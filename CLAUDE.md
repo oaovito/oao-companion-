@@ -1,13 +1,13 @@
-# Contexto do repositório — Jeff Companion
+# Contexto do repositório — JoJo Companion
 
 Este arquivo é lido automaticamente pelas sessões do Claude Code. Ele resume o
 projeto para que qualquer sessão continue o trabalho sem depender do histórico.
 
 ## O que é
 
-Companion de desktop para **Windows 11** inspirado no Jeff, o Tubarão Terrestre
-(Marvel). **Projeto de fã, não oficial** — nunca alegar vínculo com a Marvel/Disney.
-Todo o código está em `jeff-companion/`.
+Companion de desktop para **Windows 11**: o JoJo, um tubarão fisiculturista em
+estilo recorte de papel, personagem próprio do projeto.
+Todo o código está em `jojo-companion/`.
 
 ## Como o trabalho chega
 
@@ -22,7 +22,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 
 ## Personagem e usuária
 
-- O companion se chama **JoJo** (inspirado no Jeff; o app/projeto é "Jeff Companion").
+- O companion se chama **JoJo**; o app/projeto é **"JoJo Companion"**. O personagem não tem outro nome.
 - A usuária é a **Emanuele**: chamar de **Emanuele** em falas sérias e de **Manu** em brincadeiras.
 - Se ela disser que está chorando ou muito triste: dizer que é melhor falar com o **João**,
   porque ele sabe cuidar dela. Menção a se machucar/suicídio: João agora + CVV 188.
@@ -38,7 +38,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).
 - PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por
   5 min após a volta (modo `wired`). Legends: "ideia burra" 1×/semana em momento aleatório.
-- Publicação: tag `v*` → Release com `JeffCompanion.exe` (workflow do Windows).
+- Publicação: tag `v*` → Release com `JoJoCompanion.exe` (workflow do Windows).
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`
   (Wake Pet / Tuck Away Pet); movimento reduzido segue o Windows. Sem versão web.
@@ -48,7 +48,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 
 1. Fora do modo de interação o overlay é **click-through real**
    (`setIgnoreMouseEvents(true)`), inclusive durante animações. O app nunca simula cliques.
-2. Jeff **desvia do cursor** (margem padrão 100 px lógicos) sem tremer nem fazer pingue-pongue.
+2. JoJo **desvia do cursor** (margem padrão 100 px lógicos) sem tremer nem fazer pingue-pongue.
 3. Overlay transparente, sem moldura, sem foco, fora da barra de tarefas, sempre por cima.
 4. Funciona **offline**; sem telemetria, captura de tela, microfone ou registro de
    teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
@@ -59,10 +59,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 5. Sons e "iniciar com o Windows" desligados por padrão.
 6. Conversa marcada como **respostas programadas** (+ pesquisa na internet quando ativa; não é IA).
 8. Ociosidade: só o contador `powerMonitor.getSystemIdleTime()` (nunca teclas/cliques).
-9. Distribuição: **`JeffCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).
+9. Distribuição: **`JoJoCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).
 7. Arte atual é **provisória** — não declarar arte final sem que exista.
 
-Requisitos completos e critérios de aceitação: `jeff-companion/PRODUCT_SPEC.md`.
+Requisitos completos e critérios de aceitação: `jojo-companion/PRODUCT_SPEC.md`.
 
 ## Stack e mapa
 
@@ -71,13 +71,15 @@ tela cheia, isolado em `utilityProcess`.
 
 - `src/core/` — lógica pura testável (desvio, movimento, estados, layout, falas, configurações, diálogo)
 - `src/main/` — integração Windows/Electron (overlay, bandeja, atalho, energia, monitores)
-- `src/renderer/` — canvas do Jeff, balões, modo de interação, configurações, Central do JoJo (`app/`)
+- `src/renderer/` — canvas do JoJo, balões, modo de interação, configurações, Central do JoJo (`app/`)
 - `assets/` — rig, animações e falas em JSON (formato em `assets/README.md`)
 
-Detalhes: `jeff-companion/ARCHITECTURE.md`. Estado e pendências: `jeff-companion/HANDOFF.md`.
-Histórico: `jeff-companion/CHANGELOG.md` (atualizar a cada mudança).
+Os READMEs (raiz e `jojo-companion/README.md`) contêm só "descubra 🦈" — não acrescentar nada.
 
-## Comandos (em `jeff-companion/`)
+Detalhes: `jojo-companion/ARCHITECTURE.md`. Estado e pendências: `jojo-companion/HANDOFF.md`.
+Histórico: `jojo-companion/CHANGELOG.md` (atualizar a cada mudança).
+
+## Comandos (em `jojo-companion/`)
 
 ```bash
 npm ci
@@ -91,10 +93,10 @@ npm run build:win         # instalador NSIS + ZIP (Linux precisa de wine + wine3
 ## Verificação no Windows
 
 Este ambiente de desenvolvimento é Linux. O workflow
-`.github/workflows/jeff-windows.yml` roda em `windows-latest`: testes unitários,
+`.github/workflows/jojo-windows.yml` roda em `windows-latest`: testes unitários,
 build do instalador, integração com entrada real de mouse/teclado
 (`test/e2e/windows.e2e.mjs`), E2E e medição; os instaladores ficam como artefato
-`JeffCompanion-windows-x64`. Use o resultado desse CI ao relatar o que foi
+`JoJoCompanion-windows-x64`. Use o resultado desse CI ao relatar o que foi
 verificado no Windows. Multi-monitor com DPI misto, suspensão real e desconexão
 física de monitor exigem teste manual em uma máquina Windows.
 

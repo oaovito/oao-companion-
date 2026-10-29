@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>JoJo</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <aside id="side">
+    <header class="brand">
+      <img src="../../../assets/icons/app.png" alt="" width="40" height="40">
+      <div>
+        <strong id="name">JoJo</strong>
+        <small>JoJo Companion</small>
+      </div>
+    </header>
+    <button id="newChat" class="wide">+ Nova conversa</button>
+    <nav id="list" aria-label="Conversas"></nav>
+    <footer class="side-foot">
+      <button id="petToggle" class="wide"></button>
+      <button id="settings" class="wide ghost">Configurações</button>
+    </footer>
+  </aside>
+  <main id="main">
+    <header class="conv-head">
+      <h1 id="convTitle">Conversa</h1>
+      <span id="convStatus" class="chip hidden"></span>
+      <span id="badge" class="badge">Respostas programadas · offline · não é IA</span>
+    </header>
+    <p id="convDetail" class="detail hidden"></p>
+    <div id="log" role="log" aria-live="polite"></div>
+    <div id="cmdMenu" class="cmd-menu hidden" role="listbox" aria-label="Comandos"></div>
+    <form id="form" autocomplete="off">
+      <input id="input" type="text" maxlength="200" placeholder='Fale com o JoJo… ("/" abre os comandos)' aria-label="Mensagem">
+      <button type="submit" title="Enviar">➤</button>
+    </form>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

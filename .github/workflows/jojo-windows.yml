@@ -1,0 +1,101 @@
+name: JoJo Companion (Windows)
+
+on:
+  push:
+    branches: ['main', 'claude/**']
+    tags: ['v*']
+    paths: ['jojo-companion/**', '.github/workflows/jojo-windows.yml']
+  workflow_dispatch:
+    inputs:
+      publicar:
+        description: 'Publicar esta versão (cria a tag v<versão> e a Release)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: jojo-companion
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: jojo-companion/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Testes unitários
+        run: npm test
+
+      - name: Gerar executável portátil, instalador e ZIP
+        if: success() || failure()
+        run: npx electron-builder --win --x64
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Executável portátil (abre sem instalar)
+        if: success() || failure()
+        run: node scripts/smoke-portable.mjs dist/JoJoCompanion.exe
+
+      - name: Pesquisa na internet (fontes reais)
+        if: success() || failure()
+        continue-on-error: true
+        run: node scripts/check-web-search.mjs
+
+      - name: Integração no Windows (entrada real de mouse/teclado)
+        if: success() || failure()
+        run: node --test --test-concurrency=1 test/e2e/windows.e2e.mjs
+
+      - name: E2E multiplataforma
+        if: success() || failure()
+        run: node --test --test-concurrency=1 test/e2e/app.e2e.mjs
+
+      - name: Medir CPU e memória
+        if: always()
+        run: node scripts/measure.mjs | Tee-Object -FilePath measure-windows.json
+        env:
+          MEASURE_SECONDS: '20'
+
+      - name: Publicar artefatos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: JoJoCompanion-windows-x64
+          path: |
+            jojo-companion/dist/*.exe
+            jojo-companion/dist/*.zip
+            jojo-companion/measure-windows.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      # Publica a versão (Release do GitHub) com o executável portátil: por tag "v*"
+      # pela execução manual com "publicar" ou por commit com "[publicar]" na mensagem
+      # (a tag v<versão do package.json> é criada).
+      - name: Versão
+        id: versao
+        if: success() && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar || contains(github.event.head_commit.message, '[publicar]'))
+        shell: bash
+        run: echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar versão
+        if: success() && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar || contains(github.event.head_commit.message, '[publicar]'))
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: JoJo ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
+          body_path: jojo-companion/RELEASE_NOTES.md
+          files: |
+            jojo-companion/dist/JoJoCompanion.exe
+            jojo-companion/dist/JoJoCompanion-Setup-*.exe
+            jojo-companion/dist/JoJoCompanion-*-win-x64.zip

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>JoJo</title>
+  <link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <svg id="tails" aria-hidden="true"></svg>
+  <div id="bubble" class="bubble hidden" role="status" aria-live="polite"></div>
+  <div id="measure" class="bubble" aria-hidden="true"></div>
+  <div id="activities" class="hidden" role="status" aria-live="polite" aria-label="Atividades"></div>
+
+  <div id="toolbar" class="hidden" role="toolbar" aria-label="Interagir com o JoJo">
+    <button data-action="pet" title="Fazer carinho (ou passe o mouse sobre o JoJo)"><span>🤚</span><small>Carinho</small></button>
+    <button data-action="eat" title="Dar um peixinho"><span>🐟</span><small>Comer</small></button>
+    <button data-action="play" title="Brincar com a bolinha"><span>🎾</span><small>Brincar</small></button>
+    <button data-action="chat" title="Abrir a conversa"><span>💬</span><small>Conversar</small></button>
+    <button data-action="exit" class="exit" title="Sair do modo de interação (Esc)"><span>✕</span><small>Esc</small></button>
+  </div>
+
+  <section id="chat" class="hidden" aria-label="Conversa com o JoJo">
+    <header>
+      <strong>Conversa com o JoJo</strong>
+      <span id="providerBadge" class="badge">Respostas programadas · offline · não é IA</span>
+    </header>
+    <div id="log" role="log" aria-live="polite"></div>
+    <ul id="cmdMenu" class="hidden" role="listbox" aria-label="Comandos"></ul>
+    <form id="chatForm" autocomplete="off">
+      <input id="chatInput" type="text" maxlength="200" placeholder="Diga oi… ou digite / para comandos" aria-label="Mensagem para o JoJo">
+      <button type="submit" title="Enviar">➤</button>
+    </form>
+  </section>
+
+  <script type="module" src="overlay.js"></script>
+</body>
+</html>
