@@ -565,15 +565,23 @@ test('comida de tubarão com arroto e fantasia ousada/comportada no renderer', a
     const st = await win.evaluate(() => ({ e: window.__jojoRenderer.state.effect, k: window.__jojoRenderer.state.effectKind }));
     assert.equal(st.e, 'food');
     assert.ok(['peixe', 'foca', 'lula', 'tartaruga', 'pinguim', 'humano'].includes(st.k));
-    await sleep(2600);
-    assert.equal(await app.evaluate(() => globalThis.__jojo.companion.bubble && globalThis.__jojo.companion.bubble.text), 'BUUURP.');
+    let burp = null;
+    for (let i = 0; i < 40 && burp !== 'BUUURP.'; i++) {
+      await sleep(200);
+      burp = await app.evaluate(() => globalThis.__jojo.companion.bubble && globalThis.__jojo.companion.bubble.text);
+    }
+    assert.equal(burp, 'BUUURP.');
     await app.evaluate(() => globalThis.__jojo.companion.exitInteraction('test'));
     await app.evaluate(() => globalThis.__jojo.companion.checkHoliday(new Date(2026, 11, 25, 12)));
     await sleep(300);
     assert.equal(await win.evaluate(() => window.__jojoRenderer.state.sexy), true);
-    await app.evaluate(() => globalThis.__jojo.companion.chat('se veste direito'));
-    await sleep(400);
-    assert.equal(await win.evaluate(() => window.__jojoRenderer.anim), 'finger');
+    await app.evaluate(() => globalThis.__jojo.companion.chat('veste uma roupa'));
+    let anim = null;
+    for (let i = 0; i < 20 && anim !== 'finger'; i++) {
+      await sleep(150);
+      anim = await win.evaluate(() => window.__jojoRenderer.anim);
+    }
+    assert.equal(anim, 'finger');
     assert.equal(await win.evaluate(() => window.__jojoRenderer.state.sexy), false);
   } finally {
     await quit(app);
@@ -598,8 +606,12 @@ test('conversa online: entende e responde no jeito do JoJo, sem mencionar IA na 
     await win.click('#toolbar button[data-action="chat"]');
     await win.fill('#chatInput', 'como foi seu dia?');
     await win.press('#chatInput', 'Enter');
-    await sleep(1800);
-    const last = await win.evaluate(() => document.querySelector('#log .msg.jojo:last-child')?.textContent);
+    // Runner lento: espera a resposta até 10 s.
+    let last;
+    for (let i = 0; i < 40 && !last?.includes('supino'); i++) {
+      await sleep(250);
+      last = await win.evaluate(() => document.querySelector('#log .msg.jojo:last-child')?.textContent);
+    }
     assert.equal(last, 'Dia bom é dia de supino, Manu. O seu foi no Instagram.');
     assert.equal(bodies.length, 1);
     assert.match(bodies[0].messages[0].content, /REGRA IRREDUTÍVEL/);

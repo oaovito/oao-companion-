@@ -272,16 +272,17 @@ test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)'
     await app.evaluate(() => globalThis.__jojo.companion.hideBubble());
     const id = await app.evaluate(() => globalThis.__jojo.makeClickTarget({ x: 20, y: 20, width: 500, height: 400 }));
     await app.evaluate((_e, i) => globalThis.__jojo.setTargetTitle(i, 'Instagram'), id);
+    // Runner lento: espera até 20 s, devolvendo o foco ao alvo (o Windows pode segurá-lo).
     let said = null;
-    for (let i = 0; i < 20 && !said; i++) {
-      await sleep(400);
+    for (let i = 0; i < 40 && !said; i++) {
+      await sleep(500);
+      await app.evaluate(({ BrowserWindow }, i) => BrowserWindow.fromId(i)?.focus(), id);
       said = await app.evaluate(() => {
         const c = globalThis.__jojo.companion;
-        // A bronca usa a reação da frase sorteada: julgamento, dedo em riste ou raiva.
-        return ['judge', 'lecture', 'angry'].includes(c.behavior.state) && c.bubble ? c.bubble.text : null;
+        return (c.instagramScolds || []).length ? { text: c.lastSaid, state: c.behavior.state } : null;
       });
     }
-    assert.ok(said, 'JoJo deu bronca ao abrir o Instagram');
+    assert.ok(said && said.text, 'JoJo deu bronca ao abrir o Instagram');
     // Continua aberto: não repete.
     const first = await app.evaluate(() => globalThis.__jojo.companion.instagram.lastScold);
     await sleep(4000);

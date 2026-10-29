@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.23.2 — 2026-10-29
+
+### Corrigido
+- Testes do Windows mais estáveis em máquinas lentas do CI: Instagram, conversa
+  online e comida esperam o resultado com folga em vez de tempo fixo.
+
 ## 0.23.1 — 2026-10-29
 
 ### Corrigido
