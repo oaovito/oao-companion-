@@ -38,8 +38,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    (`setIgnoreMouseEvents(true)`), inclusive durante animações. O app nunca simula cliques.
 2. Jeff **desvia do cursor** (margem padrão 100 px lógicos) sem tremer nem fazer pingue-pongue.
 3. Overlay transparente, sem moldura, sem foco, fora da barra de tarefas, sempre por cima.
-4. Funciona **100% offline**; sem telemetria, captura de tela, leitura de janelas,
-   microfone ou registro de teclado/cliques. Integrações de IA só opcionais.
+4. Funciona **100% offline**; sem telemetria, captura de tela, microfone ou registro de
+   teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
+   comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
+   Integrações de IA só opcionais.
 5. Sons e "iniciar com o Windows" desligados por padrão.
 6. Conversa marcada como **respostas programadas** (não é IA).
 7. Arte atual é **provisória** — não declarar arte final sem que exista.
