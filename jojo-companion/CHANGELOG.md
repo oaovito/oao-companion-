@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.23.1 — 2026-10-29
+
+### Corrigido
+- Atualização do executável portátil no Windows: o script de troca não se apaga
+  mais enquanto roda (o cmd encerrava com "arquivo em lote não encontrado"); o app
+  remove o script na próxima abertura.
+- Testes do Windows: a ociosidade real do runner não dispara mais o pó durante os
+  testes; o teste de "iniciar com o Windows" considera o padrão ligado.
+
 ## 0.23.0 — 2026-10-29
 
 ### Adicionado

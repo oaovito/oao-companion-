@@ -39,8 +39,9 @@ export function createAutoUpdater({ app, net, store, log, feed, onUpdated = () =
   let timer = null;
   let busy = false;
 
-  // Depois de atualizar: avisa uma vez.
+  // Depois de atualizar: avisa uma vez e limpa o script de troca.
   try {
+    fs.rmSync(path.join(dir, 'trocar.cmd'), { force: true });
     const mark = path.join(app.getPath('userData'), 'last-version.txt');
     const prev = fs.existsSync(mark) ? fs.readFileSync(mark, 'utf8').trim() : null;
     if (prev && prev !== app.getVersion()) setTimeout(() => onUpdated(app.getVersion(), prev), 4000);

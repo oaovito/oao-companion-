@@ -69,6 +69,8 @@ test('script de troca do portátil: espera liberar, move e reabre', () => {
   assert.match(s, /goto retry/);
   assert.match(s, /start "" "D:\\Downloads\\JoJoCompanion.exe"/);
   assert.ok(s.includes('\r\n'), 'quebras de linha do Windows');
+  assert.ok(!s.includes('%~f0'), 'não se apaga enquanto roda (cmd daria erro)');
+  assert.match(s, /exit \/b 0\r\n$/);
   assert.ok(!portableSwapScript({ newPath: 'a"b', targetPath: 'c' }).includes('a"b'), 'sem aspas soltas');
 });
 

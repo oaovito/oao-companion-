@@ -551,7 +551,9 @@ function main() {
     companion.start();
     trayCtl.refresh();
     // Ociosidade do sistema: só o contador de segundos sem uso (não lê teclas nem cliques).
-    let idleOverride = null;
+    // Testes: ociosidade real do runner (sem ninguém no mouse) não dispara o pó.
+    const IDLE_DEFAULT = TEST ? 0 : null;
+    let idleOverride = IDLE_DEFAULT;
     let updater = null;
     // Atualização automática (Releases do GitHub; origem em package.json → jojoUpdate).
     const pkg = readJSON('package.json');
@@ -612,7 +614,7 @@ function main() {
           return updater;
         },
         setIdle: (sec) => {
-          idleOverride = sec == null ? null : Number(sec);
+          idleOverride = sec == null ? IDLE_DEFAULT : Number(sec);
           return companion.onSystemIdle(idleOverride ?? 0);
         },
         setTargetTitle: (id, title) => BrowserWindow.fromId(id)?.setTitle(title),

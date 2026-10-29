@@ -294,7 +294,10 @@ test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)'
 test('Windows: iniciar com o Windows liga e desliga', { skip }, async () => {
   const app = await launch();
   try {
-    assert.equal((await app.evaluate(() => globalThis.__jojo.loginItem())).openAtLogin, false, 'desligado por padrão');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.store.get().startWithWindows), true, 'ligado por padrão');
+    await app.evaluate(() => globalThis.__jojo.store.update({ startWithWindows: false }));
+    await sleep(300);
+    assert.equal((await app.evaluate(() => globalThis.__jojo.loginItem())).openAtLogin, false);
     await app.evaluate(() => globalThis.__jojo.store.update({ startWithWindows: true }));
     await sleep(300);
     assert.equal((await app.evaluate(() => globalThis.__jojo.loginItem())).openAtLogin, true);

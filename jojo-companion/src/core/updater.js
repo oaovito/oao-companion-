@@ -86,7 +86,9 @@ export class UpdateChecker {
 /**
  * Script (cmd do Windows) que troca o executável portátil depois que o app
  * fecha: tenta mover o novo por cima do antigo até o arquivo ser liberado e
- * abre a versão nova. Caminhos entre aspas; sem entrada de terceiros.
+ * abre a versão nova. Caminhos entre aspas; sem entrada de terceiros. Não se
+ * apaga (o cmd reclamaria "arquivo em lote não encontrado"): o app remove o
+ * script na próxima abertura.
  */
 export function portableSwapScript({ newPath, targetPath, tries = 60 }) {
   const q = (p) => `"${String(p).replace(/"/g, '')}"`;
@@ -103,7 +105,7 @@ export function portableSwapScript({ newPath, targetPath, tries = 60 }) {
     'exit /b 1',
     ':ok',
     `start "" ${q(targetPath)}`,
-    'del "%~f0"',
+    'exit /b 0',
     '',
   ].join('\r\n');
 }
