@@ -1,14 +1,20 @@
 // Orquestra provedores de diálogo com fallback garantido para o provedor
 // programado (offline). Mantém um histórico curto apenas em memória.
 import { normalizeReply } from './provider.js';
-import { ScriptedProvider } from './scripted-provider.js';
+import { ScriptedProvider, detectIntent } from './scripted-provider.js';
+
+// Intenções que nunca vão pra IA: segurança (João, CVV, SAMU) e gatilhos com animação própria.
+const SCRIPTED_ONLY = new Set(['crisis', 'distress', 'sad', 'avcReal', 'avc', 'pretty', 'lol', 'moon', 'dressDown', 'dressUp', 'bench', 'squat', 'quiet', 'scare', 'eat', 'play', 'sleep', 'wake', 'pet']);
 
 export class DialogueEngine {
   /**
    * @param search pesquisa na internet (WebSearch) para perguntas sem resposta
    *   programada; `searchEnabled()` diz se a usuária permitiu.
    */
-  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true } = {}) {
+  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true, llm = null } = {}) {
+    // Conversa com IA (API gratuita): entende e responde no jeito do JoJo.
+    this.llm = llm;
+    this.llmOk = false;
     this.search = search;
     this.searchEnabled = searchEnabled;
     this.fallback = new ScriptedProvider();
@@ -29,7 +35,8 @@ export class DialogueEngine {
 
   describe() {
     const a = this.active;
-    return { id: a.id, label: a.label, kind: a.kind, scripted: a.kind === 'scripted', webSearch: !!(this.search && this.searchEnabled()) };
+    const ia = !!(this.llm && this.llm.getConfig && (this.llm.getConfig() || {}).ativo);
+    return { id: ia ? 'llm' : a.id, label: ia ? this.llm.labelNow : a.label, kind: ia ? 'remote-api' : a.kind, scripted: !ia && a.kind === 'scripted', ia, webSearch: !!(this.search && this.searchEnabled()) };
   }
 
   async reply(text, context = {}) {
@@ -37,6 +44,23 @@ export class DialogueEngine {
     this.history.push({ role: 'user', text: input });
     let raw;
     let error = null;
+    // Segurança e gatilhos com animação própria ficam com as respostas programadas;
+    // o resto vai pra IA (se ativa e disponível), com volta às programadas se falhar.
+    const intent = detectIntent(input);
+    if (this.llm && !SCRIPTED_ONLY.has(intent) && (await this.llm.isAvailable().catch(() => false))) {
+      try {
+        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context }), this.llm.timeoutMs || this.timeoutMs);
+        const out = normalizeReply(r);
+        out.intent = 'ia';
+        this.llmOk = true;
+        this.history.push({ role: 'jeff', text: out.text });
+        if (this.history.length > 20) this.history.splice(0, this.history.length - 20);
+        return out;
+      } catch (e) {
+        this.llmOk = false;
+        this.log('warn', `IA indisponível (${e.message}); usando respostas programadas.`);
+      }
+    }
     const provider = this.active;
     try {
       if (provider !== this.fallback && !(await provider.isAvailable())) throw new Error('indisponível');

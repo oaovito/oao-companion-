@@ -53,7 +53,6 @@ function render(i) {
   document.getElementById('fullscreenStatus').textContent = i.fullscreen.available
     ? 'Funciona com janelas que cobrem o monitor (inclusive vídeos e apresentações). Jogos em tela cheia exclusiva e telas protegidas do Windows podem ficar por cima do JoJo.'
     : `Detecção de tela cheia: ${i.fullscreen.reason || 'indisponível'}`;
-  document.getElementById('dialogueInfo').textContent = `Conversa: ${i.dialogue.label}. ${i.dialogue.scripted ? 'Não é uma IA de conversa livre.' : ''}`;
   document.getElementById('paths').textContent = `Configurações: ${i.paths.userData}`;
   const notice = document.getElementById('notice');
   if (i.loadIssues && i.loadIssues.length) {

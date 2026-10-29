@@ -21,7 +21,7 @@ export const INTENTS = [
   { id: 'distress', patterns: [/\b(crise\w*|em crise|panico|ataque de ansiedade|crise de ansiedade|ansiedade|nao aguento mais|nao to aguentando|surtand\w*|surtei|desmoronand\w*|emocionalmente mal|mal emocionalmente|to destruida|desabei|desabando)\b/] },
   { id: 'sad', patterns: [/\b(chorand\w*|chorei|chorar|choro|triste\w*|tristeza|deprimid\w*|depre|pra baixo|arrasad\w*|sofrendo|muito mal|to mal|na bad|desanimad\w*|desesperad\w*)\b/] },
   { id: 'avc', patterns: [/^(jojo )?avc[!?]*$/] },
-  { id: 'dressDown', patterns: [/\b(se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
+  { id: 'dressDown', patterns: [/\b((vai |pode )?(vestir|veste|coloca|poe|bota) uma roupa|veste roupa|se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
   { id: 'dressUp', patterns: [/\b(volta (a|pra|para a) fantasia ousada|pode (ser|ficar) ousado|fantasia ousada|volta a ser ousado|tira a roupa comportada)\b/] },
   { id: 'lol', patterns: [/\b((eu )?(deveria|devo|posso|vou|quero) jogar (um )?(lol|league( of legends)?)|jogo (um )?lol|bora (de )?lol|partida de lol|lolzinho)\b/] },
   { id: 'pretty', patterns: [/\b((eu )?(sou|to|tou|estou|t[oô]) (bonita|linda|gata|bela|maravilhosa)|(voce|vc) me acha (bonita|linda|gata)|me acha (bonita|linda|gata)|(eu )?(sou|to|estou) (muito )?(bonita|linda) hoje)\b/] },

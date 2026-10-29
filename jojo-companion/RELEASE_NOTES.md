@@ -13,8 +13,9 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- **Conversa de verdade**: fale com o JoJo sobre qualquer coisa; ele entende e responde no jeito dele.
 - Ele **inicia junto com o Windows** (dá para desmarcar em Configurações).
-- Fantasias ousadas (mande **"se veste direito"** e veja a reação). Comida de tubarão de
+- Fantasias ousadas (mande **"veste uma roupa"** e veja a reação). Comida de tubarão de
   verdade com arroto (🐟). Escreva **"AVC"** e espere 1 minuto.
 - Em 38 datas festivas (feriados do Brasil e datas religiosas e culturais do mundo) ele veste
   fantasia e deseja feliz dia — ou não. Nas datas solenes, só respeito.

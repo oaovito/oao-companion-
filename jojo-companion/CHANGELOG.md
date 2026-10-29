@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 0.23.0 — 2026-10-29
+
+### Adicionado
+- **Conversa natural**: o JoJo entende o que a Emanuele diz e responde de forma
+  orgânica, sem repetir, por API gratuita (Pollinations, sem chave; Groq, Gemini
+  ou OpenRouter com chave grátis, só pelo arquivo de configurações). Histórico da
+  conversa vai junto e as respostas trazem a expressão corporal.
+- **Personalidade irredutível**: instruções com o perfil do JoJo + falas reais
+  dele como modelo; respostas com cara de assistente ("como IA", "desculpe",
+  "posso ajudar"…) ou longas são descartadas e caem nas respostas programadas.
+- Segurança (tristeza → João, crise → CVV 188, AVC real → SAMU 192) e gatilhos com
+  animação própria continuam sempre programados. Sem internet: respostas programadas.
+- "Veste uma roupa" é o gatilho principal da troca para a fantasia comportada.
+
+### Alterado
+- Nada na tela menciona IA ou "respostas programadas"; tudo vem pré-configurado. As
+  Configurações mantêm só "Conversa online" (com o aviso de que o texto vai para um
+  serviço online).
+
 ## 0.22.0 — 2026-10-29
 
 ### Alterado

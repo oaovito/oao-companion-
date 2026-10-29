@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.22.0, 2026-10-29)
+# HANDOFF — estado atual (v0.23.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -47,6 +47,10 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 - Barra de tarefas cobrindo o JoJo (mitigado reafirmando topmost a cada 8 s).
 
 ## Pendente / limitado
+
+- Conversa online: Pollinations sem chave tem limite de uso e pode mudar sem aviso;
+  se falhar, cai nas respostas programadas. Com chave grátis (Groq/Gemini/OpenRouter)
+  em `settings.json` (`iaProvedor`, `iaChave`) fica mais estável.
 
 - Atualização automática: busca em `oaovito/jojo-companion-releases` (público). Falta
   criar esse repositório e o segredo `RELEASES_TOKEN` (token com escrita nele) no

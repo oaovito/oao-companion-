@@ -16,7 +16,6 @@ const chatEl = document.getElementById('chat');
 const logEl = document.getElementById('log');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
-const providerBadge = document.getElementById('providerBadge');
 const activitiesEl = document.getElementById('activities');
 const cmdMenuEl = document.getElementById('cmdMenu');
 
@@ -239,14 +238,9 @@ function renderChat(s, prev) {
   Object.assign(chatEl.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.width}px`, height: `${r.height}px` });
   const title = chatEl.querySelector('header strong');
   if (title && s.chat.name) title.textContent = `Conversa com o ${s.chat.name}`;
-  if (s.chat.provider) {
-    providerBadge.textContent = s.chat.provider.scripted
-      ? (s.chat.provider.webSearch ? 'Respostas programadas + pesquisa na internet · não é IA' : 'Respostas programadas · offline · não é IA')
-      : `${s.chat.provider.label}`;
-  }
   if (cmdMenuEl && !cmdMenuEl.classList.contains('hidden')) renderCmdMenu();
   if (wasHidden || !prev || !prev.chat) {
-    if (!logEl.childElementCount) addMsg('jojo', 'Fala. Minhas respostas são programadas (sem IA). Tenta: "oi", "consegui", "treino", "silêncio", "me assusta" — ou me faz uma pergunta.');
+    if (!logEl.childElementCount) addMsg('jojo', 'Fala. Rápido.');
     setTimeout(() => chatInput.focus(), 30);
   }
 }

@@ -146,8 +146,7 @@ test('modo de interação: ações, conversa offline, Esc e restauração do cli
     await win.click('#toolbar button[data-action="chat"]');
     await sleep(300);
     assert.equal(await win.isVisible('#chat'), true);
-    const badge = await win.textContent('#providerBadge');
-    assert.match(badge, /programadas/i);
+    assert.equal(await win.$('#providerBadge'), null, 'sem selo de IA/programadas na tela');
     await win.fill('#chatInput', 'hora de dormir');
     await win.press('#chatInput', 'Enter');
     await sleep(1200); // inclui o "digitando…" da resposta
@@ -578,5 +577,37 @@ test('comida de tubarão com arroto e fantasia ousada/comportada no renderer', a
     assert.equal(await win.evaluate(() => window.__jojoRenderer.state.sexy), false);
   } finally {
     await quit(app);
+  }
+});
+
+test('conversa online: entende e responde no jeito do JoJo, sem mencionar IA na tela', async () => {
+  const bodies = [];
+  const server = http.createServer((req, res) => {
+    let b = '';
+    req.on('data', (c) => (b += c));
+    req.on('end', () => {
+      bodies.push(JSON.parse(b));
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ choices: [{ message: { content: '{"texto":"Dia bom é dia de supino, Manu. O seu foi no Instagram.","acao":"judge","tom":"brincadeira"}' } }] }));
+    });
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const { app, win } = await launch({ env: { JOJO_LLM_BASE: `http://127.0.0.1:${server.address().port}/chat` } });
+  try {
+    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
+    await win.click('#toolbar button[data-action="chat"]');
+    await win.fill('#chatInput', 'como foi seu dia?');
+    await win.press('#chatInput', 'Enter');
+    await sleep(1800);
+    const last = await win.evaluate(() => document.querySelector('#log .msg.jojo:last-child')?.textContent);
+    assert.equal(last, 'Dia bom é dia de supino, Manu. O seu foi no Instagram.');
+    assert.equal(bodies.length, 1);
+    assert.match(bodies[0].messages[0].content, /REGRA IRREDUTÍVEL/);
+    assert.match(bodies[0].messages[0].content, /Exemplos de como o JoJo fala/);
+    const text = await win.evaluate(() => document.body.innerText);
+    assert.ok(!/\bIA\b|intelig[eê]ncia artificial|programadas/i.test(text), 'nada de IA na tela');
+  } finally {
+    await quit(app);
+    server.close();
   }
 });

@@ -7,9 +7,11 @@ import { fileURLToPath } from 'node:url';
 import { Companion } from '../core/companion.js';
 import { SettingsStore } from '../core/settings-store.js';
 import { DEFAULTS } from '../core/settings-schema.js';
-import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../core/personality.js';
+import { sanitizePersonality, PERSONALITY_DEFAULTS, phraseFilter } from '../core/personality.js';
 import { DialogueEngine } from '../core/dialogue/engine.js';
 import { WebSearch } from '../core/dialogue/web-search.js';
+import { LlmProvider } from '../core/dialogue/llm-provider.js';
+import { HOLIDAYS } from '../core/holidays.js';
 import { createLogger } from './logger.js';
 import { createAutoUpdater } from './auto-update.js';
 import { OverlayWindow } from './overlay-window.js';
@@ -31,6 +33,24 @@ if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
   main();
+}
+
+/** Amostra de falas do JoJo (respeitando palavrões/drogas do perfil) para guiar a IA. */
+function sampleVoice(phrases, profile, n) {
+  const filter = phraseFilter(profile);
+  const cats = ['idleSpeech', 'instagram', 'joke', 'showOff', 'achievement', 'insulted', 'food_humano', 'wired', 'festa_natal', 'webOutro'];
+  const lines = [];
+  for (const c of cats) {
+    for (const l of (phrases.categories[c] || {}).lines || []) {
+      const line = typeof l === 'string' ? { t: l } : l;
+      if (filter(line)) lines.push(line.t.replace(/\{nome\}/g, profile.nomeBrincadeira || 'Manu').replace(/\{vocativo\}/g, '').replace(/\{\w+\}/g, ''));
+    }
+  }
+  for (let i = lines.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [lines[i], lines[j]] = [lines[j], lines[i]];
+  }
+  return lines.slice(0, n);
 }
 
 function readJSON(rel) {
@@ -142,7 +162,27 @@ function main() {
       bases: searchBase ? { wikipedia: searchBase, duckduckgo: `${searchBase}/ddg` } : {},
       log,
     });
-    const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch });
+    // Conversa com IA (API gratuita). Em testes, JOJO_LLM_BASE aponta para um servidor local falso.
+    const llm = new LlmProvider({
+      fetch: (url, opts) => net.fetch(url, opts),
+      getConfig: () => {
+        const s = store.get();
+        // Testes automáticos só usam a IA com o servidor falso (nunca a API de verdade).
+        const ativo = s.iaAtivo && (!TEST || !!process.env.JOJO_LLM_BASE);
+        return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo };
+      },
+      getProfile: () => personality.get(),
+      getContext: () => ({
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        festa: companion && companion.holiday ? HOLIDAYS[companion.holiday].nome : null,
+        ligadao: !!(companion && companion.wired),
+      }),
+      // Falas reais do JoJo (filtradas pelo perfil) como modelo do jeito dele.
+      getExamples: () => sampleVoice(phrases, personality.get(), 10),
+      baseOverride: TEST && process.env.JOJO_LLM_BASE ? process.env.JOJO_LLM_BASE : null,
+      log,
+    });
+    const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm });
 
     companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, phrases, dialogue, log });
 

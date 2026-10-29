@@ -23,6 +23,10 @@ export const DEFAULTS = Object.freeze({
   reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
   webSearch: true,              // pesquisar na internet perguntas sem resposta programada
   autoUpdate: true,             // baixar e instalar versões novas automaticamente
+  iaAtivo: true,                // conversa com IA por API gratuita
+  iaProvedor: 'pollinations',   // pollinations (sem chave) | groq | gemini | openrouter
+  iaChave: '',                  // chave grátis do provedor (fica só neste PC)
+  iaModelo: '',                 // modelo (vazio = padrão do provedor)
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -42,9 +46,10 @@ const ENUMS = {
   fullscreenBehavior: ['hide', 'pause', 'ignore'],
   avoidFallback: ['fade', 'hide'],
   reduceMotion: ['system', 'on', 'off'],
+  iaProvedor: ['pollinations', 'groq', 'gemini', 'openrouter'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo'];
 
 // Intervalo médio entre falas espontâneas (ms) por frequência.
 export const SPEECH_INTERVALS = { off: null, rare: [9 * 60e3, 18 * 60e3], normal: [3 * 60e3, 8 * 60e3], often: [70e3, 3 * 60e3] };
@@ -91,6 +96,12 @@ export function sanitize(input) {
   if ('preferredDisplay' in src) {
     if (src.preferredDisplay === 'auto' || typeof src.preferredDisplay === 'string' || typeof src.preferredDisplay === 'number') out.preferredDisplay = String(src.preferredDisplay);
     else issues.push('preferredDisplay');
+  }
+  for (const k of ['iaChave', 'iaModelo']) {
+    if (k in src) {
+      if (typeof src[k] === 'string' && src[k].length <= 300 && !/[\r\n]/.test(src[k])) out[k] = src[k].trim();
+      else issues.push(k);
+    }
   }
   if ('interactionHotkey' in src) {
     if (isValidAccelerator(src.interactionHotkey)) out.interactionHotkey = src.interactionHotkey;

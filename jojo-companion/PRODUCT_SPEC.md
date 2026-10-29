@@ -114,6 +114,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | M4 | Fantasia ousada | Padrão ousado; "se veste direito" → dedo do meio + versão comportada |
 | M5 | Comida | Comida de tubarão sorteada (às vezes gente), gore e arroto no fim |
 | M6 | AVC | "AVC" → força de frente, segura o peito, morto 1 min, "Essa foi por pouco."; sintomas reais → SAMU 192 |
+| C1 | Conversa natural | Entende e responde de forma orgânica no jeito do JoJo (API gratuita); personalidade irredutível; sem menção a IA na tela; volta às programadas sem internet |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho

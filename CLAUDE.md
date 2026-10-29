@@ -53,6 +53,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Comida de tubarão sorteada (peixe, foca, lula, tartaruga, pinguim, às vezes gente), gore e arroto.
 - "AVC": força de frente até ficar vermelho, segura o peito, morto 1 min, "Essa foi por pouco."; AVC real → SAMU 192.
 - Dedo do meio: mão de verdade só nessa animação (punho + dedo para cima).
+- **Conversa com IA** (API gratuita: Pollinations sem chave; Groq/Gemini/OpenRouter com chave grátis).
+  **Regra irredutível:** a IA responde sempre no jeito do JoJo (prompt com perfil + falas reais; resposta
+  com cara de assistente é descartada e cai nas programadas). Segurança e gatilhos com animação ficam programados.
 - O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
@@ -70,12 +73,12 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 4. Funciona **offline**; sem telemetria, captura de tela, microfone ou registro de
    teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
-   Saídas para a internet: **perguntas de conhecimento sem resposta programada** vão à
-   Wikipédia/DuckDuckGo (só o texto da pergunta) e a **atualização automática** consulta as
-   Releases do GitHub e baixa a versão nova — ambas desligáveis em Configurações. Conversa
-   comum nunca acessa a rede. Integrações de IA só opcionais.
+   Saídas para a internet: **conversa online** (texto da conversa ao provedor de IA), perguntas de
+   conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
+   **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. Sons desligados por padrão; **"iniciar com o Windows" ligado por padrão** (desmarcável).
-6. Conversa marcada como **respostas programadas** (+ pesquisa na internet quando ativa; não é IA).
+6. Conversa: IA por API gratuita com a personalidade do JoJo (irredutível). A tela **não menciona IA**;
+   Configurações só mostram "Conversa online" com o aviso de que o texto vai para um serviço online.
 8. Ociosidade: só o contador `powerMonitor.getSystemIdleTime()` (nunca teclas/cliques).
 9. Distribuição: **`JoJoCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).
 7. Arte atual é **provisória** — não declarar arte final sem que exista.
