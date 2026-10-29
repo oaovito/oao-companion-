@@ -220,12 +220,15 @@ function main() {
     }
 
     // ---------------- Iniciar com o Windows
+    function loginOptions() {
+      return { path: process.execPath, args: app.isPackaged ? ['--autostart'] : [app.getAppPath(), '--autostart'] };
+    }
+
     function applyAutostart() {
       if (!(IS_WIN || process.platform === 'darwin')) return;
       const enabled = store.get().startWithWindows;
       try {
-        const args = app.isPackaged ? ['--autostart'] : [app.getAppPath(), '--autostart'];
-        app.setLoginItemSettings({ openAtLogin: enabled, path: process.execPath, args });
+        app.setLoginItemSettings({ openAtLogin: enabled, ...loginOptions() });
         log('info', `Iniciar com o sistema: ${enabled}`);
       } catch (err) {
         log('warn', `Falha ao configurar inicialização: ${err.message}`);
@@ -377,7 +380,7 @@ function main() {
         targetHwnd: (id) => hwndToString(BrowserWindow.fromId(id).getNativeWindowHandle()),
         overlayHwnd: () => hwndToString(overlay.win.getNativeWindowHandle()),
         closeTarget: (id) => BrowserWindow.fromId(id)?.destroy(),
-        loginItem: () => app.getLoginItemSettings(),
+        loginItem: () => app.getLoginItemSettings(loginOptions()),
         fullscreenInfo: () => ({ available: !!fullscreen?.available, reason: fullscreen?.reason || null }),
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
       };

@@ -39,6 +39,11 @@ function winInput() {
 async function moveTo(p, scale) {
   const i = winInput();
   i.SetCursorPos(Math.round(p.x * scale), Math.round(p.y * scale));
+  // SetCursorPos não passa pelo hook de mouse; um movimento relativo real passa
+  // (é o que o Electron usa para encaminhar mousemove com click-through).
+  i.mouse_event(0x0001, 1, 0, 0, 0);
+  await sleep(15);
+  i.mouse_event(0x0001, -1 >>> 0, 0, 0, 0);
   await sleep(30);
 }
 
