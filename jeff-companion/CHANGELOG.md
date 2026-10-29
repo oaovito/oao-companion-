@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.3.0 — 2026-10-29
+
+### Alterado
+- Estética e animações no **estilo South Park** (recorte de papel): Jeff de frente,
+  olhos ovais brancos com pupilas de ponto, cores chapadas, contorno fino;
+  animação a 12 qps com movimentos secos, saltinhos ao andar, boca em degraus e
+  virada instantânea. Todas as 26 animações refeitas.
+- Renderer: `rotSign` (membros espelhados), rosto `style: "sp"`, várias bochechas;
+  animador com `style.stepFps`, `defaultEase`, `defaultBlendIn`, `turnMs`.
+- Renderer limita o desenho aos 12 qps da animação (menos CPU).
+
+### Corrigido
+- Esc às vezes não encerrava o modo de interação no Windows (foco não entregue
+  à janela ativada por atalho): agora um Esc global é registrado **somente**
+  enquanto o modo de interação está ativo. O atalho de interação não remove mais
+  outros atalhos ao ser trocado.
+
 ## 0.2.0 — 2026-10-29
 
 ### Alterado

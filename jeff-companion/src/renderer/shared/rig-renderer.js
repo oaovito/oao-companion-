@@ -20,6 +20,9 @@ export class RigRenderer {
     this.teeth = F.teeth || [0.28, 0.5, 0.72];
     this.toothSize = F.toothSize ?? 4.2;
     this.faceAfter = rig.faceAfter || 'bodyDetail';
+    this.faceStyle = F.style || 'classic';
+    this.faceCenter = F.center ?? this.box.width / 2;
+    this.blushes = Array.isArray(F.blush) ? F.blush : F.blush ? [F.blush] : [];
   }
 
   color(key) {
@@ -99,7 +102,7 @@ export class RigRenderer {
     ctx.save();
     if (part.pivot && part.rot) {
       ctx.translate(part.pivot[0], part.pivot[1]);
-      ctx.rotate((pose[part.rot] || 0) * DEG);
+      ctx.rotate((pose[part.rot] || 0) * (part.rotSign ?? 1) * DEG);
       ctx.translate(-part.pivot[0], -part.pivot[1]);
     }
     if (part.lift) ctx.translate(0, -(pose[part.lift] || 0));
@@ -134,9 +137,11 @@ export class RigRenderer {
       ctx.save();
       ctx.globalAlpha *= Math.min(1, blush) * 0.75;
       ctx.fillStyle = this.color('blush');
-      ctx.beginPath();
-      ctx.ellipse(F.blush.x, F.blush.y, F.blush.rx, F.blush.ry, 0, 0, Math.PI * 2);
-      ctx.fill();
+      for (const b of this.blushes) {
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, b.rx, b.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
     }
 
@@ -148,8 +153,9 @@ export class RigRenderer {
       ctx.fill();
     }
 
-    for (const e of this.eyes) this._eye(ctx, pose, e);
-    for (const b of this.brows) this._brow(ctx, pose, b);
+    const sp = this.faceStyle === 'sp';
+    for (const e of this.eyes) (sp ? this._eyeSP : this._eye).call(this, ctx, pose, e);
+    for (const b of this.brows) (sp ? this._browSP : this._brow).call(this, ctx, pose, b);
     this._mouth(ctx, pose);
     ctx.restore();
   }
@@ -204,6 +210,96 @@ export class RigRenderer {
       ctx.lineTo(cx + E.rx * es + 1, cy - E.ry * es * open + 1);
       ctx.stroke();
     }
+  }
+
+  /**
+   * Olho estilo South Park: oval branco com contorno, pupila de ponto puxada
+   * para o centro, pálpebra da cor do corpo descendo de cima; feliz = pálpebra
+   * inferior subindo; fechado = linha.
+   */
+  _eyeSP(ctx, pose, E) {
+    const P = (k, d = 0) => (pose[k] ?? d);
+    const outline = this.color('outline');
+    const es = P('eyeScale', 1);
+    const rx = E.rx * es;
+    const ry = E.ry * es;
+    const open = Math.max(0, Math.min(1, P('eyeOpen', 1)));
+    const happy = P('happyEyes') > 0.5;
+    const eye = new Path2D();
+    eye.ellipse(E.x, E.y, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fillStyle = this.color('sclera');
+    ctx.fill(eye);
+    if (open > 0.12) {
+      const pr = (E.pupil ?? 3.4) * (es > 1.1 ? 0.8 : 1);
+      const px = E.x + (E.pupilOffset ?? 0) + P('pupilX') * rx * 0.45;
+      const py = E.y + 2 + P('pupilY') * ry * 0.45;
+      ctx.fillStyle = this.color('eye');
+      ctx.beginPath();
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // Pálpebras (cor do corpo), recortadas pelo olho.
+    ctx.save();
+    ctx.clip(eye);
+    ctx.fillStyle = this.color('body');
+    ctx.strokeStyle = outline;
+    ctx.lineWidth = 2;
+    const top = E.y - ry;
+    if (open < 0.98) {
+      const lidY = top + (1 - open) * ry * 2;
+      ctx.fillRect(E.x - rx - 2, top - 2, rx * 2 + 4, lidY - top + 2);
+      ctx.beginPath();
+      ctx.moveTo(E.x - rx - 2, lidY);
+      ctx.lineTo(E.x + rx + 2, lidY);
+      ctx.stroke();
+    }
+    if (happy && open > 0.12) {
+      const y0 = E.y + ry * 0.25;
+      ctx.beginPath();
+      ctx.moveTo(E.x - rx - 2, E.y + ry + 2);
+      ctx.lineTo(E.x - rx - 2, y0 + ry * 0.4);
+      ctx.quadraticCurveTo(E.x, y0 - ry * 0.5, E.x + rx + 2, y0 + ry * 0.4);
+      ctx.lineTo(E.x + rx + 2, E.y + ry + 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(E.x - rx - 2, y0 + ry * 0.4);
+      ctx.quadraticCurveTo(E.x, y0 - ry * 0.5, E.x + rx + 2, y0 + ry * 0.4);
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.strokeStyle = outline;
+    ctx.lineWidth = 2;
+    ctx.stroke(eye);
+    if (open <= 0.12) {
+      // Olho fechado: linha de cílio na parte de baixo.
+      ctx.beginPath();
+      ctx.moveTo(E.x - rx * 0.7, E.y + ry * 0.35);
+      ctx.quadraticCurveTo(E.x, E.y + ry * 0.75, E.x + rx * 0.7, E.y + ry * 0.35);
+      ctx.stroke();
+    }
+  }
+
+  /** Sobrancelha estilo South Park: traço reto e grosso; brow<0 bravo/preocupado, >0 surpreso. */
+  _browSP(ctx, pose, B) {
+    const show = pose.browShow ?? 0;
+    if (show < 0.3) return;
+    const b = pose.brow ?? 0;
+    const inner = B.x < this.faceCenter ? 1 : -1; // lado voltado para o centro
+    const half = B.w / 2;
+    const y = B.y - Math.max(0, b) * 4;
+    // Ponta interna sobe quando preocupado (b<0) e levemente quando surpreso (b>0).
+    const innerY = y + (b < 0 ? b * 6 : -b * 2);
+    ctx.save();
+    ctx.globalAlpha *= Math.min(1, (show - 0.3) / 0.4);
+    ctx.strokeStyle = this.color('brow');
+    ctx.lineWidth = 3.4;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(B.x - inner * half, y);
+    ctx.lineTo(B.x + inner * half, innerY);
+    ctx.stroke();
+    ctx.restore();
   }
 
   _brow(ctx, pose, B) {

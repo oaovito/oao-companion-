@@ -132,6 +132,19 @@ test('modo de interação: entra, captura apenas quando pedido, sai com click-th
   assert.ok(e.companion.stats.flees >= 1);
 });
 
+test('aviso de mudança do modo de interação (para o Esc temporário)', () => {
+  const e = started();
+  const seen = [];
+  e.companion.onInteractionChange = (a) => seen.push(a);
+  e.companion.enterInteraction();
+  e.companion.exitInteraction('escape');
+  e.companion.enterInteraction();
+  e.companion.onBlur(); // ignorado: logo após entrar
+  e.clock.advance(600);
+  e.companion.onBlur();
+  assert.deepEqual(seen, [true, false, true, false]);
+});
+
 test('pedido de captura fora do modo de interação é recusado', () => {
   const e = started();
   assert.equal(e.companion.setCapture(true), false);

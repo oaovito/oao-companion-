@@ -48,10 +48,14 @@ registro do atalho é exibida nas configurações; bandeja continua funcionando.
 
 ## 5. Aparência e animações
 
-Versão chibi/fofa da referência do usuário: tubarão bípede azul-ardósia com
-recortes creme serrilhados (barriga, focinho, braços, pernas, rabo), sorriso com
-muitos dentinhos, barbatana na cabeça, rabo bifurcado, bermuda preta com faixa
-cinza, cabeça grande, olhos grandes, membros curtos, contorno escuro de quadrinhos. Animações distintas: idle (respira), piscar, olhar ao redor,
+Estética de recorte de papel no estilo South Park, versão fofa do Jeff da
+referência do usuário: de frente, cabeça grande e redonda, olhos ovais brancos
+com pupilas de ponto, cores chapadas e contorno fino; tubarão bípede azul-ardósia
+com recortes creme serrilhados (focinho, barriga, rabo), sorriso com muitos
+dentinhos, barbatana na cabeça, rabo bifurcado, bermuda preta com faixas cinza.
+Animação também no estilo: 12 quadros por segundo, movimentos secos, saltinhos ao
+andar, boca abrindo e fechando ao falar, virada instantânea. Só o estilo é
+imitado; nenhum personagem da série é copiado. Animações distintas: idle (respira), piscar, olhar ao redor,
 andar, correr/fugir, virar (procedural), sentar/levantar, deitar, adormecer,
 dormir (Zzz), acordar, falar, feliz, carinho (corações), comer (peixe), brincar
 (bola), curioso (?), surpreso (!), arrastado, pouso (poeira), aparecer, despedir,

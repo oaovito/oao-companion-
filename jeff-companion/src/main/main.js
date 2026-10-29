@@ -122,6 +122,22 @@ function main() {
 
     companion = new Companion({ platform, overlay, clock, store, rig: assets.rig, phrases, dialogue, log });
 
+    // Esc global SOMENTE enquanto o modo de interação está ativo: o Windows nem
+    // sempre entrega o foco do teclado à janela ativada por atalho. Fora do modo
+    // de interação o Esc nunca é capturado.
+    companion.onInteractionChange = (active) => {
+      try {
+        if (active) {
+          if (!globalShortcut.isRegistered('Escape')) globalShortcut.register('Escape', () => companion.exitInteraction('escape'));
+        } else if (globalShortcut.isRegistered('Escape')) {
+          globalShortcut.unregister('Escape');
+        }
+      } catch (err) {
+        log('warn', `Esc do modo de interação: ${err.message}`);
+      }
+      trayCtl && trayCtl.refresh();
+    };
+
     // ---------------- IPC do overlay
     const fromOverlay = (e) => overlay.alive && e.sender === overlay.win.webContents;
     ipcMain.handle('jeff:get-assets', (e) => (fromOverlay(e) ? assets : null));
@@ -202,13 +218,16 @@ function main() {
     }
 
     // ---------------- Atalho global
+    let registeredHotkey = null;
     function registerHotkey() {
-      globalShortcut.unregisterAll();
+      if (registeredHotkey) globalShortcut.unregister(registeredHotkey);
+      registeredHotkey = null;
       const acc = store.get().interactionHotkey;
       let ok = false;
       let error = null;
       try {
         ok = globalShortcut.register(acc, () => companion.toggleInteraction('hotkey'));
+        if (ok) registeredHotkey = acc;
         if (!ok) error = 'O atalho já está em uso por outro aplicativo ou não é permitido. Use a bandeja ou escolha outro.';
       } catch (err) {
         error = `Atalho inválido: ${err.message}`;

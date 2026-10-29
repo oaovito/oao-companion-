@@ -231,11 +231,13 @@ function frame(now) {
   if (!animator || !state) return;
   lastFrame = now;
   draw(now);
-  const fps = targetFps();
+  // Animação escalonada: não adianta desenhar mais vezes que os degraus.
+  const cap = animator.style.stepFps || 60;
+  const fps = Math.min(targetFps(), cap);
   clearTimeout(frameTimer);
   if (fps > 0) {
     const interval = 1000 / fps;
-    if (fps >= 60) requestFrame();
+    if (fps >= 55) requestFrame();
     else frameTimer = setTimeout(requestFrame, Math.max(0, interval - 4));
   }
 }
@@ -248,8 +250,13 @@ function draw(now) {
 
   // Virar: transição contínua do lado (animação de virada com leve achatamento).
   let squashTurn = 1;
-  if (turnStart >= 0) {
-    const k = Math.min(1, (now - turnStart) / 240);
+  const turnMs = animator.style.turnMs ?? 240;
+  if (turnStart >= 0 && turnMs === 0) {
+    // Estilo recorte de papel: virada instantânea.
+    facing = facingTarget;
+    turnStart = -1;
+  } else if (turnStart >= 0) {
+    const k = Math.min(1, (now - turnStart) / turnMs);
     facing = -facingTarget + (2 * facingTarget) * easeInOut(k);
     squashTurn = 1 + Math.sin(k * Math.PI) * 0.06;
     if (k >= 1) {

@@ -83,6 +83,7 @@ export class Companion {
     this.lastRender = '';
     this.hotkeyLabel = s.interactionHotkey;
     this.stats = { ticks: 0, flees: 0, hides: 0, clickThroughRepairs: 0 };
+    this.onInteractionChange = null; // (ativo:boolean) => void — ex.: Esc global só no modo de interação
   }
 
   // ---------------------------------------------------------------- ciclo de vida
@@ -696,6 +697,7 @@ export class Companion {
       return;
     }
     this.hideBubble();
+    if (this.onInteractionChange) this.onInteractionChange(true);
     this.sayCategory('interactEnter', { force: true });
     this.log('info', `Modo de interação ativado (${source})`);
     this._applyLayout(true);
@@ -717,6 +719,7 @@ export class Companion {
     }
     this.avoid.reset();
     this.hideBubble();
+    if (this.onInteractionChange) this.onInteractionChange(false);
     if (!this.quitting) {
       if (this.paused) this.behavior.request('paused', { now, force: true });
       else this.behavior.request('idle', { now, force: true });

@@ -5,12 +5,18 @@
 escritas originalmente. Nenhuma arte oficial da Marvel foi copiada. Ícones são
 renderizados a partir do próprio rig (`scripts/make-icons.mjs`).
 
-**Direção de arte (v0.2):** versão chibi/fofa inspirada numa imagem de referência
-enviada pelo usuário: tubarão **bípede**, azul-ardósia, com barriga, focinho,
-braços, pernas e rabo em recortes **creme serrilhados**, sorriso com muitos
+**Direção de arte (v0.3):** estética de **recorte de papel no estilo South Park**
+(apenas o estilo; nenhum personagem da série é copiado): Jeff de frente, cabeça
+grande e redonda, cores chapadas, contorno fino, olhos ovais brancos encostados
+com pupilas de ponto, pálpebras da cor do corpo, sobrancelhas em traço reto.
+Elementos da referência enviada pelo usuário: tubarão **bípede** azul-ardósia,
+focinho/barriga/rabo com recortes **creme serrilhados**, sorriso com muitos
 dentinhos, barbatana no alto da cabeça, rabo bifurcado e **bermuda preta com
-faixa cinza**. Proporções chibi (cabeça grande, corpo pequeno, membros curtos),
-olhos grandes e brilhantes. A imagem de referência não foi copiada nem incluída.
+faixas cinza**. A imagem de referência não foi copiada nem incluída.
+
+**Animação estilo South Park:** `style.stepFps` = 12 quadros por segundo,
+interpolação linear, mudanças secas (`step`), boca que abre e fecha em degraus,
+saltinhos ao andar, virada de lado instantânea (`style.turnMs` = 0).
 
 **Estado:** a arte é **PROVISÓRIA** (`"provisional": true` no rig). Substitua
 mantendo os formatos abaixo; o código não precisa mudar.
@@ -36,15 +42,19 @@ mantendo os formatos abaixo; o código não precisa mudar.
   `nostrils[]`; giram com `headRot` em torno de `face.pivot`. (Rigs antigos com
   `eye`/`brow`/`nostril` únicos continuam aceitos.)
 
-**Mapeamento dos canais no rig bípede:** `legFL` = braço de trás, `legFR` = braço da
-frente, `legBL` = perna de trás, `legBR` = perna da frente (`legLiftF/B` idem).
-Ângulo negativo leva o membro para a frente (direita), positivo para trás.
+**Mapeamento dos canais (rig de frente):** `legFL`/`legFR` = braço esquerdo/direito,
+`legBL`/`legBR` = perna esquerda/direita (`legLiftF/B` idem). Partes com `rotSign`
+espelham a rotação: valor positivo = membro para fora/levantar, negativo = para dentro.
+`face.style: "sp"` usa olhos/sobrancelhas no estilo recorte (`eyes[].pupil`, `pupilOffset`);
+`face.blush` pode ser lista.
 
 ## `animations/jeff.animations.json` (formato `jeff-anim/1`)
 
 - `channels` — canais de pose e valores padrão (rootX/Y, rootRot, squashX/Y, scale,
   alpha, headRot, tailRot, finRot, legFL/FR/BL/BR, legLiftF/B, jaw, eyeOpen,
   eyeScale, pupilX/Y, brow, browShow, blush, happyEyes, tongue).
+- `style` — `stepFps` (quadros por segundo escalonados; 0 = contínuo), `defaultBlendIn` (ms),
+  `defaultEase` (`linear`/`inOut`), `turnMs` (0 = virada instantânea).
 - `poses` — poses base reutilizáveis (`sit`, `lie`, `crouch`).
 - `animations.<nome>`: `duration` (ms), `loop`, `base` (pose), `blendIn` (ms de
   transição a partir da pose anterior; padrão 180), `tracks` (`canal: [[t, valor, easing?], …]`,

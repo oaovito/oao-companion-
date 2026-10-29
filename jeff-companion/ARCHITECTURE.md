@@ -67,7 +67,8 @@ jeff-companion/
    renderer (`jeff:state`); posição muda com `setPosition`.
 4. Renderer: `Animator` (quadros-chave + blend + piscar), `RigRenderer` (Path2D,
    contorno unificado por grupo), `Effects`; virar = escala horizontal contínua.
-   FPS: 60 em ação, 24–30 parado, 15 dormindo, 8 pausado, 0 oculto.
+   FPS: limitado ao `style.stepFps` da animação (12, estilo recorte de papel); 8 pausado, 0 oculto.
+   A janela continua sendo movida pelo processo principal a até 60 Hz (desvio suave).
 
 ## Click-through e modo de interação
 

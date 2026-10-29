@@ -80,20 +80,35 @@ test('assets: frases em pt-BR com categorias usadas pelo app', () => {
 
 // ------------------------------------------------------------ animador
 
-test('animador: blend a partir da pose anterior e laço', () => {
+test('animador: blend a partir da pose anterior (sentar → levantar)', () => {
   const a = new Animator(ANIMS, { rng: () => 0.99 });
+  const sitY = ANIMS.poses.sit.rootY;
+  const blend = ANIMS.animations.sitDown.blendIn;
   a.play('sitDown', 0);
-  const mid = a.sample(350).pose;
-  a.sample(2000);
-  const end = a.sample(3000).pose;
-  assert.ok(Math.abs(end.rootRot - ANIMS.poses.sit.rootRot) < 1);
-  a.play('standUp', 3000);
-  const s0 = a.sample(3001).pose;
-  assert.ok(Math.abs(s0.rootRot - end.rootRot) < 1, 'começa da pose sentada');
-  const s1 = a.sample(3700).pose;
-  assert.ok(Math.abs(s1.rootRot) < 0.5, 'termina em pé');
-  assert.ok(mid.rootRot < 0 && mid.rootRot > ANIMS.poses.sit.rootRot);
+  const mid = a.sample(blend / 2).pose;
+  assert.ok(mid.rootY > 0 && mid.rootY < sitY, `meio da transição: ${mid.rootY}`);
+  const end = a.sample(2000).pose;
+  assert.ok(Math.abs(end.rootY - sitY) < 0.01);
+  a.play('standUp', 2000);
+  const s0 = a.sample(2001).pose;
+  assert.ok(Math.abs(s0.rootY - sitY) < 0.5, 'começa da pose sentada');
+  const s1 = a.sample(2000 + ANIMS.animations.standUp.blendIn + 200).pose;
+  assert.ok(Math.abs(s1.rootY) < 0.01, 'termina em pé');
   assert.ok(Math.abs(evalTrack([[0, 0], [1, 10]], 0.5) - 5) < 1e-9);
+  assert.equal(evalTrack([[0, 0], [1, 10, 'step']], 0.9), 0, 'step segura o valor até a chave');
+});
+
+test('animador: estilo recorte de papel avança em degraus (stepFps)', () => {
+  const fps = ANIMS.style.stepFps;
+  assert.ok(fps > 0 && fps <= 15, 'poucos quadros por segundo');
+  const a = new Animator(ANIMS, { rng: () => 0.99 });
+  a.play('walk', 0);
+  const step = 1000 / fps;
+  const p1 = a.sample(step * 2 + 1).pose.rootY;
+  const p2 = a.sample(step * 3 - 1).pose.rootY;
+  const p3 = a.sample(step * 3 + 1).pose.rootY;
+  assert.equal(p1, p2, 'mesmo quadro dentro do degrau');
+  assert.notEqual(p2, p3, 'muda no próximo degrau');
 });
 
 // ------------------------------------------------------------ máquina de estados

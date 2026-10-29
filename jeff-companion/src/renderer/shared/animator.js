@@ -13,6 +13,11 @@ export class Animator {
   constructor(data, { rng = Math.random } = {}) {
     this.data = data;
     this.rng = rng;
+    // Estilo global: quadros por segundo escalonados (animação "recorte de papel"),
+    // blend e easing padrão.
+    this.style = data.style || {};
+    this.stepMs = this.style.stepFps ? 1000 / this.style.stepFps : 0;
+    this.defaultEase = this.style.defaultEase || 'inOut';
     this.defaults = { ...data.channels };
     this.pose = { ...this.defaults };
     this.current = null;
@@ -31,7 +36,7 @@ export class Animator {
     const key = this.data.animations[name] ? name : 'idle';
     if (this.current && this.current.name === key && !restart) return false;
     this.from = { ...this.pose };
-    this.current = { name: key, anim, start: now, blendIn: anim.blendIn ?? 180 };
+    this.current = { name: key, anim, start: now, blendIn: anim.blendIn ?? this.style.defaultBlendIn ?? 180 };
     return true;
   }
 
@@ -41,8 +46,10 @@ export class Animator {
   }
 
   /** Avalia a animação atual em `now`. Retorna {pose, flags}. */
-  sample(now) {
-    if (!this.current) this.play('idle', now);
+  sample(realNow) {
+    if (!this.current) this.play('idle', realNow);
+    // Escalonamento: o tempo anda em degraus (ex.: 12 quadros por segundo).
+    const now = this.stepMs ? this.current.start + Math.floor((realNow - this.current.start) / this.stepMs) * this.stepMs : realNow;
     const { anim, start, blendIn } = this.current;
     const dur = Math.max(1, anim.duration || 1000);
     let t = (now - start) / dur;
@@ -50,7 +57,7 @@ export class Animator {
     else t = Math.min(1, Math.max(0, t));
     const target = this.basePose(anim);
     for (const [ch, keys] of Object.entries(anim.tracks || {})) {
-      target[ch] = evalTrack(keys, t, target[ch]);
+      target[ch] = evalTrack(keys, t, target[ch], this.defaultEase);
     }
     // Piscar procedural.
     if (anim.blink) {
@@ -59,10 +66,10 @@ export class Animator {
         this.nextBlink = now + 2200 + this.rng() * 4200;
       }
       const bt = (now - this.blinkStart) / 150;
-      if (bt >= 0 && bt <= 1) target.eyeOpen *= Math.abs(1 - 2 * bt) * 0.9 + 0.05;
+      if (bt >= 0 && bt <= 1) target.eyeOpen *= this.stepMs ? 0 : Math.abs(1 - 2 * bt) * 0.9 + 0.05;
     }
     const k = blendIn > 0 ? Math.min(1, (now - start) / blendIn) : 1;
-    const e = EASE.inOut(k);
+    const e = this.defaultEase === 'linear' ? k : EASE.inOut(k);
     const pose = {};
     for (const ch of Object.keys(target)) {
       const a = this.from[ch] ?? this.defaults[ch] ?? target[ch];
@@ -79,7 +86,7 @@ export class Animator {
   }
 }
 
-export function evalTrack(keys, t, fallback) {
+export function evalTrack(keys, t, fallback, defaultEase = 'inOut') {
   if (!keys || !keys.length) return fallback;
   if (t <= keys[0][0]) return keys[0][1];
   for (let i = 1; i < keys.length; i++) {
@@ -88,7 +95,7 @@ export function evalTrack(keys, t, fallback) {
     if (t <= t1) {
       const span = t1 - t0;
       const u = span > 0 ? (t - t0) / span : 1;
-      const f = (EASE[ease] || EASE.inOut)(u);
+      const f = (EASE[ease] || EASE[defaultEase] || EASE.inOut)(u);
       return ease === 'step' ? v0 : v0 + (v1 - v0) * f;
     }
   }
