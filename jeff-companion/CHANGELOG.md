@@ -21,4 +21,11 @@ Primeira versão funcional.
   suspensão/bloqueio, detecção de tela cheia isolada em utilityProcess.
 - Testes unitários, simulação, E2E com Electron (Xvfb) e integração no Windows via GitHub Actions.
 - Scripts de build (NSIS + ZIP), ícones, folha de animações e medição de CPU/memória.
-- Documentação: README, PRODUCT_SPEC, ARCHITECTURE, HANDOFF, assets/README.
+- Documentação: README, PRODUCT_SPEC, ARCHITECTURE, HANDOFF, assets/README; CLAUDE.md na raiz.
+
+### Corrigido durante a verificação
+- Boca aberta desenhava o contorno da língua em vez do lábio (Path2D).
+- Destino da fuga deixava a caixa da janela 4 px fora da área útil.
+- Renderer continuava desenhando com o Jeff oculto.
+- Consulta de "iniciar com o Windows" em modo de desenvolvimento.
+- Caminhos de teste no Windows (`URL.pathname` → `fileURLToPath`).

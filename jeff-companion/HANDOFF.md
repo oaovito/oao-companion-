@@ -21,8 +21,9 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Atalho global real Ctrl+Alt+J entra no modo de interação; Esc real sai e restaura click-through/foco.
 - Detecção de tela cheia (utilityProcess + koffi) oculta o Jeff com janela em tela cheia e o reexibe.
 - O executável empacotado inicia, carrega assets e o detector nativo.
-- Ver seção "Resultado da última execução do CI" abaixo para o status de: botões no modo de
-  interação com hover real e "iniciar com o Windows".
+- No modo de interação, hover real sobre a barra captura o mouse e o clique aciona o botão;
+  clique real numa área transparente do overlay passa para a janela de trás.
+- "Iniciar com o Windows" desligado por padrão, liga e desliga (registro de login do usuário).
 
 ### Linux/Xvfb (indicativo, não substitui Windows)
 - Overlay sem foco, sempre por cima, canto transparente, sem erros no renderer.
@@ -44,7 +45,6 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Arrastar com o mouse real e carinho por "esfregar" com hover real.
 - Aparência no Windows 11 (transparência sem halo, nitidez em 125–200%) — precisa de olho humano.
 - Barra de tarefas cobrindo o Jeff (mitigado reafirmando topmost a cada 8 s).
-- Consumo de CPU/memória no Windows: ver log do passo "Medir CPU e memória" no CI.
 
 ## Pendente / limitado
 
@@ -78,4 +78,19 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 ## Resultado da última execução do CI
 
-(atualizado ao final da sessão — ver abaixo)
+Run #4 (`c4e7d4c`, https://github.com/oaovito/oao-companion-/actions/runs/40802636763): **sucesso**.
+Unitários 62/62, integração Windows 8/8, E2E 10/10, instalador + ZIP gerados.
+O run #2 havia falhado em 2 testes; corrigidos no run #3: o teste usava SetCursorPos
+(que não gera eventos de hook de mouse) e a consulta de "iniciar com o Windows" não
+passava o mesmo caminho/argumentos do registro.
+
+Medição no Windows (Windows Server 10.0.26100, 2 vCPUs AMD EPYC, sem GPU dedicada, 20 s por cenário):
+
+| Cenário | CPU média | CPU máx | Memória (working set somado) |
+|---|---|---|---|
+| Ocioso | 3,4% | 4,9% | 351 MB |
+| Cursor perseguindo | 6,2% | 11,0% | 349 MB |
+| Oculto | 0,3% | 1,6% | 309 MB |
+
+Processos: principal ~98 MB, GPU ~45–52 MB, utilitários ~86–107 MB (inclui o detector de
+tela cheia), renderer ~83–109 MB. Runner de CI, não um PC Windows 11 doméstico.

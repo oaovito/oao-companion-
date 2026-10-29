@@ -81,7 +81,7 @@ const stats = await app.evaluate(() => globalThis.__jeff.companion.debugState().
 const info = {
   data: new Date().toISOString(),
   ambiente: `${os.type()} ${os.release()}, ${os.cpus()[0].model} x${os.cpus().length}, Electron ${await app.evaluate(() => process.versions.electron)}, DISPLAY=${process.env.DISPLAY}`,
-  observacao: 'Medido no ambiente de desenvolvimento (Linux/Xvfb, renderização por software). Não representa o Windows 11. CPU em % de um núcleo somada entre processos.',
+  observacao: `${process.platform === 'linux' ? 'Linux/Xvfb (renderização por software); não representa o Windows 11.' : `Plataforma ${process.platform}.`} CPU em % de um núcleo somada entre processos; memória = working set somado.`,
   segundosPorCenario: SECONDS,
   resultados: results,
   contadores: stats,
