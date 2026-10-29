@@ -187,3 +187,24 @@ test('Legends: uma vez por semana, em momento aleatório', () => {
   assert.ok(cats.includes('legends'));
   assert.equal(e.companion.checkWeeklyLegends(new Date(when.getTime() + 3600e3)), false, 'não repete na mesma semana');
 });
+
+test('"vai tomar no cu": pose do meme de costas por 5 s e volta ao normal', async () => {
+  const e = started();
+  for (const msg of ['vai tomar no cu', 'VAI TOMAR NO CU JOJO', 'vtnc']) {
+    const r = await chatAdv(e, msg);
+    assert.equal(r.action, 'moon', msg);
+    assert.equal(e.companion.behavior.state, 'moon');
+    // chatAdv já avançou ~1,1 s depois do início da pose.
+    e.clock.advance(3000);
+    assert.equal(e.companion.behavior.state, 'moon', 'continua por 5 s');
+    e.clock.advance(1500);
+    assert.notEqual(e.companion.behavior.state, 'moon');
+  }
+  // A vista de costas troca o desenho: grupos de frente somem, os de costas aparecem.
+  const an = new Animator(ANIMS);
+  an.play('moon', 0, { restart: true, variant: 'moon' });
+  assert.equal(an.sample(2500).pose.mooning, 1);
+  const back = RIG.groups.filter((g) => g.showIf === 'mooning');
+  assert.ok(back.length >= 2);
+  assert.ok(RIG.groups.filter((g) => g.id === 'head' || g.id === 'arms').every((g) => g.hideIf === 'mooning'));
+});

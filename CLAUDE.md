@@ -38,6 +38,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).
 - PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por
   5 min após a volta (modo `wired`). Legends: "ideia burra" 1×/semana em momento aleatório.
+- "Vai tomar no cu" no chat: pose do meme de costas por 5 s (estado `moon`, canal `mooning`).
 - Publicação: tag `v*` → Release com `JoJoCompanion.exe` (workflow do Windows).
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`

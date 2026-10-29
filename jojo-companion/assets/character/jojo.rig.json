@@ -51,7 +51,9 @@
     "benchLeg": "#3a3d44",
     "powder": "#fbfbf7",
     "shaker": "#e8e1d0",
-    "shakerCap": "#c2453a"
+    "shakerCap": "#c2453a",
+    "gag": "#c94a5a",
+    "gagDark": "#7e2433"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
@@ -88,7 +90,8 @@
           ],
           "rot": "tailRot"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "tailDetail",
@@ -104,7 +107,8 @@
           ],
           "rot": "tailRot"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "legs",
@@ -134,7 +138,8 @@
           "rotSign": -1,
           "lift": "legLiftB"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "legDetail",
@@ -170,7 +175,8 @@
           "fill": "muscle",
           "alpha": 0.7
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "body",
@@ -186,7 +192,8 @@
           "path": "M50,84 C60,78 120,78 130,84 C141,90 143,101 137,109 C131,118 123,124 117,132 L63,132 C57,124 49,118 43,109 C37,101 39,90 50,84 Z",
           "fill": "body"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "bodyDetail",
@@ -215,7 +222,8 @@
           "fill": "muscle",
           "alpha": 0.8
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "shorts",
@@ -226,7 +234,8 @@
           "path": "M62,126 L118,126 L125,150 L55,150 Z",
           "fill": "shorts"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "shortsDetail",
@@ -237,7 +246,8 @@
           "path": "M64,128 L69,128 L63,149 L58,149 Z M111,128 L116,128 L122,149 L117,149 Z",
           "fill": "stripe"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "propsBar",
@@ -255,7 +265,8 @@
           "showIf": "propBar",
           "path": "M4,56 L16,56 L16,98 L4,98 Z M164,56 L176,56 L176,98 L164,98 Z M17,64 L22,64 L22,90 L17,90 Z M158,64 L163,64 L163,90 L158,90 Z"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "head",
@@ -281,7 +292,8 @@
           ],
           "rot": "headRot"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "headDetail",
@@ -297,7 +309,8 @@
           ],
           "rot": "headRot"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "headProps",
@@ -313,7 +326,8 @@
           "showIf": "noseDust",
           "path": "M80,50 C82,47 86,47 87,50 C86,53 82,53 80,50 Z M93,50 C94,47 98,47 100,50 C98,53 94,53 93,50 Z M88,46 L90,44 L92,46 L90,48 Z"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "arms",
@@ -367,7 +381,8 @@
           "rotSign": -1,
           "parent": "armR"
         }
-      ]
+      ],
+      "hideIf": "mooning"
     },
     {
       "id": "armDetail",
@@ -447,6 +462,107 @@
           "parent": "foreR",
           "showIf": "propShaker",
           "path": "M145,134 L161,134 L161,141 L145,141 Z"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "moonBack",
+      "outline": true,
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonTail",
+          "fill": "body",
+          "path": "M104,74 C116,58 134,44 156,36 C150,50 146,62 134,72 C146,72 154,76 160,84 C140,84 124,84 108,86 Z"
+        },
+        {
+          "id": "moonTorso",
+          "fill": "body",
+          "path": "M40,92 C40,56 64,40 92,40 C122,40 142,56 142,92 Z"
+        },
+        {
+          "id": "moonHead",
+          "fill": "body",
+          "path": "M14,58 C14,38 28,24 46,24 C62,24 72,36 72,52 C72,68 60,80 44,80 C26,80 14,72 14,58 Z"
+        },
+        {
+          "id": "moonFin",
+          "fill": "body",
+          "path": "M80,42 C86,30 94,22 106,18 C102,28 102,34 104,42 Z"
+        },
+        {
+          "id": "moonLegs",
+          "fill": "body",
+          "path": "M56,146 L86,146 L86,160 C88,162 89,165 88,167 L50,167 C49,162 52,158 56,158 Z M94,146 L124,146 L124,158 C128,158 131,162 130,167 L92,167 C91,165 92,162 94,160 Z"
+        },
+        {
+          "id": "moonShorts",
+          "fill": "shorts",
+          "path": "M48,130 L132,130 L134,148 L46,148 Z"
+        },
+        {
+          "id": "moonCheeks",
+          "fill": "body",
+          "path": "M90,102 C90,80 80,70 66,70 C50,70 40,84 40,102 C40,120 52,134 68,134 C82,134 90,122 90,102 Z M90,102 C90,80 100,70 114,70 C130,70 140,84 140,102 C140,120 128,134 112,134 C98,134 90,122 90,102 Z"
+        }
+      ]
+    },
+    {
+      "id": "moonDetail",
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonEye",
+          "fill": "sclera",
+          "path": "M24,46 C24,40 30,36 36,36 C42,36 46,40 46,46 C46,52 42,56 36,56 C30,56 24,52 24,46 Z"
+        },
+        {
+          "id": "moonPupil",
+          "fill": "eye",
+          "path": "M28,46 C28,43 30,41 33,41 C36,41 38,43 38,46 C38,49 36,51 33,51 C30,51 28,49 28,46 Z"
+        },
+        {
+          "id": "moonGrin",
+          "fill": "teeth",
+          "path": "M16,62 L38,64 L34,70 L30,65 L26,70 L22,65 L18,69 Z"
+        },
+        {
+          "id": "moonStripes",
+          "fill": "stripe",
+          "path": "M52,131 L58,131 L56,147 L50,147 Z M122,131 L128,131 L130,147 L124,147 Z"
+        },
+        {
+          "id": "moonCrack",
+          "fill": "muscle",
+          "path": "M89,80 L91,80 L91,124 L89,124 Z"
+        },
+        {
+          "id": "moonGag",
+          "fill": "gag",
+          "path": "M80,98 C82,88 98,88 100,98 C103,110 97,120 90,120 C83,120 77,110 80,98 Z"
+        },
+        {
+          "id": "moonGagSpots",
+          "fill": "gagDark",
+          "path": "M84,98 C84,96 87,96 87,98 C87,100 84,100 84,98 Z M92,103 C92,101 95,101 95,103 C95,105 92,105 92,103 Z M86,110 C86,108 89,108 89,110 C89,112 86,112 86,110 Z M93,94 C93,93 95,93 95,94 C95,96 93,96 93,94 Z"
+        }
+      ]
+    },
+    {
+      "id": "moonHandsGroup",
+      "outline": true,
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonHands",
+          "fill": "body",
+          "path": "M30,86 C24,92 24,112 32,120 C40,124 50,118 52,108 C54,98 50,88 42,84 C38,82 34,82 30,86 Z M150,86 C156,92 156,112 148,120 C140,124 130,118 128,108 C126,98 130,88 138,84 C142,82 146,82 150,86 Z"
+        },
+        {
+          "id": "moonClaws",
+          "fill": "cream",
+          "path": "M50,100 L56,96 L54,104 Z M52,108 L58,106 L54,113 Z M130,100 L124,96 L126,104 Z M128,108 L122,106 L126,113 Z"
         }
       ]
     },

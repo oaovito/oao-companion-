@@ -1038,6 +1038,8 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'scare') {
       this.behavior.request('scare', { now, force: true });
+    } else if (action === 'moon') {
+      this.behavior.request('moon', { now, force: true });
     } else if (action === 'bench' || action === 'squat') {
       this.behavior.request(action === 'bench' ? 'benchPress' : 'squat', { now, force: true });
     } else if (['judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad'].includes(action)) {

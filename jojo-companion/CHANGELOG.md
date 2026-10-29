@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.12.0 — 2026-10-29
+
+### Adicionado
+- "Vai tomar no cu" (também "vtnc") no chat: o JoJo responde e faz por **5 s** a
+  pose do meme — de costas, curvado, olhando por cima do ombro e abrindo as
+  nádegas com as mãos — e depois volta ao normal. Vista de costas própria no rig
+  (grupos com `showIf`/`hideIf` no canal `mooning`).
+
 ## 0.11.0 — 2026-10-29
 
 ### Alterado

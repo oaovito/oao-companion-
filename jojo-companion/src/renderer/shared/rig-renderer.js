@@ -126,6 +126,9 @@ export class RigRenderer {
     ctx.lineCap = 'round';
     const ow = rig.outlineWidth || 3;
     for (const group of rig.groups) {
+      // Grupos de outra vista (ex.: de costas) trocam de lugar com a vista de frente.
+      if (group.showIf && !((pose[group.showIf] ?? 0) >= 0.5)) continue;
+      if (group.hideIf && (pose[group.hideIf] ?? 0) >= 0.5) continue;
       if (group.outline) {
         ctx.strokeStyle = this.color('outline');
         ctx.lineWidth = ow * 2;

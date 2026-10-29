@@ -455,3 +455,19 @@ test('PC parado: senta e cheira; na volta fica ligadão (renderer usa as variaç
     await quit(app);
   }
 });
+
+test('"vai tomar no cu": renderer mostra a pose de costas e volta ao normal', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
+    const r = await app.evaluate(() => globalThis.__jojo.companion.chat('vai tomar no cu'));
+    assert.equal(r.action, 'moon');
+    await sleep(600);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.anim), 'moon');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
+    await sleep(5200);
+    assert.notEqual(await win.evaluate(() => window.__jojoRenderer.anim), 'moon');
+  } finally {
+    await quit(app);
+  }
+});

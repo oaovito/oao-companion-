@@ -13,6 +13,9 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- Nome novo: **JoJo Companion** (`JoJoCompanion.exe`).
+- Escreva **"vai tomar no cu"** pro JoJo no chat: ele faz a pose do meme por 5 s.
+
 - **PC parado 5 min**: o JoJo senta no chão e cheira uma carreira de pó. Quando
   você volta, ele fica ligadão por 5 min (olhos arregalados, pó no focinho,
   mandíbula rangendo, suor, fala sem parar, anda mais rápido, não dorme).
@@ -33,5 +36,6 @@ JoJo, `/pet`, movimento reduzido e o apoio do João quando ela estiver mal.
   efeito por **1** min".
 - Pergunta: no chat (Ctrl+Alt+J → 💬), "o que é fotossíntese?".
 - Exibição: no chat, "faz supino".
+- Meme: no chat, "vai tomar no cu".
 
 Arte provisória (desenho original do JoJo).
