@@ -22,6 +22,12 @@ function render(s) {
   if (s.abrirColecao && s.abrirColecao !== lastColecaoReq) {
     lastColecaoReq = s.abrirColecao;
     showingColecao = true;
+    showingGuarda = false;
+  }
+  if (s.abrirGuardaRoupa && s.abrirGuardaRoupa !== lastGuardaReq) {
+    lastGuardaReq = s.abrirGuardaRoupa;
+    showingGuarda = true;
+    showingColecao = false;
   }
   if (!selected || !s.conversations.some((c) => c.id === selected)) selected = s.currentId;
   $('name').textContent = s.companionName;
@@ -47,6 +53,7 @@ function render(s) {
   }
   renderConversation();
   renderColecao();
+  renderGuarda();
 }
 
 // ---------------- coleção, progressão, mini-jogos e estímulos
@@ -61,7 +68,8 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', showingColecao || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
+  const painel = showingColecao || showingGuarda;
+  for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
   $('convTitle').textContent = 'Coleção e jogos';
@@ -112,6 +120,68 @@ function renderColecao() {
   if (c.album.length) col.append(el('p', 'muted', `Álbum de momentos raros: ${c.album.map((a) => a.nome).join(', ')}`));
   box.append(nivel, acoes, jogos, miss, conq, col);
 }
+
+// ---------------- guarda-roupa: brincar de boneca com o JoJo (opcional)
+let showingGuarda = false;
+let lastGuardaReq = 0;
+function renderGuarda() {
+  const box = $('guardaRoupa');
+  box.classList.toggle('hidden', !showingGuarda);
+  if (!showingGuarda || !st || !st.guardaRoupa) return;
+  const g = st.guardaRoupa;
+  $('convTitle').textContent = 'Guarda-roupa';
+  chip($('convStatus'), 'idle', '');
+  box.innerHTML = '';
+  const topo = el('div', 'card');
+  topo.append(el('p', 'muted', `Veste o ${st.companionName} como quiser: uma peça por parte. Clicar de novo tira a peça. Ele usa a roupa até você trocar.`));
+  const row = el('div', 'buttons');
+  for (const [label, cmd] of [['🎲 Look surpresa', '/vestir surpresa'], ['🧺 Tirar tudo', '/vestir tirar']]) {
+    const b = el('button', 'chipbtn', label);
+    b.addEventListener('click', () => vestir(cmd));
+    row.append(b);
+  }
+  topo.append(row);
+  box.append(topo);
+  for (const parte of g.partes) {
+    const card = el('div', 'card');
+    card.append(el('h3', null, parte.nome));
+    const r = el('div', 'buttons');
+    for (const it of parte.itens) {
+      const on = g.vestido[parte.id] === it.id;
+      const b = el('button', `chipbtn${on ? ' on' : ''}`);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (it.cor) {
+        const sw = el('span', 'swatch');
+        sw.style.background = it.cor;
+        b.append(sw);
+      }
+      b.append(document.createTextNode(it.nome));
+      b.addEventListener('click', () => vestir(`/vestir ${it.id}`));
+      r.append(b);
+    }
+    card.append(r);
+    box.append(card);
+  }
+  const fala = el('p', 'muted');
+  fala.id = 'guardaFala';
+  box.append(fala);
+}
+async function vestir(cmd) {
+  const r = await api.send(selected, cmd);
+  render(await api.state());
+  if (r && r.text && $('guardaFala')) $('guardaFala').textContent = `${st.companionName}: ${r.text}`;
+}
+$('guardaBtn').addEventListener('click', async () => {
+  showingGuarda = !showingGuarda;
+  showingColecao = false;
+  if (showingGuarda) render(await api.state());
+  else {
+    renderGuarda();
+    renderColecao();
+    renderConversation();
+  }
+});
+
 async function playCmd(cmd) {
   showingColecao = false;
   renderColecao();
@@ -120,6 +190,8 @@ async function playCmd(cmd) {
 }
 $('colecaoBtn').addEventListener('click', async () => {
   showingColecao = !showingColecao;
+  showingGuarda = false;
+  renderGuarda();
   if (showingColecao) render(await api.state());
   else {
     renderColecao();
@@ -128,12 +200,14 @@ $('colecaoBtn').addEventListener('click', async () => {
 });
 
 async function select(id) {
-  if (id === 'colecao') {
-    showingColecao = true;
+  if (id === 'colecao' || id === 'guardaRoupa') {
+    showingColecao = id === 'colecao';
+    showingGuarda = id === 'guardaRoupa';
     render(await api.state());
     return;
   }
   showingColecao = false;
+  showingGuarda = false;
   selected = id;
   const s = await api.select(id);
   render(s);

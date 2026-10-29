@@ -446,6 +446,8 @@ function draw(now) {
   }
   if (s.noseDust) pose.noseDust = 1;
   if (s.costume) pose[`costume_${s.costume}`] = 1;
+  // Guarda-roupa: peças escolhidas por ela (canais costume_*, prop_*, sexy).
+  if (s.outfit) Object.assign(pose, s.outfit);
   if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);

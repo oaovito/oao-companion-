@@ -2,6 +2,7 @@
 // Qualquer campo inválido volta ao padrão sem invalidar o arquivo inteiro.
 
 import { isGoogleIcalUrl } from './calendar.js';
+import { sanitizeOutfit } from './wardrobe.js';
 
 export const SETTINGS_VERSION = 2;
 
@@ -46,6 +47,7 @@ export const DEFAULTS = Object.freeze({
   agendaSugerida: false,        // o JoJo já sugeriu conectar a agenda
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
+  guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -134,6 +136,10 @@ export function sanitize(input) {
   if ('agendaUrl' in src) {
     if (src.agendaUrl === '' || isGoogleIcalUrl(src.agendaUrl)) out.agendaUrl = String(src.agendaUrl).trim();
     else issues.push('agendaUrl');
+  }
+  if ('guardaRoupa' in src) {
+    out.guardaRoupa = sanitizeOutfit(src.guardaRoupa);
+    if (Object.keys(out.guardaRoupa).length !== Object.keys(src.guardaRoupa || {}).length) issues.push('guardaRoupa');
   }
   if ('interactionHotkey' in src) {
     if (isValidAccelerator(src.interactionHotkey)) out.interactionHotkey = src.interactionHotkey;

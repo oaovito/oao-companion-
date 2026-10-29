@@ -25,6 +25,7 @@ import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyRem
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
+import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -1161,6 +1162,12 @@ export class Companion {
         this.estimulo();
         return this._quickReply(conv, 'Toma. Sem tédio no meu turno.', 'estimulo');
       }
+      // Brincar de boneca: abre o guarda-roupa (só se ela quiser).
+      if (/\b(guarda ?roupa|brincar de boneca|te vestir|vestir voce|vestir vc|trocar (a )?(sua|tua) roupa|mudar (a )?(sua|tua) roupa|escolher (a )?(sua|tua) roupa)\b/.test(nt)) {
+        if (this.onOpenApp) this.onOpenApp('guardaRoupa');
+        this.playCatalog('espelho', { source: 'chat', speak: false });
+        return this._quickReply(conv, 'Abri o guarda-roupa na Central. Pode me vestir. Com cuidado com o bíceps.', 'guardaRoupa');
+      }
       const at = this._antitedioChat(text);
       if (at) return this._quickReply(conv, at, 'antitedio');
     }
@@ -1329,6 +1336,17 @@ export class Companion {
       const p = this.progress.snapshot(new Date());
       if (this.onOpenApp) this.onOpenApp('colecao');
       return { text: `Nível ${p.nivel} (${p.nomeNivel}), ${p.poses} poses, ${p.conquistas.filter((q) => q.ok).length} conquistas. Abri a coleção na Central.`, command: cmd, conversationId };
+    }
+    if (cmd === 'vestir') {
+      // Guarda-roupa: sem nome abre o painel na Central; com nome veste/tira a peça.
+      if (!arg) {
+        if (this.onOpenApp) this.onOpenApp('guardaRoupa');
+        return { text: 'Guarda-roupa aberto na Central. Me veste, se quiser.', command: cmd, conversationId };
+      }
+      if (/^(tira(r)?( tudo)?|nada|pelado|limpar)$/i.test(arg)) return { text: this.despir(), command: cmd, conversationId };
+      if (/^(surpresa|aleat[oó]rio|sorteia|sortear)$/i.test(arg)) return { text: this.lookSurpresa(), command: cmd, conversationId };
+      const peca = findWardrobeItem(arg);
+      return { text: peca ? this.vestir(peca.id) : 'Não tenho essa peça. Abre o guarda-roupa com /vestir.', command: cmd, conversationId };
     }
     if (cmd === 'rotina') {
       const m = arg.match(/^(bom dia|boa noite)\s*:\s*(.{2,120})$/i);
@@ -1610,6 +1628,52 @@ export class Companion {
     this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
     if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
     return this._catalogData(it);
+  }
+
+  // ---------------------------------------------------------------- guarda-roupa
+
+  /** Roupa escolhida por ela ({parte: peça}); vazia = sem roupa do guarda-roupa. */
+  get outfit() {
+    return sanitizeOutfit(this.store.get().guardaRoupa);
+  }
+
+  /** Veste a peça (a mesma de novo tira). Retorna a fala do JoJo. */
+  vestir(id) {
+    const r = wear(this.outfit, id);
+    if (!r.item) return 'Não tenho essa peça.';
+    return this._saveOutfit(r.outfit, r.removed ? 'tira' : r.item.slot);
+  }
+
+  /** Tira uma parte (ou tudo). */
+  despir(slot = null) {
+    return this._saveOutfit(undress(this.outfit, slot), 'tira');
+  }
+
+  /** Look surpresa sorteado. */
+  lookSurpresa() {
+    return this._saveOutfit(randomOutfit(this.rng), 'surpresa');
+  }
+
+  _saveOutfit(outfit, kind) {
+    this.store.update({ guardaRoupa: outfit }, { silent: true });
+    const lines = WEAR_LINES[kind];
+    const t = lines[Math.floor(this.rng() * lines.length) % lines.length];
+    if (this.started) {
+      this.say(t, 'speech');
+      this.playCatalog(kind === 'surpresa' ? 'desfile' : kind === 'tira' ? 'ajeitarPostura' : 'espelho', { source: 'comando', speak: false });
+      this._applyLayout(true);
+    }
+    if (this.onConversationsChange) this.onConversationsChange();
+    return t;
+  }
+
+  /** A animação atual deixa a mão livre para a peça "na mão"? */
+  _handFree() {
+    const a = this.behavior.anim || 'idle';
+    if (/^(idle|interactIdle|walk|sit|lie|blink)/.test(a)) return true;
+    if (!a.startsWith('cat_')) return false;
+    const it = this.catalogById.get(a.slice(4).split('~')[0]);
+    return !!(it && !(it.receita && [].concat(it.receita.objeto || []).length));
   }
 
   /** Modo "sem filtro": três reações sorteadas em sequência. */
@@ -2417,7 +2481,8 @@ export class Companion {
     } else this.activityRect = null;
 
     // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
-    if (this.costume) {
+    const vestido = Object.keys(this.outfit).length > 0;
+    if (this.costume || vestido) {
       attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
@@ -2476,9 +2541,11 @@ export class Companion {
       // Acessórios liberados por nível aparecem às vezes (camada extra de variedade).
       layer: this.behavior.state === 'ambient' ? this.layer || null : null,
       mode: this.wired ? 'wired' : null,
-      costume: this.costume,
+      // Roupa do guarda-roupa vale mais que a fantasia da data festiva.
+      costume: vestido ? null : this.costume,
+      outfit: vestido ? outfitChannels(this.outfit, { semMao: !this._handFree() }) : null,
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
-      sexy: !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
+      sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
       moving: this.mover.active ? this.mover.kind : null,
       sounds: s.sounds && !s.quietMode,

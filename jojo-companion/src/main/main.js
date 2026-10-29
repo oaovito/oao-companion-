@@ -1,6 +1,7 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
 import { parseIcs } from '../core/calendar.js';
+import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
@@ -298,6 +299,8 @@ function main() {
         provider: dialogue.describe(),
         colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome })) : [] },
         abrirColecao,
+        guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
+        abrirGuardaRoupa,
       };
     }
     let appUpdateTimer = null;
@@ -309,11 +312,14 @@ function main() {
       }, 60);
     };
     let abrirColecao = 0;
+    let abrirGuardaRoupa = 0;
     companion.onOpenApp = (id) => {
-      // A Central pode ainda estar carregando: o pedido da coleção vai junto no estado.
+      // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
+      const painel = id === 'colecao' || id === 'guardaRoupa';
       if (id === 'colecao') abrirColecao++;
-      appWin.open(id === 'colecao' ? null : id);
-      if (id === 'colecao') appWin.send('app:update', appState());
+      if (id === 'guardaRoupa') abrirGuardaRoupa++;
+      appWin.open(painel ? null : id);
+      if (painel) appWin.send('app:update', appState());
     };
 
     // Google Agenda (só leitura): busca o .ics do endereço secreto a cada 10 min.

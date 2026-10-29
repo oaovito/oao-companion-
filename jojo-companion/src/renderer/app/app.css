@@ -80,3 +80,5 @@ button.ghost { background: transparent; }
 .colecao .badge { border: 1px dashed #c9d2e3; border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; opacity: 0.6; }
 .colecao .badge.ok { border-style: solid; border-color: #9fd3b4; opacity: 1; }
 .colecao .badge small { color: #6b7385; font-size: 11px; }
+.colecao .chipbtn.on { background: #3f7fd4; border-color: #3f7fd4; color: #fff; }
+.colecao .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; border: 1px solid rgba(0, 0, 0, 0.25); vertical-align: -1px; }

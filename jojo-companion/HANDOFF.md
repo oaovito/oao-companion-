@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.29.2, 2026-10-29)
+# HANDOFF — estado atual (v0.30.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -46,6 +46,7 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
   OAuth do Google não foi usado (exige app registrado no Google Cloud); o iCal secreto dá só leitura.
 - Antitédio (v0.29): `src/core/catalog/antitedio.js` + `assets/catalog/{rotinas,minijogos,progressao}.json`; doc `docs/ANTITEDIO.md`.
 - Dormir (v0.29.2): `sleepAllowed()` em `scripted-provider.js` (21h–6h) troca `sleep` por `sleepOk` → ação `boaNoite`; prompt da conversa online segue a mesma regra.
+- Guarda-roupa (v0.30): `src/core/wardrobe.js` (peças → canais do rig), painel `#guardaRoupa` em `src/renderer/app/app.js`, comando `/vestir`, configuração `guardaRoupa`.
 - Pendentes pedidos depois: nenhum dos pedidos de catálogo/antitédio. antitédio completo
   (rotinas, mini-jogos, coleções, body doubling, painel sensorial).
 

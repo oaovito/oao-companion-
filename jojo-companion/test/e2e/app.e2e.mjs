@@ -693,6 +693,37 @@ test('Google Agenda: link colado no chat conecta (servidor local falso) e o JoJo
   }
 });
 
+test('guarda-roupa: /vestir abre o painel na Central, clicar veste o JoJo no desenho e fica salvo', async () => {
+  const { app, win } = await launch();
+  try {
+    const centralP = app.waitForEvent('window');
+    await app.evaluate(() => globalThis.__jojo.companion.chat('/vestir'));
+    const central = await centralP;
+    await central.waitForSelector('#guardaRoupa', { state: 'attached' });
+    let txt = '';
+    for (let i = 0; i < 25 && !/Cabeça/.test(txt); i++) {
+      await sleep(200);
+      txt = await central.evaluate(() => document.querySelector('#guardaRoupa')?.innerText || '');
+    }
+    assert.match(txt, /Cabeça/);
+    assert.match(txt, /Bermuda/);
+    await central.click('#guardaRoupa button:has-text("Coroa")');
+    let outfit = null;
+    for (let i = 0; i < 25 && !(outfit && outfit.costume_coroa); i++) {
+      await sleep(200);
+      outfit = await win.evaluate(() => window.__jojoRenderer.state && window.__jojoRenderer.state.outfit);
+    }
+    assert.equal(outfit && outfit.costume_coroa, 1, 'coroa no desenho');
+    assert.deepEqual(await app.evaluate(() => globalThis.__jojo.store.get().guardaRoupa), { cabeca: 'coroa' });
+    assert.equal(await central.evaluate(() => document.querySelector('#guardaRoupa button.on')?.textContent), 'Coroa');
+    await central.click('#guardaRoupa button:has-text("Tirar tudo")');
+    await sleep(400);
+    assert.deepEqual(await app.evaluate(() => globalThis.__jojo.store.get().guardaRoupa), {});
+  } finally {
+    await quit(app);
+  }
+});
+
 test('antitédio: Central mostra a coleção, bolhas aparecem e estouram, foco junto começa', async () => {
   const { app, win } = await launch();
   try {

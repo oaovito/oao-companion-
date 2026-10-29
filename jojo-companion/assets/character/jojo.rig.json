@@ -2644,7 +2644,49 @@
     }
   },
   "costumes": {
-    "_notes": "Fantasia de data festiva: canal costume_<id> liga as peças; 'palette' troca cores enquanto ativa.",
+    "_notes": "Fantasia de data festiva: canal costume_<id> liga as peças; 'palette' troca cores enquanto ativa. Guarda-roupa: costume_bermuda* só troca a cor da bermuda e tem prioridade sobre a paleta das fantasias.",
+    "bermudaBranca": {
+      "palette": {
+        "shorts": "#f2f2ec",
+        "stripe": "#d4a72c"
+      }
+    },
+    "bermudaVermelha": {
+      "palette": {
+        "shorts": "#c62828",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "bermudaRosa": {
+      "palette": {
+        "shorts": "#ff5c9a",
+        "stripe": "#ffd6e0"
+      }
+    },
+    "bermudaAzul": {
+      "palette": {
+        "shorts": "#2f5fa8",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "bermudaVerde": {
+      "palette": {
+        "shorts": "#1b8a3c",
+        "stripe": "#f2c94c"
+      }
+    },
+    "bermudaDourada": {
+      "palette": {
+        "shorts": "#d4a72c",
+        "stripe": "#26272e"
+      }
+    },
+    "bermudaLaranja": {
+      "palette": {
+        "shorts": "#fb8c00",
+        "stripe": "#26272e"
+      }
+    },
     "anoNovo": {
       "palette": {
         "shorts": "#f2f2ec",

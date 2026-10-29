@@ -56,7 +56,9 @@ export class RigRenderer {
     this.tinted = null;
     // Fantasia ativa: troca cores (ex.: bermuda branca no Ano Novo).
     const costumes = this.rig.costumes || {};
-    const costume = Object.keys(costumes).find((k) => k[0] !== '_' && (pose[`costume_${k}`] ?? 0) >= 0.5) || null;
+    // Bermuda do guarda-roupa (costume_bermuda*) vence a paleta das outras peças.
+    const on = Object.keys(costumes).filter((k) => k[0] !== '_' && (pose[`costume_${k}`] ?? 0) >= 0.5);
+    const costume = on.find((k) => k.startsWith('bermuda')) || on[0] || null;
     let key = costume ? `c:${costume};` : '';
     for (const ch of Object.keys(moods)) {
       if (ch[0] === '_') continue;

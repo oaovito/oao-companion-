@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.30.0 — 2026-10-29
+
+### Adicionado
+- **Guarda-roupa** (brincar de boneca, opcional): painel "👗 Guarda-roupa" na Central com peças
+  por parte do corpo (cabeça, rosto, pescoço, corpo, na mão e cor da bermuda), 46 peças, look
+  surpresa e "tirar tudo". Clicar veste na hora; clicar de novo tira. O JoJo se olha no espelho e
+  comenta. A roupa fica salva e vale mais que a fantasia da data festiva; a peça da mão some
+  enquanto a animação usa outro objeto. Também por `/vestir` (`/vestir coroa`, `/vestir surpresa`,
+  `/vestir tirar`) e por frases como "vamos brincar de boneca".
+
 ## 0.29.2 — 2026-10-29
 
 ### Alterado
