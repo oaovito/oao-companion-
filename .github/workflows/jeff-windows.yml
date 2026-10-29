@@ -6,6 +6,11 @@ on:
     tags: ['v*']
     paths: ['jeff-companion/**', '.github/workflows/jeff-windows.yml']
   workflow_dispatch:
+    inputs:
+      publicar:
+        description: 'Publicar esta versão (cria a tag v<versão> e a Release)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -73,12 +78,21 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      # Tag "v*": publica a versão (Release do GitHub) com o executável portátil.
+      # Publica a versão (Release do GitHub) com o executável portátil: por tag "v*"
+      # ou pela execução manual com "publicar" (a tag v<versão do package.json> é criada).
+      - name: Versão
+        id: versao
+        if: success() && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar)
+        shell: bash
+        run: echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
       - name: Publicar versão
-        if: success() && startsWith(github.ref, 'refs/tags/v')
+        if: success() && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar)
         uses: softprops/action-gh-release@v2
         with:
-          name: JoJo ${{ github.ref_name }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: JoJo ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
           body_path: jeff-companion/RELEASE_NOTES.md
           files: |
             jeff-companion/dist/JeffCompanion.exe
