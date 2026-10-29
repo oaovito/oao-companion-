@@ -106,7 +106,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | Q3 | Falha | Sem internet: aviso e conversa *Bloqueado* |
 | N1 | Animações | ≥ 2× a v0.8 (33 → 85); comuns com 3–4 variações coerentes com o motivo |
 | N2 | Emoção e cor | Raiva avermelha, tristeza acinzenta (também medo, alegria, sono, vergonha) |
-| M1 | Meme | "Vai tomar no cu" → pose de costas do meme por 5 s, depois volta ao normal |
+| M1 | Meme | "Vai tomar no cu" → vira de costas, susto com o prolapso saltando, rebola mostrando por ~5 s, desvira |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho

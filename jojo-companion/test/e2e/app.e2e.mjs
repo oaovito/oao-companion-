@@ -465,7 +465,7 @@ test('"vai tomar no cu": renderer mostra a pose de costas e volta ao normal', as
     await sleep(600);
     assert.equal(await win.evaluate(() => window.__jojoRenderer.anim), 'moon');
     assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
-    await sleep(5200);
+    await sleep(7600);
     assert.notEqual(await win.evaluate(() => window.__jojoRenderer.anim), 'moon');
   } finally {
     await quit(app);

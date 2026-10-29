@@ -14,7 +14,8 @@ o `.zip`.
 ## O que tem de novo nesta versão
 
 - Nome novo: **JoJo Companion** (`JoJoCompanion.exe`).
-- Escreva **"vai tomar no cu"** pro JoJo no chat: ele faz a pose do meme por 5 s.
+- Escreva **"vai tomar no cu"** pro JoJo no chat: ele vira de costas, mostra o prolapso
+  num susto e fica rebolando uns 5 s antes de desvirar.
 
 - **PC parado 5 min**: o JoJo senta no chão e cheira uma carreira de pó. Quando
   você volta, ele fica ligadão por 5 min (olhos arregalados, pó no focinho,

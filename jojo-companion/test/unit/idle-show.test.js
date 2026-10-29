@@ -188,22 +188,35 @@ test('Legends: uma vez por semana, em momento aleatório', () => {
   assert.equal(e.companion.checkWeeklyLegends(new Date(when.getTime() + 3600e3)), false, 'não repete na mesma semana');
 });
 
-test('"vai tomar no cu": pose do meme de costas por 5 s e volta ao normal', async () => {
+test('"vai tomar no cu": vira, mostra o prolapso rebolando ~5 s e desvira', async () => {
   const e = started();
   for (const msg of ['vai tomar no cu', 'VAI TOMAR NO CU JOJO', 'vtnc']) {
     const r = await chatAdv(e, msg);
     assert.equal(r.action, 'moon', msg);
     assert.equal(e.companion.behavior.state, 'moon');
-    // chatAdv já avançou ~1,1 s depois do início da pose.
-    e.clock.advance(3000);
-    assert.equal(e.companion.behavior.state, 'moon', 'continua por 5 s');
+    // chatAdv já avançou ~1,1 s depois do início da animação (7,4 s no total).
+    e.clock.advance(5500);
+    assert.equal(e.companion.behavior.state, 'moon', 'continua rebolando');
     e.clock.advance(1500);
     assert.notEqual(e.companion.behavior.state, 'moon');
   }
   // A vista de costas troca o desenho: grupos de frente somem, os de costas aparecem.
   const an = new Animator(ANIMS);
   an.play('moon', 0, { restart: true, variant: 'moon' });
-  assert.equal(an.sample(2500).pose.mooning, 1);
+  const D = ANIMS.animations.moon.duration;
+  assert.equal(an.sample(0).pose.mooning, 0, 'começa de frente');
+  const at = (t) => {
+    an.play('moon', 0, { restart: true, variant: 'moon' });
+    return an.sample(D * t).pose;
+  };
+  assert.ok(at(0.07).squashX < 0.3, 'virada: achata no meio do giro (tempo em degraus de 12 fps)');
+  assert.equal(at(0.5).mooning, 1);
+  assert.ok(at(0.215).gagSize > 1.3, 'susto: prolapso salta grande');
+  assert.ok(at(0.5).spread > 6, 'mãos abrindo');
+  const rots = new Set([0.3, 0.33, 0.36, 0.39].map((t) => Math.sign(at(t).rootRot)));
+  assert.ok(rots.has(1) && rots.has(-1), 'rebolando de um lado pro outro');
+  assert.equal(at(0.99).mooning, 0, 'desvira no fim');
+  assert.ok((0.88 - 0.2) * D >= 4900, 'mostra por ~5 s');
   const back = RIG.groups.filter((g) => g.showIf === 'mooning');
   assert.ok(back.length >= 2);
   assert.ok(RIG.groups.filter((g) => g.id === 'head' || g.id === 'arms').every((g) => g.hideIf === 'mooning'));

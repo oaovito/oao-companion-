@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.13.0 — 2026-10-29
+
+### Alterado
+- Meme do "vai tomar no cu" virou animação completa (7,4 s): o JoJo **vira de
+  costas** (giro de recorte de papel), curva o corpo e abre as nádegas de uma vez —
+  **susto** com zoom e o prolapso saltando grande —, **rebola** de um lado pro
+  outro por ~5 s mostrando tudo e **desvira**. Prolapso bem nojento no traço do
+  desenho: maior, pulsando, com dobras, veias, brilho molhado e gosma escorrendo e
+  pingando.
+- Rig: peças podem deslizar (`dx`/`dy`) e crescer (`scaleBy`) por canal.
+
 ## 0.12.0 — 2026-10-29
 
 ### Adicionado

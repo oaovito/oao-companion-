@@ -170,6 +170,16 @@ export class RigRenderer {
       ctx.translate(-part.pivot[0], -part.pivot[1]);
     }
     if (part.lift) ctx.translate(0, -(pose[part.lift] || 0));
+    // Deslocamento horizontal/vertical por canal (ex.: nádegas abrindo, gosma escorrendo).
+    if (part.dx) ctx.translate((pose[part.dx] || 0) * (part.dxSign ?? 1), 0);
+    if (part.dy) ctx.translate(0, pose[part.dy] || 0);
+    // Escala por canal em torno de `scalePivot` (ex.: prolapso saltando e pulsando).
+    if (part.scaleBy && part.scalePivot) {
+      const k = Math.max(0, pose[part.scaleBy] ?? 1);
+      ctx.translate(part.scalePivot[0], part.scalePivot[1]);
+      ctx.scale(k, k);
+      ctx.translate(-part.scalePivot[0], -part.scalePivot[1]);
+    }
   }
 
   _face(ctx, pose) {
