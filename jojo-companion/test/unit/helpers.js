@@ -133,6 +133,7 @@ export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, s
   const companion = new Companion({
     platform, overlay, clock, store, personality,
     rig: loadJSON('assets/character/jojo.rig.json'),
+    room: loadJSON('assets/animations/jojo.room.json'),
     phrases: loadJSON('assets/dialogue/pt-BR.json'),
     dialogue: new DialogueEngine({ searchEnabled: () => store.get().webSearch }),
     rng: seededRng(seed),

@@ -5,6 +5,8 @@ import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 
 // Intenções que nunca vão pra IA: segurança (João, CVV, SAMU) e gatilhos com animação própria.
 const SCRIPTED_ONLY = new Set(['crisis', 'distress', 'sad', 'avcReal', 'avc', 'pretty', 'lol', 'moon', 'dressDown', 'dressUp', 'bench', 'squat', 'quiet', 'scare', 'eat', 'play', 'sleep', 'wake', 'pet']);
+// Pausa da IA depois de uma falha: as próximas mensagens respondem na hora.
+const LLM_PAUSE_MS = 90e3;
 
 export class DialogueEngine {
   /**
@@ -22,6 +24,7 @@ export class DialogueEngine {
     this.activeId = 'scripted';
     this.history = [];
     this.timeoutMs = timeoutMs;
+    this.llmPauseUntil = 0;
     this.log = log;
   }
 
@@ -47,7 +50,8 @@ export class DialogueEngine {
     // Segurança e gatilhos com animação própria ficam com as respostas programadas;
     // o resto vai pra IA (se ativa e disponível), com volta às programadas se falhar.
     const intent = detectIntent(input);
-    if (this.llm && !SCRIPTED_ONLY.has(intent) && (await this.llm.isAvailable().catch(() => false))) {
+    // Depois de uma falha (rede lenta/fora), pausa a IA um pouco para não fazer esperar de novo.
+    if (this.llm && !SCRIPTED_ONLY.has(intent) && Date.now() >= this.llmPauseUntil && (await this.llm.isAvailable().catch(() => false))) {
       try {
         const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context }), this.llm.timeoutMs || this.timeoutMs);
         const out = normalizeReply(r);
@@ -58,6 +62,7 @@ export class DialogueEngine {
         return out;
       } catch (e) {
         this.llmOk = false;
+        this.llmPauseUntil = Date.now() + LLM_PAUSE_MS;
         this.log('warn', `IA indisponível (${e.message}); usando respostas programadas.`);
       }
     }

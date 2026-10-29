@@ -188,7 +188,7 @@ function main() {
     });
     const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm });
 
-    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, phrases, dialogue, log });
+    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), phrases, dialogue, log });
 
     // Esc global SOMENTE enquanto o modo de interação está ativo: o Windows nem
     // sempre entrega o foco do teclado à janela ativada por atalho. Fora do modo

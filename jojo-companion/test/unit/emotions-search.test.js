@@ -254,3 +254,33 @@ test('engine: describe informa se a pesquisa está ativa', () => {
   on = false;
   assert.equal(eng.describe().webSearch, false);
 });
+
+test('pesquisa: Wikipédia e DuckDuckGo começam juntas (resposta mais rápida)', async () => {
+  const { WebSearch } = await import('../../src/core/dialogue/web-search.js');
+  const started = [];
+  let release;
+  const gate = new Promise((r) => (release = r));
+  const ws = new WebSearch({
+    fetch: async (url) => {
+      started.push(url);
+      await gate;
+      return { ok: true, status: 200, json: async () => ({}) };
+    },
+  });
+  const p = ws.search('o que é fotossíntese?').catch(() => null);
+  await new Promise((r) => setTimeout(r, 20));
+  assert.ok(started.some((u) => /wikipedia/.test(u)) && started.some((u) => /duckduckgo/.test(u)), started.join(' | '));
+  release();
+  await p;
+});
+
+test('dormir em qualquer forma e horário: JoJo fica furioso e recusa (nunca dorme pelo chat)', async () => {
+  const { detectIntent, ScriptedProvider } = await import('../../src/core/dialogue/scripted-provider.js');
+  for (const t of ['vou dormir', 'tô com sono', 'que tal uma soneca?', 'vou tirar um cochilo', 'hora de ir pra cama', 'quantas horas devo dormir?', 'jojo vai dormir', 'to sonolenta']) {
+    assert.equal(detectIntent(t), 'sleep', t);
+  }
+  assert.notEqual(detectIntent('isso é sonoro'), 'sleep');
+  const r = await new ScriptedProvider().reply({ text: 'vou dormir agora' });
+  assert.equal(r.action, 'angry');
+  assert.ok(!r.search, 'não pesquisa: reage');
+});

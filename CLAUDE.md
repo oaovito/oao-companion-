@@ -34,6 +34,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Visual: estilo recorte de papel (South Park), adulto, fisiculturista, com presas.
 - Animações: 85 (variações sorteadas via `variantOf`; as comuns têm 3–4). Cor por emoção
   (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
+- Dormir: qualquer menção a dormir/sono/cochilo/cama no chat → JoJo furioso e contra (estado `angry`), nunca dorme pelo chat.
+- Janela cresce por animação (`assets/animations/jojo.room.json`; regenerar com `scripts/anim-room.mjs` ao mudar desenho/animação).
 - Pergunta sem resposta programada: pesquisa (Wikipédia → DuckDuckGo) e responde no jeito do
   JoJo (abertura/fecho das falas filtradas pelo perfil) citando a fonte.
 - Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).

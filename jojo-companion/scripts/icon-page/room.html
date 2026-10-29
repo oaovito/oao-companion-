@@ -1,0 +1,66 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>room</title></head>
+<body style="margin:0">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+import { Animator } from '../../src/renderer/shared/animator.js';
+import { Effects } from '../../src/renderer/shared/effects.js';
+// Mede quanto cada animação (com efeitos) passa da caixa do JoJo.
+const O = 400, SIZE = 1000;
+function bbox(ctx, box) {
+  const d = ctx.getImageData(0, 0, SIZE, SIZE).data;
+  let x0 = SIZE, y0 = SIZE, x1 = -1, y1 = -1;
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) {
+    if (d[(y * SIZE + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  if (x1 < 0) return { l: 0, t: 0, r: 0, b: 0 };
+  const c = (v) => Math.max(0, Math.ceil(v + 2));
+  return { l: c(O - x0), t: c(O - y0), r: c(x1 + 1 - (O + box.width)), b: c(y1 + 1 - (O + box.height)) };
+}
+function canvas() {
+  const c = document.createElement('canvas'); c.width = SIZE; c.height = SIZE;
+  return c.getContext('2d', { willReadFrequently: true });
+}
+function drawFrame(ctx, rig, s, fx, now, head, mouth) {
+  rig.draw(ctx, s.pose, { origin: { x: O, y: O }, scale: 1, facing: 1 });
+  if (!fx) return;
+  fx.update(now, s.flags, head);
+  ctx.save(); ctx.translate(O, O); ctx.translate(s.pose.rootX || 0, s.pose.rootY || 0);
+  fx.draw(ctx, now, { mark: s.flags.mark, head, mouth, facingSign: 1 });
+  ctx.restore();
+}
+window.measure = (rigJson, animJson) => {
+  const rig = new RigRenderer(rigJson);
+  const box = rigJson.metrics.box, head = rigJson.metrics.head, mouth = rigJson.metrics.mouth;
+  const out = { anims: {}, effects: {} };
+  for (const [name, anim] of Object.entries(animJson.animations)) {
+    if (name === 'hidden') continue;
+    const ctx = canvas();
+    let i = 0;
+    for (const seed of [0.01, 0.5, 0.99]) {
+      const a = new Animator(animJson, { rng: () => seed });
+      a.play(name, 0, { variant: name });
+      const fx = new Effects({ rng: () => seed });
+      const dur = anim.duration || 1000;
+      for (let t = 0; t <= dur + 400; t += 1000 / 24) drawFrame(ctx, rig, a.sample(t), fx, t, head, mouth);
+      i++;
+    }
+    const base = anim.variantOf || name;
+    const r = bbox(ctx, box), prev = out.anims[base];
+    out.anims[base] = prev ? { l: Math.max(prev.l, r.l), t: Math.max(prev.t, r.t), r: Math.max(prev.r, r.r), b: Math.max(prev.b, r.b) } : r;
+  }
+  // Efeitos ligados pelo companion (comida, bola, corações) sobre a pose parada.
+  const idle = { pose: { ...animJson.channels }, flags: {} };
+  for (const [eff, kinds] of [['food', ['peixe', 'foca', 'lula', 'tartaruga', 'pinguim', 'humano']], ['ball', [null]], ['hearts', [null]]]) {
+    const ctx = canvas();
+    for (const kind of kinds) {
+      const fx = new Effects({ rng: () => 0.5 });
+      fx.setEffect(eff, 0, kind);
+      for (let t = 0; t <= 4000; t += 1000 / 24) { fx.update(t, {}, head); ctx.save(); ctx.translate(O, O); fx.draw(ctx, t, { head, mouth, facingSign: 1 }); ctx.restore(); }
+    }
+    out.effects[eff] = bbox(ctx, box);
+  }
+  return out;
+};
+window.ready = true;
+</script></body></html>

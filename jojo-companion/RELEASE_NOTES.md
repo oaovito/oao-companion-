@@ -13,6 +13,9 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- Balão de fala sem ficar por cima do painel nem do JoJo; animações não são mais cortadas.
+- Supino e agachamento refeitos. Respostas mais rápidas (com "…" enquanto pensa).
+- Fale em **dormir** e veja o que acontece.
 - **Mais leve**: usa menos memória e processador e o executável ficou menor.
 - **Conversa de verdade**: fale com o JoJo sobre qualquer coisa; ele entende e responde no jeito dele.
 - Ele **inicia junto com o Windows** (dá para desmarcar em Configurações).

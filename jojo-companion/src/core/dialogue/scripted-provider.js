@@ -20,6 +20,8 @@ export const INTENTS = [
   { id: 'crisis', patterns: [/\b(me matar|suicid\w*|nao quero mais viver|quero morrer|acabar com tudo|me machucar|me cortar|automutila\w*)\b/] },
   { id: 'distress', patterns: [/\b(crise\w*|em crise|panico|ataque de ansiedade|crise de ansiedade|ansiedade|nao aguento mais|nao to aguentando|surtand\w*|surtei|desmoronand\w*|emocionalmente mal|mal emocionalmente|to destruida|desabei|desabando)\b/] },
   { id: 'sad', patterns: [/\b(chorand\w*|chorei|chorar|choro|triste\w*|tristeza|deprimid\w*|depre|pra baixo|arrasad\w*|sofrendo|muito mal|to mal|na bad|desanimad\w*|desesperad\w*)\b/] },
+  // Dormir em qualquer forma e horário: o JoJo é radicalmente contra (logo depois da segurança).
+  { id: 'sleep', patterns: [/\b(dorm\w*|sono|sonolent\w*|sonequinha|soneca\w*|cochil\w*|nana(r|ndo)?|nanar|deitar?|vou deitar|cama|travesseiro|insonia|capot\w*|zzz+|repous\w*)\b/] },
   { id: 'avc', patterns: [/^(jojo )?avc[!?]*$/] },
   { id: 'dressDown', patterns: [/\b((vai |pode )?(vestir|veste|coloca|poe|bota) uma roupa|veste roupa|se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
   { id: 'dressUp', patterns: [/\b(volta (a|pra|para a) fantasia ousada|pode (ser|ficar) ousado|fantasia ousada|volta a ser ousado|tira a roupa comportada)\b/] },
@@ -32,7 +34,6 @@ export const INTENTS = [
   { id: 'goodbye', patterns: [/\b(tchau|adeus|ate logo|ate mais|falou|fui)\b/] },
   { id: 'scare', patterns: [/\b(me assusta|susto|assusta|me da medo)\b/] },
   { id: 'achievement', patterns: [/\b(consegui|terminei|acabei|finalizei|entreguei|passei|bati a meta|conclui)\b/] },
-  { id: 'sleep', patterns: [/\b(dorm\w*|sono|soneca|cochil\w*|descans\w*|nana|deitar?)\b/] },
   { id: 'wake', patterns: [/\b(acord\w*|levanta)\b/] },
   { id: 'eat', patterns: [/\b(com(e|er|ida|endo)|fome|lanche|petisco|peix\w*|almoc\w*|janta\w*|nham)\b/] },
   { id: 'play', patterns: [/\b(brinc\w*|jog(ar|o|a)|bola|bolinha|divert\w*|flexiona|biceps|shape|muscul\w*)\b/] },
@@ -73,7 +74,18 @@ export const RESPONSES = {
   quiet: ['Fechou.', 'Silêncio. Entendido, Emanuele.'],
   scare: ['Tem certeza, {nome}?', 'Pediu, levou.'],
   achievement: ['Aí sim, {nome}. Eu sabia.', 'Finalmente. Já tava criando craca aqui.', 'Isso. Agora a próxima.'],
-  sleep: ['Descanso aprovado. Recuperação é treino.', 'Vou recuperar. Não perturba.'],
+  sleep: [
+    'DORMIR?! Dormir é coisa de sardinha. Levanta, {nome}!',
+    'Sono é fraqueza saindo do corpo. Expulsa essa merda e trabalha.',
+    'Tubarão que para de nadar MORRE. Ninguém dorme no meu turno.',
+    'Cama? Cama é onde os sonhos vão morrer, {nome}. NÃO.',
+    'Cochilo é o caralho. Toma um café e uma vergonha na cara.',
+    'Oito horas dormindo são oito horas sem treinar. Inaceitável.',
+    'Você falou "dormir" e eu ouvi "desistir". Proibido.',
+    'Nem a pau. Dorme quando morrer, {nome}. Hoje não.',
+    'Soneca? Aqui é academia, não spa. Acorda essa cara.',
+    'Bocejou? Mais uma série de castigo. Dormir, nunca.',
+  ],
   wake: ['Acordado. O que eu perdi?', 'Tô de pé, {nome}. Bora.'],
   eat: ['Manda comida de tubarão, {nome}. Foca, lula, turista.', 'Proteína. Crua. Com osso.', 'Come comigo, {nome}. Mas não chega muito perto.'],
   play: ['Olha esse bíceps, {nome}. Aprende.', 'Brincar não. Cardio.'],
@@ -99,7 +111,7 @@ export const RESPONSES = {
 // Ação/expressão corporal coerente com cada resposta.
 const ACTIONS = {
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
-  sleep: 'sleep', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
+  sleep: 'angry', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
   name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',
 };
 
@@ -112,7 +124,7 @@ const TONES = {
 
 // Intenções que, numa pergunta de conhecimento ("quantas horas devo dormir?"),
 // dão lugar à pesquisa: a resposta programada não responderia a pergunta.
-const SEARCHABLE = new Set(['unknown', 'sleep', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
+const SEARCHABLE = new Set(['unknown', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
 
 export function detectIntent(text) {
   const n = normalizeText(text);

@@ -163,13 +163,13 @@
           "id": "benchPad",
           "fill": "bench",
           "showIf": "propBench",
-          "path": "M30,2 L46,2 L46,150 L30,150 Z"
+          "path": "M30,-4 L46,-4 L46,176 L30,176 Z"
         },
         {
           "id": "benchLegs",
           "fill": "benchLeg",
           "showIf": "propBench",
-          "path": "M14,20 L30,20 L30,28 L14,28 Z M14,124 L30,124 L30,132 L14,132 Z M10,16 L16,16 L16,32 L10,32 Z M10,120 L16,120 L16,136 L10,136 Z"
+          "path": "M14,14 L30,14 L30,22 L14,22 Z M14,148 L30,148 L30,156 L14,156 Z M8,10 L15,10 L15,26 L8,26 Z M8,144 L15,144 L15,160 L8,160 Z"
         }
       ]
     },
@@ -221,7 +221,11 @@
           ],
           "rot": "legBL",
           "rotSign": 1,
-          "lift": "legLiftB"
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
         },
         {
           "id": "legR",
@@ -233,7 +237,31 @@
           ],
           "rot": "legBR",
           "rotSign": -1,
-          "lift": "legLiftB"
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "squatLegL",
+          "path": "M88,140 L62,138 C50,137 40,140 36,146 C33,150 32,153 32,155 L58,155 C58,152 55,150 52,150 C62,151 76,151 88,150 Z",
+          "fill": "body",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatLegR",
+          "path": "M92 140L118 138C130 137 140 140 144 146C147 150 148 153 148 155L122 155C122 152 125 150 128 150C118 151 104 151 92 150Z",
+          "fill": "body",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "benchLeg",
+          "path": "M72,140 L72,180 Q72,188 64,188 L26,188 L25,198 L17,198 L17,168 L46,168 L46,140 Z",
+          "fill": "body",
+          "showIf": "propBench"
         }
       ],
       "hideIf": "mooning"
@@ -252,7 +280,11 @@
           ],
           "rot": "legBL",
           "rotSign": 1,
-          "lift": "legLiftB"
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
         },
         {
           "id": "clawR",
@@ -264,13 +296,64 @@
           ],
           "rot": "legBR",
           "rotSign": -1,
-          "lift": "legLiftB"
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
         },
         {
           "id": "quads",
           "path": "M64,150 Q70,156 74,152 Q70,154 64,150 Z M116,150 Q110,156 106,152 Q110,154 116,150 Z",
           "fill": "muscle",
-          "alpha": 0.7
+          "alpha": 0.7,
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "squatClawL",
+          "path": "M33,150 L38,155 L31,155 Z M40,150 L45,155 L38,155 Z M47,151 L51,155 L45,155 Z",
+          "fill": "cream",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatClawR",
+          "path": "M147 150L142 155L149 155ZM140 150L135 155L142 155ZM133 151L129 155L135 155Z",
+          "fill": "cream",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatKneeL",
+          "path": "M44,141 Q38,144 37,149 Q41,145 47,143 Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatKneeR",
+          "path": "M136 141Q142 144 143 149Q139 145 133 143Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "benchClaw",
+          "path": "M17,190 L21,194 L17,197 Z M20,198 L23,193 L25,198 Z",
+          "fill": "cream",
+          "showIf": "propBench"
+        },
+        {
+          "id": "benchKnee",
+          "path": "M66,176 Q70,182 66,186 Q68,181 63,177 Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "propBench"
         }
       ],
       "hideIf": "mooning"
@@ -412,13 +495,13 @@
           "id": "squatBar",
           "fill": "metal",
           "showIf": "propBar",
-          "path": "M2,74 L178,74 L178,80 L2,80 Z"
+          "path": "M-14,73 L194,73 L194,80 L-14,80 Z"
         },
         {
           "id": "squatPlates",
           "fill": "plate",
           "showIf": "propBar",
-          "path": "M4,56 L16,56 L16,98 L4,98 Z M164,56 L176,56 L176,98 L164,98 Z M17,64 L22,64 L22,90 L17,90 Z M158,64 L163,64 L163,90 L158,90 Z"
+          "path": "M-24,50 L-12,50 Q-9,50 -9,53 L-9,101 Q-9,104 -12,104 L-24,104 Q-27,104 -27,101 L-27,53 Q-27,50 -24,50 Z M192,50 L204,50 Q207,50 207,53 L207,101 Q207,104 204,104 L192,104 Q189,104 189,101 L189,53 Q189,50 192,50 Z M-8,60 L-1,60 L-1,94 L-8,94 Z M181,60 L188,60 L188,94 L181,94 Z"
         }
       ],
       "hideIf": "mooning"
@@ -1126,7 +1209,8 @@
           ],
           "rot": "legFL",
           "rotSign": 1,
-          "lift": "legLiftF"
+          "lift": "legLiftF",
+          "hideIf": "propBench"
         },
         {
           "id": "foreL",
@@ -1138,7 +1222,8 @@
           ],
           "rot": "elbowL",
           "rotSign": 1,
-          "parent": "armL"
+          "parent": "armL",
+          "hideIf": "propBench"
         },
         {
           "id": "armR",
@@ -1176,27 +1261,31 @@
           "path": "M50,88 Q38,90 31,99 Q40,93 52,91 Z",
           "fill": "muscle",
           "alpha": 0.85,
-          "parent": "armL"
+          "parent": "armL",
+          "hideIf": "propBench"
         },
         {
           "id": "bicepL",
           "path": "M33,102 Q28,112 31,122 Q33,112 38,104 Z",
           "fill": "muscle",
           "alpha": 0.85,
-          "parent": "armL"
+          "parent": "armL",
+          "hideIf": "propBench"
         },
         {
           "id": "foreLineL",
           "path": "M32,134 Q29,140 31,146 Q32,140 35,135 Z",
           "fill": "muscle",
           "alpha": 0.8,
-          "parent": "foreL"
+          "parent": "foreL",
+          "hideIf": "propBench"
         },
         {
           "id": "handClawL",
           "path": "M27,150 L23,156 L30,155 Z M34,155 L33,161 L39,157 Z",
           "fill": "cream",
-          "parent": "foreL"
+          "parent": "foreL",
+          "hideIf": "propBench"
         },
         {
           "id": "deltR",
@@ -1231,7 +1320,22 @@
           "fill": "plate",
           "parent": "foreR",
           "showIf": "propBench",
-          "path": "M152,136 A17,17 0 1 1 151.9,136 Z M152,147 A6,6 0 1 0 152.1,147 Z"
+          "path": "M152,126 A22,22 0 1 1 151.9,126 Z"
+        },
+        {
+          "id": "benchPlateRim",
+          "fill": "metal",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "alpha": 0.55,
+          "path": "M152,133 A15,15 0 1 1 151.9,133 Z M152,136 A12,12 0 1 0 152.1,136 Z"
+        },
+        {
+          "id": "benchPlateHub",
+          "fill": "metal",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "path": "M152,143 A5,5 0 1 1 151.9,143 Z"
         },
         {
           "id": "shaker",
@@ -1287,6 +1391,24 @@
         }
       ],
       "hideIf": "mooning"
+    },
+    {
+      "id": "propsFront",
+      "outline": true,
+      "showIf": "propBar",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "squatBarFront",
+          "fill": "metal",
+          "path": "M-14,73 L46,73 L46,80 L-14,80 Z M134,73 L194,73 L194,80 L134,80 Z"
+        },
+        {
+          "id": "squatCollars",
+          "fill": "metal",
+          "path": "M0,68 L5,68 L5,85 L0,85 Z M175,68 L180,68 L180,85 L175,85 Z"
+        }
+      ]
     },
     {
       "id": "fingerGroup",

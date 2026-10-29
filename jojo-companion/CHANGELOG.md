@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 0.25.0 — 2026-10-29
+
+### Corrigido
+- **Balão de fala** não fica mais por cima do painel de conversa, da barra ou do próprio
+  JoJo: quando o lado preferido está ocupado ele pula o obstáculo; sem lugar livre com a
+  conversa aberta, a fala fica só no painel.
+- **Sem "parede invisível"**: a janela cresce o necessário para cada animação e efeito
+  (medidas em `assets/animations/jojo.room.json`, geradas por `scripts/anim-room.mjs`),
+  sem invadir outro monitor.
+- **Supino** refeito: deitado de lado no banco comprido, só o braço de perto, anilha de
+  verdade e a perna apoiada no chão. **Agachamento** refeito: barra nos ombros por cima
+  das mãos, joelhos dobrados para fora e pés no chão (sem afundar no piso).
+- **Respostas mais rápidas**: espera máxima da conversa online de 8 s (era 20 s); depois
+  de uma falha a conversa responde na hora por 90 s; Wikipédia e DuckDuckGo em paralelo;
+  balão "…" de pensamento quando a resposta demora.
+
+### Alterado
+- **Dormir**: qualquer menção a dormir, sono, cochilo, soneca ou cama, em qualquer
+  horário, deixa o JoJo furioso e contra a ideia (nunca dorme pelo chat, não pesquisa).
+
 ## 0.24.0 — 2026-10-29
 
 ### Alterado

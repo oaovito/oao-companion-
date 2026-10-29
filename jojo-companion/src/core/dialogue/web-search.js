@@ -70,7 +70,7 @@ export class WebSearch {
    * @param fetch função compatível com fetch (Request/Response)
    * @param bases URLs base (trocadas só em testes)
    */
-  constructor({ fetch, timeoutMs = 7000, userAgent = 'JoJoCompanion (desktop)', bases = {}, log = () => {} } = {}) {
+  constructor({ fetch, timeoutMs = 5000, userAgent = 'JoJoCompanion (desktop)', bases = {}, log = () => {} } = {}) {
     this.fetch = fetch;
     this.timeoutMs = timeoutMs;
     this.userAgent = userAgent;
@@ -131,14 +131,17 @@ export class WebSearch {
     const query = extractQuery(question);
     if (!query) return null;
     const errors = [];
-    for (const [name, fn] of [['Wikipédia', () => this._wikipedia(query)], ['DuckDuckGo', () => this._duckduckgo(query)]]) {
-      try {
-        const r = await fn();
-        if (r) return { query, ...r, extract: tidyExtract(r.extract) };
-      } catch (e) {
-        this.log('warn', `Pesquisa (${name}) falhou: ${e.message}`);
-        errors.push(`${name}: ${e.message}`);
-      }
+    // As duas fontes em paralelo (resposta mais rápida); a Wikipédia tem preferência.
+    const run = (name, fn) => fn().catch((e) => {
+      this.log('warn', `Pesquisa (${name}) falhou: ${e.message}`);
+      errors.push(`${name}: ${e.message}`);
+      return null;
+    });
+    const wiki = run('Wikipédia', () => this._wikipedia(query));
+    const ddg = run('DuckDuckGo', () => this._duckduckgo(query));
+    for (const p of [wiki, ddg]) {
+      const r = await p;
+      if (r) return { query, ...r, extract: tidyExtract(r.extract) };
     }
     if (errors.length === 2) throw new Error(errors.join('; '));
     return null;

@@ -13,7 +13,7 @@ import { BehaviorMachine, PRIORITY, STATES, weightedPick } from './behavior.js';
 import { PhraseBook, readingTimeMs, greetingCategory } from './phrases.js';
 import { placeAround, composeWindow } from './layout.js';
 import { displayForRect, allowedDisplays, recoverRect, topologySignature, primaryDisplay } from './displays.js';
-import { distPointRect, roundRect, dist, clamp } from './geometry.js';
+import { distPointRect, roundRect, dist, clamp, intersection } from './geometry.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
@@ -32,6 +32,7 @@ const COSTUME_FOOTROOM = 40;
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800, avc: 3500 + 1600 + 900 + 60000 + 1500 };
 const ACTIVITY_ROW = 26;
 const ACTIVITY_WIDTH = 224;
+const THINK_BUBBLE_MS = 1200; // resposta demorando: balão de pensamento "…"
 const THINK_MS = 650; // "digitando…": tempo em que a conversa fica "Em andamento"
 const CHAT_SIZE = { width: 300, height: 270 };
 const USER_CATEGORIES = new Set(['petted', 'food', 'play', 'interactEnter', 'interactExit', 'alreadyRunning', 'goodbye', 'unpause', 'dragged', 'land', 'achievement', 'quietAck', 'scare']);
@@ -42,7 +43,10 @@ const FLEE_SPEED = 1150;
 const CALM_STATES = new Set(['idle', 'sit', 'lookAround', 'curious', 'lie']);
 
 export class Companion {
-  constructor({ platform, overlay, clock, store, personality = null, rig = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+    // Quanto cada animação/efeito passa da caixa (assets/animations/jojo.room.json).
+    this.room = room || { anims: {}, effects: {} };
+    this.roomPrev = null; // espaço da animação anterior durante a transição
     // Perfil de personalidade (separado da aparência): {get()} — ex.: SettingsStore de personality.json.
     this.personality = personality || { get: () => PERSONALITY_DEFAULTS, update: () => [] };
     this.instagram = new InstagramWatcher();
@@ -954,12 +958,20 @@ export class Companion {
     this.conversations.setStatus(conv.id, 'running');
     await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
     let reply;
+    // Resposta demorando (internet): mostra que está pensando em vez de ficar parado.
+    let thinking = false;
+    const thinkTimer = this.clock.setTimeout(() => {
+      thinking = this.say('…', 'thought');
+    }, THINK_BUBBLE_MS);
     try {
       reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
     } catch (e) {
+      this.clock.clearTimeout(thinkTimer);
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
+    this.clock.clearTimeout(thinkTimer);
+    if (thinking && this.bubble && this.bubble.text === '…') this.hideBubble();
     // Respostas que só saem no meio da animação: "É" no último suspiro (bonita?)
     // e "Passa na cara de uma vez" quando ele oferece o cocô (lol?).
     const delayed = DELAYED_REPLY_MS[reply.action];
@@ -1293,6 +1305,10 @@ export class Companion {
     if (this.bubble) {
       const order = this.bubble.kind === 'thought' ? ['top', 'left', 'right', 'bottom'] : ['top', 'right', 'left', 'bottom'];
       bubble = placeAround(r.visual, this.bubble.size, wa, { order, avoid: [toolbar?.rect, chat?.rect], tailTarget: r.head, gap: 10 });
+      // Sem lugar livre com a conversa aberta: a fala já está no painel; não sobrepõe.
+      if (bubble.forced && chat) bubble = null;
+    }
+    if (bubble) {
       attachments.push(bubble);
       this.bubbleRect = bubble.rect;
     } else this.bubbleRect = null;
@@ -1313,6 +1329,17 @@ export class Companion {
       attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
+    }
+    // Animação/efeito passando da caixa: a janela cresce o necessário (sem parede invisível).
+    const extra = this._animRoom();
+    if (extra) {
+      const k = s.size;
+      const l = (this.facing >= 0 ? extra.l : extra.r) * k;
+      const rr = (this.facing >= 0 ? extra.r : extra.l) * k;
+      const want = { x: r.box.x - l, y: r.box.y - extra.t * k, width: r.box.width + l + rr, height: r.box.height + (extra.t + extra.b) * k };
+      // Não invade outro monitor (DPI diferente deformaria a janela).
+      const rect = disp ? intersection(want, disp.bounds) : want;
+      if (rect) attachments.push({ rect });
     }
     const { bounds, rel } = composeWindow(r.box, attachments);
     const b = roundRect(bounds);
@@ -1356,6 +1383,25 @@ export class Companion {
       this.lastRender = key;
       this.overlay.render(state);
     }
+  }
+
+  /** Espaço extra (px na escala 1) da animação atual, da anterior (transição) e do efeito. */
+  _animRoom() {
+    const now = this.clock.now();
+    const anim = this.behavior.anim || 'idle';
+    if (!this.roomPrev || this.roomPrev.anim !== anim) {
+      this.roomPrev = { anim, prev: this.roomPrev ? this.roomPrev.anim : null, until: now + 400 };
+      if (this.roomPrev.prev) this.clock.setTimeout(() => this._applyLayout(), 450);
+    }
+    const parts = [this.room.anims[anim]];
+    if (this.roomPrev.prev && now < this.roomPrev.until) parts.push(this.room.anims[this.roomPrev.prev]);
+    if (this.effect) parts.push(this.room.effects[this.effect.name]);
+    let out = null;
+    for (const p of parts) {
+      if (!p) continue;
+      out = out ? { l: Math.max(out.l, p.l), t: Math.max(out.t, p.t), r: Math.max(out.r, p.r), b: Math.max(out.b, p.b) } : { ...p };
+    }
+    return out;
   }
 
   debugState() {

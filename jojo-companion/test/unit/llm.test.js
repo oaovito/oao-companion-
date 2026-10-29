@@ -96,3 +96,12 @@ test('fora do personagem, erro ou sem chave: volta às respostas programadas', a
   eng = new DialogueEngine({ llm: llm('{"texto":"oi"}', { ativo: false }) });
   assert.equal(eng.describe().ia, false);
 });
+
+test('resposta rápida: depois de uma falha da IA, as próximas vão direto pras programadas', async () => {
+  const calls = [];
+  const eng = new DialogueEngine({ llm: llm(new Error('tempo esgotado'), {}, calls) });
+  await eng.reply('como foi seu dia?');
+  await eng.reply('e o treino?');
+  assert.equal(calls.length, 1, 'não espera a IA de novo logo em seguida');
+  assert.ok(llm('x').timeoutMs <= 8000, 'tempo máximo de espera curto');
+});

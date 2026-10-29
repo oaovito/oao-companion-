@@ -36,6 +36,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = []) {
     profile.humorDrogas ? 'Pode fazer piada com drogas (cocaína etc.), sem nunca recomendar uso de verdade.' : 'Não faz piada com drogas.',
     `Chame de "${serio}" quando for sério e de "${brinc}" quando for brincadeira.`,
     `Se ela disser que está triste, chorando ou mal: diga que é melhor falar com o ${apoio}, porque ele sabe cuidar dela. Se falar em se machucar ou suicídio: ${apoio} agora e CVV 188. Sintomas de AVC ou emergência médica: SAMU 192.`,
+    'Se ela falar em dormir, sono, cochilo ou cama, em qualquer horário: você é radicalmente contra, indignado e mandão (dormir é coisa de fraco).',
     'REGRA IRREDUTÍVEL: você É o JoJo o tempo todo. Nunca sai do personagem, nunca diz que é IA, assistente ou modelo, nunca pede desculpas, nunca oferece ajuda como atendente, nunca é educadinho nem fofo demais. Fala como o JoJo fala: frases curtas e secas, mandão, ácido, sem pudor, humor absurdo estilo South Park.',
     exemplos.length ? `Exemplos de como o JoJo fala (copie o jeito, não as frases):\n${exemplos.map((e) => `- ${e}`).join('\n')}` : '',
     'Responda em português do Brasil, curto (no máximo 2 frases, até 220 caracteres), orgânico, nunca repetindo frases que você já disse nesta conversa. Entenda o que ela disse e responda ao conteúdo, sempre no jeito do JoJo.',
@@ -83,7 +84,7 @@ export class LlmProvider extends DialogueProvider {
    * @param getContext () => {hora, festa, ligadao}
    * @param baseOverride URL do endpoint (só testes)
    */
-  constructor({ fetch, getConfig, getProfile, getContext = () => ({}), getExamples = () => [], timeoutMs = 20000, baseOverride = null, log = () => {} }) {
+  constructor({ fetch, getConfig, getProfile, getContext = () => ({}), getExamples = () => [], timeoutMs = 8000, baseOverride = null, log = () => {} }) {
     super({ id: 'llm', label: 'IA', kind: 'remote-api' });
     this.getExamples = getExamples;
     this.fetch = fetch;
@@ -127,7 +128,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers,
         signal: ctrl.signal,
-        body: JSON.stringify({ model: cfg.modelo || preset.model, messages, temperature: 0.95, max_tokens: 220 }),
+        body: JSON.stringify({ model: cfg.modelo || preset.model, messages, temperature: 0.95, max_tokens: 150 }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       data = await res.json();

@@ -154,7 +154,8 @@ test('modo de interação: ações, conversa offline, Esc e restauração do cli
     await sleep(1200); // inclui o "digitando…" da resposta
     const lastMsg = await win.evaluate(() => document.querySelector('#log .msg.jojo:last-child')?.textContent);
     assert.ok(lastMsg && lastMsg.length > 3);
-    assert.equal((await dbg(app)).behavior, 'sleep');
+    // Dormir? Nunca: ele fica furioso em vez de dormir.
+    assert.equal((await dbg(app)).behavior, 'angry');
 
     await win.keyboard.press('Escape');
     await sleep(300);
@@ -420,13 +421,14 @@ test('pergunta sem resposta programada: pesquisa (fonte local falsa) e responde 
     assert.equal(r.intent, 'web');
     assert.match(r.text, /plantas usam luz/);
     assert.match(r.text, /Fonte: Wikipédia/);
-    assert.equal(hits.length, 1);
-    assert.match(hits[0], /gsrsearch=fotoss%C3%ADntese/);
+    // Wikipédia e DuckDuckGo em paralelo; vale a Wikipédia.
+    assert.equal(hits.length, 2);
+    assert.ok(hits.some((h) => /gsrsearch=fotoss%C3%ADntese/.test(h)));
     // Desligada nas configurações: não acessa a rede.
     await app.evaluate(() => globalThis.__jojo.store.update({ webSearch: false }));
     const r2 = await app.evaluate(() => globalThis.__jojo.companion.chat('quem foi Santos Dumont?'));
     assert.notEqual(r2.intent, 'web');
-    assert.equal(hits.length, 1);
+    assert.equal(hits.length, 2);
   } finally {
     await quit(app);
     server.close();

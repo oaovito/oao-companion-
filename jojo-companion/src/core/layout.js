@@ -29,16 +29,36 @@ export function placeAround(anchor, size, workArea, { order = ['top', 'right', '
         r = { x: right(anchor) + gap, y: target.y - size.height * 0.75, ...size };
         break;
     }
-    // Desliza ao longo da borda para caber no monitor, mantendo o lado.
-    const slid = slideAlong(r, side, workArea);
+    // Desliza ao longo da borda para caber no monitor, mantendo o lado; se bater
+    // num obstáculo (barra, painel), pula para depois dele no mesmo lado.
+    let slid = slideAlong(r, side, workArea);
+    for (let k = 0; k < 4; k++) {
+      const hit = avoid.find((a) => a && overlapArea(slid, a) > 0);
+      if (!hit) break;
+      slid = slideAlong(pushPast(slid, side, hit, gap), side, workArea);
+    }
     const fits = rectInside(slid, workArea) && overlapArea(slid, anchor) === 0 &&
       avoid.every((a) => !a || overlapArea(slid, a) === 0);
-    attempts.push({ rect: slid, side, fits });
+    attempts.push({ rect: clampRectInto(slid, workArea), side });
     if (fits) return finalize(slid, side, target);
   }
-  // Nada coube perfeitamente: usa a primeira tentativa forçada para dentro do monitor.
-  const a = attempts[0];
-  return finalize(clampRectInto(a.rect, workArea), a.side, target, true);
+  // Nada coube: a tentativa (já dentro do monitor) que menos cobre o JoJo e os outros anexos.
+  const cost = (r) => 2 * overlapArea(r, anchor) + avoid.reduce((sum, a) => sum + (a ? overlapArea(r, a) : 0), 0);
+  const best = attempts.reduce((a, b) => (cost(b.rect) < cost(a.rect) ? b : a));
+  return finalize(best.rect, best.side, target, true);
+}
+
+function pushPast(r, side, obstacle, gap) {
+  switch (side) {
+    case 'top':
+      return { ...r, y: obstacle.y - r.height - gap };
+    case 'bottom':
+      return { ...r, y: bottom(obstacle) + gap };
+    case 'left':
+      return { ...r, x: obstacle.x - r.width - gap };
+    default:
+      return { ...r, x: right(obstacle) + gap };
+  }
 }
 
 function slideAlong(r, side, wa) {
