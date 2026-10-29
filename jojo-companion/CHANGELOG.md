@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.31.2 — 2026-10-29
+
+### Corrigido
+- **Bronca do Instagram em qualquer atividade**: interrompe animação, rotina, jogo, supino, sono,
+  chat aberto e também o foco junto (antes, no foco, virava só um lembrete gentil). A fala não é
+  mais atropelada (ex.: pelo "acordei") e, se o JoJo estiver fugindo do cursor ou escondido, a bronca
+  sai na próxima checagem em vez de esperar 2 min. Modo silencioso continua sem bronca.
+
 ## 0.31.1 — 2026-10-29
 
 ### Adicionado

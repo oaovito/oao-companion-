@@ -941,6 +941,9 @@ export class Companion {
   say(text, kind = 'speech', { spontaneous = false, category = null, reaction = null } = {}) {
     if (!this.started || this.userHidden || this.ghost || this.lolHidden) return false;
     if (spontaneous && this.bubble) return false;
+    // Fala importante (bronca, resposta) ainda sendo medida: a espontânea não passa por cima.
+    if (spontaneous && this.clock.now() - (this.importantSayAt ?? -Infinity) < 1500) return false;
+    if (!spontaneous) this.importantSayAt = this.clock.now();
     if (spontaneous && this.clock.now() - this.lastSpokeAt < MIN_SPONTANEOUS_GAP[this.store.get().speechFrequency]) return false;
     if (this.avoid.state === 'fleeing' || this.avoid.state === 'hidden') return false;
     // Não abrir balão sobre o cursor.
@@ -1804,16 +1807,19 @@ export class Companion {
     const now = this.clock.now();
     this._onLol(lol, now);
     if (instagram && !this.instagram.inside) this.log('info', 'Instagram em primeiro plano.');
-    if (!this.instagram.update(now, instagram, cfg, this._canNag() && this.avoid.state !== 'fleeing')) return false;
+    // A bronca vale em qualquer atividade (animação, rotina, jogo, foco, chat aberto, dormindo…).
+    // Só espera o JoJo poder aparecer: fugindo do cursor, escondido ou sendo arrastado,
+    // tenta de novo na próxima checagem (1,5 s) em vez de perder a bronca.
+    const canShow = this._canNag() && this.avoid.state !== 'fleeing' && this.avoid.state !== 'hidden' && !this.dragging;
+    if (!this.instagram.update(now, instagram, cfg, canShow)) return false;
     // Reincidência: a partir da 3ª bronca em 20 min, raiva de verdade (vermelho).
-    // Durante o foco: puxa de volta sem cobrança (nada de bronca).
-    if (this.focus) {
-      this.say('Volta pro foco quando der. Sem cobrança. Eu espero.', 'speech');
-      return true;
+    const angry = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3).length >= 2;
+    if (!this._nag(angry ? 'instagramAngry' : 'instagram', now, { force: true })) {
+      this.instagram.lastScold = -Infinity; // não saiu: tenta de novo na próxima checagem
+      return false;
     }
     this.instagramScolds = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3);
     this.instagramScolds.push(now);
-    this._nag(this.instagramScolds.length >= 3 ? 'instagramAngry' : 'instagram', now);
     return true;
   }
 
@@ -2347,17 +2353,25 @@ export class Companion {
     return profileVars(this.personality.get()).companion;
   }
 
-  _nag(category, now) {
+  /** Bronca/lembrete. `force`: interrompe qualquer atividade (animação, rotina, foco, chat). Retorna se falou. */
+  _nag(category, now, { force = false } = {}) {
     if (!this.interaction) {
       this.mover.stop();
       if (this.behavior.state === 'walk') this.behavior.finish('walk', now);
     }
+    if (force) this.ambientQueue.length = 0; // rotina/sequência em andamento não atropela a bronca
     this.hideBubble();
     // A reação corporal vem da própria fala (julgamento, dedo em riste…).
-    if (!this.sayCategory(category) && !this.interaction) this.react('judge');
+    const said = this.sayCategory(category);
+    if (force) {
+      const p = this.phrases.has(category) ? this.phrases.categories[category] : null;
+      const reaction = (p && p.reaction) || 'judge';
+      if (STATES[reaction] && this.behavior.state !== reaction) this.behavior.request(reaction, { now, force: true });
+    } else if (!said && !this.interaction) this.react('judge');
     // Lembretes (refeições, treino): JoJo com o relógio na mão.
     if (REMINDER_CATS.test(category)) this.fireEvent('lembrete', { speak: false });
     this._schedule(0);
+    return said;
   }
 
   _scheduleReminderCheck(ms = 60000) {

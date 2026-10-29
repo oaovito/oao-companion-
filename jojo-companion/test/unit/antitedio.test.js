@@ -114,7 +114,7 @@ test('companion: /jogo no chat, reflexo com "JÁ", clique rápido e bolhas conta
   assert.equal(e.companion.gesture('bolha'), true);
 });
 
-test('foco junto: estuda ao lado, marca o tempo, bloco concluído dá pausa e conquista; Instagram vira lembrete gentil', async () => {
+test('foco junto: estuda ao lado, marca o tempo, bloco concluído dá pausa e conquista; Instagram dá bronca e o foco continua', async () => {
   const e = started();
   e.companion.enterInteraction('test');
   const r = await chatAdv(e, '/foco 10');
@@ -125,8 +125,10 @@ test('foco junto: estuda ao lado, marca o tempo, bloco concluído dá pausa e co
   const said = [];
   const orig = e.companion.say.bind(e.companion);
   e.companion.say = (t, k, o) => (said.push(t), orig(t, k, o));
-  e.companion.onForeground({ instagram: true });
-  assert.ok(said.some((t) => /Sem cobrança/.test(t)), 'sem bronca durante o foco');
+  assert.equal(e.companion.onForeground({ instagram: true }), true, 'bronca também durante o foco');
+  assert.equal(e.companion.behavior.state, 'judge');
+  e.clock.advance(5000);
+  assert.match(e.companion.behavior.anim, /^cat_estudarJunto/, 'depois da bronca volta a estudar junto');
   e.clock.advance(11 * 60e3);
   assert.equal(e.companion.focus, null);
   assert.ok(said.some((t) => /Bloco concluído/.test(t)));
