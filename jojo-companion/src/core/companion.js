@@ -2363,9 +2363,10 @@ export class Companion {
 
   // ---------------------------------------------------------------- outros comandos
 
-  notifyAlreadyRunning() {
+  notifyAlreadyRunning(tries = 4) {
     if (this.userHidden) this.setVisible(true);
-    this.sayCategory('alreadyRunning', { force: true });
+    // Fugindo do cursor ele não fala: tenta de novo quando a fuga acabar.
+    if (!this.sayCategory('alreadyRunning', { force: true }) && tries > 1) this.clock.setTimeout(() => this.notifyAlreadyRunning(tries - 1), 1500);
   }
 
   // ---------------------------------------------------------------- layout / renderização

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.29.1 — 2026-10-29
+
+### Corrigido
+- Aviso "já estou aberto" (segunda execução) se perdia quando o JoJo estava fugindo do cursor; agora tenta de novo depois da fuga.
+
 ## 0.29.0 — 2026-10-29
 
 ### Adicionado

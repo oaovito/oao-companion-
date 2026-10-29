@@ -337,6 +337,7 @@ test('instância única: segunda execução encerra e a primeira avisa', async (
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-e2e-'));
   const { app } = await launch({ userData });
   try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
     const second = spawn(ELECTRON, ['--no-sandbox', ROOT], { env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData }, stdio: 'ignore' });
     const code = await new Promise((r) => {
       const t = setTimeout(() => {
