@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.28.0 — 2026-10-29
+
+### Adicionado
+- **Google Agenda** (só leitura): o JoJo sugere conectar (uma vez, depois de 10 min aberto) e guia
+  no chat ("conectar agenda"): ela copia o "Endereço secreto no formato iCal" e cola no chat. Ele
+  avisa antes de cada compromisso (padrão 10 min) e quando começa, com animação do tipo (treino →
+  duplo bíceps, reunião → modo foco, aula → lendo, festa → comemora, médico → lembrete), resume o dia
+  de manhã e responde "o que eu tenho hoje/amanhã?". "Desconectar agenda" remove.
+  Busca a agenda no Google a cada 10 min; o endereço fica só neste PC. Configurações → Google Agenda.
+
 ## 0.27.0 — 2026-10-29
 
 ### Adicionado

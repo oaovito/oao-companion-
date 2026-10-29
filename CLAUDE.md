@@ -36,6 +36,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (`assets/catalog/animacoes.json`, `src/core/catalog/`), 3 intensidades, motor de variedade (memória 30,
   pesos dinâmicos, humor, horário, temporada), animações e falas ambientes; `/anim <nome>`; doc `docs/ANIMACOES.md`. Cor por emoção
   (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
+- Google Agenda: JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
+- Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?".
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
 - Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
@@ -83,7 +85,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
    Também local e desligável: título da janela do **Spotify** ("Artista - Música", para reagir à música) e
    detecção do **League of Legends** em primeiro plano (título/executável → sim/não; JoJo fica de mau humor e some).
-   Saídas para a internet: **conversa online** (texto da conversa ao provedor de IA), perguntas de
+   Saídas para a internet: **Google Agenda** (só leitura, endereço secreto iCal colado por ela; busca a cada 10 min), **conversa online** (texto da conversa ao provedor de IA), perguntas de
    conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. Sons desligados por padrão; **"iniciar com o Windows" ligado por padrão** (desmarcável).

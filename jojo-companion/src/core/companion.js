@@ -23,6 +23,7 @@ import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
+import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -133,6 +134,10 @@ export class Companion {
         return { modo: st.ambienteModo, surpresas: st.surpresas };
       },
     });
+    // Google Agenda: eventos lidos do endereço iCal (o main busca); avisos já dados.
+    this.calendar = { events: [], error: null, lastSync: 0 };
+    this.calendarWarned = new Set();
+    this.onCalendarConnect = null; // async (url) => {ok, count, error}
     this.ambientItem = null; // item do catálogo tocando agora (ambiente ou pedido)
     this.ambientQueue = [];
     this.walkTarget = null;
@@ -1092,6 +1097,16 @@ export class Companion {
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
     await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
+    // Google Agenda: conectar (guia/link colado), "o que tenho hoje?", desconectar.
+    const ag = await this._agendaChat(text);
+    if (ag) {
+      this.conversations.addMessage(conv.id, 'jojo', ag);
+      this.conversations.setStatus(conv.id, 'ready');
+      this.talkingUntil = this.clock.now() + 2000;
+      if (!/^Conectado/.test(ag)) this.playCatalog('lembrete', { source: 'chat', speak: false });
+      this._applyLayout(true);
+      return { text: ag, action: null, intent: 'agenda', conversationId: conv.id, provider: this.dialogue.describe() };
+    }
     // "O que tá tocando?": a música do Spotify, no jeito dele.
     if (this.nowPlaying && /\b(o ?que|qual|que) (musica |som )?(ta|esta|tá|está)? ?tocando\b|\bque musica e essa\b/.test(normalizeText(text))) {
       const np = this.nowPlaying;
@@ -1637,6 +1652,120 @@ export class Companion {
     return true;
   }
 
+  // ---------------------------------------------------------------- Google Agenda
+
+  /** Eventos novos da agenda (vindos do main). */
+  setCalendar({ events = [], error = null } = {}) {
+    this.calendar = { events, error, lastSync: this.clock.now() };
+  }
+
+  get agendaConectada() {
+    const s = this.store.get();
+    return !!(s.agendaUrl && s.agendaAtiva);
+  }
+
+  /**
+   * A cada minuto: avisa antes de cada compromisso e quando começa, com a
+   * animação do tipo (treino, médico, reunião…); resumo do dia na primeira vez
+   * de manhã; e, uma única vez, sugere conectar a agenda.
+   */
+  checkAgenda(date = new Date()) {
+    const s = this.store.get();
+    if (!this.started) return null;
+    if (!s.agendaUrl) {
+      // Sugestão (uma vez), depois de 10 min aberto e num momento calmo.
+      if (!s.agendaSugerida && this.clock.now() - (this.startedAt || 0) > 10 * 60e3 && this._canNag() && !this.interaction) {
+        this.store.update({ agendaSugerida: true });
+        this._nag('agendaSugestao', this.clock.now());
+        const c = this.conversations.create({ id: 'agenda', title: 'Conectar a Google Agenda', kind: 'reminder' });
+        this.conversations.addMessage(c.id, 'jojo', 'Diz "conectar agenda" que eu te guio. Leva um minuto.');
+        this.conversations.setStatus(c.id, 'needsInput', 'Diga "conectar agenda" no chat.');
+        return 'sugestao';
+      }
+      return null;
+    }
+    if (!s.agendaAtiva || !this.calendar.events.length) return null;
+    const now = date.getTime();
+    const soon = agendaBetween(this.calendar.events, new Date(now - 3 * 60e3), new Date(now + s.agendaAvisoMin * 60e3 + 60e3)).filter((e) => !e.diaInteiro);
+    // Resumo do dia: primeira checagem depois das 6h.
+    const hoje = dayKey(date);
+    if (date.getHours() >= 6 && this.agendaResumoDia !== hoje && this._canNag() && !this.interaction) {
+      this.agendaResumoDia = hoje;
+      const dia = agendaDoDia(this.calendar.events, date).filter((e) => e.fim > date);
+      if (dia.length) {
+        const first = dia[0];
+        this.say(`Hoje: ${dia.length} compromisso${dia.length > 1 ? 's' : ''}. ${first.diaInteiro ? first.titulo : `O próximo às ${hhmm(first.inicio)}: ${first.titulo}`}.`, 'speech');
+        this.fireEvent('lembrete', { speak: false });
+        return 'resumo';
+      }
+    }
+    for (const e of soon) {
+      const key = `${e.uid || e.titulo}@${e.inicio.getTime()}`;
+      const mins = Math.round((e.inicio.getTime() - now) / 60e3);
+      const kind = eventKind(e.titulo);
+      const vars = { titulo: e.titulo, hora: hhmm(e.inicio), min: String(Math.max(1, mins)) };
+      if (mins > 0 && mins <= s.agendaAvisoMin && !this.calendarWarned.has(`${key}:aviso`)) {
+        if (!this._canNag() || this.interaction) return null;
+        this.calendarWarned.add(`${key}:aviso`);
+        this._agendaSay(`agenda_${kind}`, vars, KIND_ANIMS[kind]);
+        return 'aviso';
+      }
+      if (mins <= 0 && mins > -3 && !this.calendarWarned.has(`${key}:inicio`)) {
+        if (!this._canNag() || this.interaction) return null;
+        this.calendarWarned.add(`${key}:inicio`);
+        this.calendarWarned.add(`${key}:aviso`);
+        this._agendaSay('agendaComecou', vars, KIND_ANIMS[kind]);
+        return 'inicio';
+      }
+    }
+    return null;
+  }
+
+  _agendaSay(category, vars, anim) {
+    const p = this.phrases.pick(category, (tone) => ({ ...profileVars(this.personality.get(), tone), ...vars }));
+    if (p) this.say(p.text, 'speech');
+    this.playCatalog(anim, { source: 'evento', speak: false });
+  }
+
+  /** Conversa sobre a agenda: guia de conexão, link colado, "o que tenho hoje?". Retorna texto ou null. */
+  async _agendaChat(text) {
+    const n = normalizeText(text);
+    const url = findIcalUrl(text);
+    if (url) {
+      if (!this.onCalendarConnect) return 'Não consigo conectar agora. Tenta de novo depois.';
+      const r = await this.onCalendarConnect(url);
+      if (!r || !r.ok) return `Esse link não funcionou${r && r.error ? ` (${r.error})` : ''}. Confere se copiou o "Endereço secreto no formato iCal" inteiro.`;
+      this.conversations.setStatus('agenda', 'idle');
+      this.fireEvent('sucesso', { speak: false });
+      const hoje = agendaDoDia(this.calendar.events, new Date());
+      return `Conectado. Agora eu cobro seus compromissos, ${profileVars(this.personality.get(), 'serio').nome}. Hoje você tem ${hoje.length}. Aviso ${this.store.get().agendaAvisoMin} min antes.`;
+    }
+    if (/\b(desconecta|desliga|remove|tira)\w* (a |minha )?(google )?agenda\b|\bdisconnect (my )?calendar\b/.test(n)) {
+      this.store.update({ agendaUrl: '' });
+      this.setCalendar({ events: [] });
+      return 'Agenda desconectada. Agora se vira sozinha.';
+    }
+    if (/\b(conecta|conectar|integra|integrar|liga|ligar|configura|configurar|vincula|vincular)\w* (a |minha |com a |com )?(google )?(agenda|calendario|google calendar)\b|\bconnect (my )?(google )?calendar\b/.test(n)) {
+      return [
+        'Bora. É rápido:',
+        '1) Abre calendar.google.com no navegador e clica na engrenagem → Configurações.',
+        '2) Na esquerda, em "Configurações das minhas agendas", clica na sua agenda.',
+        '3) Desce até "Integrar agenda" e copia o "Endereço secreto no formato iCal".',
+        '4) Cola aqui no chat. Eu só leio os compromissos, nada sai deste PC além de buscar a agenda.',
+      ].join('\n');
+    }
+    if (/\b(o que|oque|que) (eu )?(tenho|tem) (hoje|amanha|pra hoje)\b|\b(minha|a) agenda\b|\bcompromissos?\b|\bproximo compromisso\b|\bwhats? on my calendar\b/.test(n)) {
+      if (!this.store.get().agendaUrl) return 'Sua agenda não está conectada. Diz "conectar agenda" que eu te guio.';
+      const amanha = /amanha/.test(n);
+      const base = new Date();
+      const dia = amanha ? new Date(base.getFullYear(), base.getMonth(), base.getDate() + 1, 12) : base;
+      const lista = agendaDoDia(this.calendar.events, dia).filter((e) => amanha || e.fim > base);
+      if (!lista.length) return amanha ? 'Amanhã está livre. Dia de treino, então.' : 'Nada mais hoje. Sem desculpa pra não treinar.';
+      return `${amanha ? 'Amanhã' : 'Hoje'}: ${lista.slice(0, 6).map((e) => `${e.diaInteiro ? 'dia todo' : hhmm(e.inicio)} ${e.titulo}`).join('; ')}.`;
+    }
+    return null;
+  }
+
   /** Nome do personagem (perfil). */
   get companionName() {
     return profileVars(this.personality.get()).companion;
@@ -1662,6 +1791,7 @@ export class Companion {
       this.checkDailyReminder(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
+      this.checkAgenda(new Date());
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);
   }

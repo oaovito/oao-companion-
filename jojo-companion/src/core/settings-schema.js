@@ -1,6 +1,8 @@
 // Esquema das configurações: padrões, validação, migração de versão.
 // Qualquer campo inválido volta ao padrão sem invalidar o arquivo inteiro.
 
+import { isGoogleIcalUrl } from './calendar.js';
+
 export const SETTINGS_VERSION = 2;
 
 export const DEFAULTS = Object.freeze({
@@ -35,6 +37,11 @@ export const DEFAULTS = Object.freeze({
   avisoRaros: true,             // aviso visual suave antes de algo raro
   falasAmbientes: true,         // frases curtas sozinho enquanto ela trabalha
   microMovimentos: 'normal',    // normal | discreto | desligado (respiração, guelras, bolhas…)
+  // Google Agenda (só leitura) pelo endereço secreto iCal; fica só neste PC.
+  agendaUrl: '',
+  agendaAtiva: true,
+  agendaAvisoMin: 10,           // aviso antes de cada compromisso (5 – 60 min)
+  agendaSugerida: false,        // o JoJo já sugeriu conectar a agenda
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   position: null,               // {x, y, displayId} — última posição válida
@@ -49,6 +56,7 @@ const RANGES = {
   activity: [0, 1],
   bubbleScale: [0.8, 1.6],
   interactionTimeoutSec: [10, 600],
+  agendaAvisoMin: [5, 60],
 };
 
 const ENUMS = {
@@ -63,7 +71,7 @@ const ENUMS = {
   microMovimentos: ['normal', 'discreto', 'desligado'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -119,6 +127,10 @@ export function sanitize(input) {
       if (typeof src[k] === 'string' && src[k].length <= 300 && !/[\r\n]/.test(src[k])) out[k] = src[k].trim();
       else issues.push(k);
     }
+  }
+  if ('agendaUrl' in src) {
+    if (src.agendaUrl === '' || isGoogleIcalUrl(src.agendaUrl)) out.agendaUrl = String(src.agendaUrl).trim();
+    else issues.push('agendaUrl');
   }
   if ('interactionHotkey' in src) {
     if (isValidAccelerator(src.interactionHotkey)) out.interactionHotkey = src.interactionHotkey;

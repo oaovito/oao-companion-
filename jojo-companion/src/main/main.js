@@ -1,5 +1,6 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
+import { parseIcs } from '../core/calendar.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
@@ -305,6 +306,41 @@ function main() {
       }, 60);
     };
     companion.onOpenApp = (id) => appWin.open(id);
+
+    // Google Agenda (só leitura): busca o .ics do endereço secreto a cada 10 min.
+    const calBase = TEST ? process.env.JOJO_CAL_BASE : null;
+    const fetchCalendar = async (url) => {
+      const res = await net.fetch(calBase ? `${calBase}/basic.ics` : url, { headers: { 'User-Agent': `JoJoCompanion/${app.getVersion()}` } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      if (!/BEGIN:VCALENDAR/.test(text)) throw new Error('não é uma agenda');
+      return parseIcs(text);
+    };
+    const syncCalendar = async () => {
+      const s = store.get();
+      if (!s.agendaUrl || !s.agendaAtiva) return;
+      try {
+        companion.setCalendar({ events: await fetchCalendar(s.agendaUrl) });
+        companion.reportSystem('agenda', 'Sistema: Google Agenda', null);
+      } catch (err) {
+        log('warn', `Agenda: ${err.message}`);
+        companion.setCalendar({ events: companion.calendar.events, error: err.message });
+        companion.reportSystem('agenda', 'Sistema: Google Agenda', `Não consegui ler a Google Agenda (${err.message}).`);
+      }
+    };
+    companion.onCalendarConnect = async (url) => {
+      try {
+        const events = await fetchCalendar(url);
+        store.update({ agendaUrl: url, agendaAtiva: true });
+        companion.setCalendar({ events });
+        return { ok: true, count: events.length };
+      } catch (err) {
+        return { ok: false, error: err.message };
+      }
+    };
+    syncCalendar();
+    const calTimer = setInterval(syncCalendar, 10 * 60e3);
+    app.on('will-quit', () => clearInterval(calTimer));
     companion.onOpenSettings = () => openSettings();
     ipcMain.handle('app:state', (e) => (fromApp(e) ? appState() : null));
     ipcMain.handle('app:select', (e, id) => {
@@ -376,6 +412,7 @@ function main() {
     });
 
     store.onChange((s, changed) => {
+      if (changed.includes('agendaUrl') || changed.includes('agendaAtiva')) syncCalendar();
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();
       if (changed.includes('startWithWindows')) applyAutostart();

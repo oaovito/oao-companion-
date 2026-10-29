@@ -1368,6 +1368,87 @@
     "{musica}! Festa no aquário.",
     "Isso é festa. Cadê o confete?"
    ]
+  },
+  "agendaSugestao": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "lecture",
+   "lines": [
+    "{nome}, conecta sua Google Agenda comigo. Eu te cobro os compromissos. Diz \"conectar agenda\".",
+    "Quer que eu cuide da sua agenda? Fala \"conectar agenda\" no chat. Leva um minuto."
+   ]
+  },
+  "agenda_treino": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Treino marcado é treino feito. Bora.",
+    "{titulo} às {hora}. Pega a garrafa e vai, {nome}."
+   ]
+  },
+  "agenda_saude": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "lecture",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Não esquece documento. Sério.",
+    "{titulo} às {hora}, {nome}. Saúde primeiro."
+   ]
+  },
+  "agenda_reuniao": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "lecture",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Postura, água e foco.",
+    "{titulo} às {hora}. Fecha o Instagram e vai."
+   ]
+  },
+  "agenda_estudo": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "lecture",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Cérebro também é músculo.",
+    "{titulo} às {hora}, {nome}. Caderno aberto."
+   ]
+  },
+  "agenda_festa": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Festa! Eu vou junto. Mentalmente.",
+    "{titulo} às {hora}. Arruma esse cabelo."
+   ]
+  },
+  "agenda_comida": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Come direito, {nome}.",
+    "{titulo} às {hora}. Finalmente comida."
+   ]
+  },
+  "agenda_outro": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "lecture",
+   "lines": [
+    "Daqui a {min} min: {titulo}. Não vai atrasar, {nome}.",
+    "{titulo} às {hora}. Anotado e cobrado."
+   ]
+  },
+  "agendaComecou": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "lecture",
+   "lines": [
+    "Começou: {titulo}. Vai.",
+    "{titulo} agora, {nome}. Já devia estar lá."
+   ]
   }
  }
 }

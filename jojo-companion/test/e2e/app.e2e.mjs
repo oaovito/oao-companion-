@@ -659,3 +659,33 @@ test('catálogo: /anim toca no renderer, docinho faz nojo e o JoJo fica clicáve
     await quit(app);
   }
 });
+
+test('Google Agenda: link colado no chat conecta (servidor local falso) e o JoJo responde a agenda do dia', async () => {
+  const now = new Date();
+  const p2 = (n) => String(n).padStart(2, '0');
+  const later = new Date(now.getTime() + 3 * 3600e3);
+  const stamp = (d) => `${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}T${p2(d.getHours())}${p2(d.getMinutes())}00`;
+  const ics = ['BEGIN:VCALENDAR', 'BEGIN:VEVENT', 'UID:t1', 'SUMMARY:Academia', `DTSTART:${stamp(later)}`, `DTEND:${stamp(new Date(later.getTime() + 3600e3))}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const hits = [];
+  const server = http.createServer((req, res) => {
+    hits.push(req.url);
+    res.setHeader('Content-Type', 'text/calendar');
+    res.end(ics);
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const { app } = await launch({ env: { JOJO_CAL_BASE: `http://127.0.0.1:${server.address().port}` } });
+  try {
+    const url = 'https://calendar.google.com/calendar/ical/teste%40gmail.com/private-0123456789abcdef0123456789abcdef/basic.ics';
+    let r = await app.evaluate(() => globalThis.__jojo.companion.chat('conectar agenda'));
+    assert.match(r.text, /iCal/);
+    r = await app.evaluate((_e, u) => globalThis.__jojo.companion.chat(u), url);
+    assert.match(r.text, /^Conectado/);
+    assert.ok(hits.length >= 1, 'buscou a agenda');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.store.get().agendaUrl), url);
+    r = await app.evaluate(() => globalThis.__jojo.companion.chat('o que eu tenho hoje?'));
+    if (later.getDate() === now.getDate()) assert.match(r.text, /Academia/);
+  } finally {
+    await quit(app);
+    server.close();
+  }
+});

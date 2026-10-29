@@ -13,6 +13,7 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- Diga **"conectar agenda"** no chat: o JoJo conecta sua Google Agenda e cobra seus compromissos.
 - Coloque uma música no **Spotify** e veja o JoJo reagir. Abra o **League of Legends** e veja o mau humor.
 - **264 animações novas**: o JoJo faz coisas sozinho enquanto você trabalha (selfie, espelho,
   halteres, dancinha viral, modo fera, peidinho com bolhas…) e solta frases curtas. Peça no chat:
