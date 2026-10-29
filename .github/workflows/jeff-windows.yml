@@ -44,7 +44,7 @@ jobs:
 
       - name: Medir CPU e memória
         if: always()
-        run: node scripts/measure.mjs > measure-windows.json
+        run: node scripts/measure.mjs | Tee-Object -FilePath measure-windows.json
         env:
           MEASURE_SECONDS: '20'
 
