@@ -24,19 +24,44 @@ export class Animator {
     this.from = { ...this.defaults };
     this.nextBlink = 0;
     this.blinkStart = -1;
+    // Variações: animações com `variantOf` entram no sorteio da animação-base.
+    this.variants = {};
+    for (const [key, a] of Object.entries(data.animations)) {
+      if (a.variantOf && data.animations[a.variantOf]) (this.variants[a.variantOf] ||= [a.variantOf]).push(key);
+    }
+    this.lastVariant = {};
+  }
+
+  /** Lista de variações da animação (inclui a própria). */
+  variantsOf(name) {
+    return this.variants[name] || [name];
+  }
+
+  /** Sorteia uma variação diferente da última usada para essa animação. */
+  _pickVariant(name) {
+    const list = this.variantsOf(name);
+    if (list.length === 1) return name;
+    const options = list.filter((k) => k !== this.lastVariant[name]);
+    const key = options[Math.floor(this.rng() * options.length) % options.length];
+    this.lastVariant[name] = key;
+    return key;
   }
 
   has(name) {
     return !!this.data.animations[name];
   }
 
-  /** Inicia uma animação, mesclando a partir da pose atual. */
-  play(name, now, { restart = false } = {}) {
-    const anim = this.data.animations[name] || this.data.animations.idle;
+  /**
+   * Inicia uma animação, mesclando a partir da pose atual. `name` é a animação
+   * pedida (base); a variação sorteada fica em `current.variant`.
+   */
+  play(name, now, { restart = false, variant = null } = {}) {
     const key = this.data.animations[name] ? name : 'idle';
     if (this.current && this.current.name === key && !restart) return false;
+    const v = variant && this.variantsOf(key).includes(variant) ? variant : this._pickVariant(key);
+    const anim = this.data.animations[v];
     this.from = { ...this.pose };
-    this.current = { name: key, anim, start: now, blendIn: anim.blendIn ?? this.style.defaultBlendIn ?? 180 };
+    this.current = { name: key, variant: v, anim, start: now, blendIn: anim.blendIn ?? this.style.defaultBlendIn ?? 180 };
     return true;
   }
 
@@ -48,6 +73,12 @@ export class Animator {
   /** Avalia a animação atual em `now`. Retorna {pose, flags}. */
   sample(realNow) {
     if (!this.current) this.play('idle', realNow);
+    // Animações que repetem trocam de variação a cada `rotate` ciclos.
+    const cur = this.current;
+    const rotate = this.data.animations[cur.name].rotate;
+    if (rotate && cur.anim.loop && this.variantsOf(cur.name).length > 1 && realNow - cur.start >= rotate * Math.max(1, cur.anim.duration || 1000)) {
+      this.play(cur.name, realNow, { restart: true });
+    }
     // Escalonamento: o tempo anda em degraus (ex.: 12 quadros por segundo).
     const now = this.stepMs ? this.current.start + Math.floor((realNow - this.current.start) / this.stepMs) * this.stepMs : realNow;
     const { anim, start, blendIn } = this.current;

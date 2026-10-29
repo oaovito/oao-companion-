@@ -850,10 +850,13 @@ export class Companion {
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
-    const vars = profileVars(this.personality.get(), reply.tone);
+    const profile = this.personality.get();
+    const vars = profileVars(profile, reply.tone);
     reply.text = reply.text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+    if (reply.web || reply.webNotFound || reply.webError) Object.assign(reply, this._webReply(reply, profile));
     this.conversations.addMessage(conv.id, 'jeff', reply.text);
-    if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Provedor de IA falhou (${reply.error}); respondi com frases programadas.`);
+    if (reply.webError) this.conversations.setStatus(conv.id, 'blocked', `Pesquisa na internet falhou (${reply.webError}).`);
+    else if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Provedor de IA falhou (${reply.error}); respondi com frases programadas.`);
     else if (/\?\s*$/.test(reply.text)) this.conversations.setStatus(conv.id, 'needsInput', 'Pergunta esperando resposta.');
     else this.conversations.setStatus(conv.id, 'ready');
     const now = this.clock.now();
@@ -863,6 +866,32 @@ export class Companion {
     this._applyLayout(true);
     this._schedule(0);
     return { ...reply, conversationId: conv.id, provider: this.dialogue.describe() };
+  }
+
+  /**
+   * Resposta de pesquisa na internet no jeito do JoJo: abertura e fecho vêm
+   * das falas filtradas pelo perfil (palavrões, humor), o miolo é o resumo da fonte.
+   */
+  _webReply(reply, profile) {
+    const vars = (tone) => ({ ...profileVars(profile, tone), atalho: this.store.get().interactionHotkey });
+    if (reply.webError) {
+      const p = this.phrases.pick('webOffline', vars);
+      return { text: p ? p.text : 'Sem internet agora.', action: p && p.reaction, tone: p ? p.tone : 'serio' };
+    }
+    if (reply.webNotFound) {
+      const p = this.phrases.pick('webNotFound', vars);
+      return { text: p ? p.text : 'Não achei nada sobre isso.', action: p && p.reaction === 'curious' ? 'curious' : null, tone: p ? p.tone : 'serio' };
+    }
+    const intro = this.phrases.pick('webIntro', vars);
+    const outro = this.rng() < 0.6 ? this.phrases.pick('webOutro', vars) : null;
+    const src = ` (Fonte: ${reply.web.source})`;
+    const head = intro ? `${intro.text} ` : '';
+    const tail = outro ? ` ${outro.text}` : '';
+    // normalizeReply limita o texto a 400 caracteres: o resumo cede espaço.
+    let body = reply.web.extract;
+    const room = 400 - head.length - src.length - tail.length;
+    if (body.length > room) body = `${body.slice(0, Math.max(40, room - 1)).replace(/\s+\S*$/, '')}…`;
+    return { text: `${head}${body}${src}${tail}`.slice(0, 400), action: null, tone: intro ? intro.tone : 'serio' };
   }
 
   /** Comandos do menu "/" (chat da Central ou do pet). */
@@ -935,7 +964,7 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'scare') {
       this.behavior.request('scare', { now, force: true });
-    } else if (action === 'judge' || action === 'wave' || action === 'nod' || action === 'comfort' || action === 'lecture') {
+    } else if (['judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad'].includes(action)) {
       this.behavior.request(action, { now, force: true });
     } else if (action === 'quiet') {
       // "Silêncio": ativa o modo silencioso (sem falas espontâneas nem broncas).
@@ -1007,7 +1036,10 @@ export class Companion {
     const now = this.clock.now();
     if (!this.instagram.update(now, instagram, cfg)) return false;
     if (!this._canNag()) return false;
-    this._nag('instagram', now);
+    // Reincidência: a partir da 3ª bronca em 20 min, raiva de verdade (vermelho).
+    this.instagramScolds = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3);
+    this.instagramScolds.push(now);
+    this._nag(this.instagramScolds.length >= 3 ? 'instagramAngry' : 'instagram', now);
     return true;
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "jeff-companion",
   "productName": "Jeff Companion",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Companion de desktop fan-made (não oficial) inspirado no Jeff, o Tubarão Terrestre.",
   "author": "Jeff Companion contributors",
   "license": "MIT",
@@ -53,6 +53,12 @@
     "win": {
       "target": [
         {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
           "target": "nsis",
           "arch": [
             "x64"
@@ -78,6 +84,10 @@
       "artifactName": "JeffCompanion-Setup-${version}.exe",
       "deleteAppDataOnUninstall": false
     },
-    "publish": null
+    "publish": null,
+    "portable": {
+      "artifactName": "JeffCompanion.exe",
+      "unpackDirName": "JeffCompanion"
+    }
   }
 }

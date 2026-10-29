@@ -5,6 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -381,7 +382,7 @@ test('ocultar, pausar, suspensão/retomada e encerramento pela bandeja', async (
   }
 });
 
-test('funciona offline: nenhuma requisição de rede é feita', async () => {
+test('conversa comum funciona offline: nenhuma requisição de rede é feita', async () => {
   const { app } = await launch();
   try {
     await app.evaluate(({ session }) => {
@@ -398,5 +399,35 @@ test('funciona offline: nenhuma requisição de rede é feita', async () => {
     assert.deepEqual(net, []);
   } finally {
     await quit(app);
+  }
+});
+
+test('pergunta sem resposta programada: pesquisa (fonte local falsa) e responde com a fonte', async () => {
+  const hits = [];
+  const server = http.createServer((req, res) => {
+    hits.push(req.url);
+    res.setHeader('Content-Type', 'application/json');
+    if (req.url.startsWith('/w/api.php')) {
+      res.end(JSON.stringify({ query: { pages: { 1: { index: 1, title: 'Fotossíntese', extract: 'Fotossíntese é o processo em que plantas usam luz para produzir energia.' } } } }));
+    } else res.end('{}');
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const { app } = await launch({ env: { JEFF_SEARCH_BASE: base } });
+  try {
+    const r = await app.evaluate(() => globalThis.__jeff.companion.chat('o que é fotossíntese?'));
+    assert.equal(r.intent, 'web');
+    assert.match(r.text, /plantas usam luz/);
+    assert.match(r.text, /Fonte: Wikipédia/);
+    assert.equal(hits.length, 1);
+    assert.match(hits[0], /gsrsearch=fotoss%C3%ADntese/);
+    // Desligada nas configurações: não acessa a rede.
+    await app.evaluate(() => globalThis.__jeff.store.update({ webSearch: false }));
+    const r2 = await app.evaluate(() => globalThis.__jeff.companion.chat('quem foi Santos Dumont?'));
+    assert.notEqual(r2.intent, 'web');
+    assert.equal(hits.length, 1);
+  } finally {
+    await quit(app);
+    server.close();
   }
 });

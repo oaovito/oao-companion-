@@ -14,18 +14,23 @@ aplicativo que está atrás.
 
 ## Instalação (Windows)
 
-Opção A — artefato pronto do CI:
-1. Abra a aba **Actions** do repositório → execução mais recente de *Jeff Companion (Windows)*.
-2. Baixe o artefato `JeffCompanion-windows-x64`.
-3. Rode `JeffCompanion-Setup-<versão>.exe` (instalação por usuário, sem admin) ou
-   descompacte `JeffCompanion-<versão>-win-x64.zip` e execute `Jeff Companion.exe`.
+**Só o `JeffCompanion.exe`**: é um executável portátil único. Basta abrir — não
+precisa instalar nada (nem Node, nem runtime, nem permissão de administrador). As
+configurações ficam em `%APPDATA%\Jeff Companion`.
+
+Onde baixar: aba **Actions** do repositório → execução mais recente de *Jeff
+Companion (Windows)* → artefato `JeffCompanion-windows-x64` → `JeffCompanion.exe`.
+
+Alternativas no mesmo artefato: `JeffCompanion-Setup-<versão>.exe` (instala por
+usuário, com atalho no menu Iniciar) ou `JeffCompanion-<versão>-win-x64.zip`.
+O portátil leva alguns segundos a mais para abrir (ele se descompacta a cada início).
 
 Opção B — gerar localmente (Windows, Node.js 22+):
 
 ```powershell
 cd jeff-companion
 npm ci
-npx electron-builder --win --x64     # gera dist\JeffCompanion-Setup-*.exe e dist\*.zip
+npx electron-builder --win --x64     # gera dist\JeffCompanion.exe, dist\JeffCompanion-Setup-*.exe e dist\*.zip
 ```
 
 O executável não é assinado digitalmente; o SmartScreen pode pedir confirmação
@@ -56,6 +61,19 @@ npm start
 
 Fora do modo de interação o Jeff não recebe cliques: ele foge do cursor e os
 cliques passam para a janela de trás, mesmo durante a animação de fuga.
+
+## Perguntas e emoções
+
+- **Perguntas sem resposta programada**: o JoJo pesquisa na Wikipédia (ou no
+  DuckDuckGo), resume em até 3 frases e responde no jeito dele (abertura e fecho
+  seguem o perfil: palavrões, humor), citando a fonte. Sem internet, ele avisa e
+  a conversa fica como *Bloqueado*. Pedidos contra as diretrizes (ex.: como usar
+  drogas, dieta extrema) não são pesquisados.
+- **85 animações**: as mais comuns (parado, andando, falando, alegria, julgamento,
+  bronca, raiva) têm 4 variações sorteadas; as demais, 2–3.
+- **Cor por emoção**: raiva deixa o JoJo avermelhado, tristeza acinzentado, medo
+  pálido, alegria mais vivo, sono mais escuro, vergonha rosado. Xingar o JoJo
+  deixa ele com raiva; rejeitar, triste; Instagram 3 vezes em 20 min, raiva.
 
 ## Pet, atividades e Central
 
@@ -98,8 +116,12 @@ na conversa, "silêncio" liga o modo silencioso.
 
 ## Privacidade
 
-Funciona 100% offline. Não captura a tela, não usa microfone, não registra
-teclas, cliques ou histórico, e não envia dados. O cursor é consultado apenas
+Funciona offline. Não captura a tela, não usa microfone, não registra teclas,
+cliques ou histórico, e não envia dados — com uma exceção, desligável em
+Configurações: quando você faz uma **pergunta de conhecimento** que as respostas
+programadas não cobrem ("o que é…", "quem foi…", "qual…"), só o texto dessa
+pergunta é enviado à Wikipédia (e, se ela não tiver nada, ao DuckDuckGo) para o
+JoJo responder. Conversa comum nunca acessa a rede. O cursor é consultado apenas
 para calcular a distância até o Jeff. A detecção de tela cheia usa o estado do
 shell e o retângulo/classe da janela em primeiro plano. O fiscal do Instagram
 (Windows) compara o **título da janela em primeiro plano** e o nome do executável

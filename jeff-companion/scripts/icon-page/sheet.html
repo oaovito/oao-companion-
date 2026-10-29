@@ -16,7 +16,7 @@ window.renderSheet = (rigJson, animJson, names, cols, cell, bg) => {
   names.forEach((name, r) => {
     const a = new Animator(animJson, { rng: () => 0.99 });
     const anim = animJson.animations[name];
-    a.play(name, 0);
+    a.play(name, 0, { variant: name });
     for (let k = 0; k < cols; k++) {
       const t = (anim.duration || 1000) * (k / (cols - (anim.loop ? 0 : 1)));
       const s = a.sample(t + 1);

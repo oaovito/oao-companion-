@@ -97,9 +97,21 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | A6 | Crise | Se a Emanuele disser que está em crise/emocionalmente mal, mandar falar com o João para cuidar dela |
 | A7 | Versão web | Não aplicável (app só desktop) |
 
+## 8c. Perguntas, animações e emoções (v0.9)
+
+| # | Requisito | Critério de aceitação |
+|---|---|---|
+| Q1 | Pergunta sem resposta | Pergunta de conhecimento sem resposta programada → pesquisa (Wikipédia, depois DuckDuckGo) e resposta no jeito do JoJo, coerente com o perfil (palavrões/humor filtrados), com a fonte |
+| Q2 | Rede mínima | Só o texto da pergunta sai; conversa comum, crise e pedidos contra as diretrizes não acessam a rede; desligável (`webSearch`) |
+| Q3 | Falha | Sem internet: aviso e conversa *Bloqueado* |
+| N1 | Animações | ≥ 2× a v0.8 (33 → 85); comuns com 3–4 variações coerentes com o motivo |
+| N2 | Emoção e cor | Raiva avermelha, tristeza acinzenta (também medo, alegria, sono, vergonha) |
+| X1 | Distribuição | `JeffCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
+
 ## 9. Privacidade e desempenho
 
 Sem captura de tela, leitura de janelas, microfone, telemetria ou keylogging.
+Rede só para a pesquisa de perguntas (Q2).
 Loop por timers adaptativos (sem busy loop); renderer limita FPS por estado
 (8–60) e para quando oculto.
 

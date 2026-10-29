@@ -31,6 +31,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   humor com drogas sem incentivar uso). Perfil editável em `personality.json`.
 - Toda fala vem com expressão corporal coerente (campo `reaction` nas falas).
 - Visual: estilo recorte de papel (South Park), adulto, fisiculturista, com presas.
+- Animações: 85 (variações sorteadas via `variantOf`; as comuns têm 3–4). Cor por emoção
+  (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
+- Pergunta sem resposta programada: pesquisa (Wikipédia → DuckDuckGo) e responde no jeito do
+  JoJo (abertura/fecho das falas filtradas pelo perfil) citando a fonte.
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`
   (Wake Pet / Tuck Away Pet); movimento reduzido segue o Windows. Sem versão web.
@@ -42,12 +46,15 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    (`setIgnoreMouseEvents(true)`), inclusive durante animações. O app nunca simula cliques.
 2. Jeff **desvia do cursor** (margem padrão 100 px lógicos) sem tremer nem fazer pingue-pongue.
 3. Overlay transparente, sem moldura, sem foco, fora da barra de tarefas, sempre por cima.
-4. Funciona **100% offline**; sem telemetria, captura de tela, microfone ou registro de
+4. Funciona **offline**; sem telemetria, captura de tela, microfone ou registro de
    teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
-   Integrações de IA só opcionais.
+   Única saída para a internet: **perguntas de conhecimento sem resposta programada** vão à
+   Wikipédia/DuckDuckGo (só o texto da pergunta; desligável em Configurações). Conversa comum
+   nunca acessa a rede. Integrações de IA só opcionais.
 5. Sons e "iniciar com o Windows" desligados por padrão.
-6. Conversa marcada como **respostas programadas** (não é IA).
+6. Conversa marcada como **respostas programadas** (+ pesquisa na internet quando ativa; não é IA).
+8. Distribuição: **`JeffCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).
 7. Arte atual é **provisória** — não declarar arte final sem que exista.
 
 Requisitos completos e critérios de aceitação: `jeff-companion/PRODUCT_SPEC.md`.

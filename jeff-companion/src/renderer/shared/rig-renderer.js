@@ -40,7 +40,40 @@ export class RigRenderer {
   }
 
   color(key) {
-    return this.rig.palette[key] || key;
+    return (this.tinted && this.tinted[key]) || this.rig.palette[key] || key;
+  }
+
+  /**
+   * Cor por emoção: canais moodAngry, moodSad… (0..1) misturam a paleta com os
+   * alvos de `rig.moods` (raiva avermelha, tristeza acinzenta…). Resultado em cache.
+   */
+  _applyMoods(pose) {
+    const moods = this.rig.moods;
+    this.tinted = null;
+    if (!moods) return;
+    let key = '';
+    for (const ch of Object.keys(moods)) {
+      if (ch[0] === '_') continue;
+      const v = Math.round(Math.max(0, Math.min(1, pose[ch] || 0)) * 40);
+      if (v) key += `${ch}${v};`;
+    }
+    if (!key) return;
+    if (this._tintKey === key) {
+      this.tinted = this._tintCache;
+      return;
+    }
+    const out = { ...this.rig.palette };
+    for (const ch of Object.keys(moods)) {
+      if (ch[0] === '_') continue;
+      const amt = Math.max(0, Math.min(1, pose[ch] || 0)) * (moods[ch].max ?? 1);
+      if (amt <= 0) continue;
+      for (const [k, to] of Object.entries(moods[ch].to || {})) {
+        if (out[k]) out[k] = mixHex(out[k], to, amt);
+      }
+    }
+    this._tintKey = key;
+    this._tintCache = out;
+    this.tinted = out;
   }
 
   /**
@@ -52,6 +85,7 @@ export class RigRenderer {
   draw(ctx, pose, { origin, scale = 1, facing = 1, alpha = 1 }) {
     const P = (k, d = 0) => (pose[k] ?? d);
     const rig = this.rig;
+    this._applyMoods(pose);
     const W = this.box.width;
     const gx = W / 2;
     const gy = this.ground;
@@ -315,7 +349,8 @@ export class RigRenderer {
     const y = B.y - Math.max(0, b) * 4;
     // Ponta interna sobe quando preocupado (b<0) e levemente quando surpreso (b>0).
     const frown = b > 0.3 ? 0 : this.browFrown;
-    const innerY = y + (b < 0 ? b * 6 : -b * 2) + frown;
+    // browAngry (0..1): ponta interna bem para baixo — cara de raiva.
+    const innerY = y + (b < 0 ? b * 6 : -b * 2) + frown + Math.max(0, pose.browAngry ?? 0) * 6;
     ctx.save();
     ctx.globalAlpha *= Math.min(1, (show - 0.3) / 0.4);
     ctx.strokeStyle = this.color('brow');
@@ -424,4 +459,12 @@ export class RigRenderer {
       ctx.stroke();
     }
   }
+}
+
+/** Mistura duas cores #rrggbb (t = 0 → a, t = 1 → b). */
+export function mixHex(a, b, t) {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const ch = (sh) => Math.round(((pa >> sh) & 255) + (((pb >> sh) & 255) - ((pa >> sh) & 255)) * t);
+  return `#${((1 << 24) | (ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).slice(1)}`;
 }

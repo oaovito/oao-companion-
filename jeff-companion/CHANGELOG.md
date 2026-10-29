@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## 0.9.0 — 2026-10-29
+
+### Adicionado
+- **85 animações** (eram 33). As mais comuns ganharam variações sorteadas, sem
+  repetir a anterior: parado, andando, falando, alegria, julgamento, bronca e
+  raiva com 4; interação, sentado, dormindo, correndo, olhar em volta, curioso,
+  aceno, aceno de cabeça, acolhimento, carinho e tristeza com 3; as demais com 2.
+  Animações paradas/sentadas trocam de variação a cada 2 ciclos.
+- **Cor por emoção**: raiva avermelha (bronca do Instagram, julgamento, susto,
+  arrastado), tristeza acinzenta (acolhimento, rejeição), medo empalidece (fuga,
+  esconderijo), alegria aviva, sono escurece, vergonha rosa. Sobrancelha de raiva.
+- Estados novos **raiva** e **tristeza**: xingar o JoJo deixa ele bravo; rejeitar
+  ("não gosto de você", "vou te desinstalar") deixa triste; a 3ª entrada no
+  Instagram em 20 min vira bronca com raiva.
+- **Pesquisa na internet** para perguntas de conhecimento sem resposta programada:
+  Wikipédia em português (DuckDuckGo de reserva), resumo de até 3 frases, aberto e
+  fechado por falas no jeito do JoJo filtradas pelo perfil, com a fonte. Sem
+  internet: aviso e conversa *Bloqueado*. Pedidos contra as diretrizes (drogas,
+  dieta extrema) não são pesquisados. Desligável em Configurações.
+- **`JeffCompanion.exe` portátil**: um único executável que abre sem instalar
+  nada. "Iniciar com o Windows" aponta para o próprio `.exe`. O CI do Windows abre
+  o portátil e confere que ele fica pronto sem erros.
+
+### Alterado
+- Selo da conversa: "Respostas programadas + pesquisa na internet · não é IA"
+  quando a pesquisa está ligada.
+- "como funciona" só abre a ajuda quando é sobre o JoJo ("como você funciona").
+
 ## 0.8.0 — 2026-10-29
 
 ### Adicionado

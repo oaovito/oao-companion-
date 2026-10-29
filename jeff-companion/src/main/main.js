@@ -1,6 +1,6 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
-import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow } from 'electron';
+import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +9,7 @@ import { SettingsStore } from '../core/settings-store.js';
 import { DEFAULTS } from '../core/settings-schema.js';
 import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../core/personality.js';
 import { DialogueEngine } from '../core/dialogue/engine.js';
+import { WebSearch } from '../core/dialogue/web-search.js';
 import { createLogger } from './logger.js';
 import { OverlayWindow } from './overlay-window.js';
 import { SettingsWindow } from './settings-window.js';
@@ -131,7 +132,16 @@ function main() {
       setTimeout: (fn, ms) => setTimeout(fn, ms),
       clearTimeout: (id) => clearTimeout(id),
     };
-    const dialogue = new DialogueEngine({ log });
+    // Pesquisa na internet (só para perguntas sem resposta programada; desligável).
+    // Em testes, JEFF_SEARCH_BASE aponta para um servidor local falso.
+    const searchBase = TEST && process.env.JEFF_SEARCH_BASE ? process.env.JEFF_SEARCH_BASE : null;
+    const webSearch = new WebSearch({
+      fetch: (url, opts) => net.fetch(url, opts),
+      userAgent: `JeffCompanion/${app.getVersion()} (projeto de fã; desktop)`,
+      bases: searchBase ? { wikipedia: searchBase, duckduckgo: `${searchBase}/ddg` } : {},
+      log,
+    });
+    const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch });
 
     companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, phrases, dialogue, log });
 
@@ -203,6 +213,7 @@ function main() {
         currentId: conv.id,
         current: companion.conversations.snapshot(conv.id),
         commands: commandMenu({ petVisible: !companion.userHidden }),
+        provider: dialogue.describe(),
       };
     }
     let appUpdateTimer = null;
@@ -289,6 +300,10 @@ function main() {
       if (changed.includes('interactionHotkey')) registerHotkey();
       if (changed.includes('startWithWindows')) applyAutostart();
       if (changed.includes('reduceMotion')) applyReducedMotion();
+      if (changed.includes('webSearch')) {
+        appWin.send('app:update', appState());
+        companion._applyLayout(true);
+      }
       if (changed.includes('visible')) appWin.send('app:update', appState());
       if (changed.includes('fullscreenBehavior')) {
         startFullscreenWatch();
@@ -354,7 +369,9 @@ function main() {
 
     // ---------------- Iniciar com o Windows
     function loginOptions() {
-      return { path: process.execPath, args: app.isPackaged ? ['--autostart'] : [app.getAppPath(), '--autostart'] };
+      // No .exe portátil, process.execPath é a cópia temporária extraída: o
+      // Windows deve abrir o próprio JeffCompanion.exe.
+      return { path: process.env.PORTABLE_EXECUTABLE_FILE || process.execPath, args: app.isPackaged ? ['--autostart'] : [app.getAppPath(), '--autostart'] };
     }
 
     function applyAutostart() {
@@ -490,6 +507,7 @@ function main() {
     startFullscreenWatch();
     companion.start();
     trayCtl.refresh();
+    log('info', `Pronto${process.env.PORTABLE_EXECUTABLE_FILE ? ' (executável portátil)' : ''}.`);
     topTimer = setInterval(() => !companion.interaction && overlay.reassertTop(), 8000);
 
     if (store.loadIssues.length) log('warn', `Problemas ao carregar configurações: ${store.loadIssues.join('; ')}`);

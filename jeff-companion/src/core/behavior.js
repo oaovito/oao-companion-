@@ -62,6 +62,8 @@ export const STATES = {
   lecture: { priority: P.INTERACT, phases: [{ anim: 'lecture', ms: 2600 }], next: 'idle' },
   comfort: { priority: P.INTERACT, phases: [{ anim: 'comfort', ms: 4500 }], next: 'idle' },
   scare: { priority: P.INTERACT, phases: [{ anim: 'scare', ms: 1500 }], next: 'idle' },
+  angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },
+  sad: { priority: P.INTERACT, phases: [{ anim: 'sad', ms: 3200 }], next: 'idle' },
   interactIdle: { priority: P.COMMAND, phases: [{ anim: 'interactIdle', loop: true }], external: true },
   dragged: { priority: P.COMMAND, phases: [{ anim: 'dragged', loop: true }], external: true, next: 'land' },
   land: { priority: P.COMMAND, phases: [{ anim: 'land', ms: 750 }], next: 'idle' },

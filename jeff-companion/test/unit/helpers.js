@@ -134,7 +134,7 @@ export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, s
     platform, overlay, clock, store, personality,
     rig: loadJSON('assets/character/jeff.rig.json'),
     phrases: loadJSON('assets/dialogue/pt-BR.json'),
-    dialogue: new DialogueEngine(),
+    dialogue: new DialogueEngine({ searchEnabled: () => store.get().webSearch }),
     rng: seededRng(seed),
   });
   return { companion, clock, overlay, store, personality, env, platform, dir: tmp };

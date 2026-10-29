@@ -4,7 +4,13 @@ import { normalizeReply } from './provider.js';
 import { ScriptedProvider } from './scripted-provider.js';
 
 export class DialogueEngine {
-  constructor({ providers = [], timeoutMs = 8000, log = () => {} } = {}) {
+  /**
+   * @param search pesquisa na internet (WebSearch) para perguntas sem resposta
+   *   programada; `searchEnabled()` diz se a usuária permitiu.
+   */
+  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true } = {}) {
+    this.search = search;
+    this.searchEnabled = searchEnabled;
     this.fallback = new ScriptedProvider();
     this.providers = providers;
     this.activeId = 'scripted';
@@ -23,7 +29,7 @@ export class DialogueEngine {
 
   describe() {
     const a = this.active;
-    return { id: a.id, label: a.label, kind: a.kind, scripted: a.kind === 'scripted' };
+    return { id: a.id, label: a.label, kind: a.kind, scripted: a.kind === 'scripted', webSearch: !!(this.search && this.searchEnabled()) };
   }
 
   async reply(text, context = {}) {
@@ -42,7 +48,20 @@ export class DialogueEngine {
     }
     const out = normalizeReply(raw);
     if (error) out.error = error;
-    this.history.push({ role: 'jeff', text: out.text });
+    if (raw && raw.search && this.search && this.searchEnabled()) {
+      try {
+        const found = await this.search.search(input);
+        if (found) {
+          out.intent = 'web';
+          out.web = found;
+          out.action = null;
+        } else out.webNotFound = true;
+      } catch (e) {
+        this.log('warn', `Pesquisa na internet falhou: ${e.message}`);
+        out.webError = e.message;
+      }
+    }
+    this.history.push({ role: 'jeff', text: out.web ? out.web.extract : out.text });
     if (this.history.length > 20) this.history.splice(0, this.history.length - 20);
     return out;
   }

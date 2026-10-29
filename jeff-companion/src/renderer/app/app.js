@@ -20,6 +20,7 @@ function render(s) {
   st = s;
   if (!selected || !s.conversations.some((c) => c.id === selected)) selected = s.currentId;
   $('name').textContent = s.companionName;
+  if (s.provider) $('badge').textContent = s.provider.webSearch ? 'Respostas programadas + pesquisa na internet · não é IA' : 'Respostas programadas · offline · não é IA';
   document.title = s.companionName;
   $('petToggle').textContent = s.petVisible ? 'Tuck Away Pet' : 'Wake Pet';
   $('petToggle').title = s.petVisible ? `Esconder o ${s.companionName}` : `Mostrar o ${s.companionName}`;

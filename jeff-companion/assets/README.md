@@ -69,6 +69,12 @@ entreaberta), `mouthDepth` (px de abertura com jaw=1), `teeth`/`toothSize`
   t de 0 a 1, easing `inOut` padrão | `in` | `out` | `linear` | `step`),
   flags: `blink`, `z` (Zzz), `dust` (`true` contínuo ou `"burst"`), `sparkle`,
   `hearts`, `mark` (`"!"` ou `"?"`).
+- Variações: `variantOf: "<base>"` coloca a animação no sorteio da base (mesma
+  `duration`/`loop` da base — o teste garante). `rotate: N` na base troca de
+  variação a cada N ciclos (loops).
+- Emoção: canais `moodAngry`, `moodSad`, `moodScared`, `moodJoy`, `moodTired`,
+  `moodShy` (0..1) e `browAngry` (sobrancelha de raiva). A cor de cada emoção fica
+  em `rig.moods` (`{ max, to: { body, bodyShade, muscle, cream } }`).
 - Nomes usados pela máquina de estados: ver `STATES` em `src/core/behavior.js`
   (o teste `assets: toda animação usada…` garante que existam).
 

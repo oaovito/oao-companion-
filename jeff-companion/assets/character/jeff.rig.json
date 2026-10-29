@@ -493,5 +493,60 @@
     ],
     "mouthDepth": 34,
     "toothWidth": 0.4
+  },
+  "moods": {
+    "_notes": "Emoção → cor do corpo. Cada canal (0..1) mistura a cor da paleta com o alvo, até 'max'. Raiva avermelha, tristeza acinzenta, medo empalidece, alegria aquece, cansaço escurece, vergonha rosa.",
+    "moodAngry": {
+      "max": 0.75,
+      "to": {
+        "body": "#c0392b",
+        "bodyShade": "#a2301f",
+        "muscle": "#7a2216",
+        "cream": "#f0b09c"
+      }
+    },
+    "moodSad": {
+      "max": 0.85,
+      "to": {
+        "body": "#8b8e94",
+        "bodyShade": "#777a80",
+        "muscle": "#606369",
+        "cream": "#d3d1cc"
+      }
+    },
+    "moodScared": {
+      "max": 0.6,
+      "to": {
+        "body": "#b4c3df",
+        "bodyShade": "#a0b0cf",
+        "muscle": "#8596b8",
+        "cream": "#f6efe2"
+      }
+    },
+    "moodJoy": {
+      "max": 0.45,
+      "to": {
+        "body": "#6f92de",
+        "bodyShade": "#5c7fca",
+        "muscle": "#4865a3",
+        "cream": "#f8e7c2"
+      }
+    },
+    "moodTired": {
+      "max": 0.5,
+      "to": {
+        "body": "#4e5872",
+        "bodyShade": "#434c64",
+        "muscle": "#353d52",
+        "cream": "#cfc6b4"
+      }
+    },
+    "moodShy": {
+      "max": 0.5,
+      "to": {
+        "body": "#8a7fb8",
+        "cream": "#f2c2c6"
+      }
+    }
   }
 }

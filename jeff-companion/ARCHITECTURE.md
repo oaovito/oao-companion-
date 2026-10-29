@@ -37,7 +37,8 @@ jeff-companion/
     settings-store.js  JSON atômico + backup de arquivo inválido (usado também pelo perfil)
     conversations.js   conversas em memória, status das atividades, comandos "/"
     personality.js     perfil de personalidade, filtro/peso de frases, fiscal do Instagram, lembrete diário
-    dialogue/          interface DialogueProvider, provedor programado, engine com fallback
+    dialogue/          interface DialogueProvider, provedor programado, engine com fallback,
+                       web-search.js (pesquisa Wikipédia/DuckDuckGo com fetch injetado)
   src/main/            integração com Windows/Electron
     main.js            bootstrap, IPC validado, bandeja, atalho, energia, monitores, autostart
     overlay-window.js  janela overlay = adaptador "overlay" do Companion
@@ -93,6 +94,22 @@ Candidatos: 16 direções × 4 distâncias + grade 7×5 por monitor permitido
 cursor ×6 + distância ×0,12 − afastamento + troca de monitor + inversão de direção
 recente + destino à frente do movimento do cursor. Caminho: melhor entre reta e
 curvas laterais.
+
+## Pesquisa na internet
+
+`ScriptedProvider` marca `search: true` quando a mensagem é uma pergunta de
+conhecimento sem resposta programada. O `DialogueEngine` chama `WebSearch.search`
+(no app, `net.fetch` do processo principal; os renderers continuam com
+`connect-src 'none'`). O `Companion` emoldura o resumo com as falas `webIntro`/
+`webOutro` (filtradas pelo perfil) e cita a fonte; falhas viram `webOffline` e
+status *Bloqueado*.
+
+## Animações: variações e emoção
+
+`Animator.play(nome)` sorteia uma variação (`variantOf`) sem repetir a anterior;
+`current.name` continua o nome lógico usado pelos estados. Loops com `rotate`
+trocam de variação a cada N ciclos. Canais `mood*` (0..1) tingem a paleta via
+`rig.moods` no `RigRenderer` (cache por combinação).
 
 ## Assets
 

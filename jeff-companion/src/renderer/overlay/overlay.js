@@ -237,12 +237,12 @@ function renderChat(s, prev) {
   if (title && s.chat.name) title.textContent = `Conversa com o ${s.chat.name}`;
   if (s.chat.provider) {
     providerBadge.textContent = s.chat.provider.scripted
-      ? 'Respostas programadas · offline · não é IA'
+      ? (s.chat.provider.webSearch ? 'Respostas programadas + pesquisa na internet · não é IA' : 'Respostas programadas · offline · não é IA')
       : `${s.chat.provider.label}`;
   }
   if (cmdMenuEl && !cmdMenuEl.classList.contains('hidden')) renderCmdMenu();
   if (wasHidden || !prev || !prev.chat) {
-    if (!logEl.childElementCount) addMsg('jeff', 'Fala. Minhas respostas são programadas (sem IA). Tenta: "oi", "consegui", "treino", "silêncio" ou "me assusta".');
+    if (!logEl.childElementCount) addMsg('jeff', 'Fala. Minhas respostas são programadas (sem IA). Tenta: "oi", "consegui", "treino", "silêncio", "me assusta" — ou me faz uma pergunta.');
     setTimeout(() => chatInput.focus(), 30);
   }
 }
@@ -626,6 +626,9 @@ window.__jeffRenderer = {
   },
   get mouseMode() {
     return mouseMode;
+  },
+  get variant() {
+    return animator && animator.current ? animator.current.variant : null;
   },
   get reduced() {
     return reduced;

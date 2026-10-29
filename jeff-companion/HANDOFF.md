@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.8.0, 2026-10-29)
+# HANDOFF — estado atual (v0.9.0, 2026-10-29)
 
 Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -7,7 +7,7 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 | Ambiente | O que roda | Comando |
 |---|---|---|
-| Linux (sessão de desenvolvimento) | 85 testes unitários/simulação, 11 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
+| Linux (sessão de desenvolvimento) | 98 testes unitários/simulação, 12 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
 | Windows real (GitHub Actions `windows-latest`) | unitários, build do instalador, 8 testes de integração com mouse/teclado reais do sistema, E2E, medição | workflow `.github/workflows/jeff-windows.yml` |
 
 ## Verificado
@@ -47,6 +47,13 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Barra de tarefas cobrindo o Jeff (mitigado reafirmando topmost a cada 8 s).
 
 ## Pendente / limitado
+
+- Pesquisa (v0.9.0): resposta montada a partir do resumo da fonte (não é IA; não
+  "entende" a pergunta). Perguntas muito específicas podem cair num artigo
+  genérico. Neste ambiente de desenvolvimento a internet externa é bloqueada; a
+  pesquisa real é conferida no CI do Windows (`scripts/check-web-search.mjs`).
+- Portátil: descompacta a cada início (alguns segundos a mais); SmartScreen avisa
+  por não ser assinado.
 
 - Pet/atividades (v0.8.0): conversas só em memória (somem ao encerrar). Movimento
   reduzido do Windows lido via `prefers-reduced-motion`; não conferido numa máquina
@@ -89,6 +96,8 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Provedor de diálogo opcional (modelo local/API) implementando `DialogueProvider`.
 
 ## Resultado da última execução do CI
+
+Run #13 (v0.8.0, https://github.com/oaovito/oao-companion-/actions/runs/40810888984): **sucesso**.
 
 Runs #11 (v0.6.0) e #12 (v0.7.0, https://github.com/oaovito/oao-companion-/actions/runs/40809682449):
 **sucesso**. O resultado da v0.8.0 sai no próximo run do workflow.

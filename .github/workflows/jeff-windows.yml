@@ -28,11 +28,20 @@ jobs:
       - name: Testes unitários
         run: npm test
 
-      - name: Gerar instalador e ZIP
+      - name: Gerar executável portátil, instalador e ZIP
         if: success() || failure()
         run: npx electron-builder --win --x64
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Executável portátil (abre sem instalar)
+        if: success() || failure()
+        run: node scripts/smoke-portable.mjs dist/JeffCompanion.exe
+
+      - name: Pesquisa na internet (fontes reais)
+        if: success() || failure()
+        continue-on-error: true
+        run: node scripts/check-web-search.mjs
 
       - name: Integração no Windows (entrada real de mouse/teclado)
         if: success() || failure()

@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = process.argv.find((a) => a.endsWith('.png')) || path.join(ROOT, 'docs', 'animation-sheet.png');
-const only = process.argv.find((a) => /^[a-zA-Z,]+$/.test(a) && a.includes(',')) || null;
+const only = process.argv.find((a) => /^[a-zA-Z_,]+$/.test(a) && a.includes(',')) || null;
 const big = process.argv.includes('--big');
 app.whenReady().then(async () => {
   const win = new BrowserWindow({ show: false });

@@ -189,6 +189,52 @@
       "lines": [
         "Emanuele, isso é sério. Fala agora com o {apoio}. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha."
       ]
+    },
+    "webIntro": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Pesquisei{vocativo}.",
+        "Fui atrás. Presta atenção.",
+        "Resumo, {nome}:",
+        "Anota aí{vocativo}.",
+        { "t": "Pesquisei, porra. De nada.", "tags": ["palavrao"] },
+        { "t": "Pesquisei pra você, {nome}. Uma vez.", "tone": "brincadeira" }
+      ]
+    },
+    "webOutro": {
+      "kind": "speech", "tone": "serio",
+      "lines": [
+        "Agora volta pro trabalho.",
+        "Pronto. Próxima.",
+        "Satisfeita{vocativo}?",
+        "Fim da aula.",
+        { "t": "Viu? Nem precisou do Instagram.", "tone": "brincadeira" },
+        { "t": "Sabedoria sem cocaína, {nome}. Raro.", "tags": ["drogas"], "tone": "brincadeira" },
+        { "t": "Era isso, caralho. Volta pro foco.", "tags": ["palavrao"] }
+      ]
+    },
+    "webNotFound": {
+      "kind": "speech", "tone": "serio", "reaction": "curious",
+      "lines": [
+        "Procurei e não achei nada que preste sobre isso{vocativo}. Pergunta de outro jeito.",
+        "Nem a internet sabe isso, {nome}. Reformula.",
+        { "t": "Pesquisei e veio porra nenhuma. Pergunta diferente.", "tags": ["palavrao"] }
+      ]
+    },
+    "webOffline": {
+      "kind": "speech", "tone": "serio", "reaction": "judge",
+      "lines": [
+        "Tentei pesquisar, mas a internet não respondeu{vocativo}. Tenta de novo depois.",
+        "Sem internet agora, {nome}. Pergunta de novo mais tarde."
+      ]
+    },
+    "instagramAngry": {
+      "kind": "speech", "tone": "serio", "reaction": "angry",
+      "lines": [
+        "Instagram DE NOVO{vocativo}? Tô ficando vermelho de raiva.",
+        "De novo. Fecha isso agora, {nome}.",
+        { "t": "Chega. Fecha o Instagram, porra.", "tags": ["palavrao"] }
+      ]
     }
   }
 }
