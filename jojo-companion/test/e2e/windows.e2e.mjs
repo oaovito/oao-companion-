@@ -277,7 +277,8 @@ test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)'
       await sleep(400);
       said = await app.evaluate(() => {
         const c = globalThis.__jojo.companion;
-        return c.behavior.state === 'judge' && c.bubble ? c.bubble.text : null;
+        // A bronca usa a reação da frase sorteada: julgamento, dedo em riste ou raiva.
+        return ['judge', 'lecture', 'angry'].includes(c.behavior.state) && c.bubble ? c.bubble.text : null;
       });
     }
     assert.ok(said, 'JoJo deu bronca ao abrir o Instagram');
