@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Jeff Companion — Configurações</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../../../assets/icons/app.png" alt="" width="56" height="56">
+    <div>
+      <h1>Jeff Companion</h1>
+      <p class="sub">Projeto de fã, não oficial — sem vínculo com a Marvel. <span id="version"></span></p>
+    </div>
+  </header>
+
+  <div id="notice" class="notice hidden" role="alert"></div>
+
+  <form id="form">
+    <fieldset>
+      <legend>Aparência</legend>
+      <label class="row">Tamanho do Jeff
+        <input type="range" name="size" min="0.6" max="1.8" step="0.05"><output data-for="size" data-fmt="pct"></output>
+      </label>
+      <label class="row">Tamanho dos balões
+        <input type="range" name="bubbleScale" min="0.8" max="1.6" step="0.05"><output data-for="bubbleScale" data-fmt="pct"></output>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Movimento e mouse</legend>
+      <label class="row">Área de segurança do cursor
+        <input type="range" name="safetyMargin" min="40" max="300" step="10"><output data-for="safetyMargin" data-fmt="px"></output>
+      </label>
+      <p class="hint">Quando o ponteiro chega a esta distância do Jeff ou do balão, ele sai do caminho. Os cliques sempre atravessam o Jeff fora do modo de interação.</p>
+      <label class="row">Velocidade
+        <input type="range" name="moveSpeed" min="0.5" max="2" step="0.1"><output data-for="moveSpeed" data-fmt="x"></output>
+      </label>
+      <label class="row">Atividade (frequência de movimento)
+        <input type="range" name="activity" min="0" max="1" step="0.05"><output data-for="activity" data-fmt="activity"></output>
+      </label>
+      <label class="row">Sem espaço seguro ou perseguido
+        <select name="avoidFallback">
+          <option value="fade">Ficar quase transparente</option>
+          <option value="hide">Ficar invisível</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Monitores</legend>
+      <label class="row">Monitor preferido
+        <select name="preferredDisplay" id="displaySelect"></select>
+      </label>
+      <label class="check"><input type="checkbox" name="allowDisplaySwitch"> Pode passear e fugir para outros monitores</label>
+      <label class="row">Aplicativos em tela cheia
+        <select name="fullscreenBehavior">
+          <option value="hide">Ocultar o Jeff</option>
+          <option value="pause">Pausar o Jeff</option>
+          <option value="ignore">Não fazer nada</option>
+        </select>
+      </label>
+      <p class="hint" id="fullscreenStatus"></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Falas e sons</legend>
+      <label class="row">Falas espontâneas
+        <select name="speechFrequency">
+          <option value="off">Desligadas</option>
+          <option value="rare">Raras</option>
+          <option value="normal">Normais</option>
+          <option value="often">Frequentes</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="quietMode"> Modo silencioso (sem falas espontâneas e sem sons)</label>
+      <label class="check"><input type="checkbox" name="sounds"> Sons nas interações</label>
+      <p class="hint" id="dialogueInfo"></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Modo de interação</legend>
+      <label class="row">Atalho
+        <input type="text" name="interactionHotkey" id="hotkeyInput" readonly title="Clique e pressione a nova combinação">
+        <button type="button" id="hotkeyDefault">Padrão</button>
+      </label>
+      <p class="hint" id="hotkeyStatus"></p>
+      <label class="row">Sair sozinho após inatividade
+        <input type="number" name="interactionTimeoutSec" min="10" max="600" step="5"><span class="unit">s</span>
+      </label>
+      <p class="hint">No modo de interação o Jeff para de fugir: faça carinho (passe o mouse sobre ele), dê comida, brinque, arraste ou converse. <kbd>Esc</kbd> ou clicar fora encerra.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Sistema</legend>
+      <label class="check"><input type="checkbox" name="startWithWindows"> Iniciar com o Windows</label>
+      <p class="hint" id="autostartStatus"></p>
+      <div class="buttons">
+        <button type="button" id="reset">Restaurar padrões</button>
+        <button type="button" id="openFolder">Abrir pasta de dados</button>
+      </div>
+      <p class="hint" id="paths"></p>
+    </fieldset>
+  </form>
+
+  <footer>
+    Funciona totalmente offline. Não captura a tela, não lê janelas, não usa microfone, não registra teclas nem cliques e não envia dados.
+    Arte atual: desenho vetorial articulado provisório.
+  </footer>
+  <script type="module" src="settings.js"></script>
+</body>
+</html>

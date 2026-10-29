@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>icons</title></head>
+<body style="margin:0;background:transparent">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+window.renderIcons = async (rigJson, animJson, sizes) => {
+  const rig = new RigRenderer(rigJson);
+  const pose = { ...animJson.channels, jaw: 0.25, blush: 0.5 };
+  const out = {};
+  for (const size of sizes) {
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    // Enquadra o corpo inteiro (caixa 180x150) com pequena margem.
+    const s = size / 168;
+    ctx.translate(size / 2 - 92 * s, size / 2 - 92 * s);
+    rig.draw(ctx, pose, { origin: { x: 0, y: 0 }, scale: s, facing: 1 });
+    out[size] = c.toDataURL('image/png');
+  }
+  return out;
+};
+window.iconsReady = true;
+</script>
+</body></html>

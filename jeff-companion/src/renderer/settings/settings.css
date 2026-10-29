@@ -1,0 +1,76 @@
+:root {
+  --ink: #1b2647;
+  --muted: #5a6788;
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --line: #d8e0ec;
+  --accent: #3f7fd4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 18px 22px 28px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.45 "Segoe UI", "Segoe UI Variable", system-ui, sans-serif;
+}
+
+.top { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+.top h1 { margin: 0; font-size: 22px; }
+.sub { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+
+fieldset {
+  margin: 0 0 12px;
+  padding: 10px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+legend { padding: 0 6px; font-weight: 700; }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr minmax(140px, 220px) auto;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.row select, .row input[type=text], .row input[type=number] {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid #b9c6da;
+  border-radius: 8px;
+  font: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+
+.row input[type=range] { width: 100%; accent-color: var(--accent); }
+output, .unit { min-width: 52px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.check { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; }
+.hint { margin: 2px 0 6px; color: var(--muted); font-size: 12.5px; }
+.hint.error { color: #a12a3c; font-weight: 600; }
+.hint.ok { color: #23753d; }
+.buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+button {
+  padding: 6px 12px;
+  border: 1px solid #b9c6da;
+  border-radius: 8px;
+  background: #eef3fb;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover { background: #e1eaf8; }
+#hotkeyInput.recording { outline: 2px solid var(--accent); background: #eef5ff; }
+.notice { padding: 8px 12px; border-radius: 10px; background: #fff3cd; border: 1px solid #f0d58a; margin-bottom: 12px; }
+.hidden { display: none; }
+kbd { padding: 0 5px; border: 1px solid #b9c6da; border-radius: 4px; background: #f7f9fc; font-size: 12px; }
+footer { color: var(--muted); font-size: 12px; margin-top: 8px; }

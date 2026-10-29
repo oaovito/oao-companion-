@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>sheet</title></head>
+<body style="margin:0;background:#fff">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+import { Animator } from '../../src/renderer/shared/animator.js';
+import { Effects } from '../../src/renderer/shared/effects.js';
+window.renderSheet = (rigJson, animJson, names, cols, cell, bg) => {
+  const rig = new RigRenderer(rigJson);
+  const c = document.createElement('canvas');
+  const rows = names.length;
+  c.width = cols * cell.w; c.height = rows * cell.h;
+  const ctx = c.getContext('2d');
+  if (bg) { ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height); }
+  ctx.font = '12px sans-serif';
+  names.forEach((name, r) => {
+    const a = new Animator(animJson, { rng: () => 0.99 });
+    const anim = animJson.animations[name];
+    a.play(name, 0);
+    for (let k = 0; k < cols; k++) {
+      const t = (anim.duration || 1000) * (k / (cols - (anim.loop ? 0 : 1)));
+      const s = a.sample(t + 1);
+      const fx = new Effects({ rng: () => 0.5 });
+      const ox = k * cell.w + (cell.w - 180 * cell.s) / 2, oy = r * cell.h + 14;
+      rig.draw(ctx, s.pose, { origin: { x: ox, y: oy }, scale: cell.s, facing: 1 });
+      ctx.fillStyle = '#333'; ctx.fillText(k === 0 ? name : '', k * cell.w + 3, r * cell.h + 11);
+    }
+  });
+  return c.toDataURL('image/png');
+};
+window.ready = true;
+</script></body></html>

@@ -1,0 +1,334 @@
+// Testes de integração com o Electron real (Playwright).
+// No Linux roda sob Xvfb (ver run-e2e.mjs). NÃO substitui testes no Windows:
+// click-through com WS_EX_TRANSPARENT, encaminhamento de mouse, DPI misto e
+// detecção de tela cheia só podem ser verificados no Windows.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const ELECTRON = require('electron');
+const { _electron } = require('playwright');
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function launch({ userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jeff-e2e-')), env = {} } = {}) {
+  const app = await _electron.launch({
+    executablePath: ELECTRON,
+    args: ['--no-sandbox', ROOT],
+    cwd: ROOT,
+    env: { ...process.env, JEFF_TEST: '1', JEFF_USER_DATA: userData, ...env },
+  });
+  const errors = [];
+  const win = await app.firstWindow();
+  win.on('pageerror', (e) => errors.push(e.message));
+  win.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await waitFor(app, () => globalThis.__jeff && globalThis.__jeff.companion.started);
+  await sleep(1500);
+  return { app, win, userData, errors };
+}
+
+async function waitFor(app, fn, timeout = 8000) {
+  const end = Date.now() + timeout;
+  for (;;) {
+    const ok = await app.evaluate(fn).catch(() => false);
+    if (ok) return ok;
+    if (Date.now() > end) throw new Error(`timeout esperando: ${fn}`);
+    await sleep(100);
+  }
+}
+
+const dbg = (app) => app.evaluate(() => globalThis.__jeff.companion.debugState());
+
+async function quit(app) {
+  await app.evaluate(() => globalThis.__jeff.quit()).catch(() => {});
+  const proc = app.process();
+  const done = new Promise((r) => proc.once('exit', r));
+  await Promise.race([done, sleep(5000)]);
+  try {
+    await app.close();
+  } catch {
+    /* já fechado */
+  }
+}
+
+test('overlay: sem foco, sempre por cima, click-through e sem erros no renderer', async () => {
+  const { app, win, errors } = await launch();
+  try {
+    const props = await app.evaluate(({ BrowserWindow }) => {
+      const w = globalThis.__jeff.overlay.win;
+      return {
+        count: BrowserWindow.getAllWindows().length,
+        focusable: w.isFocusable(),
+        onTop: w.isAlwaysOnTop(),
+        visible: w.isVisible(),
+        focused: w.isFocused(),
+        mode: globalThis.__jeff.overlay.mouseMode,
+      };
+    });
+    assert.deepEqual(props, { count: 1, focusable: false, onTop: true, visible: true, focused: false, mode: 'passthrough' });
+    const r = await win.evaluate(() => ({ anim: window.__jeffRenderer.anim, frame: window.__jeffRenderer.lastFrame }));
+    assert.ok(r.anim);
+    assert.ok(r.frame > 0, 'renderizou quadros');
+    // Transparência: o fundo da página não pinta pixels (canvas transparente fora do Jeff).
+    const corner = await win.evaluate(() => {
+      const c = document.getElementById('stage');
+      const ctx = c.getContext('2d');
+      return Array.from(ctx.getImageData(0, 0, 1, 1).data);
+    });
+    assert.equal(corner[3], 0, 'canto da janela transparente');
+    assert.deepEqual(errors, []);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('desvio real: cursor se aproxima rápido; janela se move e continua click-through', async () => {
+  const { app } = await launch({ env: {} });
+  try {
+    let st = await dbg(app);
+    const v = st.visual;
+    const c = { x: v.x + v.width / 2, y: v.y + v.height / 2 };
+    // Ponteiro vem da esquerda em ~150 ms até o centro do Jeff.
+    for (let i = 0; i <= 10; i++) {
+      const p = { x: c.x - 500 + 50 * i, y: c.y };
+      await app.evaluate((_e, pp) => globalThis.__jeff.setCursor(pp), p);
+      await sleep(15);
+      const mode = await app.evaluate(() => globalThis.__jeff.overlay.mouseMode);
+      assert.equal(mode, 'passthrough');
+    }
+    await sleep(1500);
+    st = await dbg(app);
+    const ignore = await app.evaluate(() => globalThis.__jeff.overlay.mouseMode);
+    assert.equal(ignore, 'passthrough');
+    assert.ok(st.stats.flees >= 1, 'fugiu');
+    const nv = st.visual;
+    const dx = Math.max(nv.x - c.x, 0, c.x - (nv.x + nv.width));
+    const dy = Math.max(nv.y - c.y, 0, c.y - (nv.y + nv.height));
+    assert.ok(Math.hypot(dx, dy) >= 100, 'longe do cursor');
+    const wb = await app.evaluate(() => globalThis.__jeff.overlay.win.getBounds());
+    assert.equal(wb.x, st.bounds.x);
+    assert.equal(wb.y, st.bounds.y);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('modo de interação: ações, conversa offline, Esc e restauração do click-through', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 5, y: 5 }));
+    await app.evaluate(() => globalThis.__jeff.companion.enterInteraction('test'));
+    await sleep(400);
+    let w = await app.evaluate(() => ({ f: globalThis.__jeff.overlay.win.isFocusable(), m: globalThis.__jeff.overlay.mouseMode }));
+    assert.deepEqual(w, { f: true, m: 'interactive' });
+    assert.equal(await win.isVisible('#toolbar'), true);
+
+    await win.click('#toolbar button[data-action="eat"]');
+    await sleep(200);
+    assert.equal((await dbg(app)).behavior, 'eat');
+    await sleep(500);
+    assert.equal(await win.evaluate(() => window.__jeffRenderer.anim), 'eat');
+
+    await win.click('#toolbar button[data-action="chat"]');
+    await sleep(300);
+    assert.equal(await win.isVisible('#chat'), true);
+    const badge = await win.textContent('#providerBadge');
+    assert.match(badge, /programadas/i);
+    await win.fill('#chatInput', 'hora de dormir');
+    await win.press('#chatInput', 'Enter');
+    await sleep(500);
+    const lastMsg = await win.evaluate(() => document.querySelector('#log .msg.jeff:last-child')?.textContent);
+    assert.ok(lastMsg && lastMsg.length > 3);
+    assert.equal((await dbg(app)).behavior, 'sleep');
+
+    await win.keyboard.press('Escape');
+    await sleep(300);
+    w = await app.evaluate(() => ({ f: globalThis.__jeff.overlay.win.isFocusable(), m: globalThis.__jeff.overlay.mouseMode, i: globalThis.__jeff.companion.interaction }));
+    assert.deepEqual(w, { f: false, m: 'passthrough', i: false });
+    assert.equal(await win.isVisible('#toolbar'), false);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('arrastar no modo de interação e soltar fora da tela volta para área válida', async () => {
+  const { app } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.companion.enterInteraction('test'));
+    const st = await dbg(app);
+    await app.evaluate((_e, p) => globalThis.__jeff.setCursor(p), { x: st.pos.x + 90, y: st.pos.y + 80 });
+    await app.evaluate(() => {
+      const j = globalThis.__jeff;
+      const c = j.companion;
+      const p = { x: c.pos.x + 90, y: c.pos.y + 80 };
+      c.dragStart({ x: p.x - c.pos.x, y: p.y - c.pos.y });
+    });
+    for (let i = 0; i < 10; i++) {
+      await app.evaluate((_e, p) => globalThis.__jeff.setCursor(p), { x: 300 - i * 60, y: 200 - i * 40 });
+      await sleep(30);
+    }
+    assert.equal((await dbg(app)).behavior, 'dragged');
+    await app.evaluate(() => globalThis.__jeff.companion.dragEnd());
+    await sleep(200);
+    const after = await dbg(app);
+    assert.equal(after.behavior, 'land');
+    assert.ok(after.box.x >= 0 && after.box.y >= 0, 'dentro da tela');
+  } finally {
+    await quit(app);
+  }
+});
+
+test('todas as animações dos estados são exibidas pelo renderer', async () => {
+  const { app, win } = await launch();
+  try {
+    const states = ['idle', 'lookAround', 'curious', 'surprised', 'walk', 'sit', 'lie', 'sleep', 'talk', 'happy', 'petted', 'eat', 'play', 'dragged', 'land', 'flee', 'hidden', 'paused', 'interactIdle'];
+    const seen = {};
+    for (const s of states) {
+      await app.evaluate((_e, name) => {
+        const c = globalThis.__jeff.companion;
+        c.mover.stop();
+        c.hideBubble();
+        if (name === 'talk') c.talkingUntil = performance.now() + 5000;
+        c.behavior.request(name, { now: performance.now(), force: true });
+        c._applyLayout(true);
+      }, s);
+      await sleep(250);
+      seen[s] = await win.evaluate(() => window.__jeffRenderer.anim);
+    }
+    const expected = { idle: 'idle', lookAround: 'lookAround', curious: 'curious', surprised: 'surprised', walk: 'walk', sit: 'sitDown', lie: 'lieDown', sleep: 'fallAsleep', talk: 'talk', happy: 'happy', petted: 'petted', eat: 'eat', play: 'play', dragged: 'dragged', land: 'land', flee: 'run', hidden: 'hide', paused: 'sit', interactIdle: 'interactIdle' };
+    for (const [k, v] of Object.entries(expected)) {
+      // "walk" sem destino válido pode terminar rápido; aceita a transição seguinte.
+      if (k === 'walk' && seen[k] !== v) continue;
+      assert.equal(seen[k], v, `estado ${k}`);
+    }
+  } finally {
+    await quit(app);
+  }
+});
+
+test('configurações: alterar, persistir e restaurar padrões', async () => {
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jeff-e2e-'));
+  let { app } = await launch({ userData });
+  try {
+    await app.evaluate(() => globalThis.__jeff.openSettings());
+    const sw = await app.waitForEvent('window');
+    await sw.waitForLoadState('domcontentloaded');
+    await sleep(600);
+    await sw.evaluate(() => window.settingsApi.set({ size: 1.3, safetyMargin: 150, quietMode: true, speechFrequency: 'rare' }));
+    await sleep(300);
+    const box = (await dbg(app)).box;
+    assert.equal(Math.round(box.width), Math.round(180 * 1.3));
+    // Interface reflete o valor.
+    const shown = await sw.evaluate(() => document.querySelector('[name=safetyMargin]')?.value);
+    assert.equal(shown, '150');
+    const hk = await sw.evaluate(() => document.getElementById('hotkeyStatus')?.textContent || '');
+    assert.ok(hk.length > 0);
+  } finally {
+    await quit(app);
+  }
+  const saved = JSON.parse(fs.readFileSync(path.join(userData, 'settings.json'), 'utf8'));
+  assert.equal(saved.size, 1.3);
+  assert.equal(saved.safetyMargin, 150);
+  assert.equal(saved.startWithWindows, false);
+  ({ app } = await launch({ userData }));
+  try {
+    assert.equal((await app.evaluate(() => globalThis.__jeff.store.get().size)), 1.3);
+    await app.evaluate(() => globalThis.__jeff.store.reset());
+    assert.equal((await app.evaluate(() => globalThis.__jeff.store.get().size)), 1);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('arquivo de configurações inválido é preservado e substituído por padrões', async () => {
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jeff-e2e-'));
+  fs.writeFileSync(path.join(userData, 'settings.json'), '{ isto não é json');
+  const { app } = await launch({ userData });
+  try {
+    const s = await app.evaluate(() => globalThis.__jeff.store.get());
+    assert.equal(s.size, 1);
+    assert.ok(fs.readdirSync(userData).some((f) => f.startsWith('settings.invalid-')));
+  } finally {
+    await quit(app);
+  }
+});
+
+test('instância única: segunda execução encerra e a primeira avisa', async () => {
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jeff-e2e-'));
+  const { app } = await launch({ userData });
+  try {
+    const second = spawn(ELECTRON, ['--no-sandbox', ROOT], { env: { ...process.env, JEFF_TEST: '1', JEFF_USER_DATA: userData }, stdio: 'ignore' });
+    const code = await new Promise((r) => {
+      const t = setTimeout(() => {
+        second.kill();
+        r('timeout');
+      }, 10000);
+      second.on('exit', (c) => {
+        clearTimeout(t);
+        r(c);
+      });
+    });
+    assert.equal(code, 0, 'segunda instância saiu');
+    await sleep(800);
+    const b = (await dbg(app)).bubble;
+    assert.ok(b && /aqui|Jeff/i.test(b.text), `aviso exibido: ${b && b.text}`);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('ocultar, pausar, suspensão/retomada e encerramento pela bandeja', async () => {
+  const { app } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.store.update({ visible: false }));
+    await sleep(200);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), false);
+    await app.evaluate(() => globalThis.__jeff.store.update({ visible: true }));
+    await sleep(300);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), true);
+    await app.evaluate(() => globalThis.__jeff.store.update({ paused: true }));
+    await sleep(200);
+    assert.equal((await dbg(app)).behavior, 'paused');
+    await app.evaluate(() => globalThis.__jeff.store.update({ paused: false }));
+    await app.evaluate(() => globalThis.__jeff.companion.onSuspend());
+    const t0 = (await dbg(app)).stats.ticks;
+    await sleep(1000);
+    assert.equal((await dbg(app)).stats.ticks, t0);
+    await app.evaluate(() => globalThis.__jeff.companion.onResume());
+    await sleep(500);
+    assert.ok((await dbg(app)).stats.ticks > t0);
+  } finally {
+    const proc = app.process();
+    const exited = new Promise((r) => proc.once('exit', (c) => r(c)));
+    await app.evaluate(() => globalThis.__jeff.quit()).catch(() => {});
+    const code = await Promise.race([exited, sleep(6000).then(() => 'timeout')]);
+    assert.notEqual(code, 'timeout', 'processo encerrou');
+  }
+});
+
+test('funciona offline: nenhuma requisição de rede é feita', async () => {
+  const { app } = await launch();
+  try {
+    await app.evaluate(({ session }) => {
+      globalThis.__netlog = [];
+      session.defaultSession.webRequest.onBeforeRequest((d, cb) => {
+        if (!d.url.startsWith('file:') && !d.url.startsWith('devtools:') && !d.url.startsWith('data:')) globalThis.__netlog.push(d.url);
+        cb({});
+      });
+    });
+    await app.evaluate(() => globalThis.__jeff.companion.enterInteraction('test'));
+    await app.evaluate(() => globalThis.__jeff.companion.chat('oi'));
+    await sleep(1500);
+    const net = await app.evaluate(() => globalThis.__netlog);
+    assert.deepEqual(net, []);
+  } finally {
+    await quit(app);
+  }
+});

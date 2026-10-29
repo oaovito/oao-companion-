@@ -1,0 +1,138 @@
+{
+  "format": "jeff-phrases/1",
+  "language": "pt-BR",
+  "notes": "Falas locais do Jeff (fan-made). kind: speech | thought | sleep. Categorias usadas pelo app em src/core/phrases.js.",
+  "categories": {
+    "greeting": {
+      "kind": "speech",
+      "lines": [
+        "Oi! Cheguei pra fazer companhia.",
+        "Glub glub! Bom te ver!",
+        "Opa! Tô por aqui, quietinho.",
+        "Oi, oi! Pode trabalhar que eu fico de olho.",
+        "Cheguei! Prometo não atrapalhar.",
+        "Olá, humano favorito!"
+      ]
+    },
+    "morning": {
+      "kind": "speech",
+      "lines": ["Bom dia! Já tomou água hoje?", "Bom dia! Que o dia seja leve.", "Bom diaaa! *se espreguiça*"]
+    },
+    "afternoon": {
+      "kind": "speech",
+      "lines": ["Boa tarde! Tô curtindo o solzinho do monitor.", "Boa tarde! Lanchinho mais tarde?"]
+    },
+    "night": {
+      "kind": "speech",
+      "lines": ["Boa noite! Ainda acordado?", "Boa noite... eu já tô quase cochilando.", "Noite tranquila por aqui."]
+    },
+    "idleSpeech": {
+      "kind": "speech",
+      "lines": [
+        "Tubarões de terra também gostam de sossego.",
+        "Só passando pra dizer: você tá indo bem.",
+        "Esse cantinho da tela é bem confortável.",
+        "Se precisar de mim, é só apertar {atalho}.",
+        "Hoje eu contei três pixels brilhando. Foi ótimo.",
+        "Que tal alongar os ombros um pouquinho?",
+        "Glub! (isso quer dizer 'tô feliz')",
+        "Eu fico aqui do ladinho, combinado?",
+        "Lembrete amigável: piscar faz bem pros olhos.",
+        "Barbatana ao alto! Quer dizer: tudo certo!"
+      ]
+    },
+    "idleThought": {
+      "kind": "thought",
+      "lines": [
+        "Hmm... será que peixe empanado sonha?",
+        "Barbatanas... patinhas... por que não os dois?",
+        "Aquela janela parece interessante.",
+        "Se eu ficar parado, viro decoração?",
+        "Petisco... petisco... petisco...",
+        "Quantos cliques será que tem num dia?",
+        "Nuvem em formato de sardinha!"
+      ]
+    },
+    "curious": {
+      "kind": "thought",
+      "lines": ["Hmm? O que é aquilo?", "Ooh, curioso...", "Tem algo se mexendo ali?", "Investigando..."]
+    },
+    "surprised": {
+      "kind": "speech",
+      "lines": ["Opa!", "Eita!", "Uau!", "Glub?!"]
+    },
+    "petted": {
+      "kind": "speech",
+      "lines": [
+        "Hehehe, faz cosquinha!",
+        "Mais carinho, por favor!",
+        "Isso é o melhor da vida.",
+        "*ronrona de um jeito tubarônico*",
+        "Ahhh, bem atrás da barbatana!",
+        "Você é muito gentil.",
+        "Glub glub glub! (feliz demais)"
+      ]
+    },
+    "food": {
+      "kind": "speech",
+      "lines": [
+        "Nhac! Delícia!",
+        "Peixinho! Meu favorito!",
+        "Hmmm, crocante!",
+        "Obrigado pelo lanche!",
+        "Nham nham nham...",
+        "Isso merece uma dancinha!"
+      ]
+    },
+    "play": {
+      "kind": "speech",
+      "lines": [
+        "Bolinha! Bolinha!",
+        "Peguei! Peguei!",
+        "De novo, de novo!",
+        "Sou o tubarão mais rápido da terra firme!",
+        "Isso foi divertido!"
+      ]
+    },
+    "sleep": {
+      "kind": "sleep",
+      "lines": ["Zzz...", "Zzz... peixinho... zzz", "Zzzzz...", "zz... glub... zz"]
+    },
+    "sleepy": {
+      "kind": "thought",
+      "lines": ["*bocejo* Acho que vou descansar um pouco.", "Que soninho...", "Só um cochilinho..."]
+    },
+    "wake": {
+      "kind": "speech",
+      "lines": ["Hã? Eu tava acordado! Juro.", "*espreguiça* Que soneca boa!", "Bom dia de novo!"]
+    },
+    "dragged": {
+      "kind": "speech",
+      "lines": ["Wheee!", "Voandooo!", "Ei, para onde vamos?", "Uhuuu!"]
+    },
+    "land": {
+      "kind": "speech",
+      "lines": ["Pouso perfeito!", "Ufa, chão firme.", "Aqui tá ótimo!"]
+    },
+    "interactEnter": {
+      "kind": "speech",
+      "lines": ["Oi! Tô prontinho pra brincar.", "Modo carinho ativado!", "Opa, atenção total pra você!"]
+    },
+    "interactExit": {
+      "kind": "speech",
+      "lines": ["Voltando ao meu cantinho!", "Valeu! Até já.", "Vou ficar por perto."]
+    },
+    "alreadyRunning": {
+      "kind": "speech",
+      "lines": ["Eu já tô aqui!", "Só cabe um Jeff por vez!"]
+    },
+    "goodbye": {
+      "kind": "speech",
+      "lines": ["Tchau! Até a próxima!", "Fui! Glub!", "Até logo!"]
+    },
+    "unpause": {
+      "kind": "speech",
+      "lines": ["De volta à ativa!", "Pronto, voltei!"]
+    }
+  }
+}

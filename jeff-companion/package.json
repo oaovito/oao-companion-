@@ -1,0 +1,27 @@
+{
+  "name": "jeff-companion",
+  "productName": "Jeff Companion",
+  "version": "0.1.0",
+  "description": "Companion de desktop fan-made (não oficial) inspirado no Jeff, o Tubarão Terrestre.",
+  "author": "Jeff Companion contributors",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/unit/*.test.js",
+    "test:e2e": "node test/e2e/run-e2e.mjs",
+    "icons": "electron scripts/make-icons.mjs",
+    "measure": "node scripts/measure.mjs",
+    "build:win": "bash scripts/build-win.sh",
+    "build:dir": "electron-builder --win --x64 --dir"
+  },
+  "dependencies": {
+    "koffi": "3.3.3"
+  },
+  "devDependencies": {
+    "electron": "44.9.3",
+    "electron-builder": "26.0.12"
+  }
+}
