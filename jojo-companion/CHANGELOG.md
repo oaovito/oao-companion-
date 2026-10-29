@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 0.32.0 — 2026-10-29
+
+### Adicionado
+- **Entende pedidos ditos de qualquer jeito** (regra geral): "pare com a sessão de foco", "chega de
+  estudar", "cansei" (com o foco ativo), "some daqui", "volta", "pausa", "para de falar", "abre as
+  configurações", "vamos estudar 40 minutos"… viram a ação certa, sem "/" (`src/core/dialogue/intencoes.js`,
+  funciona offline). A conversa online também interpreta o que ela quis dizer e devolve um comando
+  validado de uma lista fechada. "para" como preposição e perguntas não viram comando; segurança vem antes.
+
+### Corrigido
+- Encerrar o foco para na hora a animação de estudar/treinar junto.
+
 ## 0.31.2 — 2026-10-29
 
 ### Corrigido

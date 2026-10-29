@@ -25,6 +25,7 @@ import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyRem
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
+import { interpretCommand } from './dialogue/intencoes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
@@ -78,6 +79,8 @@ export function musicVibe(title) {
 // Intenções do chat que deixam o catálogo responder por frase (as outras têm resposta própria).
 const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 'howAreYou', 'help', 'name', 'thanks', 'scare', 'pet']);
 const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
+
+const NOD_AFTER = new Set(['foco_parar', 'jogo_parar', 'parar_atividade', 'retomar', 'mostrar', 'silencio_ligar', 'silencio_desligar', 'configuracoes', 'nova_conversa', 'resumo']);
 
 export class Companion {
   constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, antitedio = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
@@ -1153,6 +1156,9 @@ export class Companion {
     // Mini-jogo em andamento: a mensagem é a jogada (segurança sempre vem antes).
     const safety = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text));
     if (safety && this.game) this.game = null;
+    // Pedido de comando dito de qualquer jeito ("pare com a sessão de foco", "some daqui"…).
+    const pedido = safety ? null : interpretCommand(text, this._commandContext());
+    if (pedido) return this._quickReply(conv, this.runInterpreted(pedido, conv.id), 'comando');
     if (this.game) {
       const t = this._gameAnswer(text);
       if (t) return this._quickReply(conv, t, 'jogo');
@@ -1247,9 +1253,99 @@ export class Companion {
     else if (reply.web) this.fireEvent('respostaPronta', { speak: false });
     else if (reply.action) this._doChatAction(reply.action, now);
     else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
+    // A conversa online entendeu um pedido de comando que as frases programadas não pegaram.
+    if (reply.command) this.runInterpreted({ cmd: reply.command, arg: reply.commandArg || '' }, conv.id, { silent: true });
     this._applyLayout(true);
     this._schedule(0);
     return { ...reply, conversationId: conv.id, provider: this.dialogue.describe() };
+  }
+
+  /** O que está ativo agora (para entender "para", "chega", "volta"…). */
+  _commandContext() {
+    const anim = this.behavior.anim || '';
+    return {
+      foco: !!this.focus,
+      jogo: !!(this.game && this.game.tipo !== 'bolhas'),
+      bolhas: !!(this.game && this.game.tipo === 'bolhas'),
+      calma: /^cat_calma/.test(anim),
+      ritmo: /^cat_ritmo/.test(anim),
+      pausado: !!this.paused,
+      escondido: !!this.userHidden,
+      silencio: !!this.store.get().quietMode,
+    };
+  }
+
+  /** Executa um comando entendido por frase (ou pela conversa online). Devolve a fala. */
+  runInterpreted({ cmd, arg = '' }, conversationId = null, { silent = false } = {}) {
+    const now = this.clock.now();
+    const run = (c, raw) => this.runCommand(c, conversationId, raw).text;
+    let text;
+    switch (cmd) {
+      case 'foco_parar':
+        text = this._endFocus(false) || 'Não tem foco rolando.';
+        break;
+      case 'foco_iniciar':
+        text = run('foco', `/foco ${arg}`);
+        break;
+      case 'jogo':
+        text = run('jogo', `/jogo ${arg}`);
+        break;
+      case 'jogo_parar':
+      case 'parar_atividade': {
+        const tinha = this.game || this.calmUntil > now || /^cat_(calma|ritmo)/.test(this.behavior.anim || '');
+        if (this.game) this.game = null;
+        this.calmUntil = 0;
+        if (/^cat_(calma|ritmo)/.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, now);
+        text = tinha ? (cmd === 'jogo_parar' ? 'Jogo encerrado. Medrosa. Brincadeira.' : 'Parei.') : 'Não tem nada rolando.';
+        break;
+      }
+      case 'calma':
+      case 'ritmo':
+      case 'bolhas':
+      case 'estimulo':
+      case 'resumo':
+      case 'colecao':
+        text = run(cmd, `/${cmd}`);
+        break;
+      case 'guarda_roupa':
+        text = run('vestir', '/vestir');
+        break;
+      case 'pausar':
+        this.setPaused(true);
+        text = 'Pausado. Fico quietinho.';
+        break;
+      case 'retomar':
+        this.setPaused(false);
+        text = 'Voltei.';
+        break;
+      case 'esconder':
+        this.setVisible(false);
+        text = `Fui. Diz "volta" ou /pet que eu apareço.`;
+        break;
+      case 'mostrar':
+        this.setVisible(true);
+        text = 'Voltei. Sentiu falta, né.';
+        break;
+      case 'silencio_ligar':
+        this.store.update({ quietMode: true });
+        text = 'Modo silencioso. Sem falas sozinho e sem broncas.';
+        break;
+      case 'silencio_desligar':
+        this.store.update({ quietMode: false });
+        text = 'Voltei a falar. Se prepara.';
+        break;
+      case 'configuracoes':
+        text = run('settings', '/config');
+        break;
+      case 'nova_conversa':
+        text = run('new', '/nova');
+        break;
+      default:
+        return null;
+    }
+    // Concorda com a cabeça (as ações com animação própria já se mexem).
+    if (!silent && !this.userHidden && !this.paused && NOD_AFTER.has(cmd)) this.behavior.request('nod', { now, force: true });
+    return text;
   }
 
   _quickReply(conv, text, intent) {
@@ -2045,6 +2141,8 @@ export class Companion {
     const f = this.focus;
     this.focus = null;
     if (!f) return null;
+    // Para de estudar/treinar do lado na hora.
+    if (/^cat_(estudarJunto|treinarJunto)/.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, this.clock.now());
     if (!done) {
       this.conversations.setStatus('foco', 'idle');
       return 'Foco encerrado. Sem drama.';

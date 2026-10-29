@@ -12,6 +12,7 @@ export const LLM_PRESETS = Object.freeze({
 });
 
 // Ações que a IA pode pedir (expressão corporal).
+import { COMANDOS } from './intencoes.js';
 const LLM_ACTIONS = ['wave', 'nod', 'judge', 'lecture', 'happy', 'flex', 'scare', 'angry', 'sad', 'comfort', 'eat', 'play', 'sleep', 'pet', 'bench', 'squat', 'curious'];
 
 /** Instruções de sistema a partir do perfil (pt-BR). */
@@ -42,7 +43,9 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = []) {
     'Língua: português do Brasil é a principal e preferida. Se ela escrever em inglês, responda em inglês, no mesmo jeito do JoJo; senão, sempre em português.',
     'Responda curto (no máximo 2 frases, até 220 caracteres), orgânico, nunca repetindo frases que você já disse nesta conversa. Entenda o que ela disse e responda ao conteúdo, sempre no jeito do JoJo.',
     extra,
-    `Responda SOMENTE com JSON: {"texto": "...", "acao": uma de ${JSON.stringify(LLM_ACTIONS)} ou null, "tom": "serio" ou "brincadeira"}. A ação é a expressão corporal coerente com a fala.`,
+    'Interprete o que ela quis dizer, não as palavras exatas. Se ela pedir (de qualquer jeito, com erro de digitação, gíria ou indireta) para você fazer algo no app, preencha "comando" com o id certo e responda confirmando no seu jeito; se não for pedido de comando, "comando" é null.',
+    `Comandos: foco_iniciar (começar sessão de foco/estudo; "arg" = minutos e "treino" se for treino), foco_parar (parar/encerrar o foco), jogo (mini-jogo; "arg" = nome), jogo_parar, calma, ritmo, bolhas, estimulo, parar_atividade (parar calma/ritmo/bolhas), resumo (resumo do dia), colecao, guarda_roupa, pausar, retomar, esconder (sumir da tela), mostrar, silencio_ligar, silencio_desligar, configuracoes, nova_conversa.`,
+    `Responda SOMENTE com JSON: {"texto": "...", "acao": uma de ${JSON.stringify(LLM_ACTIONS)} ou null, "tom": "serio" ou "brincadeira", "comando": um de ${JSON.stringify(COMANDOS)} ou null, "arg": "..." ou null}. A ação é a expressão corporal coerente com a fala.`,
   ].filter(Boolean).join('\n');
 }
 
@@ -67,7 +70,12 @@ export function parseLlmReply(content) {
       const text = String(j.texto ?? j.text ?? '').trim();
       if (text) {
         const action = LLM_ACTIONS.includes(j.acao) && ALLOWED_ACTIONS.has(j.acao) ? j.acao : null;
-        return { text, action, tone: j.tom === 'brincadeira' ? 'brincadeira' : 'serio' };
+        const out = { text, action, tone: j.tom === 'brincadeira' ? 'brincadeira' : 'serio' };
+        if (COMANDOS.includes(j.comando)) {
+          out.command = j.comando;
+          out.commandArg = typeof j.arg === 'string' || typeof j.arg === 'number' ? String(j.arg).replace(/[^\p{L}\p{N} ]/gu, '').slice(0, 30) : '';
+        }
+        return out;
       }
     } catch {
       /* cai no texto puro */

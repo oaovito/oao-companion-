@@ -41,6 +41,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?".
+- Entende pedidos de qualquer forma (regra geral): frases livres viram comandos (`dialogue/intencoes.js`, offline)
+  e a conversa online devolve `comando` de uma lista fechada; nunca responder "não está na lista" a um pedido claro.
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
 - Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
 - Configurações: seções Personalidade e Sistema **ocultas**; perfil volta ao padrão a cada versão nova do perfil.

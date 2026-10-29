@@ -17,6 +17,8 @@
 //   action: comando opcional para o JoJo (sleep | eat | play | pet | wake | lookAround | happy | quiet | flex | scare | judge)
 //   context.persona: instruções livres do perfil de personalidade (para provedores de IA futuros)
 
+import { COMANDOS } from './intencoes.js';
+
 export const ALLOWED_ACTIONS = new Set(['nojo', 'boaNoite', 'sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon', 'smitten', 'poop', 'dressDown', 'dressUp', 'avc']);
 
 export class DialogueProvider {
@@ -44,6 +46,10 @@ export function normalizeReply(r) {
   const tone = r?.tone === 'brincadeira' ? 'brincadeira' : 'serio';
   const out = { text: text || '...', kind, action, tone, intent: typeof r?.intent === 'string' ? r.intent : null };
   if (r?.lang === 'en') out.lang = 'en';
+  if (typeof r?.command === 'string' && COMANDOS.includes(r.command)) {
+    out.command = r.command;
+    out.commandArg = typeof r.commandArg === 'string' ? r.commandArg.slice(0, 30) : '';
+  }
   return out;
 }
 
