@@ -278,3 +278,18 @@ test('"eu sou bonita?": cai de costas apaixonado e responde "É" no último susp
   assert.equal(at(0.6).rootRot, -90, 'caído de costas');
   assert.equal(at(0.99).rootRot, 0, 'levantou');
 });
+
+test('em repouso o JoJo nunca fica parado: toda animação de idle se mexe', () => {
+  for (const [k, a] of Object.entries(ANIMS.animations)) {
+    const base = a.variantOf || k;
+    if (!['idle', 'sit', 'lie', 'interactIdle'].includes(base)) continue;
+    const moving = Object.entries(a.tracks).filter(([, keys]) => new Set(keys.map((x) => x[1])).size > 1).map(([c]) => c);
+    assert.ok(moving.length >= 4, `${k} mexe só ${moving.join(', ')}`);
+    for (const ch of ['squashY', 'headRot', 'tailRot']) assert.ok(moving.includes(ch), `${k}: falta ${ch}`);
+  }
+  // Quadros diferentes ao longo de um ciclo.
+  const an = new Animator(ANIMS);
+  an.play('idle', 0, { restart: true, variant: 'idle' });
+  const poses = [0, 750, 1500, 2250].map((t) => JSON.stringify(an.sample(t + 1).pose));
+  assert.equal(new Set(poses).size, 4);
+});

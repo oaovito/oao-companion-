@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.16.0 — 2026-10-29
+
+### Alterado
+- Repouso sempre animado: todas as animações de idle (em pé, sentado, deitado,
+  modo de interação, variações e modo ligadão) ganharam respiração, sobe-desce,
+  braços balançando, cabeça inclinando, rabo abanando e troca de peso. Nada fica
+  parado (o movimento reduzido do Windows continua usando quadros estáticos).
+
 ## 0.15.0 — 2026-10-29
 
 ### Adicionado
