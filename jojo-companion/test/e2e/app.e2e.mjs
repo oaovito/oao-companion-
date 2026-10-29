@@ -154,8 +154,10 @@ test('modo de interação: ações, conversa offline, Esc e restauração do cli
     await sleep(1200); // inclui o "digitando…" da resposta
     const lastMsg = await win.evaluate(() => document.querySelector('#log .msg.jojo:last-child')?.textContent);
     assert.ok(lastMsg && lastMsg.length > 3);
-    // Dormir? Nunca: ele fica furioso em vez de dormir.
-    assert.equal((await dbg(app)).behavior, 'angry');
+    // Dormir antes das 21h? Nunca: furioso. Depois das 21h é permitido (boa noite).
+    const h = new Date().getHours();
+    if (h >= 21 || h < 6) assert.ok(['act', 'nod', 'idle'].includes((await dbg(app)).behavior));
+    else assert.equal((await dbg(app)).behavior, 'angry');
 
     await win.keyboard.press('Escape');
     await sleep(300);

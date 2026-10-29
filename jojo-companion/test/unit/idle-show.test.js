@@ -2,7 +2,7 @@
 // piadas e o lembrete semanal do Legends.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { makeEnv, chatAdv, loadJSON } from './helpers.js';
+import { makeEnv, chatAdv, loadJSON, seededRng } from './helpers.js';
 import { Animator } from '../../src/renderer/shared/animator.js';
 import { autoWeights, BehaviorMachine } from '../../src/core/behavior.js';
 import { weeklyReminder, weekKey, PERSONALITY_DEFAULTS, sanitizePersonality } from '../../src/core/personality.js';
@@ -164,10 +164,13 @@ test('objetivo de fazer sorrir: piadas e exibições aparecem sozinhas', () => {
 test('Legends: uma vez por semana, em momento aleatório', () => {
   let cfg = { ...PERSONALITY_DEFAULTS.legends };
   const due = [];
+  // Sorteio determinístico e checagem a cada 10 min (com 1×/hora o último
+  // horário de domingo podia escapar do teste).
+  const rng = seededRng(11);
   for (let d = 0; d < 35; d++) {
-    for (let h = 0; h < 24; h++) {
-      const date = new Date(2026, 10, 2 + d, h, 30);
-      const r = weeklyReminder(date, cfg, Math.random);
+    for (let m = 0; m < 24 * 60; m += 10) {
+      const date = new Date(2026, 10, 2 + d, 0, m);
+      const r = weeklyReminder(date, cfg, rng);
       cfg = { ...cfg, ...r.state };
       if (r.due) due.push(weekKey(date));
     }

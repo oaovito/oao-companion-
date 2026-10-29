@@ -106,10 +106,15 @@ test('motor de variedade: horário, temporada da semana, humor e adaptação mud
   }
 });
 
-test('falas ambientes: até 80 caracteres, sem repetir em sequência, as que contradizem "dormir" desligadas', () => {
+test('falas ambientes: até 80 caracteres, sem repetir em sequência, as de dormir só depois das 21h', () => {
   for (const l of LINES.falas) assert.ok(l.t.length <= 80, l.t);
   assert.equal(LINES.falas.filter((l) => typeof l.n === 'number').length, 120);
-  for (const n of [84, 99]) assert.equal(LINES.falas.find((l) => l.n === n).freq, 'desligada');
+  for (const n of [84, 99]) assert.equal(LINES.falas.find((l) => l.n === n).apos, 21);
+  const dormir = new VarietyEngine({ catalog: CAT, lines: LINES, rng: seededRng(5), now: () => 0, getPrefs: () => ({}) });
+  for (let i = 0; i < 200; i++) assert.ok(!dormir.pickLine({ date: new Date(2026, 9, 29, 20) }).apos, 'fala de dormir antes das 21h');
+  let viu = false;
+  for (let i = 0; i < 400 && !viu; i++) viu = !!dormir.pickLine({ categories: ['horario'], date: new Date(2026, 9, 29, 22) })?.apos;
+  assert.ok(viu, 'depois das 21h as falas de dormir aparecem');
   const v = new VarietyEngine({ catalog: CAT, lines: LINES, rng: seededRng(4), now: () => 0, getPrefs: () => ({}) });
   let prev = null;
   for (let i = 0; i < 300; i++) {

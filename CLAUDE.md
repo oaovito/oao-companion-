@@ -44,7 +44,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
 - Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
 - Configurações: seções Personalidade e Sistema **ocultas**; perfil volta ao padrão a cada versão nova do perfil.
-- Dormir: qualquer menção a dormir/sono/cochilo/cama no chat → JoJo furioso e contra (estado `angry`), nunca dorme pelo chat.
+- Dormir: antes das 21h qualquer menção a dormir/sono/cochilo/cama → JoJo furioso e contra (estado `angry`);
+  das 21h às 6h é permitido e ele reafirma (ação `boaNoite`); falas ambientes de dormir com `apos: 21`.
 - Janela cresce por animação (`assets/animations/jojo.room.json`; regenerar com `scripts/anim-room.mjs` ao mudar desenho/animação).
 - Pergunta sem resposta programada: pesquisa (Wikipédia → DuckDuckGo) e responde no jeito do
   JoJo (abertura/fecho das falas filtradas pelo perfil) citando a fonte.

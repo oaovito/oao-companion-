@@ -54,6 +54,7 @@ export const EN_RESPONSES = {
   distress: ['Breathe with me, {nome}. In for four, out for four. Then call {apoio}. He knows how to take care of you.'],
   sad: ['Better talk to {apoio}, {nome}. He knows how to take care of you. I stay right here.'],
   sleep: ['SLEEP?! Sleep is for sardines. Get up, {nome}.', 'A shark that stops swimming DIES. Nobody sleeps on my watch.', 'You said "sleep", I heard "quit". Denied.'],
+  sleepOk: ['It is past 9 PM. Sleeping is allowed now, {nome}. Go.', 'After 9 PM it is the law: bed. Muscles grow while you rest.'],
   docinho: ['Do you want to become an abomination?'],
   pretty: ['Yes.'],
   moon: ['Oh yeah? Look at THIS.'],

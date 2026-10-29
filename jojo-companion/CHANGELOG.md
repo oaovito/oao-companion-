@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.29.2 — 2026-10-29
+
+### Alterado
+- **Dormir depois das 21h é permitido**: das 21h às 6h, falar em dormir/sono/cama no chat faz o
+  JoJo reafirmar que agora pode (boa noite, também em inglês e na conversa online); antes das 21h
+  ele continua furioso e contra. Falas ambientes de dormir só aparecem depois das 21h (`apos`).
+
+### Corrigido
+- Teste do Legends determinístico (o sorteio podia cair num horário que a checagem horária pulava).
+
 ## 0.29.1 — 2026-10-29
 
 ### Corrigido

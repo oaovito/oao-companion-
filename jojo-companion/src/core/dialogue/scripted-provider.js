@@ -78,6 +78,13 @@ export const RESPONSES = {
   scare: ['Tem certeza, {nome}?', 'Pediu, levou.'],
   achievement: ['Aí sim, {nome}. Eu sabia.', 'Finalmente. Já tava criando craca aqui.', 'Isso. Agora a próxima.'],
   docinho: ['Quer se tornar uma aberração?'],
+  sleepOk: [
+    'Passou das 21h. Agora dormir é permitido, {nome}. Vai.',
+    'Depois das 21h é lei: cama. Músculo cresce no descanso.',
+    'Pode dormir. Já cumpriu o dia. Amanhã tem treino.',
+    'Agora sim. Desliga a tela e dorme, {nome}. Ordem do chefe.',
+    'Depois das 21h dormir não é fraqueza, é recuperação. Boa noite.',
+  ],
   sleep: [
     'DORMIR?! Dormir é coisa de sardinha. Levanta, {nome}!',
     'Sono é fraqueza saindo do corpo. Expulsa essa merda e trabalha.',
@@ -115,12 +122,13 @@ export const RESPONSES = {
 // Ação/expressão corporal coerente com cada resposta.
 const ACTIONS = {
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
-  sleep: 'angry', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
+  sleep: 'angry', sleepOk: 'boaNoite', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
   name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
+  sleepOk: 'serio',
   crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', pretty: 'brincadeira', avc: 'brincadeira', avcReal: 'serio', dressDown: 'serio', dressUp: 'brincadeira', lol: 'brincadeira', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',
@@ -129,6 +137,12 @@ const TONES = {
 // Intenções que, numa pergunta de conhecimento ("quantas horas devo dormir?"),
 // dão lugar à pesquisa: a resposta programada não responderia a pergunta.
 const SEARCHABLE = new Set(['unknown', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
+
+/** Depois das 21h (até as 6h) dormir é permitido — e o JoJo reafirma isso. */
+export function sleepAllowed(date = new Date()) {
+  const h = date.getHours();
+  return h >= 21 || h < 6;
+}
 
 export function detectIntent(text) {
   if (isEnglish(text)) return detectIntentEn(text);
@@ -141,9 +155,10 @@ export function detectIntent(text) {
 }
 
 export class ScriptedProvider extends DialogueProvider {
-  constructor({ rng = Math.random } = {}) {
+  constructor({ rng = Math.random, now = () => new Date() } = {}) {
     super({ id: 'scripted', label: 'Respostas programadas (offline)', kind: 'scripted' });
     this.rng = rng;
+    this.now = now;
     this.last = {};
   }
 
@@ -155,6 +170,8 @@ export class ScriptedProvider extends DialogueProvider {
     // Inglês quando ela escreve em inglês (português é a língua principal).
     if (isEnglish(text)) return this._replyEn(text);
     let intent = detectIntent(text);
+    // Dormir: antes das 21h ele é contra; depois das 21h é permitido e ele reafirma.
+    if (intent === 'sleep' && sleepAllowed(this.now())) intent = 'sleepOk';
     // Pergunta de conhecimento sem resposta programada: pede pesquisa ao engine.
     let search = false;
     if (SEARCHABLE.has(intent) && isFactualQuestion(text)) {
@@ -173,6 +190,7 @@ export class ScriptedProvider extends DialogueProvider {
 
   _replyEn(text) {
     let intent = detectIntentEn(text);
+    if (intent === 'sleep' && sleepAllowed(this.now())) intent = 'sleepOk';
     const search = intent === 'unknown' && isEnglishFactualQuestion(text);
     const options = EN_RESPONSES[intent] || EN_RESPONSES.unknown;
     let idx = Math.floor(this.rng() * options.length);

@@ -205,6 +205,8 @@ export class VarietyEngine {
       if (prefs.surpresas === false && l.freq === 'easter') return;
       if (want && !want.includes(l.cat)) return;
       if (l.horario && !l.horario.includes(per)) return;
+      // Falas de dormir: só depois das 21h (até as 6h).
+      if (l.apos && !(date.getHours() >= l.apos || date.getHours() < 6)) return;
       const key = String(idx);
       if (this.state.lines[this.state.lines.length - 1] === key) return;
       let v = freq[l.freq] ?? freq.comum;

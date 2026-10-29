@@ -1,5 +1,5 @@
 {
- "_notas": "Falas ambientes do JoJo (no máximo 80 caracteres). Campos: n (número na lista pedida), t (texto), cat (categoria), freq (comum | rara | easter | desligada), anims (animações ambientes em que a fala combina mais), horario (manha, tarde, noite, madrugada). O motor sorteia a fala pela categoria da animação que está tocando (campo 'fala' em assets/catalog/animacoes.json), pelo período do dia e pela temporada, sem repetir em sequência. Para ajustar a frequência, troque 'freq'; para desligar, use 'desligada'.",
+ "_notas": "Falas ambientes do JoJo (no máximo 80 caracteres). Campos: n (número na lista pedida), t (texto), cat (categoria), freq (comum | rara | easter | desligada), anims (animações ambientes em que a fala combina mais), horario (manha, tarde, noite, madrugada), apos (só a partir dessa hora até as 6h; ex.: 21 para falas de dormir). O motor sorteia a fala pela categoria da animação que está tocando (campo 'fala' em assets/catalog/animacoes.json), pelo período do dia e pela temporada, sem repetir em sequência. Para ajustar a frequência, troque 'freq'; para desligar, use 'desligada'.",
  "falas": [
   {
    "n": 1,
@@ -939,8 +939,8 @@
    "n": 84,
    "t": "Dormir bem é o melhor suplemento.",
    "cat": "cuidado",
-   "freq": "desligada",
-   "nota": "Desligada: contradiz a regra de o JoJo ser radicalmente contra dormir."
+   "freq": "comum",
+   "apos": 21
   },
   {
    "n": 85,
@@ -1093,11 +1093,8 @@
    "n": 99,
    "t": "Vai dormir. Músculo cresce no descanso.",
    "cat": "horario",
-   "freq": "desligada",
-   "horario": [
-    "noite"
-   ],
-   "nota": "Desligada: contradiz a regra de o JoJo ser radicalmente contra dormir."
+   "freq": "comum",
+   "apos": 21
   },
   {
    "n": 100,
@@ -1516,6 +1513,24 @@
    "t": "Dia ruim também conta. Você apareceu.",
    "cat": "constancia",
    "freq": "comum"
+  },
+  {
+   "t": "Passou das 21h. Agora dormir é permitido. Recomendado, até.",
+   "cat": "horario",
+   "freq": "comum",
+   "apos": 21
+  },
+  {
+   "t": "Depois das 21h, descanso é treino. Pode desligar.",
+   "cat": "horario",
+   "freq": "comum",
+   "apos": 21
+  },
+  {
+   "t": "21h passou. Cama liberada, sem culpa.",
+   "cat": "horario",
+   "freq": "comum",
+   "apos": 21
   }
  ]
 }

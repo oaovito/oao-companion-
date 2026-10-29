@@ -13,13 +13,13 @@ export class DialogueEngine {
    * @param search pesquisa na internet (WebSearch) para perguntas sem resposta
    *   programada; `searchEnabled()` diz se a usuária permitiu.
    */
-  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true, llm = null } = {}) {
+  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true, llm = null, now = () => new Date() } = {}) {
     // Conversa com IA (API gratuita): entende e responde no jeito do JoJo.
     this.llm = llm;
     this.llmOk = false;
     this.search = search;
     this.searchEnabled = searchEnabled;
-    this.fallback = new ScriptedProvider();
+    this.fallback = new ScriptedProvider({ now });
     this.providers = providers;
     this.activeId = 'scripted';
     this.history = [];

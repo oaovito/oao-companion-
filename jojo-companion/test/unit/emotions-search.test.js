@@ -274,15 +274,26 @@ test('pesquisa: Wikipédia e DuckDuckGo começam juntas (resposta mais rápida)'
   await p;
 });
 
-test('dormir em qualquer forma e horário: JoJo fica furioso e recusa (nunca dorme pelo chat)', async () => {
+test('dormir antes das 21h: JoJo fica furioso e recusa; depois das 21h é permitido e ele reafirma', async () => {
   const { detectIntent, ScriptedProvider } = await import('../../src/core/dialogue/scripted-provider.js');
   for (const t of ['vou dormir', 'tô com sono', 'que tal uma soneca?', 'vou tirar um cochilo', 'hora de ir pra cama', 'quantas horas devo dormir?', 'jojo vai dormir', 'to sonolenta']) {
     assert.equal(detectIntent(t), 'sleep', t);
   }
   assert.notEqual(detectIntent('isso é sonoro'), 'sleep');
-  const r = await new ScriptedProvider().reply({ text: 'vou dormir agora' });
+  const tarde = new ScriptedProvider({ now: () => new Date(2026, 9, 29, 15) });
+  let r = await tarde.reply({ text: 'vou dormir agora' });
   assert.equal(r.action, 'angry');
   assert.ok(!r.search, 'não pesquisa: reage');
+  for (const h of [21, 23, 2, 5]) {
+    const noite = new ScriptedProvider({ now: () => new Date(2026, 9, 29, h) });
+    r = await noite.reply({ text: 'vou dormir agora' });
+    assert.equal(r.action, 'boaNoite', `${h}h`);
+    assert.match(r.text, /permitid|cama|lei|Dorm/i, r.text);
+    r = await noite.reply({ text: 'going to sleep now' });
+    assert.equal(r.action, 'boaNoite', `${h}h (inglês)`);
+  }
+  r = await new ScriptedProvider({ now: () => new Date(2026, 9, 29, 6) }).reply({ text: 'tô com sono' });
+  assert.equal(r.action, 'angry', '6h já é dia de novo');
 });
 
 test('inglês quando necessário: entende e responde em inglês; português continua o padrão', async () => {

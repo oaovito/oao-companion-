@@ -1393,6 +1393,11 @@ export class Companion {
   }
 
   _doChatAction(action, now) {
+    if (action === 'boaNoite') {
+      // Depois das 21h: dormir liberado, ele dá boa noite.
+      this.playCatalog('boaNoite', { source: 'chat', speak: false });
+      return;
+    }
     if (action === 'nojo') {
       // Docinho: cara de nojo, tom esverdeado.
       this.playCatalog('nojo', { source: 'chat', speak: false });
