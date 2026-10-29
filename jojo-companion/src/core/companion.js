@@ -9,7 +9,7 @@
 //   store:    SettingsStore-like { get(), update(patch, opts) }
 import { AvoidanceController, isSafeTarget, choosePathControl } from './avoidance.js';
 import { Mover } from './motion.js';
-import { BehaviorMachine, PRIORITY, STATES } from './behavior.js';
+import { BehaviorMachine, PRIORITY, STATES, weightedPick } from './behavior.js';
 import { PhraseBook, readingTimeMs, greetingCategory } from './phrases.js';
 import { placeAround, composeWindow } from './layout.js';
 import { displayForRect, allowedDisplays, recoverRect, topologySignature, primaryDisplay } from './displays.js';
@@ -21,11 +21,15 @@ import { ConversationManager, parseCommand, commandMenu } from './conversations.
 import { holidayFor, HOLIDAYS } from './holidays.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
+// O que um tubarão come (peso no sorteio). Gente só de vez em quando.
+const FOODS = { peixe: 3, foca: 2, lula: 2, tartaruga: 1.5, pinguim: 1.5, humano: 0.8 };
+// Momento do arroto depois de começar a comer.
+const BURP_MS = 2500;
 // Altura extra acima da caixa para chapéus das fantasias (px lógicos, escala 1).
 const COSTUME_HEADROOM = 36;
 const COSTUME_FOOTROOM = 40;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
-const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800 };
+const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800, avc: 3500 + 1600 + 900 + 60000 + 1500 };
 const ACTIVITY_ROW = 26;
 const ACTIVITY_WIDTH = 224;
 const THINK_MS = 650; // "digitando…": tempo em que a conversa fica "Em andamento"
@@ -431,7 +435,8 @@ export class Companion {
   }
 
   _avoidanceEnabled() {
-    return !this.interaction && !this.dragging && !this.quitting && this.behavior.state !== 'goodbye';
+    // Morto no chão (AVC) não foge do cursor.
+    return !this.interaction && !this.dragging && !this.quitting && this.behavior.state !== 'goodbye' && this.behavior.state !== 'avc';
   }
 
   _sampleCursor(now) {
@@ -898,11 +903,31 @@ export class Companion {
     const m = map[action];
     if (!m) return false;
     if (!this.behavior.request(m[0], { now, force: true })) return false;
-    this.effect = { name: m[2], until: now + m[3] };
-    this.sayCategory(m[1], { force: true });
+    if (action === 'eat') {
+      this._feed(now);
+    } else {
+      this.effect = { name: m[2], until: now + m[3] };
+      this.sayCategory(m[1], { force: true });
+    }
     this._applyLayout(true);
     this._schedule(0);
     return true;
+  }
+
+  /**
+   * Comida de tubarão: sorteia o que ele come (às vezes gente), fala sobre e
+   * arrota no fim, sempre.
+   */
+  _feed(now, { quiet = false } = {}) {
+    const kind = weightedPick(FOODS, this.rng);
+    this.effect = { name: 'food', kind, until: now + 3400 };
+    if (!quiet) this.sayCategory(`food_${kind}`, { force: true, fallback: 'food' });
+    this.clock.setTimeout(() => {
+      if (this.quitting || !this.started) return;
+      this.hideBubble();
+      this.say('BUUURP.', 'speech');
+    }, BURP_MS);
+    return kind;
   }
 
   setChatOpen(open) {
@@ -1046,7 +1071,8 @@ export class Companion {
       const map = { pet: ['petted', 'hearts', 2200], eat: ['eat', 'food', 2800], play: ['play', 'ball', 3400] };
       const [st, fx, ms] = map[action];
       this.behavior.request(st, { now, force: true });
-      this.effect = { name: fx, until: now + ms };
+      if (action === 'eat') this._feed(now, { quiet: true });
+      else this.effect = { name: fx, until: now + ms };
     } else if (action === 'sleep') {
       // No modo de interação, cochilo curto e acorda na saída.
       this.behavior.request('sleep', { now, force: true });
@@ -1058,6 +1084,15 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'scare') {
       this.behavior.request('scare', { now, force: true });
+    } else if (action === 'avc') {
+      this.hideBubble();
+      this.behavior.request('avc', { now, force: true });
+    } else if (action === 'dressDown' || action === 'dressUp') {
+      const cfg = this.personality.get().festas;
+      this.personality.update({ festas: { ...cfg, estilo: action === 'dressDown' ? 'comportada' : 'ousada' } });
+      if (action === 'dressDown') this.behavior.request('finger', { now, force: true });
+      else this.behavior.request('happy', { now, force: true });
+      this._applyLayout(true);
     } else if (action === 'poop') {
       this.behavior.request('poop', { now, force: true });
     } else if (action === 'smitten') {
@@ -1109,7 +1144,7 @@ export class Companion {
   react(name) {
     if (!STATES[name] || this.quitting) return false;
     const st = this.behavior.state;
-    if (st === name || st === 'flee' || st === 'hidden' || st === 'dragged' || st === 'goodbye' || st === 'gone' || this.dragging) return false;
+    if (st === name || st === 'flee' || st === 'hidden' || st === 'dragged' || st === 'goodbye' || st === 'gone' || st === 'avc' || this.dragging) return false;
     const now = this.clock.now();
     if (this.mover.active && this.mover.kind === 'walk') {
       this.mover.stop();
@@ -1305,10 +1340,13 @@ export class Companion {
       toolbar: toolbar ? { rect: rel(toolbar.rect), side: toolbar.side, hotkey: s.interactionHotkey } : null,
       chat: chat ? { rect: rel(chat.rect), provider: this.dialogue ? this.dialogue.describe() : null, name: this.companionName, commands: commandMenu({ petVisible: !this.userHidden }) } : null,
       effect: this.effect ? this.effect.name : null,
+      effectKind: this.effect ? this.effect.kind || null : null,
       activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
       reducedMotion: this.reducedMotion,
       mode: this.wired ? 'wired' : null,
       costume: this.costume,
+      // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
+      sexy: !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
       moving: this.mover.active ? this.mover.kind : null,
       sounds: s.sounds && !s.quietMode,

@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.21.0 — 2026-10-29
+
+### Adicionado
+- **Fantasias ousadas** por padrão: sunga mínima nas cores da fantasia, meia
+  arrastão, liga com laço e colarinho com gravata-borboleta. "Se veste direito" (e
+  variações): o JoJo acha ruim, mostra o **dedo do meio** e veste a versão
+  comportada (lembra da escolha); "pode voltar a fantasia ousada" desfaz. Datas
+  islâmicas, judaicas, hindus e budistas: só a versão comportada.
+- **Comida de tubarão**: a cada refeição sorteia peixe, foca, lula, tartaruga,
+  pinguim ou, de vez em quando, **gente** (perna de turista com tênis). Mordidas
+  ensanguentadas, sangue pingando, osso (ou tênis) caindo e **sempre um arroto**
+  no fim ("BUUURP!" com nuvem verde).
+- **"AVC"** no chat: vira de costas fazendo força até ficar vermelho, vira
+  segurando o peito, cai morto (olhos em X, moscas) por **1 minuto** e volta à
+  vida dizendo **"Essa foi por pouco."**. Morto ele não foge do cursor. Sintomas de
+  AVC de verdade ("tô tendo um AVC", "boca torta") dão resposta séria: SAMU 192 e o João.
+
 ## 0.20.0 — 2026-10-29
 
 ### Adicionado

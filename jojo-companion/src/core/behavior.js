@@ -68,6 +68,10 @@ export const STATES = {
   // Exibição pra Emanuele ver.
   benchPress: { priority: P.INTERACT, phases: [{ anim: 'benchPress', ms: 5200 }], next: 'happy' },
   squat: { priority: P.INTERACT, phases: [{ anim: 'squat', ms: 4400 }], next: 'happy' },
+  // "AVC": vira de costas e faz força, segura o peito, cai morto 1 min e volta.
+  avc: { priority: P.INTERACT, phases: [{ anim: 'avcStrain', ms: 3500 }, { anim: 'avcClutch', ms: 1600 }, { anim: 'avcFall', ms: 900 }, { anim: 'avcDead', ms: 60000 }, { anim: 'avcRevive', ms: 1800 }], next: 'idle' },
+  // Mandaram se vestir diferente: dedo do meio.
+  finger: { priority: P.INTERACT, phases: [{ anim: 'finger', ms: 2600 }], next: 'idle' },
   // "Eu deveria jogar lol?": caga no chão, pega e oferece.
   poop: { priority: P.INTERACT, phases: [{ anim: 'poop', ms: 7000 }], next: 'idle' },
   // "Eu sou bonita?": olhos de coração, cambaleia, cai de costas (😵), "É" e levanta.

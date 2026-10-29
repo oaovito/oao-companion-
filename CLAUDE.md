@@ -48,6 +48,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Datas festivas (38): feriados nacionais do Brasil + datas religiosas e culturais do mundo;
   fantasia do dia + cumprimento (solenes sem fantasia/piada; religiosas sem zombaria);
   `holidays.js` (ICU + fases da Lua), `rig.costumes`.
+- Fantasias ousadas por padrão (`festas.estilo`); "se veste direito" → dedo do meio + comportada.
+- Comida de tubarão sorteada (peixe, foca, lula, tartaruga, pinguim, às vezes gente), gore e arroto.
+- "AVC": esforço de costas, segura o peito, morto 1 min, "Essa foi por pouco."; AVC real → SAMU 192.
 - O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.

@@ -34,7 +34,7 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   // Uma vez por semana, em momento aleatório: "jogar Legends é ideia burra".
   legends: { ativo: true, inicio: 10, fim: 22, ultimaSemana: null, momento: null },
   // Datas festivas: fantasia do dia e cumprimento (uma vez por dia).
-  festas: { ativo: true, ultimoDia: null },
+  festas: { ativo: true, ultimoDia: null, estilo: 'ousada' }, // estilo: ousada | comportada
 });
 
 const PALAVROES = ['nenhum', 'ocasional', 'frequente'];
@@ -94,6 +94,7 @@ export function sanitizePersonality(input) {
   out.ociosidade.efeitoMin = int(oc.efeitoMin, 1, 60, D.ociosidade.efeitoMin);
   const fe = src.festas && typeof src.festas === 'object' ? src.festas : {};
   if (typeof fe.ativo === 'boolean') out.festas.ativo = fe.ativo;
+  if (fe.estilo === 'ousada' || fe.estilo === 'comportada') out.festas.estilo = fe.estilo;
   out.festas.ultimoDia = typeof fe.ultimoDia === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fe.ultimoDia) ? fe.ultimoDia : null;
   const lg = src.legends && typeof src.legends === 'object' ? src.legends : {};
   if (typeof lg.ativo === 'boolean') out.legends.ativo = lg.ativo;

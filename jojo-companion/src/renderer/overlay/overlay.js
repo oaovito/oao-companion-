@@ -102,7 +102,7 @@ function onState(s) {
     reduced = !!s.reducedMotion;
     document.body.classList.toggle('reduced', reduced);
   }
-  effects.setEffect(reduced ? null : s.effect, now);
+  effects.setEffect(reduced ? null : s.effect, now, s.effectKind || null);
   renderBubble(s);
   renderActivities(s);
   renderToolbar(s);
@@ -382,6 +382,7 @@ function draw(now) {
   }
   if (s.noseDust) pose.noseDust = 1;
   if (s.costume) pose[`costume_${s.costume}`] = 1;
+  if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);
     puffDone = true;

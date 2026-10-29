@@ -7,10 +7,12 @@ export class RigRenderer {
   constructor(rig) {
     this.rig = rig;
     this.paths = new Map();
+    this.clips = new Map(); // recortes (ex.: meia arrastão só dentro das pernas)
     this.partsById = new Map();
     for (const g of rig.groups) {
       for (const p of g.parts) {
         this.paths.set(p.id, new Path2D(p.path));
+        if (p.clipPath) this.clips.set(p.id, new Path2D(p.clipPath));
         this.partsById.set(p.id, p);
       }
     }
@@ -130,7 +132,7 @@ export class RigRenderer {
     for (const group of rig.groups) {
       // Grupos de outra vista (ex.: de costas) trocam de lugar com a vista de frente.
       if (group.showIf && !((pose[group.showIf] ?? 0) >= 0.5)) continue;
-      if (group.hideIf && (pose[group.hideIf] ?? 0) >= 0.5) continue;
+      if (group.hideIf && [].concat(group.hideIf).some((ch) => (pose[ch] ?? 0) >= 0.5)) continue;
       if (group.outline) {
         ctx.strokeStyle = this.color('outline');
         ctx.lineWidth = ow * 2;
@@ -156,6 +158,8 @@ export class RigRenderer {
     if (part.showIf && !((pose[part.showIf] ?? 0) >= 0.5)) return;
     ctx.save();
     this._xform(ctx, part, pose, 0);
+    const clip = this.clips.get(part.id);
+    if (clip) ctx.clip(clip);
     op(this.paths.get(part.id));
     ctx.restore();
   }

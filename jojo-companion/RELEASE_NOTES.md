@@ -13,6 +13,8 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- Fantasias ousadas (mande **"se veste direito"** e veja a reação). Comida de tubarão de
+  verdade com arroto (🐟). Escreva **"AVC"** e espere 1 minuto.
 - Em 38 datas festivas (feriados do Brasil e datas religiosas e culturais do mundo) ele veste
   fantasia e deseja feliz dia — ou não. Nas datas solenes, só respeito.
 - Pergunte **"eu deveria jogar lol?"** e veja o que ele te oferece.
@@ -45,5 +47,6 @@ JoJo, `/pet`, movimento reduzido e o apoio do João quando ela estiver mal.
 - Pergunta: no chat (Ctrl+Alt+J → 💬), "o que é fotossíntese?".
 - Exibição: no chat, "faz supino".
 - Meme: no chat, "vai tomar no cu".
+- AVC: no chat, "AVC" (ele volta em 1 minuto).
 
 Arte provisória (desenho original do JoJo).

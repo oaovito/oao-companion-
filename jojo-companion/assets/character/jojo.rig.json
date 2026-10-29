@@ -126,7 +126,12 @@
     "rainBlue": "#1e88e5",
     "rainPurple": "#8e24aa",
     "patHat": "#1b8a3c",
-    "patBand": "#111111"
+    "patBand": "#111111",
+    "fishnet": "#16161c",
+    "garter": "#e8344e",
+    "garterBow": "#ffd6e0",
+    "collar": "#f7f5ee",
+    "bowtie": "#e8344e"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
@@ -271,6 +276,20 @@
       "hideIf": "mooning"
     },
     {
+      "id": "sexyNet",
+      "showIf": "sexy",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "sexyNetL",
+          "fill": "fishnet",
+          "alpha": 0.5,
+          "clipPath": "M52,146 L89,146 L89,167 L49,167 Z M91,146 L128,146 L131,167 L91,167 Z",
+          "path": "M40,146 L62,167 L63.2,167 L41.2,146 Z M62,146 L40,167 L41.2,167 L63.2,146 Z M46,146 L68,167 L69.2,167 L47.2,146 Z M68,146 L46,167 L47.2,167 L69.2,146 Z M52,146 L74,167 L75.2,167 L53.2,146 Z M74,146 L52,167 L53.2,167 L75.2,146 Z M58,146 L80,167 L81.2,167 L59.2,146 Z M80,146 L58,167 L59.2,167 L81.2,146 Z M64,146 L86,167 L87.2,167 L65.2,146 Z M86,146 L64,167 L65.2,167 L87.2,146 Z M70,146 L92,167 L93.2,167 L71.2,146 Z M92,146 L70,167 L71.2,167 L93.2,146 Z M76,146 L98,167 L99.2,167 L77.2,146 Z M98,146 L76,167 L77.2,167 L99.2,146 Z M82,146 L104,167 L105.2,167 L83.2,146 Z M104,146 L82,167 L83.2,167 L105.2,146 Z M88,146 L110,167 L111.2,167 L89.2,146 Z M110,146 L88,167 L89.2,167 L111.2,146 Z M94,146 L116,167 L117.2,167 L95.2,146 Z M116,146 L94,167 L95.2,167 L117.2,146 Z M100,146 L122,167 L123.2,167 L101.2,146 Z M122,146 L100,167 L101.2,167 L123.2,146 Z M106,146 L128,167 L129.2,167 L107.2,146 Z M128,146 L106,167 L107.2,167 L129.2,146 Z M112,146 L134,167 L135.2,167 L113.2,146 Z M134,146 L112,167 L113.2,167 L135.2,146 Z M118,146 L140,167 L141.2,167 L119.2,146 Z M140,146 L118,167 L119.2,167 L141.2,146 Z M124,146 L146,167 L147.2,167 L125.2,146 Z M146,146 L124,167 L125.2,167 L147.2,146 Z M130,146 L152,167 L153.2,167 L131.2,146 Z M152,146 L130,167 L131.2,167 L153.2,146 Z M136,146 L158,167 L159.2,167 L137.2,146 Z M158,146 L136,167 L137.2,167 L159.2,146 Z"
+        }
+      ]
+    },
+    {
       "id": "body",
       "outline": true,
       "parts": [
@@ -327,7 +346,10 @@
           "fill": "shorts"
         }
       ],
-      "hideIf": "mooning"
+      "hideIf": [
+        "mooning",
+        "sexy"
+      ]
     },
     {
       "id": "shortsDetail",
@@ -339,7 +361,48 @@
           "fill": "stripe"
         }
       ],
-      "hideIf": "mooning"
+      "hideIf": [
+        "mooning",
+        "sexy"
+      ]
+    },
+    {
+      "id": "sexyLayer",
+      "outline": true,
+      "showIf": "sexy",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "sexySunga",
+          "fill": "shorts",
+          "path": "M62,126 L118,126 L112,140 C104,146 76,146 68,140 Z"
+        },
+        {
+          "id": "sexySungaStripe",
+          "fill": "stripe",
+          "path": "M64,127 L69,127 L72,135 L68,136 Z M111,127 L116,127 L112,136 L108,135 Z"
+        },
+        {
+          "id": "sexyGarter",
+          "fill": "garter",
+          "path": "M54,150 L86,150 L86,154 L54,154 Z M94,150 L126,150 L126,154 L94,154 Z"
+        },
+        {
+          "id": "sexyGarterBow",
+          "fill": "garterBow",
+          "path": "M66,149 L72,152 L66,155 Z M78,149 L72,152 L78,155 Z M102,149 L108,152 L102,155 Z M114,149 L108,152 L114,155 Z"
+        },
+        {
+          "id": "sexyCollar",
+          "fill": "collar",
+          "path": "M68,80 C80,86 100,86 112,80 L112,86 C100,92 80,92 68,86 Z"
+        },
+        {
+          "id": "sexyBowtie",
+          "fill": "bowtie",
+          "path": "M80,84 L90,88 L80,93 Z M100,84 L90,88 L100,93 Z M88,86 L92,86 L92,90 L88,90 Z"
+        }
+      ]
     },
     {
       "id": "propsBar",
@@ -1225,6 +1288,32 @@
       "hideIf": "mooning"
     },
     {
+      "id": "fingerGroup",
+      "outline": true,
+      "showIf": "finger",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "middleFinger",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M147,154 C147,164 148,176 151,181 C154,176 155,164 155,154 Z"
+        },
+        {
+          "id": "middleNail",
+          "fill": "cream",
+          "parent": "foreR",
+          "path": "M149,173 L153,173 L153,177 C153,181 149,181 149,177 Z"
+        },
+        {
+          "id": "fistKnuckles",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M140,150 C140,144 146,142 150,146 C154,142 160,144 160,150 C160,158 140,158 140,150 Z"
+        }
+      ]
+    },
+    {
       "id": "costumeHand",
       "outline": true,
       "hideIf": "mooning",
@@ -1499,7 +1588,12 @@
         {
           "id": "moonGap",
           "fill": "gagDark",
-          "path": "M80,90 C84,84 96,84 100,90 L101,124 C96,130 84,130 79,124 Z"
+          "path": "M80,90 C84,84 96,84 100,90 L101,124 C96,130 84,130 79,124 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            108
+          ]
         },
         {
           "id": "moonCheekL",

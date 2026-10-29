@@ -111,6 +111,9 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | U1 | Atualização automática | Baixa a versão nova das Releases e troca sozinho (PC parado ou ao encerrar); desligável |
 | M3 | LoL | "Eu deveria jogar lol?" → caga no chão, pega e oferece dizendo "Passa na cara de uma vez." |
 | F1 | Datas festivas | 38 datas: feriados nacionais do Brasil e datas religiosas/culturais do mundo; fantasia + cumprimento uma vez por dia; solenes sem fantasia |
+| M4 | Fantasia ousada | Padrão ousado; "se veste direito" → dedo do meio + versão comportada |
+| M5 | Comida | Comida de tubarão sorteada (às vezes gente), gore e arroto no fim |
+| M6 | AVC | "AVC" → força de costas, segura o peito, morto 1 min, "Essa foi por pouco."; sintomas reais → SAMU 192 |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho

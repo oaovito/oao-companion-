@@ -590,6 +590,55 @@
         "Happy Thanksgiving, {nome}. Agradece e come com atenção.",
         { "t": "Não vou desejar nada. Nem é feriado aqui. Mas agradece.", "tone": "serio", "reaction": "judge" }
       ]
+    },
+    "food_peixe": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
+      "lines": [
+        "Peixe cru, com espinha e tudo. Crocante.",
+        "Sashimi de verdade, {nome}. Sem shoyu.",
+        "Olho de peixe estoura que nem uva. Delícia."
+      ]
+    },
+    "food_foca": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
+      "lines": [
+        "Foca. Suculenta. Proteína pura.",
+        "Desculpa, foca. Cadeia alimentar.",
+        "Foca inteira. O bigode fica no dente, {nome}."
+      ]
+    },
+    "food_lula": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
+      "lines": [
+        "Lula viva. Ainda tá mexendo, olha.",
+        "Tentáculo grudando na garganta. Faz parte.",
+        "Lula com tinta. Molho natural."
+      ]
+    },
+    "food_tartaruga": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
+      "lines": [
+        "Tartaruga. O casco é a parte crocante.",
+        "Craque. Ouviu? Era o casco.",
+        "Tartaruga. Lenta pra fugir, rápida pra descer."
+      ]
+    },
+    "food_pinguim": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
+      "lines": [
+        "Pinguim. Veio de terno, saiu sem.",
+        "Pinguim de geladeira não. Pinguim de verdade.",
+        "Engoli com gravata e tudo, {nome}."
+      ]
+    },
+    "food_humano": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
+      "lines": [
+        "Surfista. Achei que era foca. Não devolvo.",
+        "Perna de turista. Tênis não desce, fica pra decoração.",
+        "Gente tem gosto de protetor solar. Ruim, mas eu como.",
+        { "t": "Humano. Erro de digitação da natureza. Puta merda, que tendão duro.", "tags": ["palavrao"] }
+      ]
     }
   }
 }

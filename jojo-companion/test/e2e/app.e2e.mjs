@@ -554,3 +554,29 @@ test('data festiva: renderer recebe a fantasia e a janela continua click-through
     await quit(app);
   }
 });
+
+test('comida de tubarão com arroto e fantasia ousada/comportada no renderer', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
+    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
+    await sleep(300);
+    await win.click('#toolbar button[data-action="eat"]');
+    await sleep(400);
+    const st = await win.evaluate(() => ({ e: window.__jojoRenderer.state.effect, k: window.__jojoRenderer.state.effectKind }));
+    assert.equal(st.e, 'food');
+    assert.ok(['peixe', 'foca', 'lula', 'tartaruga', 'pinguim', 'humano'].includes(st.k));
+    await sleep(2600);
+    assert.equal(await app.evaluate(() => globalThis.__jojo.companion.bubble && globalThis.__jojo.companion.bubble.text), 'BUUURP.');
+    await app.evaluate(() => globalThis.__jojo.companion.exitInteraction('test'));
+    await app.evaluate(() => globalThis.__jojo.companion.checkHoliday(new Date(2026, 11, 25, 12)));
+    await sleep(300);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.state.sexy), true);
+    await app.evaluate(() => globalThis.__jojo.companion.chat('se veste direito'));
+    await sleep(400);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.anim), 'finger');
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.state.sexy), false);
+  } finally {
+    await quit(app);
+  }
+});
