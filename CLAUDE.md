@@ -20,6 +20,18 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Respostas e documentação em **português do Brasil**.
 - Nunca afirmar que algo foi testado no Windows sem ter sido (ver CI abaixo).
 
+## Personagem e usuária
+
+- O companion se chama **JoJo** (inspirado no Jeff; o app/projeto é "Jeff Companion").
+- A usuária é a **Emanuele**: chamar de **Emanuele** em falas sérias e de **Manu** em brincadeiras.
+- Se ela disser que está chorando ou muito triste: dizer que é melhor falar com o **João**,
+  porque ele sabe cuidar dela. Menção a se machucar/suicídio: João agora + CVV 188.
+- Personalidade padrão: sério, mandão, humor seco/ácido, palavrões ocasionais; bronca ao
+  abrir o Instagram; lembrete diário de comer com atenção (nunca usar peso/corpo como insulto;
+  humor com drogas sem incentivar uso). Perfil editável em `personality.json`.
+- Toda fala vem com expressão corporal coerente (campo `reaction` nas falas).
+- Visual: estilo recorte de papel (South Park), adulto, fisiculturista, com presas.
+
 ## Requisitos que não podem regredir
 
 1. Fora do modo de interação o overlay é **click-through real**

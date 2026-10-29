@@ -187,13 +187,15 @@ function renderChat(s, prev) {
   chatEl.classList.remove('hidden');
   const r = s.chat.rect;
   Object.assign(chatEl.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.width}px`, height: `${r.height}px` });
+  const title = chatEl.querySelector('header strong');
+  if (title && s.chat.name) title.textContent = `Conversa com o ${s.chat.name}`;
   if (s.chat.provider) {
     providerBadge.textContent = s.chat.provider.scripted
       ? 'Respostas programadas · offline · não é IA'
       : `${s.chat.provider.label}`;
   }
   if (wasHidden || !prev || !prev.chat) {
-    if (!logEl.childElementCount) addMsg('jeff', 'Oi! Minhas respostas são programadas (sem IA). Tente: "oi", "tá com fome?", "vamos brincar?" ou "hora de dormir".');
+    if (!logEl.childElementCount) addMsg('jeff', 'Fala. Minhas respostas são programadas (sem IA). Tenta: "oi", "consegui", "treino", "silêncio" ou "me assusta".');
     setTimeout(() => chatInput.focus(), 30);
   }
 }

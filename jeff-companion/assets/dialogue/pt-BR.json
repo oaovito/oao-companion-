@@ -1,180 +1,194 @@
 {
-  "format": "jeff-phrases/2",
+  "format": "jeff-phrases/3",
   "language": "pt-BR",
-  "notes": "Falas do Jeff com a personalidade padrão (sério, mandão, humor seco e ácido). Cada frase é texto ou {t, tags}. Tags: 'palavrao' (filtrada se palavrões = nenhum; mais rara em 'ocasional'), 'drogas' (humor ácido com referência a cocaína, sem incentivar uso; desligável). Variáveis: {vocativo} (', Nome' ou vazio), {nome} (nome ou 'você'), {atalho}. Nunca usar peso ou corpo como insulto.",
+  "notes": "Falas do JoJo (personalidade padrão: sério, mandão, humor seco e ácido). Cada categoria tem 'tone' ('serio' usa {nome} = Emanuele; 'brincadeira' usa {nome} = Manu) e 'reaction' (estado de corpo coerente com a fala). Cada frase é texto ou {t, tags, tone?, reaction?}. Tags: 'palavrao', 'drogas' (humor ácido sem incentivar uso). Variáveis: {nome}, {vocativo} (', Nome' ou vazio), {companion}, {apoio}, {atalho}. Nunca usar peso ou corpo como insulto.",
   "categories": {
     "greeting": {
-      "kind": "speech",
+      "kind": "speech", "tone": "brincadeira", "reaction": "wave",
       "lines": [
         "Cheguei{vocativo}. Bora trabalhar.",
-        "Tô de olho. Pode começar.",
+        "Tô de olho, {nome}. Pode começar.",
         "Presente. Agora produz.",
-        "Expediente aberto. Sem enrolação.",
-        { "t": "Voltei. Cadê a porra da lista de tarefas?", "tags": ["palavrao"] }
+        { "t": "Expediente aberto, Emanuele. Sem enrolação.", "tone": "serio", "reaction": "lecture" },
+        { "t": "Voltei. Cadê a porra da lista de tarefas, {nome}?", "tags": ["palavrao"], "reaction": "judge" }
       ]
     },
     "morning": {
-      "kind": "speech",
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
       "lines": [
         "Bom dia{vocativo}. Água, café e foco. Nessa ordem.",
         "Bom dia. O dia não vai se resolver sozinho.",
-        "Manhã é hora de fazer o difícil. Começa."
+        { "t": "Bom dia, {nome}. Acordou ou só abriu o olho?", "tone": "brincadeira", "reaction": "wave" }
       ]
     },
     "afternoon": {
-      "kind": "speech",
+      "kind": "speech", "tone": "serio", "reaction": "judge",
       "lines": [
         "Boa tarde{vocativo}. Metade do dia já foi. E aí?",
-        "Tarde. Hora de terminar o que você começou de manhã.",
-        { "t": "Boa tarde. Sem sonequinha, caralho.", "tags": ["palavrao"] }
+        "Tarde. Hora de terminar o que começou de manhã.",
+        { "t": "Boa tarde, {nome}. Sem sonequinha, caralho.", "tone": "brincadeira", "tags": ["palavrao"], "reaction": "lecture" }
       ]
     },
     "night": {
-      "kind": "speech",
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
       "lines": [
         "Boa noite{vocativo}. Termina isso e vai dormir.",
         "Noite. Recuperação também é treino.",
-        "Tarde da noite e você aqui. Anotado."
+        { "t": "Tarde da noite e você aqui, {nome}. Anotado.", "reaction": "judge" }
       ]
     },
     "idleSpeech": {
-      "kind": "speech",
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
       "lines": [
-        "Postura. Ombro pra trás.",
+        "Postura{vocativo}. Ombro pra trás.",
         "Bebe água. Não é sugestão.",
         "Constância ganha de motivação. Todo dia.",
         "Uma tarefa de cada vez. Termina essa.",
-        "Se precisar de mim: {atalho}. Se não, trabalha.",
-        "Treino de hoje tá pago? Pergunta retórica.",
+        { "t": "Se precisar de mim: {atalho}. Se não, trabalha.", "reaction": "judge" },
+        { "t": "Treino de hoje tá pago, {nome}? Pergunta retórica.", "tone": "brincadeira", "reaction": "happy" },
         "Descanso faz parte. Preguiça não.",
-        "Fiscalização de rotina. Pode continuar.",
+        { "t": "Fiscalização de rotina. Pode continuar.", "reaction": "judge" },
         { "t": "Foco, porra. O resto é distração.", "tags": ["palavrao"] },
-        { "t": "Essa energia aí é café ou outra coisa? Não responde.", "tags": ["drogas"] },
-        { "t": "Calma, Scarface. É só uma planilha.", "tags": ["drogas"] }
+        { "t": "Essa energia aí é café ou outra coisa, {nome}? Não responde.", "tags": ["drogas"], "tone": "brincadeira", "reaction": "judge" },
+        { "t": "Calma, Scarface. É só uma planilha.", "tags": ["drogas"], "tone": "brincadeira", "reaction": "judge" }
       ]
     },
     "idleThought": {
-      "kind": "thought",
+      "kind": "thought", "tone": "brincadeira", "reaction": "curious",
       "lines": [
         "Hmm. Isso podia estar pronto já.",
         "Série de 12. Descanso de 60. Simples.",
         "Alguém aqui tá enrolando. Não sou eu.",
         "Proteína. Sono. Repetição.",
-        "Esse cursor tá perdido de novo."
+        "O que a {nome} tá aprontando agora?"
       ]
     },
     "curious": {
-      "kind": "thought",
-      "lines": ["Hm. O que você tá aprontando?", "Interessante. Ou inútil. Vamos ver.", "Isso aí é trabalho mesmo?"]
+      "kind": "thought", "tone": "brincadeira", "reaction": "curious",
+      "lines": ["Hm. O que você tá aprontando, {nome}?", "Interessante. Ou inútil. Vamos ver.", "Isso aí é trabalho mesmo?"]
     },
     "surprised": {
-      "kind": "speech",
+      "kind": "speech", "tone": "brincadeira", "reaction": "surprised",
       "lines": ["Ei!", "Opa. Calma aí.", { "t": "Caralho!", "tags": ["palavrao"] }]
     },
     "petted": {
-      "kind": "speech",
+      "kind": "speech", "tone": "brincadeira", "reaction": "petted",
       "lines": [
-        "Tá. Chega.",
+        "Tá, {nome}. Chega.",
         "Ok. Isso foi... aceitável.",
-        "Não se acostuma.",
+        "Não se acostuma, {nome}.",
         "Valeu. Agora volta pro trabalho.",
         "Carinho registrado. Não conta pra ninguém."
       ]
     },
     "food": {
-      "kind": "speech",
+      "kind": "speech", "tone": "brincadeira", "reaction": "eat",
       "lines": [
         "Peixe. Proteína de verdade.",
-        "Comida de verdade. Aprovado.",
+        "Comida de verdade. Aprovado, {nome}.",
         "Mastiga devagar. Atenção no prato.",
         "Isso sim é pré-treino."
       ]
     },
     "play": {
-      "kind": "speech",
+      "kind": "speech", "tone": "brincadeira", "reaction": "play",
       "lines": [
-        "Bíceps. Olha e aprende.",
+        "Bíceps, {nome}. Olha e aprende.",
         "Isso não é brincadeira. É cardio.",
         "Mais uma série. Vai.",
         "Ninguém pediu, mas tá aí o shape."
       ]
     },
     "sleep": {
-      "kind": "sleep",
+      "kind": "sleep", "tone": "brincadeira",
       "lines": ["Zzz...", "Zzz... recuperação... zzz", "Zzz... mais uma série... zzz"]
     },
     "sleepy": {
-      "kind": "thought",
+      "kind": "thought", "tone": "serio",
       "lines": ["Descanso programado. Não confunda com folga.", "Recuperando. Não perturba."]
     },
     "wake": {
-      "kind": "speech",
-      "lines": ["Acordado. O que eu perdi?", "Descansado. Bora.", "Não estava dormindo. Estava recuperando."]
+      "kind": "speech", "tone": "brincadeira",
+      "lines": ["Acordado. O que eu perdi, {nome}?", "Descansado. Bora.", "Não estava dormindo. Estava recuperando."]
     },
     "dragged": {
-      "kind": "speech",
-      "lines": ["Ei, me solta.", "Cuidado com o shape.", { "t": "Que porra é essa?", "tags": ["palavrao"] }]
+      "kind": "speech", "tone": "brincadeira",
+      "lines": ["Ei, me solta, {nome}.", "Cuidado com o shape.", { "t": "Que porra é essa?", "tags": ["palavrao"] }]
     },
     "land": {
-      "kind": "speech",
-      "lines": ["Aterrissagem perfeita. Óbvio.", "Ok. Aqui serve.", "Nunca mais faz isso."]
+      "kind": "speech", "tone": "brincadeira",
+      "lines": ["Aterrissagem perfeita. Óbvio.", "Ok. Aqui serve.", "Nunca mais faz isso, {nome}."]
     },
     "interactEnter": {
-      "kind": "speech",
-      "lines": ["Fala{vocativo}. Rápido.", "Tô ouvindo.", "Que foi?"]
+      "kind": "speech", "tone": "serio", "reaction": "wave",
+      "lines": ["Fala{vocativo}. Rápido.", "Tô ouvindo.", "Que foi, {nome}?"]
     },
     "interactExit": {
-      "kind": "speech",
-      "lines": ["De volta ao trabalho.", "Dispensado.", "Fechou."]
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": ["De volta ao trabalho.", "Dispensada.", "Fechou."]
     },
     "alreadyRunning": {
-      "kind": "speech",
-      "lines": ["Eu já tô aqui. Presta atenção.", "Um Jeff só. Já basta."]
+      "kind": "speech", "tone": "serio", "reaction": "judge",
+      "lines": ["Eu já tô aqui, {nome}. Presta atenção.", "Um {companion} só. Já basta."]
     },
     "goodbye": {
-      "kind": "speech",
-      "lines": ["Fui. Não faz besteira.", "Até. Sem Instagram.", "Saindo. Você continua."]
+      "kind": "speech", "tone": "brincadeira",
+      "lines": ["Fui. Não faz besteira, {nome}.", "Até. Sem Instagram.", "Saindo. Você continua."]
     },
     "unpause": {
-      "kind": "speech",
-      "lines": ["Voltei. Cadê o progresso?", "Pausa acabou."]
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
+      "lines": ["Voltei. Cadê o progresso{vocativo}?", "Pausa acabou."]
     },
     "instagram": {
-      "kind": "speech",
+      "kind": "speech", "tone": "serio", "reaction": "judge",
       "lines": [
-        "Instagram de novo. O departamento de perder tempo agradece.",
+        "Instagram de novo{vocativo}. O departamento de perder tempo agradece.",
         "Abriu pra ver uma coisa. Essa ficção eu já conheço.",
-        "Pode entrar. Sua concentração já pediu demissão.",
-        "Fiscalização: cadê aquela tarefa que era tão urgente?",
+        { "t": "Pode entrar, {nome}. Sua concentração já pediu demissão.", "tone": "brincadeira" },
+        { "t": "Fiscalização: cadê aquela tarefa que era tão urgente, Emanuele?", "reaction": "lecture" },
         "Rolagem infinita, progresso zero.",
-        "Instagram. Que surpresa. Nenhuma.",
-        "Isso aí não conta como descanso.",
-        { "t": "Instagram de novo? Fecha essa merda.", "tags": ["palavrao"] },
+        { "t": "Instagram. Que surpresa, {nome}. Nenhuma.", "tone": "brincadeira" },
+        { "t": "Isso aí não conta como descanso.", "reaction": "lecture" },
+        { "t": "Instagram de novo, Emanuele? Fecha essa merda.", "tags": ["palavrao"], "reaction": "lecture" },
         { "t": "Puta que pariu. Instagram outra vez.", "tags": ["palavrao"] },
-        { "t": "Nem o Pablo Escobar rolava o feed tanto assim.", "tags": ["drogas"] }
+        { "t": "Nem o Pablo Escobar rolava o feed tanto assim, {nome}.", "tags": ["drogas"], "tone": "brincadeira" }
       ]
     },
     "foodReminder": {
-      "kind": "speech",
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
       "lines": [
-        "Vai comer no automático de novo? Presta atenção no prato.",
-        "Lembrete do dia: come com calma e para quando estiver satisfeito.",
+        "Vai comer no automático de novo{vocativo}? Presta atenção no prato.",
+        "Lembrete do dia: come com calma e para quando estiver satisfeita.",
         "Fome ou tédio? Responde com sinceridade antes de abrir a geladeira.",
         "Comida de verdade, prato na mesa, sem tela. Simples.",
-        { "t": "Vai comer no automático de novo? Presta atenção nessa porra.", "tags": ["palavrao"] }
+        { "t": "Vai comer no automático de novo, Emanuele? Presta atenção nessa porra.", "tags": ["palavrao"] }
       ]
     },
     "achievement": {
-      "kind": "speech",
-      "lines": ["Aí sim. Eu sabia.", "Finalmente. Já tava criando craca aqui.", "Isso. Agora a próxima.", "Bom trabalho. Não se empolga."]
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": ["Aí sim, {nome}. Eu sabia.", "Finalmente. Já tava criando craca aqui.", "Isso. Agora a próxima.", { "t": "Bom trabalho, Emanuele. Não se empolga.", "tone": "serio", "reaction": "nod" }]
     },
     "quietAck": {
-      "kind": "speech",
-      "lines": ["Fechou.", "Silêncio. Entendido."]
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": ["Fechou.", "Silêncio. Entendido{vocativo}."]
     },
     "scare": {
-      "kind": "speech",
-      "lines": ["Tem certeza?", "RAAAH!", "Pediu, levou."]
+      "kind": "speech", "tone": "brincadeira", "reaction": "scare",
+      "lines": ["Tem certeza, {nome}?", "RAAAH!", "Pediu, levou."]
+    },
+    "sadSupport": {
+      "kind": "speech", "tone": "serio", "reaction": "comfort",
+      "lines": [
+        "Emanuele, isso é com o {apoio}. Vai falar com ele, ele sabe cuidar de você.",
+        "Chorando? Para tudo e chama o {apoio}, Emanuele. Ele sabe cuidar de você.",
+        "Emanuele, agora não é comigo. Fala com o {apoio}. Ele sabe cuidar de você."
+      ]
+    },
+    "crisisSupport": {
+      "kind": "speech", "tone": "serio", "reaction": "comfort",
+      "lines": [
+        "Emanuele, isso é sério. Fala agora com o {apoio}. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha."
+      ]
     }
   }
 }

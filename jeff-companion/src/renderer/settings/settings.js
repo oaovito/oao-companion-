@@ -69,6 +69,8 @@ function getPath(obj, path) {
 function renderPersonality(i) {
   const p = i.personality;
   if (!p) return;
+  document.getElementById('companionTitle').textContent = p.nomeCompanion || 'JoJo';
+  document.title = `${p.nomeCompanion || 'JoJo'} — Configurações`;
   for (const el of pFields()) {
     if (el === document.activeElement && el.type !== 'checkbox') continue;
     const v = getPath(p, el.dataset.p);

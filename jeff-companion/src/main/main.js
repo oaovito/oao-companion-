@@ -205,6 +205,7 @@ function main() {
     personality.onChange((p, changed) => {
       log('info', `Perfil de personalidade alterado: ${changed.join(', ')}`);
       companion.applyPersonality(p);
+      trayCtl && trayCtl.refresh();
       if (changed.includes('instagram')) startFullscreenWatch();
       settingsWin.send('settings:changed', settingsInfo());
     });
@@ -356,6 +357,7 @@ function main() {
         quiet: store.get().quietMode,
         hotkey: store.get().interactionHotkey,
         hotkeyOk: hotkeyStatus.ok,
+        name: personality.get().nomeCompanion || 'JoJo',
       }),
       actions: {
         toggleInteraction: () => {
@@ -370,7 +372,7 @@ function main() {
           dialog.showMessageBox({
             type: 'info',
             title: 'Sobre o Jeff Companion',
-            message: `Jeff Companion ${app.getVersion()}`,
+            message: `${personality.get().nomeCompanion || 'JoJo'} — Jeff Companion ${app.getVersion()}`,
             detail:
               'Companion de desktop feito por fãs, inspirado no Jeff, o Tubarão Terrestre.\n' +
               'Projeto não oficial, sem vínculo com a Marvel ou a Disney.\n\n' +

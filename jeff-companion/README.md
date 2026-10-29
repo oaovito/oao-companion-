@@ -68,7 +68,12 @@ padrões). Log local: `%APPDATA%\Jeff Companion\logs\jeff.log`.
 
 ## Personalidade
 
-O jeito do Jeff fica num **perfil separado** da aparência
+O companion se chama **JoJo** (configurável); ele chama a usuária de **Emanuele**
+quando o assunto é sério e de **Manu** quando é brincadeira, e cada fala vem com
+a expressão corporal correspondente. Se ela disser que está chorando ou muito
+triste, o JoJo diz para falar com o **João**, que sabe cuidar dela.
+
+O jeito dele fica num **perfil separado** da aparência
 (`%APPDATA%\Jeff Companion\personality.json`), editável em Configurações →
 Personalidade: como ele te chama, palavrões (nenhum/ocasionais/frequentes),
 humor ácido com referências a cocaína (sem incentivar uso; desligável), bronca ao

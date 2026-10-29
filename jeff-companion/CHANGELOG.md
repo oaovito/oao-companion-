@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.7.0 — 2026-10-29
+
+### Adicionado
+- O companion se chama **JoJo** (bandeja, Sobre, configurações, conversa; editável).
+- Tratamento por tom: **Emanuele** em falas sérias, **Manu** em brincadeiras.
+- Tristeza na conversa ("chorando", "muito triste", "na bad"…): "é melhor falar com
+  o **João**, ele sabe cuidar de você", com postura de acolhimento. Menção a se
+  machucar/suicídio: falar com o João agora e CVV 188.
+- **Expressão corporal coerente**: cada fala e resposta toca uma reação (aceno,
+  aceno de cabeça, julgamento, dedo em riste, acolhimento, duplo bíceps, susto).
+  Novos estados/animações: `wave`, `nod`, `lecture`, `comfort`; canal `mouthClose`.
+- Perfil: `nomeCompanion`, `nomeSerio`, `nomeBrincadeira`, `pessoaApoio`
+  (migração automática do antigo `tratamento`).
+
 ## 0.6.0 — 2026-10-29
 
 ### Adicionado

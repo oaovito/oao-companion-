@@ -26,7 +26,7 @@ export class PhraseBook {
   _lines(category) {
     const cat = this.categories[category];
     if (!cat) return [];
-    const all = cat.lines.map((l) => (typeof l === 'string' ? { t: l, tags: [] } : { t: l.t, tags: l.tags || [] }));
+    const all = cat.lines.map((l) => (typeof l === 'string' ? { t: l, tags: [] } : { ...l, tags: l.tags || [] }));
     return this.filter ? all.filter(this.filter) : all;
   }
 
@@ -44,9 +44,9 @@ export class PhraseBook {
       const w = this.weight ? this.weight(l) : 1;
       // Peso < 1: entra no saco com essa probabilidade; > 1: pode entrar repetida.
       const copies = Math.floor(w) + (this.rng() < w - Math.floor(w) ? 1 : 0);
-      for (let i = 0; i < copies; i++) lines.push(l.t);
+      for (let i = 0; i < copies; i++) lines.push(l);
     }
-    if (!lines.length) lines = this._lines(category).map((l) => l.t);
+    if (!lines.length) lines = this._lines(category);
     for (let i = lines.length - 1; i > 0; i--) {
       const j = Math.floor(this.rng() * (i + 1));
       [lines[i], lines[j]] = [lines[j], lines[i]];
@@ -58,20 +58,28 @@ export class PhraseBook {
     this.bags[category] = lines;
   }
 
-  /** @returns {{text, kind, category}|null} — `vars` substitui {chave} no texto. */
+  /**
+   * @param vars objeto ou função (tom) => objeto; substitui {chave} no texto.
+   * @returns {{text, kind, category, reaction, tone}|null}
+   *   reaction: estado de corpo coerente com a fala (da frase ou da categoria);
+   *   tone: 'serio' | 'brincadeira' (define o nome usado).
+   */
   pick(category, vars = {}) {
     if (!this.has(category)) return null;
     if (!this.bags[category] || !this.bags[category].length) this._refill(category);
     const bag = this.bags[category];
-    let text = bag.pop();
-    for (let tries = 0; this.recent.includes(text) && bag.length && tries < bag.length; tries++) {
-      bag.unshift(text);
-      text = bag.pop();
+    let line = bag.pop();
+    for (let tries = 0; this.recent.includes(line.t) && bag.length && tries < bag.length; tries++) {
+      bag.unshift(line);
+      line = bag.pop();
     }
-    this.recent.push(text);
+    this.recent.push(line.t);
     if (this.recent.length > this.recentSize) this.recent.shift();
-    const out = text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m));
-    return { text: out, kind: this.kindOf(category), category };
+    const cat = this.categories[category];
+    const tone = line.tone || cat.tone || 'serio';
+    const v = typeof vars === 'function' ? vars(tone) : vars;
+    const out = line.t.replace(/\{(\w+)\}/g, (m, k) => (k in v ? String(v[k]) : m));
+    return { text: out, kind: this.kindOf(category), category, reaction: line.reaction || cat.reaction || null, tone };
   }
 }
 

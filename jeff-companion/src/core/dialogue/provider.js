@@ -17,7 +17,7 @@
 //   action: comando opcional para o Jeff (sleep | eat | play | pet | wake | lookAround | happy | quiet | flex | scare | judge)
 //   context.persona: instruções livres do perfil de personalidade (para provedores de IA futuros)
 
-export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge']);
+export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture']);
 
 export class DialogueProvider {
   constructor({ id, label, kind }) {
@@ -41,7 +41,8 @@ export function normalizeReply(r) {
   const text = typeof r?.text === 'string' ? r.text.trim().slice(0, 400) : '';
   const kind = ['speech', 'thought', 'sleep'].includes(r?.kind) ? r.kind : 'speech';
   const action = ALLOWED_ACTIONS.has(r?.action) ? r.action : null;
-  return { text: text || '...', kind, action, intent: typeof r?.intent === 'string' ? r.intent : null };
+  const tone = r?.tone === 'brincadeira' ? 'brincadeira' : 'serio';
+  return { text: text || '...', kind, action, tone, intent: typeof r?.intent === 'string' ? r.intent : null };
 }
 
 /**

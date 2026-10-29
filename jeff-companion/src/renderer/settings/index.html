@@ -10,8 +10,8 @@
   <header class="top">
     <img src="../../../assets/icons/app.png" alt="" width="56" height="56">
     <div>
-      <h1>Jeff Companion</h1>
-      <p class="sub">Projeto de fã, não oficial — sem vínculo com a Marvel. <span id="version"></span></p>
+      <h1 id="companionTitle">JoJo</h1>
+      <p class="sub">Jeff Companion — projeto de fã, não oficial, sem vínculo com a Marvel. <span id="version"></span></p>
     </div>
   </header>
 
@@ -66,10 +66,20 @@
 
     <fieldset id="personality">
       <legend>Personalidade</legend>
-      <p class="hint">Perfil separado da aparência: muda o jeito do Jeff sem mexer no boneco.</p>
-      <label class="row">Como o Jeff te chama
-        <input type="text" data-p="tratamento" maxlength="40" placeholder="você">
+      <p class="hint">Perfil separado da aparência: muda o jeito do companion sem mexer no boneco. A expressão corporal acompanha cada fala.</p>
+      <label class="row">Nome do companion
+        <input type="text" data-p="nomeCompanion" maxlength="30" placeholder="JoJo">
       </label>
+      <label class="row">Nome em momentos sérios
+        <input type="text" data-p="nomeSerio" maxlength="40" placeholder="Emanuele">
+      </label>
+      <label class="row">Apelido em brincadeiras
+        <input type="text" data-p="nomeBrincadeira" maxlength="40" placeholder="Manu">
+      </label>
+      <label class="row">Quem procurar quando estiver triste
+        <input type="text" data-p="pessoaApoio" maxlength="40" placeholder="João">
+      </label>
+      <p class="hint">Se você disser na conversa que está chorando ou muito triste, o companion diz para falar com essa pessoa.</p>
       <label class="row">Palavrões
         <select data-p="palavroes">
           <option value="nenhum">Nenhum</option>

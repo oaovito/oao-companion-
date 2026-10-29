@@ -109,6 +109,10 @@ braços cruzados, sobrancelha levantada, dentes à mostra, ataque teatral só so
 | P4 | Palavrões | nenhum / ocasional / frequente filtra e pondera as falas marcadas |
 | P5 | Privacidade | Só título da janela em primeiro plano/nome do executável, comparados localmente; nada é guardado ou enviado; sem bloquear apps, fechar páginas ou impedir cliques |
 | P6 | IA futura | `instrucoes` do perfil é passado como `context.persona` aos provedores de diálogo |
+| P7 | Nome | O companion se chama **JoJo** (`nomeCompanion`); o app continua "Jeff Companion" |
+| P8 | Tratamento | A usuária é chamada de **Emanuele** em falas sérias e **Manu** em brincadeiras (tom por categoria/frase/resposta) |
+| P9 | Tristeza | Se ela disser na conversa que está chorando ou muito triste: dizer que é melhor falar com o **João**, porque ele sabe cuidar dela (postura de acolhimento, boca fechada). Menção a se machucar/suicídio: falar com o João agora e CVV 188 |
+| P10 | Expressão corporal | Toda fala/resposta traz uma reação coerente: aceno (cumprimento), julgamento/dedo em riste (bronca, lembrete), duplo bíceps (conquista), acolhimento (tristeza), aceno de cabeça (confirmação), susto teatral (pedido) |
 
 ## 10. Fora do escopo atual
 

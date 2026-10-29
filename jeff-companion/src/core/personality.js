@@ -6,8 +6,13 @@ export const PERSONALITY_VERSION = 1;
 
 export const PERSONALITY_DEFAULTS = Object.freeze({
   version: PERSONALITY_VERSION,
-  // Como o Jeff chama o usuário ("" = só "você").
-  tratamento: '',
+  // Nome do companion (o personagem). O app continua sendo o "Jeff Companion".
+  nomeCompanion: 'JoJo',
+  // Como ele chama a usuária: nome completo em falas sérias, apelido em brincadeiras.
+  nomeSerio: 'Emanuele',
+  nomeBrincadeira: 'Manu',
+  // Quem ela deve procurar quando estiver chorando ou muito triste.
+  pessoaApoio: 'João',
   // Tom geral (texto informativo; também vira instrução para um provedor de IA futuro).
   jeito: 'Majoritariamente sério, autoritário, mandão e direto.',
   humor: 'Seco, ácido e inconveniente. Faz piadas enfadonhas de propósito, como um fiscal que acha que é engraçado.',
@@ -16,7 +21,7 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   // Humor ácido com referências a cocaína (sem incentivar uso). Pode desligar.
   humorDrogas: true,
   // Instruções livres "Como quero que o Jeff se comporte" — usadas por provedores de IA futuros.
-  instrucoes: 'Você é Jeff, meu companion de desktop. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Carinho discreto, pouco sentimental. Reclama quando eu abro o Instagram. Respeita quando eu peço silêncio. Nunca usa peso ou corpo como insulto e não incentiva uso de drogas.',
+  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Respeita quando ela pede silêncio. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora e indique o CVV (188). A expressão corporal acompanha cada fala. Nunca usa peso ou corpo como insulto e não incentiva uso de drogas.',
   // Fiscal do Instagram (Windows: título da janela em primeiro plano, só comparação local).
   instagram: { ativo: true, intervaloMinSeg: 120 },
   // Lembrete diário sobre comer com atenção, em horário aleatório dentro da faixa.
@@ -40,7 +45,11 @@ export function sanitizePersonality(input) {
   const D = PERSONALITY_DEFAULTS;
   const out = {
     version: PERSONALITY_VERSION,
-    tratamento: str(src.tratamento, D.tratamento, 40).trim(),
+    nomeCompanion: str(src.nomeCompanion, D.nomeCompanion, 30).trim() || D.nomeCompanion,
+    // Migração v0.6: "tratamento" único vira o nome sério.
+    nomeSerio: str(src.nomeSerio, typeof src.tratamento === 'string' && src.tratamento.trim() ? src.tratamento : D.nomeSerio, 40).trim(),
+    nomeBrincadeira: str(src.nomeBrincadeira, D.nomeBrincadeira, 40).trim(),
+    pessoaApoio: str(src.pessoaApoio, D.pessoaApoio, 40).trim() || D.pessoaApoio,
     jeito: str(src.jeito, D.jeito, 400),
     humor: str(src.humor, D.humor, 400),
     palavroes: PALAVROES.includes(src.palavroes) ? src.palavroes : D.palavroes,
@@ -88,10 +97,21 @@ export function phraseWeight(profile) {
   };
 }
 
-/** Variáveis de texto do perfil para as frases ({vocativo}, {nome}). */
-export function profileVars(profile) {
-  const t = (profile.tratamento || '').trim();
-  return { vocativo: t ? `, ${t}` : '', nome: t || 'você' };
+/**
+ * Variáveis de texto do perfil para as frases. O nome depende do tom da fala:
+ * 'serio' → nome completo (Emanuele); 'brincadeira' → apelido (Manu).
+ * {nome}, {vocativo} (", Nome" ou vazio), {companion}, {apoio}.
+ */
+export function profileVars(profile, tone = 'serio') {
+  const serio = (profile.nomeSerio || '').trim();
+  const brinc = (profile.nomeBrincadeira || '').trim() || serio;
+  const n = tone === 'brincadeira' ? brinc : serio;
+  return {
+    nome: n || 'você',
+    vocativo: n ? `, ${n}` : '',
+    companion: (profile.nomeCompanion || 'JoJo').trim(),
+    apoio: (profile.pessoaApoio || 'João').trim(),
+  };
 }
 
 /**

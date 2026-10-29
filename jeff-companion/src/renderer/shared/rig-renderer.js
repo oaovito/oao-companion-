@@ -346,7 +346,9 @@ export class RigRenderer {
 
   _mouth(ctx, pose) {
     const M = this.rig.face.mouth;
-    const jaw = Math.max(this.restJaw, Math.min(1.2, pose.jaw ?? 0));
+    // mouthClose (0..1) recolhe o sorriso de repouso (ex.: acolhimento).
+    const rest = this.restJaw * (1 - Math.max(0, Math.min(1, pose.mouthClose ?? 0)));
+    const jaw = Math.max(rest, Math.min(1.2, pose.jaw ?? 0));
     const outline = this.color('outline');
     if (jaw > 0.05) {
       const drop = 3 + jaw * this.mouthDepth;

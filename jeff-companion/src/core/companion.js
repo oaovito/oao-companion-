@@ -9,7 +9,7 @@
 //   store:    SettingsStore-like { get(), update(patch, opts) }
 import { AvoidanceController, isSafeTarget, choosePathControl } from './avoidance.js';
 import { Mover } from './motion.js';
-import { BehaviorMachine, PRIORITY } from './behavior.js';
+import { BehaviorMachine, PRIORITY, STATES } from './behavior.js';
 import { PhraseBook, readingTimeMs, greetingCategory } from './phrases.js';
 import { placeAround, composeWindow } from './layout.js';
 import { displayForRect, allowedDisplays, recoverRect, topologySignature, primaryDisplay } from './displays.js';
@@ -626,13 +626,16 @@ export class Companion {
     if (!force && s.quietMode && !USER_CATEGORIES.has(category)) return false;
     const cat = this.phrases.has(category) ? category : fallback;
     if (!cat) return false;
-    const p = this.phrases.pick(cat, { atalho: this.hotkeyLabel.replace(/Control/g, 'Ctrl').replace(/\+/g, ' + '), ...profileVars(this.personality.get()) });
+    const atalho = this.hotkeyLabel.replace(/Control/g, 'Ctrl').replace(/\+/g, ' + ');
+    const p = this.phrases.pick(cat, (tone) => ({ atalho, ...profileVars(this.personality.get(), tone) }));
     if (!p) return false;
-    return this.say(p.text, p.kind, { spontaneous, category: cat });
+    const ok = this.say(p.text, p.kind, { spontaneous, category: cat, reaction: p.reaction });
+    if (ok && p.reaction) this.react(p.reaction);
+    return ok;
   }
 
   /** Mostra um balão. No máximo um por vez; o novo substitui o anterior. */
-  say(text, kind = 'speech', { spontaneous = false, category = null } = {}) {
+  say(text, kind = 'speech', { spontaneous = false, category = null, reaction = null } = {}) {
     if (!this.started || this.userHidden || this.ghost) return false;
     if (spontaneous && this.bubble) return false;
     if (spontaneous && this.clock.now() - this.lastSpokeAt < MIN_SPONTANEOUS_GAP[this.store.get().speechFrequency]) return false;
@@ -648,7 +651,7 @@ export class Companion {
         this.lastSpokeAt = now;
         if (kind === 'speech') {
           this.talkingUntil = now + Math.min(2600, 500 + text.length * 45);
-          if (spontaneous && CALM_STATES.has(this.behavior.state) && this.behavior.state !== 'lie') this.behavior.request('talk', { now });
+          if (!reaction && spontaneous && CALM_STATES.has(this.behavior.state) && this.behavior.state !== 'lie') this.behavior.request('talk', { now });
         }
         this._applyLayout(true);
         // Se o balão nasceu perto do cursor, recolhe imediatamente.
@@ -803,6 +806,8 @@ export class Companion {
     if (!this.dialogue) return null;
     this.noteActivity();
     const reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
+    const vars = profileVars(this.personality.get(), reply.tone);
+    reply.text = reply.text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
     const now = this.clock.now();
     this.noteActivity();
     if (reply.action) this._doChatAction(reply.action, now);
@@ -829,11 +834,12 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'scare') {
       this.behavior.request('scare', { now, force: true });
-    } else if (action === 'judge') {
-      this.behavior.request('judge', { now, force: true });
+    } else if (action === 'judge' || action === 'wave' || action === 'nod' || action === 'comfort' || action === 'lecture') {
+      this.behavior.request(action, { now, force: true });
     } else if (action === 'quiet') {
       // "Silêncio": ativa o modo silencioso (sem falas espontâneas nem broncas).
       this.store.update({ quietMode: true });
+      this.behavior.request('nod', { now, force: true });
     }
   }
 
@@ -862,6 +868,23 @@ export class Companion {
     this._schedule(0);
   }
 
+  /**
+   * Expressão corporal coerente com a fala/situação: troca para o estado de
+   * reação (aceno, julgamento, dedo em riste, acolhimento…), sem interromper
+   * fuga, arraste, sono profundo de outro estado prioritário ou despedida.
+   */
+  react(name) {
+    if (!STATES[name] || this.quitting) return false;
+    const st = this.behavior.state;
+    if (st === name || st === 'flee' || st === 'hidden' || st === 'dragged' || st === 'goodbye' || st === 'gone' || this.dragging) return false;
+    const now = this.clock.now();
+    if (this.mover.active && this.mover.kind === 'walk') {
+      this.mover.stop();
+      if (st === 'walk') this.behavior.finish('walk', now);
+    }
+    return this.behavior.request(name, { now, force: this.behavior.priority >= PRIORITY.INTERACT });
+  }
+
   // ---------------------------------------------------------------- personalidade
 
   applyPersonality(profile) {
@@ -887,14 +910,19 @@ export class Companion {
     return true;
   }
 
+  /** Nome do personagem (perfil). */
+  get companionName() {
+    return profileVars(this.personality.get()).companion;
+  }
+
   _nag(category, now) {
     if (!this.interaction) {
       this.mover.stop();
       if (this.behavior.state === 'walk') this.behavior.finish('walk', now);
-      this.behavior.request('judge', { now, force: this.behavior.priority > PRIORITY.INTERACT || this.behavior.state === 'sleep' });
     }
     this.hideBubble();
-    this.sayCategory(category);
+    // A reação corporal vem da própria fala (julgamento, dedo em riste…).
+    if (!this.sayCategory(category) && !this.interaction) this.react('judge');
     this._schedule(0);
   }
 
@@ -979,7 +1007,7 @@ export class Companion {
         scale: s.bubbleScale,
       } : null,
       toolbar: toolbar ? { rect: rel(toolbar.rect), side: toolbar.side, hotkey: s.interactionHotkey } : null,
-      chat: chat ? { rect: rel(chat.rect), provider: this.dialogue ? this.dialogue.describe() : null } : null,
+      chat: chat ? { rect: rel(chat.rect), provider: this.dialogue ? this.dialogue.describe() : null, name: this.companionName } : null,
       effect: this.effect ? this.effect.name : null,
       moving: this.mover.active ? this.mover.kind : null,
       sounds: s.sounds && !s.quietMode,
