@@ -13,6 +13,8 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- **Atualização automática**: a partir desta versão o JoJo baixa as próximas sozinho
+  e troca quando o PC fica parado.
 - Parado ele não fica mais estático: respira, balança os braços, inclina a cabeça e abana o rabo.
 - Pergunte **"eu sou bonita?"**: ele cai de costas apaixonado e responde "É." no último suspiro.
 - Nome novo: **JoJo Companion** (`JoJoCompanion.exe`).

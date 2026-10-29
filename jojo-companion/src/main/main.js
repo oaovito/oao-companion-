@@ -11,6 +11,7 @@ import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../core/personality.j
 import { DialogueEngine } from '../core/dialogue/engine.js';
 import { WebSearch } from '../core/dialogue/web-search.js';
 import { createLogger } from './logger.js';
+import { createAutoUpdater } from './auto-update.js';
 import { OverlayWindow } from './overlay-window.js';
 import { SettingsWindow } from './settings-window.js';
 import { AppWindow } from './app-window.js';
@@ -492,6 +493,8 @@ function main() {
         /* ignora */
       }
       companion.stop();
+      // Atualização baixada: instala ao encerrar (sem reabrir).
+      if (updater) updater.onQuit();
       if (fullscreen) fullscreen.dispose();
       store.flush();
       globalShortcut.unregisterAll();
@@ -508,9 +511,21 @@ function main() {
     trayCtl.refresh();
     // Ociosidade do sistema: só o contador de segundos sem uso (não lê teclas nem cliques).
     let idleOverride = null;
+    let updater = null;
+    // Atualização automática (Releases do GitHub; origem em package.json → jojoUpdate).
+    const pkg = readJSON('package.json');
+    updater = createAutoUpdater({
+      app, net, store, log,
+      feed: pkg.jojoUpdate || {},
+      onUpdated: (v) => companion.say(`Fui atualizado pra v${v}. Mais forte. Óbvio.`, 'speech'),
+    });
+    updater.start();
     const idleTimer = setInterval(() => {
       try {
-        companion.onSystemIdle(idleOverride ?? powerMonitor.getSystemIdleTime());
+        const idle = idleOverride ?? powerMonitor.getSystemIdleTime();
+        companion.onSystemIdle(idle);
+        // Versão nova pronta: troca quando o PC está parado e nada acontece.
+        if (updater.onIdle(idle, { busyNow: companion.interaction || companion.dragging || quitting })) setTimeout(() => quit(), 300);
       } catch (err) {
         log('warn', `Falha ao ler ociosidade: ${err.message}`);
       }
@@ -552,6 +567,9 @@ function main() {
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
         personality,
         appWin,
+        get updater() {
+          return updater;
+        },
         setIdle: (sec) => {
           idleOverride = sec == null ? null : Number(sec);
           return companion.onSystemIdle(idleOverride ?? 0);

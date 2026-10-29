@@ -108,6 +108,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | N2 | Emoção e cor | Raiva avermelha, tristeza acinzenta (também medo, alegria, sono, vergonha) |
 | M1 | Meme | "Vai tomar no cu" → vira de costas, susto com o prolapso saltando, rebola mostrando por ~5 s, desvira |
 | M2 | Bonita | "Eu sou bonita?" → olhos de coração, cai de costas com 😵, responde "É." no último suspiro e levanta |
+| U1 | Atualização automática | Baixa a versão nova das Releases e troca sozinho (PC parado ou ao encerrar); desligável |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.17.0 — 2026-10-29
+
+### Adicionado
+- **Atualização automática**: 1 min após abrir e a cada 6 h, consulta a última
+  Release (`package.json` → `jojoUpdate`), baixa a versão nova em segundo plano
+  (confere tamanho e SHA-256), e troca quando o PC fica parado por 2 min ou ao
+  encerrar. Portátil: substitui o próprio `JoJoCompanion.exe` e reabre.
+  Instalado: roda o instalador novo em silêncio. Depois de atualizar o JoJo avisa.
+  Desligável em Configurações ("Atualizar automaticamente"). ZIP não se atualiza.
+
 ## 0.16.0 — 2026-10-29
 
 ### Alterado

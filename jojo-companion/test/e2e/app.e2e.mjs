@@ -486,3 +486,44 @@ test('"eu sou bonita?": renderer mostra a queda apaixonada e a resposta "É." no
     await quit(app);
   }
 });
+
+test('atualização automática: acha a versão nova, baixa e confere o arquivo', async () => {
+  const exe = Buffer.alloc(4096, 7);
+  const sha = (await import('node:crypto')).createHash('sha256').update(exe).digest('hex');
+  const hits = [];
+  const server = http.createServer((req, res) => {
+    hits.push(req.url);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    if (req.url === '/repos/oaovito/oao-companion-/releases/latest') {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ tag_name: 'v99.0.0', draft: false, prerelease: false, assets: [{ name: 'JoJoCompanion.exe', browser_download_url: `${base}/dl/JoJoCompanion.exe`, size: exe.length, digest: `sha256:${sha}` }] }));
+    } else if (req.url === '/dl/JoJoCompanion.exe') res.end(exe);
+    else {
+      res.statusCode = 404;
+      res.end();
+    }
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-e2e-'));
+  const { app } = await launch({ userData, env: { JOJO_UPDATE_BASE: `http://127.0.0.1:${server.address().port}`, JOJO_UPDATE_MODE: 'portable' } });
+  try {
+    let st = null;
+    for (let i = 0; i < 40; i++) {
+      st = await app.evaluate(() => ({ ...globalThis.__jojo.updater.state }));
+      if (st.status === 'ready' || st.status === 'error') break;
+      await sleep(250);
+    }
+    assert.equal(st.status, 'ready', JSON.stringify(st));
+    assert.equal(st.version, '99.0.0');
+    assert.deepEqual(fs.readFileSync(path.join(userData, 'updates', 'JoJoCompanion.exe')), exe);
+    assert.ok(hits.includes('/dl/JoJoCompanion.exe'));
+    // Desligada nas configurações: não consulta de novo.
+    await app.evaluate(() => globalThis.__jojo.store.update({ autoUpdate: false }));
+    const n = hits.length;
+    await app.evaluate(() => globalThis.__jojo.updater.check());
+    assert.equal(hits.length, n);
+  } finally {
+    await quit(app);
+    server.close();
+  }
+});

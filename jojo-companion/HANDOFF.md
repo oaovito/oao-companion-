@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.16.0, 2026-10-29)
+# HANDOFF — estado atual (v0.17.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -47,6 +47,12 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 - Barra de tarefas cobrindo o JoJo (mitigado reafirmando topmost a cada 8 s).
 
 ## Pendente / limitado
+
+- Atualização automática (v0.17.0): o repositório é **privado**, então a consulta às
+  Releases dá 404 para quem não tem login — precisa de uma origem pública
+  (repositório público ou um repositório só de versões; `package.json` → `jojoUpdate`).
+  A troca do executável no Windows real ainda não foi exercitada (testado: consulta,
+  download e conferência do arquivo).
 
 - v0.10.0: supino desenhado com o rig de frente girado (leitura de desenho
   animado, não anatômica). O efeito "ligadão" é piada de desenho; desligar o

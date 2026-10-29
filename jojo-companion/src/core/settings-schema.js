@@ -22,6 +22,7 @@ export const DEFAULTS = Object.freeze({
   avoidFallback: 'fade',        // fade | hide  (sem espaço seguro / perseguição)
   reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
   webSearch: true,              // pesquisar na internet perguntas sem resposta programada
+  autoUpdate: true,             // baixar e instalar versões novas automaticamente
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -43,7 +44,7 @@ const ENUMS = {
   reduceMotion: ['system', 'on', 'off'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate'];
 
 // Intervalo médio entre falas espontâneas (ms) por frequência.
 export const SPEECH_INTERVALS = { off: null, rare: [9 * 60e3, 18 * 60e3], normal: [3 * 60e3, 8 * 60e3], often: [70e3, 3 * 60e3] };

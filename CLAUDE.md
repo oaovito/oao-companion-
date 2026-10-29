@@ -59,9 +59,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 4. Funciona **offline**; sem telemetria, captura de tela, microfone ou registro de
    teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
-   Única saída para a internet: **perguntas de conhecimento sem resposta programada** vão à
-   Wikipédia/DuckDuckGo (só o texto da pergunta; desligável em Configurações). Conversa comum
-   nunca acessa a rede. Integrações de IA só opcionais.
+   Saídas para a internet: **perguntas de conhecimento sem resposta programada** vão à
+   Wikipédia/DuckDuckGo (só o texto da pergunta) e a **atualização automática** consulta as
+   Releases do GitHub e baixa a versão nova — ambas desligáveis em Configurações. Conversa
+   comum nunca acessa a rede. Integrações de IA só opcionais.
 5. Sons e "iniciar com o Windows" desligados por padrão.
 6. Conversa marcada como **respostas programadas** (+ pesquisa na internet quando ativa; não é IA).
 8. Ociosidade: só o contador `powerMonitor.getSystemIdleTime()` (nunca teclas/cliques).
