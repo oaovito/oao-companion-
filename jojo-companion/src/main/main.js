@@ -385,7 +385,7 @@ function main() {
         companion._applyLayout(true);
       }
       if (changed.includes('visible')) appWin.send('app:update', appState());
-      if (changed.includes('fullscreenBehavior')) {
+      if (['fullscreenBehavior', 'lolBronca', 'spotifyReacoes'].some((k) => changed.includes(k))) {
         startFullscreenWatch();
         if (s.fullscreenBehavior === 'ignore') companion.setFullscreenDisplays([]);
       }
@@ -470,7 +470,9 @@ function main() {
       clearInterval(fullscreenTimer);
       const wantFullscreen = () => store.get().fullscreenBehavior !== 'ignore';
       const wantInstagram = () => personality.get().instagram.ativo;
-      if (!wantFullscreen() && !wantInstagram()) return;
+      const wantLol = () => store.get().lolBronca;
+      const wantSpotify = () => store.get().spotifyReacoes;
+      if (!wantFullscreen() && !wantInstagram() && !wantLol() && !wantSpotify()) return;
       if (!fullscreen) {
         fullscreen = createFullscreenDetector(log);
         if (fullscreen.available && overlay.alive) fullscreen.setOwnHandles([hwndToString(overlay.win.getNativeWindowHandle())].filter(Boolean));
@@ -488,9 +490,15 @@ function main() {
         }
         busy = true;
         try {
-          const res = await fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays(), { instagram: wantInstagram() });
+          const res = await fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays(), {
+            instagram: wantInstagram(),
+            lol: wantLol(),
+            spotify: wantSpotify(),
+            spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
+          });
           companion.setFullscreenDisplays(wantFullscreen() ? res.fullscreenIds : []);
-          companion.onForeground({ instagram: wantInstagram() && res.instagram });
+          companion.onForeground({ instagram: wantInstagram() && res.instagram, lol: wantLol() && res.lol });
+          companion.onSpotify(wantSpotify() ? res.spotify : null);
         } catch (err) {
           log('warn', `Falha na detecção de tela cheia: ${err.message}`);
         } finally {

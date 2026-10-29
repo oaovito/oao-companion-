@@ -35,6 +35,8 @@ export const DEFAULTS = Object.freeze({
   avisoRaros: true,             // aviso visual suave antes de algo raro
   falasAmbientes: true,         // frases curtas sozinho enquanto ela trabalha
   microMovimentos: 'normal',    // normal | discreto | desligado (respiração, guelras, bolhas…)
+  lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
+  spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -61,7 +63,7 @@ const ENUMS = {
   microMovimentos: ['normal', 'discreto', 'desligado'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };

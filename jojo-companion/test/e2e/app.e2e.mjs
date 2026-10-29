@@ -349,9 +349,13 @@ test('instância única: segunda execução encerra e a primeira avisa', async (
       });
     });
     assert.equal(code, 0, 'segunda instância saiu');
-    await sleep(800);
-    const b = (await dbg(app)).bubble;
-    assert.ok(b && /aqui|JoJo|JoJo/i.test(b.text), `aviso exibido: ${b && b.text}`);
+    // Runner lento: espera o aviso até 6 s.
+    let b = null;
+    for (let i = 0; i < 30 && !(b && /aqui|JoJo/i.test(b.text)); i++) {
+      await sleep(200);
+      b = (await dbg(app)).bubble;
+    }
+    assert.ok(b && /aqui|JoJo/i.test(b.text), `aviso exibido: ${b && b.text}`);
   } finally {
     await quit(app);
   }

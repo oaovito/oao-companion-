@@ -10,7 +10,7 @@ const MAX_CRASHES = 2;
 
 export function createFullscreenDetector(log = () => {}) {
   if (process.platform !== 'win32') {
-    return { available: false, reason: 'Disponível apenas no Windows', detect: async () => ({ fullscreenIds: [], instagram: false }), setOwnHandles() {}, dispose() {} };
+    return { available: false, reason: 'Disponível apenas no Windows', detect: async () => ({ fullscreenIds: [], instagram: false, lol: false, spotify: null }), setOwnHandles() {}, dispose() {} };
   }
   const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [] };
 
@@ -68,7 +68,7 @@ export function createFullscreenDetector(log = () => {}) {
     },
     /** @returns Promise<{fullscreenIds, instagram}> */
     async detect(toDip, displays, opts = {}) {
-      if (!state.available || !state.child || !state.ready) return { fullscreenIds: [], instagram: false };
+      if (!state.available || !state.child || !state.ready) return { fullscreenIds: [], instagram: false, lol: false, spotify: null };
       const id = ++state.seq;
       const result = await new Promise((resolve, reject) => {
         state.pending.set(id, { resolve, reject });
@@ -77,10 +77,10 @@ export function createFullscreenDetector(log = () => {}) {
           if (state.pending.delete(id)) reject(new Error('tempo esgotado'));
         }, 1500);
       });
-      const instagram = !!(result && result.instagram);
-      if (!result || !result.fullscreen || !result.monitor) return { fullscreenIds: [], instagram };
+      const extra = { instagram: !!(result && result.instagram), lol: !!(result && result.lol), spotify: (result && result.spotify) || null };
+      if (!result || !result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
       const d = matchFullscreenDisplay(toDip(result.monitor), displays);
-      return { fullscreenIds: d ? [d.id] : [], instagram };
+      return { fullscreenIds: d ? [d.id] : [], ...extra };
     },
     dispose() {
       state.available = false;

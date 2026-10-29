@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.26.0, 2026-10-29)
+# HANDOFF — estado atual (v0.27.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -41,7 +41,8 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
   `expandCatalog` gera 3 intensidades). Doc: `docs/ANIMACOES.md` (`node scripts/catalog-doc.mjs`).
 - Ao mudar desenho/animação: `xvfb-run -a npx electron --no-sandbox scripts/anim-room.mjs`.
 - Motor: `src/core/catalog/variety.js`; estados dinâmicos `act`/`ambient` em `behavior.js`.
-- Pendentes pedidos depois: Spotify (reagir ao que toca), Google Agenda, antitédio completo
+- Spotify e LoL (v0.27): `fullscreen-worker.cjs` (`spotifyTitle`, `isLol`), `companion.onSpotify`/`_onLol`.
+- Pendentes pedidos depois: Google Agenda, antitédio completo
   (rotinas, mini-jogos, coleções, body doubling, painel sensorial).
 
 ## Implementado, mas ainda não verificado no Windows

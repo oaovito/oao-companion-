@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.27.0 — 2026-10-29
+
+### Adicionado
+- **Spotify**: o JoJo reage à música que está tocando (só o título da janela do Spotify, lido
+  neste PC): animação que combina com o clima (treino, funk, rock, rap, calma, amor, triste,
+  festa), comentário no jeito dele no máximo a cada 4 min e "o que tá tocando?" no chat.
+- **League of Legends**: ao abrir, ele fica de mau humor, reclama e some; volta emburrado depois
+  que ela sai do jogo. Não mexe no jogo.
+- Configurações → Falas e sons: "Reagir ao que toca no Spotify" e "Ficar de mau humor e sumir
+  quando o League of Legends abrir" (ligados por padrão).
+
 ## 0.26.0 — 2026-10-29
 
 ### Adicionado

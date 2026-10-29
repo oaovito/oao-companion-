@@ -45,6 +45,33 @@ const MIN_SPONTANEOUS_GAP = { off: Infinity, rare: 240e3, normal: 90e3, often: 4
 const WALK_SPEED = 70;
 const FLEE_SPEED = 1150;
 const CALM_STATES = new Set(['idle', 'sit', 'lookAround', 'curious', 'lie', 'ambient']);
+// Spotify: "clima" da música pelo título (sem consultar nada fora do PC) → animações.
+const VIBE_ANIMS = {
+  treino: ['halteres', 'duploBiceps', 'flexoes', 'agachamentoNado'],
+  funk: ['dancinhaViral', 'dancarSemRitmo', 'dancinha'],
+  rock: ['modoFera', 'poseVilao', 'estalar'],
+  rap: ['poseVilao', 'superioridade', 'seAcharMaximo'],
+  calma: ['ouvirMusica', 'contente', 'balancar', 'flutuar'],
+  amor: ['apaixonado', 'cantarDesafinado', 'charmeCauda'],
+  triste: ['chorando', 'solitario', 'cantarDesafinado'],
+  festa: ['festaSozinho', 'dancinha', 'puloOndas'],
+  outra: ['ouvirMusica', 'dancinha', 'cantarDesafinado', 'dancarSemRitmo', 'balancar', 'charmeCauda'],
+};
+const VIBES = [
+  ['treino', /\b(workout|gym|treino|academia|eye of the tiger|stronger|lose yourself|till i collapse|phonk|pump)\b/i],
+  ['funk', /\b(funk|mc |mc$|baile|pancad[aã]o|brega|piseiro|forr[oó]|arrocha)\b/i],
+  ['rock', /\b(rock|metal|punk|grunge|metallica|ac\/dc|iron maiden|slipknot|nirvana|linkin park|foo fighters|guns n|system of a down|avenged)\b/i],
+  ['rap', /\b(rap|trap|hip.?hop|drill|racionais|emicida|djonga|matu[eê]|eminem|kendrick|drake|travis scott|50 cent)\b/i],
+  ['calma', /\b(lo-?fi|lofi|chill|piano|acoustic|ac[uú]stic|ambient|relax|study|sleep|calm|bossa|jazz|classical|cl[aá]ssic)\b/i],
+  ['amor', /\b(love|amor|amo|cora[cç][aã]o|heart|paix[aã]o|baby|beijo|kiss)\b/i],
+  ['triste', /\b(sad|triste|saudade|sozinh|alone|cry|chor|broken|adeus|goodbye|lonely)\b/i],
+  ['festa', /\b(party|festa|dance|dan[cç]a|remix|edm|house|techno|pagode|samba|sertanejo|carnaval|ax[eé])\b/i],
+];
+export function musicVibe(title) {
+  for (const [vibe, re] of VIBES) if (re.test(title)) return vibe;
+  return 'outra';
+}
+
 // Intenções do chat que deixam o catálogo responder por frase (as outras têm resposta própria).
 const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 'howAreYou', 'help', 'name', 'thanks', 'scare', 'pet']);
 const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
@@ -376,6 +403,8 @@ export class Companion {
     if (changed.includes('paused')) this.setPaused(settings.paused, { fromSettings: true });
     if (changed.includes('visible')) this.setVisible(settings.visible, { fromSettings: true });
     if (changed.includes('bubbleScale') && this.bubble) this._remeasureBubble();
+    if (changed.includes('lolBronca') && !settings.lolBronca) this._lolReturn();
+    if (changed.includes('spotifyReacoes') && !settings.spotifyReacoes) this.onSpotify(null);
     this._applyLayout(true);
     this._schedule(0);
   }
@@ -414,7 +443,7 @@ export class Companion {
   }
 
   _showAgain() {
-    if (this.userHidden || this.fullscreenHidden || this.suspended) return;
+    if (this.userHidden || this.fullscreenHidden || this.suspended || this.lolHidden) return;
     const now = this.clock.now();
     this.refreshDisplays();
     this.avoid.reset();
@@ -457,7 +486,7 @@ export class Companion {
   // ---------------------------------------------------------------- tick principal
 
   tick() {
-    if (!this.started || this.suspended || this.userHidden || this.fullscreenHidden) return;
+    if (!this.started || this.suspended || this.userHidden || this.fullscreenHidden || this.lolHidden) return;
     const now = this.clock.now();
     this.stats.ticks++;
     this.lastTick = now;
@@ -699,7 +728,7 @@ export class Companion {
   }
 
   _canIdleAct() {
-    return this.started && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.interaction && !this.dragging;
+    return this.started && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.lolHidden && !this.suspended && !this.quitting && !this.ghost && !this.interaction && !this.dragging;
   }
 
   _startWired(now) {
@@ -858,7 +887,7 @@ export class Companion {
 
   /** Mostra um balão. No máximo um por vez; o novo substitui o anterior. */
   say(text, kind = 'speech', { spontaneous = false, category = null, reaction = null } = {}) {
-    if (!this.started || this.userHidden || this.ghost) return false;
+    if (!this.started || this.userHidden || this.ghost || this.lolHidden) return false;
     if (spontaneous && this.bubble) return false;
     if (spontaneous && this.clock.now() - this.lastSpokeAt < MIN_SPONTANEOUS_GAP[this.store.get().speechFrequency]) return false;
     if (this.avoid.state === 'fleeing' || this.avoid.state === 'hidden') return false;
@@ -1063,6 +1092,15 @@ export class Companion {
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
     await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
+    // "O que tá tocando?": a música do Spotify, no jeito dele.
+    if (this.nowPlaying && /\b(o ?que|qual|que) (musica |som )?(ta|esta|tá|está)? ?tocando\b|\bque musica e essa\b/.test(normalizeText(text))) {
+      const np = this.nowPlaying;
+      const out = `${np.musica}, de ${np.artista}. ${np.vibe === 'treino' ? 'Música de treino. Aprovada.' : np.vibe === 'calma' ? 'Calminha. Boa pra focar.' : 'Eu escolheria melhor, mas tá valendo.'}`;
+      this.conversations.addMessage(conv.id, 'jojo', out);
+      this.conversations.setStatus(conv.id, 'ready');
+      this.fireEvent('ouvindo') || this.playCatalog('ouvirMusica', { source: 'chat', speak: false });
+      return { text: out, action: null, intent: 'musica', conversationId: conv.id, provider: this.dialogue.describe() };
+    }
     // Pedido de animação por frase ("faz uma dancinha", "selfie", "modo fera"…).
     const hit = this.catalogFromChat(text);
     if (hit && this.playCatalog(hit.id, { source: 'chat', speak: false })) {
@@ -1508,22 +1546,94 @@ export class Companion {
   /** Pode dar uma bronca/lembrete agora? Respeita silêncio, pausa, ocultação e despedida. */
   _canNag() {
     const s = this.store.get();
-    return this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost;
+    return this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.lolHidden;
   }
 
   /**
    * Informação sobre o app em primeiro plano, vinda do detector (apenas um
    * booleano "é Instagram"; títulos não chegam aqui nem são guardados).
    */
-  onForeground({ instagram = false } = {}) {
+  onForeground({ instagram = false, lol = false } = {}) {
     const cfg = this.personality.get().instagram;
     const now = this.clock.now();
+    this._onLol(lol, now);
     if (instagram && !this.instagram.inside) this.log('info', 'Instagram em primeiro plano.');
     if (!this.instagram.update(now, instagram, cfg, this._canNag() && this.avoid.state !== 'fleeing')) return false;
     // Reincidência: a partir da 3ª bronca em 20 min, raiva de verdade (vermelho).
     this.instagramScolds = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3);
     this.instagramScolds.push(now);
     this._nag(this.instagramScolds.length >= 3 ? 'instagramAngry' : 'instagram', now);
+    return true;
+  }
+
+  /**
+   * League of Legends em primeiro plano: mau humor, reclama, dá as costas e some.
+   * Volta (emburrado) quando ela fica 20 s fora do LoL. Nunca mexe no jogo.
+   */
+  _onLol(lol, now) {
+    if (lol) this.lolSeenAt = now;
+    if (lol && !this.lolHidden && !this.lolLeaving && this.started && !this.userHidden) {
+      this.lolLeaving = true;
+      this.hideBubble();
+      if (this.interaction) this.exitInteraction('lol');
+      this.mover.stop();
+      this.sayCategory('lolAbriu', { force: true });
+      this.react('angry');
+      this.clock.setTimeout(() => {
+        if (!this.lolLeaving) return;
+        this.behavior.request('goodbye', { now: this.clock.now(), force: true });
+        this.clock.setTimeout(() => {
+          if (!this.lolLeaving) return;
+          this.lolLeaving = false;
+          this.lolHidden = true;
+          this.hideBubble();
+          this.overlay.hide();
+          this.log('info', 'League of Legends aberto: JoJo saiu de mau humor.');
+        }, 1500);
+      }, 2600);
+      return;
+    }
+    if (!lol && (this.lolHidden || this.lolLeaving) && now - (this.lolSeenAt || 0) > 20000) this._lolReturn();
+  }
+
+  _lolReturn() {
+    const wasHidden = this.lolHidden;
+    this.lolHidden = false;
+    this.lolLeaving = false;
+    if (!wasHidden) return;
+    this._showAgain();
+    // Volta de mau humor: vermelho de raiva e uma fala emburrada.
+    this.clock.setTimeout(() => {
+      this.sayCategory('lolVoltou', { force: true });
+      this.react('angry');
+    }, 1600);
+  }
+
+  /**
+   * Spotify: título "Artista - Música" (ou null parado). Na troca de música,
+   * reage no jeito dele com a animação que combina; comenta no máximo a cada 4 min.
+   */
+  onSpotify(title) {
+    const now = this.clock.now();
+    const t = title && title.includes(' - ') ? title : null;
+    if (t === this.spotifyTitle) return false;
+    this.spotifyTitle = t;
+    if (!t) {
+      this.nowPlaying = null;
+      return false;
+    }
+    const i = t.indexOf(' - ');
+    this.nowPlaying = { artista: t.slice(0, i).trim(), musica: t.slice(i + 3).trim(), since: now, vibe: musicVibe(t) };
+    if (!this._canNag() || this.interaction || this.lolHidden) return false;
+    const it = this.catalogById.get(VIBE_ANIMS[this.nowPlaying.vibe][Math.floor(this.rng() * VIBE_ANIMS[this.nowPlaying.vibe].length)]);
+    if (it) this.playCatalog(it.id, { source: 'evento', speak: false });
+    if (now - (this.lastMusicTalk || -Infinity) > 4 * 60e3 && !this.store.get().quietMode) {
+      this.lastMusicTalk = now;
+      const vars = { musica: this.nowPlaying.musica, artista: this.nowPlaying.artista };
+      const p = this.phrases.pick(`musica_${this.nowPlaying.vibe}`, (tone) => ({ ...profileVars(this.personality.get(), tone), ...vars })) ||
+        this.phrases.pick('musica', (tone) => ({ ...profileVars(this.personality.get(), tone), ...vars }));
+      if (p) this.say(p.text, 'speech', { spontaneous: true, category: 'musica' });
+    }
     return true;
   }
 

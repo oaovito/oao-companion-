@@ -1250,6 +1250,124 @@
      ]
     }
    ]
+  },
+  "lolAbriu": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "angry",
+   "lines": [
+    "League of Legends. Sério, {nome}? Tô fora. Me chama quando voltar a ser gente.",
+    {
+     "t": "LoL de novo? Ideia burra. Vou embora até você fechar essa merda.",
+     "tags": [
+      "palavrao"
+     ]
+    },
+    {
+     "t": "Abriu o LoL. Que vergonha. Fui.",
+     "tone": "serio"
+    },
+    "Não vou assistir isso. Volto quando você sair dessa armadilha."
+   ]
+  },
+  "lolVoltou": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "angry",
+   "lines": [
+    "Saiu do LoL? Hm. Tô de mau humor ainda.",
+    "Voltei. Não me dirige a palavra por uns minutos.",
+    "Espero que tenha valido a pena. Não valeu.",
+    {
+     "t": "Voltei, mas tô puto. Bebe água e vai trabalhar.",
+     "tags": [
+      "palavrao"
+     ]
+    }
+   ]
+  },
+  "musica": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{artista}? Respeito. Aumenta.",
+    "Tocando {musica}. Gosto duvidoso, mas eu danço.",
+    "{musica}. Boa. Eu escolheria melhor, mas boa.",
+    "Essa {musica} combina comigo. Óbvio."
+   ]
+  },
+  "musica_treino": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{musica}! Música de treino. Bora série, {nome}.",
+    "Isso é trilha de campeão. Pega o halter."
+   ]
+  },
+  "musica_funk": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{musica}? Segura que eu vou descer até o chão.",
+    "Funk no talo. Tubarão também rebola."
+   ]
+  },
+  "musica_rock": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{artista}! Modo fera ativado.",
+    "Rock. Agora sim, {nome}. Respeito."
+   ]
+  },
+  "musica_rap": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{artista}. Postura de vilão liberada.",
+    "Rap no fone, shape no espelho."
+   ]
+  },
+  "musica_calma": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "nod",
+   "lines": [
+    "{musica}. Calminho. Pode focar, eu fico quieto.",
+    "Música de foco. Gostei. Trabalha."
+   ]
+  },
+  "musica_amor": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{musica}? Tá apaixonada, {nome}? Eu também. Por mim.",
+    "Música de amor. Me olha não que eu fico vermelho."
+   ]
+  },
+  "musica_triste": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "comfort",
+   "lines": [
+    "{musica}... drama bonito. Eu choro junto, escondido.",
+    "Música triste. Respira. Eu tô aqui."
+   ]
+  },
+  "musica_festa": {
+   "kind": "speech",
+   "tone": "brincadeira",
+   "reaction": "happy",
+   "lines": [
+    "{musica}! Festa no aquário.",
+    "Isso é festa. Cadê o confete?"
+   ]
   }
  }
 }

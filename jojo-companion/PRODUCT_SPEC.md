@@ -136,7 +136,9 @@ braços cruzados, sobrancelha levantada, dentes à mostra, ataque teatral só so
 
 | ID | Requisito | Critério de aceitação |
 |---|---|---|
-| P1 | Instagram | Bronca curta (animação de julgamento) a cada **entrada** no Instagram (navegador ou app no Windows), no máximo uma por intervalo (padrão 120 s); nunca contínua enquanto aberto |
+| P1 | Instagram | Bronca curta (animação de julgamento) ao abrir o Instagram (navegador ou app no Windows) e de novo a cada intervalo (padrão 120 s) enquanto ela continua usando; bronca que não pôde sair fica pendente |
+| P1b | League of Legends | Em primeiro plano: mau humor, reclama, dá as costas e some; volta emburrado depois de 20 s fora do LoL. Nunca mexe no jogo. Desligável |
+| P1c | Spotify | Lê só o título da janela do Spotify ("Artista - Música"), localmente; na troca de música reage com animação do clima (treino, funk, rock, rap, calma, amor, triste, festa) e comenta no máximo a cada 4 min; "o que tá tocando?" no chat. Desligável |
 | P2 | Lembrete de comida | Uma vez por dia, horário aleatório na faixa (padrão 10h–21h); firme, sem insultar o corpo/peso da Emanuele (no resto, humor sem limite) |
 | P3 | Silêncio | Modo silencioso/pausa suprimem broncas e lembretes; "silêncio" na conversa liga o modo silencioso |
 | P4 | Palavrões | nenhum / ocasional / frequente filtra e pondera as falas marcadas |

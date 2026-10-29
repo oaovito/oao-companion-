@@ -363,3 +363,32 @@ test('Windows: calendários islâmico, hebraico e chinês funcionam no Electron 
     await quit(app);
   }
 });
+
+test('Windows: Spotify (título "Artista - Música") e League of Legends detectados pela janela', { skip }, async () => {
+  // Nos testes, o "Spotify" é uma janela do próprio Electron (mesmo caminho Win32: classe, título e executável).
+  const app = await launch({ env: { JOJO_SPOTIFY_EXE: path.basename(require('electron')) } });
+  try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
+    const id = await app.evaluate(() => globalThis.__jojo.makeClickTarget({ x: 20, y: 20, width: 400, height: 300 }));
+    await app.evaluate((_e, i) => globalThis.__jojo.setTargetTitle(i, 'Daft Punk - One More Time'), id);
+    let np = null;
+    for (let i = 0; i < 30 && !np; i++) {
+      await sleep(400);
+      np = await app.evaluate(() => globalThis.__jojo.companion.nowPlaying);
+    }
+    assert.ok(np, 'música detectada');
+    assert.equal(np.musica, 'One More Time');
+    assert.equal(np.artista, 'Daft Punk');
+    // League of Legends em primeiro plano: mau humor e sai.
+    await app.evaluate((_e, i) => globalThis.__jojo.setTargetTitle(i, 'League of Legends'), id);
+    let gone = false;
+    for (let i = 0; i < 40 && !gone; i++) {
+      await sleep(400);
+      await app.evaluate(({ BrowserWindow }, i) => BrowserWindow.fromId(i)?.focus(), id);
+      gone = await app.evaluate(() => !!(globalThis.__jojo.companion.lolLeaving || globalThis.__jojo.companion.lolHidden));
+    }
+    assert.ok(gone, 'saiu de mau humor com o LoL');
+  } finally {
+    await quit(app);
+  }
+});

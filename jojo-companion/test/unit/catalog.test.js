@@ -193,3 +193,48 @@ test('companion: ausente, volta e notificação viram animações', () => {
   e.clock.advance(50);
   assert.match(e.companion.behavior.anim, /^cat_notificacao/);
 });
+
+test('League of Legends: mau humor, some e volta emburrado depois que ela sai', () => {
+  const e = started();
+  const cats = [];
+  const orig = e.companion.sayCategory.bind(e.companion);
+  e.companion.sayCategory = (c, o) => (cats.push(c), orig(c, o));
+  e.companion.onForeground({ lol: true });
+  assert.equal(cats[cats.length - 1], 'lolAbriu');
+  e.clock.advance(5000);
+  assert.equal(e.companion.lolHidden, true);
+  assert.equal(e.overlay.visible, false);
+  e.companion.onForeground({ lol: true });
+  e.clock.advance(10000);
+  e.companion.onForeground({ lol: false });
+  assert.equal(e.companion.lolHidden, true, 'ainda não: espera 20 s fora do LoL');
+  e.clock.advance(15000);
+  e.companion.onForeground({ lol: false });
+  assert.equal(e.companion.lolHidden, false);
+  e.clock.advance(2000);
+  assert.equal(cats[cats.length - 1], 'lolVoltou');
+  // Desligado nas configurações: não some.
+  const e2 = started({ settings: { lolBronca: false } });
+  e2.companion.applySettings(e2.store.get(), ['lolBronca']);
+  assert.ok(!e2.companion.lolHidden);
+});
+
+test('Spotify: reage à troca de música com animação e fala no jeito dele', async () => {
+  const { musicVibe } = await import('../../src/core/companion.js');
+  assert.equal(musicVibe('Survivor - Eye of the Tiger'), 'treino');
+  assert.equal(musicVibe('MC Kevinho - Olha a Explosão'), 'funk');
+  assert.equal(musicVibe('Metallica - Enter Sandman'), 'rock');
+  assert.equal(musicVibe('Lofi Girl - Study Beats'), 'calma');
+  const e = started({ settings: { speechFrequency: 'normal' } });
+  assert.equal(e.companion.onSpotify('Survivor - Eye of the Tiger'), true);
+  assert.match(e.companion.behavior.anim, /^cat_(halteres|duploBiceps|flexoes|agachamentoNado)/);
+  assert.equal(e.companion.nowPlaying.musica, 'Eye of the Tiger');
+  assert.equal(e.companion.onSpotify('Survivor - Eye of the Tiger'), false, 'mesma música: nada');
+  e.companion.onSpotify(null);
+  assert.equal(e.companion.nowPlaying, null);
+  e.clock.advance(5000);
+  e.companion.onSpotify('Daft Punk - One More Time');
+  e.companion.enterInteraction('test');
+  const r = await chatAdv(e, 'o que tá tocando?');
+  assert.match(r.text, /One More Time, de Daft Punk/);
+});

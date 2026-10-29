@@ -81,6 +81,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 4. Funciona **offline**; sem telemetria, captura de tela, microfone ou registro de
    teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
+   Também local e desligável: título da janela do **Spotify** ("Artista - Música", para reagir à música) e
+   detecção do **League of Legends** em primeiro plano (título/executável → sim/não; JoJo fica de mau humor e some).
    Saídas para a internet: **conversa online** (texto da conversa ao provedor de IA), perguntas de
    conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.

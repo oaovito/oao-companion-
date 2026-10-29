@@ -4,10 +4,12 @@
 //
 // Usa somente: SHQueryUserNotificationState (estado do shell), a janela em
 // primeiro plano, seu retângulo e nome de classe, e o retângulo do monitor.
-// Para o "fiscal do Instagram" (opcional, pedido pelo usuário) compara o título
-// da janela em primeiro plano e o nome do executável com "instagram" AQUI
-// dentro: só um booleano sai deste processo; o título não é enviado nem salvo.
-// Não lê conteúdo, pixels, histórico nem entrada do usuário.
+// Para o "fiscal do Instagram" e o mau humor com o League of Legends (opcionais,
+// pedidos pelo usuário) compara o título da janela em primeiro plano e o nome do
+// executável AQUI dentro: só booleanos saem deste processo. Para reagir ao
+// Spotify (opcional), lê só o título da janela do Spotify ("Artista - Música").
+// Nada é salvo nem enviado para fora do PC. Não lê conteúdo, pixels, histórico
+// nem entrada do usuário.
 
 const QUNS_BUSY = 2;
 const QUNS_RUNNING_D3D_FULL_SCREEN = 3;
@@ -41,6 +43,7 @@ function init() {
     OpenProcess: kernel32.func('uintptr_t __stdcall OpenProcess(uint32 dwDesiredAccess, int bInheritHandle, uint32 dwProcessId)'),
     QueryFullProcessImageNameW: kernel32.func('int __stdcall QueryFullProcessImageNameW(uintptr_t hProcess, uint32 dwFlags, _Out_ uint16_t *lpExeName, _Inout_ uint32 *lpdwSize)'),
     CloseHandle: kernel32.func('int __stdcall CloseHandle(uintptr_t hObject)'),
+    FindWindowExW: user32.func('uintptr_t __stdcall FindWindowExW(uintptr_t hWndParent, uintptr_t hWndChildAfter, str16 lpszClass, str16 lpszWindow)'),
   };
 }
 
@@ -53,22 +56,26 @@ function className(hwnd) {
 const INSTAGRAM = /instagram/i;
 const PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
-function isInstagram(hwnd) {
+function windowTitle(hwnd) {
+  const buf = new Uint16Array(256);
+  const n = api.GetWindowTextW(hwnd, buf, 256);
+  return n > 0 ? String.fromCharCode(...buf.slice(0, n)) : '';
+}
+
+/** Nome do executável dono da janela (ex.: "Spotify.exe") ou ''. */
+function exeName(hwnd) {
   try {
-    const buf = new Uint16Array(256);
-    const n = api.GetWindowTextW(hwnd, buf, 256);
-    if (n > 0 && INSTAGRAM.test(String.fromCharCode(...buf.slice(0, n)))) return true;
     const pid = [0];
     api.GetWindowThreadProcessId(hwnd, pid);
-    if (!pid[0]) return false;
+    if (!pid[0]) return '';
     const h = api.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid[0]);
-    if (!h) return false;
+    if (!h) return '';
     try {
       const name = new Uint16Array(520);
       const size = [520];
       if (api.QueryFullProcessImageNameW(h, 0, name, size)) {
         const full = String.fromCharCode(...name.slice(0, size[0]));
-        return INSTAGRAM.test(full.split(/[\\/]/).pop() || '');
+        return full.split(/[\\/]/).pop() || '';
       }
     } finally {
       api.CloseHandle(h);
@@ -76,17 +83,48 @@ function isInstagram(hwnd) {
   } catch {
     /* sem permissão para o processo: ignora */
   }
-  return false;
+  return '';
+}
+
+function isInstagram(hwnd) {
+  if (INSTAGRAM.test(windowTitle(hwnd))) return true;
+  return INSTAGRAM.test(exeName(hwnd));
+}
+
+const LOL_TITLE = /^league of legends\b/i;
+const LOL_EXE = /^(leagueclient\w*|league of legends)\.exe$/i;
+function isLol(hwnd) {
+  return LOL_TITLE.test(windowTitle(hwnd)) || LOL_EXE.test(exeName(hwnd));
+}
+
+// Spotify: título da janela principal é "Artista - Música" tocando, "Spotify…" parado.
+const SPOTIFY_IDLE = /^spotify( (premium|free))?$/i;
+function spotifyTitle(exe = 'Spotify.exe') {
+  const want = exe.toLowerCase();
+  for (const cls of ['Chrome_WidgetWin_0', 'Chrome_WidgetWin_1']) {
+    let h = 0;
+    for (let i = 0; i < 300; i++) {
+      h = api.FindWindowExW(0, h, cls, null);
+      if (!h) break;
+      const t = windowTitle(h);
+      if (!t || SPOTIFY_IDLE.test(t) || !t.includes(' - ')) continue;
+      if (exeName(h).toLowerCase() === want) return t.slice(0, 200);
+    }
+  }
+  return null;
 }
 
 /** @returns {{fullscreen:boolean, instagram:boolean, monitor?:{x,y,width,height}, shell?:number}} pixels físicos */
 function detect(opts = {}) {
   const result = detectFullscreen();
   result.instagram = false;
-  if (opts.instagram) {
-    const hwnd = api.GetForegroundWindow();
-    if (hwnd && !own.has(String(hwnd))) result.instagram = isInstagram(hwnd);
+  result.lol = false;
+  const hwnd = opts.instagram || opts.lol ? api.GetForegroundWindow() : 0;
+  if (hwnd && !own.has(String(hwnd))) {
+    if (opts.instagram) result.instagram = isInstagram(hwnd);
+    if (opts.lol) result.lol = isLol(hwnd);
   }
+  result.spotify = opts.spotify ? spotifyTitle(opts.spotifyExe || 'Spotify.exe') : null;
   return result;
 }
 
