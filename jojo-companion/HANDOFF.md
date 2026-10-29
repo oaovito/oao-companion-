@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.13.0, 2026-10-29)
+# HANDOFF — estado atual (v0.14.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).

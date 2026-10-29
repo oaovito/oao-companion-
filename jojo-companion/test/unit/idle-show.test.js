@@ -221,3 +221,14 @@ test('"vai tomar no cu": vira, mostra o prolapso rebolando ~5 s e desvira', asyn
   assert.ok(back.length >= 2);
   assert.ok(RIG.groups.filter((g) => g.id === 'head' || g.id === 'arms').every((g) => g.hideIf === 'mooning'));
 });
+
+test('de costas o JoJo continua fisiculturista (memes usam a mesma vista)', () => {
+  const back = RIG.groups.filter((g) => g.showIf === 'mooning').flatMap((g) => g.parts.map((p) => p.id));
+  for (const id of ['moonTraps', 'moonLats', 'moonSpine', 'moonRearDelt', 'moonTriL', 'moonTriR', 'moonHams', 'moonCalf', 'moonUpperL', 'moonUpperR']) {
+    assert.ok(back.includes(id), `falta ${id}`);
+  }
+  // Costas em V: ombros bem mais largos que a cintura.
+  const torso = RIG.groups.flatMap((g) => g.parts).find((p) => p.id === 'moonTorso').path;
+  const xs = torso.match(/-?\d+(\.\d+)?,/g).map((s) => parseFloat(s));
+  assert.ok(Math.max(...xs) - Math.min(...xs) >= 120, 'ombros largos');
+});

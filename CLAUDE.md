@@ -39,7 +39,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por
   5 min após a volta (modo `wired`). Legends: "ideia burra" 1×/semana em momento aleatório.
 - "Vai tomar no cu" no chat: vira de costas, susto com o prolapso, rebola ~5 s e desvira
-  (estado `moon`, 7,4 s; canais `mooning`, `spread`, `gagSize`, `drip`).
+  (estado `moon`, 7,4 s; canais `mooning`, `spread`, `gagSize`, `drip`). De costas ele continua
+  fisiculturista (costas em V, trapézio, dorsais, tríceps) em qualquer meme.
 - Publicação: tag `v*` → Release com `JoJoCompanion.exe` (workflow do Windows).
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`

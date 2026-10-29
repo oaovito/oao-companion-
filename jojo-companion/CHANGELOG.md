@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.14.0 — 2026-10-29
+
+### Alterado
+- Vista de costas (usada nas animações de meme) redesenhada como fisiculturista:
+  costas em V com trapézio e dorsais largos, coluna marcada, deltoides posteriores,
+  tríceps grandes, glúteos e posteriores da coxa definidos, panturrilhas.
+
 ## 0.13.0 — 2026-10-29
 
 ### Alterado
