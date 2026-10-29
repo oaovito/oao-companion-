@@ -394,7 +394,7 @@ function draw(now) {
   const box = s.jojo;
   const scale = s.scale || 1;
   const head = rig.rig.metrics.head;
-  const festive = s.costume === 'carnaval' || s.costume === 'anoNovo';
+  const festive = ['carnaval', 'anoNovo', 'diya', 'fanous', 'lanternaChinesa', 'tinta'].includes(s.costume);
   if (!reduced) effects.update(now, s.mode === 'wired' || festive ? { ...sample.flags, sweat: sample.flags.sweat || s.mode === 'wired', sparkle: sample.flags.sparkle || festive } : sample.flags, head);
   lastAnimFlags = sample.flags;
 

@@ -356,6 +356,7 @@
       "kind": "speech", "tone": "brincadeira", "reaction": "happy",
       "lines": [
         "Feliz Dia das Crianças, {nome}. Olha o boné.",
+        { "t": "Dia de Nossa Senhora Aparecida e das Crianças. Feriado. Aproveita, {nome}.", "tone": "serio", "reaction": "nod" },
         "Dia das Crianças. Hoje pode doce. Amanhã, frango e arroz.",
         { "t": "Não vou desejar nada. Você tem boleto, não é criança.", "tone": "serio", "reaction": "judge" }
       ]
@@ -367,6 +368,227 @@
         "Doce ou travessura? Travessura.",
         { "t": "Não vou desejar feliz Halloween. Não é feriado brasileiro.", "tone": "serio", "reaction": "judge" },
         { "t": "Bu, porra. Feliz Halloween.", "tags": ["palavrao"] }
+      ]
+    },
+    "festa_sextaSanta": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Sexta-feira Santa{vocativo}. Dia de respeito. Hoje eu fico quieto.",
+        "Sexta-feira Santa. Sem piada hoje, {nome}."
+      ]
+    },
+    "festa_yomKippur": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Yom Kippur. Dia de reflexão. Respeito total{vocativo}.",
+        "Hoje é Yom Kippur. Gmar chatimá tová."
+      ]
+    },
+    "festa_finados": {
+      "kind": "speech", "tone": "serio", "reaction": "comfort",
+      "lines": [
+        "Finados{vocativo}. Dia de lembrar de quem foi. Sem brincadeira hoje.",
+        "Dia de Finados. Se bater saudade, fala com o {apoio}."
+      ]
+    },
+    "festa_corpusChristi": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Corpus Christi{vocativo}. Feriado de respeito. Descansa.",
+        "Corpus Christi. Hoje eu só fiscalizo em silêncio."
+      ]
+    },
+    "festa_conscienciaNegra": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Dia da Consciência Negra{vocativo}. Dia de memória e luta. Respeito.",
+        "Consciência Negra. Zumbi dos Palmares. Hoje é dia de lembrar e de respeitar."
+      ]
+    },
+    "festa_reis": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Dia de Reis, {nome}. Ganhei uma coroa. Me trata como rei.",
+        "Feliz Dia de Reis. Pode desmontar a árvore. Ordem real.",
+        { "t": "Não vou desejar nada. Reis magos chegaram atrasados doze dias.", "tone": "serio", "reaction": "judge" }
+      ]
+    },
+    "festa_ramada": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Ramadan Mubarak{vocativo}. Bom início de Ramadã a quem jejua.",
+        "Começa o Ramadã. Respeito a quem jejua. Eu só jejuo de Instagram."
+      ]
+    },
+    "festa_eidFitr": {
+      "kind": "speech", "tone": "serio", "reaction": "happy",
+      "lines": [
+        "Eid Mubarak{vocativo}. Fim do Ramadã. Hoje é dia de festa e comida boa.",
+        "Eid al-Fitr. Eid Mubarak. Acendi a lanterna, {nome}."
+      ]
+    },
+    "festa_eidAdha": {
+      "kind": "speech", "tone": "serio", "reaction": "happy",
+      "lines": [
+        "Eid al-Adha Mubarak{vocativo}. Dia de partilha.",
+        "Eid al-Adha. Eid Mubarak a quem celebra."
+      ]
+    },
+    "festa_anoNovoIslamico": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Feliz Ano Novo islâmico{vocativo}.",
+        "Ano Novo islâmico hoje. Bom ano a quem celebra."
+      ]
+    },
+    "festa_roshHashana": {
+      "kind": "speech", "tone": "serio", "reaction": "happy",
+      "lines": [
+        "Shaná tová{vocativo}. Ano novo doce. Toma uma maçã.",
+        "Rosh Hashaná. Maçã com mel e ano bom. Shaná tová."
+      ]
+    },
+    "festa_pessach": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Chag Pessach Sameach{vocativo}. Bom Pessach a quem celebra.",
+        "Pessach. Liberdade. Respeito e boas festas."
+      ]
+    },
+    "festa_hanukkah": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Chag Hanukkah Sameach, {nome}. Oito noites de luz. Eu trouxe o cachecol.",
+        "Hanukkah. Feliz festa das luzes, {nome}."
+      ]
+    },
+    "festa_purim": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Chag Purim Sameach, {nome}. Dia de fantasia. Olha a coroa.",
+        "Feliz Purim. Hoje eu sou realeza."
+      ]
+    },
+    "festa_diwali": {
+      "kind": "speech", "tone": "serio", "reaction": "happy",
+      "lines": [
+        "Happy Diwali{vocativo}. Festa das luzes. Acendi a diya.",
+        "Shubh Deepavali, {nome}. Que a luz ganhe."
+      ]
+    },
+    "festa_holi": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Happy Holi, {nome}! Me pintaram todo. Não reclamo. Hoje.",
+        "Holi. Festa das cores. Tô parecendo um arco-íris bombado."
+      ]
+    },
+    "festa_vesak": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Vesak{vocativo}. Dia de paz e compaixão. Respira.",
+        "Feliz Vesak. Hoje até eu fico zen. Um pouco."
+      ]
+    },
+    "festa_anoNovoChines": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Feliz Ano Novo Chinês, {nome}! Xin nian kuai le.",
+        "Gong xi fa cai, {nome}. Lanterna acesa, prosperidade na conta."
+      ]
+    },
+    "festa_tiradentes": {
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
+      "lines": [
+        "Tiradentes{vocativo}. Feriado nacional. Descansa, mas sem perder a cabeça.",
+        "Dia de Tiradentes. Feriado. Aproveita."
+      ]
+    },
+    "festa_trabalho": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Feliz Dia do Trabalho, {nome}. Folga. Eu trabalho de capacete mesmo assim.",
+        { "t": "Não vou desejar nada. Trabalhador de verdade não tira folga de mim.", "tone": "serio", "reaction": "judge" },
+        "Dia do Trabalhador. Hoje pode descansar sem culpa."
+      ]
+    },
+    "festa_independencia": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Sete de Setembro, {nome}. Independência ou morte. Eu escolho supino.",
+        "Feliz Dia da Independência. Bandeirinha na mão.",
+        { "t": "Não vou desejar nada. Independente mesmo é quem fecha o Instagram.", "tone": "serio", "reaction": "judge" }
+      ]
+    },
+    "festa_republica": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Proclamação da República{vocativo}. Feriado. Descansa.",
+        { "t": "Quinze de novembro. Não vou desejar nada, só aproveita a folga.", "reaction": "judge" }
+      ]
+    },
+    "festa_namorados": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "petted",
+      "lines": [
+        "Feliz Dia dos Namorados, {nome}. Manda um beijo pro {apoio}.",
+        "Dia dos Namorados. Tiara de coração. Não comenta.",
+        { "t": "Não vou desejar nada. Data comercial. Mas manda mensagem pro {apoio}.", "tone": "serio", "reaction": "judge" }
+      ]
+    },
+    "festa_mulher": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Feliz Dia Internacional da Mulher, Emanuele. Toma uma flor. Não se acostuma.",
+        "Dia da Mulher. Respeito todo dia, flor só hoje."
+      ]
+    },
+    "festa_stPatrick": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Happy St. Patrick's Day, {nome}. Verde é a cor do foco.",
+        { "t": "Não vou desejar nada. Nem sou irlandês.", "tone": "serio", "reaction": "judge" }
+      ]
+    },
+    "festa_terra": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Dia da Terra{vocativo}. Desliga uma luz. Fecha uma aba.",
+        "Feliz Dia da Terra. O planeta agradece cada aba fechada."
+      ]
+    },
+    "festa_maes": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "petted",
+      "lines": [
+        "Feliz Dia das Mães, {nome}. Liga pra sua mãe. Agora.",
+        "Dia das Mães. Trouxe flor. Entrega pra quem merece."
+      ]
+    },
+    "festa_pais": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Feliz Dia dos Pais, {nome}. Pus gravata. Respeita.",
+        { "t": "Não vou desejar nada. Mas liga pro seu pai.", "tone": "serio", "reaction": "lecture" }
+      ]
+    },
+    "festa_orgulho": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Feliz Dia do Orgulho LGBTQIA+, {nome}. Respeito é básico. Bandeira na mão.",
+        "Orgulho. Cada um ama quem quiser. Eu amo supino."
+      ]
+    },
+    "festa_muertos": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Dia de Todos os Santos e Día de Muertos{vocativo}. Flores pra quem a gente lembra.",
+        "Hoje é dia de lembrar com carinho. Coroa de calêndulas, sem piada."
+      ]
+    },
+    "festa_acaoDeGracas": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "nod",
+      "lines": [
+        "Happy Thanksgiving, {nome}. Agradece e come com atenção.",
+        { "t": "Não vou desejar nada. Nem é feriado aqui. Mas agradece.", "tone": "serio", "reaction": "judge" }
       ]
     }
   }

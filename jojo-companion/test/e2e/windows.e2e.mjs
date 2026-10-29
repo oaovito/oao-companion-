@@ -322,3 +322,40 @@ test('Windows: executável empacotado inicia, carrega assets e o detector nativo
     await quit(app);
   }
 });
+
+test('Windows: atualização do portátil troca o executável de verdade (cmd.exe)', { skip }, async () => {
+  const { portableSwapScript } = await import('../../src/core/updater.js');
+  const { spawnSync } = await import('node:child_process');
+  const crypto = await import('node:crypto');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-swap-'));
+  const sys = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32');
+  const target = path.join(dir, 'JoJo Companion antigo', 'JoJoCompanion.exe');
+  const fresh = path.join(dir, 'updates', 'JoJoCompanion.exe');
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.mkdirSync(path.dirname(fresh), { recursive: true });
+  // "Versão antiga" e "versão nova": dois executáveis inofensivos do Windows.
+  fs.copyFileSync(path.join(sys, 'whoami.exe'), target);
+  fs.copyFileSync(path.join(sys, 'hostname.exe'), fresh);
+  const want = crypto.createHash('sha256').update(fs.readFileSync(fresh)).digest('hex');
+  const script = path.join(dir, 'updates', 'trocar.cmd');
+  fs.writeFileSync(script, portableSwapScript({ newPath: fresh, targetPath: target, tries: 10 }));
+  const r = spawnSync('cmd.exe', ['/d', '/c', script], { timeout: 60000, windowsHide: true });
+  assert.equal(r.status, 0, String(r.stderr || r.stdout));
+  const got = crypto.createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+  assert.equal(got, want, 'executável trocado pela versão nova');
+  assert.equal(fs.existsSync(fresh), false, 'arquivo baixado movido');
+});
+
+test('Windows: calendários islâmico, hebraico e chinês funcionam no Electron (datas festivas)', { skip }, async () => {
+  const app = await launch();
+  try {
+    const r = await app.evaluate(async () => {
+      const c = globalThis.__jojo.companion;
+      const at = (y, m, d) => c.checkHoliday(new Date(y, m - 1, d, 12));
+      return { eid: at(2025, 3, 30), rosh: at(2025, 9, 23), hanukkah: at(2025, 12, 16), cny: at(2025, 1, 29), diwali: at(2025, 10, 20), natal: at(2026, 12, 25) };
+    });
+    assert.deepEqual(r, { eid: 'eidFitr', rosh: 'roshHashana', hanukkah: 'hanukkah', cny: 'anoNovoChines', diwali: 'diwali', natal: 'natal' });
+  } finally {
+    await quit(app);
+  }
+});

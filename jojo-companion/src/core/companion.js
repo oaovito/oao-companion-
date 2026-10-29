@@ -18,11 +18,12 @@ import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
-import { holidayFor } from './holidays.js';
+import { holidayFor, HOLIDAYS } from './holidays.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
 // Altura extra acima da caixa para chapéus das fantasias (px lógicos, escala 1).
 const COSTUME_HEADROOM = 36;
+const COSTUME_FOOTROOM = 40;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800 };
 const ACTIVITY_ROW = 26;
@@ -130,7 +131,9 @@ export class Companion {
     this.started = true;
     this._scheduleSpeech(now, true);
     // Fantasia da data festiva já aparece ao abrir; o cumprimento vem na checagem.
-    this.costume = this.personality.get().festas.ativo ? holidayFor(new Date()) : null;
+    const festa = this.personality.get().festas.ativo ? holidayFor(new Date()) : null;
+    this.holiday = festa;
+    this.costume = festa ? HOLIDAYS[festa].fantasia : null;
     this._scheduleReminderCheck(20000);
     if (this.userHidden) {
       this.overlay.hide();
@@ -1197,8 +1200,11 @@ export class Companion {
   checkHoliday(date = new Date()) {
     const cfg = this.personality.get().festas;
     const id = cfg.ativo ? holidayFor(date) : null;
-    if (id !== this.costume) {
-      this.costume = id;
+    // Datas solenes não têm fantasia.
+    const costume = id ? HOLIDAYS[id].fantasia : null;
+    this.holiday = id;
+    if (costume !== this.costume) {
+      this.costume = costume;
       this._applyLayout(true);
     }
     const hoje = dayKey(date);
@@ -1268,7 +1274,11 @@ export class Companion {
     } else this.activityRect = null;
 
     // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
-    if (this.costume) attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
+    if (this.costume) {
+      attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
+      // Lanternas penduradas na mão passam do pé.
+      attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
+    }
     const { bounds, rel } = composeWindow(r.box, attachments);
     const b = roundRect(bounds);
     if (!this.lastBounds || b.x !== this.lastBounds.x || b.y !== this.lastBounds.y || b.width !== this.lastBounds.width || b.height !== this.lastBounds.height) {

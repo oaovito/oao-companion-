@@ -45,7 +45,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços, inclina a cabeça e abana o rabo.
 - "Eu deveria jogar lol?": caga no chão, pega e oferece — "Passa na cara de uma vez." (estado `poop`, 7 s).
-- Datas festivas: fantasia do dia + cumprimento (deseja ou se recusa); `holidays.js`, `rig.costumes`.
+- Datas festivas (38): feriados nacionais do Brasil + datas religiosas e culturais do mundo;
+  fantasia do dia + cumprimento (solenes sem fantasia/piada; religiosas sem zombaria);
+  `holidays.js` (ICU + fases da Lua), `rig.costumes`.
+- O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);

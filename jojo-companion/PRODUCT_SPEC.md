@@ -110,7 +110,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | M2 | Bonita | "Eu sou bonita?" → olhos de coração, cai de costas com 😵, responde "É." no último suspiro e levanta |
 | U1 | Atualização automática | Baixa a versão nova das Releases e troca sozinho (PC parado ou ao encerrar); desligável |
 | M3 | LoL | "Eu deveria jogar lol?" → caga no chão, pega e oferece dizendo "Passa na cara de uma vez." |
-| F1 | Datas festivas | Natal, Ano Novo, Páscoa, Carnaval, Festa Junina, Dia das Crianças, Halloween: fantasia + cumprimento uma vez por dia |
+| F1 | Datas festivas | 38 datas: feriados nacionais do Brasil e datas religiosas/culturais do mundo; fantasia + cumprimento uma vez por dia; solenes sem fantasia |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho

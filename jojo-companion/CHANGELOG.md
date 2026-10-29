@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 0.20.0 — 2026-10-29
+
+### Adicionado
+- **Datas festivas do mundo todo** (38): todos os feriados nacionais do Brasil;
+  cristãs (Reis, Sexta-feira Santa, Páscoa, Corpus Christi, Todos os Santos,
+  Finados, Natal); islâmicas (início do Ramadã, Eid al-Fitr, Eid al-Adha, Ano Novo
+  islâmico); judaicas (Purim, Pessach, Rosh Hashaná, Yom Kippur, Hanukkah); hindus
+  (Holi, Diwali); budista (Vesak); Ano Novo Chinês; e culturais (Namorados 14/2 e
+  12/6, Dia da Mulher, St. Patrick, Dia da Terra, Dia do Trabalho, Mães, Pais,
+  Orgulho LGBTQIA+, Festa Junina, Dia das Crianças, Halloween, Día de Muertos,
+  Ação de Graças). Datas móveis pelos calendários islâmico, hebraico e chinês do
+  sistema (ICU) e por fases da Lua (Meeus) para Holi, Diwali e Vesak.
+- 18 fantasias novas (coroa, tiara de corações, chapéu verde, coroa de folhas,
+  capacete, calêndulas, chapéu de peregrino, faixa e bandeira do Brasil, tinta do
+  Holi, gravata, cachecol, lanternas, flor, diya, lótus, maçã, bandeira arco-íris).
+- Datas solenes (Sexta-feira Santa, Yom Kippur, Finados, Corpus Christi,
+  Consciência Negra): sem fantasia e sem piada. Religiosas: ele deseja, sem zombar.
+  Seculares: às vezes se recusa a desejar.
+- Windows: testes reais da troca do executável na atualização (cmd.exe) e dos
+  calendários no Electron.
+
+### Alterado
+- A Release no repositório do código não derruba mais a execução (as atualizações
+  vêm do repositório público).
+
 ## 0.19.0 — 2026-10-29
 
 ### Adicionado
