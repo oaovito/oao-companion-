@@ -38,7 +38,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
 - Antitédio: rotinas, mini-jogos, progressão/coleção (Central), foco junto (`/foco`), estímulos (💪 ✨ /calma /ritmo /bolhas),
   adaptação; tudo desligável e interrompível; doc `jojo-companion/docs/ANTITEDIO.md`.
-- Google Agenda: JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
+- Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?".
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
@@ -90,7 +90,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
    Também local e desligável: título da janela do **Spotify** ("Artista - Música", para reagir à música) e
    detecção do **League of Legends** em primeiro plano (título/executável → sim/não; JoJo fica de mau humor e some).
-   Saídas para a internet: **Google Agenda** (só leitura, endereço secreto iCal colado por ela; busca a cada 10 min), **conversa online** (texto da conversa ao provedor de IA), perguntas de
+   Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **conversa online** (texto da conversa ao provedor de IA), perguntas de
    conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. Sons desligados por padrão; **"iniciar com o Windows" ligado por padrão** (desmarcável).

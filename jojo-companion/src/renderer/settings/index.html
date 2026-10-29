@@ -184,15 +184,15 @@
     </fieldset>
 
     <fieldset>
-      <legend>Google Agenda</legend>
+      <legend>Agenda (Google ou iCloud)</legend>
       <label class="check"><input type="checkbox" name="agendaAtiva"> Avisar meus compromissos</label>
-      <label class="row">Endereço secreto iCal
-        <input type="password" name="agendaUrl" placeholder="https://calendar.google.com/calendar/ical/…/basic.ics" autocomplete="off" spellcheck="false">
+      <label class="row">Endereço da agenda
+        <input type="password" name="agendaUrl" placeholder="Google: endereço secreto iCal · iCloud: webcal://…icloud.com/published/…" autocomplete="off" spellcheck="false">
       </label>
       <label class="row">Avisar antes (min)
         <input type="number" name="agendaAvisoMin" min="5" max="60" step="5">
       </label>
-      <p class="hint">Mais fácil: diga "conectar agenda" no chat do JoJo que ele guia. O endereço fica só neste PC; o JoJo só lê os compromissos (busca a agenda no Google a cada 10 min).</p>
+      <p class="hint">Mais fácil: diga "conectar agenda" no chat do JoJo que ele guia. O endereço fica só neste PC; o JoJo só lê os compromissos (busca a agenda no Google ou no iCloud a cada 10 min). No iCloud o link é de calendário público: quem tiver o link vê a agenda.</p>
     </fieldset>
 
     <fieldset>

@@ -1374,7 +1374,7 @@
    "tone": "serio",
    "reaction": "lecture",
    "lines": [
-    "{nome}, conecta sua Google Agenda comigo. Eu te cobro os compromissos. Diz \"conectar agenda\".",
+    "{nome}, conecta sua agenda (Google ou iCloud) comigo. Eu te cobro os compromissos. Diz \"conectar agenda\".",
     "Quer que eu cuide da sua agenda? Fala \"conectar agenda\" no chat. Leva um minuto."
    ]
   },

@@ -322,7 +322,7 @@ function main() {
       if (painel) appWin.send('app:update', appState());
     };
 
-    // Google Agenda (só leitura): busca o .ics do endereço secreto a cada 10 min.
+    // Agenda (só leitura, Google ou iCloud): busca o .ics a cada 10 min.
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;
     const fetchCalendar = async (url) => {
       const res = await net.fetch(calBase ? `${calBase}/basic.ics` : url, { headers: { 'User-Agent': `JoJoCompanion/${app.getVersion()}` } });
@@ -336,11 +336,11 @@ function main() {
       if (!s.agendaUrl || !s.agendaAtiva) return;
       try {
         companion.setCalendar({ events: await fetchCalendar(s.agendaUrl) });
-        companion.reportSystem('agenda', 'Sistema: Google Agenda', null);
+        companion.reportSystem('agenda', 'Sistema: Agenda', null);
       } catch (err) {
         log('warn', `Agenda: ${err.message}`);
         companion.setCalendar({ events: companion.calendar.events, error: err.message });
-        companion.reportSystem('agenda', 'Sistema: Google Agenda', `Não consegui ler a Google Agenda (${err.message}).`);
+        companion.reportSystem('agenda', 'Sistema: Agenda', `Não consegui ler a agenda (${err.message}).`);
       }
     };
     companion.onCalendarConnect = async (url) => {

@@ -1,5 +1,6 @@
-// Google Agenda (somente leitura) pelo "endereço secreto no formato iCal" que a
-// usuária copia das configurações da agenda. Puro: interpreta o .ics e calcula
+// Agenda (somente leitura) do Google ou do iCloud. Google: "endereço secreto no
+// formato iCal" das configurações da agenda. iCloud: link do "Calendário público"
+// (webcal://pNN-caldav.icloud.com/published/…). Puro: interpreta o .ics e calcula
 // os próximos compromissos; quem busca o arquivo é o processo principal.
 
 /** É um endereço iCal secreto do Google Agenda? */
@@ -7,10 +8,43 @@ export function isGoogleIcalUrl(url) {
   return /^https:\/\/calendar\.google\.com\/calendar\/ical\/[^\s/]+\/(private-[0-9a-f]+|public)\/basic\.ics$/i.test(String(url || '').trim());
 }
 
-/** Acha um endereço iCal do Google dentro de um texto colado no chat. */
+const ICLOUD_RE = /^https:\/\/(p\d+-)?(caldav|calendarws|calendars)\.icloud\.com\/(published\/\d+|ca\/subscribe\/\d+)\/[A-Za-z0-9_-]{8,}$/i;
+
+/** É o link de um calendário público do iCloud (já em https)? */
+export function isIcloudIcalUrl(url) {
+  return ICLOUD_RE.test(String(url || '').trim());
+}
+
+/** webcal:// (como o iPhone copia) vira https://; o resto fica igual. */
+export function normalizeCalendarUrl(url) {
+  return String(url || '').trim().replace(/^webcals?:\/\//i, 'https://');
+}
+
+/** Endereço de agenda aceito (Google ou iCloud)? Aceita webcal://. */
+export function isCalendarUrl(url) {
+  const u = normalizeCalendarUrl(url);
+  return isGoogleIcalUrl(u) || isIcloudIcalUrl(u);
+}
+
+/** 'google' | 'icloud' | null */
+export function calendarProvider(url) {
+  const u = normalizeCalendarUrl(url);
+  if (isGoogleIcalUrl(u)) return 'google';
+  if (isIcloudIcalUrl(u)) return 'icloud';
+  return null;
+}
+
+/** Acha um endereço de agenda (Google ou iCloud) num texto colado no chat; devolve em https. */
 export function findIcalUrl(text) {
-  const m = String(text || '').match(/https:\/\/calendar\.google\.com\/calendar\/ical\/\S+?\/basic\.ics/i);
-  return m && isGoogleIcalUrl(m[0]) ? m[0] : null;
+  const t = String(text || '');
+  const g = t.match(/https:\/\/calendar\.google\.com\/calendar\/ical\/\S+?\/basic\.ics/i);
+  if (g && isGoogleIcalUrl(g[0])) return g[0];
+  const i = t.match(/(webcals?|https):\/\/[a-z0-9-]*\.?icloud\.com\/[^\s"'<>]+/i);
+  if (i) {
+    const u = normalizeCalendarUrl(i[0]).replace(/[).,;!?]+$/, '');
+    if (isIcloudIcalUrl(u)) return u;
+  }
+  return null;
 }
 
 function unfold(text) {

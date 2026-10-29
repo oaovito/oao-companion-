@@ -1,7 +1,7 @@
 // Esquema das configurações: padrões, validação, migração de versão.
 // Qualquer campo inválido volta ao padrão sem invalidar o arquivo inteiro.
 
-import { isGoogleIcalUrl } from './calendar.js';
+import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
 
 export const SETTINGS_VERSION = 2;
@@ -40,7 +40,7 @@ export const DEFAULTS = Object.freeze({
   microMovimentos: 'normal',    // normal | discreto | desligado (respiração, guelras, bolhas…)
   animacoesPesadas: true,       // giros, confete, tremidas (desligue para só as suaves)
   volume: 60,                   // volume dos sons (quando ligados), 0 – 100
-  // Google Agenda (só leitura) pelo endereço secreto iCal; fica só neste PC.
+  // Agenda (só leitura): endereço iCal do Google ou link público do iCloud; fica só neste PC.
   agendaUrl: '',
   agendaAtiva: true,
   agendaAvisoMin: 10,           // aviso antes de cada compromisso (5 – 60 min)
@@ -134,7 +134,7 @@ export function sanitize(input) {
     }
   }
   if ('agendaUrl' in src) {
-    if (src.agendaUrl === '' || isGoogleIcalUrl(src.agendaUrl)) out.agendaUrl = String(src.agendaUrl).trim();
+    if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');
   }
   if ('guardaRoupa' in src) {

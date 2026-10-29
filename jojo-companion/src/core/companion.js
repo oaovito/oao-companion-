@@ -2208,7 +2208,7 @@ export class Companion {
     return null;
   }
 
-  // ---------------------------------------------------------------- Google Agenda
+  // ---------------------------------------------------------------- Agenda (Google ou iCloud)
 
   /** Eventos novos da agenda (vindos do main). */
   setCalendar({ events = [], error = null } = {}) {
@@ -2233,7 +2233,7 @@ export class Companion {
       if (!s.agendaSugerida && this.clock.now() - (this.startedAt || 0) > 10 * 60e3 && this._canNag() && !this.interaction) {
         this.store.update({ agendaSugerida: true });
         this._nag('agendaSugestao', this.clock.now());
-        const c = this.conversations.create({ id: 'agenda', title: 'Conectar a Google Agenda', kind: 'reminder' });
+        const c = this.conversations.create({ id: 'agenda', title: 'Conectar a agenda', kind: 'reminder' });
         this.conversations.addMessage(c.id, 'jojo', 'Diz "conectar agenda" que eu te guio. Leva um minuto.');
         this.conversations.setStatus(c.id, 'needsInput', 'Diga "conectar agenda" no chat.');
         return 'sugestao';
@@ -2290,20 +2290,40 @@ export class Companion {
     if (url) {
       if (!this.onCalendarConnect) return 'Não consigo conectar agora. Tenta de novo depois.';
       const r = await this.onCalendarConnect(url);
-      if (!r || !r.ok) return `Esse link não funcionou${r && r.error ? ` (${r.error})` : ''}. Confere se copiou o "Endereço secreto no formato iCal" inteiro.`;
+      if (!r || !r.ok) return `Esse link não funcionou${r && r.error ? ` (${r.error})` : ''}. ${/icloud/i.test(url) ? 'Confere se o "Calendário Público" está ligado e se copiou o link inteiro.' : 'Confere se copiou o "Endereço secreto no formato iCal" inteiro.'}`;
       this.conversations.setStatus('agenda', 'idle');
       this.fireEvent('sucesso', { speak: false });
       const hoje = agendaDoDia(this.calendar.events, new Date());
       return `Conectado. Agora eu cobro seus compromissos, ${profileVars(this.personality.get(), 'serio').nome}. Hoje você tem ${hoje.length}. Aviso ${this.store.get().agendaAvisoMin} min antes.`;
     }
-    if (/\b(desconecta|desliga|remove|tira)\w* (a |minha )?(google )?agenda\b|\bdisconnect (my )?calendar\b/.test(n)) {
+    if (/\b(desconecta|desliga|remove|tira)\w* (a |minha |o )?(google |icloud )?(agenda|calendario|icloud)\b|\bdisconnect (my )?calendar\b/.test(n)) {
       this.store.update({ agendaUrl: '' });
       this.setCalendar({ events: [] });
       return 'Agenda desconectada. Agora se vira sozinha.';
     }
-    if (/\b(conecta|conectar|integra|integrar|liga|ligar|configura|configurar|vincula|vincular)\w* (a |minha |com a |com )?(google )?(agenda|calendario|google calendar)\b|\bconnect (my )?(google )?calendar\b/.test(n)) {
+    const conectar = /\b(conecta|conectar|integra|integrar|liga|ligar|configura|configurar|vincula|vincular)\w* (a |minha |o |meu |com a |com o |com )?(google |icloud |apple )?(agenda|calendario|google calendar|icloud|calendario do iphone)\b|\bconnect (my )?(google |icloud |apple )?calendar\b/.test(n);
+    const icloud = /\b(icloud|iphone|apple|ipad|mac)\b/.test(n);
+    if (conectar && icloud) {
       return [
-        'Bora. É rápido:',
+        'iCloud, beleza. É rápido:',
+        '1) No iPhone, abre o app Calendário e toca em "Calendários" lá embaixo.',
+        '2) Toca no (i) ao lado da agenda que você quer.',
+        '3) Liga "Calendário Público" e toca em "Compartilhar Link…" → Copiar.',
+        '   (No computador: icloud.com/calendar → ícone de compartilhar ao lado da agenda → "Calendário público" → copiar o link.)',
+        '4) Manda o link pra este PC e cola aqui no chat (começa com webcal://).',
+        'Aviso: no iCloud o link é público; quem tiver o link vê a agenda. Eu só leio os compromissos.',
+      ].join('\n');
+    }
+    if (conectar && !/\bgoogle\b/.test(n)) {
+      return [
+        'Bora. Sua agenda é do Google ou do iCloud (iPhone)?',
+        'Google: diz "conectar agenda do Google". iCloud: diz "conectar agenda do iCloud".',
+        'Eu só leio os compromissos, nada sai deste PC além de buscar a agenda.',
+      ].join('\n');
+    }
+    if (conectar) {
+      return [
+        'Google, beleza. É rápido:',
         '1) Abre calendar.google.com no navegador e clica na engrenagem → Configurações.',
         '2) Na esquerda, em "Configurações das minhas agendas", clica na sua agenda.',
         '3) Desce até "Integrar agenda" e copia o "Endereço secreto no formato iCal".',

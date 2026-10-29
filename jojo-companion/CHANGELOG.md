@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.31.0 — 2026-10-29
+
+### Adicionado
+- **Agenda do iCloud**: além da Google Agenda, o JoJo conecta o calendário do iCloud pelo link de
+  "Calendário Público" (o `webcal://` que o iPhone copia vira `https://`). "conectar agenda" pergunta
+  se é Google ou iCloud e guia o passo a passo de cada um; avisos, "o que tenho hoje?" e
+  desconectar funcionam igual. Configurações: seção "Agenda (Google ou iCloud)".
+
 ## 0.30.0 — 2026-10-29
 
 ### Adicionado

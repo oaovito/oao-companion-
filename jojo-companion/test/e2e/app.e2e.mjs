@@ -679,12 +679,42 @@ test('Google Agenda: link colado no chat conecta (servidor local falso) e o JoJo
   const { app } = await launch({ env: { JOJO_CAL_BASE: `http://127.0.0.1:${server.address().port}` } });
   try {
     const url = 'https://calendar.google.com/calendar/ical/teste%40gmail.com/private-0123456789abcdef0123456789abcdef/basic.ics';
-    let r = await app.evaluate(() => globalThis.__jojo.companion.chat('conectar agenda'));
+    let r = await app.evaluate(() => globalThis.__jojo.companion.chat('conectar agenda do google'));
     assert.match(r.text, /iCal/);
     r = await app.evaluate((_e, u) => globalThis.__jojo.companion.chat(u), url);
     assert.match(r.text, /^Conectado/);
     assert.ok(hits.length >= 1, 'buscou a agenda');
     assert.equal(await app.evaluate(() => globalThis.__jojo.store.get().agendaUrl), url);
+    r = await app.evaluate(() => globalThis.__jojo.companion.chat('o que eu tenho hoje?'));
+    if (later.getDate() === now.getDate()) assert.match(r.text, /Academia/);
+  } finally {
+    await quit(app);
+    server.close();
+  }
+});
+
+test('Agenda do iCloud: link webcal:// colado no chat conecta (servidor local falso)', async () => {
+  const now = new Date();
+  const p2 = (n) => String(n).padStart(2, '0');
+  const later = new Date(now.getTime() + 3 * 3600e3);
+  const stamp = (d) => `${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}T${p2(d.getHours())}${p2(d.getMinutes())}00`;
+  const ics = ['BEGIN:VCALENDAR', 'BEGIN:VEVENT', 'UID:t1', 'SUMMARY:Academia', `DTSTART:${stamp(later)}`, `DTEND:${stamp(new Date(later.getTime() + 3600e3))}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const hits = [];
+  const server = http.createServer((req, res) => {
+    hits.push(req.url);
+    res.setHeader('Content-Type', 'text/calendar');
+    res.end(ics);
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const { app } = await launch({ env: { JOJO_CAL_BASE: `http://127.0.0.1:${server.address().port}` } });
+  try {
+    const url = 'webcal://p45-caldav.icloud.com/published/2/MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3OG1hbnU';
+    let r = await app.evaluate(() => globalThis.__jojo.companion.chat('conectar agenda do icloud'));
+    assert.match(r.text, /Calendário Público/);
+    r = await app.evaluate((_e, u) => globalThis.__jojo.companion.chat(u), url);
+    assert.match(r.text, /^Conectado/);
+    assert.ok(hits.length >= 1, 'buscou a agenda');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.store.get().agendaUrl), url.replace('webcal://', 'https://'));
     r = await app.evaluate(() => globalThis.__jojo.companion.chat('o que eu tenho hoje?'));
     if (later.getDate() === now.getDate()) assert.match(r.text, /Academia/);
   } finally {

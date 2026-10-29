@@ -1,7 +1,8 @@
-// Google Agenda (só leitura) pelo endereço secreto iCal.
+// Agenda (só leitura): Google (endereço secreto iCal) ou iCloud (calendário público).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseIcs, agendaDoDia, agendaBetween, isGoogleIcalUrl, findIcalUrl, eventKind } from '../../src/core/calendar.js';
+import { parseIcs, agendaDoDia, agendaBetween, isGoogleIcalUrl, isIcloudIcalUrl, isCalendarUrl, calendarProvider, findIcalUrl, eventKind } from '../../src/core/calendar.js';
+import { sanitize } from '../../src/core/settings-schema.js';
 import { makeEnv, chatAdv } from './helpers.js';
 
 const URL = 'https://calendar.google.com/calendar/ical/emanuele%40gmail.com/private-0123456789abcdef0123456789abcdef/basic.ics';
@@ -49,7 +50,13 @@ test('agenda: JoJo sugere uma vez, guia no chat, conecta pelo link colado e resp
   assert.equal(e.companion.checkAgenda(new Date(2026, 9, 30, 8, 1)), null, 'só uma vez');
   e.companion.enterInteraction('test');
   let r = await chatAdv(e, 'quero conectar a agenda');
+  assert.match(r.text, /Google ou do iCloud/);
+  r = await chatAdv(e, 'conectar agenda do google');
   assert.match(r.text, /Endereço secreto no formato iCal/);
+  r = await chatAdv(e, 'conectar agenda do icloud');
+  assert.match(r.text, /Calendário Público/);
+  r = await chatAdv(e, 'quero conectar o calendário do iphone');
+  assert.match(r.text, /Calendário Público/);
   e.companion.onCalendarConnect = async (url) => {
     e.store.update({ agendaUrl: url, agendaAtiva: true });
     e.companion.setCalendar({ events: parseIcs(ICS) });
@@ -60,6 +67,41 @@ test('agenda: JoJo sugere uma vez, guia no chat, conecta pelo link colado e resp
   r = await chatAdv(e, 'o que eu tenho hoje?');
   assert.ok(r.text.startsWith('Hoje') || r.text.startsWith('Nada'), r.text);
   r = await chatAdv(e, 'desconectar agenda');
+  assert.equal(e.store.get().agendaUrl, '');
+});
+
+const ICLOUD = 'https://p123-caldav.icloud.com/published/2/MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3OG1hbnU';
+
+test('agenda do iCloud: link público (webcal:// do iPhone) é aceito, vira https e conecta pelo chat', async () => {
+  const webcal = ICLOUD.replace('https://', 'webcal://');
+  assert.equal(isIcloudIcalUrl(ICLOUD), true);
+  assert.equal(isIcloudIcalUrl(webcal), false, 'a checagem estrita é em https');
+  assert.equal(isCalendarUrl(webcal), true);
+  assert.equal(calendarProvider(webcal), 'icloud');
+  assert.equal(calendarProvider(URL), 'google');
+  assert.equal(calendarProvider('https://icloud.com.evil.com/published/2/abcdefghijk'), null);
+  assert.equal(isCalendarUrl('https://p1-caldav.icloud.com/../etc'), false);
+  assert.equal(findIcalUrl(`olha: ${webcal}.`), ICLOUD);
+  assert.equal(findIcalUrl(`link ${ICLOUD}`), ICLOUD);
+  assert.equal(sanitize({ agendaUrl: webcal }).settings.agendaUrl, ICLOUD);
+  assert.equal(sanitize({ agendaUrl: 'https://evil.com/x.ics' }).settings.agendaUrl, '');
+  const e = started();
+  e.companion.enterInteraction('test');
+  let pedido = null;
+  e.companion.onCalendarConnect = async (url) => {
+    pedido = url;
+    e.store.update({ agendaUrl: url, agendaAtiva: true });
+    e.companion.setCalendar({ events: parseIcs(ICS) });
+    return { ok: true };
+  };
+  let r = await chatAdv(e, webcal);
+  assert.match(r.text, /^Conectado/);
+  assert.equal(pedido, ICLOUD, 'busca em https');
+  assert.equal(e.store.get().agendaUrl, ICLOUD);
+  e.companion.onCalendarConnect = async () => ({ ok: false, error: 'HTTP 404' });
+  r = await chatAdv(e, webcal);
+  assert.match(r.text, /Calendário Público/);
+  r = await chatAdv(e, 'desconectar o icloud');
   assert.equal(e.store.get().agendaUrl, '');
 });
 
