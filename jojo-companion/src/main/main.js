@@ -28,6 +28,10 @@ const IS_WIN = process.platform === 'win32';
 if (process.env.JOJO_USER_DATA) app.setPath('userData', path.resolve(process.env.JOJO_USER_DATA));
 app.setName('JoJo Companion');
 if (IS_WIN) app.setAppUserModelId('com.jojocompanion.app');
+// Leveza: o JoJo é um canvas pequeno. Desenhar no processador dispensa a memória
+// do processo de vídeo e, no Windows, a cópia GPU → janela transparente a cada
+// quadro. JOJO_GPU=1 religa a aceleração (diagnóstico).
+if (process.env.JOJO_GPU !== '1') app.disableHardwareAcceleration();
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();

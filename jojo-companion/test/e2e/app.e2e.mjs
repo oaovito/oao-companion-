@@ -68,6 +68,8 @@ async function quit(app) {
 test('overlay: sem foco, sempre por cima, click-through e sem erros no renderer', async () => {
   const { app, win, errors } = await launch();
   try {
+    // Leveza: desenho no processador (sem aceleração de vídeo).
+    assert.equal(await app.evaluate(({ app: a }) => a.isHardwareAccelerationEnabled()), false);
     const props = await app.evaluate(({ BrowserWindow }) => {
       const w = globalThis.__jojo.overlay.win;
       return {

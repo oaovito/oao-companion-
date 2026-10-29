@@ -13,6 +13,7 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- **Mais leve**: usa menos memória e processador e o executável ficou menor.
 - **Conversa de verdade**: fale com o JoJo sobre qualquer coisa; ele entende e responde no jeito dele.
 - Ele **inicia junto com o Windows** (dá para desmarcar em Configurações).
 - Fantasias ousadas (mande **"veste uma roupa"** e veja a reação). Comida de tubarão de

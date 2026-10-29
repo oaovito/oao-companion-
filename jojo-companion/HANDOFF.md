@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.23.2, 2026-10-29)
+# HANDOFF — estado atual (v0.24.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -86,8 +86,10 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 - No Linux o modo de interação captura a janela inteira (sem `forward`) — só desenvolvimento.
 - Sob Wine o executável Windows inicia mas trava na criação da janela (limitação do Wine;
   não usar Wine como verificação).
-- Memória típica de Electron; se for problema, avaliar `app.disableHardwareAcceleration()`
-  (removeria o processo de GPU) após testar transparência no Windows.
+- Leveza (v0.24): aceleração de vídeo desligada (`app.disableHardwareAcceleration()`; o
+  JoJo é um canvas de 180×170). No Linux o processo de vídeo caiu de ~123 MB para ~52 MB
+  sem custo de CPU. O CI do Windows mede com e sem (`measure-windows.json` e
+  `measure-windows-gpu.json`); `JOJO_GPU=1` religa para diagnóstico.
 
 ## Checklist manual sugerido (máquina Windows 11)
 

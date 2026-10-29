@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.24.0 — 2026-10-29
+
+### Alterado
+- **Mais leve**: o JoJo é desenhado sem aceleração de vídeo (canvas pequeno). Menos
+  memória (no Linux o processo de vídeo caiu de ~123 MB para ~52 MB) e, no Windows, sem a
+  cópia da placa de vídeo para a janela transparente a cada quadro. `JOJO_GPU=1` religa.
+- Pacote só com os idiomas pt-BR e en-US do Chromium (download e extração menores).
+- Desenho do rig sem alocação por quadro nos grupos ocultáveis.
+- CI do Windows mede também com aceleração ligada, para comparação.
+
 ## 0.23.2 — 2026-10-29
 
 ### Corrigido

@@ -9,7 +9,9 @@ export class RigRenderer {
     this.paths = new Map();
     this.clips = new Map(); // recortes (ex.: meia arrastão só dentro das pernas)
     this.partsById = new Map();
+    this.groupHide = new Map(); // hideIf do grupo já como lista (sem alocar por quadro)
     for (const g of rig.groups) {
+      if (g.hideIf) this.groupHide.set(g, [].concat(g.hideIf));
       for (const p of g.parts) {
         this.paths.set(p.id, new Path2D(p.path));
         if (p.clipPath) this.clips.set(p.id, new Path2D(p.clipPath));
@@ -132,7 +134,7 @@ export class RigRenderer {
     for (const group of rig.groups) {
       // Grupos de outra vista (ex.: de costas) trocam de lugar com a vista de frente.
       if (group.showIf && !((pose[group.showIf] ?? 0) >= 0.5)) continue;
-      if (group.hideIf && [].concat(group.hideIf).some((ch) => (pose[ch] ?? 0) >= 0.5)) continue;
+      if (group.hideIf && this.groupHide.get(group).some((ch) => (pose[ch] ?? 0) >= 0.5)) continue;
       if (group.outline) {
         ctx.strokeStyle = this.color('outline');
         ctx.lineWidth = ow * 2;
