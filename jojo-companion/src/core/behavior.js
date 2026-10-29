@@ -112,6 +112,9 @@ export function autoWeights(activity, { sleepiness = 0, alert = false } = {}) {
   return w;
 }
 
+/** Chance, a cada escolha autônoma do repouso, de virar de costas e rebolar sozinho. */
+export const MOON_IDLE_CHANCE = 1e-9;
+
 export function weightedPick(weights, rng = Math.random, avoid = []) {
   const entries = Object.entries(weights).map(([k, v]) => [k, avoid.includes(k) ? v * 0.25 : v]);
   const total = entries.reduce((s, [, v]) => s + v, 0);
@@ -134,8 +137,10 @@ export class BehaviorMachine {
   /**
    * @param opts {rng, activity (0..1), onEnter(state, info), getContext()}
    */
-  constructor({ rng = Math.random, activity = 0.5, getContext = () => ({}) } = {}) {
+  constructor({ rng = Math.random, activity = 0.5, getContext = () => ({}), rareRng = Math.random } = {}) {
     this.rng = rng;
+    // Sorteio separado para eventos raríssimos (não mexe na sequência do rng principal).
+    this.rareRng = rareRng;
     this.activity = activity;
     this.getContext = getContext;
     this.history = [];
@@ -276,6 +281,8 @@ export class BehaviorMachine {
   }
 
   pickAuto(ctx = {}) {
+    // 1 em 1 bilhão: o "vai tomar no cu" sozinho, sem ninguém pedir.
+    if (!ctx.paused && !ctx.alert && this.rareRng() < MOON_IDLE_CHANCE) return 'moon';
     const w = autoWeights(this.activity, ctx);
     if (ctx.alert) {
       w.walk = 0;

@@ -54,7 +54,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   5 min após a volta (modo `wired`). Legends: "ideia burra" 1×/semana em momento aleatório.
 - "Vai tomar no cu" no chat: vira de costas, susto com o prolapso, rebola ~5 s e desvira
   (estado `moon`, 7,4 s; canais `mooning`, `spread`, `gagSize`, `drip`). De costas ele continua
-  fisiculturista (costas em V, trapézio, dorsais, tríceps) em qualquer meme.
+  fisiculturista (costas em V, trapézio, dorsais, tríceps) em qualquer meme. Sozinho no repouso:
+  1 chance em 1 bilhão a cada escolha autônoma (`MOON_IDLE_CHANCE` em `behavior.js`).
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços, inclina a cabeça e abana o rabo.

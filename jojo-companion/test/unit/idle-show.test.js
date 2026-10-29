@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeEnv, chatAdv, loadJSON, seededRng } from './helpers.js';
 import { Animator } from '../../src/renderer/shared/animator.js';
-import { autoWeights, BehaviorMachine } from '../../src/core/behavior.js';
+import { autoWeights, BehaviorMachine, MOON_IDLE_CHANCE } from '../../src/core/behavior.js';
 import { weeklyReminder, weekKey, PERSONALITY_DEFAULTS, sanitizePersonality } from '../../src/core/personality.js';
 
 const ANIMS = loadJSON('assets/animations/jojo.animations.json');
@@ -331,4 +331,24 @@ test('"eu deveria jogar lol?": caga no chão, pega e oferece dizendo "Passa na c
   assert.equal(at(0.5).flags.stink, true, 'mau cheiro e moscas');
   const parts = RIG.groups.flatMap((g) => g.parts);
   assert.ok(parts.some((p) => p.showIf === 'propPoop') && parts.some((p) => p.showIf === 'poopHand'));
+});
+
+test('"vai tomar no cu" sozinho no repouso: 1 chance em 1 bilhão, sem comando', () => {
+  assert.equal(MOON_IDLE_CHANCE, 1e-9);
+  // Sorteio abaixo da chance: vira de costas e rebola sozinho.
+  let bm = new BehaviorMachine({ rng: () => 0.5, rareRng: () => 0.5e-9 });
+  assert.equal(bm.pickAuto({}), 'moon');
+  assert.notEqual(bm.pickAuto({ paused: true }), 'moon', 'pausado não');
+  // Acima da chance (quase sempre): repouso normal.
+  bm = new BehaviorMachine({ rng: seededRng(2), rareRng: () => 1.5e-9 });
+  for (let i = 0; i < 500; i++) assert.notEqual(bm.pickAuto({}), 'moon');
+  // No companion, com o sorteio raro forçado, o estado moon acontece sem ninguém pedir.
+  const e = started();
+  e.companion.behavior.rareRng = () => 0;
+  let viu = false;
+  for (let i = 0; i < 120 && !viu; i++) {
+    e.clock.advance(1000);
+    viu = e.companion.behavior.state === 'moon';
+  }
+  assert.ok(viu, 'moon sozinho');
 });

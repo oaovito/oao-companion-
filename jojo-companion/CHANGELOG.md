@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.31.1 — 2026-10-29
+
+### Adicionado
+- Easter egg: a cada escolha do repouso, **1 chance em 1 bilhão** de o JoJo fazer sozinho a
+  animação do "vai tomar no cu" (vira, rebola e desvira), sem nenhum comando (`MOON_IDLE_CHANCE`).
+
 ## 0.31.0 — 2026-10-29
 
 ### Adicionado
