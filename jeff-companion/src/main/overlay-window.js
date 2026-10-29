@@ -124,6 +124,7 @@ export class OverlayWindow {
   show() {
     if (!this.alive) return;
     this.visible = true;
+    this._send('jeff:visible', true);
     this.win.showInactive();
     this.win.setAlwaysOnTop(true, 'floating');
   }
@@ -131,6 +132,7 @@ export class OverlayWindow {
   hide() {
     if (!this.alive) return;
     this.visible = false;
+    this._send('jeff:visible', false);
     this.win.hide();
   }
 

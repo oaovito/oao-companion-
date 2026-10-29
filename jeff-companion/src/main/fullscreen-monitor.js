@@ -1,97 +1,98 @@
-// Detecção de aplicativo em tela cheia no Windows, sem ler conteúdo de janelas
-// e sem injeção: usa apenas SHQueryUserNotificationState (estado do shell) e o
-// retângulo/classe da janela em primeiro plano comparado ao do monitor.
-// Em outros sistemas (ou se o FFI falhar) a detecção fica indisponível.
-import { createRequire } from 'node:module';
+// Gerencia a detecção de tela cheia (somente Windows) em um processo
+// utilitário isolado. Falhas desativam o recurso sem afetar o Jeff.
+import { utilityProcess } from 'electron';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { matchFullscreenDisplay } from '../core/displays.js';
 
-const require = createRequire(import.meta.url);
-
-// Valores de QUERY_USER_NOTIFICATION_STATE
-const QUNS_BUSY = 2;
-const QUNS_RUNNING_D3D_FULL_SCREEN = 3;
-const QUNS_PRESENTATION_MODE = 4;
-const SHELL_CLASSES = new Set(['Progman', 'WorkerW', 'Shell_TrayWnd', 'Shell_SecondaryTrayWnd']);
-const MONITOR_DEFAULTTONEAREST = 2;
+const WORKER = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fullscreen-worker.cjs');
+const MAX_CRASHES = 2;
 
 export function createFullscreenDetector(log = () => {}) {
-  if (process.platform !== 'win32') return { available: false, reason: 'Disponível apenas no Windows', detect: () => [] };
-  try {
-    const koffi = require('koffi');
-    const user32 = koffi.load('user32.dll');
-    const shell32 = koffi.load('shell32.dll');
-    const RECT = koffi.struct('JEFF_RECT', { left: 'int32', top: 'int32', right: 'int32', bottom: 'int32' });
-    const MONITORINFO = koffi.struct('JEFF_MONITORINFO', { cbSize: 'uint32', rcMonitor: RECT, rcWork: RECT, dwFlags: 'uint32' });
-    const GetForegroundWindow = user32.func('void * __stdcall GetForegroundWindow()');
-    const GetShellWindow = user32.func('void * __stdcall GetShellWindow()');
-    const GetDesktopWindow = user32.func('void * __stdcall GetDesktopWindow()');
-    const GetWindowRect = user32.func('int __stdcall GetWindowRect(void *hWnd, _Out_ JEFF_RECT *lpRect)');
-    const GetClassNameW = user32.func('int __stdcall GetClassNameW(void *hWnd, _Out_ uint16_t *lpClassName, int nMaxCount)');
-    const MonitorFromWindow = user32.func('void * __stdcall MonitorFromWindow(void *hwnd, uint32_t dwFlags)');
-    const GetMonitorInfoW = user32.func('int __stdcall GetMonitorInfoW(void *hMonitor, _Inout_ JEFF_MONITORINFO *lpmi)');
-    const SHQueryUserNotificationState = shell32.func('int32 __stdcall SHQueryUserNotificationState(_Out_ int32 *pquns)');
+  if (process.platform !== 'win32') {
+    return { available: false, reason: 'Disponível apenas no Windows', detect: async () => [], setOwnHandles() {}, dispose() {} };
+  }
+  const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [] };
 
-    const ownHandles = new Set();
-
-    function className(hwnd) {
-      const buf = new Uint16Array(64);
-      const n = GetClassNameW(hwnd, buf, 64);
-      return n > 0 ? String.fromCharCode(...buf.slice(0, n)) : '';
+  function spawn() {
+    state.ready = false;
+    try {
+      state.child = utilityProcess.fork(WORKER, [], { serviceName: 'Jeff fullscreen detector', stdio: 'ignore' });
+    } catch (e) {
+      disable(`não foi possível iniciar o detector (${e.message})`);
+      return;
     }
-
-    /**
-     * @param toDip (rectPx) => rectDip  — conversão de pixels físicos para DIP (screen.screenToDipRect)
-     * @param displays lista de displays do Electron
-     * @returns ids dos displays ocupados por um app em tela cheia
-     */
-    function detect(toDip, displays) {
-      const out = [];
-      const q = [0];
-      const hr = SHQueryUserNotificationState(q);
-      const shellSaysFull = hr === 0 && [QUNS_BUSY, QUNS_RUNNING_D3D_FULL_SCREEN, QUNS_PRESENTATION_MODE].includes(q[0]);
-      const hwnd = GetForegroundWindow();
-      if (!hwnd) return out;
-      const key = String(hwnd);
-      if (ownHandles.has(key)) return out;
-      if (hwnd === GetShellWindow() || hwnd === GetDesktopWindow()) return out;
-      if (SHELL_CLASSES.has(className(hwnd))) return out;
-      const wr = {};
-      if (!GetWindowRect(hwnd, wr)) return out;
-      const mon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-      const mi = { cbSize: koffi.sizeof(MONITORINFO), rcMonitor: {}, rcWork: {}, dwFlags: 0 };
-      if (!mon || !GetMonitorInfoW(mon, mi)) return out;
-      const m = mi.rcMonitor;
-      const coversMonitor = wr.left <= m.left && wr.top <= m.top && wr.right >= m.right && wr.bottom >= m.bottom;
-      if (!coversMonitor && !shellSaysFull) return out;
-      if (!coversMonitor) return out; // estado do shell sem janela cobrindo: ignora (ex.: modo apresentação em outro monitor)
-      const dip = toDip({ x: m.left, y: m.top, width: m.right - m.left, height: m.bottom - m.top });
-      let best = null;
-      let bestD = Infinity;
-      for (const d of displays) {
-        const dd = Math.abs(d.bounds.x - dip.x) + Math.abs(d.bounds.y - dip.y) + Math.abs(d.bounds.width - dip.width) + Math.abs(d.bounds.height - dip.height);
-        if (dd < bestD) {
-          bestD = dd;
-          best = d;
-        }
+    state.child.on('message', (m) => {
+      if (m.type === 'ready') state.ready = true;
+      else if (m.type === 'result' || m.type === 'error') {
+        const p = state.pending.get(m.id);
+        if (!p) return;
+        state.pending.delete(m.id);
+        if (m.type === 'result') p.resolve(m.result);
+        else p.reject(new Error(m.message));
       }
-      if (best && bestD < 40) out.push(best.id);
-      return out;
-    }
+    });
+    state.child.on('exit', (code) => {
+      for (const p of state.pending.values()) p.reject(new Error('detector encerrado'));
+      state.pending.clear();
+      state.child = null;
+      state.ready = false;
+      if (!state.available) return;
+      state.crashes++;
+      log('warn', `Detector de tela cheia encerrou (código ${code}); tentativa ${state.crashes}/${MAX_CRASHES}`);
+      if (state.crashes >= MAX_CRASHES) disable('o detector falhou repetidamente');
+      else setTimeout(spawn, 2000);
+    });
+    state.child.postMessage({ type: 'init', own: state.own });
+  }
 
-    return {
-      available: true,
-      reason: null,
-      detect,
-      addOwnHandle(buf) {
-        try {
-          const v = buf.length >= 8 ? buf.readBigUInt64LE(0) : BigInt(buf.readUInt32LE(0));
-          ownHandles.add(String(v));
-        } catch {
-          /* ignora */
-        }
-      },
-    };
-  } catch (e) {
-    log('warn', `Detecção de tela cheia indisponível: ${e.message}`);
-    return { available: false, reason: `Indisponível: ${e.message}`, detect: () => [] };
+  function disable(reason) {
+    state.available = false;
+    state.reason = `Indisponível: ${reason}`;
+    log('warn', `Detecção de tela cheia desativada: ${reason}`);
+    if (state.child) state.child.kill();
+  }
+
+  spawn();
+
+  return {
+    get available() {
+      return state.available;
+    },
+    get reason() {
+      return state.reason;
+    },
+    setOwnHandles(handles) {
+      state.own = handles.map(String);
+      if (state.child) state.child.postMessage({ type: 'init', own: state.own });
+    },
+    /** @returns Promise<ids de displays ocupados por app em tela cheia> */
+    async detect(toDip, displays) {
+      if (!state.available || !state.child || !state.ready) return [];
+      const id = ++state.seq;
+      const result = await new Promise((resolve, reject) => {
+        state.pending.set(id, { resolve, reject });
+        state.child.postMessage({ type: 'detect', id });
+        setTimeout(() => {
+          if (state.pending.delete(id)) reject(new Error('tempo esgotado'));
+        }, 1500);
+      });
+      if (!result || !result.fullscreen || !result.monitor) return [];
+      const d = matchFullscreenDisplay(toDip(result.monitor), displays);
+      return d ? [d.id] : [];
+    },
+    dispose() {
+      state.available = false;
+      if (state.child) state.child.kill();
+    },
+  };
+}
+
+/** Converte o HWND (Buffer de getNativeWindowHandle) para string decimal. */
+export function hwndToString(buf) {
+  try {
+    return (buf.length >= 8 ? buf.readBigUInt64LE(0) : BigInt(buf.readUInt32LE(0))).toString();
+  } catch {
+    return null;
   }
 }

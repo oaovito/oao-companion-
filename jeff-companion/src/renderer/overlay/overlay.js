@@ -32,6 +32,7 @@ let lastFrame = 0;
 let dpr = window.devicePixelRatio || 1;
 let lastAnimFlags = {};
 let landBurstDone = false;
+let windowVisible = true;
 
 // ------------------------------------------------------------------ setup
 
@@ -42,6 +43,11 @@ async function init() {
   resize();
   api.onState(onState);
   api.onMeasure(onMeasure);
+  api.onVisible((v) => {
+    windowVisible = v;
+    if (v) requestFrame();
+    else clearTimeout(frameTimer);
+  });
   api.onMouseMode((m) => {
     mouseMode = m;
   });
@@ -210,6 +216,7 @@ function requestFrame() {
 
 function targetFps() {
   if (!state) return 10;
+  if (!windowVisible) return 0;
   if (state.opacity === 0 || state.anim === 'hidden') return 0;
   if (state.moving || dragging || ['run', 'dragged', 'land', 'appear', 'goodbye', 'play', 'happy', 'surprised'].includes(state.anim)) return 60;
   if (state.paused) return 8;

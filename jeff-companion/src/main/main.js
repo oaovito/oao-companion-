@@ -1,6 +1,6 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
-import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell } from 'electron';
+import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +12,7 @@ import { createLogger } from './logger.js';
 import { OverlayWindow } from './overlay-window.js';
 import { SettingsWindow } from './settings-window.js';
 import { createTray } from './tray.js';
-import { createFullscreenDetector } from './fullscreen-monitor.js';
+import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TEST = process.env.JEFF_TEST === '1';
@@ -58,6 +58,10 @@ function main() {
     }
   });
 
+  process.on('unhandledRejection', (e) => {
+    log('error', `Promise rejeitada sem tratamento: ${(e && e.stack) || e}`);
+  });
+
   app.on('second-instance', () => {
     log('info', 'Segunda instância detectada; mantendo a atual.');
     if (companion) companion.notifyAlreadyRunning();
@@ -70,7 +74,13 @@ function main() {
     store.flush();
   });
 
-  app.whenReady().then(() => {
+  app.whenReady().then(() => startApp()).catch((e) => {
+    log('error', `Falha ao iniciar: ${e.stack || e.message}`);
+    dialog.showErrorBox('Jeff Companion', `Não foi possível iniciar o Jeff.\n\n${e.message}\n\nDetalhes em: ${log.file}`);
+    app.exit(1);
+  });
+
+  function startApp() {
     store.load();
     log('info', `Iniciando Jeff Companion ${app.getVersion()} (${process.platform}, Electron ${process.versions.electron})`);
     const assets = {
@@ -225,19 +235,29 @@ function main() {
     // ---------------- Tela cheia
     function startFullscreenWatch() {
       clearInterval(fullscreenTimer);
+      if (store.get().fullscreenBehavior === 'ignore') return;
       if (!fullscreen) {
         fullscreen = createFullscreenDetector(log);
-        if (fullscreen.available && overlay.alive) fullscreen.addOwnHandle(overlay.win.getNativeWindowHandle());
+        if (fullscreen.available && overlay.alive) fullscreen.setOwnHandles([hwndToString(overlay.win.getNativeWindowHandle())].filter(Boolean));
       }
-      if (!fullscreen.available || store.get().fullscreenBehavior === 'ignore') return;
-      fullscreenTimer = setInterval(() => {
-        if (companion.suspended) return;
+      if (!fullscreen.available) return;
+      let busy = false;
+      fullscreenTimer = setInterval(async () => {
+        if (companion.suspended || busy) return;
+        if (!fullscreen.available) {
+          clearInterval(fullscreenTimer);
+          companion.setFullscreenDisplays([]);
+          settingsWin.send('settings:changed', settingsInfo());
+          return;
+        }
+        busy = true;
         try {
-          const ids = fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays());
+          const ids = await fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays());
           companion.setFullscreenDisplays(ids);
         } catch (err) {
           log('warn', `Falha na detecção de tela cheia: ${err.message}`);
-          clearInterval(fullscreenTimer);
+        } finally {
+          busy = false;
         }
       }, 1500);
     }
@@ -313,6 +333,7 @@ function main() {
         /* ignora */
       }
       companion.stop();
+      if (fullscreen) fullscreen.dispose();
       store.flush();
       globalShortcut.unregisterAll();
       trayCtl.destroy();
@@ -343,7 +364,23 @@ function main() {
         },
         hotkeyStatus: () => hotkeyStatus,
         registerHotkey,
+        // Janela comum que registra cliques: usada para provar que cliques atravessam o Jeff.
+        async makeClickTarget(bounds, { fullscreen = false } = {}) {
+          const w = new BrowserWindow({ ...bounds, show: false, frame: false, fullscreen, title: 'Jeff test target', webPreferences: { sandbox: true } });
+          await w.loadURL('data:text/html,' + encodeURIComponent('<body style="margin:0;background:#cfe0f5"><script>window.__clicks=[];addEventListener("mousedown",e=>window.__clicks.push({x:e.screenX,y:e.screenY}));</script></body>'));
+          w.show();
+          w.focus();
+          return w.id;
+        },
+        readClicks: (id) => BrowserWindow.fromId(id).webContents.executeJavaScript('window.__clicks'),
+        targetFocused: (id) => BrowserWindow.fromId(id).isFocused(),
+        targetHwnd: (id) => hwndToString(BrowserWindow.fromId(id).getNativeWindowHandle()),
+        overlayHwnd: () => hwndToString(overlay.win.getNativeWindowHandle()),
+        closeTarget: (id) => BrowserWindow.fromId(id)?.destroy(),
+        loginItem: () => app.getLoginItemSettings(),
+        fullscreenInfo: () => ({ available: !!fullscreen?.available, reason: fullscreen?.reason || null }),
+        primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
       };
     }
-  });
+  }
 }

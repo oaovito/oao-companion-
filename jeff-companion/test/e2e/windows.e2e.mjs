@@ -1,0 +1,292 @@
+// Integração no Windows real, com entrada de mouse/teclado do SISTEMA
+// (SetCursorPos/mouse_event/keybd_event via koffi no processo de teste).
+// Só roda em win32 (ex.: GitHub Actions windows-latest). Em outros sistemas
+// os testes são ignorados.
+//
+// Observação: o app em si nunca simula cliques. A entrada sintética aqui
+// existe apenas para o teste provar que o sistema entrega o clique à janela
+// que está atrás do Jeff.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const IS_WIN = process.platform === 'win32';
+const skip = IS_WIN ? false : 'somente Windows';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+let input = null;
+function winInput() {
+  if (input) return input;
+  const koffi = require('koffi');
+  const user32 = koffi.load('user32.dll');
+  const SetProcessDPIAware = user32.func('int __stdcall SetProcessDPIAware()');
+  SetProcessDPIAware();
+  input = {
+    SetCursorPos: user32.func('int __stdcall SetCursorPos(int x, int y)'),
+    mouse_event: user32.func('void __stdcall mouse_event(uint32 dwFlags, uint32 dx, uint32 dy, uint32 dwData, uintptr_t dwExtraInfo)'),
+    keybd_event: user32.func('void __stdcall keybd_event(uint8 bVk, uint8 bScan, uint32 dwFlags, uintptr_t dwExtraInfo)'),
+    GetForegroundWindow: user32.func('uintptr_t __stdcall GetForegroundWindow()'),
+  };
+  return input;
+}
+
+async function moveTo(p, scale) {
+  const i = winInput();
+  i.SetCursorPos(Math.round(p.x * scale), Math.round(p.y * scale));
+  await sleep(30);
+}
+
+async function click(p, scale) {
+  const i = winInput();
+  await moveTo(p, scale);
+  i.mouse_event(0x0002, 0, 0, 0, 0); // LEFTDOWN
+  await sleep(25);
+  i.mouse_event(0x0004, 0, 0, 0, 0); // LEFTUP
+  await sleep(60);
+}
+
+async function keys(vks) {
+  const i = winInput();
+  for (const vk of vks) i.keybd_event(vk, 0, 0, 0);
+  await sleep(40);
+  for (const vk of [...vks].reverse()) i.keybd_event(vk, 0, 0x0002, 0);
+  await sleep(100);
+}
+
+function loadPlaywright() {
+  try {
+    return require('playwright-core');
+  } catch {
+    return require('playwright');
+  }
+}
+
+async function launch({ executablePath = null, env = {} } = {}) {
+  const { _electron } = loadPlaywright();
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jeff-win-'));
+  fs.writeFileSync(path.join(userData, 'settings.json'), JSON.stringify({ version: 1, speechFrequency: 'off' }));
+  const app = await _electron.launch({
+    executablePath: executablePath || require('electron'),
+    args: executablePath ? [] : [ROOT],
+    env: { ...process.env, JEFF_TEST: '1', JEFF_USER_DATA: userData, ...env },
+  });
+  await app.firstWindow();
+  for (let i = 0; i < 80; i++) {
+    if (await app.evaluate(() => !!(globalThis.__jeff && globalThis.__jeff.companion.started)).catch(() => false)) break;
+    await sleep(100);
+  }
+  await sleep(1500);
+  return app;
+}
+
+async function quit(app) {
+  await app.evaluate(() => globalThis.__jeff.quit()).catch(() => {});
+  await sleep(2500);
+  try {
+    await app.close();
+  } catch {
+    /* já fechou */
+  }
+}
+
+const dbg = (app) => app.evaluate(() => globalThis.__jeff.companion.debugState());
+
+test('Windows: clique real sobre o Jeff parado chega à janela de trás', { skip }, async () => {
+  const app = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 })); // Jeff ignora o cursor real
+    const scale = await app.evaluate(() => globalThis.__jeff.primaryScale());
+    const st = await dbg(app);
+    const b = st.box;
+    const id = await app.evaluate((_e, bb) => globalThis.__jeff.makeClickTarget(bb), { x: b.x - 40, y: b.y - 40, width: b.width + 80, height: b.height + 80 });
+    await sleep(800);
+    const center = { x: st.visual.x + st.visual.width / 2, y: st.visual.y + st.visual.height / 2 };
+    await click(center, scale);
+    await sleep(300);
+    const clicks = await app.evaluate((_e, i) => globalThis.__jeff.readClicks(i), id);
+    assert.ok(clicks.length >= 1, `janela de trás recebeu ${clicks.length} cliques`);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.mouseMode), 'passthrough');
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isFocused()), false);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('Windows: cliques reais durante a fuga também atravessam', { skip }, async () => {
+  const app = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 }));
+    const scale = await app.evaluate(() => globalThis.__jeff.primaryScale());
+    const wa = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().workArea);
+    const id = await app.evaluate((_e, bb) => globalThis.__jeff.makeClickTarget(bb), wa);
+    await sleep(800);
+    let got = 0;
+    let attempts = 0;
+    for (let round = 0; round < 4; round++) {
+      const st = await dbg(app);
+      const c = { x: st.visual.x + st.visual.width / 2, y: st.visual.y + st.visual.height / 2 };
+      // Cursor "virtual" encosta no Jeff → fuga começa; clica no ponto onde ele está durante o movimento.
+      await app.evaluate((_e, p) => globalThis.__jeff.setCursor(p), { x: c.x - 30, y: c.y });
+      await sleep(40);
+      for (let k = 0; k < 3; k++) {
+        const now = await dbg(app);
+        if (!now.moving) continue;
+        attempts++;
+        const before = (await app.evaluate((_e, i) => globalThis.__jeff.readClicks(i), id)).length;
+        await click({ x: now.visual.x + now.visual.width / 2, y: now.visual.y + now.visual.height / 2 }, scale);
+        const after = (await app.evaluate((_e, i) => globalThis.__jeff.readClicks(i), id)).length;
+        if (after > before) got++;
+        assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.mouseMode), 'passthrough');
+      }
+      await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 }));
+      await sleep(1500);
+    }
+    assert.ok(attempts >= 1, 'houve cliques durante o movimento');
+    assert.equal(got, attempts, `cliques entregues: ${got}/${attempts}`);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('Windows: Jeff não rouba o foco durante o uso normal', { skip }, async () => {
+  const app = await launch();
+  try {
+    const wa = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().workArea);
+    const id = await app.evaluate((_e, bb) => globalThis.__jeff.makeClickTarget(bb), { x: wa.x + 20, y: wa.y + 20, width: 500, height: 400 });
+    await sleep(800);
+    const targetHwnd = await app.evaluate((_e, i) => globalThis.__jeff.targetHwnd(i), id);
+    // Fala, anda e foge por alguns segundos.
+    await app.evaluate(() => globalThis.__jeff.companion.say('Teste de foco', 'speech'));
+    for (let i = 0; i < 6; i++) {
+      const st = await dbg(app);
+      await app.evaluate((_e, p) => globalThis.__jeff.setCursor(p), { x: st.visual.x + 10, y: st.visual.y + 10 });
+      await sleep(400);
+      await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 }));
+      await sleep(300);
+    }
+    const fg = String(winInput().GetForegroundWindow());
+    assert.equal(fg, targetHwnd, 'janela do usuário continua em primeiro plano');
+    assert.equal(await app.evaluate((_e, i) => globalThis.__jeff.targetFocused(i), id), true);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('Windows: atalho global real Ctrl+Alt+J e Esc', { skip }, async () => {
+  const app = await launch();
+  try {
+    const hk = await app.evaluate(() => globalThis.__jeff.hotkeyStatus());
+    assert.equal(hk.ok, true, `atalho registrado: ${JSON.stringify(hk)}`);
+    await keys([0x11, 0x12, 0x4a]); // Ctrl, Alt, J
+    await sleep(600);
+    assert.equal((await dbg(app)).interaction, true, 'entrou no modo de interação pelo atalho');
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isFocusable()), true);
+    await keys([0x1b]); // Esc
+    await sleep(500);
+    const st = await dbg(app);
+    assert.equal(st.interaction, false, 'Esc encerrou');
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.mouseMode), 'passthrough');
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isFocusable()), false);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('Windows: no modo de interação só as regiões interativas capturam o mouse', { skip }, async () => {
+  const app = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 }));
+    const scale = await app.evaluate(() => globalThis.__jeff.primaryScale());
+    const wa = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().workArea);
+    const id = await app.evaluate((_e, bb) => globalThis.__jeff.makeClickTarget(bb), wa);
+    await sleep(600);
+    await app.evaluate(() => globalThis.__jeff.companion.enterInteraction('test'));
+    await sleep(800);
+    const win = await app.firstWindow();
+    const btn = await win.evaluate(() => {
+      const r = document.querySelector('#toolbar button[data-action="eat"]').getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    });
+    const wb = await app.evaluate(() => globalThis.__jeff.overlay.win.getBounds());
+    const p = { x: wb.x + btn.x, y: wb.y + btn.y };
+    await moveTo({ x: p.x - 3, y: p.y }, scale);
+    await moveTo(p, scale);
+    await sleep(250);
+    await click(p, scale);
+    await sleep(400);
+    assert.equal((await dbg(app)).behavior, 'eat', 'botão recebeu o clique real');
+    // Ponto transparente da janela do overlay (canto superior esquerdo) deixa o clique passar.
+    const before = (await app.evaluate((_e, i) => globalThis.__jeff.readClicks(i), id)).length;
+    const st = await dbg(app);
+    const corner = { x: wb.x + 3, y: wb.y + 3 };
+    const vis = st.visual;
+    const insideJeff = corner.x >= vis.x && corner.x <= vis.x + vis.width && corner.y >= vis.y && corner.y <= vis.y + vis.height;
+    if (!insideJeff) {
+      await moveTo({ x: corner.x + 2, y: corner.y + 2 }, scale);
+      await sleep(250);
+      await click(corner, scale);
+      await sleep(300);
+      const after = (await app.evaluate((_e, i) => globalThis.__jeff.readClicks(i), id)).length;
+      assert.ok(after > before, 'área transparente não bloqueia o clique');
+    }
+    await app.evaluate(() => globalThis.__jeff.companion.exitInteraction('test'));
+  } finally {
+    await quit(app);
+  }
+});
+
+test('Windows: detecção de tela cheia oculta e reexibe o Jeff', { skip }, async () => {
+  const app = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 }));
+    await sleep(2500);
+    const info = await app.evaluate(() => globalThis.__jeff.fullscreenInfo());
+    assert.equal(info.available, true, `detector: ${JSON.stringify(info)}`);
+    const id = await app.evaluate((_e) => globalThis.__jeff.makeClickTarget({ x: 0, y: 0, width: 400, height: 300 }, { fullscreen: true }));
+    await sleep(4500);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), false, 'oculto em tela cheia');
+    await app.evaluate((_e, i) => globalThis.__jeff.closeTarget(i), id);
+    await sleep(4000);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), true, 'reexibido');
+  } finally {
+    await quit(app);
+  }
+});
+
+test('Windows: iniciar com o Windows liga e desliga', { skip }, async () => {
+  const app = await launch();
+  try {
+    assert.equal((await app.evaluate(() => globalThis.__jeff.loginItem())).openAtLogin, false, 'desligado por padrão');
+    await app.evaluate(() => globalThis.__jeff.store.update({ startWithWindows: true }));
+    await sleep(300);
+    assert.equal((await app.evaluate(() => globalThis.__jeff.loginItem())).openAtLogin, true);
+    await app.evaluate(() => globalThis.__jeff.store.update({ startWithWindows: false }));
+    await sleep(300);
+    assert.equal((await app.evaluate(() => globalThis.__jeff.loginItem())).openAtLogin, false);
+  } finally {
+    await quit(app);
+  }
+});
+
+const PACKAGED = path.join(ROOT, 'dist', 'win-unpacked', 'Jeff Companion.exe');
+test('Windows: executável empacotado inicia, carrega assets e o detector nativo', { skip: skip || (!fs.existsSync(PACKAGED) && 'pacote não gerado') }, async () => {
+  const app = await launch({ executablePath: PACKAGED });
+  try {
+    const st = await dbg(app);
+    assert.ok(st.box.width > 0);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), true);
+    await sleep(2500);
+    const info = await app.evaluate(() => globalThis.__jeff.fullscreenInfo());
+    assert.equal(info.available, true, JSON.stringify(info));
+    const anim = await (await app.firstWindow()).evaluate(() => window.__jeffRenderer.anim);
+    assert.ok(anim);
+  } finally {
+    await quit(app);
+  }
+});

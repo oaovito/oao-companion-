@@ -14,7 +14,13 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const ELECTRON = require('electron');
-const { _electron } = require('playwright');
+const { _electron } = (() => {
+  try {
+    return require('playwright-core');
+  } catch {
+    return require('playwright');
+  }
+})();
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

@@ -1,0 +1,58 @@
+name: Jeff Companion (Windows)
+
+on:
+  push:
+    branches: ['main', 'claude/**']
+    paths: ['jeff-companion/**', '.github/workflows/jeff-windows.yml']
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: jeff-companion
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: jeff-companion/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Testes unitários
+        run: npm test
+
+      - name: Gerar instalador e ZIP
+        run: npx electron-builder --win --x64
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Integração no Windows (entrada real de mouse/teclado)
+        run: node --test --test-concurrency=1 test/e2e/windows.e2e.mjs
+
+      - name: E2E multiplataforma
+        run: node --test --test-concurrency=1 test/e2e/app.e2e.mjs
+
+      - name: Medir CPU e memória
+        if: always()
+        run: node scripts/measure.mjs > measure-windows.json
+        env:
+          MEASURE_SECONDS: '20'
+
+      - name: Publicar artefatos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: JeffCompanion-windows-x64
+          path: |
+            jeff-companion/dist/*.exe
+            jeff-companion/dist/*.zip
+            jeff-companion/measure-windows.json
+          if-no-files-found: warn
+          retention-days: 14
