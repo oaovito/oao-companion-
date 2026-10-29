@@ -17,7 +17,7 @@
 //   action: comando opcional para o JoJo (sleep | eat | play | pet | wake | lookAround | happy | quiet | flex | scare | judge)
 //   context.persona: instruções livres do perfil de personalidade (para provedores de IA futuros)
 
-export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon']);
+export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon', 'smitten']);
 
 export class DialogueProvider {
   constructor({ id, label, kind }) {

@@ -13,6 +13,7 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- Pergunte **"eu sou bonita?"**: ele cai de costas apaixonado e responde "É." no último suspiro.
 - Nome novo: **JoJo Companion** (`JoJoCompanion.exe`).
 - Escreva **"vai tomar no cu"** pro JoJo no chat: ele vira de costas, mostra o prolapso
   num susto e fica rebolando uns 5 s antes de desvirar.

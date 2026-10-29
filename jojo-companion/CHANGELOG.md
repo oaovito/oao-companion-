@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.15.0 — 2026-10-29
+
+### Adicionado
+- "Eu sou bonita?" (e variações: "sou linda?", "tô bonita hoje?", "você me acha
+  bonita?"): o JoJo fica com **olhos de coração**, corado, cambaleia, **cai de
+  costas** com a cara de 😵 (olhos em X, língua de fora) e, no último suspiro,
+  responde **"É."** — depois levanta e volta ao normal (6 s).
+- Rig: olhos de coração (`heartEyes`) e em X (`eyeX`).
+
 ## 0.14.0 — 2026-10-29
 
 ### Alterado

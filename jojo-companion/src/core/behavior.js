@@ -68,6 +68,8 @@ export const STATES = {
   // Exibição pra Emanuele ver.
   benchPress: { priority: P.INTERACT, phases: [{ anim: 'benchPress', ms: 5200 }], next: 'happy' },
   squat: { priority: P.INTERACT, phases: [{ anim: 'squat', ms: 4400 }], next: 'happy' },
+  // "Eu sou bonita?": olhos de coração, cambaleia, cai de costas (😵), "É" e levanta.
+  smitten: { priority: P.INTERACT, phases: [{ anim: 'smitten', ms: 6000 }], next: 'idle' },
   // "Vai tomar no cu": vira de costas, mostra o prolapso rebolando por ~5 s e desvira.
   moon: { priority: P.INTERACT, phases: [{ anim: 'moon', ms: 7400 }], next: 'idle' },
   angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },

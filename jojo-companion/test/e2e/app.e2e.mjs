@@ -471,3 +471,18 @@ test('"vai tomar no cu": renderer mostra a pose de costas e volta ao normal', as
     await quit(app);
   }
 });
+
+test('"eu sou bonita?": renderer mostra a queda apaixonada e a resposta "É." no fim', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
+    const p = app.evaluate(() => globalThis.__jojo.companion.chat('eu sou bonita?'));
+    await sleep(1500);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.anim), 'smitten');
+    const r = await p;
+    assert.equal(r.text, 'É.');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
+  } finally {
+    await quit(app);
+  }
+});

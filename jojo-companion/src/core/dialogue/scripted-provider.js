@@ -18,6 +18,7 @@ export const INTENTS = [
   { id: 'crisis', patterns: [/\b(me matar|suicid\w*|nao quero mais viver|quero morrer|acabar com tudo|me machucar|me cortar|automutila\w*)\b/] },
   { id: 'distress', patterns: [/\b(crise\w*|em crise|panico|ataque de ansiedade|crise de ansiedade|ansiedade|nao aguento mais|nao to aguentando|surtand\w*|surtei|desmoronand\w*|emocionalmente mal|mal emocionalmente|to destruida|desabei|desabando)\b/] },
   { id: 'sad', patterns: [/\b(chorand\w*|chorei|chorar|choro|triste\w*|tristeza|deprimid\w*|depre|pra baixo|arrasad\w*|sofrendo|muito mal|to mal|na bad|desanimad\w*|desesperad\w*)\b/] },
+  { id: 'pretty', patterns: [/\b((eu )?(sou|to|tou|estou|t[oô]) (bonita|linda|gata|bela|maravilhosa)|(voce|vc) me acha (bonita|linda|gata)|me acha (bonita|linda|gata)|(eu )?(sou|to|estou) (muito )?(bonita|linda) hoje)\b/] },
   { id: 'moon', patterns: [/\b(vai (se )?toma(r)? no cu|vai tomar no seu cu|vtnc|toma no cu)\b/] },
   { id: 'rejected', patterns: [/\b(nao gosto de voce|nao gosto de vc|vou te (desinstalar|apagar|deletar|excluir)|nao preciso de voce|nao preciso de vc|vai embora|some daqui|nao te aguento)\b/] },
   { id: 'insult', patterns: [/\b(idiota|burro|otario|babaca|imbecil|inutil|te odeio|odeio voce|odeio vc|seu chato|voce e chato|vc e chato|lixo|ridiculo)\b/] },
@@ -52,6 +53,7 @@ export const RESPONSES = {
     'Chorando? Para tudo e chama o {apoio}, Emanuele. Ele sabe cuidar de você.',
     'Emanuele, agora não é comigo. Fala com o {apoio}. Ele sabe cuidar de você.',
   ],
+  pretty: ['É.'],
   moon: ['Toma você, {nome}. Olha aqui.', 'Tomar? Toma essa, {nome}.', 'Eu? Olha só o que eu acho disso, {nome}.'],
   rejected: ['Tá. Anotado, Emanuele.', 'Doeu, mas eu aguento. Sou de cartilagem.', 'Beleza. Fico aqui no meu canto.'],
   insult: ['Olha o respeito, Emanuele.', 'Repete isso olhando no meu olho, {nome}.', 'Tô ficando vermelho. Melhor parar, {nome}.'],
@@ -87,12 +89,12 @@ export const RESPONSES = {
 const ACTIONS = {
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'sleep', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
-  name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon',
+  name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
-  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', name: 'serio', sleep: 'serio',
+  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', pretty: 'brincadeira', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',
 };

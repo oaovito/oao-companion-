@@ -20,6 +20,8 @@ import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, 
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
+// Momento do "É" na animação smitten (70% de 6 s).
+const SMITTEN_BREATH_MS = 4200;
 const ACTIVITY_ROW = 26;
 const ACTIVITY_WIDTH = 224;
 const THINK_MS = 650; // "digitando…": tempo em que a conversa fica "Em andamento"
@@ -924,6 +926,12 @@ export class Companion {
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
+    // "Eu sou bonita?": a resposta ("É") só sai no último suspiro, caído de costas.
+    if (reply.action === 'smitten') {
+      this.noteActivity();
+      this._doChatAction('smitten', this.clock.now());
+      await new Promise((r) => this.clock.setTimeout(r, SMITTEN_BREATH_MS));
+    }
     const profile = this.personality.get();
     const vars = profileVars(profile, reply.tone);
     reply.text = reply.text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
@@ -935,7 +943,8 @@ export class Companion {
     else this.conversations.setStatus(conv.id, 'ready');
     const now = this.clock.now();
     this.noteActivity();
-    if (reply.action) this._doChatAction(reply.action, now);
+    if (reply.action === 'smitten') this.say(reply.text, 'speech');
+    else if (reply.action) this._doChatAction(reply.action, now);
     else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
     this._applyLayout(true);
     this._schedule(0);
@@ -1038,6 +1047,9 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'scare') {
       this.behavior.request('scare', { now, force: true });
+    } else if (action === 'smitten') {
+      this.behavior.request('smitten', { now, force: true });
+      this.effect = { name: 'hearts', until: now + 2400 };
     } else if (action === 'moon') {
       this.behavior.request('moon', { now, force: true });
     } else if (action === 'bench' || action === 'squat') {

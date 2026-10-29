@@ -303,7 +303,31 @@ export class RigRenderer {
     eye.ellipse(E.x, E.y, rx, ry, 0, 0, Math.PI * 2);
     ctx.fillStyle = this.color('sclera');
     ctx.fill(eye);
-    if (open > 0.12) {
+    // Olhos em X (😵) ou de coração no lugar da pupila.
+    const dazed = P('eyeX') > 0.5;
+    const love = !dazed && P('heartEyes') > 0.5;
+    if (dazed) {
+      ctx.strokeStyle = this.color('eye');
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      const k = Math.min(rx, ry) * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(E.x - k, E.y - k);
+      ctx.lineTo(E.x + k, E.y + k);
+      ctx.moveTo(E.x + k, E.y - k);
+      ctx.lineTo(E.x - k, E.y + k);
+      ctx.stroke();
+    } else if (love) {
+      const s = Math.min(rx, ry) * 0.75;
+      const hx = E.x;
+      const hy = E.y + 1;
+      ctx.fillStyle = this.color('heart');
+      ctx.beginPath();
+      ctx.moveTo(hx, hy + s * 0.7);
+      ctx.bezierCurveTo(hx - s * 1.3, hy - s * 0.2, hx - s * 0.6, hy - s * 1.2, hx, hy - s * 0.45);
+      ctx.bezierCurveTo(hx + s * 0.6, hy - s * 1.2, hx + s * 1.3, hy - s * 0.2, hx, hy + s * 0.7);
+      ctx.fill();
+    } else if (open > 0.12) {
       const pr = (E.pupil ?? 3.4) * (es > 1.1 ? 0.8 : 1);
       const px = E.x + (E.pupilOffset ?? 0) + P('pupilX') * rx * 0.45;
       const py = E.y + 2 + P('pupilY') * ry * 0.45;
@@ -327,7 +351,7 @@ export class RigRenderer {
       ctx.lineTo(E.x + rx + 2, lidY);
       ctx.stroke();
     }
-    if (happy && open > 0.12) {
+    if (happy && open > 0.12 && !dazed && !love) {
       const y0 = E.y + ry * 0.25;
       ctx.beginPath();
       ctx.moveTo(E.x - rx - 2, E.y + ry + 2);

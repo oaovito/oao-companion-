@@ -232,3 +232,49 @@ test('de costas o JoJo continua fisiculturista (memes usam a mesma vista)', () =
   const xs = torso.match(/-?\d+(\.\d+)?,/g).map((s) => parseFloat(s));
   assert.ok(Math.max(...xs) - Math.min(...xs) >= 120, 'ombros largos');
 });
+
+test('"eu sou bonita?": cai de costas apaixonado e responde "É" no último suspiro', async () => {
+  const e = started();
+  const flush = async () => {
+    for (let k = 0; k < 8; k++) await Promise.resolve();
+  };
+  for (const msg of ['eu sou bonita?', 'Sou linda?', 'você me acha bonita?', 'tô bonita hoje?', 'estou linda?']) {
+    let done = null;
+    e.companion.chat(msg).then((r) => (done = r));
+    e.clock.advance(700);
+    await flush();
+    assert.equal(e.companion.behavior.state, 'smitten', msg);
+    assert.equal(done, null, 'ainda não respondeu: está caindo');
+    e.clock.advance(3000);
+    await flush();
+    assert.equal(done, null);
+    e.clock.advance(1500);
+    await flush();
+    assert.ok(done, 'respondeu');
+    assert.equal(done.text, 'É.');
+    assert.equal(done.action, 'smitten');
+    assert.equal(e.companion.behavior.state, 'smitten', 'ainda caído no "É"');
+    e.clock.advance(2500);
+    await flush();
+    assert.notEqual(e.companion.behavior.state, 'smitten', 'volta ao normal');
+  }
+  for (const msg of ['eu sou feia?', 'você é bonito?']) {
+    let r = null;
+    e.companion.chat(msg).then((x) => (r = x));
+    for (let i = 0; i < 20 && !r; i++) {
+      e.clock.advance(300);
+      await flush();
+    }
+    assert.notEqual(r.action, 'smitten', msg);
+  }
+  // Olhos de coração no começo, em X (😵) caído.
+  const an = new Animator(ANIMS);
+  const at = (t) => {
+    an.play('smitten', 0, { restart: true, variant: 'smitten' });
+    return an.sample(6000 * t).pose;
+  };
+  assert.equal(at(0.1).heartEyes, 1);
+  assert.equal(at(0.6).eyeX, 1);
+  assert.equal(at(0.6).rootRot, -90, 'caído de costas');
+  assert.equal(at(0.99).rootRot, 0, 'levantou');
+});

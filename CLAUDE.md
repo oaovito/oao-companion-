@@ -41,6 +41,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - "Vai tomar no cu" no chat: vira de costas, susto com o prolapso, rebola ~5 s e desvira
   (estado `moon`, 7,4 s; canais `mooning`, `spread`, `gagSize`, `drip`). De costas ele continua
   fisiculturista (costas em V, trapézio, dorsais, tríceps) em qualquer meme.
+- "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
+  último suspiro (estado `smitten`, 6 s).
 - Publicação: tag `v*` → Release com `JoJoCompanion.exe` (workflow do Windows).
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`

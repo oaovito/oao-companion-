@@ -57,7 +57,8 @@
     "gagRim": "#8f2238",
     "gagVein": "#4a0f2c",
     "gagShine": "#ffd9df",
-    "slime": "#e98aa0"
+    "slime": "#e98aa0",
+    "heart": "#e8344e"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
