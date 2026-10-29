@@ -151,6 +151,15 @@ export function commandMenu({ petVisible }) {
     { cmd: '/nova', label: 'Nova conversa', hint: 'Começa uma conversa nova' },
     { cmd: '/config', label: 'Configurações', hint: 'Abre as configurações' },
     { cmd: '/anim', label: 'Animação', hint: 'Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)' },
+    { cmd: '/jogo', label: 'Mini-jogo', hint: 'Joga com o JoJo: /jogo, /jogo quiz, /jogo bolhas…' },
+    { cmd: '/foco', label: 'Foco junto', hint: 'Bloco de foco com o JoJo: /foco 25 (ou /foco treino)' },
+    { cmd: '/estimulo', label: 'Me dá estímulo', hint: 'Uma animação surpresa' },
+    { cmd: '/calma', label: 'Calma', hint: 'Padrão calmante por 2 min (cardume, cores suaves)' },
+    { cmd: '/ritmo', label: 'Ritmo', hint: 'Sequência rítmica previsível por 30 s' },
+    { cmd: '/bolhas', label: 'Bolhas', hint: 'Bolhas para estourar com clique, sem placar' },
+    { cmd: '/resumo', label: 'Resumo do dia', hint: 'O que rolou hoje' },
+    { cmd: '/rotina', label: 'Rotina fixa', hint: '/rotina bom dia: texto que ele diz sempre igual' },
+    { cmd: '/pausa', label: 'Pausa', hint: 'Pausa/retoma o JoJo na hora' },
   ];
 }
 
@@ -164,5 +173,7 @@ export function parseCommand(text) {
   if (name === '/nova') return 'new';
   if (name === '/config' || name === '/configuracoes') return 'settings';
   if (name === '/anim' || name === '/animacao' || name === '/animação') return 'anim';
+  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/colecao': 'colecao', '/coleção': 'colecao' };
+  if (MAP[name]) return MAP[name];
   return 'unknown';
 }

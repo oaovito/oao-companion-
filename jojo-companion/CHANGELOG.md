@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.29.0 — 2026-10-29
+
+### Adicionado
+- **Sistema antitédio** completo (`docs/ANTITEDIO.md`): rotinas e mini-histórias (15, com
+  progresso no dia e história em episódios), 15 mini-jogos (quiz, verdade ou mentira, pedra-papel-
+  nadadeira, repetições em dupla, caça-palavras, memória, siga o líder, reflexo, esconde-esconde,
+  pega-pega, cabo de guerra, clique rápido, caça às bolhas…), progressão (10 níveis do shape,
+  conquistas, acessórios, álbum, cartas de frases, áreas do aquário, missões diárias opcionais,
+  diário com resumo do dia), **foco junto** (`/foco 25`, `/foco 25 treino`), estímulos (💪 fidget
+  de bíceps com contador, ✨ estímulo, `/calma` com cardume e cores suaves, `/ritmo`, `/bolhas`,
+  ondinhas no cursor) e adaptação (horários, curtiu/ignorou, humor do dia, dia quieto,
+  interesses, `/rotina bom dia: …`).
+- Central → **Coleção e jogos**. Micromovimentos novos (olhar segue o cursor, dorsal, músculo,
+  brilho nas escamas e no dente). Tédio do tubarão e temporada da semana anunciada.
+- Configurações: "Animações mais agitadas" e volume dos sons. Comandos `/jogo`, `/foco`,
+  `/estimulo`, `/calma`, `/ritmo`, `/bolhas`, `/resumo`, `/rotina`, `/pausa`.
+
 ## 0.28.0 — 2026-10-29
 
 ### Adicionado

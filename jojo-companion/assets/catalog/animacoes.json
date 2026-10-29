@@ -6972,6 +6972,131 @@
      "fedor"
     ]
    }
+  },
+  {
+   "id": "tesouro",
+   "nome": "Abrir um baú do tesouro",
+   "categoria": "acoes",
+   "listas": {},
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "curioso"
+   ],
+   "receita": {
+    "objeto": "bau",
+    "bracos": "maosAlto",
+    "rosto": "surpreso",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "ritmo",
+   "nome": "Sequência rítmica previsível",
+   "categoria": "estimulo",
+   "listas": {},
+   "gatilho": {
+    "frases": [
+     "ritmo"
+    ]
+   },
+   "duracao": 4000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "marcha",
+    "cauda": "abana",
+    "bracos": "aplaude",
+    "repeticoes": 8
+   }
+  },
+  {
+   "id": "calma",
+   "nome": "Padrão visual calmante (cardume e cores suaves)",
+   "categoria": "estimulo",
+   "listas": {},
+   "gatilho": {
+    "frases": [
+     "calma",
+     "me acalma"
+    ]
+   },
+   "duracao": 6000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "flutua",
+    "rosto": "zen",
+    "cauda": "devagar",
+    "fx": [
+     "cardume",
+     "auraCiclo"
+    ],
+    "intensidade": 0.5
+   }
+  },
+  {
+   "id": "fidget",
+   "nome": "Fidget de bíceps (bombar)",
+   "categoria": "estimulo",
+   "listas": {},
+   "gatilho": {},
+   "duracao": 900,
+   "loop": false,
+   "entrada": 60,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "flexUm",
+    "rosto": "orgulhoso",
+    "repeticoes": 1
+   }
+  },
+  {
+   "id": "estudarJunto",
+   "nome": "Estudar junto, em silêncio",
+   "categoria": "estimulo",
+   "listas": {},
+   "gatilho": {},
+   "duracao": 6000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "livro",
+    "bracos": "segura",
+    "cabeca": "leJunto",
+    "rosto": "focado",
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "treinarJunto",
+   "nome": "Treinar junto, marcando séries",
+   "categoria": "estimulo",
+   "listas": {},
+   "gatilho": {},
+   "duracao": 4000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "halter",
+    "bracos": "rosca",
+    "rosto": "focado",
+    "fx": [
+     "suor"
+    ],
+    "repeticoes": 4
+   }
   }
  ]
 }

@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.28.0, 2026-10-29)
+# HANDOFF — estado atual (v0.29.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -44,7 +44,8 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 - Spotify e LoL (v0.27): `fullscreen-worker.cjs` (`spotifyTitle`, `isLol`), `companion.onSpotify`/`_onLol`.
 - Google Agenda (v0.28): `src/core/calendar.js` (iCal), `companion.checkAgenda/_agendaChat`, busca no main.
   OAuth do Google não foi usado (exige app registrado no Google Cloud); o iCal secreto dá só leitura.
-- Pendentes pedidos depois: antitédio completo
+- Antitédio (v0.29): `src/core/catalog/antitedio.js` + `assets/catalog/{rotinas,minijogos,progressao}.json`; doc `docs/ANTITEDIO.md`.
+- Pendentes pedidos depois: nenhum dos pedidos de catálogo/antitédio. antitédio completo
   (rotinas, mini-jogos, coleções, body doubling, painel sensorial).
 
 ## Implementado, mas ainda não verificado no Windows

@@ -103,6 +103,7 @@ function onState(s) {
   }
   effects.setEffect(reduced ? null : s.effect, now, s.effectKind || null);
   renderBubble(s);
+  renderBubbleGame(s);
   renderActivities(s);
   renderToolbar(s);
   renderChat(s, prev);
@@ -182,6 +183,51 @@ function drawTail(b) {
       `<circle cx="${p1.x}" cy="${p1.y}" r="4.5" fill="${fill}" stroke="${ink}" stroke-width="2"${dash}/>` +
       `<circle cx="${p2.x}" cy="${p2.y}" r="2.6" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   }
+}
+
+// Mini-jogo/estímulo de bolhas: bolhas clicáveis em volta do JoJo (modo de interação).
+function renderBubbleGame(s) {
+  const on = !!(s.minigame && s.minigame.tipo === 'bolhas' && s.interaction);
+  if (!on) {
+    if (bubbleGame.el) bubbleGame.el.remove();
+    bubbleGame.el = null;
+    clearInterval(bubbleGame.timer);
+    bubbleGame.timer = null;
+    return;
+  }
+  if (bubbleGame.el) return;
+  const box = document.createElement('div');
+  box.id = 'bubbleGame';
+  document.body.appendChild(box);
+  bubbleGame.el = box;
+  const spawn = () => {
+    if (!state || !state.jojo || box.childElementCount > 9) return;
+    const b = document.createElement('button');
+    b.className = 'game-bubble';
+    const size = 26 + Math.random() * 22;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    let x;
+    let y;
+    for (let i = 0; i < 8; i++) {
+      x = Math.random() * (W - size);
+      y = Math.random() * (H - size - 10);
+      const v = state.visual;
+      if (!(x + size > v.x && x < v.x + v.width && y + size > v.y && y < v.y + v.height)) break;
+    }
+    Object.assign(b.style, { left: `${x}px`, top: `${y}px`, width: `${size}px`, height: `${size}px` });
+    b.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      if (b.classList.contains('pop')) return;
+      b.classList.add('pop');
+      api.gesture('bolha');
+      setTimeout(() => b.remove(), 220);
+    });
+    setTimeout(() => b.remove(), 3800);
+    box.appendChild(b);
+  };
+  spawn();
+  bubbleGame.timer = setInterval(spawn, reduced ? 1200 : 650);
 }
 
 function renderActivities(s) {
@@ -378,10 +424,25 @@ function draw(now) {
   if (!reduced && s.micro !== 'desligado') {
     const k = s.micro === 'discreto' ? 0.45 : 1;
     pose.gills = Math.max(pose.gills || 0, k * (0.5 + 0.5 * Math.sin(now / 700)));
+    pose.finRot = (pose.finRot || 0) + k * 2 * Math.sin(now / 410) * Math.max(0, Math.sin(now / 3700));
+    // Contração de músculo de vez em quando (pulso curto e suave).
+    const pulse = (now % 23000) / 23000;
+    if (pulse < 0.012) pose.squashX = (pose.squashX || 1) * (1 + 0.025 * k * Math.sin((pulse / 0.012) * Math.PI));
+    if (now >= nextMicroShine) {
+      nextMicroShine = now + (26000 + Math.random() * 40000) / k;
+      if (Math.random() < 0.5) effects._spawnFx('brilhoDente', now, rig.rig.metrics.head);
+      else effects._spawn('sparkle', now, 0, rig.rig.metrics.head); // escamas brilhando
+    }
     if (now >= nextMicroBubble) {
       nextMicroBubble = now + (18000 + Math.random() * 30000) / k;
       if (/^(idle|interactIdle|sit|lie)/.test(sample.name)) effects._spawnFx('bolhas', now, rig.rig.metrics.head);
     }
+  }
+  if (s.layer) Object.assign(pose, s.layer);
+  // Olhos que exploram: seguem o cursor de leve quando está perto (repouso).
+  if (s.gaze && !reduced && /^(idle|interactIdle|sit|lie|cat_)/.test(sample.name) && !pose.heartEyes && !pose.eyeX) {
+    pose.pupilX = (pose.pupilX || 0) * 0.4 + s.gaze.x * 0.6;
+    pose.pupilY = (pose.pupilY || 0) * 0.4 + s.gaze.y * 0.6;
   }
   if (s.noseDust) pose.noseDust = 1;
   if (s.costume) pose[`costume_${s.costume}`] = 1;
@@ -449,6 +510,9 @@ let lastPet = 0;
 let lastActivity = 0;
 let lastTickle = 0;
 let nextMicroBubble = 0;
+let nextMicroShine = 0;
+let lastRipple = 0;
+const bubbleGame = { el: null, until: 0, timer: null };
 let lastClickAt = 0;
 let holdTimer = null;
 let dragVel = { x: 0, y: 0, t: 0, sx: 0, sy: 0 };
@@ -466,7 +530,7 @@ function overJoJo(x, y) {
 }
 
 function overUi(target) {
-  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (!activitiesEl.classList.contains('hidden') && activitiesEl.contains(target))));
+  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target)) || (!activitiesEl.classList.contains('hidden') && activitiesEl.contains(target))));
 }
 
 function activity() {
@@ -485,6 +549,16 @@ function setupInteraction() {
     const interactive = dragging || overJoJo(e.clientX, e.clientY) || overUi(e.target);
     setCaptureLocal(interactive);
     if (interactive) activity();
+    // Ondinhas na água onde o cursor passa (estímulo calmo; não com movimento reduzido).
+    const tnow = performance.now();
+    if (!reduced && state.micro !== 'desligado' && tnow - lastRipple > 140 && state.jojo) {
+      lastRipple = tnow;
+      const sc = state.scale || 1;
+      let bx = (e.clientX - state.jojo.x) / sc;
+      if (facing < 0) bx = rig.box.width - bx;
+      effects.ripple(tnow, bx, (e.clientY - state.jojo.y) / sc);
+      requestFrame();
+    }
     // Carinho: esfregar o mouse sobre o JoJo (sem botão pressionado).
     if (!dragging && !e.buttons && overJoJo(e.clientX, e.clientY)) {
       const now = performance.now();
@@ -657,7 +731,7 @@ function chirp(kind) {
       o.type = 'triangle';
       o.frequency.value = f;
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.06, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0002, 0.1 * ((state && state.volume) ?? 60) / 100), t + 0.02);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
       o.connect(g).connect(audio.destination);
       o.start(t);

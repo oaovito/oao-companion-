@@ -37,6 +37,8 @@ export const DEFAULTS = Object.freeze({
   avisoRaros: true,             // aviso visual suave antes de algo raro
   falasAmbientes: true,         // frases curtas sozinho enquanto ela trabalha
   microMovimentos: 'normal',    // normal | discreto | desligado (respiração, guelras, bolhas…)
+  animacoesPesadas: true,       // giros, confete, tremidas (desligue para só as suaves)
+  volume: 60,                   // volume dos sons (quando ligados), 0 – 100
   // Google Agenda (só leitura) pelo endereço secreto iCal; fica só neste PC.
   agendaUrl: '',
   agendaAtiva: true,
@@ -57,6 +59,7 @@ const RANGES = {
   bubbleScale: [0.8, 1.6],
   interactionTimeoutSec: [10, 600],
   agendaAvisoMin: [5, 60],
+  volume: [0, 100],
 };
 
 const ENUMS = {
@@ -71,7 +74,7 @@ const ENUMS = {
   microMovimentos: ['normal', 'discreto', 'desligado'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };

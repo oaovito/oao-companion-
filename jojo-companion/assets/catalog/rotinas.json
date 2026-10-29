@@ -1,0 +1,344 @@
+{
+ "_notas": "Rotinas e mini-histórias (antitédio 31–45): sequências de animações do catálogo com falas por etapa. Campos: id, nome, n (número na lista), passos [{anim, fala?}], frequencia (comum|rara|easter), horario? (manha|tarde|noite|madrugada), episodios? (história contada em partes, uma por vez, ao longo dos dias). A rotina só se repete depois de passar por todas as outras do mesmo peso; nunca duas vezes seguidas.",
+ "rotinas": [
+  {
+   "id": "treino5",
+   "nome": "Rotina de treino em 5 etapas",
+   "n": 31,
+   "frequencia": "comum",
+   "horario": [
+    "manha",
+    "tarde"
+   ],
+   "passos": [
+    {
+     "anim": "alongar",
+     "fala": "Aquecimento. Ninguém pula essa parte."
+    },
+    {
+     "anim": "halteres",
+     "fala": "Série principal. Conta comigo."
+    },
+    {
+     "anim": "duploBiceps",
+     "fala": "Pump. Olha isso."
+    },
+    {
+     "anim": "beberShake",
+     "fala": "Shake. Recuperação começa agora."
+    },
+    {
+     "anim": "esparramado",
+     "fala": "Descanso de campeão. Cinco minutos. Nem um a mais."
+    }
+   ]
+  },
+  {
+   "id": "estudo",
+   "nome": "Rotina de estudo",
+   "n": 32,
+   "frequencia": "comum",
+   "passos": [
+    {
+     "anim": "lendo",
+     "fala": "Livro aberto. Foco."
+    },
+    {
+     "anim": "digitando",
+     "fala": "Anotando tudo."
+    },
+    {
+     "anim": "confuso",
+     "fala": "Hm. Essa parte não entrou."
+    },
+    {
+     "anim": "pensando",
+     "fala": "Pensa, tubarão, pensa…"
+    },
+    {
+     "anim": "comemorar",
+     "fala": "ENTENDI. Óbvio que entendi."
+    }
+   ]
+  },
+  {
+   "id": "frango",
+   "nome": "Cozinhar o frango de proteína",
+   "n": 33,
+   "frequencia": "comum",
+   "horario": [
+    "tarde",
+    "noite"
+   ],
+   "passos": [
+    {
+     "anim": "pensando",
+     "fala": "Hoje o cardápio é frango. Como sempre."
+    },
+    {
+     "anim": "calor",
+     "fala": "Fogão ligado. Calor de academia."
+    },
+    {
+     "anim": "devorar",
+     "fala": "Frango pronto. Proteína pura."
+    },
+    {
+     "anim": "lamberDentes",
+     "fala": "Nem sobrou o osso."
+    }
+   ]
+  },
+  {
+   "id": "miniHalter",
+   "nome": "Montar um mini-halter e falhar",
+   "n": 34,
+   "frequencia": "rara",
+   "passos": [
+    {
+     "anim": "halteres",
+     "fala": "Halter caseiro. Engenharia de tubarão."
+    },
+    {
+     "anim": "chocado",
+     "fala": "Ele… quebrou?"
+    },
+    {
+     "anim": "desmaio",
+     "fala": "Morri de vergonha."
+    },
+    {
+     "anim": "ressuscitar",
+     "fala": "Brincadeira. Campeão não desiste."
+    }
+   ]
+  },
+  {
+   "id": "torre",
+   "nome": "Construir a torre de pesos ao longo do dia",
+   "n": 35,
+   "frequencia": "comum",
+   "progresso": 5,
+   "passos": [
+    {
+     "anim": "halteres",
+     "fala": "Mais um peso na torre. {etapa} de 5."
+    },
+    {
+     "anim": "orgulhoso",
+     "fala": "A torre cresce. Igual meu shape."
+    }
+   ]
+  },
+  {
+   "id": "truque",
+   "nome": "Aprender um truque novo (evolui a cada tentativa)",
+   "n": 36,
+   "frequencia": "comum",
+   "progresso": 4,
+   "passos": [
+    {
+     "anim": "girar",
+     "fala": "Tentativa {etapa} do giro duplo."
+    },
+    {
+     "anim": "chocado",
+     "fala": "Quase."
+    },
+    {
+     "anim": "orgulhoso",
+     "fala": "Na próxima sai perfeito."
+    }
+   ]
+  },
+  {
+   "id": "discurso",
+   "nome": "Ensaiar um discurso de campeão",
+   "n": 37,
+   "frequencia": "rara",
+   "passos": [
+    {
+     "anim": "agradecer",
+     "fala": "Ehm. Primeiro, eu queria agradecer… a mim."
+    },
+    {
+     "anim": "poseVilao",
+     "fala": "E aos meus bíceps. Principalmente o direito."
+    },
+    {
+     "anim": "agradecerPlateia",
+     "fala": "Obrigado, obrigado. Sem fotos."
+    }
+   ]
+  },
+  {
+   "id": "desfileSub",
+   "nome": "Desfile de moda submarina",
+   "n": 38,
+   "frequencia": "rara",
+   "passos": [
+    {
+     "anim": "desfile",
+     "fala": "Coleção outono-inverno do fundo do mar."
+    },
+    {
+     "anim": "selfie",
+     "fala": "Close pro look."
+    },
+    {
+     "anim": "aplausosImaginarios",
+     "fala": "A plateia vai à loucura."
+    }
+   ]
+  },
+  {
+   "id": "live",
+   "nome": "Live de treino para o público imaginário",
+   "n": 39,
+   "frequencia": "rara",
+   "passos": [
+    {
+     "anim": "selfie",
+     "fala": "Tô ao vivo, galera. Dez mil sardinhas assistindo."
+    },
+    {
+     "anim": "flexoes",
+     "fala": "Contando as flexões pra vocês."
+    },
+    {
+     "anim": "duploBiceps",
+     "fala": "Deixa o like se ficou pump."
+    },
+    {
+     "anim": "tchau",
+     "fala": "Valeu, até amanhã. Bebe água."
+    }
+   ]
+  },
+  {
+   "id": "peixinho",
+   "nome": "Perseguir o peixinho que sempre escapa",
+   "n": 40,
+   "frequencia": "comum",
+   "passos": [
+    {
+     "anim": "perseguir",
+     "fala": "Volta aqui, peixinho."
+    },
+    {
+     "anim": "frustrado",
+     "fala": "ESCAPOU DE NOVO."
+    },
+    {
+     "anim": "ombrosDeboche",
+     "fala": "Eu deixei ele ganhar."
+    }
+   ]
+  },
+  {
+   "id": "tesouro",
+   "nome": "Procurar um tesouro e abrir o baú",
+   "n": 41,
+   "frequencia": "rara",
+   "passos": [
+    {
+     "anim": "escondeAlga",
+     "fala": "Tem algo aqui no fundo…"
+    },
+    {
+     "anim": "tesouro",
+     "fala": "Um baú! Abre, abre…"
+    },
+    {
+     "anim": "comemorar",
+     "fala": "Dentro: um shake de proteína. O maior tesouro."
+    }
+   ]
+  },
+  {
+   "id": "rival",
+   "nome": "Competir contra um rival imaginário",
+   "n": 42,
+   "frequencia": "comum",
+   "passos": [
+    {
+     "anim": "poseVilao",
+     "fala": "O tubarão-martelo acha que é mais forte."
+    },
+    {
+     "anim": "quedaBraco",
+     "fala": "Queda de braço. Agora."
+    },
+    {
+     "anim": "linguaVitoria",
+     "fala": "Ganhei. Sempre ganho."
+    }
+   ]
+  },
+  {
+   "id": "mala",
+   "nome": "Fazer a mala para um campeonato",
+   "n": 43,
+   "frequencia": "rara",
+   "passos": [
+    {
+     "anim": "toalha",
+     "fala": "Toalha: ok."
+    },
+    {
+     "anim": "beberShake",
+     "fala": "Shake: ok."
+    },
+    {
+     "anim": "sequencia",
+     "fala": "Medalha da última vez: ok. Pronto pro campeonato."
+    }
+   ]
+  },
+  {
+   "id": "videoMotivacao",
+   "nome": "Gravar um vídeo de motivação",
+   "n": 44,
+   "frequencia": "comum",
+   "passos": [
+    {
+     "anim": "selfie",
+     "fala": "Gravando. Ação."
+    },
+    {
+     "anim": "motivacaoAcademia",
+     "fala": "Disciplina vence motivação. Corta."
+    },
+    {
+     "anim": "espelho",
+     "fala": "Ficou lindo. Como eu."
+    }
+   ]
+  },
+  {
+   "id": "historia",
+   "nome": "História de campeão em episódios",
+   "n": 45,
+   "frequencia": "comum",
+   "episodios": [
+    "Episódio 1: eu era um filhote magrelo. Os golfinhos riam de mim.",
+    "Episódio 2: achei um pneu no fundo do mar. Virou meu primeiro peso.",
+    "Episódio 3: comecei a treinar todo dia. Até no Natal.",
+    "Episódio 4: o primeiro bíceps apareceu. O cardume desmaiou.",
+    "Episódio 5: os golfinhos pararam de rir. Começaram a pedir dica.",
+    "Episódio 6: campeonato do recife. Fiquei em segundo. Doeu.",
+    "Episódio 7: dobrei a proteína, dobrei o treino, dobrei o ego.",
+    "Episódio 8: campeão do recife. E aqui estou: no seu computador. Final feliz."
+   ],
+   "passos": [
+    {
+     "anim": "sussurrar",
+     "fala": "{episodio}"
+    },
+    {
+     "anim": "orgulhoso"
+    }
+   ]
+  }
+ ]
+}

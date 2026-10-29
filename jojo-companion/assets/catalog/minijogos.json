@@ -1,0 +1,427 @@
+{
+ "_notas": "Mini-jogos (antitédio 46–60): todos opcionais, começam só quando ela pede (Central → Mini-jogos, ou no chat). Campos: id, nome, n, gatilho (frases), duracao (s), tipo. Nunca o mesmo jogo duas vezes seguidas quando sorteado ('/jogo').",
+ "jogos": [
+  {
+   "id": "cliqueRapido",
+   "nome": "Desafio de clique rápido",
+   "n": 46,
+   "tipo": "cliques",
+   "duracao": 10,
+   "frases": [
+    "clique rapido",
+    "desafio de clique"
+   ]
+  },
+  {
+   "id": "bolhas",
+   "nome": "Caça às bolhas",
+   "n": 47,
+   "tipo": "bolhas",
+   "duracao": 15,
+   "frases": [
+    "caca as bolhas",
+    "caça às bolhas",
+    "estoura bolhas"
+   ]
+  },
+  {
+   "id": "cabo",
+   "nome": "Cabo de guerra com o cursor",
+   "n": 48,
+   "tipo": "cabo",
+   "duracao": 20,
+   "frases": [
+    "cabo de guerra"
+   ]
+  },
+  {
+   "id": "quiz",
+   "nome": "Quiz de estudo",
+   "n": 49,
+   "tipo": "quiz",
+   "duracao": 60,
+   "frases": [
+    "quiz",
+    "me faz uma pergunta"
+   ]
+  },
+  {
+   "id": "repeticoes",
+   "nome": "Contagem de repetições em dupla",
+   "n": 50,
+   "tipo": "repeticoes",
+   "duracao": 90,
+   "frases": [
+    "conta comigo",
+    "contar repeticoes",
+    "contar repetições"
+   ]
+  },
+  {
+   "id": "esconde",
+   "nome": "Esconde-esconde",
+   "n": 51,
+   "tipo": "esconde",
+   "duracao": 30,
+   "frases": [
+    "esconde-esconde",
+    "esconde esconde"
+   ]
+  },
+  {
+   "id": "lider",
+   "nome": "Siga o líder",
+   "n": 52,
+   "tipo": "lider",
+   "duracao": 60,
+   "frases": [
+    "siga o lider",
+    "siga o líder"
+   ]
+  },
+  {
+   "id": "memoria",
+   "nome": "Memória de poses",
+   "n": 53,
+   "tipo": "memoria",
+   "duracao": 60,
+   "frases": [
+    "memoria de poses",
+    "memória de poses",
+    "jogo da memoria"
+   ]
+  },
+  {
+   "id": "corrida",
+   "nome": "Corrida de nado",
+   "n": 54,
+   "tipo": "reflexo",
+   "duracao": 20,
+   "frases": [
+    "corrida de nado",
+    "corrida"
+   ]
+  },
+  {
+   "id": "equilibrio",
+   "nome": "Desafio de equilíbrio",
+   "n": 55,
+   "tipo": "reflexo",
+   "duracao": 20,
+   "frases": [
+    "equilibrio",
+    "equilíbrio"
+   ]
+  },
+  {
+   "id": "curiosidades",
+   "nome": "Pergunta e resposta rápida de curiosidades",
+   "n": 56,
+   "tipo": "curiosidade",
+   "duracao": 30,
+   "frases": [
+    "curiosidade",
+    "verdade ou mentira"
+   ]
+  },
+  {
+   "id": "emocao",
+   "nome": "Adivinhar a emoção do tubarão",
+   "n": 57,
+   "tipo": "emocao",
+   "duracao": 30,
+   "frases": [
+    "adivinha a emocao",
+    "adivinhar a emoção",
+    "que emocao",
+    "que emoção"
+   ]
+  },
+  {
+   "id": "ppn",
+   "nome": "Pedra, papel e nadadeira",
+   "n": 58,
+   "tipo": "ppn",
+   "duracao": 30,
+   "frases": [
+    "pedra papel",
+    "jokenpo",
+    "jokenpô"
+   ]
+  },
+  {
+   "id": "pega",
+   "nome": "Pega-pega suave",
+   "n": 59,
+   "tipo": "pega",
+   "duracao": 25,
+   "frases": [
+    "pega-pega",
+    "pega pega"
+   ]
+  },
+  {
+   "id": "cacaPalavras",
+   "nome": "Caça-palavras no balão",
+   "n": 60,
+   "tipo": "cacaPalavras",
+   "duracao": 90,
+   "frases": [
+    "caca-palavras",
+    "caça-palavras",
+    "caca palavras"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "p": "Qual músculo o supino trabalha mais?",
+   "o": [
+    "Peitoral",
+    "Panturrilha",
+    "Glúteo"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Quantos ossos tem um tubarão?",
+   "o": [
+    "206",
+    "Nenhum (é cartilagem)",
+    "50"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual é a capital da Austrália?",
+   "o": [
+    "Sydney",
+    "Canberra",
+    "Melbourne"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Proteína é feita de…",
+   "o": [
+    "Aminoácidos",
+    "Açúcar",
+    "Vitamina C"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Quanto é 7 × 8?",
+   "o": [
+    "54",
+    "56",
+    "64"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual planeta é o maior do sistema solar?",
+   "o": [
+    "Saturno",
+    "Júpiter",
+    "Netuno"
+   ],
+   "r": 1
+  },
+  {
+   "p": "A fotossíntese acontece em qual parte da célula?",
+   "o": [
+    "Mitocôndria",
+    "Cloroplasto",
+    "Núcleo"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Quem escreveu Dom Casmurro?",
+   "o": [
+    "Machado de Assis",
+    "José de Alencar",
+    "Clarice Lispector"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Revisar em intervalos crescentes se chama…",
+   "o": [
+    "Repetição espaçada",
+    "Leitura dinâmica",
+    "Decoreba"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é o maior órgão do corpo humano?",
+   "o": [
+    "Fígado",
+    "Pele",
+    "Cérebro"
+   ],
+   "r": 1
+  },
+  {
+   "p": "H2O é…",
+   "o": [
+    "Água",
+    "Oxigênio",
+    "Hidrogênio puro"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Em que ano o Brasil ficou independente?",
+   "o": [
+    "1822",
+    "1889",
+    "1500"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual músculo é o 'bíceps femoral'?",
+   "o": [
+    "Posterior da coxa",
+    "Braço",
+    "Costas"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é a raiz quadrada de 144?",
+   "o": [
+    "12",
+    "14",
+    "11"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual gás as plantas liberam na fotossíntese?",
+   "o": [
+    "Gás carbônico",
+    "Oxigênio",
+    "Nitrogênio"
+   ],
+   "r": 1
+  }
+ ],
+ "curiosidades": [
+  {
+   "p": "Tubarões existem antes das árvores.",
+   "r": true
+  },
+  {
+   "p": "Tubarão precisa nadar pra respirar (alguns, sim).",
+   "r": true
+  },
+  {
+   "p": "O coração do polvo é um só.",
+   "r": false
+  },
+  {
+   "p": "O mel nunca estraga.",
+   "r": true
+  },
+  {
+   "p": "Músculo vira gordura quando para de treinar.",
+   "r": false
+  },
+  {
+   "p": "Bananas são frutas vermelhas por dentro.",
+   "r": false
+  },
+  {
+   "p": "O cérebro usa cerca de 20% da energia do corpo.",
+   "r": true
+  },
+  {
+   "p": "Peixe-dourado tem memória de 3 segundos.",
+   "r": false
+  },
+  {
+   "p": "Dormir pouco atrapalha a hipertrofia.",
+   "r": true
+  },
+  {
+   "p": "A Lua tem terremotos (lunemotos).",
+   "r": true
+  }
+ ],
+ "emocoes": [
+  {
+   "anim": "feliz",
+   "nome": "feliz"
+  },
+  {
+   "anim": "triste",
+   "nome": "triste"
+  },
+  {
+   "anim": "irritadoLeve",
+   "nome": "irritado"
+  },
+  {
+   "anim": "assustado",
+   "nome": "assustado"
+  },
+  {
+   "anim": "apaixonado",
+   "nome": "apaixonado"
+  },
+  {
+   "anim": "entediado",
+   "nome": "entediado"
+  },
+  {
+   "anim": "confuso",
+   "nome": "confuso"
+  },
+  {
+   "anim": "orgulhoso",
+   "nome": "orgulhoso"
+  }
+ ],
+ "poses": [
+  {
+   "anim": "duploBiceps",
+   "nome": "bíceps"
+  },
+  {
+   "anim": "acenar",
+   "nome": "aceno"
+  },
+  {
+   "anim": "coracao",
+   "nome": "coração"
+  },
+  {
+   "anim": "girar",
+   "nome": "giro"
+  },
+  {
+   "anim": "pular",
+   "nome": "pulo"
+  },
+  {
+   "anim": "tchau",
+   "nome": "tchau"
+  }
+ ],
+ "palavras": [
+  "SHAPE",
+  "TREINO",
+  "FOCO",
+  "SUPINO",
+  "DORSAL",
+  "PUMP",
+  "SERIE",
+  "ESTUDO",
+  "CAMPEAO",
+  "BICEPS"
+ ]
+}

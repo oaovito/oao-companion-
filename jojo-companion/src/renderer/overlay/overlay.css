@@ -275,3 +275,19 @@ body.reduced .act.running .dot { animation: none; }
   #bubble { animation: none; }
   .act.running .dot { animation: none; }
 }
+
+/* Jogo/estímulo de bolhas: bolhas suaves, estouram sem flash. */
+#bubbleGame { position: absolute; inset: 0; pointer-events: none; }
+.game-bubble {
+  position: absolute;
+  pointer-events: auto;
+  border-radius: 50%;
+  border: 2px solid rgba(120, 180, 230, 0.95);
+  background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.9) 0 12%, rgba(200, 235, 255, 0.35) 13% 100%);
+  cursor: pointer;
+  animation: bubble-rise 3.8s linear forwards;
+}
+.game-bubble.pop { animation: bubble-pop 0.2s ease-out forwards; }
+@keyframes bubble-rise { from { transform: translateY(8px); opacity: 0; } 10% { opacity: 1; } to { transform: translateY(-40px); opacity: 0.9; } }
+@keyframes bubble-pop { to { transform: scale(1.5); opacity: 0; } }
+.reduced .game-bubble { animation: none; }

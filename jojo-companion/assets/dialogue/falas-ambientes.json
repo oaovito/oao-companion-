@@ -1466,6 +1466,56 @@
     "cantarDesafinado",
     "karaoke"
    ]
+  },
+  {
+   "t": "Dizem que existe uma pose épica escondida. Rara. Muito rara.",
+   "cat": "dicas",
+   "freq": "rara"
+  },
+  {
+   "t": "Já viu um tubarão fantasma? Só de noite, dizem…",
+   "cat": "dicas",
+   "freq": "rara"
+  },
+  {
+   "t": "Tenta /anim nado sincronizado. Ou não. Eu não ligo.",
+   "cat": "dicas",
+   "freq": "rara"
+  },
+  {
+   "t": "Se disser \"modo fera\", eu viro outro tubarão.",
+   "cat": "dicas",
+   "freq": "rara"
+  },
+  {
+   "t": "Tem gente que nunca me viu peidar bolhas. Sorte.",
+   "cat": "dicas",
+   "freq": "rara"
+  },
+  {
+   "t": "Pede um estímulo no ✨. Às vezes sai coisa rara.",
+   "cat": "dicas",
+   "freq": "rara"
+  },
+  {
+   "t": "Um pouco todo dia vale mais que muito um dia só.",
+   "cat": "constancia",
+   "freq": "comum"
+  },
+  {
+   "t": "Voltou hoje? Já é vitória. Sem cobrança.",
+   "cat": "constancia",
+   "freq": "comum"
+  },
+  {
+   "t": "Constância não é perfeição. É aparecer.",
+   "cat": "constancia",
+   "freq": "comum"
+  },
+  {
+   "t": "Dia ruim também conta. Você apareceu.",
+   "cat": "constancia",
+   "freq": "comum"
   }
  ]
 }

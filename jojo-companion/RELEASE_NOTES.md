@@ -13,6 +13,7 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- **Coleção e jogos** na Central: níveis do shape, conquistas, missões e 15 mini-jogos. Foco junto com `/foco 25`. 💪 e ✨ no modo de interação.
 - Diga **"conectar agenda"** no chat: o JoJo conecta sua Google Agenda e cobra seus compromissos.
 - Coloque uma música no **Spotify** e veja o JoJo reagir. Abra o **League of Legends** e veja o mau humor.
 - **264 animações novas**: o JoJo faz coisas sozinho enquanto você trabalha (selfie, espelho,

@@ -223,7 +223,8 @@ function main() {
     });
     const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm });
 
-    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), catalog, ambientLines, variety: varietyState, phrases, dialogue, log });
+    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), catalog, ambientLines, variety: varietyState,
+      antitedio: { rotinas: readJSON('assets/catalog/rotinas.json'), minijogos: readJSON('assets/catalog/minijogos.json'), progressao: readJSON('assets/catalog/progressao.json') }, phrases, dialogue, log });
 
     // Esc global SOMENTE enquanto o modo de interação está ativo: o Windows nem
     // sempre entrega o foco do teclado à janela ativada por atalho. Fora do modo
@@ -295,6 +296,8 @@ function main() {
         current: companion.conversations.snapshot(conv.id),
         commands: commandMenu({ petVisible: !companion.userHidden }),
         provider: dialogue.describe(),
+        colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome })) : [] },
+        abrirColecao,
       };
     }
     let appUpdateTimer = null;
@@ -305,7 +308,13 @@ function main() {
         trayCtl && trayCtl.refresh();
       }, 60);
     };
-    companion.onOpenApp = (id) => appWin.open(id);
+    let abrirColecao = 0;
+    companion.onOpenApp = (id) => {
+      // A Central pode ainda estar carregando: o pedido da coleção vai junto no estado.
+      if (id === 'colecao') abrirColecao++;
+      appWin.open(id === 'colecao' ? null : id);
+      if (id === 'colecao') appWin.send('app:update', appState());
+    };
 
     // Google Agenda (só leitura): busca o .ics do endereço secreto a cada 10 min.
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;

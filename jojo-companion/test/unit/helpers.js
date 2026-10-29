@@ -143,6 +143,7 @@ export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, s
     catalog: loadJSON('assets/catalog/animacoes.json'),
     ambientLines: loadJSON('assets/dialogue/falas-ambientes.json'),
     variety: memState(),
+    antitedio: { rotinas: loadJSON('assets/catalog/rotinas.json'), minijogos: loadJSON('assets/catalog/minijogos.json'), progressao: loadJSON('assets/catalog/progressao.json') },
     phrases: loadJSON('assets/dialogue/pt-BR.json'),
     dialogue: new DialogueEngine({ searchEnabled: () => store.get().webSearch }),
     rng: seededRng(seed),

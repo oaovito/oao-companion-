@@ -18,6 +18,11 @@ function chip(el, status, label) {
 
 function render(s) {
   st = s;
+  // Pedido de abrir a coleção (/colecao): cada pedido novo vale uma vez.
+  if (s.abrirColecao && s.abrirColecao !== lastColecaoReq) {
+    lastColecaoReq = s.abrirColecao;
+    showingColecao = true;
+  }
   if (!selected || !s.conversations.some((c) => c.id === selected)) selected = s.currentId;
   $('name').textContent = s.companionName;
   document.title = s.companionName;
@@ -41,9 +46,94 @@ function render(s) {
     listEl.appendChild(b);
   }
   renderConversation();
+  renderColecao();
 }
 
+// ---------------- coleção, progressão, mini-jogos e estímulos
+let showingColecao = false;
+let lastColecaoReq = 0;
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+function renderColecao() {
+  const box = $('colecao');
+  box.classList.toggle('hidden', !showingColecao);
+  for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', showingColecao || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
+  if (!showingColecao || !st || !st.colecao) return;
+  const c = st.colecao;
+  $('convTitle').textContent = 'Coleção e jogos';
+  chip($('convStatus'), 'idle', '');
+  box.innerHTML = '';
+  const nivel = el('div', 'card');
+  nivel.append(el('h2', null, `Nível ${c.nivel}: ${c.nomeNivel}`), el('p', 'muted', `${c.xp} XP · próximo nível em ${Math.max(0, c.proximo - c.xp)} XP · ${c.streak} dia(s) seguidos`));
+  const bar = el('div', 'bar');
+  const fill = el('span');
+  fill.style.width = `${Math.min(100, Math.round(((c.xp % 60) / 60) * 100))}%`;
+  bar.append(fill);
+  nivel.append(bar, el('p', null, c.resumo));
+  const acoes = el('div', 'card');
+  acoes.append(el('h3', null, 'Agora'));
+  const row = el('div', 'buttons');
+  for (const [label, cmd] of [['✨ Me dá estímulo', '/estimulo'], ['⏱ Foco 25 min', '/foco 25'], ['🏋️ Treinar junto', '/foco 25 treino'], ['🌊 Calma', '/calma'], ['🎵 Ritmo', '/ritmo'], ['🫧 Bolhas', '/bolhas'], ['📋 Resumo do dia', '/resumo']]) {
+    const b = el('button', 'chipbtn', label);
+    b.addEventListener('click', () => playCmd(cmd));
+    row.append(b);
+  }
+  acoes.append(row);
+  const jogos = el('div', 'card');
+  jogos.append(el('h3', null, 'Mini-jogos'));
+  const jr = el('div', 'buttons');
+  for (const j of c.jogos || []) {
+    const b = el('button', 'chipbtn', j.nome);
+    b.addEventListener('click', () => playCmd(`/jogo ${j.id}`));
+    jr.append(b);
+  }
+  jogos.append(jr);
+  const miss = el('div', 'card');
+  miss.append(el('h3', null, 'Missões de hoje (opcionais)'));
+  for (const m of c.missoes) miss.append(el('p', m.ok ? 'ok' : 'muted', `${m.ok ? '✓' : '○'} ${m.txt}`));
+  const conq = el('div', 'card');
+  conq.append(el('h3', null, `Conquistas (${c.conquistas.filter((q) => q.ok).length}/${c.conquistas.length})`));
+  const grid = el('div', 'grid');
+  for (const q of c.conquistas) {
+    const g = el('div', `badge${q.ok ? ' ok' : ''}`);
+    g.append(el('b', null, q.ok ? q.nome : '???'), el('small', null, q.desc));
+    grid.append(g);
+  }
+  conq.append(grid);
+  const col = el('div', 'card');
+  col.append(el('h3', null, 'Coleção'));
+  col.append(el('p', null, `Poses vistas: ${c.poses} · Cartas de frases: ${c.cartas}`));
+  col.append(el('p', null, `Acessórios: ${c.acessorios.map((a) => (a.ok ? a.nome : `🔒 nível ${a.nivel}`)).join(' · ')}`));
+  col.append(el('p', null, `Aquário: ${c.areas.map((a) => (a.ok ? a.nome : '???')).join(' · ')}`));
+  if (c.album.length) col.append(el('p', 'muted', `Álbum de momentos raros: ${c.album.map((a) => a.nome).join(', ')}`));
+  box.append(nivel, acoes, jogos, miss, conq, col);
+}
+async function playCmd(cmd) {
+  showingColecao = false;
+  renderColecao();
+  renderConversation();
+  await run(cmd);
+}
+$('colecaoBtn').addEventListener('click', async () => {
+  showingColecao = !showingColecao;
+  if (showingColecao) render(await api.state());
+  else {
+    renderColecao();
+    renderConversation();
+  }
+});
+
 async function select(id) {
+  if (id === 'colecao') {
+    showingColecao = true;
+    render(await api.state());
+    return;
+  }
+  showingColecao = false;
   selected = id;
   const s = await api.select(id);
   render(s);

@@ -62,3 +62,21 @@ button.ghost { background: transparent; }
 .cmd.sel, .cmd:hover { background: #e3edfb; }
 .cmd code { font-weight: 700; }
 .cmd span { color: var(--muted); font-size: 12px; }
+
+/* Coleção e jogos */
+.colecao { flex: 1; overflow: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.colecao .card { border: 1px solid #d9dde6; border-radius: 12px; padding: 10px 12px; background: #fff; }
+.colecao h2 { margin: 0 0 4px; font-size: 18px; }
+.colecao h3 { margin: 0 0 6px; font-size: 14px; }
+.colecao p { margin: 4px 0; font-size: 13px; }
+.colecao .muted { color: #6b7385; }
+.colecao .ok { color: #1f7a45; }
+.colecao .bar { height: 8px; background: #eef1f6; border-radius: 6px; overflow: hidden; margin: 6px 0; }
+.colecao .bar span { display: block; height: 100%; background: #3f7fd4; }
+.colecao .buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+.colecao .chipbtn { border: 1px solid #c9d2e3; background: #f5f8fd; border-radius: 999px; padding: 5px 10px; font-size: 12.5px; cursor: pointer; }
+.colecao .chipbtn:hover { background: #e7effb; }
+.colecao .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.colecao .badge { border: 1px dashed #c9d2e3; border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; opacity: 0.6; }
+.colecao .badge.ok { border-style: solid; border-color: #9fd3b4; opacity: 1; }
+.colecao .badge small { color: #6b7385; font-size: 11px; }

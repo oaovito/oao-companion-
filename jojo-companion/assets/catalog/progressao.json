@@ -1,0 +1,258 @@
+{
+ "_notas": "Coleções e progressão (antitédio 61–70) e missões diárias. Níveis do shape por XP; acessórios liberados por nível; conquistas por contadores; missões diárias opcionais (3 sorteadas por dia, sem cobrança).",
+ "niveis": [
+  "Sardinha",
+  "Lambari",
+  "Baiacu",
+  "Moreia",
+  "Barracuda",
+  "Tubarão-lixa",
+  "Tubarão-tigre",
+  "Tubarão-martelo",
+  "Tubarão-branco",
+  "Megalodon"
+ ],
+ "xpPorNivel": 60,
+ "xp": {
+  "gesto": 2,
+  "chat": 1,
+  "jogoVitoria": 10,
+  "jogoParticipacao": 3,
+  "foco": 15,
+  "missao": 10,
+  "poseNova": 1,
+  "diaNovo": 5,
+  "estimulo": 1
+ },
+ "acessorios": [
+  {
+   "nivel": 2,
+   "prop": "oculos",
+   "nome": "Óculos escuros"
+  },
+  {
+   "nivel": 3,
+   "prop": "medalha",
+   "nome": "Medalha"
+  },
+  {
+   "nivel": 4,
+   "prop": "toalha",
+   "nome": "Toalha de academia"
+  },
+  {
+   "nivel": 5,
+   "prop": "halter",
+   "nome": "Halter de estimação"
+  },
+  {
+   "nivel": 6,
+   "prop": "microfone",
+   "nome": "Microfone"
+  },
+  {
+   "nivel": 7,
+   "prop": "trofeu",
+   "nome": "Troféu"
+  }
+ ],
+ "conquistas": [
+  {
+   "id": "primeiraConversa",
+   "nome": "Primeiro papo",
+   "desc": "Conversou com o JoJo",
+   "conta": "chat",
+   "n": 1
+  },
+  {
+   "id": "tagarela",
+   "nome": "Tagarela",
+   "desc": "100 mensagens",
+   "conta": "chat",
+   "n": 100
+  },
+  {
+   "id": "colecionadora10",
+   "nome": "Colecionadora",
+   "desc": "Viu 10 poses diferentes",
+   "conta": "poses",
+   "n": 10
+  },
+  {
+   "id": "colecionadora50",
+   "nome": "Curadora do aquário",
+   "desc": "Viu 50 poses diferentes",
+   "conta": "poses",
+   "n": 50
+  },
+  {
+   "id": "colecionadora150",
+   "nome": "Enciclopédia do JoJo",
+   "desc": "Viu 150 poses diferentes",
+   "conta": "poses",
+   "n": 150
+  },
+  {
+   "id": "easter",
+   "nome": "Caçadora de segredos",
+   "desc": "Encontrou um easter egg",
+   "conta": "easter",
+   "n": 1
+  },
+  {
+   "id": "foco1",
+   "nome": "Primeiro bloco",
+   "desc": "Completou um bloco de foco",
+   "conta": "foco",
+   "n": 1
+  },
+  {
+   "id": "foco10",
+   "nome": "Máquina de foco",
+   "desc": "10 blocos de foco",
+   "conta": "foco",
+   "n": 10
+  },
+  {
+   "id": "jogadora",
+   "nome": "Jogadora",
+   "desc": "Venceu um mini-jogo",
+   "conta": "vitorias",
+   "n": 1
+  },
+  {
+   "id": "invicta",
+   "nome": "Invicta",
+   "desc": "10 vitórias em mini-jogos",
+   "conta": "vitorias",
+   "n": 10
+  },
+  {
+   "id": "carinhosa",
+   "nome": "Carinhosa",
+   "desc": "20 gestos com o JoJo",
+   "conta": "gestos",
+   "n": 20
+  },
+  {
+   "id": "sequencia3",
+   "nome": "Constância",
+   "desc": "3 dias seguidos",
+   "conta": "streak",
+   "n": 3
+  },
+  {
+   "id": "sequencia7",
+   "nome": "Semana de campeã",
+   "desc": "7 dias seguidos",
+   "conta": "streak",
+   "n": 7
+  },
+  {
+   "id": "sequencia30",
+   "nome": "Disciplina de aço",
+   "desc": "30 dias seguidos",
+   "conta": "streak",
+   "n": 30
+  },
+  {
+   "id": "missoes10",
+   "nome": "Missão dada",
+   "desc": "10 missões diárias",
+   "conta": "missoes",
+   "n": 10
+  },
+  {
+   "id": "cartas30",
+   "nome": "Baralho do JoJo",
+   "desc": "30 cartas de frases",
+   "conta": "cartas",
+   "n": 30
+  },
+  {
+   "id": "fidget100",
+   "nome": "Pump infinito",
+   "desc": "100 bombadas no bíceps",
+   "conta": "fidget",
+   "n": 100
+  }
+ ],
+ "missoes": [
+  {
+   "id": "carinho",
+   "txt": "Faça carinho no JoJo",
+   "evento": "carinho"
+  },
+  {
+   "id": "conversa",
+   "txt": "Converse com o JoJo",
+   "evento": "chat"
+  },
+  {
+   "id": "foco",
+   "txt": "Complete um bloco de foco (/foco)",
+   "evento": "foco"
+  },
+  {
+   "id": "agua",
+   "txt": "Diga \"bebi água\" pro JoJo",
+   "evento": "agua"
+  },
+  {
+   "id": "alongar",
+   "txt": "Diga \"alonguei\" pro JoJo",
+   "evento": "alongar"
+  },
+  {
+   "id": "jogo",
+   "txt": "Jogue um mini-jogo",
+   "evento": "jogo"
+  },
+  {
+   "id": "estimulo",
+   "txt": "Peça um estímulo (✨ ou /estimulo)",
+   "evento": "estimulo"
+  },
+  {
+   "id": "anim",
+   "txt": "Peça uma animação (/anim)",
+   "evento": "anim"
+  },
+  {
+   "id": "fidget",
+   "txt": "Bombe o bíceps do JoJo 10 vezes (💪)",
+   "evento": "fidget",
+   "n": 10
+  }
+ ],
+ "areas": [
+  {
+   "id": "treino",
+   "nome": "Academia do recife"
+  },
+  {
+   "id": "estudo",
+   "nome": "Biblioteca afundada"
+  },
+  {
+   "id": "descaro",
+   "nome": "Bar do descaro"
+  },
+  {
+   "id": "praia",
+   "nome": "Praia"
+  },
+  {
+   "id": "caverna",
+   "nome": "Caverna"
+  },
+  {
+   "id": "gamer",
+   "nome": "Aquário gamer"
+  },
+  {
+   "id": "comilanca",
+   "nome": "Cozinha do fundo do mar"
+  }
+ ]
+}

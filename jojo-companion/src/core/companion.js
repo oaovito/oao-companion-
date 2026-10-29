@@ -15,7 +15,8 @@ import { placeAround, composeWindow } from './layout.js';
 import { displayForRect, allowedDisplays, recoverRect, topologySignature, primaryDisplay } from './displays.js';
 import { distPointRect, roundRect, dist, clamp, intersection } from './geometry.js';
 import { animName, INTENSITIES } from './catalog/recipes.js';
-import { VarietyEngine, periodOf } from './catalog/variety.js';
+import { VarietyEngine, periodOf, seasonOf } from './catalog/variety.js';
+import { Progress, Games, pickRoutine, routineSteps } from './catalog/antitedio.js';
 import { detectIntent, normalizeText } from './dialogue/scripted-provider.js';
 import { isFactualQuestion } from './dialogue/web-search.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
@@ -25,7 +26,7 @@ import { ConversationManager, parseCommand, commandMenu } from './conversations.
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
 
-const TOOLBAR_SIZE = { width: 278, height: 50 };
+const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
 const FOODS = { peixe: 3, foca: 2, lula: 2, tartaruga: 1.5, pinguim: 1.5, humano: 0.8 };
 // Momento do arroto depois de começar a comer.
@@ -78,7 +79,7 @@ const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 
 const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
 export class Companion {
-  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, antitedio = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
     // Quanto cada animação/efeito passa da caixa (assets/animations/jojo.room.json).
     this.room = room || { anims: {}, effects: {} };
     this.roomPrev = null; // espaço da animação anterior durante a transição
@@ -131,9 +132,32 @@ export class Companion {
       now: () => this.clock.now(),
       getPrefs: () => {
         const st = this.store.get();
-        return { modo: st.ambienteModo, surpresas: st.surpresas };
+        const vs = this.variety ? this.variety.state : {};
+        const quieto = this.progress && this.progress.st.diasQuietos === dayKey(new Date());
+        // Humor do dia dela (cansada/triste → calmo; animada → pilhado) quando a energia é automática.
+        const humorDia = this.progress && this.progress.st.humorDia && this.progress.st.humorDia.dia === dayKey(new Date()) ? this.progress.st.humorDia.modo : null;
+        return { modo: st.ambienteModo === 'auto' ? (quieto ? 'calmo' : humorDia || 'auto') : st.ambienteModo, surpresas: st.surpresas, desligadas: vs.desligadas || [], semPesadas: !st.animacoesPesadas };
       },
     });
+    // Antitédio: progressão/coleções, rotinas e mini-jogos (assets/catalog/*.json).
+    const at = antitedio || {};
+    this.rotinas = (at.rotinas && at.rotinas.rotinas) || [];
+    this.games = at.minijogos ? new Games({ data: at.minijogos, rng }) : null;
+    this.progress = new Progress({
+      data: at.progressao || { niveis: ['Sardinha'], xpPorNivel: 60, xp: {}, acessorios: [], conquistas: [], missoes: [], areas: [] },
+      state: this.variety.state.prog,
+      save: (st) => {
+        this.variety.state.prog = st;
+        this.variety.save(this.variety.state);
+      },
+      rng,
+      now: () => this.clock.now(),
+    });
+    this.game = null; // mini-jogo em andamento
+    this.focus = null; // bloco de foco (body doubling)
+    this.calmUntil = 0;
+    this.lastAmbientAt = 0;
+    this.lastAmbientItemAt = 0;
     // Google Agenda: eventos lidos do endereço iCal (o main busca); avisos já dados.
     this.calendar = { events: [], error: null, lastSync: 0 };
     this.calendarWarned = new Set();
@@ -215,8 +239,12 @@ export class Companion {
     this._applyLayout(true);
     this._schedule(0);
     this.clock.setTimeout(() => {
-      this.sayCategory(greetingCategory(new Date()), { force: false, fallback: 'greeting' });
       const per = periodOf(new Date());
+      // Rotina previsível definida por ela ("bom dia" sempre igual).
+      const fixa = this.progress.st.rotinaFixa || {};
+      const fixo = per === 'manha' ? fixa.bomDia : per === 'noite' ? fixa.boaNoite : null;
+      if (fixo) this.say(fixo, 'speech');
+      else this.sayCategory(greetingCategory(new Date()), { force: false, fallback: 'greeting' });
       if (per === 'manha') this.fireEvent('bomDia', { speak: false });
       else if (per === 'noite') this.fireEvent('boaNoite', { speak: false });
       this._checkStreak(new Date());
@@ -234,6 +262,7 @@ export class Companion {
     s.last = today;
     st.streak = s;
     this.variety.save(st);
+    this._announceProgress({ lvl: this.progress.xp('diaNovo'), novas: this.progress.count('streak', s.count, true) });
     if (s.count >= 2) {
       this.clock.setTimeout(() => {
         if (this.fireEvent('sequencia', { speak: false })) this.say(`${s.count} dias seguidos comigo. Constância é tudo.`, 'speech', { spontaneous: true });
@@ -519,6 +548,7 @@ export class Companion {
 
     if (this._avoidanceEnabled()) this._runAvoidance(now);
 
+    this._gamePega(now);
     this.behavior.tick(now);
     this._updateWired(now);
     this._updateSpeech(now);
@@ -658,7 +688,8 @@ export class Companion {
       quiet: this.store.get().quietMode,
       wired: this.wired,
       // Catálogo: peso do sorteio ambiente e fila (sequências, "sem filtro", aviso de raro).
-      ambientWeight: this.reducedMotion ? AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] * 0.5 : AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] ?? 0,
+      // Mais nas horas em que ela costuma interagir; menos em dia quieto e com movimento reduzido.
+      ambientWeight: (AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] ?? 0) * (this.reducedMotion ? 0.5 : 1) * this.progress.hourBoost() * (this.progress.st.diasQuietos === dayKey(new Date()) ? 0.4 : 1),
       pickAmbient: () => this._pickAmbient(),
       hasQueue: this.ambientQueue.length > 0,
     };
@@ -705,6 +736,17 @@ export class Companion {
    */
   _idleEvents(idleSec, now) {
     if (!this.started) return;
+    if (idleSec < 60) this._boredomTick(now);
+    // Fim do dia: resumo animado (uma vez, a partir das 21h, se ela estiver por aí).
+    const d = new Date();
+    if (d.getHours() >= 21 && idleSec < 60 && this.resumoDia !== dayKey(d) && this._canNag() && !this.interaction) {
+      this.resumoDia = dayKey(d);
+      const txt = this.progress.resumoDia(d);
+      if (!/tranquilo/.test(txt)) {
+        this.fireEvent('parabens', { speak: false });
+        this.say(txt, 'speech');
+      }
+    }
     if (idleSec >= 120) {
       if (!this.awaySince && !this.powderKind && this._canIdleAct()) {
         this.awaySince = now;
@@ -763,6 +805,8 @@ export class Companion {
       this.behavior.request('interactIdle', { now, force: true });
       return;
     }
+    // Foco junto: voltou ao repouso → continua estudando/treinando do lado dela.
+    if (ev.state === 'idle' && this.focus && !this.interaction) this.clock.setTimeout(() => this.focus && this.behavior.state === 'idle' && this._focusAnim(this.clock.now()), 0);
     if (ev.state === 'walk') this._startWalk(now);
     if (ev.state === 'sleep' && ev.prev !== 'sleep') this.clock.setTimeout(() => this._sleepTalk(), 3000);
     if (ev.state === 'curious' && this.rng() < 0.35) this.sayCategory('curious', { spontaneous: true });
@@ -853,6 +897,8 @@ export class Companion {
     this._scheduleSpeech(now, true);
     const st = this.behavior.state;
     if (this.bubble || this.paused || this.interaction || this.ghost || this.avoid.isAlert) return;
+    // Foco, calma ou dia quieto: nada de falas espontâneas.
+    if (this.focus || now < this.calmUntil || this.progress.st.diasQuietos === dayKey(new Date())) return;
     if (st === 'sleep') {
       if (this.behavior.sleeping) this.sayCategory('sleep', { spontaneous: true });
       return;
@@ -1036,6 +1082,9 @@ export class Companion {
     if (!this.interaction) return false;
     const now = this.clock.now();
     this.noteActivity();
+    if (action === 'fidget') return this.fidget() > 0;
+    if (action === 'estimulo') return this.estimulo();
+    if (action === 'pet') this._progress('gesto', { conta: 'gestos', missao: 'carinho' });
     const map = {
       pet: ['petted', 'petted', 'hearts', 2200],
       eat: ['eat', 'food', 'food', 2800],
@@ -1097,6 +1146,24 @@ export class Companion {
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
     await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
+    // Mini-jogo em andamento: a mensagem é a jogada (segurança sempre vem antes).
+    const safety = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text));
+    if (safety && this.game) this.game = null;
+    if (this.game) {
+      const t = this._gameAnswer(text);
+      if (t) return this._quickReply(conv, t, 'jogo');
+    }
+    if (!safety) {
+      const nt = normalizeText(text);
+      if (this.games && /\b(vamos jogar|bora jogar|quero jogar|joga comigo|um jogo|mini ?jogo)\b/.test(nt)) return this._quickReply(conv, this.startGame(text), 'jogo');
+      if (/\b(vamos|bora) focar\b|\bmodo foco\b|\bestuda comigo\b|\btreina comigo\b/.test(nt)) return this._quickReply(conv, this.startFocus(25, /treina/.test(nt) ? 'treino' : 'estudo'), 'foco');
+      if (/\bme da (um )?estimulo\b|\bto entediad[ao]\b|\bque tedio\b/.test(nt)) {
+        this.estimulo();
+        return this._quickReply(conv, 'Toma. Sem tédio no meu turno.', 'estimulo');
+      }
+      const at = this._antitedioChat(text);
+      if (at) return this._quickReply(conv, at, 'antitedio');
+    }
     // Google Agenda: conectar (guia/link colado), "o que tenho hoje?", desconectar.
     const ag = await this._agendaChat(text);
     if (ag) {
@@ -1175,6 +1242,14 @@ export class Companion {
     return { ...reply, conversationId: conv.id, provider: this.dialogue.describe() };
   }
 
+  _quickReply(conv, text, intent) {
+    this.conversations.addMessage(conv.id, 'jojo', text);
+    this.conversations.setStatus(conv.id, 'ready');
+    this.talkingUntil = this.clock.now() + Math.min(2600, 500 + text.length * 45);
+    this._applyLayout(true);
+    return { text, action: null, intent, conversationId: conv.id, provider: this.dialogue ? this.dialogue.describe() : null };
+  }
+
   /**
    * Resposta de pesquisa na internet no jeito do JoJo: abertura e fecho vêm
    * das falas filtradas pelo perfil (palavrões, humor), o miolo é o resumo da fonte.
@@ -1223,6 +1298,50 @@ export class Companion {
       }
       return { text, command: cmd, conversationId };
     }
+    const arg = String(raw).replace(/^\/\S+\s*/, '').trim();
+    if (cmd === 'jogo') return { text: this.startGame(arg), command: cmd, conversationId };
+    if (cmd === 'foco') {
+      if (/^(parar|sair|cancelar|fim)/i.test(arg)) return { text: this._endFocus(false) || 'Sem foco ativo.', command: cmd, conversationId };
+      const min = clamp(Number((arg.match(/\d+/) || [25])[0]), 5, 120);
+      return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo'), command: cmd, conversationId };
+    }
+    if (cmd === 'estimulo') return { text: this.estimulo() ? 'Toma.' : 'Agora não.', command: cmd, conversationId };
+    if (cmd === 'calma') return { text: this.calma(2) ? 'Respira. Dois minutos de calma.' : 'Agora não.', command: cmd, conversationId };
+    if (cmd === 'ritmo') return { text: this.ritmo(30) ? 'Um, dois, três, quatro. Segue o ritmo.' : 'Agora não.', command: cmd, conversationId };
+    if (cmd === 'bolhas') {
+      if (!this.interaction) this.enterInteraction('bolhas');
+      this.game = { id: 'bolhasLivre', tipo: 'bolhas', nome: 'Bolhas', ate: this.clock.now() + 30e3, bolhas: 0, livre: true };
+      const g = this.game;
+      this.clock.setTimeout(() => {
+        if (this.game === g) {
+          this.game = null;
+          this._applyLayout(true);
+        }
+      }, 30e3);
+      this._applyLayout(true);
+      return { text: 'Bolhas por 30 s. Estoura à vontade, sem placar.', command: cmd, conversationId };
+    }
+    if (cmd === 'resumo') {
+      this.fireEvent('parabens', { speak: false });
+      return { text: this.progress.resumoDia(new Date()), command: cmd, conversationId };
+    }
+    if (cmd === 'colecao') {
+      const p = this.progress.snapshot(new Date());
+      if (this.onOpenApp) this.onOpenApp('colecao');
+      return { text: `Nível ${p.nivel} (${p.nomeNivel}), ${p.poses} poses, ${p.conquistas.filter((q) => q.ok).length} conquistas. Abri a coleção na Central.`, command: cmd, conversationId };
+    }
+    if (cmd === 'rotina') {
+      const m = arg.match(/^(bom dia|boa noite)\s*:\s*(.{2,120})$/i);
+      if (!m) return { text: 'Use: /rotina bom dia: texto (ou boa noite). Eu digo sempre igual.', command: cmd, conversationId };
+      const key = /dia/i.test(m[1]) ? 'bomDia' : 'boaNoite';
+      this.progress.st.rotinaFixa = { ...(this.progress.st.rotinaFixa || {}), [key]: m[2].trim() };
+      this.progress.save(this.progress.st);
+      return { text: `Fechado. ${m[1]} vai ser sempre: "${m[2].trim()}"`, command: cmd, conversationId };
+    }
+    if (cmd === 'pausa') {
+      this.setPaused(!this.paused);
+      return { text: this.paused ? 'Pausado. Fico quietinho.' : 'Voltei.', command: cmd, conversationId };
+    }
     if (cmd === 'pet') {
       const show = this.userHidden;
       this.setVisible(show);
@@ -1239,7 +1358,7 @@ export class Companion {
       if (this.onOpenSettings) this.onOpenSettings();
       text = 'Abrindo as configurações.';
     } else {
-      text = 'Comando desconhecido. Use /pet, /silencio, /nova, /config ou /anim.';
+      text = 'Comando desconhecido. Use / para ver a lista.';
     }
     return { text, command: cmd, conversationId };
   }
@@ -1328,6 +1447,7 @@ export class Companion {
     if (!this.interaction) return false;
     const now = this.clock.now();
     this.noteActivity();
+    this.dragFrom = { ...this.pos };
     this.dragging = { offset: { x: offset.x, y: offset.y } };
     this.mover.stop();
     this.hideBubble();
@@ -1341,6 +1461,12 @@ export class Companion {
     if (!this.dragging) return;
     const now = this.clock.now();
     this.dragging = null;
+    // Cabo de guerra: arrastou longe o bastante?
+    if (this.game && this.game.tipo === 'cabo' && this.dragFrom) {
+      const d = Math.hypot(this.pos.x - this.dragFrom.x, this.pos.y - this.dragFrom.y);
+      if (d > 250) this.clock.setTimeout(() => this.say(this._finishGame(true, 'Você venceu o cabo de guerra. Braço de campeã.'), 'speech'), 800);
+      else this.clock.setTimeout(() => this.say('Puxa mais! Mais de 250 px.', 'speech'), 800);
+    }
     this.noteActivity();
     this._recoverPosition();
     this.behavior.request('land', { now, force: true });
@@ -1407,6 +1533,7 @@ export class Companion {
     else ok = this._requestCatalog(source === 'ambiente' ? 'ambient' : 'act', this._catalogData(item), now, source);
     if (!ok) return false;
     this.ambientItem = item;
+    this._noteSeen(item);
     if (source !== 'ambiente') this.variety.note(item.id);
     if (speak && item.fala && (source !== 'ambiente' || this.rng() < 0.35)) this._ambientLine(item, { force: source === 'chat' || source === 'comando' });
     this._applyLayout(true);
@@ -1428,11 +1555,30 @@ export class Companion {
   /** Sorteio ambiente (chamado pela máquina de comportamento ao sair do repouso). */
   _pickAmbient() {
     const s = this.store.get();
-    let it = null;
-    while (this.ambientQueue.length && !it) it = this.catalogById.get(this.ambientQueue.shift()) || null;
+    const date = new Date();
+    // Foco junto: continua estudando/treinando do lado dela.
+    if (this.focus) {
+      const fid = this.focus.tipo === 'treino' ? 'treinarJunto' : 'estudarJunto';
+      return { ...this._catalogData(this.catalogById.get(fid), 'suave'), ms: Math.max(2000, this.focus.fim - this.clock.now()) };
+    }
+    // Temporada nova da semana: anuncia uma vez e marca a área do aquário.
+    const season = seasonOf(date);
+    if (this.variety.state.season !== season.id) {
+      this.variety.state.season = season.id;
+      this.variety.save(this.variety.state);
+      if (this.progress.visitArea(season.id) && this._canNag()) this.clock.setTimeout(() => this.say(`Começou a ${season.nome}.`, 'thought', { spontaneous: true }), 300);
+    }
+    // Às vezes uma rotina/mini-história inteira em vez de uma animação solta.
+    if (!this.ambientQueue.length && this.rng() < (this.variety.state.boredom >= 3 ? 0.35 : 0.12)) this._startRoutine(date);
+    let it = this._dequeue();
     const queued = !!it;
     if (!it) it = this.variety.pickAmbient({ filter: (x) => !(x.mover && this.reducedMotion) });
     if (!it) return null;
+    // Energia caótica: emenda mais uma ou duas reações.
+    if (!queued && this.variety.energy(date) === 'caotico' && this.rng() < 0.5) {
+      const extra = this.variety.pickAmbient({ filter: (x) => !x.mover && !x.especial && !x.usa });
+      if (extra) this.ambientQueue.push(extra.id);
+    }
     if (!queued) {
       // Algo raro: aviso visual suave antes (dá para desligar nas configurações).
       if (it.frequencia !== 'comum' && s.avisoRaros && !s.quietMode && !this.bubble) {
@@ -1447,11 +1593,17 @@ export class Companion {
     }
     this.movedFor = null;
     this.ambientItem = it;
-    if (it.fala && this.rng() < 0.35) this.clock.setTimeout(() => this._ambientLine(it), 700);
+    this._noteSeen(it);
+    if (it.fala && !queued && this.rng() < 0.35) this.clock.setTimeout(() => this._ambientLine(it), 700);
     if (it.especial === 'semFiltro') {
       this.clock.setTimeout(() => this._semFiltro(), 0);
       return { anim: 'idle', ms: 200, item: it.id };
     }
+    // Camadas extras de variedade: acessório liberado (óculos, medalha) e lado.
+    const acc = this.progress.acessorios.filter((a) => a.prop === 'oculos' || a.prop === 'medalha');
+    const usaObjeto = it.receita && [].concat(it.receita.objeto || []).length;
+    this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
+    if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
     return this._catalogData(it);
   }
 
@@ -1503,8 +1655,15 @@ export class Companion {
   _ambientLine(item = null, { force = false, categories = null } = {}) {
     const s = this.store.get();
     if (!force && (!s.falasAmbientes || s.quietMode || s.speechFrequency === 'off')) return false;
+    // Interesses que ela contou aparecem de vez em quando.
+    const ints = this.progress.st.interesses || [];
+    if (!item && ints.length && this.rng() < 0.12) {
+      const x = ints[Math.floor(this.rng() * ints.length)];
+      return this.say(`Pensando em ${x} agora. Por quê? Porque sim.`, 'speech', { spontaneous: !force, category: 'ambiente:interesse' });
+    }
     const line = this.variety.pickLine({ item, categories });
     if (!line) return false;
+    this._announceProgress({ novas: this.progress.seeCard(line) });
     return this.say(line.t, 'speech', { spontaneous: !force, category: `ambiente:${line.cat}` });
   }
 
@@ -1518,11 +1677,14 @@ export class Companion {
 
   /** Gestos no modo de interação vindos do renderer (clique, duplo clique, segurar, cócegas, jogar). */
   gesture(name) {
-    if (!this.interaction || !['clique', 'duploClique', 'segurar', 'cocegas', 'jogar'].includes(name)) return false;
+    if (!this.interaction || !['clique', 'duploClique', 'segurar', 'cocegas', 'jogar', 'bolha'].includes(name)) return false;
     this.noteActivity();
-    const ok = this.fireEvent(name);
-    if (ok && this.ambientItem) this.variety.like(this.ambientItem.id);
-    return ok;
+    if (this._gameGesture(name)) return true;
+    if (name === 'bolha') return false;
+    // Curtiu a animação de agora há pouco (adaptação) e ganha XP pelo gesto.
+    if (this.ambientItem && this.clock.now() - this.lastAmbientItemAt < 15000) this.variety.like(this.ambientItem.id);
+    this._progress('gesto', { conta: 'gestos' });
+    return this.fireEvent(name);
   }
 
   /** Item do catálogo pedido por frase no chat ("faz uma dancinha", "selfie"…). */
@@ -1575,6 +1737,11 @@ export class Companion {
     if (instagram && !this.instagram.inside) this.log('info', 'Instagram em primeiro plano.');
     if (!this.instagram.update(now, instagram, cfg, this._canNag() && this.avoid.state !== 'fleeing')) return false;
     // Reincidência: a partir da 3ª bronca em 20 min, raiva de verdade (vermelho).
+    // Durante o foco: puxa de volta sem cobrança (nada de bronca).
+    if (this.focus) {
+      this.say('Volta pro foco quando der. Sem cobrança. Eu espero.', 'speech');
+      return true;
+    }
     this.instagramScolds = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3);
     this.instagramScolds.push(now);
     this._nag(this.instagramScolds.length >= 3 ? 'instagramAngry' : 'instagram', now);
@@ -1650,6 +1817,326 @@ export class Companion {
       if (p) this.say(p.text, 'speech', { spontaneous: true, category: 'musica' });
     }
     return true;
+  }
+
+  // ---------------------------------------------------------------- antitédio
+
+  /** Progressão: XP, conquistas e nível novo viram fala e animação (sem atrapalhar). */
+  _progress(kind, { conta = null, missao = null } = {}) {
+    const lvl = kind ? this.progress.xp(kind) : null;
+    const novas = conta ? this.progress.count(conta) : [];
+    const m = missao ? this.progress.missionEvent(missao) : null;
+    this._announceProgress({ lvl, novas, missao: m });
+  }
+
+  _announceProgress({ lvl = null, novas = [], missao = null } = {}) {
+    const msgs = [];
+    if (missao) msgs.push(`Missão do dia feita: ${missao.txt}.`);
+    for (const q of novas) msgs.push(`Conquista: ${q.nome}!`);
+    if (lvl) msgs.push(`Subi pro nível ${lvl.nivel}: ${lvl.nome}. Shape evoluindo.`);
+    if (!msgs.length) return;
+    this.clock.setTimeout(() => {
+      this.say(msgs.join(' '), 'speech');
+      if (lvl) this.fireEvent('nivel', { speak: false });
+    }, 900);
+  }
+
+  /** Item tocou: entra na coleção de poses e alimenta a memória de "curtiu"/"ignorou". */
+  _noteSeen(item) {
+    if (!item || item.id === 'aviso') return;
+    this.lastAmbientItemAt = this.clock.now();
+    this.lastAmbientAt = this.clock.now();
+    this.progress.log('pose');
+    this._announceProgress({ novas: this.progress.seePose(item) });
+  }
+
+  /** Rotina/mini-história: põe os passos na fila (fala de cada passo quando ele tocar). */
+  _startRoutine(date = new Date()) {
+    if (!this.rotinas.length) return false;
+    const r = pickRoutine(this.rotinas, this.progress.st.rotinas, { rng: this.rng, period: periodOf(date) });
+    if (!r) return false;
+    const steps = routineSteps(r, this.progress.st.rotinas, date).filter((p) => this.catalogById.has(p.anim));
+    this.progress.save(this.progress.st);
+    if (!steps.length) return false;
+    this.ambientQueue.push(...steps.map((p) => ({ id: p.anim, fala: p.fala })));
+    this.log('info', `Rotina: ${r.nome}`);
+    return true;
+  }
+
+  /** Próximo da fila (id simples ou {id, fala}). */
+  _dequeue() {
+    while (this.ambientQueue.length) {
+      const q = this.ambientQueue.shift();
+      const id = typeof q === 'string' ? q : q.id;
+      const it = this.catalogById.get(id);
+      if (!it) continue;
+      if (q.fala) this.clock.setTimeout(() => this.say(q.fala, 'speech', { spontaneous: true }), 400);
+      return it;
+    }
+    return null;
+  }
+
+  /** Tédio do tubarão: tela parada sem novidade → dispara algo novo (respeita as configurações). */
+  _boredomTick(now) {
+    if (!this.started || !this._canIdleAct() || this.focus || this.store.get().ambienteFrequencia === 'desligado') return false;
+    if (now - Math.max(this.lastAmbientAt || 0, this.startedAt || 0) < 6 * 60e3) return false;
+    this.lastAmbientAt = now;
+    if (this.variety.tickBoredom() < 3) return false;
+    if (this.behavior.priority < PRIORITY.AUTO) return false;
+    const data = this._pickAmbient();
+    return data ? this.behavior.request('ambient', { now, data }) : false;
+  }
+
+  // -------- estímulos (stim-friendly)
+
+  /** 💪 Fidget de bíceps: cada clique bomba e o contador sobe. */
+  fidget() {
+    const n = (this.progress.st.contas.fidget || 0) + 1;
+    this._progress(null, { conta: 'fidget', missao: 'fidget' });
+    this.playCatalog('fidget', { source: 'comando', speak: false });
+    this.hideBubble();
+    this.say(`${n}!`, 'speech');
+    return n;
+  }
+
+  /** ✨ Me dá estímulo: animação surpresa (respeita "sem pesadas" e "sem surpresas"). */
+  estimulo() {
+    const it = this.variety.pickAmbient({ filter: (x) => !x.mover && !x.especial });
+    if (!it) return false;
+    this.progress.xp('estimulo');
+    this._announceProgress({ missao: this.progress.missionEvent('estimulo') });
+    return this.playCatalog(it.id, { source: 'comando' });
+  }
+
+  /** Padrão calmante (cardume, cores suaves) por alguns minutos, sem falas. */
+  calma(min = 2) {
+    this.calmUntil = this.clock.now() + min * 60e3;
+    const ok = this._requestCatalog('act', { ...this._catalogData(this.catalogById.get('calma'), 'suave'), ms: min * 60e3 }, this.clock.now(), 'comando');
+    this.hideBubble();
+    return ok;
+  }
+
+  /** Sequência rítmica previsível: marcha e contagem 1-2-3-4 por 30 s. */
+  ritmo(sec = 30) {
+    if (!this._requestCatalog('act', { ...this._catalogData(this.catalogById.get('ritmo'), 'normal'), ms: sec * 1000 }, this.clock.now(), 'comando')) return false;
+    let k = 0;
+    const beat = () => {
+      if (this.behavior.anim && !/^cat_ritmo/.test(this.behavior.anim)) return;
+      this.hideBubble();
+      this.say(String((k % 4) + 1), 'thought');
+      k++;
+      if (k < sec / 1.5) this.clock.setTimeout(beat, 1500);
+    };
+    beat();
+    return true;
+  }
+
+  // -------- foco junto (body doubling)
+
+  startFocus(min = 25, tipo = 'estudo') {
+    const now = this.clock.now();
+    this.focus = { inicio: now, fim: now + min * 60e3, min, tipo, marcas: 0 };
+    const c = this.conversations.create({ id: 'foco', title: 'Foco com o JoJo', kind: 'reminder' });
+    this.conversations.setStatus(c.id, 'running', `Foco: ${min} min. ${tipo === 'treino' ? 'Treinando junto.' : 'Estudando junto, em silêncio.'}`);
+    this._focusAnim(now);
+    this.clock.setTimeout(() => this._focusTick(), 60e3);
+    return `Foco de ${min} min. ${tipo === 'treino' ? 'Eu treino aqui do lado e marco as séries.' : 'Eu estudo aqui do lado, quieto.'} Sem Instagram.`;
+  }
+
+  _focusAnim(now) {
+    if (!this.focus) return;
+    const id = this.focus.tipo === 'treino' ? 'treinarJunto' : 'estudarJunto';
+    this._requestCatalog('act', { ...this._catalogData(this.catalogById.get(id), 'suave'), ms: Math.max(1000, this.focus.fim - now) }, now, 'comando');
+  }
+
+  _focusTick() {
+    const f = this.focus;
+    if (!f) return;
+    const now = this.clock.now();
+    const left = Math.ceil((f.fim - now) / 60e3);
+    if (left <= 0) return this._endFocus(true);
+    this.conversations.setStatus('foco', 'running', `Foco: ${left} min restantes.`);
+    const passed = Math.floor((now - f.inicio) / 60e3);
+    // Marca as séries (treino) ou o tempo (estudo) a cada 5 min, discreto.
+    if (passed > 0 && passed % 5 === 0 && this._canNag()) {
+      f.marcas++;
+      this.say(f.tipo === 'treino' ? `Série ${f.marcas} ✓` : `✓ ${passed} min`, 'thought', { spontaneous: true });
+    }
+    if (!/^cat_(estudarJunto|treinarJunto)/.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT) this._focusAnim(now);
+    this.clock.setTimeout(() => this._focusTick(), 60e3);
+  }
+
+  _endFocus(done) {
+    const f = this.focus;
+    this.focus = null;
+    if (!f) return null;
+    if (!done) {
+      this.conversations.setStatus('foco', 'idle');
+      return 'Foco encerrado. Sem drama.';
+    }
+    this.conversations.setStatus('foco', 'ready', 'Bloco concluído. Pausa de 5 min.');
+    this.progress.log('foco');
+    this._progress('foco', { conta: 'foco', missao: 'foco' });
+    this.fireEvent('parabens', { speak: false });
+    const n = this.progress.st.contas.foco;
+    this.say(`Bloco concluído${n > 1 ? ` (${n} no total)` : ''}. Pausa de 5 min: água e alongamento. Eu deixo.`, 'speech');
+    this.clock.setTimeout(() => {
+      if (this.focus) return;
+      this.fireEvent('pausa', { speak: false });
+      if (this._canNag()) this.say('Pausa acabou. Mais um bloco? /foco', 'speech', { spontaneous: true });
+    }, 5 * 60e3);
+    return null;
+  }
+
+  // -------- mini-jogos
+
+  /** Começa um mini-jogo (pelo id, nome ou sorteado). Devolve o texto para a conversa. */
+  startGame(query = '') {
+    if (!this.games) return 'Sem jogos agora.';
+    const jogo = (query && (this.games.byId.get(query) || this.games.find(query))) || this.games.random(this.progress.st.jogos.ultimo);
+    if (!jogo) return 'Não conheço esse jogo.';
+    this.progress.st.jogos.ultimo = jogo.id;
+    const r = this.games.start(jogo);
+    const g = (this.game = { ...r.game, ate: this.clock.now() + jogo.duracao * 1000, cliques: 0, bolhas: 0 });
+    this.progress.log('jogo');
+    this._announceProgress({ missao: this.progress.missionEvent('jogo') });
+    this.progress.xp('jogoParticipacao');
+    // Jogos de clique precisam do modo de interação (o JoJo para de fugir).
+    if (['cliques', 'bolhas', 'pega', 'cabo', 'esconde'].includes(g.tipo) && !this.interaction) this.enterInteraction('jogo');
+    if (r.sequence) this.ambientQueue.push(...r.sequence.slice(1));
+    const first = r.sequence ? r.sequence[0] : r.anim;
+    if (first) this.playCatalog(first, { source: 'comando', speak: false });
+    if (r.timer === 'reflexo') this.clock.setTimeout(() => this._reflexGo(g), 2000 + this.rng() * 3000);
+    this.clock.setTimeout(() => this._gameTimeout(g), jogo.duracao * 1000);
+    this._applyLayout(true);
+    return r.text;
+  }
+
+  _reflexGo(g) {
+    if (this.game !== g) return;
+    g.goAt = this.clock.now();
+    this.hideBubble();
+    this.say(g.id === 'corrida' ? 'JÁ!' : 'AGORA!', 'speech');
+  }
+
+  _gameTimeout(g) {
+    if (this.game !== g) return;
+    let text;
+    if (g.tipo === 'cliques') text = this._finishGame(g.cliques >= 15, `${g.cliques} cliques em 10 s. ${g.cliques >= 15 ? 'Dedo de campeã.' : 'Dá pra mais.'}`);
+    else if (g.tipo === 'bolhas') text = this._finishGame(g.bolhas >= 10, `${g.bolhas} bolhas estouradas. ${g.bolhas >= 10 ? 'Destruidora.' : 'Fracote. Brincadeira.'}`);
+    else text = this._finishGame(false, g.tipo === 'pega' || g.tipo === 'esconde' ? 'Tempo! Ganhei. Sou rápido demais.' : 'Acabou o tempo.');
+    this.say(text, 'speech');
+  }
+
+  _finishGame(win, text, anim = null) {
+    this.game = null;
+    if (win) {
+      this.progress.log('vitoria');
+      this._progress('jogoVitoria', { conta: 'vitorias' });
+    }
+    const a = anim || (win ? 'aplaudir' : 'dancaVitoria');
+    this.clock.setTimeout(() => this.playCatalog(a, { source: 'comando', speak: false }), 200);
+    this._applyLayout(true);
+    return text;
+  }
+
+  /** Resposta de texto ao jogo em andamento (ou null se não for jogo de texto). */
+  _gameAnswer(text) {
+    const g = this.game;
+    if (!g || !this.games) return null;
+    if (/^(parar|sair|chega|para o jogo|cancelar)\b/i.test(normalizeText(text))) {
+      this.game = null;
+      return 'Jogo encerrado. Medrosa. Brincadeira.';
+    }
+    const r = this.games.answer(g, text, { now: this.clock.now() });
+    if (r.done) return this._finishGame(!!r.win, r.text, r.anim);
+    if (r.anim) this.playCatalog(r.anim, { source: 'comando', speak: false });
+    return r.text;
+  }
+
+  /** Gesto durante jogo de clique (cliques, bolhas, esconde, pega). true = consumido. */
+  _gameGesture(name) {
+    const g = this.game;
+    if (!g) return false;
+    if (name === 'bolha' && g.tipo === 'bolhas') return (g.bolhas++, true);
+    if (name === 'clique' && g.tipo === 'cliques') return (g.cliques++, true);
+    if (name === 'clique' && (g.tipo === 'esconde' || g.tipo === 'pega')) {
+      this.say(this._finishGame(true, g.tipo === 'esconde' ? 'Me achou! Tubarão desse tamanho não se esconde.' : 'Me pegou! Dessa vez.'), 'speech');
+      return true;
+    }
+    return false;
+  }
+
+  /** Pega-pega: foge um pouquinho quando o cursor chega perto (modo de interação). */
+  _gamePega(now) {
+    const g = this.game;
+    if (!g || g.tipo !== 'pega' || !this.interaction || this.dragging || this.mover.active) return;
+    const r = this._rects();
+    if (distPointRect(this.cursor, r.visual) > 50 || now - (g.lastHop || 0) < 1200) return;
+    g.lastHop = now;
+    const disp = this._currentDisplay();
+    if (!disp) return;
+    const dir = this.cursor.x > r.visual.x + r.visual.width / 2 ? -1 : 1;
+    const to = { x: clamp(this.pos.x + dir * 120, disp.workArea.x, disp.workArea.x + disp.workArea.width - r.box.width), y: this.pos.y };
+    this.mover.start(this.pos, to, { speed: 260, easing: 'out', now, kind: 'flee' });
+  }
+
+  // -------- conversa: comandos e adaptação
+
+  /** Frases do antitédio no chat. Devolve texto ou null. */
+  _antitedioChat(text) {
+    const n = normalizeText(text);
+    const date = new Date();
+    const p = this.progress;
+    p.noteHour(date);
+    p.log('chat', date);
+    this._progress('chat', { conta: 'chat', missao: 'chat' });
+    // Gostou/não gostou da última animação ambiente (adaptação).
+    const recent = this.ambientItem && this.clock.now() - this.lastAmbientItemAt < 60e3;
+    if (recent && /\b(nao gosto dessa|para com isso|chega disso|odeio isso|nao faz mais isso)\b/.test(n)) {
+      const id = this.ambientItem.id;
+      this.variety.ignore(id);
+      const vs = this.variety.state;
+      if ((vs.ignored[id] || 0) >= 2) vs.desligadas = [...new Set([...(vs.desligadas || []), id])];
+      this.variety.save(vs);
+      return `Tá. Menos "${this.ambientItem.nome}" daqui pra frente.`;
+    }
+    if (recent && /\b(adorei|amei|gostei|faz de novo|de novo|mais uma vez)\b/.test(n)) {
+      this.variety.like(this.ambientItem.id);
+      if (/de novo|mais uma vez/.test(n)) this.playCatalog(this.ambientItem.id, { source: 'chat', speak: false });
+      return 'Óbvio que gostou. Anotado.';
+    }
+    if (/\bbebi (agua|água)\b/.test(n)) {
+      this._announceProgress({ missao: p.missionEvent('agua', date) });
+      return 'Boa. Hidratação é treino.';
+    }
+    if (/\balonguei\b/.test(n)) {
+      this._announceProgress({ missao: p.missionEvent('alongar', date) });
+      return 'Isso. Corpo agradece.';
+    }
+    // Dia sem vontade de interagir: fica por perto, quieto.
+    if (/\b(hoje (nao|não) (quero|to a fim de) (conversa|papo|falar)|me deixa quiet[ao] hoje|hoje (eu )?quero sossego)\b/.test(n)) {
+      p.st.diasQuietos = dayKey(date);
+      p.save(p.st);
+      return 'Fico por perto. Quieto. Se precisar, tô aqui.';
+    }
+    // Humor do dia dela muda o ritmo do dia.
+    if (/\b(to|tou|estou|t[oô]) (cansad[ao]|exaust[ao]|esgotad[ao]|sem energia)\b/.test(n)) {
+      p.st.humorDia = { dia: dayKey(date), modo: 'calmo' };
+      p.save(p.st);
+    } else if (/\b(to|tou|estou) (animad[ao]|feliz|empolgad[ao]|com energia|pilhad[ao])\b/.test(n)) {
+      p.st.humorDia = { dia: dayKey(date), modo: 'pilhado' };
+      p.save(p.st);
+    }
+    // Interesses que ela conta.
+    const m = n.match(/\b(eu gosto de|adoro|amo|meu interesse e|curto muito) (.{3,40})$/);
+    if (m && !/\bvoce\b|\bvc\b|\bjojo\b/.test(m[2])) {
+      const it = m[2].trim();
+      p.st.interesses = [...new Set([it, ...(p.st.interesses || [])])].slice(0, 10);
+      p.save(p.st);
+      return `Anotado: ${it}. Vou lembrar disso.`;
+    }
+    return null;
   }
 
   // ---------------------------------------------------------------- Google Agenda
@@ -1929,6 +2416,11 @@ export class Companion {
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
     }
+    // Jogo de bolhas: espaço em volta do JoJo para as bolhas.
+    if (this.game && this.game.tipo === 'bolhas' && this.interaction) {
+      const k = s.size;
+      attachments.push({ rect: { x: r.box.x - 150 * k, y: r.box.y - 110 * k, width: r.box.width + 300 * k, height: r.box.height + 110 * k } });
+    }
     // Animação/efeito passando da caixa: a janela cresce o necessário (sem parede invisível).
     const extra = this._animRoom();
     if (extra) {
@@ -1970,6 +2462,13 @@ export class Companion {
       activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
       reducedMotion: this.reducedMotion,
       micro: s.microMovimentos || 'normal',
+      // Olhar acompanha o cursor de leve quando está perto (micromovimento).
+      gaze: this._gaze(r),
+      volume: s.volume ?? 60,
+      // Mini-jogo de bolhas: o renderer solta bolhas clicáveis em volta.
+      minigame: this.game && this.game.tipo === 'bolhas' && this.interaction ? { tipo: 'bolhas', ate: this.game.ate - now + Date.now() } : null,
+      // Acessórios liberados por nível aparecem às vezes (camada extra de variedade).
+      layer: this.behavior.state === 'ambient' ? this.layer || null : null,
       mode: this.wired ? 'wired' : null,
       costume: this.costume,
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
@@ -1983,6 +2482,15 @@ export class Companion {
       this.lastRender = key;
       this.overlay.render(state);
     }
+  }
+
+  _gaze(r) {
+    if (this.store.get().microMovimentos === 'desligado') return null;
+    const dx = this.cursor.x - r.head.x;
+    const dy = this.cursor.y - r.head.y;
+    if (Math.hypot(dx, dy) > 700) return null;
+    const x = Math.max(-1, Math.min(1, dx / 350)) * (this.facing >= 0 ? 1 : -1);
+    return { x: Math.round(x * 10) / 10, y: Math.round(Math.max(-1, Math.min(1, dy / 300)) * 10) / 10 };
   }
 
   /** Espaço extra (px na escala 1) da animação atual, da anterior (transição) e do efeito. */

@@ -689,3 +689,35 @@ test('Google Agenda: link colado no chat conecta (servidor local falso) e o JoJo
     server.close();
   }
 });
+
+test('antitédio: Central mostra a coleção, bolhas aparecem e estouram, foco junto começa', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
+    await app.evaluate(() => globalThis.__jojo.companion.chat('/bolhas'));
+    let n = 0;
+    for (let i = 0; i < 20 && !n; i++) {
+      await sleep(200);
+      n = await win.evaluate(() => document.querySelectorAll('.game-bubble').length);
+    }
+    assert.ok(n > 0, 'bolhas na tela');
+    await win.evaluate(() => document.querySelector('.game-bubble').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })));
+    await sleep(200);
+    assert.ok((await app.evaluate(() => globalThis.__jojo.companion.game && globalThis.__jojo.companion.game.bolhas)) >= 1, 'estourou');
+    const r = await app.evaluate(() => globalThis.__jojo.companion.chat('/foco 15'));
+    assert.match(r.text, /Foco de 15 min/);
+    const centralP = app.waitForEvent('window');
+    await app.evaluate(() => globalThis.__jojo.companion.openApp('colecao'));
+    const central = await centralP;
+    await central.waitForSelector('#colecao', { state: 'attached' });
+    let txt = '';
+    for (let i = 0; i < 25 && !/Nível/.test(txt); i++) {
+      await sleep(200);
+      txt = await central.evaluate(() => document.querySelector('#colecao')?.innerText || '');
+    }
+    assert.match(txt, /Nível 1/);
+    assert.match(txt, /Mini-jogos/);
+  } finally {
+    await quit(app);
+  }
+});

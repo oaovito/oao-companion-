@@ -156,6 +156,8 @@ export class Effects {
       else if (f === 'fantasma') this._ghostFin(ctx, now, 0.28);
       else if (f === 'dorsal') this._ghostFin(ctx, now, 1);
       else if (f === 'peixinho') this._littleFish(ctx, now);
+      else if (f === 'cardume') this._school(ctx, now);
+      else if (f === 'auraCiclo') this._aura(ctx, now, `hsl(${Math.round((now / 120) % 360)}, 70%, 65%)`);
     }
   }
 
@@ -228,8 +230,47 @@ export class Effects {
     ctx.restore();
   }
 
+  // Cardume hipnótico: três peixinhos num oito lento e previsível.
+  _school(ctx, now) {
+    for (let i = 0; i < 3; i++) {
+      const t = now / 2600 + i * 0.5;
+      const x = this.cx + Math.sin(t * 2) * 70;
+      const y = 80 + Math.sin(t * 4) * 18;
+      const dir = Math.cos(t * 2) >= 0 ? 1 : -1;
+      ctx.save();
+      ctx.globalAlpha *= 0.85;
+      ctx.translate(x, y);
+      ctx.scale(dir * 0.8, 0.8);
+      ctx.fillStyle = ['#f08a2c', '#ffd84a', '#7fb6e8'][i];
+      ctx.strokeStyle = OUTLINE;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 9, 5, 0, 0, Math.PI * 2);
+      ctx.moveTo(-8, 0);
+      ctx.lineTo(-15, -5);
+      ctx.lineTo(-15, 5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  /** Ondinha na água onde o cursor passa (modo de interação). */
+  ripple(now, x, y) {
+    if (this.particles.filter((p) => p.kind === 'onda').length > 8) return;
+    this.particles.push({ kind: 'onda', born: now, life: 900, x, y, vx: 0, vy: 0, size: 6 });
+  }
+
   _fxParticle(ctx, p, x, y, t) {
     switch (p.kind) {
+      case 'onda':
+        ctx.strokeStyle = 'rgba(120, 180, 230, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(x, y, p.size + t * 22, (p.size + t * 22) * 0.45, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        break;
       case 'bolhas':
         ctx.fillStyle = 'rgba(200, 235, 255, 0.35)';
         ctx.strokeStyle = 'rgba(120, 180, 230, 0.95)';

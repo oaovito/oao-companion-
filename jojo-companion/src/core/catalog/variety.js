@@ -44,6 +44,15 @@ export function seasonOf(date) {
   return SEASONS[(date.getFullYear() * 53 + isoWeek(date)) % SEASONS.length];
 }
 
+// Animações "pesadas" (muito movimento ou efeito forte): somem com "sem animações pesadas".
+const HEAVY_BODY = new Set(['gira', 'rola', 'pula', 'jogado', 'dancaSemRitmo', 'treme', 'desmaia', 'teleporte', 'evolui', 'circula', 'danca', 'viral', 'dorsalCruza', 'sobeDaBorda']);
+const HEAVY_FX = new Set(['confete', 'aura', 'auraFera', 'vento', 'chuva', 'lagrimas', 'velocidade', 'neve']);
+export function isHeavy(it) {
+  const r = it && it.receita;
+  if (!r) return false;
+  return [].concat(r.corpo || []).some((c) => HEAVY_BODY.has(c)) || [].concat(r.fx || []).some((f) => HEAVY_FX.has(f));
+}
+
 export const FREQ_DEFAULT = Object.freeze({ comum: 10, rara: 2.5, easter: 0.35 });
 const MEMORY = 30;
 
@@ -112,6 +121,7 @@ export class VarietyEngine {
     const prefs = this.getPrefs();
     const freq = this._freq();
     if (prefs.surpresas === false && it.frequencia !== 'comum') return 0;
+    if (prefs.semPesadas && isHeavy(it)) return 0;
     let w = freq[it.frequencia] ?? freq.comum;
     if (w <= 0) return 0;
     const t = this.now();

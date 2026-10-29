@@ -1,6 +1,6 @@
 # Catálogo de animações do JoJo
 
-Gerado por `scripts/catalog-doc.mjs` a partir de `assets/catalog/animacoes.json` (264 animações únicas, cada uma em 3 intensidades: discreta, normal e exagerada).
+Gerado por `scripts/catalog-doc.mjs` a partir de `assets/catalog/animacoes.json` (270 animações únicas, cada uma em 3 intensidades: discreta, normal e exagerada).
 
 ## Como disparar
 
@@ -167,6 +167,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | **Sentir calor** (`calor`) | Base 108 | sorteio ambiente; /anim calor | 3,0 s | não | rara |
 | **Reagir à chuva** (`chuva`) | Base 109 | sorteio ambiente; /anim chuva | 3,4 s | não | rara |
 | **Reagir ao vento** (`vento`) | Base 110 | sorteio ambiente; /anim vento | 3,0 s | não | rara |
+| **Abrir um baú do tesouro** (`tesouro`) | — | sorteio ambiente; /anim tesouro | 3,0 s | não | rara |
 
 ## Vaidade e fisiculturismo
 
@@ -376,6 +377,16 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 |---|---|---|---|---|---|
 | **Nojo de doce** (`nojo`) | — | /anim nojo | 3,2 s | não | comum |
 
+## estimulo
+
+| Animação | Listas | Gatilho | Duração | Loop | Frequência |
+|---|---|---|---|---|---|
+| **Sequência rítmica previsível** (`ritmo`) | — | “ritmo”; /anim ritmo | 4,0 s | sim | comum |
+| **Padrão visual calmante (cardume e cores suaves)** (`calma`) | — | “calma”; “me acalma”; /anim calma | 6,0 s | sim | comum |
+| **Fidget de bíceps (bombar)** (`fidget`) | — | /anim fidget | 0,9 s | não | comum |
+| **Estudar junto, em silêncio** (`estudarJunto`) | — | /anim estudarJunto | 6,0 s | sim | comum |
+| **Treinar junto, marcando séries** (`treinarJunto`) | — | /anim treinarJunto | 4,0 s | sim | comum |
+
 ## Itens que são do sistema
 
 - **Versão estática de cada estado** (Base 120, Sem pudor 116, Ambiente 114): redução de movimento do Windows ou “Reduzir movimento”; o renderer usa o quadro estático de toda animação.
@@ -383,7 +394,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 
 ## Falas ambientes
 
-135 falas em `assets/dialogue/falas-ambientes.json` (até 80 caracteres). Cada animação aponta uma categoria em `fala`; o motor escolhe uma fala dessa categoria, combinando com a animação, o período do dia e a temporada da semana, sem repetir em sequência.
+145 falas em `assets/dialogue/falas-ambientes.json` (até 80 caracteres). Cada animação aponta uma categoria em `fala`; o motor escolhe uma fala dessa categoria, combinando com a animação, o período do dia e a temporada da semana, sem repetir em sequência.
 
 | Categoria | Falas | Exemplo |
 |---|---|---|
@@ -402,5 +413,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | cantada | 4 | Você é tipo proteína: essencial na minha dieta. |
 | provocacao | 4 | Sabia que você ia errar. E sabia que ia acertar depois. |
 | cantar | 3 | Lá-lá-lá… afinado é para os fracos. |
+| dicas | 6 | Dizem que existe uma pose épica escondida. Rara. Muito rara. |
+| constancia | 4 | Um pouco todo dia vale mais que muito um dia só. |
 
 Desligadas por contradizer a regra de o JoJo ser contra dormir: #84 “Dormir bem é o melhor suplemento.”, #99 “Vai dormir. Músculo cresce no descanso.”.

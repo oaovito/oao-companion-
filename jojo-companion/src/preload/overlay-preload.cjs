@@ -1,8 +1,8 @@
 // Ponte mínima e validada entre o overlay (renderer isolado) e o processo principal.
 const { contextBridge, ipcRenderer } = require('electron');
 
-const ACTIONS = new Set(['pet', 'eat', 'play']);
-const GESTURES = new Set(['clique', 'duploClique', 'segurar', 'cocegas', 'jogar']);
+const ACTIONS = new Set(['pet', 'eat', 'play', 'fidget', 'estimulo']);
+const GESTURES = new Set(['clique', 'duploClique', 'segurar', 'cocegas', 'jogar', 'bolha']);
 
 contextBridge.exposeInMainWorld('jojo', {
   getAssets: () => ipcRenderer.invoke('jojo:get-assets'),
