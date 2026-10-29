@@ -44,6 +44,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços, inclina a cabeça e abana o rabo.
+- "Eu deveria jogar lol?": caga no chão, pega e oferece — "Passa na cara de uma vez." (estado `poop`, 7 s).
 - Publicação: tag `v*` → Release com `JoJoCompanion.exe` (workflow do Windows).
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`

@@ -293,3 +293,39 @@ test('em repouso o JoJo nunca fica parado: toda animação de idle se mexe', () 
   const poses = [0, 750, 1500, 2250].map((t) => JSON.stringify(an.sample(t + 1).pose));
   assert.equal(new Set(poses).size, 4);
 });
+
+test('"eu deveria jogar lol?": caga no chão, pega e oferece dizendo "Passa na cara de uma vez."', async () => {
+  const e = started();
+  const flush = async () => {
+    for (let k = 0; k < 8; k++) await Promise.resolve();
+  };
+  for (const msg of ['eu deveria jogar lol?', 'Devo jogar LoL?', 'posso jogar league of legends?', 'bora de lol']) {
+    let done = null;
+    e.companion.chat(msg).then((r) => (done = r));
+    e.clock.advance(700);
+    await flush();
+    assert.equal(e.companion.behavior.state, 'poop', msg);
+    e.clock.advance(4000);
+    await flush();
+    assert.equal(done, null, 'ainda não ofereceu');
+    e.clock.advance(1200);
+    await flush();
+    assert.equal(done && done.text, 'Passa na cara de uma vez.');
+    assert.equal(e.companion.behavior.state, 'poop', 'oferecendo');
+    e.clock.advance(3000);
+    await flush();
+    assert.notEqual(e.companion.behavior.state, 'poop', 'volta ao normal');
+  }
+  const an = new Animator(ANIMS);
+  const at = (t) => {
+    an.play('poop', 0, { restart: true, variant: 'poop' });
+    return an.sample(7000 * t);
+  };
+  assert.equal(at(0.35).pose.propPoop, 1, 'cocô no chão');
+  assert.ok(at(0.2).pose.moodAngry > 0.4, 'vermelho de força');
+  assert.equal(at(0.75).pose.poopHand, 1, 'cocô na mão');
+  assert.equal(at(0.75).pose.propPoop, 0, 'chão limpo depois de pegar');
+  assert.equal(at(0.5).flags.stink, true, 'mau cheiro e moscas');
+  const parts = RIG.groups.flatMap((g) => g.parts);
+  assert.ok(parts.some((p) => p.showIf === 'propPoop') && parts.some((p) => p.showIf === 'poopHand'));
+});

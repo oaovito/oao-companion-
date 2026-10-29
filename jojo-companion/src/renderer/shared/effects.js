@@ -43,6 +43,8 @@ export class Effects {
     if (flags.dust === true && every('dust', 120)) this._spawn('dust', now);
     if (flags.sparkle === true && every('sparkle', 160)) this._spawn('sparkle', now, 0, head);
     if (flags.sweat && every('sweat', 850)) this._spawn('sweat', now, 0, head);
+    if (flags.stink && every('stink', 260)) this._spawn('stink', now);
+    if (flags.stink && every('fly', 700) && this.particles.filter((p) => p.kind === 'fly').length < 4) this._spawn('fly', now);
     this.particles = this.particles.filter((p) => now - p.born < p.life);
   }
 
@@ -68,6 +70,12 @@ export class Effects {
       case 'powderPuff':
         this.particles.push({ ...base, kind: 'puff', life: 700, x: head.x + (k - 0.5) * 30, y: head.y + 44, vx: (k - 0.5) * 50, vy: -18, size: 3 + r() * 3 });
         break;
+      case 'stink':
+        this.particles.push({ ...base, life: 1400, x: this.cx + 20 + r() * 50, y: this.g - 10 - r() * 30, vx: -6 + r() * 12, vy: -26, size: 10 + r() * 6 });
+        break;
+      case 'fly':
+        this.particles.push({ ...base, life: 3200, x: this.cx + 30 + r() * 30, y: this.g - 40 - r() * 40, vx: 0, vy: 0, size: 3, phase: r() * 6.28 });
+        break;
       case 'sparkle':
         this.particles.push({ ...base, life: 700, x: this.cx - 70 + r() * 140, y: 20 + r() * (this.g - 60), vx: 0, vy: -6, size: 4 + r() * 4 });
         break;
@@ -89,6 +97,8 @@ export class Effects {
       else if (p.kind === 'dust') this._puff(ctx, x, y, p.size * (1 + t));
       else if (p.kind === 'sparkle') this._star(ctx, x, y, p.size * (1 - Math.abs(t - 0.5)));
       else if (p.kind === 'sweat') this._drop(ctx, x, y, p.size);
+      else if (p.kind === 'stink') this._stink(ctx, x, y, p.size, t);
+      else if (p.kind === 'fly') this._fly(ctx, p.x + Math.cos(p.phase + t * 18) * 18, p.y + Math.sin(p.phase + t * 25) * 10, now);
       else if (p.kind === 'puff') this._whitePuff(ctx, x, y, p.size * (1 + t));
       ctx.restore();
     }
@@ -132,6 +142,34 @@ export class Effects {
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+  }
+
+  // Linhas onduladas verdes de mau cheiro.
+  _stink(ctx, x, y, s, t) {
+    ctx.strokeStyle = 'rgba(110, 160, 40, 0.85)';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (let i = 0; i <= 8; i++) {
+      const yy = y - (i / 8) * s * 1.6;
+      const xx = x + Math.sin(i * 1.2 + t * 8) * s * 0.3;
+      if (i === 0) ctx.moveTo(xx, yy);
+      else ctx.lineTo(xx, yy);
+    }
+    ctx.stroke();
+  }
+
+  _fly(ctx, x, y, now) {
+    ctx.fillStyle = 'rgba(200, 220, 255, 0.8)';
+    const flap = Math.sin(now / 20) * 2;
+    ctx.beginPath();
+    ctx.ellipse(x - 2, y - 2 - flap, 2.6, 1.4, -0.5, 0, Math.PI * 2);
+    ctx.ellipse(x + 2, y - 2 - flap, 2.6, 1.4, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = OUTLINE;
+    ctx.beginPath();
+    ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   _drop(ctx, x, y, s) {

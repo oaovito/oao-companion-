@@ -58,7 +58,12 @@
     "gagVein": "#4a0f2c",
     "gagShine": "#ffd9df",
     "slime": "#e98aa0",
-    "heart": "#e8344e"
+    "heart": "#e8344e",
+    "poop": "#6b3f1d",
+    "poopDark": "#3b200d",
+    "poopShine": "#b07a42",
+    "corn": "#f2c94c",
+    "poopSlime": "#8a6a2c"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
@@ -467,6 +472,44 @@
           "parent": "foreR",
           "showIf": "propShaker",
           "path": "M145,134 L161,134 L161,141 L145,141 Z"
+        },
+        {
+          "id": "poopHandBlob",
+          "fill": "poop",
+          "path": "M140,150 C138,142 146,138 152,140 C152,134 160,132 162,138 C168,140 168,148 164,152 C168,156 166,164 158,164 L146,164 C140,164 138,156 140,150 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandLines",
+          "fill": "poopDark",
+          "path": "M144,156 C150,153 158,153 164,156 C158,155 150,155 144,156 Z M146,146 C152,143 158,143 162,146 C158,145 152,145 146,146 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandShine",
+          "fill": "poopShine",
+          "alpha": 0.8,
+          "path": "M148,150 C149,147 152,146 153,148 C151,148 150,149 148,150 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandCorn",
+          "fill": "corn",
+          "path": "M156,150 L159,149 L159,152 L156,152 Z M147,159 L150,159 L149,162 L146,161 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandDrip",
+          "fill": "poopSlime",
+          "alpha": 0.9,
+          "dy": "poopDrip",
+          "path": "M150,163 C150,168 148,172 150,175 C152,177 154,175 154,172 C154,169 153,166 153,163 Z M160,162 C160,166 158,169 160,171 C162,172 163,170 163,168 C163,166 162,164 162,162 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
         }
       ],
       "hideIf": "mooning"
@@ -796,6 +839,63 @@
           "fill": "powder",
           "showIf": "propPowder",
           "path": "M104,161 C112,159 132,159 142,161 C134,164 112,164 104,161 Z"
+        },
+        {
+          "id": "poopPuddle",
+          "fill": "poopSlime",
+          "alpha": 0.85,
+          "path": "M96,166 C100,160 146,160 150,166 C146,170 100,170 96,166 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopPile",
+          "fill": "poop",
+          "path": "M104,165 C102,157 110,154 116,155 C112,148 118,141 124,143 C122,136 128,130 132,134 C138,138 136,144 132,146 C140,147 142,155 136,158 C144,159 144,166 138,167 L108,167 C105,167 104,166 104,165 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopLines",
+          "fill": "poopDark",
+          "path": "M108,160 C116,157 128,157 138,160 C128,159 118,159 108,160 Z M114,151 C120,148 128,148 134,151 C128,150 120,150 114,151 Z M120,141 C124,139 128,139 131,141 C128,140 124,140 120,141 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopShineF",
+          "fill": "poopShine",
+          "alpha": 0.8,
+          "path": "M112,158 C113,155 116,154 117,156 C115,156 114,157 112,158 Z M125,147 C126,145 128,145 129,146 C127,146 126,147 125,147 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopCorn",
+          "fill": "corn",
+          "path": "M110,162 L113,161 L113,164 L110,164 Z M129,153 L132,152 L132,155 L129,155 Z M120,158 L123,158 L122,161 L119,160 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
         }
       ]
     }

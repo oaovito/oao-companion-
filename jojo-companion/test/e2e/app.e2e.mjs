@@ -527,3 +527,18 @@ test('atualização automática: acha a versão nova, baixa e confere o arquivo'
     server.close();
   }
 });
+
+test('"eu deveria jogar lol?": renderer mostra a cena e a oferta no fim', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
+    const p = app.evaluate(() => globalThis.__jojo.companion.chat('eu deveria jogar lol?'));
+    await sleep(1500);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.anim), 'poop');
+    const r = await p;
+    assert.equal(r.text, 'Passa na cara de uma vez.');
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.flags.stink), true);
+  } finally {
+    await quit(app);
+  }
+});

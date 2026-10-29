@@ -120,7 +120,7 @@ export class Animator {
       name: this.current.name,
       t,
       done: !anim.loop && now - start >= dur,
-      flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts, sweat: !!anim.sweat },
+      flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts, sweat: !!anim.sweat, stink: !!anim.stink },
     };
   }
 

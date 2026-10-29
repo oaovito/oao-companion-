@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.18.0 — 2026-10-29
+
+### Adicionado
+- "Eu deveria jogar lol?" (e variações: "devo jogar lol?", "posso jogar league of
+  legends?", "bora de lol"): o JoJo olha pros lados, agacha vermelho de força
+  tremendo, solta um cocô no chão (com milho, poça, brilho molhado), suspira
+  aliviado, pega com a mão — pingando, com moscas e mau cheiro verde — e oferece
+  dizendo **"Passa na cara de uma vez."** (7 s).
+- Efeitos: linhas de mau cheiro e moscas (`stink`).
+
 ## 0.17.0 — 2026-10-29
 
 ### Adicionado
