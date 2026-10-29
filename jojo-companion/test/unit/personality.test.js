@@ -28,7 +28,7 @@ test('perfil: padrões e validação', () => {
   assert.equal(sanitizePersonality({ tratamento: 'Mel' }).settings.nomeSerio, 'Mel');
 });
 
-test('frases: sem palavrões nem humor com drogas quando desligados; nunca usam corpo/peso', () => {
+test('frases: sem palavrões nem humor com drogas quando desligados; lembrete de comida não insulta o corpo dela', () => {
   const pb = new PhraseBook(PHRASES, { rng: seededRng(2), filter: phraseFilter({ palavroes: 'nenhum', humorDrogas: false }) });
   const bad = /porra|caralho|merda|puta|escobar|scarface|cheir|cocaína/i;
   for (const cat of Object.keys(PHRASES.categories)) {
@@ -38,7 +38,9 @@ test('frases: sem palavrões nem humor com drogas quando desligados; nunca usam 
     }
   }
   const all = JSON.stringify(PHRASES.categories);
-  assert.ok(!/gord|magr|barriga|peso|engord/i.test(all), 'nenhuma fala usa peso ou corpo como insulto');
+  // Sem pudor no geral; só o lembrete de comida (dirigido a ela) não insulta corpo/peso.
+  const lembrete = JSON.stringify(loadJSON('assets/dialogue/pt-BR.json').categories.foodReminder);
+  assert.ok(!/gord|magr|barriga|peso|engord/i.test(lembrete), 'lembrete não insulta o corpo da Emanuele');
   for (const c of ['instagram', 'foodReminder', 'achievement', 'quietAck', 'scare']) assert.ok(PHRASES.categories[c], c);
 });
 

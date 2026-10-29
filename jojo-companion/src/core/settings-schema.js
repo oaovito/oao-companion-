@@ -1,7 +1,7 @@
 // Esquema das configurações: padrões, validação, migração de versão.
 // Qualquer campo inválido volta ao padrão sem invalidar o arquivo inteiro.
 
-export const SETTINGS_VERSION = 1;
+export const SETTINGS_VERSION = 2;
 
 export const DEFAULTS = Object.freeze({
   version: SETTINGS_VERSION,
@@ -17,7 +17,7 @@ export const DEFAULTS = Object.freeze({
   sounds: false,                // sons desativados por padrão
   interactionHotkey: 'Control+Alt+J',
   interactionTimeoutSec: 45,    // saída automática do modo de interação (10 – 600)
-  startWithWindows: false,
+  startWithWindows: true,       // inicia junto com o Windows (desmarcável)
   fullscreenBehavior: 'hide',   // hide | pause | ignore
   avoidFallback: 'fade',        // fade | hide  (sem espaço seguro / perseguição)
   reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
@@ -115,6 +115,10 @@ export function migrate(obj, issues = []) {
     // v0 (hipotético/manual): "margin" → safetyMargin; "hotkey" → interactionHotkey.
     if ('margin' in o && !('safetyMargin' in o)) o.safetyMargin = o.margin;
     if ('hotkey' in o && !('interactionHotkey' in o)) o.interactionHotkey = o.hotkey;
+  }
+  if (v < 2) {
+    // v2: "iniciar com o Windows" passou a vir ligado; quem tinha o padrão antigo ganha o novo.
+    if (o.startWithWindows === false) o.startWithWindows = true;
   }
   return o;
 }

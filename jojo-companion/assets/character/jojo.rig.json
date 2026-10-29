@@ -1223,7 +1223,8 @@
           "id": "handClawR",
           "path": "M153,150 L157,156 L150,155ZM146,155 L147,161 L141,157Z",
           "fill": "cream",
-          "parent": "foreR"
+          "parent": "foreR",
+          "hideIf": "finger"
         },
         {
           "id": "benchPlate",
@@ -1294,22 +1295,47 @@
       "hideIf": "mooning",
       "parts": [
         {
-          "id": "middleFinger",
+          "id": "handFist",
           "fill": "body",
           "parent": "foreR",
-          "path": "M147,154 C147,164 148,176 151,181 C154,176 155,164 155,154 Z"
+          "path": "M138,148 C138,143 142,141 146,142 L157,142 C161,141 165,143 165,148 L165,163 C165,167 161,169 157,169 L146,169 C141,169 138,166 138,162 Z"
         },
         {
-          "id": "middleNail",
+          "id": "handMiddle",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M147,167 L147,192 C147,197 156,197 156,192 L156,167 Z"
+        },
+        {
+          "id": "handThumb",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M137,152 C132,154 132,162 138,164 L150,163 C153,162 153,157 150,156 Z"
+        }
+      ]
+    },
+    {
+      "id": "fingerDetail",
+      "showIf": "finger",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "handFolded",
+          "fill": "muscle",
+          "parent": "foreR",
+          "path": "M139,166 C139,171 146,172 146,167 L145,167 C145,170 140,170 140,166 Z M157,166 C157,171 164,171 164,166 L163,166 C163,169 158,169 158,166 Z M159,160 C163,160 163,165 159,165 L159,164 C162,164 162,161 159,161 Z"
+        },
+        {
+          "id": "handCreases",
+          "fill": "muscle",
+          "parent": "foreR",
+          "path": "M148,176 L155,176 L155,177.4 L148,177.4 Z M148,184 L155,184 L155,185.4 L148,185.4 Z M141,155 L148,155 L148,156.2 L141,156.2 Z"
+        },
+        {
+          "id": "handNail",
           "fill": "cream",
           "parent": "foreR",
-          "path": "M149,173 L153,173 L153,177 C153,181 149,181 149,177 Z"
-        },
-        {
-          "id": "fistKnuckles",
-          "fill": "body",
-          "parent": "foreR",
-          "path": "M140,150 C140,144 146,142 150,146 C154,142 160,144 160,150 C160,158 140,158 140,150 Z"
+          "path": "M149,188 L154,188 L154,192 C154,194.5 149,194.5 149,192 Z"
         }
       ]
     },

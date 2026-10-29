@@ -505,7 +505,8 @@ function main() {
     app.on('will-quit', () => globalShortcut.unregisterAll());
 
     registerHotkey();
-    applyAutostart();
+    // Testes automáticos não registram o app no Windows sozinhos (só quando o teste pede).
+    if (!TEST) applyAutostart();
     startFullscreenWatch();
     companion.start();
     trayCtl.refresh();

@@ -196,7 +196,7 @@ test('configurações: valores inválidos voltam ao padrão, faixas são limitad
 
 test('configurações: padrões exigidos (sons off, iniciar com Windows off, margem 100)', () => {
   assert.equal(DEFAULTS.sounds, false);
-  assert.equal(DEFAULTS.startWithWindows, false);
+  assert.equal(DEFAULTS.startWithWindows, true);
   assert.equal(DEFAULTS.safetyMargin, 100);
   assert.equal(DEFAULTS.interactionHotkey, 'Control+Alt+J');
 });
@@ -315,4 +315,11 @@ test('movimento: chega ao destino e respeita duração mínima/máxima', () => {
   assert.equal(e.done, true);
   assert.equal(e.x, 1000);
   assert.equal(m.active, false);
+});
+
+test('iniciar com o Windows: ligado por padrão e migrado de configurações antigas', async () => {
+  const { sanitize } = await import('../../src/core/settings-schema.js');
+  assert.equal(sanitize({}).settings.startWithWindows, true);
+  assert.equal(sanitize({ version: 1, startWithWindows: false }).settings.startWithWindows, true, 'padrão antigo vira o novo');
+  assert.equal(sanitize({ version: 2, startWithWindows: false }).settings.startWithWindows, false, 'quem desmarcou continua desmarcado');
 });

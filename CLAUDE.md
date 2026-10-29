@@ -27,8 +27,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Se ela disser que está chorando ou muito triste: dizer que é melhor falar com o **João**,
   porque ele sabe cuidar dela. Menção a se machucar/suicídio: João agora + CVV 188.
 - Personalidade padrão: sério, mandão, humor seco/ácido, palavrões ocasionais; bronca ao
-  abrir o Instagram; lembrete diário de comer com atenção (nunca usar peso/corpo como insulto;
-  humor com drogas sem incentivar uso). Perfil editável em `personality.json`.
+  abrir o Instagram; lembrete diário de comer com atenção. **Sem pudor nenhum**: humor sem
+  limite e absurdo, no estilo South Park (corpo, peso, drogas, nojeira, tudo vale). Único
+  limite de conteúdo: não insultar o corpo/peso da Emanuele. Perfil em `personality.json`.
 - Toda fala vem com expressão corporal coerente (campo `reaction` nas falas).
 - Visual: estilo recorte de papel (South Park), adulto, fisiculturista, com presas.
 - Animações: 85 (variações sorteadas via `variantOf`; as comuns têm 3–4). Cor por emoção
@@ -50,7 +51,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   `holidays.js` (ICU + fases da Lua), `rig.costumes`.
 - Fantasias ousadas por padrão (`festas.estilo`); "se veste direito" → dedo do meio + comportada.
 - Comida de tubarão sorteada (peixe, foca, lula, tartaruga, pinguim, às vezes gente), gore e arroto.
-- "AVC": esforço de costas, segura o peito, morto 1 min, "Essa foi por pouco."; AVC real → SAMU 192.
+- "AVC": força de frente até ficar vermelho, segura o peito, morto 1 min, "Essa foi por pouco."; AVC real → SAMU 192.
+- Dedo do meio: mão de verdade só nessa animação (punho + dedo para cima).
 - O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
@@ -72,7 +74,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    Wikipédia/DuckDuckGo (só o texto da pergunta) e a **atualização automática** consulta as
    Releases do GitHub e baixa a versão nova — ambas desligáveis em Configurações. Conversa
    comum nunca acessa a rede. Integrações de IA só opcionais.
-5. Sons e "iniciar com o Windows" desligados por padrão.
+5. Sons desligados por padrão; **"iniciar com o Windows" ligado por padrão** (desmarcável).
 6. Conversa marcada como **respostas programadas** (+ pesquisa na internet quando ativa; não é IA).
 8. Ociosidade: só o contador `powerMonitor.getSystemIdleTime()` (nunca teclas/cliques).
 9. Distribuição: **`JoJoCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).

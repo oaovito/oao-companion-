@@ -354,7 +354,7 @@ test('configurações persistem posição e reabrem no mesmo lugar', () => {
   store2.load();
   assert.deepEqual({ x: store2.get().position.x, y: store2.get().position.y }, { x: 300, y: 300 });
   const raw = JSON.parse(fs.readFileSync(e.store.file, 'utf8'));
-  assert.equal(raw.version, 1);
+  assert.equal(raw.version, 2);
 });
 
 test('conversa offline sem credenciais usa respostas programadas e dispara ação', async () => {

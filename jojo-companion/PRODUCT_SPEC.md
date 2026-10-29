@@ -113,7 +113,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | F1 | Datas festivas | 38 datas: feriados nacionais do Brasil e datas religiosas/culturais do mundo; fantasia + cumprimento uma vez por dia; solenes sem fantasia |
 | M4 | Fantasia ousada | Padrão ousado; "se veste direito" → dedo do meio + versão comportada |
 | M5 | Comida | Comida de tubarão sorteada (às vezes gente), gore e arroto no fim |
-| M6 | AVC | "AVC" → força de costas, segura o peito, morto 1 min, "Essa foi por pouco."; sintomas reais → SAMU 192 |
+| M6 | AVC | "AVC" → força de frente, segura o peito, morto 1 min, "Essa foi por pouco."; sintomas reais → SAMU 192 |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho
@@ -136,7 +136,7 @@ braços cruzados, sobrancelha levantada, dentes à mostra, ataque teatral só so
 | ID | Requisito | Critério de aceitação |
 |---|---|---|
 | P1 | Instagram | Bronca curta (animação de julgamento) a cada **entrada** no Instagram (navegador ou app no Windows), no máximo uma por intervalo (padrão 120 s); nunca contínua enquanto aberto |
-| P2 | Lembrete de comida | Uma vez por dia, horário aleatório na faixa (padrão 10h–21h); firme **sem usar peso ou corpo como insulto** nem incentivar restrição |
+| P2 | Lembrete de comida | Uma vez por dia, horário aleatório na faixa (padrão 10h–21h); firme, sem insultar o corpo/peso da Emanuele (no resto, humor sem limite) |
 | P3 | Silêncio | Modo silencioso/pausa suprimem broncas e lembretes; "silêncio" na conversa liga o modo silencioso |
 | P4 | Palavrões | nenhum / ocasional / frequente filtra e pondera as falas marcadas |
 | P5 | Privacidade | Só título da janela em primeiro plano/nome do executável, comparados localmente; nada é guardado ou enviado; sem bloquear apps, fechar páginas ou impedir cliques |

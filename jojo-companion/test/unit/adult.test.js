@@ -49,10 +49,15 @@ test('camada ousada e dedo do meio existem no desenho', () => {
   for (const id of ['sexySunga', 'sexyGarter', 'sexyCollar', 'sexyNetL']) assert.ok(parts.some((p) => p.id === id), id);
   const shorts = RIG.groups.find((g) => g.id === 'shorts');
   assert.ok([].concat(shorts.hideIf).includes('sexy'), 'bermuda some na versão ousada');
-  assert.ok(parts.some((p) => p.id === 'middleFinger' && p.group.showIf === 'finger'));
+  // Mão de verdade (estilo South Park) só no dedo do meio: punho, polegar e dedo do meio com unha.
+  for (const id of ['handFist', 'handThumb', 'handMiddle', 'handNail', 'handCreases']) assert.ok(parts.some((p) => p.id === id && p.group.showIf === 'finger'), id);
+  assert.equal(parts.find((p) => p.id === 'handClawR').hideIf, 'finger', 'barbatana da mão some nessa animação');
   const an = new Animator(ANIMS);
   an.play('finger', 0, { restart: true, variant: 'finger' });
-  assert.equal(an.sample(1300).pose.finger, 1);
+  const pose = an.sample(1300).pose;
+  assert.equal(pose.finger, 1);
+  // Antebraço erguido: o dedo (que aponta para longe do cotovelo) fica para cima.
+  assert.ok(pose.legFR >= 60 && pose.elbowR >= 90, 'braço levantado com a mão para cima');
 });
 
 test('comida de tubarão: sorteia o que come (às vezes gente), sangra e sempre arrota', () => {

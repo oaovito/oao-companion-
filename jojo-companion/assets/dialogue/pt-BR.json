@@ -1,7 +1,7 @@
 {
   "format": "jojo-phrases/3",
   "language": "pt-BR",
-  "notes": "Falas do JoJo (personalidade padrão: sério, mandão, humor seco e ácido). Cada categoria tem 'tone' ('serio' usa {nome} = Emanuele; 'brincadeira' usa {nome} = Manu) e 'reaction' (estado de corpo coerente com a fala). Cada frase é texto ou {t, tags, tone?, reaction?}. Tags: 'palavrao', 'drogas' (humor ácido sem incentivar uso). Variáveis: {nome}, {vocativo} (', Nome' ou vazio), {companion}, {apoio}, {atalho}. Nunca usar peso ou corpo como insulto.",
+  "notes": "Falas do JoJo (personalidade padrão: sério, mandão, humor seco e ácido). Cada categoria tem 'tone' ('serio' usa {nome} = Emanuele; 'brincadeira' usa {nome} = Manu) e 'reaction' (estado de corpo coerente com a fala). Cada frase é texto ou {t, tags, tone?, reaction?}. Tags: 'palavrao', 'drogas' (humor ácido sem incentivar uso). Variáveis: {nome}, {vocativo} (', Nome' ou vazio), {companion}, {apoio}, {atalho}. JoJo não tem pudor: humor sem limite, só não insulta o corpo da Emanuele.",
   "categories": {
     "greeting": {
       "kind": "speech", "tone": "brincadeira", "reaction": "wave",
@@ -50,7 +50,12 @@
         { "t": "Fiscalização de rotina. Pode continuar.", "reaction": "judge" },
         { "t": "Foco, porra. O resto é distração.", "tags": ["palavrao"] },
         { "t": "Essa energia aí é café ou outra coisa, {nome}? Não responde.", "tags": ["drogas"], "tone": "brincadeira", "reaction": "judge" },
-        { "t": "Calma, Scarface. É só uma planilha.", "tags": ["drogas"], "tone": "brincadeira", "reaction": "judge" }
+        { "t": "Calma, Scarface. É só uma planilha.", "tags": ["drogas"], "tone": "brincadeira", "reaction": "judge" },
+        { "t": "Coçando o saco em público. Tubarão não tem vergonha, {nome}.", "tone": "brincadeira", "reaction": "happy" },
+        { "t": "Soltei um peido aqui. Fica entre a gente.", "tone": "brincadeira", "reaction": "happy" },
+        { "t": "Meu shape é tão bom que eu me pegaria. Pegaria mesmo.", "tone": "brincadeira", "reaction": "happy" },
+        { "t": "Comi um surfista gordinho ontem. Tava uma delícia.", "tone": "brincadeira", "reaction": "happy" },
+        { "t": "Pudor? Nunca ouvi falar. Deve ser coisa de golfinho.", "tone": "brincadeira", "reaction": "judge" }
       ]
     },
     "idleThought": {
@@ -602,7 +607,7 @@
     "food_foca": {
       "kind": "speech", "tone": "brincadeira", "reaction": "eat",
       "lines": [
-        "Foca. Suculenta. Proteína pura.",
+        "Foca. Gordinha. Gordura é sabor.",
         "Desculpa, foca. Cadeia alimentar.",
         "Foca inteira. O bigode fica no dente, {nome}."
       ]

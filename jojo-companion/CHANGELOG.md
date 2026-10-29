@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.22.0 — 2026-10-29
+
+### Alterado
+- Dedo do meio com **mão de verdade** (estilo South Park): punho, polegar, dedos
+  dobrados e o dedo do meio esticado para cima, com dobras e unha; a barbatana da
+  mão some só nessa animação.
+- **AVC** sem a vista de costas: ele faz força de frente até ficar vermelho e
+  suado, segura o peito, cai morto 1 min e volta ("Essa foi por pouco.").
+- **Sem pudor**: a personalidade gira em torno da falta de pudor — humor sem
+  limite e absurdo (corpo, peso, nojeira, drogas). Falas novas nesse tom. Só o
+  lembrete de comida não insulta o corpo da Emanuele.
+- **Inicia com o Windows** por padrão (desmarcável em Configurações). Configurações
+  antigas com o padrão anterior migram para ligado (formato de configurações v2).
+
 ## 0.21.0 — 2026-10-29
 
 ### Adicionado

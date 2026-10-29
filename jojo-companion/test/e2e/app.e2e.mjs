@@ -305,7 +305,7 @@ test('configurações: alterar, persistir e restaurar padrões', async () => {
   const saved = JSON.parse(fs.readFileSync(path.join(userData, 'settings.json'), 'utf8'));
   assert.equal(saved.size, 1.3);
   assert.equal(saved.safetyMargin, 150);
-  assert.equal(saved.startWithWindows, false);
+  assert.equal(saved.startWithWindows, true);
   ({ app } = await launch({ userData }));
   try {
     assert.equal((await app.evaluate(() => globalThis.__jojo.store.get().size)), 1.3);
