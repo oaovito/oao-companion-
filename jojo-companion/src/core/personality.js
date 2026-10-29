@@ -2,7 +2,17 @@
 // Guardado em <userData>/personality.json e editável pelas configurações.
 // Também contém as regras de comportamento "fiscal" (Instagram, lembrete diário).
 
-export const PERSONALITY_VERSION = 1;
+// v2: o menu Personalidade saiu das Configurações. Ao mudar de versão, o perfil
+// volta ao padrão do desenvolvedor (só o estado interno dos lembretes é mantido).
+export const PERSONALITY_VERSION = 2;
+
+// Refeições lembradas todo dia (horário sorteado dentro de cada faixa, em horas).
+export const MEALS = Object.freeze([
+  { id: 'cafe', nome: 'café da manhã', inicio: 7.5, fim: 9.5 },
+  { id: 'almoco', nome: 'almoço', inicio: 11.75, fim: 13.5 },
+  { id: 'lanche', nome: 'lanche da tarde', inicio: 15.5, fim: 17 },
+  { id: 'jantar', nome: 'jantar', inicio: 19, fim: 21 },
+]);
 
 export const PERSONALITY_DEFAULTS = Object.freeze({
   version: PERSONALITY_VERSION,
@@ -23,11 +33,14 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   // Objetivo final do companion (orienta as brincadeiras e os provedores de IA futuros).
   objetivo: 'Fazer a Emanuele sorrir. Mesmo sério, de vez em quando brinca, faz graça e se exibe (supino, agachamento, dancinha).',
   // Instruções livres "Como quero que o JoJo se comporte" — usadas por provedores de IA futuros.
-  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Respeita quando ela pede silêncio. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora e indique o CVV (188). A expressão corporal acompanha cada fala. Não tem pudor nenhum: humor sem limite e absurdo, no estilo South Park (corpo, peso, nojeira, drogas, tudo vale), só nunca insulta o corpo da Emanuele. Objetivo final: fazer a Emanuele sorrir, então de vez em quando brinca.',
+  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora. A expressão corporal acompanha cada fala. Não tem pudor nenhum: humor sem limite e absurdo, no estilo South Park (corpo, peso, nojeira, drogas, tudo vale), só nunca insulta o corpo da Emanuele. Lembra quatro vezes por dia das refeições: café da manhã, almoço, lanche da tarde e jantar. Lembra que treinar é essencial. Objetivo final: fazer a Emanuele sorrir, então de vez em quando brinca.',
   // Fiscal do Instagram (Windows: título da janela em primeiro plano, só comparação local).
   instagram: { ativo: true, intervaloMinSeg: 120 },
-  // Lembrete diário sobre comer com atenção, em horário aleatório dentro da faixa.
-  lembreteComida: { ativo: true, inicio: 10, fim: 21, ultimoDia: null, horarioDeHoje: null },
+  // Lembrete das 4 refeições (MEALS), cada uma em horário aleatório dentro da faixa.
+  // `inicio`/`fim`/`ultimoDia`/`horarioDeHoje` ficam por compatibilidade; o estado por refeição em `refeicoes`.
+  lembreteComida: { ativo: true, inicio: 10, fim: 21, ultimoDia: null, horarioDeHoje: null, refeicoes: {} },
+  // Lembrete diário de que treinar é essencial.
+  lembreteTreino: { ativo: true, inicio: 16, fim: 20, ultimoDia: null, horarioDeHoje: null },
   // Computador parado: o JoJo senta no chão e cheira pó (ou toma pré-treino se
   // humorDrogas estiver desligado); o efeito dura `efeitoMin` após a volta.
   ociosidade: { ativo: true, minutos: 5, efeitoMin: 5 },
@@ -50,8 +63,10 @@ function int(v, lo, hi, def) {
 /** Normaliza um perfil qualquer. Retorna {settings, issues} (mesmo contrato do SettingsStore). */
 export function sanitizePersonality(input) {
   const issues = [];
-  const src = input && typeof input === 'object' && !Array.isArray(input) ? input : (issues.push('raiz inválida'), {});
+  const raw = input && typeof input === 'object' && !Array.isArray(input) ? input : (issues.push('raiz inválida'), {});
   const D = PERSONALITY_DEFAULTS;
+  // Versão antiga (ou sem versão): volta ao padrão, mantendo só o estado dos lembretes e da fantasia.
+  const src = (raw.version ?? 1) < PERSONALITY_VERSION ? keepState(raw) : raw;
   const out = {
     version: PERSONALITY_VERSION,
     nomeCompanion: str(src.nomeCompanion, D.nomeCompanion, 30).trim() || D.nomeCompanion,
@@ -66,7 +81,8 @@ export function sanitizePersonality(input) {
     objetivo: str(src.objetivo, D.objetivo, 400),
     instrucoes: str(src.instrucoes, D.instrucoes, 4000),
     instagram: { ...D.instagram },
-    lembreteComida: { ...D.lembreteComida },
+    lembreteComida: { ...D.lembreteComida, refeicoes: {} },
+    lembreteTreino: { ...D.lembreteTreino },
     ociosidade: { ...D.ociosidade },
     legends: { ...D.legends },
     festas: { ...D.festas },
@@ -87,6 +103,22 @@ export function sanitizePersonality(input) {
   out.lembreteComida.ultimoDia = typeof lc.ultimoDia === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(lc.ultimoDia) ? lc.ultimoDia : null;
   out.lembreteComida.horarioDeHoje = lc.horarioDeHoje && typeof lc.horarioDeHoje.dia === 'string' && Number.isFinite(lc.horarioDeHoje.minuto)
     ? { dia: lc.horarioDeHoje.dia, minuto: Math.max(0, Math.min(1439, Math.round(lc.horarioDeHoje.minuto))) }
+    : null;
+  // Estado por refeição: {cafe: {ultimoDia, horarioDeHoje}, …}
+  const rf = lc.refeicoes && typeof lc.refeicoes === 'object' ? lc.refeicoes : {};
+  for (const m of MEALS) {
+    const st = rf[m.id];
+    if (!st || typeof st !== 'object') continue;
+    out.lembreteComida.refeicoes[m.id] = {
+      ultimoDia: typeof st.ultimoDia === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(st.ultimoDia) ? st.ultimoDia : null,
+      horarioDeHoje: st.horarioDeHoje && typeof st.horarioDeHoje.dia === 'string' && Number.isFinite(st.horarioDeHoje.minuto) ? { dia: st.horarioDeHoje.dia, minuto: Math.max(0, Math.min(1439, Math.round(st.horarioDeHoje.minuto))) } : null,
+    };
+  }
+  const lt = src.lembreteTreino && typeof src.lembreteTreino === 'object' ? src.lembreteTreino : {};
+  if (typeof lt.ativo === 'boolean') out.lembreteTreino.ativo = lt.ativo;
+  out.lembreteTreino.ultimoDia = typeof lt.ultimoDia === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(lt.ultimoDia) ? lt.ultimoDia : null;
+  out.lembreteTreino.horarioDeHoje = lt.horarioDeHoje && typeof lt.horarioDeHoje.dia === 'string' && Number.isFinite(lt.horarioDeHoje.minuto)
+    ? { dia: lt.horarioDeHoje.dia, minuto: Math.max(0, Math.min(1439, Math.round(lt.horarioDeHoje.minuto))) }
     : null;
   const oc = src.ociosidade && typeof src.ociosidade === 'object' ? src.ociosidade : {};
   if (typeof oc.ativo === 'boolean') out.ociosidade.ativo = oc.ativo;
@@ -110,6 +142,20 @@ export function sanitizePersonality(input) {
     ? { semana: lg.momento.semana, dia: Math.max(0, Math.min(6, lg.momento.dia)), minuto: Math.max(0, Math.min(1439, Math.round(lg.momento.minuto))) }
     : null;
   return { settings: out, issues };
+}
+
+/** Só o estado interno (lembretes, fantasia escolhida no chat) de um perfil antigo. */
+function keepState(src) {
+  const pick = (o, keys) => {
+    const x = o && typeof o === 'object' ? o : {};
+    return Object.fromEntries(keys.filter((k) => k in x).map((k) => [k, x[k]]));
+  };
+  return {
+    lembreteComida: pick(src.lembreteComida, ['ultimoDia', 'horarioDeHoje', 'refeicoes']),
+    lembreteTreino: pick(src.lembreteTreino, ['ultimoDia', 'horarioDeHoje']),
+    legends: pick(src.legends, ['ultimaSemana', 'momento']),
+    festas: pick(src.festas, ['ultimoDia', 'estilo']),
+  };
 }
 
 /** Filtro de frases conforme o perfil (tags: "palavrao", "drogas"). */
@@ -149,8 +195,10 @@ export function profileVars(profile, tone = 'serio') {
 }
 
 /**
- * Fiscal do Instagram: dispara na ENTRADA (transição fora → dentro), no máximo
- * uma vez por intervalo mínimo; não dispara continuamente enquanto fica aberto.
+ * Fiscal do Instagram: enquanto o Instagram estiver em primeiro plano, dá
+ * bronca no máximo uma vez por intervalo mínimo (ao abrir e, se continuar
+ * usando, de novo a cada intervalo). Se na hora o JoJo não puder falar
+ * (pausado, escondido, fugindo), a bronca fica pendente e sai assim que puder.
  */
 export class InstagramWatcher {
   constructor() {
@@ -159,10 +207,9 @@ export class InstagramWatcher {
   }
 
   /** @returns true se deve repreender agora */
-  update(now, isInstagram, { ativo = true, intervaloMinSeg = 120 } = {}) {
-    const entering = isInstagram && !this.inside;
+  update(now, isInstagram, { ativo = true, intervaloMinSeg = 120 } = {}, allowed = true) {
     this.inside = !!isInstagram;
-    if (!ativo || !entering) return false;
+    if (!ativo || !this.inside || !allowed) return false;
     if (now - this.lastScold < intervaloMinSeg * 1000) return false;
     this.lastScold = now;
     return true;

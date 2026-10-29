@@ -13,6 +13,11 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- **264 animações novas**: o JoJo faz coisas sozinho enquanto você trabalha (selfie, espelho,
+  halteres, dancinha viral, modo fera, peidinho com bolhas…) e solta frases curtas. Peça no chat:
+  `/anim selfie` ou "faz uma dancinha". Ajuste em Configurações → Animações e estímulos.
+- Pergunte "e se eu comer um docinho?". Fala inglês quando você escreve em inglês.
+- Quatro lembretes de refeição por dia e um de treino. Bronca do Instagram consertada.
 - Balão de fala sem ficar por cima do painel nem do JoJo; animações não são mais cortadas.
 - Supino e agachamento refeitos. Respostas mais rápidas (com "…" enquanto pensa).
 - Fale em **dormir** e veja o que acontece.

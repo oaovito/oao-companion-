@@ -114,6 +114,12 @@ export const TWO_MONITORS_NEG = [
   { id: 2, bounds: { x: -1920, y: 200, width: 1920, height: 1080 }, workArea: { x: -1920, y: 200, width: 1920, height: 1040 }, scaleFactor: 1 },
 ];
 
+/** Estado em memória (motor de variedade) para os testes. */
+export function memState(initial = null) {
+  let data = initial;
+  return { get: () => data, set: (v) => (data = v) };
+}
+
 export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, seed = 7, dir = null } = {}) {
   const tmp = dir || fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-test-'));
   const store = new SettingsStore(tmp);
@@ -134,6 +140,9 @@ export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, s
     platform, overlay, clock, store, personality,
     rig: loadJSON('assets/character/jojo.rig.json'),
     room: loadJSON('assets/animations/jojo.room.json'),
+    catalog: loadJSON('assets/catalog/animacoes.json'),
+    ambientLines: loadJSON('assets/dialogue/falas-ambientes.json'),
+    variety: memState(),
     phrases: loadJSON('assets/dialogue/pt-BR.json'),
     dialogue: new DialogueEngine({ searchEnabled: () => store.get().webSearch }),
     rng: seededRng(seed),

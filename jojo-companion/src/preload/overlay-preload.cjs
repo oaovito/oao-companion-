@@ -2,6 +2,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 const ACTIONS = new Set(['pet', 'eat', 'play']);
+const GESTURES = new Set(['clique', 'duploClique', 'segurar', 'cocegas', 'jogar']);
 
 contextBridge.exposeInMainWorld('jojo', {
   getAssets: () => ipcRenderer.invoke('jojo:get-assets'),
@@ -13,6 +14,7 @@ contextBridge.exposeInMainWorld('jojo', {
   setCapture: (on) => ipcRenderer.send('jojo:capture', !!on),
   activity: () => ipcRenderer.send('jojo:activity'),
   interact: (action) => ACTIONS.has(action) && ipcRenderer.send('jojo:interact', action),
+  gesture: (g) => GESTURES.has(g) && ipcRenderer.send('jojo:gesture', g),
   setChatOpen: (open) => ipcRenderer.send('jojo:chat-open', !!open),
   chat: (text) => ipcRenderer.invoke('jojo:chat', String(text).slice(0, 500)),
   dragStart: () => ipcRenderer.send('jojo:drag-start'),

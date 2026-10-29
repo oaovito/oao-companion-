@@ -1,5 +1,6 @@
 // Provedor de respostas programadas (offline). Reconhece intenções simples por
 // palavras-chave e responde com frases locais. Não é uma IA de conversa livre.
+import { isEnglish, detectIntentEn, EN_RESPONSES, isEnglishFactualQuestion } from './english.js';
 import { DialogueProvider } from './provider.js';
 import { isFactualQuestion, isBlockedQuestion } from './web-search.js';
 
@@ -22,6 +23,8 @@ export const INTENTS = [
   { id: 'sad', patterns: [/\b(chorand\w*|chorei|chorar|choro|triste\w*|tristeza|deprimid\w*|depre|pra baixo|arrasad\w*|sofrendo|muito mal|to mal|na bad|desanimad\w*|desesperad\w*)\b/] },
   // Dormir em qualquer forma e horário: o JoJo é radicalmente contra (logo depois da segurança).
   { id: 'sleep', patterns: [/\b(dorm\w*|sono|sonolent\w*|sonequinha|soneca\w*|cochil\w*|nana(r|ndo)?|nanar|deitar?|vou deitar|cama|travesseiro|insonia|capot\w*|zzz+|repous\w*)\b/] },
+  // "E se eu comer um docinho?" (e variações): nojo e a pergunta da aberração.
+  { id: 'docinho', patterns: [/\b((e se eu|posso|vou|quero|devo|deveria|to com vontade de|tou com vontade de|bora|pode) (comer|chupar|pegar|atacar|mandar( ver)?)( n?(um|uma|uns|umas|o|a|os|as))? (docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|bombo\w*|bala\w*|balinha\w*|sobremesa\w*|bolo\w*|sorvete\w*|pudim|torta|beijinho\w*|pacoca|pacoquinha|cookie\w*|biscoito recheado|donut\w*|rosquinha\w*|trufa\w*|bombom\w*))\b/, /\b(comer|comi|como) (um |uma |uns |umas )?(docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|sobremesa\w*|bolo\w*|sorvete\w*|bombom\w*)\b/] },
   { id: 'avc', patterns: [/^(jojo )?avc[!?]*$/] },
   { id: 'dressDown', patterns: [/\b((vai |pode )?(vestir|veste|coloca|poe|bota) uma roupa|veste roupa|se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
   { id: 'dressUp', patterns: [/\b(volta (a|pra|para a) fantasia ousada|pode (ser|ficar) ousado|fantasia ousada|volta a ser ousado|tira a roupa comportada)\b/] },
@@ -74,6 +77,7 @@ export const RESPONSES = {
   quiet: ['Fechou.', 'Silêncio. Entendido, Emanuele.'],
   scare: ['Tem certeza, {nome}?', 'Pediu, levou.'],
   achievement: ['Aí sim, {nome}. Eu sabia.', 'Finalmente. Já tava criando craca aqui.', 'Isso. Agora a próxima.'],
+  docinho: ['Quer se tornar uma aberração?'],
   sleep: [
     'DORMIR?! Dormir é coisa de sardinha. Levanta, {nome}!',
     'Sono é fraqueza saindo do corpo. Expulsa essa merda e trabalha.',
@@ -111,7 +115,7 @@ export const RESPONSES = {
 // Ação/expressão corporal coerente com cada resposta.
 const ACTIONS = {
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
-  sleep: 'angry', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
+  sleep: 'angry', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
   name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',
 };
 
@@ -127,6 +131,7 @@ const TONES = {
 const SEARCHABLE = new Set(['unknown', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
 
 export function detectIntent(text) {
+  if (isEnglish(text)) return detectIntentEn(text);
   const n = normalizeText(text);
   if (!n) return 'unknown';
   for (const intent of INTENTS) {
@@ -147,6 +152,8 @@ export class ScriptedProvider extends DialogueProvider {
   }
 
   async reply({ text }) {
+    // Inglês quando ela escreve em inglês (português é a língua principal).
+    if (isEnglish(text)) return this._replyEn(text);
     let intent = detectIntent(text);
     // Pergunta de conhecimento sem resposta programada: pede pesquisa ao engine.
     let search = false;
@@ -162,5 +169,15 @@ export class ScriptedProvider extends DialogueProvider {
     if (options.length > 1 && idx === this.last[intent]) idx = (idx + 1) % options.length;
     this.last[intent] = idx;
     return { text: options[idx], kind: 'speech', action: ACTIONS[intent] || null, intent, tone: TONES[intent] || 'serio', search };
+  }
+
+  _replyEn(text) {
+    let intent = detectIntentEn(text);
+    const search = intent === 'unknown' && isEnglishFactualQuestion(text);
+    const options = EN_RESPONSES[intent] || EN_RESPONSES.unknown;
+    let idx = Math.floor(this.rng() * options.length);
+    if (options.length > 1 && idx === this.last[`en:${intent}`]) idx = (idx + 1) % options.length;
+    this.last[`en:${intent}`] = idx;
+    return { text: options[idx], kind: 'speech', action: ACTIONS[intent] || null, intent, tone: TONES[intent] || 'serio', search, lang: 'en' };
   }
 }

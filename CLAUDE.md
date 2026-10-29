@@ -32,8 +32,14 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   limite de conteúdo: não insultar o corpo/peso da Emanuele. Perfil em `personality.json`.
 - Toda fala vem com expressão corporal coerente (campo `reaction` nas falas).
 - Visual: estilo recorte de papel (South Park), adulto, fisiculturista, com presas.
-- Animações: 85 (variações sorteadas via `variantOf`; as comuns têm 3–4). Cor por emoção
+- Animações: ~100 feitas à mão (variações via `variantOf`) + **catálogo de 264** por receitas em camadas
+  (`assets/catalog/animacoes.json`, `src/core/catalog/`), 3 intensidades, motor de variedade (memória 30,
+  pesos dinâmicos, humor, horário, temporada), animações e falas ambientes; `/anim <nome>`; doc `docs/ANIMACOES.md`. Cor por emoção
   (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
+- Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?".
+- Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
+- Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
+- Configurações: seções Personalidade e Sistema **ocultas**; perfil volta ao padrão a cada versão nova do perfil.
 - Dormir: qualquer menção a dormir/sono/cochilo/cama no chat → JoJo furioso e contra (estado `angry`), nunca dorme pelo chat.
 - Janela cresce por animação (`assets/animations/jojo.room.json`; regenerar com `scripts/anim-room.mjs` ao mudar desenho/animação).
 - Pergunta sem resposta programada: pesquisa (Wikipédia → DuckDuckGo) e responde no jeito do

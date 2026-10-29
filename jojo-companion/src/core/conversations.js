@@ -150,6 +150,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/silencio', label: 'Modo silencioso', hint: 'Liga/desliga as falas espontâneas e broncas' },
     { cmd: '/nova', label: 'Nova conversa', hint: 'Começa uma conversa nova' },
     { cmd: '/config', label: 'Configurações', hint: 'Abre as configurações' },
+    { cmd: '/anim', label: 'Animação', hint: 'Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)' },
   ];
 }
 
@@ -162,5 +163,6 @@ export function parseCommand(text) {
   if (name === '/silencio' || name === '/silêncio') return 'quiet';
   if (name === '/nova') return 'new';
   if (name === '/config' || name === '/configuracoes') return 'settings';
+  if (name === '/anim' || name === '/animacao' || name === '/animação') return 'anim';
   return 'unknown';
 }

@@ -12,7 +12,7 @@ const settle = async () => {
 };
 
 test('perfil: padrões e validação', () => {
-  const { settings, issues } = sanitizePersonality({ palavroes: 'muitos', instagram: { ativo: false, intervaloMinSeg: 1 }, lembreteComida: { inicio: 22, fim: 8 } });
+  const { settings, issues } = sanitizePersonality({ version: 2, palavroes: 'muitos', instagram: { ativo: false, intervaloMinSeg: 1 }, lembreteComida: { inicio: 22, fim: 8 } });
   assert.equal(settings.palavroes, 'ocasional');
   assert.equal(settings.instagram.ativo, false);
   assert.equal(settings.instagram.intervaloMinSeg, 10);
@@ -24,8 +24,15 @@ test('perfil: padrões e validação', () => {
   assert.equal(P.nomeCompanion, 'JoJo');
   assert.deepEqual(profileVars(P, 'serio'), { nome: 'Emanuele', vocativo: ', Emanuele', companion: 'JoJo', apoio: 'João' });
   assert.equal(profileVars(P, 'brincadeira').nome, 'Manu');
-  // Migração do campo antigo "tratamento".
-  assert.equal(sanitizePersonality({ tratamento: 'Mel' }).settings.nomeSerio, 'Mel');
+  // Perfil de versão antiga (menu Personalidade saiu da tela): volta ao padrão do desenvolvedor,
+  // mantendo só o estado interno (ex.: fantasia escolhida no chat).
+  const old = sanitizePersonality({ version: 1, nomeSerio: 'Mel', humorDrogas: false, instrucoes: 'outra', festas: { estilo: 'comportada' } }).settings;
+  assert.equal(old.nomeSerio, 'Emanuele');
+  assert.equal(old.humorDrogas, true);
+  assert.equal(old.instrucoes, P.instrucoes);
+  assert.equal(old.festas.estilo, 'comportada');
+  assert.match(P.instrucoes, /quatro vezes por dia/);
+  assert.match(P.instrucoes, /treinar é essencial/);
 });
 
 test('frases: sem palavrões nem humor com drogas quando desligados; lembrete de comida não insulta o corpo dela', () => {
@@ -44,16 +51,19 @@ test('frases: sem palavrões nem humor com drogas quando desligados; lembrete de
   for (const c of ['instagram', 'foodReminder', 'achievement', 'quietAck', 'scare']) assert.ok(PHRASES.categories[c], c);
 });
 
-test('fiscal do Instagram: só na entrada e com intervalo mínimo', () => {
+test('fiscal do Instagram: ao abrir e enquanto continua usando, com intervalo mínimo', () => {
   const w = new InstagramWatcher();
   const cfg = { ativo: true, intervaloMinSeg: 120 };
-  assert.equal(w.update(0, true, cfg), true, 'entrou');
-  assert.equal(w.update(1000, true, cfg), false, 'continua aberto: não repete');
+  assert.equal(w.update(0, true, cfg), true, 'abriu');
+  assert.equal(w.update(1000, true, cfg), false, 'continua aberto: não repete logo');
   assert.equal(w.update(2000, false, cfg), false);
   assert.equal(w.update(30000, true, cfg), false, 'voltou antes de 2 min');
-  w.update(40000, false, cfg);
-  assert.equal(w.update(130000, true, cfg), true, 'nova entrada após o intervalo');
+  assert.equal(w.update(125000, true, cfg), true, 'continua usando depois do intervalo: bronca de novo');
   assert.equal(new InstagramWatcher().update(0, true, { ativo: false }), false, 'desligado');
+  // Não podia falar na hora (pausado/fugindo): a bronca fica pendente.
+  const p = new InstagramWatcher();
+  assert.equal(p.update(0, true, cfg, false), false);
+  assert.equal(p.update(3000, true, cfg, true), true, 'sai assim que puder');
 });
 
 test('lembrete diário: uma vez por dia, dentro da faixa, horário sorteado', () => {
@@ -101,18 +111,30 @@ test('companion: Instagram aberto → bronca com olhar de julgamento; silêncio 
   assert.equal(q.companion.onForeground({ instagram: true }), false);
 });
 
-test('companion: lembrete de comida sai uma vez e é salvo no perfil', async () => {
-  const e = makeEnv({ profile: { lembreteComida: { ativo: true, inicio: 10, fim: 21 } } });
+test('companion: 4 refeições por dia (café, almoço, lanche, jantar) + treino, cada uma uma vez', async () => {
+  const e = makeEnv();
   e.companion.start();
   e.env.cursor = { x: 5, y: 5 };
   e.clock.advance(3000);
-  let delivered = 0;
-  for (let m = 10 * 60; m < 21 * 60; m += 1) {
-    if (e.companion.checkDailyReminder(new Date(2026, 9, 29, Math.floor(m / 60), m % 60))) delivered++;
+  const cats = [];
+  const orig = e.companion._nag.bind(e.companion);
+  e.companion._nag = (c, now) => {
+    cats.push(c);
+    return orig(c, now);
+  };
+  for (let m = 6 * 60; m < 23 * 60; m += 1) {
+    e.companion.checkDailyReminder(new Date(2026, 9, 29, Math.floor(m / 60), m % 60));
     e.clock.advance(10);
   }
-  assert.equal(delivered, 1);
-  assert.equal(e.personality.get().lembreteComida.ultimoDia, '2026-10-29');
+  assert.deepEqual(cats.filter((c) => c.startsWith('refeicao_')), ['refeicao_cafe', 'refeicao_almoco', 'refeicao_lanche', 'refeicao_jantar']);
+  assert.equal(cats.filter((c) => c === 'treinoLembrete').length, 1);
+  const st = e.personality.get().lembreteComida.refeicoes;
+  for (const id of ['cafe', 'almoco', 'lanche', 'jantar']) assert.equal(st[id].ultimoDia, '2026-10-29', id);
+  // Os lembretes dirigidos a ela não insultam o corpo.
+  const P = loadJSON('assets/dialogue/pt-BR.json').categories;
+  for (const c of ['refeicao_cafe', 'refeicao_almoco', 'refeicao_lanche', 'refeicao_jantar', 'treinoLembrete']) {
+    assert.ok(!/gord|magr|barriga|peso|engord/i.test(JSON.stringify(P[c])), c);
+  }
 });
 
 test('conversa: silêncio liga o modo silencioso; conquista flexiona; susto teatral', async () => {
@@ -126,7 +148,9 @@ test('conversa: silêncio liga o modo silencioso; conquista flexiona; susto teat
   e.companion.enterInteraction();
   let r = await chatAdv(e, 'consegui!');
   assert.equal(r.action, 'flex');
-  assert.equal(e.companion.behavior.state, 'happy');
+  // Conquista: animação "Tarefa finalizada" do catálogo (flexiona com confete).
+  assert.equal(e.companion.behavior.state, 'act');
+  assert.match(e.companion.behavior.anim, /^cat_tarefaFinalizada/);
   r = await chatAdv(e, 'me assusta');
   assert.equal(e.companion.behavior.state, 'scare');
   r = await chatAdv(e, 'silêncio');

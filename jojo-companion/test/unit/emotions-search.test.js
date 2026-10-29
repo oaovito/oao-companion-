@@ -284,3 +284,39 @@ test('dormir em qualquer forma e horário: JoJo fica furioso e recusa (nunca dor
   assert.equal(r.action, 'angry');
   assert.ok(!r.search, 'não pesquisa: reage');
 });
+
+test('inglês quando necessário: entende e responde em inglês; português continua o padrão', async () => {
+  const { isEnglish } = await import('../../src/core/dialogue/english.js');
+  const { detectIntent, ScriptedProvider } = await import('../../src/core/dialogue/scripted-provider.js');
+  assert.equal(isEnglish('how are you today?'), true);
+  assert.equal(isEnglish('hello'), true);
+  assert.equal(isEnglish('oi jojo, tudo bem?'), false);
+  assert.equal(isEnglish('o que é fotossíntese?'), false);
+  assert.equal(isEnglish('vou ao shopping'), false);
+  // Segurança também em inglês (João + CVV 188), sempre programada.
+  assert.equal(detectIntent('i want to kill myself'), 'crisis');
+  assert.equal(detectIntent('i am crying so much'), 'sad');
+  assert.equal(detectIntent('i am going to sleep'), 'sleep');
+  const sp = new ScriptedProvider({ rng: () => 0 });
+  let r = await sp.reply({ text: 'i want to kill myself' });
+  assert.match(r.text, /\{apoio\}/);
+  assert.match(r.text, /188/);
+  assert.equal(r.lang, 'en');
+  r = await sp.reply({ text: 'how are you?' });
+  assert.equal(r.lang, 'en');
+  r = await sp.reply({ text: 'what is photosynthesis?' });
+  assert.equal(r.search, true);
+  r = await sp.reply({ text: 'tudo bem?' });
+  assert.equal(r.lang, undefined);
+});
+
+test('docinho: "e se eu comer um docinho?" (e variações) → nojo e "Quer se tornar uma aberração?"', async () => {
+  const { detectIntent, ScriptedProvider } = await import('../../src/core/dialogue/scripted-provider.js');
+  for (const t of ['e se eu comer um docinho?', 'E se eu comer um docinho', 'posso comer um chocolate?', 'vou comer um brigadeiro', 'to com vontade de comer um doce', 'comi um bolo', 'can i eat a candy?']) {
+    assert.equal(detectIntent(t), 'docinho', t);
+  }
+  assert.notEqual(detectIntent('estou com fome'), 'docinho');
+  const r = await new ScriptedProvider().reply({ text: 'e se eu comer um docinho?' });
+  assert.equal(r.text, 'Quer se tornar uma aberração?');
+  assert.equal(r.action, 'nojo');
+});

@@ -1,0 +1,6977 @@
+{
+ "_notas": "Catálogo de animações do JoJo. Cada item: id, nome, categoria, listas (número em cada lista pedida: base, semPudor, ambiente), gatilho (ambiente = entra no sorteio; eventos; frases do chat; horario), duracao (ms), loop, entrada (ms de transição), frequencia (comum | rara | easter), energia (estados de humor em que aparece mais), fala (categoria de falas ambientes), receita (camadas: corpo, bracos, cabeca, rosto, cauda, dorsal, objeto, fx, humor, base, marca, intensidade, repeticoes, semPiscar) ou usa (animação já existente). A versão estática (redução de movimento) é o quadro 'estatico' (padrão 0,5). Para adicionar: copie um item, troque o id e a receita (primitivos em src/core/catalog/recipes.js). Toda animação ganha 3 intensidades: suave, normal e exagerado.",
+ "frequencias": {
+  "comum": 10,
+  "rara": 2.5,
+  "easter": 0.35
+ },
+ "itens": [
+  {
+   "id": "idle",
+   "nome": "Idle respirando",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     1
+    ],
+    "ambiente": [
+     1
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "usa": "idle",
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ]
+  },
+  {
+   "id": "piscar",
+   "nome": "Piscar",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     2
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "pisca",
+    "corpo": "respira"
+   }
+  },
+  {
+   "id": "piscarLento",
+   "nome": "Piscar lentamente",
+   "categoria": "base",
+   "listas": {
+    "ambiente": [
+     3
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen",
+    "sonolento"
+   ],
+   "receita": {
+    "rosto": "piscaLento",
+    "corpo": "respira"
+   }
+  },
+  {
+   "id": "olharRedor",
+   "nome": "Olhar ao redor",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     3
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "usa": "lookAround",
+   "frequencia": "comum",
+   "energia": [
+    "curioso"
+   ]
+  },
+  {
+   "id": "bocejar",
+   "nome": "Bocejar mostrando todos os dentes",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     4
+    ],
+    "semPudor": [
+     50
+    ],
+    "ambiente": [
+     33,
+     101
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "tarde",
+     "noite"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "fala": "descaro",
+   "receita": {
+    "rosto": "boceja",
+    "bracos": "alonga",
+    "corpo": "espreguica",
+    "dorsal": "treme"
+   }
+  },
+  {
+   "id": "cochilar",
+   "nome": "Cochilar",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     5
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "tarde",
+     "noite",
+     "madrugada"
+    ]
+   },
+   "duracao": 5200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "cabeca": "cochila",
+    "base": "sit",
+    "fx": [
+     "zzz"
+    ]
+   }
+  },
+  {
+   "id": "dormirProfundo",
+   "nome": "Dormir profundo",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     6
+    ]
+   },
+   "gatilho": {},
+   "usa": "sleep",
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ]
+  },
+  {
+   "id": "acordar",
+   "nome": "Acordar",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     7
+    ]
+   },
+   "gatilho": {},
+   "usa": "wake",
+   "frequencia": "comum"
+  },
+  {
+   "id": "espreguicar",
+   "nome": "Espreguiçar",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     8
+    ],
+    "ambiente": [
+     34
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "manha"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen",
+    "sonolento"
+   ],
+   "receita": {
+    "corpo": "espreguica",
+    "bracos": "alonga",
+    "rosto": "boceja",
+    "cauda": "devagar"
+   }
+  },
+  {
+   "id": "balancar",
+   "nome": "Balançar suavemente",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     9
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "corpo": "balanca",
+    "cauda": "devagar",
+    "rosto": "contente"
+   }
+  },
+  {
+   "id": "flutuar",
+   "nome": "Flutuar parado respirando fundo",
+   "categoria": "base",
+   "listas": {
+    "base": [
+     10
+    ],
+    "ambiente": [
+     1
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "corpo": "flutua",
+    "bracos": "nadando",
+    "cauda": "devagar",
+    "rosto": "neutro"
+   }
+  },
+  {
+   "id": "caudaDevagar",
+   "nome": "Balançar a cauda devagar",
+   "categoria": "base",
+   "listas": {
+    "ambiente": [
+     2
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "respira"
+   }
+  },
+  {
+   "id": "guelras",
+   "nome": "Mexer as guelras",
+   "categoria": "base",
+   "listas": {
+    "ambiente": [
+     4
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "rosto": "guelras",
+    "corpo": "respira"
+   }
+  },
+  {
+   "id": "giroLeve",
+   "nome": "Girar o corpo de leve",
+   "categoria": "base",
+   "listas": {
+    "ambiente": [
+     5
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "corpo": "giroLeve",
+    "cauda": "devagar"
+   }
+  },
+  {
+   "id": "bolhas",
+   "nome": "Soltar bolhas ocasionais",
+   "categoria": "base",
+   "listas": {
+    "ambiente": [
+     6
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "rosto": "beijoBoca",
+    "fx": [
+     "bolhas"
+    ],
+    "cabeca": "olhaCima"
+   }
+  },
+  {
+   "id": "ouvindo",
+   "nome": "Ouvindo",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     11
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "conversaAberta"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "cabeca": "inclina",
+    "rosto": "sobrancelha",
+    "cauda": "devagar"
+   }
+  },
+  {
+   "id": "pensando",
+   "nome": "Pensando",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     12
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "pensando"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "pensando",
+    "bracos": "maoBoca",
+    "marca": "?"
+   }
+  },
+  {
+   "id": "processando",
+   "nome": "Processando",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     13
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "processando"
+    ]
+   },
+   "duracao": 3000,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "focado",
+    "cabeca": "explora",
+    "corpo": "respira",
+    "fx": [
+     "brilho"
+    ],
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "digitando",
+   "nome": "Escrevendo/digitando",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     14
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco"
+   ],
+   "receita": {
+    "bracos": "digita",
+    "objeto": "notebook",
+    "rosto": "focado",
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "fingirTrabalhar",
+   "nome": "Fingir que está trabalhando também",
+   "categoria": "atencao",
+   "listas": {
+    "ambiente": [
+     46
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco"
+   ],
+   "fala": "estudo",
+   "receita": {
+    "bracos": "digita",
+    "objeto": "notebook",
+    "rosto": "inocente"
+   }
+  },
+  {
+   "id": "pesquisando",
+   "nome": "Pesquisando",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     15
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "pesquisando"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "celular",
+    "bracos": "segura",
+    "cabeca": "leJunto",
+    "rosto": "focado"
+   }
+  },
+  {
+   "id": "lendo",
+   "nome": "Lendo",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     16,
+     95
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "le um livro",
+     "vai ler",
+     "ler um livro"
+    ]
+   },
+   "duracao": 4200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco",
+    "zen"
+   ],
+   "fala": "estudo",
+   "receita": {
+    "objeto": "livro",
+    "bracos": "segura",
+    "cabeca": "leJunto",
+    "rosto": "focado"
+   }
+  },
+  {
+   "id": "tarefaConcluida",
+   "nome": "Tarefa concluída",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     17
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "respostaPronta"
+    ]
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "confuso",
+   "nome": "Confuso",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     18
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "curioso"
+   ],
+   "receita": {
+    "rosto": "confuso",
+    "bracos": "ombros",
+    "marca": "?"
+   }
+  },
+  {
+   "id": "curioso",
+   "nome": "Curioso (inclinar a cabeça)",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     19
+    ],
+    "ambiente": [
+     13
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "usa": "curious",
+   "frequencia": "comum",
+   "energia": [
+    "curioso"
+   ]
+  },
+  {
+   "id": "seguirOlhar",
+   "nome": "Seguir o cursor com o olhar",
+   "categoria": "atencao",
+   "listas": {
+    "base": [
+     20
+    ],
+    "ambiente": [
+     12
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "especial": "olhar",
+   "receita": {
+    "cabeca": "explora",
+    "rosto": "neutro"
+   }
+  },
+  {
+   "id": "encarar",
+   "nome": "Parar e encarar o usuário",
+   "categoria": "atencao",
+   "listas": {
+    "ambiente": [
+     10
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "cabeca": "encara",
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "lerJunto",
+   "nome": "Olhar para a tela como se lesse junto",
+   "categoria": "atencao",
+   "listas": {
+    "ambiente": [
+     11
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco",
+    "curioso"
+   ],
+   "receita": {
+    "cabeca": "leJunto",
+    "rosto": "focado"
+   }
+  },
+  {
+   "id": "feliz",
+   "nome": "Feliz",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     21
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "usa": "happy",
+   "frequencia": "comum"
+  },
+  {
+   "id": "animado",
+   "nome": "Animado",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     22
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "pulinho",
+    "bracos": "agita",
+    "rosto": "feliz",
+    "cauda": "abana"
+   }
+  },
+  {
+   "id": "puloAlegria",
+   "nome": "Pulo de alegria",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     23
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "pula",
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "risada",
+   "nome": "Risada",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     24
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "rosto": "risada",
+    "corpo": "balanca",
+    "bracos": "tapaBarriga"
+   }
+  },
+  {
+   "id": "sorrisoSuave",
+   "nome": "Sorriso suave",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     25
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "rosto": "sorriso",
+    "cauda": "devagar"
+   }
+  },
+  {
+   "id": "orgulhoso",
+   "nome": "Orgulhoso",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     26
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "rosto": "orgulhoso",
+    "bracos": "cintura",
+    "corpo": "infla"
+   }
+  },
+  {
+   "id": "apaixonado",
+   "nome": "Apaixonado",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     27
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "rosto": "apaixonado",
+    "bracos": "maosBoca",
+    "corpo": "balanca",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "grato",
+   "nome": "Grato",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     28
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "obrigad",
+     "valeu jojo"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "grato",
+    "bracos": "maoNoPeito",
+    "cabeca": "assente"
+   }
+  },
+  {
+   "id": "aplaudir",
+   "nome": "Aplaudir",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     29
+    ],
+    "ambiente": [
+     98
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "eventos": [
+     "tarefaFinalizada"
+    ]
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "aplaude",
+    "rosto": "feliz"
+   }
+  },
+  {
+   "id": "comemorar",
+   "nome": "Comemorar",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     30
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "sucesso"
+    ],
+    "frases": [
+     "comemora",
+     "bora comemorar"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "pula",
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "dancinha",
+   "nome": "Dancinha",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     31
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "dancinha",
+     "danca",
+     "dança"
+    ]
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "danca",
+    "bracos": "agita",
+    "rosto": "feliz",
+    "fx": [
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "brilhoOlhos",
+   "nome": "Brilho nos olhos",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     32
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "rosto": "brilhoOlhos",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "contente",
+   "nome": "Contentamento",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     33
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "rosto": "contente",
+    "corpo": "respira",
+    "cauda": "devagar"
+   }
+  },
+  {
+   "id": "aliviado",
+   "nome": "Aliviado",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     34
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "alivio"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "aliviado",
+    "bracos": "repouso"
+   }
+  },
+  {
+   "id": "empolgado",
+   "nome": "Empolgado",
+   "categoria": "positivas",
+   "listas": {
+    "base": [
+     35
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "pulinho",
+    "bracos": "flexDuplo",
+    "rosto": "sorrisao",
+    "cauda": "abana",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "triste",
+   "nome": "Triste",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     36
+    ]
+   },
+   "gatilho": {},
+   "usa": "sad",
+   "frequencia": "comum"
+  },
+  {
+   "id": "chorando",
+   "nome": "Chorar cachoeira",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     37
+    ],
+    "semPudor": [
+     68
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "rosto": "chora",
+    "bracos": "cobreRosto",
+    "fx": [
+     "lagrimas"
+    ]
+   }
+  },
+  {
+   "id": "decepcionado",
+   "nome": "Decepcionado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     38
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "decepcionado",
+    "cabeca": "olhaBaixo",
+    "cauda": "baixa"
+   }
+  },
+  {
+   "id": "preocupado",
+   "nome": "Preocupado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     39
+    ],
+    "ambiente": [
+     106
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "trabalhoLongo"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "cuidado",
+   "receita": {
+    "rosto": "preocupado",
+    "bracos": "maosBoca",
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "ansioso",
+   "nome": "Ansioso",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     40
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "nervoso",
+    "corpo": "treme",
+    "bracos": "coca",
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "nervoso",
+   "nome": "Nervoso",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     41
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "nervoso",
+    "bracos": "reza",
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "envergonhado",
+   "nome": "Envergonhado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     42
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "envergonhado",
+    "bracos": "cobreRosto",
+    "corpo": "encolhe"
+   }
+  },
+  {
+   "id": "entediado",
+   "nome": "Entediado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     43
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "rosto": "entediado",
+    "cabeca": "inclina",
+    "corpo": "balanca",
+    "bracos": "cruzados",
+    "intensidade": 0.6
+   }
+  },
+  {
+   "id": "irritadoLeve",
+   "nome": "Irritado leve",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     44
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "irritado",
+    "bracos": "cruzados",
+    "cauda": "abana"
+   }
+  },
+  {
+   "id": "frustrado",
+   "nome": "Frustrado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     45
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "erro"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "frustrado",
+    "bracos": "agita",
+    "fx": [
+     "vapor"
+    ]
+   }
+  },
+  {
+   "id": "assustado",
+   "nome": "Assustado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     46
+    ]
+   },
+   "gatilho": {},
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "assustado",
+    "corpo": "recua",
+    "bracos": "protege",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "surpreso",
+   "nome": "Surpreso",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     47
+    ]
+   },
+   "gatilho": {},
+   "usa": "surprised",
+   "frequencia": "comum"
+  },
+  {
+   "id": "chocado",
+   "nome": "Chocado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     48
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "chocado",
+    "corpo": "recua",
+    "bracos": "maosAlto",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "cansado",
+   "nome": "Cansado",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     49
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "noite",
+     "madrugada"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "rosto": "cansado",
+    "corpo": "encolhe",
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "solitario",
+   "nome": "Solitário",
+   "categoria": "negativas",
+   "listas": {
+    "base": [
+     50
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "semInteracao"
+    ]
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "solitario",
+    "cabeca": "olhaBaixo",
+    "cauda": "baixa",
+    "base": "sit"
+   }
+  },
+  {
+   "id": "acenar",
+   "nome": "Acenar (oi)",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     51
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "oi"
+    ]
+   },
+   "usa": "wave",
+   "frequencia": "comum"
+  },
+  {
+   "id": "tchau",
+   "nome": "Tchau",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     52
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "tchau"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "tchau",
+    "rosto": "sorriso"
+   }
+  },
+  {
+   "id": "abraco",
+   "nome": "Abraço",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     53
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "abraco",
+     "abraço",
+     "me abraca",
+     "me abraça"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "abraco",
+    "rosto": "contente",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "coracao",
+   "nome": "Coração com as nadadeiras",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     54
+    ],
+    "semPudor": [
+     22
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "manda um coracao",
+     "manda coração",
+     "faz um coracao",
+     "faz coração"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "bracos": "coracao",
+    "rosto": "sorriso",
+    "fx": [
+     "coracaoGrande"
+    ]
+   }
+  },
+  {
+   "id": "highFive",
+   "nome": "High five",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     55
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "high five",
+     "toca aqui",
+     "bate aqui"
+    ]
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "highFive",
+    "rosto": "feliz",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "piscadinha",
+   "nome": "Piscadinha",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     56
+    ],
+    "semPudor": [
+     10
+    ],
+    "ambiente": [
+     62
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "rosto": "piscadinha",
+    "cabeca": "inclina",
+    "humor": {
+     "vergonha": 0.2
+    }
+   }
+  },
+  {
+   "id": "assentir",
+   "nome": "Assentir (sim)",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     57
+    ]
+   },
+   "gatilho": {},
+   "usa": "nod",
+   "frequencia": "comum"
+  },
+  {
+   "id": "negar",
+   "nome": "Negar (não)",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     58
+    ],
+    "semPudor": [
+     54
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "faz isso",
+     "faz pra mim"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "cabeca": "nega",
+    "bracos": "cruzados",
+    "rosto": "irritado"
+   }
+  },
+  {
+   "id": "ombros",
+   "nome": "Dar de ombros",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     59
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "bracos": "ombros",
+    "cabeca": "inclina",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "apontar",
+   "nome": "Apontar",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     60
+    ]
+   },
+   "gatilho": {},
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "aponta",
+    "rosto": "sobrancelha"
+   }
+  },
+  {
+   "id": "convidar",
+   "nome": "Convidar para algo",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     61
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "competitivo"
+   ],
+   "receita": {
+    "bracos": "convida",
+    "rosto": "sorriso",
+    "cabeca": "inclina"
+   }
+  },
+  {
+   "id": "desculpas",
+   "nome": "Pedir desculpas",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     62
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "pede desculpa",
+     "pede perdao",
+     "pede perdão"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "reza",
+    "rosto": "decepcionado",
+    "cabeca": "olhaBaixo"
+   }
+  },
+  {
+   "id": "agradecer",
+   "nome": "Agradecer",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     63
+    ]
+   },
+   "gatilho": {},
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "maoNoPeito",
+    "cabeca": "assente",
+    "rosto": "grato"
+   }
+  },
+  {
+   "id": "cumprimentar",
+   "nome": "Cumprimentar",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     64
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "bomDia"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "acena",
+    "cabeca": "assente",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "consolar",
+   "nome": "Consolar o usuário",
+   "categoria": "social",
+   "listas": {
+    "base": [
+     65
+    ]
+   },
+   "gatilho": {},
+   "usa": "comfort",
+   "frequencia": "comum"
+  },
+  {
+   "id": "tarefaFinalizada",
+   "nome": "Tarefa finalizada",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     66
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "tarefaFinalizada"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "flexDuplo",
+    "rosto": "orgulhoso",
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "erro",
+   "nome": "Erro ocorrido",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     67
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "erro"
+    ]
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "chocado",
+    "bracos": "agita",
+    "fx": [
+     "vapor"
+    ],
+    "marca": "!"
+   }
+  },
+  {
+   "id": "sucesso",
+   "nome": "Sucesso",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     68
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "sucesso"
+    ]
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "sequencia",
+   "nome": "Sequência (streak) mantida",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     69
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "sequencia"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "medalha",
+    "bracos": "flexDuplo",
+    "rosto": "orgulhoso",
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "aniversario",
+   "nome": "Aniversário",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     70
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "aniversario"
+    ]
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "maosAlto",
+    "corpo": "pulinho",
+    "rosto": "feliz",
+    "fx": [
+     "confete",
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "bomDia",
+   "nome": "Bom dia animado",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     71
+    ],
+    "ambiente": [
+     99
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "bomDia"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "horario",
+   "receita": {
+    "bracos": "alonga",
+    "objeto": "cafe",
+    "rosto": "feliz",
+    "corpo": "espreguica"
+   }
+  },
+  {
+   "id": "boaNoite",
+   "nome": "Boa noite",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     72
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "boaNoite"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "tchau",
+    "rosto": "canto",
+    "fx": [
+     "estrelas"
+    ]
+   }
+  },
+  {
+   "id": "lembrete",
+   "nome": "Lembrete",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     73
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "lembrete"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "relogio",
+    "bracos": "seguraFrente",
+    "rosto": "sobrancelha",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "horaPausa",
+   "nome": "Hora da pausa",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     74
+    ],
+    "ambiente": [
+     92
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "pausa"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "cuidado",
+   "receita": {
+    "objeto": "relogio",
+    "bracos": "seguraFrente",
+    "rosto": "canto",
+    "cabeca": "olhaBaixo"
+   }
+  },
+  {
+   "id": "modoFoco",
+   "nome": "Modo foco",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     75
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "foco"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "oculos",
+    "rosto": "focado",
+    "bracos": "cruzados",
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "parabens",
+   "nome": "Parabéns",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     76
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "parabens"
+    ],
+    "frases": [
+     "parabens",
+     "parabéns"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "aplaude",
+    "rosto": "feliz",
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "notificacao",
+   "nome": "Notificação recebida",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     77
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "notificacao"
+    ]
+   },
+   "duracao": 1600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "pulinho",
+    "cabeca": "olhaLado",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "mensagemNova",
+   "nome": "Mensagem nova",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     78
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "mensagemNova"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "objeto": "celular",
+    "bracos": "seguraFrente",
+    "marca": "!",
+    "rosto": "sobrancelha"
+   }
+  },
+  {
+   "id": "ausente",
+   "nome": "Usuário ausente (esperando)",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     79
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "ausente"
+    ]
+   },
+   "duracao": 4200,
+   "loop": true,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "base": "sit",
+    "cabeca": "olhaRedor",
+    "rosto": "entediado"
+   }
+  },
+  {
+   "id": "voltou",
+   "nome": "Usuário voltou (reencontro)",
+   "categoria": "eventos",
+   "listas": {
+    "base": [
+     80
+    ],
+    "ambiente": [
+     105
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "voltou"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "ausencia",
+   "receita": {
+    "corpo": "pula",
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "clique",
+   "nome": "Clique simples",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     81
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "clique"
+    ]
+   },
+   "duracao": 900,
+   "loop": false,
+   "entrada": 60,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "pulinho",
+    "rosto": "surpreso",
+    "marca": "!",
+    "intensidade": 0.6,
+    "repeticoes": 1
+   }
+  },
+  {
+   "id": "carinho",
+   "nome": "Carinho",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     82
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "carinho"
+    ]
+   },
+   "usa": "petted",
+   "frequencia": "comum"
+  },
+  {
+   "id": "cocegas",
+   "nome": "Cócegas",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     83
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "cocegas"
+    ],
+    "frases": [
+     "cocegas",
+     "cócegas"
+    ]
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "risada",
+    "corpo": "treme",
+    "bracos": "cocegas"
+   }
+  },
+  {
+   "id": "pego",
+   "nome": "Ser pego (arrastar)",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     84
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "arrastar"
+    ]
+   },
+   "usa": "dragged",
+   "frequencia": "comum"
+  },
+  {
+   "id": "solto",
+   "nome": "Ser solto",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     85
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "soltar"
+    ]
+   },
+   "usa": "land",
+   "frequencia": "comum"
+  },
+  {
+   "id": "jogado",
+   "nome": "Ser jogado",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     86
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "jogar"
+    ]
+   },
+   "duracao": 1400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "jogado",
+    "rosto": "chocado"
+   }
+  },
+  {
+   "id": "duploClique",
+   "nome": "Duplo clique",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     87
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "duploClique"
+    ]
+   },
+   "duracao": 1200,
+   "loop": false,
+   "entrada": 60,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "gira",
+    "rosto": "feliz",
+    "repeticoes": 1
+   }
+  },
+  {
+   "id": "segurar",
+   "nome": "Segurar",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     88
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "segurar"
+    ]
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "encolhe",
+    "rosto": "timido"
+   }
+  },
+  {
+   "id": "empurrado",
+   "nome": "Ser empurrado",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     89
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "te empurro",
+     "empurra"
+    ]
+   },
+   "duracao": 1400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "empurrado",
+    "rosto": "irritado"
+   }
+  },
+  {
+   "id": "seguir",
+   "nome": "Seguir o usuário",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     90
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "me segue",
+     "vem comigo",
+     "vem aqui"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "mover": "cursor",
+   "receita": {
+    "corpo": "nada",
+    "bracos": "nadando",
+    "rosto": "sorriso"
+   }
+  },
+  {
+   "id": "esconder",
+   "nome": "Esconder-se",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     91
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "se esconde",
+     "esconde"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "encolhe",
+    "bracos": "cobreRosto",
+    "rosto": "timido"
+   }
+  },
+  {
+   "id": "espiarBorda",
+   "nome": "Espiar da borda da tela",
+   "categoria": "interacao",
+   "listas": {
+    "base": [
+     92
+    ],
+    "ambiente": [
+     65
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "curioso"
+   ],
+   "mover": "borda",
+   "receita": {
+    "corpo": "espiaBorda",
+    "cabeca": "espia",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "comer",
+   "nome": "Comer",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     93
+    ]
+   },
+   "gatilho": {},
+   "usa": "eat",
+   "frequencia": "comum"
+  },
+  {
+   "id": "beberShake",
+   "nome": "Beber shake de proteína",
+   "categoria": "vaidade",
+   "listas": {
+    "base": [
+     94
+    ],
+    "semPudor": [
+     44
+    ],
+    "ambiente": [
+     25
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "bebe shake",
+     "toma shake",
+     "shake"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "fala": "treino",
+   "receita": {
+    "objeto": "shake",
+    "bracos": "bebe",
+    "rosto": "contente"
+   }
+  },
+  {
+   "id": "ouvirMusica",
+   "nome": "Ouvir música",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     96
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen",
+    "pilhado"
+   ],
+   "receita": {
+    "bracos": "fone",
+    "corpo": "balanca",
+    "rosto": "contente",
+    "cauda": "abana",
+    "fx": [
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "estrelas",
+   "nome": "Observar estrelas",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     97
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "noite",
+     "madrugada"
+    ]
+   },
+   "duracao": 4600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "base": "sit",
+    "cabeca": "olhaCima",
+    "rosto": "contente",
+    "fx": [
+     "estrelas"
+    ]
+   }
+  },
+  {
+   "id": "soprarBolhas",
+   "nome": "Soprar bolhas",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     98
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "rosto": "beijoBoca",
+    "cabeca": "olhaCima",
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "brincar",
+   "nome": "Brincar com um objeto",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     99
+    ],
+    "ambiente": [
+     74
+    ]
+   },
+   "gatilho": {},
+   "usa": "play",
+   "frequencia": "comum"
+  },
+  {
+   "id": "perseguir",
+   "nome": "Perseguir algo",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     100
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado",
+    "curioso"
+   ],
+   "receita": {
+    "corpo": "nada",
+    "cabeca": "olhaRedor",
+    "bracos": "agita",
+    "fx": [
+     "peixinho"
+    ]
+   }
+  },
+  {
+   "id": "pular",
+   "nome": "Pular",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     101
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "pula",
+    "rosto": "feliz"
+   }
+  },
+  {
+   "id": "rolar",
+   "nome": "Rolar",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     102
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "rola",
+     "rolar"
+    ]
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "rola",
+    "rosto": "feliz"
+   }
+  },
+  {
+   "id": "girar",
+   "nome": "Girar",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     103
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "gira",
+     "girar"
+    ]
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "gira",
+    "rosto": "feliz",
+    "repeticoes": 2
+   }
+  },
+  {
+   "id": "sentar",
+   "nome": "Sentar",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     104
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "usa": "sit",
+   "frequencia": "comum"
+  },
+  {
+   "id": "deitar",
+   "nome": "Deitar",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     105
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "usa": "lie",
+   "frequencia": "comum"
+  },
+  {
+   "id": "escondeBorda",
+   "nome": "Esconder-se atrás da borda/janela",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     106
+    ],
+    "ambiente": [
+     67
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "curioso"
+   ],
+   "mover": "borda",
+   "receita": {
+    "corpo": "escondeBorda",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "frio",
+   "nome": "Sentir frio",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     107
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "treme",
+    "bracos": "cruzados",
+    "rosto": "triste",
+    "fx": [
+     "neve"
+    ],
+    "humor": {
+     "medo": 0.4
+    }
+   }
+  },
+  {
+   "id": "calor",
+   "nome": "Sentir calor",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     108
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "objeto": "toalha",
+    "bracos": "toalha",
+    "rosto": "cansado",
+    "fx": [
+     "vapor",
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "chuva",
+   "nome": "Reagir à chuva",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     109
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "bracos": "protege",
+    "rosto": "irritado",
+    "fx": [
+     "chuva"
+    ]
+   }
+  },
+  {
+   "id": "vento",
+   "nome": "Reagir ao vento",
+   "categoria": "acoes",
+   "listas": {
+    "base": [
+     110
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "corpo": "inclina",
+    "bracos": "protege",
+    "rosto": "surpreso",
+    "fx": [
+     "vento"
+    ]
+   }
+  },
+  {
+   "id": "aparecer",
+   "nome": "Aparecer (spawn)",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     111
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "aparecer"
+    ]
+   },
+   "usa": "appear",
+   "frequencia": "comum"
+  },
+  {
+   "id": "desaparecer",
+   "nome": "Desaparecer",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     112
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "some",
+     "desaparece"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "some",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "teleporte",
+   "nome": "Teleporte",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     113
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "teleporta",
+     "teleporte"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "corpo": "teleporte",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "aura",
+   "nome": "Brilho/aura",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     114
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "corpo": "respira",
+    "rosto": "orgulhoso",
+    "fx": [
+     "aura"
+    ]
+   }
+  },
+  {
+   "id": "evolucao",
+   "nome": "Transformação/evolução",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     115
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "eventos": [
+     "nivel"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "corpo": "evolui",
+    "rosto": "sorrisao",
+    "fx": [
+     "brilho",
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "modoPoder",
+   "nome": "Modo poder",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     116
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "modo poder"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "convencido",
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "poder",
+    "bracos": "flexDuplo",
+    "rosto": "fera",
+    "fx": [
+     "aura"
+    ]
+   }
+  },
+  {
+   "id": "pet",
+   "nome": "Reação ao comando /pet",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     117
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "pet"
+    ]
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "pulinho",
+    "bracos": "acena",
+    "rosto": "feliz"
+   }
+  },
+  {
+   "id": "poseEpica",
+   "nome": "Pose épica de capa de revista",
+   "categoria": "especiais",
+   "listas": {
+    "base": [
+     119
+    ],
+    "semPudor": [
+     115
+    ],
+    "ambiente": [
+     108
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "easter",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "especiais",
+   "receita": {
+    "objeto": "oculos",
+    "bracos": "flexDuplo",
+    "corpo": "infla",
+    "fx": [
+     "aura",
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "encararDentes",
+   "nome": "Encarar sem piscar com sorriso cheio de dentes",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     1
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "cabeca": "encara",
+    "rosto": "sorrisao",
+    "semPiscar": true,
+    "fx": [
+     "brilhoDente"
+    ]
+   }
+  },
+  {
+   "id": "sorrisoCanto",
+   "nome": "Sorriso de canto mostrando um dente",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     2
+    ],
+    "ambiente": [
+     61
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "rosto": "canto",
+    "fx": [
+     "brilhoDente"
+    ]
+   }
+  },
+  {
+   "id": "sobrancelha",
+   "nome": "Levantar uma sobrancelha",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     3
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "rosto": "sobrancelha"
+   }
+  },
+  {
+   "id": "revirarOlhos",
+   "nome": "Revirar os olhos",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     4
+    ],
+    "ambiente": [
+     44
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "cabeca": "revira",
+    "rosto": "entediado"
+   }
+  },
+  {
+   "id": "ombrosDeboche",
+   "nome": "Dar de ombros com deboche",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     5
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "bracos": "ombros",
+    "rosto": "canto",
+    "cabeca": "revira"
+   }
+  },
+  {
+   "id": "superioridade",
+   "nome": "Cruzar as nadadeiras com superioridade",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     6
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "bracos": "cruzados",
+    "rosto": "orgulhoso",
+    "corpo": "infla"
+   }
+  },
+  {
+   "id": "naoFuiEu",
+   "nome": "Fingir que não fez nada",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     7
+    ],
+    "ambiente": [
+     60
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "descaro",
+   "receita": {
+    "rosto": "inocente",
+    "bracos": "escondeAtras",
+    "fx": [
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "assobiar",
+   "nome": "Assobiar disfarçando (com bolhas)",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     8
+    ],
+    "ambiente": [
+     59
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "assobia",
+    "cabeca": "olhaLado",
+    "fx": [
+     "notas",
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "olharLado",
+   "nome": "Olhar para o lado inocentemente",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     9
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "cabeca": "olhaLado",
+    "rosto": "inocente"
+   }
+  },
+  {
+   "id": "beijoExagerado",
+   "nome": "Mandar beijo exagerado",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     11
+    ],
+    "ambiente": [
+     63
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "manda um beijo",
+     "me manda beijo",
+     "beijo"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "bracos": "beijo",
+    "rosto": "beijoBoca",
+    "corpo": "inclina",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "poseVilao",
+   "nome": "Pose de vilão com a dorsal em destaque",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     12
+    ],
+    "ambiente": [
+     32,
+     95
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido",
+    "competitivo"
+   ],
+   "fala": "filosofia",
+   "receita": {
+    "dorsal": "destaque",
+    "rosto": "fera",
+    "bracos": "cruzados",
+    "humor": {
+     "raiva": 0.2
+    }
+   }
+  },
+  {
+   "id": "rirPropriaPiada",
+   "nome": "Rir da própria piada",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     13
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "rosto": "risada",
+    "corpo": "balanca",
+    "bracos": "tapaBarriga"
+   }
+  },
+  {
+   "id": "hmpf",
+   "nome": "Fazer \"hmpf\" e virar o rosto",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     14
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "cabeca": "viraRosto",
+    "bracos": "cruzados",
+    "rosto": "irritado"
+   }
+  },
+  {
+   "id": "circularPresa",
+   "nome": "Circular o usuário como presa",
+   "categoria": "descarado",
+   "listas": {
+    "semPudor": [
+     15
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "competitivo"
+   ],
+   "receita": {
+    "corpo": "circula",
+    "dorsal": "destaque",
+    "rosto": "fera"
+   }
+  },
+  {
+   "id": "charmeCauda",
+   "nome": "Fazer charme balançando a cauda",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     16
+    ],
+    "ambiente": [
+     64
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido",
+    "carente"
+   ],
+   "receita": {
+    "cauda": "charme",
+    "rosto": "canto",
+    "corpo": "balanca"
+   }
+  },
+  {
+   "id": "brilharDentes",
+   "nome": "Ajeitar a pose e brilhar os dentes",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     17
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "corpo": "infla",
+    "rosto": "sorrisao",
+    "bracos": "cintura",
+    "fx": [
+     "brilhoDente"
+    ]
+   }
+  },
+  {
+   "id": "olharApaixonado",
+   "nome": "Olhar apaixonado demais",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     18
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "rosto": "apaixonado",
+    "cabeca": "encara",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "corar",
+   "nome": "Corar de propósito",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     19
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "rosto": "envergonhado",
+    "bracos": "maosBoca"
+   }
+  },
+  {
+   "id": "fingirTimidez",
+   "nome": "Fingir timidez escondendo o rosto",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     20
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "bracos": "cobreRosto",
+    "rosto": "timido",
+    "corpo": "encolhe"
+   }
+  },
+  {
+   "id": "soprarBeijo",
+   "nome": "Soprar um beijo",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     21
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "bracos": "beijo",
+    "rosto": "beijoBoca",
+    "fx": [
+     "coracaoGrande"
+    ]
+   }
+  },
+  {
+   "id": "nadarParaTela",
+   "nome": "Nadar devagar em direção à tela",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     23
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "nadando",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "sussurrar",
+   "nome": "Sussurrar com balão de fala",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     24
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "fala": "especiais",
+   "receita": {
+    "bracos": "maoBoca",
+    "cabeca": "inclina",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "elogiarExagero",
+   "nome": "Elogiar o usuário com exagero",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     25
+    ],
+    "ambiente": [
+     88
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente"
+   ],
+   "fala": "motivacao",
+   "receita": {
+    "bracos": "aponta",
+    "rosto": "feliz",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "ciumento",
+   "nome": "Ficar ciumento",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     26
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "outro tubarao",
+     "outro tubarão"
+    ]
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "rosto": "irritado",
+    "cabeca": "viraRosto",
+    "bracos": "cruzados",
+    "humor": {
+     "raiva": 0.3
+    }
+   }
+  },
+  {
+   "id": "dramaCiumes",
+   "nome": "Drama de ciúmes rangendo os dentes",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     27
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "rosto": "frustrado",
+    "bracos": "agita",
+    "fx": [
+     "vapor"
+    ],
+    "humor": {
+     "raiva": 0.5
+    }
+   }
+  },
+  {
+   "id": "amorEterno",
+   "nome": "Declarar amor eterno de forma teatral",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     28
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "easter",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "corpo": "ajoelha",
+    "bracos": "maoNoPeito",
+    "rosto": "apaixonado",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "cantadaRuim",
+   "nome": "Cantada ruim de tubarão",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     29
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "cantada",
+     "me da uma cantada",
+     "me dá uma cantada"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "fala": "cantada",
+   "receita": {
+    "rosto": "piscadinha",
+    "bracos": "aponta"
+   }
+  },
+  {
+   "id": "abracoApertado",
+   "nome": "Abraço apertado demais, de quebrar costela",
+   "categoria": "flerte",
+   "listas": {
+    "semPudor": [
+     30
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "abraco apertado",
+     "abraço apertado"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "abraco",
+    "corpo": "treme",
+    "rosto": "feliz",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "espelho",
+   "nome": "Admirar-se no espelho",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     31
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "espelho"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "objeto": "espelho",
+    "bracos": "seguraFrente",
+    "rosto": "orgulhoso",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "selfie",
+   "nome": "Posar para selfie",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     32
+    ],
+    "ambiente": [
+     28
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "selfie",
+     "tira uma foto"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "objeto": "celular",
+    "bracos": "seguraAlto",
+    "rosto": "sorrisao",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "desfile",
+   "nome": "Desfile de passarela submarina",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     33,
+     38
+    ],
+    "ambiente": [
+     109
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "desfile",
+     "desfila"
+    ]
+   },
+   "duracao": 4400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "corpo": "desfile",
+    "bracos": "cintura",
+    "rosto": "orgulhoso",
+    "objeto": "oculos"
+   }
+  },
+  {
+   "id": "seAcharMaximo",
+   "nome": "Se achar o máximo",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     34
+    ],
+    "ambiente": [
+     31
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "corpo": "infla",
+    "bracos": "cintura",
+    "rosto": "orgulhoso",
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "flexionarBiceps",
+   "nome": "Flexionar bíceps",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     35
+    ],
+    "ambiente": [
+     16
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "flexiona",
+     "biceps",
+     "bíceps",
+     "mostra o braco",
+     "mostra o braço"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "treino",
+   "receita": {
+    "bracos": "flexUm",
+    "rosto": "orgulhoso"
+   }
+  },
+  {
+   "id": "duploBiceps",
+   "nome": "Pose de fisiculturista (duplo bíceps)",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     36
+    ],
+    "ambiente": [
+     17,
+     27
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "duplo biceps",
+     "duplo bíceps",
+     "faz pose"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido",
+    "pilhado"
+   ],
+   "fala": "treino",
+   "receita": {
+    "bracos": "flexDuplo",
+    "rosto": "sorrisao",
+    "corpo": "infla"
+   }
+  },
+  {
+   "id": "aplausosImaginarios",
+   "nome": "Receber aplausos imaginários",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     37
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "cabeca": "olhaRedor",
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "agradecerPlateia",
+   "nome": "Agradecer a plateia",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     38
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "bracos": "maoNoPeito",
+    "cabeca": "assente",
+    "corpo": "inclina",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "fingirModestia",
+   "nome": "Fingir modéstia",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     39
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "bracos": "maoNoPeito",
+    "rosto": "timido",
+    "cabeca": "viraRosto"
+   }
+  },
+  {
+   "id": "pedirElogios",
+   "nome": "Pedir elogios",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     40
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente",
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "bracos": "convida",
+    "rosto": "canto",
+    "cabeca": "inclina",
+    "marca": "?"
+   }
+  },
+  {
+   "id": "tapinhaAbdomen",
+   "nome": "Mostrar o abdômen e dar tapinha",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     41
+    ],
+    "ambiente": [
+     19
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "treino",
+   "receita": {
+    "bracos": "tapaBarriga",
+    "rosto": "orgulhoso"
+   }
+  },
+  {
+   "id": "halteres",
+   "nome": "Levantar halteres",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     42
+    ],
+    "ambiente": [
+     21
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "halter",
+     "levanta peso"
+    ]
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco",
+    "pilhado"
+   ],
+   "fala": "treino",
+   "receita": {
+    "objeto": "halter",
+    "bracos": "rosca",
+    "rosto": "focado",
+    "fx": [
+     "suor"
+    ],
+    "repeticoes": 4
+   }
+  },
+  {
+   "id": "flexoes",
+   "nome": "Fazer flexões flutuando",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     43
+    ],
+    "ambiente": [
+     20
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "flexao",
+     "flexão",
+     "flexoes",
+     "flexões"
+    ]
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco",
+    "pilhado"
+   ],
+   "fala": "treino",
+   "receita": {
+    "corpo": "flexoes",
+    "rosto": "focado",
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "incrivel",
+   "nome": "Cara de \"eu sei que sou incrível\"",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     45
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "rosto": "canto",
+    "objeto": "oculos"
+   }
+  },
+  {
+   "id": "toalha",
+   "nome": "Treinar, suar e se secar com toalha",
+   "categoria": "vaidade",
+   "listas": {
+    "semPudor": [
+     46
+    ],
+    "ambiente": [
+     26
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "fala": "treino",
+   "receita": {
+    "objeto": "toalha",
+    "bracos": "toalha",
+    "fx": [
+     "suor"
+    ],
+    "rosto": "cansado"
+   }
+  },
+  {
+   "id": "admirarMusculos",
+   "nome": "Admirar os próprios músculos",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     18
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "bracos": "flexUm",
+    "cabeca": "olhaLado",
+    "rosto": "apaixonado"
+   }
+  },
+  {
+   "id": "agachamentoNado",
+   "nome": "Agachamento de nado",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     22
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado",
+    "hiperfoco"
+   ],
+   "fala": "treino",
+   "receita": {
+    "corpo": "agacha",
+    "bracos": "cintura",
+    "rosto": "focado",
+    "repeticoes": 2
+   }
+  },
+  {
+   "id": "alongar",
+   "nome": "Alongar o corpo todo",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     23,
+     91
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "alonga",
+     "alongar"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "fala": "cuidado",
+   "receita": {
+    "bracos": "alonga",
+    "corpo": "espreguica",
+    "rosto": "zen"
+   }
+  },
+  {
+   "id": "elastico",
+   "nome": "Treinar com elástico",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     24
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco"
+   ],
+   "fala": "treino",
+   "receita": {
+    "bracos": "elastico",
+    "rosto": "focado",
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "espelhoInvisivel",
+   "nome": "Posar para espelho invisível",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     27
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "bracos": "flexDuplo",
+    "cabeca": "olhaLado",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "beijoBiceps",
+   "nome": "Soprar um beijo para o próprio bíceps",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     29
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "vaidade",
+   "receita": {
+    "bracos": "flexUm",
+    "cabeca": "olhaLado",
+    "rosto": "beijoBoca",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "contarRepeticoes",
+   "nome": "Contar repetições em um balão",
+   "categoria": "vaidade",
+   "listas": {
+    "ambiente": [
+     30
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 5000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco"
+   ],
+   "fala": "repeticoes",
+   "receita": {
+    "objeto": "halter",
+    "bracos": "rosca",
+    "rosto": "focado",
+    "repeticoes": 5
+   }
+  },
+  {
+   "id": "esparramado",
+   "nome": "Deitar esparramado no fundo",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     47
+    ],
+    "ambiente": [
+     40
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento",
+    "zen"
+   ],
+   "receita": {
+    "base": "lie",
+    "rosto": "contente",
+    "bracos": "repouso"
+   }
+  },
+  {
+   "id": "ignorar",
+   "nome": "Ignorar o usuário de propósito",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     48
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "cabeca": "viraRosto",
+    "bracos": "cruzados",
+    "rosto": "entediado"
+   }
+  },
+  {
+   "id": "fingirDormir",
+   "nome": "Fingir que está dormindo",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     49
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "base": "lie",
+    "rosto": "dormindo",
+    "fx": [
+     "zzz"
+    ]
+   }
+  },
+  {
+   "id": "palito",
+   "nome": "Cutucar o dente com palito",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     51
+    ],
+    "ambiente": [
+     39
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido",
+    "faminto"
+   ],
+   "receita": {
+    "objeto": "palito",
+    "bracos": "maoBoca",
+    "rosto": "dente"
+   }
+  },
+  {
+   "id": "cocarBarriga",
+   "nome": "Coçar a barriga sem cerimônia",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     52
+    ],
+    "ambiente": [
+     38,
+     52
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "descaro",
+   "receita": {
+    "bracos": "coca",
+    "rosto": "contente",
+    "corpo": "balanca"
+   }
+  },
+  {
+   "id": "rolarPreguica",
+   "nome": "Rolar de preguiça",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     53
+    ],
+    "ambiente": [
+     41
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "corpo": "rola",
+    "rosto": "cansado",
+    "intensidade": 0.6
+   }
+  },
+  {
+   "id": "depoisEuFaco",
+   "nome": "Dizer \"depois eu faço\" e virar de lado",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     55
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "depois eu faco",
+     "depois eu faço"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "descaro",
+   "receita": {
+    "cabeca": "viraRosto",
+    "base": "lie",
+    "rosto": "entediado"
+   }
+  },
+  {
+   "id": "escondeAlga",
+   "nome": "Se esconder sob uma alga",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     56
+    ],
+    "ambiente": [
+     42
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "curioso"
+   ],
+   "receita": {
+    "objeto": "alga",
+    "rosto": "canto",
+    "corpo": "encolhe"
+   }
+  },
+  {
+   "id": "escondeCoberta",
+   "nome": "Se esconder sob a coberta",
+   "categoria": "preguica",
+   "listas": {
+    "semPudor": [
+     56
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "objeto": "coberta",
+    "base": "lie",
+    "rosto": "dormindo"
+   }
+  },
+  {
+   "id": "suspirar",
+   "nome": "Suspirar entediado",
+   "categoria": "preguica",
+   "listas": {
+    "ambiente": [
+     43
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "rosto": "aliviado",
+    "cabeca": "olhaCima"
+   }
+  },
+  {
+   "id": "olharRelogio",
+   "nome": "Olhar para o relógio",
+   "categoria": "preguica",
+   "listas": {
+    "ambiente": [
+     45,
+     93
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "horario",
+   "receita": {
+    "objeto": "relogio",
+    "bracos": "seguraFrente",
+    "cabeca": "olhaBaixo",
+    "rosto": "entediado"
+   }
+  },
+  {
+   "id": "arrotar",
+   "nome": "Arrotar bolhas",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     57
+    ],
+    "ambiente": [
+     47
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "descaro",
+   "receita": {
+    "rosto": "sorrisao",
+    "corpo": "infla",
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "solucar",
+   "nome": "Soluçar",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     58
+    ],
+    "ambiente": [
+     48
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "solucos",
+    "rosto": "surpreso",
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "espirrar",
+   "nome": "Espirrar com jato de bolhas",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     59
+    ],
+    "ambiente": [
+     49
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "espirro",
+    "corpo": "recua",
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "peidinho",
+   "nome": "Peidinho fofo com efeito de bolhas",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     60
+    ],
+    "ambiente": [
+     50
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "fala": "descaro",
+   "receita": {
+    "rosto": "inocente",
+    "corpo": "pulinho",
+    "fx": [
+     "bolhas",
+     "fedor"
+    ],
+    "repeticoes": 1
+   }
+  },
+  {
+   "id": "barrigaRoncando",
+   "nome": "Barriga roncando",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     61
+    ],
+    "ambiente": [
+     51,
+     94,
+     100
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "tarde"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "fala": "fome",
+   "receita": {
+    "bracos": "tapaBarriga",
+    "rosto": "pidao",
+    "marca": "?"
+   }
+  },
+  {
+   "id": "careta",
+   "nome": "Fazer careta",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     62
+    ],
+    "ambiente": [
+     53
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "careta"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "descaro",
+   "receita": {
+    "rosto": "careta"
+   }
+  },
+  {
+   "id": "lingua",
+   "nome": "Mostrar a língua",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     63
+    ],
+    "ambiente": [
+     54
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "mostra a lingua",
+     "mostra a língua"
+    ]
+   },
+   "duracao": 1800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "lingua"
+   }
+  },
+  {
+   "id": "bochechas",
+   "nome": "Bochechas infladas como baiacu",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     64
+    ],
+    "ambiente": [
+     55
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "baiacu",
+     "bochecha"
+    ]
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "bochechas"
+   }
+  },
+  {
+   "id": "estalar",
+   "nome": "Estalar o pescoço e as nadadeiras",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     65
+    ],
+    "ambiente": [
+     15
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "bracos": "estala",
+    "cabeca": "nega",
+    "rosto": "canto",
+    "repeticoes": 2
+   }
+  },
+  {
+   "id": "autoCocegas",
+   "nome": "Fazer cócegas em si mesmo",
+   "categoria": "corpo",
+   "listas": {
+    "semPudor": [
+     66
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "bracos": "cocegas",
+    "rosto": "risada",
+    "corpo": "treme"
+   }
+  },
+  {
+   "id": "desmaio",
+   "nome": "Desmaiar dramaticamente",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     67
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "desmaia",
+    "rosto": "morto"
+   }
+  },
+  {
+   "id": "cairJoelhos",
+   "nome": "Cair de joelhos (nadadeiras)",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     69
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "ajoelha",
+    "bracos": "maosAlto",
+    "rosto": "chora"
+   }
+  },
+  {
+   "id": "perdaoTeatral",
+   "nome": "Pedir perdão de forma teatral",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     70
+    ]
+   },
+   "gatilho": {
+    "frases": [
+     "me pede perdao",
+     "me pede perdão"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "ajoelha",
+    "bracos": "reza",
+    "rosto": "triste"
+   }
+  },
+  {
+   "id": "fingirMachucado",
+   "nome": "Fingir estar machucado",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     71
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "bracos": "maoNoPeito",
+    "rosto": "chora",
+    "corpo": "encolhe",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "falsaMorte",
+   "nome": "Falsa morte boiando",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     72
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "boia",
+    "rosto": "morto"
+   }
+  },
+  {
+   "id": "ressuscitar",
+   "nome": "Ressuscitar com pose épica",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     73
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "corpo": "surge",
+    "bracos": "flexDuplo",
+    "fx": [
+     "aura",
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "gritarSuperficie",
+   "nome": "Gritar para a superfície",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     74
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "cabeca": "olhaCima",
+    "rosto": "chocado",
+    "bracos": "maosAlto",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "revolta",
+   "nome": "Revolta cômica",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     75
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "bracos": "agita",
+    "rosto": "bravo",
+    "corpo": "pulinho",
+    "fx": [
+     "vapor"
+    ]
+   }
+  },
+  {
+   "id": "birra",
+   "nome": "Ficar de birra",
+   "categoria": "drama",
+   "listas": {
+    "semPudor": [
+     76
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "base": "sit",
+    "bracos": "cruzados",
+    "rosto": "irritado",
+    "cabeca": "viraRosto"
+   }
+  },
+  {
+   "id": "esconderAtras",
+   "nome": "Esconder algo atrás das costas",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     77
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "caotico",
+    "curioso"
+   ],
+   "receita": {
+    "bracos": "escondeAtras",
+    "rosto": "inocente"
+   }
+  },
+  {
+   "id": "puxarCursor",
+   "nome": "Puxar o cursor com a boca (só de mentira)",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     78
+    ],
+    "ambiente": [
+     68
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "competitivo"
+   ],
+   "receita": {
+    "corpo": "morde",
+    "rosto": "fera"
+   }
+  },
+  {
+   "id": "derrubarObjeto",
+   "nome": "Derrubar um objeto de propósito",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     79
+    ],
+    "ambiente": [
+     69
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "objeto": "cafe",
+    "bracos": "aponta",
+    "rosto": "inocente",
+    "fx": [
+     "poeira"
+    ]
+   }
+  },
+  {
+   "id": "fugirBolhas",
+   "nome": "Fugir depois de aprontar, deixando rastro de bolhas",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     80
+    ],
+    "ambiente": [
+     70
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "mover": "foge",
+   "receita": {
+    "corpo": "nada",
+    "rosto": "inocente",
+    "fx": [
+     "bolhas",
+     "velocidade"
+    ]
+   }
+  },
+  {
+   "id": "rirEscondido",
+   "nome": "Rir escondido",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     81
+    ],
+    "ambiente": [
+     71
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "maosBoca",
+    "rosto": "risada",
+    "corpo": "treme",
+    "intensidade": 0.6
+   }
+  },
+  {
+   "id": "espiarUmOlho",
+   "nome": "Espiar com um olho só",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     82
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "curioso"
+   ],
+   "receita": {
+    "bracos": "cobreUmOlho",
+    "cabeca": "espia"
+   }
+  },
+  {
+   "id": "sustoBorda",
+   "nome": "Dar um susto saindo da borda da tela",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     83
+    ],
+    "ambiente": [
+     72
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "mover": "borda",
+   "receita": {
+    "corpo": "sobeDaBorda",
+    "rosto": "fera",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "dorsalTela",
+   "nome": "Aparecer só com a nadadeira dorsal cortando a tela",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     84
+    ],
+    "ambiente": [
+     7,
+     66
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 5000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "corpo": "some2",
+    "fx": [
+     "dorsal"
+    ]
+   }
+  },
+  {
+   "id": "pregarPeca",
+   "nome": "Pregar peça",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     85
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "bracos": "escondeAtras",
+    "rosto": "canto",
+    "fx": [
+     "confete"
+    ],
+    "marca": "!"
+   }
+  },
+  {
+   "id": "roubarFoco",
+   "nome": "Roubar o foco da tela (só de mentira)",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     86
+    ],
+    "ambiente": [
+     78
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "easter",
+   "receita": {
+    "corpo": "avanca",
+    "rosto": "canto",
+    "cabeca": "encara",
+    "fx": [
+     "aura"
+    ],
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "baguncarJanela",
+   "nome": "Bagunçar a janela (só de mentira)",
+   "categoria": "travessuras",
+   "listas": {
+    "semPudor": [
+     87
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "treme",
+    "bracos": "agita",
+    "fx": [
+     "poeira",
+     "vento"
+    ]
+   }
+  },
+  {
+   "id": "perseguirBolha",
+   "nome": "Perseguir uma bolha",
+   "categoria": "travessuras",
+   "listas": {
+    "ambiente": [
+     73
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado",
+    "curioso"
+   ],
+   "receita": {
+    "corpo": "nada",
+    "cabeca": "olhaCima",
+    "bracos": "agita",
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "peixeBorracha",
+   "nome": "Brincar com um peixinho de borracha",
+   "categoria": "travessuras",
+   "listas": {
+    "ambiente": [
+     75
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "objeto": "peixeBorracha",
+    "bracos": "segura",
+    "rosto": "feliz",
+    "corpo": "pulinho"
+   }
+  },
+  {
+   "id": "baterBorda",
+   "nome": "Bater na borda da tela e fingir que não foi nada",
+   "categoria": "travessuras",
+   "listas": {
+    "ambiente": [
+     76
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "receita": {
+    "corpo": "bateBorda",
+    "rosto": "inocente"
+   }
+  },
+  {
+   "id": "morderIcone",
+   "nome": "Tentar morder o ícone mais próximo (só de mentira)",
+   "categoria": "travessuras",
+   "listas": {
+    "ambiente": [
+     77
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "faminto"
+   ],
+   "receita": {
+    "corpo": "morde",
+    "rosto": "fera",
+    "cabeca": "olhaLado"
+   }
+  },
+  {
+   "id": "zombar",
+   "nome": "Zombar com carinho",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     88
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "competitivo"
+   ],
+   "receita": {
+    "rosto": "lingua",
+    "bracos": "aponta",
+    "corpo": "balanca"
+   }
+  },
+  {
+   "id": "imitar",
+   "nome": "Imitar o usuário",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     89
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "me imita"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "competitivo"
+   ],
+   "receita": {
+    "bracos": "digita",
+    "rosto": "careta"
+   }
+  },
+  {
+   "id": "linguaVitoria",
+   "nome": "Dar língua após vencer",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     90
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "venceu"
+    ]
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "lingua",
+    "bracos": "maosAlto"
+   }
+  },
+  {
+   "id": "dancaVitoria",
+   "nome": "Dançar vitória provocando",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     91
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "venceu"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "corpo": "danca",
+    "rosto": "lingua",
+    "bracos": "aponta"
+   }
+  },
+  {
+   "id": "sabiaQueIaErrar",
+   "nome": "\"Sabia que você ia errar\"",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     92
+    ]
+   },
+   "gatilho": {
+    "eventos": [
+     "usuarioErrou"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "provocacao",
+   "receita": {
+    "bracos": "aponta",
+    "rosto": "canto",
+    "cabeca": "assente"
+   }
+  },
+  {
+   "id": "apostar",
+   "nome": "Apostar com o usuário",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     93
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "aposta",
+     "apostar"
+    ]
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "competitivo"
+   ],
+   "fala": "provocacao",
+   "receita": {
+    "bracos": "convida",
+    "rosto": "sobrancelha"
+   }
+  },
+  {
+   "id": "quedaBraco",
+   "nome": "Desafiar para queda de braço",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     94
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "queda de braco",
+     "queda de braço"
+    ]
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "competitivo"
+   ],
+   "fala": "provocacao",
+   "receita": {
+    "bracos": "quedaBraco",
+    "rosto": "fera"
+   }
+  },
+  {
+   "id": "surpresaSarcastica",
+   "nome": "Fingir surpresa sarcástica",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     95
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "rosto": "surpreso",
+    "bracos": "maosBoca",
+    "cabeca": "revira"
+   }
+  },
+  {
+   "id": "aplausoLento",
+   "nome": "Aplauso lento sarcástico",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     96
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "receita": {
+    "bracos": "aplausoLento",
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "tchauIronico",
+   "nome": "Dar \"tchau\" irônico",
+   "categoria": "provocacao",
+   "listas": {
+    "semPudor": [
+     97
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "bracos": "acena",
+    "rosto": "canto",
+    "cabeca": "revira",
+    "intensidade": 0.6
+   }
+  },
+  {
+   "id": "devorar",
+   "nome": "Comer sem modos, devorando tudo",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     98
+    ],
+    "ambiente": [
+     79
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "fala": "fome",
+   "receita": {
+    "objeto": "frango",
+    "bracos": "maosBoca",
+    "rosto": "mastiga"
+   }
+  },
+  {
+   "id": "lamberDentes",
+   "nome": "Lamber os dentes",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     99
+    ],
+    "ambiente": [
+     80
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "receita": {
+    "rosto": "lambe"
+   }
+  },
+  {
+   "id": "rostoSujo",
+   "nome": "Sujar o rosto de comida",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     100
+    ],
+    "ambiente": [
+     81
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "receita": {
+    "objeto": "frango",
+    "rosto": "sujo",
+    "bracos": "maosBoca"
+   }
+  },
+  {
+   "id": "roubarComida",
+   "nome": "Roubar a comida do usuário",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     101
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "faminto"
+   ],
+   "receita": {
+    "bracos": "pegaComida",
+    "objeto": "frango",
+    "rosto": "inocente"
+   }
+  },
+  {
+   "id": "engolirTudo",
+   "nome": "Engolir tudo de uma vez",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     102
+    ],
+    "ambiente": [
+     82
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "receita": {
+    "rosto": "engole",
+    "corpo": "infla"
+   }
+  },
+  {
+   "id": "festaSozinho",
+   "nome": "Fazer festa sozinho",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     103
+    ],
+    "ambiente": [
+     85
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "pilhado",
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "danca",
+    "rosto": "feliz",
+    "fx": [
+     "confete",
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "dancarSemRitmo",
+   "nome": "Dançar sem ritmo",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     104
+    ],
+    "ambiente": [
+     56
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado",
+    "caotico"
+   ],
+   "receita": {
+    "corpo": "dancaSemRitmo",
+    "rosto": "careta",
+    "bracos": "agita"
+   }
+  },
+  {
+   "id": "cantarDesafinado",
+   "nome": "Cantar desafinado (só com balão)",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     105
+    ],
+    "ambiente": [
+     57
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "fala": "cantar",
+   "receita": {
+    "rosto": "canta",
+    "bracos": "maoNoPeito",
+    "fx": [
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "karaoke",
+   "nome": "Karaokê dramático",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     106
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "karaoke",
+     "karaokê",
+     "canta"
+    ]
+   },
+   "duracao": 4200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "fala": "cantar",
+   "receita": {
+    "objeto": "microfone",
+    "bracos": "segura",
+    "rosto": "canta",
+    "corpo": "ajoelha",
+    "fx": [
+     "notas"
+    ]
+   }
+  },
+  {
+   "id": "puloOndas",
+   "nome": "Pular de felicidade, fazendo ondas",
+   "categoria": "comida",
+   "listas": {
+    "semPudor": [
+     107
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "pula",
+    "rosto": "feliz",
+    "fx": [
+     "bolhas",
+     "poeira"
+    ]
+   }
+  },
+  {
+   "id": "comerPeixinhos",
+   "nome": "Comer peixinhos de um pote",
+   "categoria": "comida",
+   "listas": {
+    "ambiente": [
+     83
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "fala": "fome",
+   "receita": {
+    "objeto": "pote",
+    "bracos": "maosBoca",
+    "rosto": "mastiga"
+   }
+  },
+  {
+   "id": "beberAquario",
+   "nome": "Beber água do aquário",
+   "categoria": "comida",
+   "listas": {
+    "ambiente": [
+     84,
+     90
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "fala": "cuidado",
+   "receita": {
+    "objeto": "pote",
+    "bracos": "bebe",
+    "rosto": "contente"
+   }
+  },
+  {
+   "id": "cafeOlhando",
+   "nome": "Tomar café e olhar para o usuário",
+   "categoria": "comida",
+   "listas": {
+    "ambiente": [
+     86
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "manha"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen"
+   ],
+   "receita": {
+    "objeto": "cafe",
+    "bracos": "bebe",
+    "cabeca": "encara"
+   }
+  },
+  {
+   "id": "pedirComida",
+   "nome": "Pedir comida com um balão",
+   "categoria": "comida",
+   "listas": {
+    "ambiente": [
+     87
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "faminto"
+   ],
+   "fala": "fome",
+   "receita": {
+    "bracos": "convida",
+    "rosto": "pidao"
+   }
+  },
+  {
+   "id": "semFiltro",
+   "nome": "Modo \"sem filtro\" (combinação aleatória)",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     108
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "sem filtro"
+    ]
+   },
+   "duracao": 1000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "especial": "semFiltro",
+   "receita": {
+    "rosto": "canto"
+   }
+  },
+  {
+   "id": "confissao",
+   "nome": "Confissão constrangedora",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     109
+    ],
+    "ambiente": [
+     96
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "fala": "especiais",
+   "receita": {
+    "rosto": "envergonhado",
+    "bracos": "maosBoca"
+   }
+  },
+  {
+   "id": "horaDaVerdade",
+   "nome": "Hora da verdade (segredo bobo)",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     110
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "segredo",
+     "me conta um segredo"
+    ]
+   },
+   "duracao": 3000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "fala": "especiais",
+   "receita": {
+    "bracos": "maoBoca",
+    "rosto": "canto",
+    "cabeca": "inclina"
+   }
+  },
+  {
+   "id": "surtoCarencia",
+   "nome": "Surto de carência",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     111
+    ],
+    "ambiente": [
+     104,
+     112
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "eventos": [
+     "semInteracao"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "carente"
+   ],
+   "fala": "ausencia",
+   "receita": {
+    "corpo": "avanca",
+    "rosto": "apaixonado",
+    "bracos": "abraco",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "dancinhaViral",
+   "nome": "Dancinha viral",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     112
+    ],
+    "ambiente": [
+     58
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "dancinha viral",
+     "trend"
+    ]
+   },
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "receita": {
+    "corpo": "viral",
+    "bracos": "viral",
+    "rosto": "sorrisao"
+   }
+  },
+  {
+   "id": "criseRiso",
+   "nome": "Crise de riso",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     113
+    ],
+    "ambiente": [
+     111
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "caotico"
+   ],
+   "receita": {
+    "rosto": "risada",
+    "corpo": "treme",
+    "bracos": "tapaBarriga",
+    "fx": [
+     "lagrimas"
+    ],
+    "intensidade": 1.3
+   }
+  },
+  {
+   "id": "modoFera",
+   "nome": "Modo fera: olhos fixos, dentes à mostra, aura de predador",
+   "categoria": "especiais",
+   "listas": {
+    "semPudor": [
+     114
+    ],
+    "ambiente": [
+     107
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "frases": [
+     "modo fera"
+    ]
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "rara",
+   "energia": [
+    "competitivo"
+   ],
+   "receita": {
+    "rosto": "fera",
+    "cabeca": "encara",
+    "dorsal": "destaque",
+    "fx": [
+     "auraFera"
+    ],
+    "semPiscar": true
+   }
+  },
+  {
+   "id": "fantasma",
+   "nome": "Tubarão fantasma (silhueta passando ao fundo)",
+   "categoria": "especiais",
+   "listas": {
+    "ambiente": [
+     110
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "noite",
+     "madrugada"
+    ]
+   },
+   "duracao": 5000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "easter",
+   "receita": {
+    "cabeca": "olhaLado",
+    "rosto": "surpreso",
+    "fx": [
+     "fantasma"
+    ]
+   }
+  },
+  {
+   "id": "nadoSincronizado",
+   "nome": "Show de talentos com nado sincronizado",
+   "categoria": "especiais",
+   "listas": {
+    "ambiente": [
+     113
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "easter",
+   "receita": {
+    "corpo": "gira",
+    "bracos": "maosAlto",
+    "rosto": "sorrisao",
+    "fx": [
+     "brilho",
+     "notas"
+    ],
+    "repeticoes": 3
+   }
+  },
+  {
+   "id": "acordarAssustado",
+   "nome": "Acordar assustado e fingir que não dormiu",
+   "categoria": "preguica",
+   "listas": {
+    "ambiente": [
+     37
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "rosto": "acordaAssustado",
+    "corpo": "recua",
+    "marca": "!"
+   }
+  },
+  {
+   "id": "cochilarBoiando",
+   "nome": "Cochilar boiando",
+   "categoria": "preguica",
+   "listas": {
+    "ambiente": [
+     35
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "tarde",
+     "noite"
+    ]
+   },
+   "duracao": 5000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "corpo": "boia",
+    "rosto": "dormindo",
+    "fx": [
+     "zzz",
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "dormirRonco",
+   "nome": "Dormir de barriga para cima com bolhas de ronco",
+   "categoria": "preguica",
+   "listas": {
+    "ambiente": [
+     36,
+     102
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "noite",
+     "madrugada"
+    ]
+   },
+   "duracao": 5600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "base": "lie",
+    "rosto": "dormindo",
+    "fx": [
+     "zzz",
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "madrugada",
+   "nome": "Modo madrugada: olhos pesados e bolhas lentas",
+   "categoria": "preguica",
+   "listas": {
+    "ambiente": [
+     103
+    ]
+   },
+   "gatilho": {
+    "ambiente": true,
+    "horario": [
+     "madrugada"
+    ]
+   },
+   "duracao": 4800,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "sonolento"
+   ],
+   "receita": {
+    "corpo": "flutua",
+    "rosto": "cansado",
+    "fx": [
+     "bolhas"
+    ],
+    "intensidade": 0.5
+   }
+  },
+  {
+   "id": "ajeitarPostura",
+   "nome": "Ajeitar a postura",
+   "categoria": "presenca",
+   "listas": {
+    "ambiente": [
+     14
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "convencido"
+   ],
+   "fala": "cuidado",
+   "receita": {
+    "corpo": "infla",
+    "bracos": "cintura",
+    "rosto": "canto",
+    "intensidade": 0.5
+   }
+  },
+  {
+   "id": "nadarCirculos",
+   "nome": "Nadar em círculos lentos",
+   "categoria": "presenca",
+   "listas": {
+    "ambiente": [
+     8
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 4600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "zen",
+    "curioso"
+   ],
+   "receita": {
+    "corpo": "circula",
+    "bracos": "nadando",
+    "rosto": "contente"
+   }
+  },
+  {
+   "id": "nadarCanto",
+   "nome": "Nadar de um canto ao outro da tela",
+   "categoria": "presenca",
+   "listas": {
+    "ambiente": [
+     9
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 3600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado",
+    "curioso"
+   ],
+   "mover": "atravessa",
+   "receita": {
+    "corpo": "nada",
+    "bracos": "nadando",
+    "rosto": "contente"
+   }
+  },
+  {
+   "id": "elogioSilencio",
+   "nome": "Elogiar o usuário em silêncio",
+   "categoria": "presenca",
+   "listas": {
+    "ambiente": [
+     88
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "carente"
+   ],
+   "receita": {
+    "bracos": "aponta",
+    "rosto": "sorriso",
+    "fx": [
+     "coracoes"
+    ]
+   }
+  },
+  {
+   "id": "motivacaoAcademia",
+   "nome": "Balão motivacional de academia",
+   "categoria": "presenca",
+   "listas": {
+    "ambiente": [
+     89
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2600,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "hiperfoco"
+   ],
+   "fala": "motivacao",
+   "receita": {
+    "bracos": "flexUm",
+    "rosto": "orgulhoso"
+   }
+  },
+  {
+   "id": "torcer",
+   "nome": "Torcer pelo usuário",
+   "categoria": "presenca",
+   "listas": {
+    "ambiente": [
+     97
+    ]
+   },
+   "gatilho": {
+    "ambiente": true
+   },
+   "duracao": 2400,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "energia": [
+    "pilhado"
+   ],
+   "fala": "motivacao",
+   "receita": {
+    "bracos": "maosAlto",
+    "rosto": "feliz",
+    "corpo": "pulinho"
+   }
+  },
+  {
+   "id": "nojo",
+   "nome": "Nojo de doce",
+   "categoria": "reacoes",
+   "listas": {},
+   "gatilho": {},
+   "duracao": 3200,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "nojo",
+    "corpo": "recua",
+    "bracos": "protege",
+    "humor": {
+     "nojo": 1
+    },
+    "fx": [
+     "fedor"
+    ]
+   }
+  }
+ ]
+}

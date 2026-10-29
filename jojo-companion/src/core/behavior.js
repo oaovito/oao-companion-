@@ -80,6 +80,10 @@ export const STATES = {
   moon: { priority: P.INTERACT, phases: [{ anim: 'moon', ms: 7400 }], next: 'idle' },
   angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },
   sad: { priority: P.INTERACT, phases: [{ anim: 'sad', ms: 3200 }], next: 'idle' },
+  // Animações do catálogo: `act` (pedido, evento, chat) e `ambient` (sorteio enquanto ela trabalha).
+  // A animação e a duração vêm em `data` ({anim, ms, loopMs}).
+  act: { priority: P.INTERACT, dynamic: true, phases: [{ anim: 'idle', ms: 2000 }], next: 'idle' },
+  ambient: { priority: P.AUTO, dynamic: true, phases: [{ anim: 'idle', ms: 2000 }], next: 'idle' },
   interactIdle: { priority: P.COMMAND, phases: [{ anim: 'interactIdle', loop: true }], external: true },
   dragged: { priority: P.COMMAND, phases: [{ anim: 'dragged', loop: true }], external: true, next: 'land' },
   land: { priority: P.COMMAND, phases: [{ anim: 'land', ms: 750 }], next: 'idle' },
@@ -186,7 +190,8 @@ export class BehaviorMachine {
     const def = STATES[name];
     const prev = this.cur ? this.cur.name : null;
     const hold = pickRange(def.hold, this.rng);
-    this.cur = { name, def, prio: prio ?? def.priority, since: now, phaseIndex: 0, phaseStart: now, hold, data, exiting: false, anim: def.phases[0].anim };
+    const anim = def.dynamic && data && data.anim ? data.anim : def.phases[0].anim;
+    this.cur = { name, def, prio: prio ?? def.priority, since: now, phaseIndex: 0, phaseStart: now, hold, data, exiting: false, anim };
     this._setPhaseDur(now);
     this.history.push(name);
     if (this.history.length > 12) this.history.shift();
@@ -195,6 +200,10 @@ export class BehaviorMachine {
 
   _setPhaseDur(now) {
     const ph = this.cur.def.phases[this.cur.phaseIndex];
+    if (this.cur.def.dynamic && this.cur.data && this.cur.data.ms) {
+      this.cur.phaseEnd = now + this.cur.data.ms;
+      return;
+    }
     if (ph.loop) {
       const elapsedBefore = now - this.cur.since;
       this.cur.phaseEnd = this.cur.def.external && !this.cur.def.hold ? Infinity : this.cur.since + Math.max(this.cur.hold, elapsedBefore);
@@ -249,8 +258,18 @@ export class BehaviorMachine {
     let next = c.def.next || 'idle';
     const ctx = this.getContext() || {};
     if (next === 'auto') next = this.pickAuto(ctx);
+    // Sorteio ambiente (catálogo): o companion escolhe a animação (abaixo).
     else if (next === 'afterSit') next = this.rng() < 0.3 + (ctx.sleepiness || 0) * 0.4 ? 'lie' : 'idle';
     else if (next === 'afterLie') next = this.rng() < 0.45 + (ctx.sleepiness || 0) * 0.4 ? 'sleep' : 'idle';
+    if (ctx.hasQueue && !ctx.paused && STATES[next].priority >= P.AUTO && next !== 'ambient') next = 'ambient';
+    if (next === 'ambient') {
+      const data = ctx.pickAmbient ? ctx.pickAmbient() : null;
+      if (data && !ctx.paused) {
+        this._enter('ambient', now, data);
+        return;
+      }
+      next = 'idle';
+    }
     if (ctx.paused && STATES[next].priority >= P.AUTO) next = 'paused';
     this._enter(next, now, null);
     // Pedido de transição autônoma nunca deve ter prioridade maior que AUTO.
@@ -275,6 +294,8 @@ export class BehaviorMachine {
       w.benchPress *= 2;
       w.squat *= 2;
     }
+    // Animações ambientes do catálogo (peso vindo das configurações do companion).
+    if (ctx.ambientWeight > 0 && !ctx.alert) w.ambient = ctx.ambientWeight;
     const recent = this.history.slice(-3);
     return weightedPick(w, this.rng, recent);
   }

@@ -27,6 +27,14 @@ export const DEFAULTS = Object.freeze({
   iaProvedor: 'pollinations',   // pollinations (sem chave) | groq | gemini | openrouter
   iaChave: '',                  // chave grátis do provedor (fica só neste PC)
   iaModelo: '',                 // modelo (vazio = padrão do provedor)
+  // Animações e falas ambientes (motor de variedade / antitédio).
+  ambienteFrequencia: 'normal', // desligado | pouca | normal | muita
+  ambienteIntensidade: 'auto',  // auto (pelo humor) | suave | normal | exagerado
+  ambienteModo: 'auto',         // auto | calmo | pilhado — energia preferida
+  surpresas: true,              // animações raras e easter eggs
+  avisoRaros: true,             // aviso visual suave antes de algo raro
+  falasAmbientes: true,         // frases curtas sozinho enquanto ela trabalha
+  microMovimentos: 'normal',    // normal | discreto | desligado (respiração, guelras, bolhas…)
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -47,9 +55,16 @@ const ENUMS = {
   avoidFallback: ['fade', 'hide'],
   reduceMotion: ['system', 'on', 'off'],
   iaProvedor: ['pollinations', 'groq', 'gemini', 'openrouter'],
+  ambienteFrequencia: ['desligado', 'pouca', 'normal', 'muita'],
+  ambienteIntensidade: ['auto', 'suave', 'normal', 'exagerado'],
+  ambienteModo: ['auto', 'calmo', 'pilhado'],
+  microMovimentos: ['normal', 'discreto', 'desligado'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes'];
+
+// Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
+export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
 
 // Intervalo médio entre falas espontâneas (ms) por frequência.
 export const SPEECH_INTERVALS = { off: null, rare: [9 * 60e3, 18 * 60e3], normal: [3 * 60e3, 8 * 60e3], often: [70e3, 3 * 60e3] };

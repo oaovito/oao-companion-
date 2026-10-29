@@ -204,10 +204,12 @@ export class RigRenderer {
     ctx.strokeStyle = outline;
     ctx.globalAlpha *= 0.55;
     ctx.lineWidth = 2;
+    const gw = P('gills') * 3; // guelras mexendo
     for (const g of F.gills) {
+      const dx = Math.sign(g[0] - this.faceCenter) * gw;
       ctx.beginPath();
-      ctx.moveTo(g[0], g[1]);
-      ctx.quadraticCurveTo(g[0] - 3, (g[1] + g[3]) / 2, g[2], g[3]);
+      ctx.moveTo(g[0] + dx, g[1]);
+      ctx.quadraticCurveTo(g[0] - 3 + dx * 1.6, (g[1] + g[3]) / 2, g[2] + dx, g[3]);
       ctx.stroke();
     }
     ctx.globalAlpha /= 0.55;
@@ -234,8 +236,31 @@ export class RigRenderer {
       ctx.fill();
     }
 
+    // Bochechas infladas (baiacu): bolas da cor do corpo com contorno.
+    const cheeks = P('cheeks');
+    if (cheeks > 0.02) {
+      ctx.save();
+      ctx.fillStyle = this.color('body');
+      ctx.strokeStyle = outline;
+      ctx.lineWidth = 2.5;
+      for (const b of this.blushes) {
+        const r = (b.rx + 4) * (0.6 + 0.6 * Math.min(1, cheeks));
+        const x = b.x + Math.sign(b.x - this.faceCenter) * r * 0.45;
+        ctx.beginPath();
+        ctx.ellipse(x, b.y + 2, r, r * 0.85, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
     const sp = this.faceStyle === 'sp';
-    for (const e of this.eyes) (sp ? this._eyeSP : this._eye).call(this, ctx, pose, e);
+    // Piscadinha: fecha só o olho do lado de fora (direita do desenho).
+    const wink = P('wink') > 0.5;
+    for (const e of this.eyes) {
+      const p = wink && e.x > this.faceCenter ? { ...pose, eyeOpen: 0, happyEyes: 0 } : pose;
+      (sp ? this._eyeSP : this._eye).call(this, ctx, p, e);
+    }
     for (const b of this.brows) (sp ? this._browSP : this._brow).call(this, ctx, pose, b);
     this._mouth(ctx, pose);
     ctx.restore();

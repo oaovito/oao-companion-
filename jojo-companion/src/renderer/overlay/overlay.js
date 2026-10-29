@@ -374,6 +374,15 @@ function draw(now) {
     pose.moodWired = Math.max(pose.moodWired || 0, 0.5);
     pose.eyeScale = Math.max(pose.eyeScale || 1, 1.2);
   }
+  // Micromovimentos constantes (guelras, bolhas de vez em quando), discretos e sem flashes.
+  if (!reduced && s.micro !== 'desligado') {
+    const k = s.micro === 'discreto' ? 0.45 : 1;
+    pose.gills = Math.max(pose.gills || 0, k * (0.5 + 0.5 * Math.sin(now / 700)));
+    if (now >= nextMicroBubble) {
+      nextMicroBubble = now + (18000 + Math.random() * 30000) / k;
+      if (/^(idle|interactIdle|sit|lie)/.test(sample.name)) effects._spawnFx('bolhas', now, rig.rig.metrics.head);
+    }
+  }
   if (s.noseDust) pose.noseDust = 1;
   if (s.costume) pose[`costume_${s.costume}`] = 1;
   if (s.sexy) pose.sexy = 1;
@@ -438,6 +447,11 @@ let down = null;
 let rub = { dist: 0, since: 0, last: null };
 let lastPet = 0;
 let lastActivity = 0;
+let lastTickle = 0;
+let nextMicroBubble = 0;
+let lastClickAt = 0;
+let holdTimer = null;
+let dragVel = { x: 0, y: 0, t: 0, sx: 0, sy: 0 };
 
 function setCaptureLocal(on) {
   if (on === captureLocal) return;
@@ -480,7 +494,13 @@ function setupInteraction() {
         rub.since = now;
       }
       rub.last = { x: e.clientX, y: e.clientY };
-      if (rub.dist > 260 && now - lastPet > 2600) {
+      // Esfregar rápido demais vira cócegas.
+      if (rub.dist > 650 && now - rub.since < 1100 && now - lastTickle > 3000) {
+        lastTickle = now;
+        lastPet = now;
+        rub.dist = 0;
+        api.gesture('cocegas');
+      } else if (rub.dist > 260 && now - lastPet > 2600 && now - rub.since >= 1100) {
         lastPet = now;
         rub.dist = 0;
         api.interact('pet');
@@ -496,11 +516,26 @@ function setupInteraction() {
     down = { x: e.screenX, y: e.screenY, t: performance.now(), id: e.pointerId };
     canvas.setPointerCapture(e.pointerId);
     activity();
+    // Segurar sem arrastar.
+    clearTimeout(holdTimer);
+    holdTimer = setTimeout(() => {
+      if (down && !dragging) {
+        down.held = true;
+        api.gesture('segurar');
+      }
+    }, 750);
   });
   canvas.addEventListener('pointermove', (e) => {
+    if (dragging) {
+      // Velocidade do arrasto (para "jogar" o JoJo).
+      const t = performance.now();
+      const dt = Math.max(1, t - dragVel.t);
+      dragVel = { x: (e.screenX - dragVel.sx) / dt, y: (e.screenY - dragVel.sy) / dt, t, sx: e.screenX, sy: e.screenY };
+    }
     if (!down || dragging) return;
     if (Math.hypot(e.screenX - down.x, e.screenY - down.y) > 6) {
       dragging = true;
+      dragVel = { x: 0, y: 0, t: performance.now(), sx: e.screenX, sy: e.screenY };
       api.dragStart();
     }
   });
@@ -508,6 +543,8 @@ function setupInteraction() {
     if (!down) return;
     const wasDragging = dragging;
     const quick = performance.now() - down.t < 450;
+    const held = down.held;
+    clearTimeout(holdTimer);
     down = null;
     dragging = false;
     try {
@@ -515,10 +552,24 @@ function setupInteraction() {
     } catch {
       /* ignora */
     }
-    if (wasDragging) api.dragEnd();
+    if (wasDragging) {
+      const thrown = Math.hypot(dragVel.x, dragVel.y) > 1.6 && performance.now() - dragVel.t < 120;
+      api.dragEnd();
+      if (thrown) api.gesture('jogar');
+    }
     // Clique rápido no pet: traz a Central para frente (carinho continua
-    // no botão 🤚 e esfregando o mouse sobre ele).
-    else if (quick && e.type === 'pointerup') api.openApp(null);
+    // no botão 🤚 e esfregando o mouse sobre ele) e ele reage; dois cliques: gira.
+    else if (quick && !held && e.type === 'pointerup') {
+      const now = performance.now();
+      if (now - lastClickAt < 380) {
+        lastClickAt = 0;
+        api.gesture('duploClique');
+      } else {
+        lastClickAt = now;
+        api.openApp(null);
+        api.gesture('clique');
+      }
+    }
   };
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);

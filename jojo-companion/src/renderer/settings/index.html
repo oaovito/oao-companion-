@@ -64,7 +64,8 @@
       <p class="hint" id="fullscreenStatus"></p>
     </fieldset>
 
-    <fieldset id="personality">
+    <!-- Personalidade: definida pelo desenvolvedor; não aparece para a usuária. -->
+    <fieldset id="personality" hidden>
       <legend>Personalidade</legend>
       <p class="hint">Perfil separado da aparência: muda o jeito do companion sem mexer no boneco. A expressão corporal acompanha cada fala.</p>
       <label class="row">Nome do companion
@@ -139,6 +140,44 @@
     </fieldset>
 
     <fieldset>
+      <legend>Animações e estímulos</legend>
+      <label class="row">Animações sozinho (enquanto você trabalha)
+        <select name="ambienteFrequencia">
+          <option value="desligado">Desligadas</option>
+          <option value="pouca">Poucas</option>
+          <option value="normal">Normais</option>
+          <option value="muita">Muitas</option>
+        </select>
+      </label>
+      <label class="row">Intensidade
+        <select name="ambienteIntensidade">
+          <option value="auto">Pelo humor do momento</option>
+          <option value="suave">Discreta</option>
+          <option value="normal">Normal</option>
+          <option value="exagerado">Exagerada</option>
+        </select>
+      </label>
+      <label class="row">Energia
+        <select name="ambienteModo">
+          <option value="auto">Varia ao longo do dia</option>
+          <option value="calmo">Modo calmo</option>
+          <option value="pilhado">Modo pilhado</option>
+        </select>
+      </label>
+      <label class="row">Micromovimentos (respiração, guelras, bolhas)
+        <select name="microMovimentos">
+          <option value="normal">Normais</option>
+          <option value="discreto">Discretos</option>
+          <option value="desligado">Desligados</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="falasAmbientes"> Falas curtas sozinho (combinando com a animação)</label>
+      <label class="check"><input type="checkbox" name="surpresas"> Surpresas (animações raras e easter eggs)</label>
+      <label class="check"><input type="checkbox" name="avisoRaros"> Avisar antes de algo raro (balão "…!")</label>
+      <p class="hint">Nada pisca rápido nem treme a tela. Com "Reduzir movimento" do Windows, tudo vira quadro estático. Clicar, arrastar ou usar /pet interrompe qualquer animação.</p>
+    </fieldset>
+
+    <fieldset>
       <legend>Modo de interação</legend>
       <label class="row">Atalho
         <input type="text" name="interactionHotkey" id="hotkeyInput" readonly title="Clique e pressione a nova combinação">
@@ -151,7 +190,8 @@
       <p class="hint">No modo de interação o JoJo para de fugir: faça carinho (passe o mouse sobre ele), dê comida, brinque, arraste ou converse. <kbd>Esc</kbd> ou clicar fora encerra.</p>
     </fieldset>
 
-    <fieldset>
+    <!-- Sistema: pré-configurado; não aparece para a usuária. -->
+    <fieldset id="system" hidden>
       <legend>Sistema</legend>
       <label class="check"><input type="checkbox" name="startWithWindows"> Iniciar com o Windows</label>
       <p class="hint" id="autostartStatus"></p>
@@ -175,7 +215,7 @@
   </form>
 
   <footer>
-    Funciona totalmente offline. Não captura a tela, não usa microfone, não registra teclas nem cliques e não envia dados. Para tela cheia e para o fiscal do Instagram, olha só o retângulo e o título da janela em primeiro plano, sem guardar nada.
+    Não captura a tela, não usa microfone e não registra teclas nem cliques. Para tela cheia e para o fiscal do Instagram, olha só o retângulo e o título da janela em primeiro plano, sem guardar nada. Só usa a internet nas opções marcadas acima.
     Arte atual: desenho vetorial articulado provisório.
   </footer>
   <script type="module" src="settings.js"></script>

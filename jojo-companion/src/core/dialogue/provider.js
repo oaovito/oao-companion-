@@ -17,7 +17,7 @@
 //   action: comando opcional para o JoJo (sleep | eat | play | pet | wake | lookAround | happy | quiet | flex | scare | judge)
 //   context.persona: instruções livres do perfil de personalidade (para provedores de IA futuros)
 
-export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon', 'smitten', 'poop', 'dressDown', 'dressUp', 'avc']);
+export const ALLOWED_ACTIONS = new Set(['nojo', 'sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon', 'smitten', 'poop', 'dressDown', 'dressUp', 'avc']);
 
 export class DialogueProvider {
   constructor({ id, label, kind }) {
@@ -42,7 +42,9 @@ export function normalizeReply(r) {
   const kind = ['speech', 'thought', 'sleep'].includes(r?.kind) ? r.kind : 'speech';
   const action = ALLOWED_ACTIONS.has(r?.action) ? r.action : null;
   const tone = r?.tone === 'brincadeira' ? 'brincadeira' : 'serio';
-  return { text: text || '...', kind, action, tone, intent: typeof r?.intent === 'string' ? r.intent : null };
+  const out = { text: text || '...', kind, action, tone, intent: typeof r?.intent === 'string' ? r.intent : null };
+  if (r?.lang === 'en') out.lang = 'en';
+  return out;
 }
 
 /**

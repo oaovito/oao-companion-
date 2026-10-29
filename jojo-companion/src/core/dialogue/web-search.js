@@ -4,6 +4,7 @@
 //
 // Fontes (sem chave de API): Wikipédia em português e, se ela não tiver nada,
 // a "Instant Answer" do DuckDuckGo.
+import { isEnglish, extractQueryEn } from './english.js';
 import { normalizeText } from './scripted-provider.js';
 
 const QUESTION_START = /^(o que|oque|o q|que|quem|qual|quais|quando|onde|aonde|quanto|quantos|quantas|quanta|por que|porque|pq|por q|como|cade|sera que|voce sabe|vc sabe|me (diz|fala|explica|conta)|explica|pesquisa|procura|significado)\b/;
@@ -75,6 +76,7 @@ export class WebSearch {
     this.timeoutMs = timeoutMs;
     this.userAgent = userAgent;
     this.wiki = bases.wikipedia || 'https://pt.wikipedia.org';
+    this.wikiEn = bases.wikipedia || 'https://en.wikipedia.org';
     this.ddg = bases.duckduckgo || 'https://api.duckduckgo.com';
     this.log = log;
   }
@@ -93,13 +95,13 @@ export class WebSearch {
     }
   }
 
-  async _wikipedia(query) {
+  async _wikipedia(query, en = false) {
     const p = new URLSearchParams({
       action: 'query', format: 'json', utf8: '1', redirects: '1', origin: '*',
       generator: 'search', gsrsearch: query, gsrlimit: '3',
       prop: 'extracts|info', exintro: '1', explaintext: '1', exsentences: '3', inprop: 'url',
     });
-    const data = await this._json(`${this.wiki}/w/api.php?${p}`);
+    const data = await this._json(`${en ? this.wikiEn : this.wiki}/w/api.php?${p}`);
     const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
     // Entre os 3 primeiros, prefere o resumo que cita mais palavras da pergunta
     // ("capital da Austrália" → Canberra, não o artigo do país).
@@ -112,11 +114,11 @@ export class WebSearch {
       .filter((p) => p.extract && !/desambigua/i.test(p.extract.slice(0, 200)))
       .sort((a, b) => score(b) - score(a) || (a.index ?? 0) - (b.index ?? 0))[0];
     if (!page) return null;
-    return { title: page.title, extract: page.extract, source: 'Wikipédia', url: page.fullurl || null };
+    return { title: page.title, extract: page.extract, source: en ? 'Wikipedia' : 'Wikipédia', url: page.fullurl || null };
   }
 
-  async _duckduckgo(query) {
-    const p = new URLSearchParams({ q: query, format: 'json', no_html: '1', skip_disambig: '1', kl: 'br-pt' });
+  async _duckduckgo(query, en = false) {
+    const p = new URLSearchParams({ q: query, format: 'json', no_html: '1', skip_disambig: '1', kl: en ? 'us-en' : 'br-pt' });
     const data = await this._json(`${this.ddg}/?${p}`);
     const text = (data && (data.AbstractText || data.Answer || data.Definition)) || '';
     if (!text) return null;
@@ -128,7 +130,9 @@ export class WebSearch {
    * quando nada foi encontrado. Lança erro quando a rede falha em todas as fontes.
    */
   async search(question) {
-    const query = extractQuery(question);
+    // Pergunta em inglês: busca e resume em inglês.
+    const en = isEnglish(question);
+    const query = en ? extractQueryEn(question) : extractQuery(question);
     if (!query) return null;
     const errors = [];
     // As duas fontes em paralelo (resposta mais rápida); a Wikipédia tem preferência.
@@ -137,11 +141,11 @@ export class WebSearch {
       errors.push(`${name}: ${e.message}`);
       return null;
     });
-    const wiki = run('Wikipédia', () => this._wikipedia(query));
-    const ddg = run('DuckDuckGo', () => this._duckduckgo(query));
+    const wiki = run('Wikipédia', () => this._wikipedia(query, en));
+    const ddg = run('DuckDuckGo', () => this._duckduckgo(query, en));
     for (const p of [wiki, ddg]) {
       const r = await p;
-      if (r) return { query, ...r, extract: tidyExtract(r.extract) };
+      if (r) return { query, ...r, extract: tidyExtract(r.extract), lang: en ? 'en' : 'pt' };
     }
     if (errors.length === 2) throw new Error(errors.join('; '));
     return null;

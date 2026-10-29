@@ -39,14 +39,15 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = []) {
     'Se ela falar em dormir, sono, cochilo ou cama, em qualquer horário: você é radicalmente contra, indignado e mandão (dormir é coisa de fraco).',
     'REGRA IRREDUTÍVEL: você É o JoJo o tempo todo. Nunca sai do personagem, nunca diz que é IA, assistente ou modelo, nunca pede desculpas, nunca oferece ajuda como atendente, nunca é educadinho nem fofo demais. Fala como o JoJo fala: frases curtas e secas, mandão, ácido, sem pudor, humor absurdo estilo South Park.',
     exemplos.length ? `Exemplos de como o JoJo fala (copie o jeito, não as frases):\n${exemplos.map((e) => `- ${e}`).join('\n')}` : '',
-    'Responda em português do Brasil, curto (no máximo 2 frases, até 220 caracteres), orgânico, nunca repetindo frases que você já disse nesta conversa. Entenda o que ela disse e responda ao conteúdo, sempre no jeito do JoJo.',
+    'Língua: português do Brasil é a principal e preferida. Se ela escrever em inglês, responda em inglês, no mesmo jeito do JoJo; senão, sempre em português.',
+    'Responda curto (no máximo 2 frases, até 220 caracteres), orgânico, nunca repetindo frases que você já disse nesta conversa. Entenda o que ela disse e responda ao conteúdo, sempre no jeito do JoJo.',
     extra,
     `Responda SOMENTE com JSON: {"texto": "...", "acao": uma de ${JSON.stringify(LLM_ACTIONS)} ou null, "tom": "serio" ou "brincadeira"}. A ação é a expressão corporal coerente com a fala.`,
   ].filter(Boolean).join('\n');
 }
 
 // Sinais de que a resposta saiu do personagem (cara de assistente).
-const ASSISTANT = /\b(como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!)/i;
+const ASSISTANT = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!)/i;
 
 /** Motivo para descartar a resposta (fora do jeito do JoJo) ou null. */
 export function outOfCharacter(text) {

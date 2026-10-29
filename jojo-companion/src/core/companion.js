@@ -14,9 +14,13 @@ import { PhraseBook, readingTimeMs, greetingCategory } from './phrases.js';
 import { placeAround, composeWindow } from './layout.js';
 import { displayForRect, allowedDisplays, recoverRect, topologySignature, primaryDisplay } from './displays.js';
 import { distPointRect, roundRect, dist, clamp, intersection } from './geometry.js';
+import { animName, INTENSITIES } from './catalog/recipes.js';
+import { VarietyEngine, periodOf } from './catalog/variety.js';
+import { detectIntent, normalizeText } from './dialogue/scripted-provider.js';
+import { isFactualQuestion } from './dialogue/web-search.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
-import { SPEECH_INTERVALS } from './settings-schema.js';
-import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
+import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
+import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 
@@ -40,10 +44,13 @@ const USER_CATEGORIES = new Set(['petted', 'food', 'play', 'interactEnter', 'int
 const MIN_SPONTANEOUS_GAP = { off: Infinity, rare: 240e3, normal: 90e3, often: 40e3 };
 const WALK_SPEED = 70;
 const FLEE_SPEED = 1150;
-const CALM_STATES = new Set(['idle', 'sit', 'lookAround', 'curious', 'lie']);
+const CALM_STATES = new Set(['idle', 'sit', 'lookAround', 'curious', 'lie', 'ambient']);
+// Intenções do chat que deixam o catálogo responder por frase (as outras têm resposta própria).
+const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 'howAreYou', 'help', 'name', 'thanks', 'scare', 'pet']);
+const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
 export class Companion {
-  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
     // Quanto cada animação/efeito passa da caixa (assets/animations/jojo.room.json).
     this.room = room || { anims: {}, effects: {} };
     this.roomPrev = null; // espaço da animação anterior durante a transição
@@ -53,7 +60,13 @@ export class Companion {
     this.reminderTimer = null;
     // Conversas e atividades (balão de status). Callbacks definidos pelo main:
     this.conversations = new ConversationManager({ now: () => Date.now() });
+    this.needsSeen = new Set();
     this.conversations.onChange(() => {
+      // Atividade nova "Precisa de você": notificação com pulinho.
+      const needs = this.conversations.activities(8).filter((a) => a.status === 'needsInput' && (this.conversations.get(a.id) || {}).kind !== 'chat').map((a) => a.id);
+      const fresh = needs.some((id) => !this.needsSeen.has(id));
+      this.needsSeen = new Set(needs);
+      if (fresh && this.started && this.catalog) this.clock.setTimeout(() => this.fireEvent('notificacao', { speak: false }), 0);
       if (this.started) this._applyLayout(true);
       if (this.onConversationsChange) this.onConversationsChange();
     });
@@ -78,6 +91,24 @@ export class Companion {
     this.phrases = new PhraseBook(phrases, { rng });
     this.applyPersonality(this.personality.get());
     this.dialogue = dialogue;
+    // Catálogo de animações (assets/catalog/animacoes.json) e motor de variedade.
+    this.catalog = catalog || { itens: [] };
+    this.catalogById = new Map(this.catalog.itens.map((it) => [it.id, it]));
+    this.variety = new VarietyEngine({
+      catalog: this.catalog,
+      lines: ambientLines || { falas: [] },
+      state: variety ? variety.get() : null,
+      save: (st) => variety && variety.set(st),
+      rng,
+      now: () => this.clock.now(),
+      getPrefs: () => {
+        const st = this.store.get();
+        return { modo: st.ambienteModo, surpresas: st.surpresas };
+      },
+    });
+    this.ambientItem = null; // item do catálogo tocando agora (ambiente ou pedido)
+    this.ambientQueue = [];
+    this.walkTarget = null;
 
     const s = store.get();
     this.avoid = new AvoidanceController({ margin: s.safetyMargin });
@@ -151,7 +182,32 @@ export class Companion {
     this.behavior.request('appear', { now, force: true });
     this._applyLayout(true);
     this._schedule(0);
-    this.clock.setTimeout(() => this.sayCategory(greetingCategory(new Date()), { force: false, fallback: 'greeting' }), 1500);
+    this.clock.setTimeout(() => {
+      this.sayCategory(greetingCategory(new Date()), { force: false, fallback: 'greeting' });
+      const per = periodOf(new Date());
+      if (per === 'manha') this.fireEvent('bomDia', { speak: false });
+      else if (per === 'noite') this.fireEvent('boaNoite', { speak: false });
+      this._checkStreak(new Date());
+    }, 1500);
+  }
+
+  /** Sequência de dias seguidos com o JoJo (constância, sem cobrança). */
+  _checkStreak(date) {
+    const st = this.variety.state;
+    const today = dayKey(date);
+    const y = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+    const s = st.streak || { last: null, count: 0 };
+    if (s.last === today) return s.count;
+    s.count = s.last === dayKey(y) ? s.count + 1 : 1;
+    s.last = today;
+    st.streak = s;
+    this.variety.save(st);
+    if (s.count >= 2) {
+      this.clock.setTimeout(() => {
+        if (this.fireEvent('sequencia', { speak: false })) this.say(`${s.count} dias seguidos comigo. Constância é tudo.`, 'speech', { spontaneous: true });
+      }, 6000);
+    }
+    return s.count;
   }
 
   stop() {
@@ -567,6 +623,10 @@ export class Companion {
       paused: this.paused,
       quiet: this.store.get().quietMode,
       wired: this.wired,
+      // Catálogo: peso do sorteio ambiente e fila (sequências, "sem filtro", aviso de raro).
+      ambientWeight: this.reducedMotion ? AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] * 0.5 : AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] ?? 0,
+      pickAmbient: () => this._pickAmbient(),
+      hasQueue: this.ambientQueue.length > 0,
     };
   }
 
@@ -587,6 +647,7 @@ export class Companion {
     const profile = this.personality.get();
     const cfg = profile.ociosidade;
     const now = this.clock.now();
+    this._idleEvents(idleSec, now);
     if (idleSec >= cfg.minutos * 60) {
       if (!cfg.ativo || this.powderKind || !this._canIdleAct()) return false;
       const kind = profile.humorDrogas ? 'snort' : 'chug';
@@ -601,6 +662,40 @@ export class Companion {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Eventos ligados ao tempo de uso (só o contador de ociosidade do sistema):
+   * ausente (2 min parado), voltou, pausa depois de 90 min sem parar e
+   * carência discreta depois de muito tempo sem interação (no máximo a cada 2 h).
+   */
+  _idleEvents(idleSec, now) {
+    if (!this.started) return;
+    if (idleSec >= 120) {
+      if (!this.awaySince && !this.powderKind && this._canIdleAct()) {
+        this.awaySince = now;
+        this.fireEvent('ausente', { speak: false });
+      }
+      if (idleSec >= 300) this.activeSince = null; // pausa de verdade
+      return;
+    }
+    if (idleSec < 10 && this.awaySince) {
+      const wasPowder = !!this.powderKind || this.wired;
+      this.awaySince = null;
+      if (!wasPowder && this._canIdleAct()) this.fireEvent('voltou');
+    }
+    if (idleSec < 60) {
+      if (!this.activeSince) this.activeSince = now;
+      if (now - this.activeSince > 90 * 60e3 && now - (this.lastPauseHint || 0) > 90 * 60e3 && this._canNag()) {
+        this.lastPauseHint = now;
+        this.fireEvent(this.rng() < 0.5 ? 'pausa' : 'trabalhoLongo');
+      }
+      const quiet = now - Math.max(this.lastInteractionActivity || 0, this.startedAt || 0);
+      if (quiet > 45 * 60e3 && now - (this.lastNeedy || 0) > 2 * 3600e3 && this._canNag()) {
+        this.lastNeedy = now;
+        this.fireEvent('semInteracao');
+      }
+    }
   }
 
   _canIdleAct() {
@@ -651,7 +746,9 @@ export class Companion {
       this.behavior.finish('walk', now);
       return;
     }
-    const target = this._pickWanderTarget();
+    // Destino pedido por uma animação do catálogo (borda, outro canto, perto do cursor).
+    const target = this.walkTarget || this._pickWanderTarget();
+    this.walkTarget = null;
     if (!target) {
       this.behavior.finish('walk', now);
       return;
@@ -735,7 +832,12 @@ export class Companion {
     else if (roll < 0.26) {
       this.react(this.rng() < 0.5 ? 'benchPress' : 'squat');
       return;
-    } else cat = roll < 0.65 ? 'idleSpeech' : 'idleThought';
+    } else if (roll < 0.5) cat = 'idleSpeech';
+    else if (roll < 0.82 && this.store.get().falasAmbientes) {
+      // Fala ambiente que combina com a animação do momento.
+      this._ambientLine(st === 'ambient' ? this.ambientItem : null);
+      return;
+    } else cat = 'idleThought';
     this.sayCategory(cat, { spontaneous: true });
   }
 
@@ -775,7 +877,8 @@ export class Companion {
         }
         this._applyLayout(true);
         // Se o balão nasceu perto do cursor, recolhe imediatamente.
-        if (this.bubbleRect && distPointRect(this.cursor, this.bubbleRect) < this.avoid.cfg.margin && !this.interaction) this.hideBubble();
+        // (Broncas e lembretes ficam: só falas espontâneas recolhem.)
+        if (spontaneous && this.bubbleRect && distPointRect(this.cursor, this.bubbleRect) < this.avoid.cfg.margin && !this.interaction) this.hideBubble();
         this._schedule(0);
       })
       .catch((e) => this.log('warn', `Falha ao medir balão: ${e.message}`));
@@ -939,7 +1042,10 @@ export class Companion {
     this.chatOpen = !!open;
     this.conversations.setViewing(this.conversations.current().id, this.chatOpen);
     this.noteActivity();
-    if (open) this.hideBubble();
+    if (open) {
+      this.hideBubble();
+      this.fireEvent('conversaAberta');
+    }
     this._applyLayout(true);
   }
 
@@ -951,23 +1057,39 @@ export class Companion {
   async chat(text, conversationId = null) {
     const conv = (conversationId && this.conversations.get(conversationId)) || this.conversations.current();
     const cmd = parseCommand(text);
-    if (cmd) return this.runCommand(cmd, conv.id);
+    if (cmd) return this.runCommand(cmd, conv.id, text);
     if (!this.dialogue) return null;
     this.noteActivity();
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
     await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
+    // Pedido de animação por frase ("faz uma dancinha", "selfie", "modo fera"…).
+    const hit = this.catalogFromChat(text);
+    if (hit && this.playCatalog(hit.id, { source: 'chat', speak: false })) {
+      const line = hit.fala ? this.variety.pickLine({ item: hit }) : null;
+      const vars = profileVars(this.personality.get(), 'brincadeira');
+      const t = line ? line.t : ['Assiste.', 'Olha e aprende, {nome}.', 'Feito. De nada.', 'Só porque eu quis.'][Math.floor(this.rng() * 4)];
+      const out = t.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+      this.conversations.addMessage(conv.id, 'jojo', out);
+      this.conversations.setStatus(conv.id, 'ready');
+      this.talkingUntil = this.clock.now() + Math.min(2600, 500 + out.length * 45);
+      this._applyLayout(true);
+      return { text: out, action: null, intent: 'animacao', animacao: hit.id, conversationId: conv.id, provider: this.dialogue.describe() };
+    }
     let reply;
     // Resposta demorando (internet): mostra que está pensando em vez de ficar parado.
     let thinking = false;
     const thinkTimer = this.clock.setTimeout(() => {
       thinking = this.say('…', 'thought');
+      // Pensando (ou pesquisando, se for pergunta de conhecimento).
+      this.fireEvent(isFactualQuestion(text) ? 'pesquisando' : 'pensando', { speak: false });
     }, THINK_BUBBLE_MS);
     try {
       reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
     } catch (e) {
       this.clock.clearTimeout(thinkTimer);
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
+      this.fireEvent('erro', { speak: false });
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
     this.clock.clearTimeout(thinkTimer);
@@ -986,12 +1108,13 @@ export class Companion {
     if (reply.web || reply.webNotFound || reply.webError) Object.assign(reply, this._webReply(reply, profile));
     this.conversations.addMessage(conv.id, 'jojo', reply.text);
     if (reply.webError) this.conversations.setStatus(conv.id, 'blocked', `Pesquisa na internet falhou (${reply.webError}).`);
-    else if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Provedor de IA falhou (${reply.error}); respondi com frases programadas.`);
+    else if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Conversa online indisponível (${reply.error}); respondi do meu jeito mesmo.`);
     else if (/\?\s*$/.test(reply.text)) this.conversations.setStatus(conv.id, 'needsInput', 'Pergunta esperando resposta.');
     else this.conversations.setStatus(conv.id, 'ready');
     const now = this.clock.now();
     this.noteActivity();
     if (delayed) this.say(reply.text, 'speech');
+    else if (reply.web) this.fireEvent('respostaPronta', { speak: false });
     else if (reply.action) this._doChatAction(reply.action, now);
     else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
     this._applyLayout(true);
@@ -1005,6 +1128,13 @@ export class Companion {
    */
   _webReply(reply, profile) {
     const vars = (tone) => ({ ...profileVars(profile, tone), atalho: this.store.get().interactionHotkey });
+    // Pergunta em inglês: resposta em inglês, no mesmo jeito.
+    if (reply.lang === 'en' || (reply.web && reply.web.lang === 'en')) {
+      const nome = vars('serio').nome;
+      if (reply.webError) return { text: 'No internet right now. Ask me later.', action: 'judge', tone: 'serio' };
+      if (reply.webNotFound) return { text: 'Found nothing on that. Rare. Ask another way.', action: 'curious', tone: 'serio' };
+      return { text: `Here, ${nome}: ${reply.web.extract} (Source: ${reply.web.source})`, action: 'lecture', tone: 'serio' };
+    }
     if (reply.webError) {
       const p = this.phrases.pick('webOffline', vars);
       return { text: p ? p.text : 'Sem internet agora.', action: p && p.reaction, tone: p ? p.tone : 'serio' };
@@ -1026,12 +1156,24 @@ export class Companion {
   }
 
   /** Comandos do menu "/" (chat da Central ou do pet). */
-  runCommand(cmd, conversationId = null) {
+  runCommand(cmd, conversationId = null, raw = '') {
     const name = this.companionName;
     let text;
+    if (cmd === 'anim') {
+      // /anim <nome ou id>: toca qualquer animação do catálogo.
+      const q = String(raw).replace(/^\/\S+\s*/, '');
+      if (!q) text = `${this.catalog.itens.length} animações no catálogo. Use /anim e o nome, ex.: /anim selfie, /anim modo fera, /anim dancinha viral.`;
+      else {
+        const it = this.findCatalog(q);
+        if (!it) text = 'Não conheço essa. Tenta outro nome.';
+        else text = this.playCatalog(it.id, { source: 'comando' }) ? `${it.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
+      }
+      return { text, command: cmd, conversationId };
+    }
     if (cmd === 'pet') {
       const show = this.userHidden;
       this.setVisible(show);
+      if (show) this.clock.setTimeout(() => this.fireEvent('pet', { speak: false }), 1500);
       text = show ? `${name} acordou. (Wake Pet)` : `${name} foi guardado. Use /pet para chamar de volta. (Tuck Away Pet)`;
     } else if (cmd === 'quiet') {
       const q = !this.store.get().quietMode;
@@ -1044,7 +1186,7 @@ export class Companion {
       if (this.onOpenSettings) this.onOpenSettings();
       text = 'Abrindo as configurações.';
     } else {
-      text = 'Comando desconhecido. Use /pet, /silencio, /nova ou /config.';
+      text = 'Comando desconhecido. Use /pet, /silencio, /nova, /config ou /anim.';
     }
     return { text, command: cmd, conversationId };
   }
@@ -1079,6 +1221,12 @@ export class Companion {
   }
 
   _doChatAction(action, now) {
+    if (action === 'nojo') {
+      // Docinho: cara de nojo, tom esverdeado.
+      this.playCatalog('nojo', { source: 'chat', speak: false });
+      return;
+    }
+    if (action === 'flex' && this.playCatalog('tarefaFinalizada', { source: 'chat', speak: false })) return;
     if (action === 'eat' || action === 'play' || action === 'pet') {
       const map = { pet: ['petted', 'hearts', 2200], eat: ['eat', 'food', 2800], play: ['play', 'ball', 3400] };
       const [st, fx, ms] = map[action];
@@ -1165,6 +1313,192 @@ export class Companion {
     return this.behavior.request(name, { now, force: this.behavior.priority >= PRIORITY.INTERACT });
   }
 
+  // ---------------------------------------------------------------- catálogo de animações
+
+  /** Intensidade: escolhida nas configurações ou pelo humor do momento. */
+  _intensity() {
+    const pref = this.store.get().ambienteIntensidade;
+    if (pref && pref !== 'auto') return pref;
+    const e = this.variety.energy();
+    if (e === 'zen' || e === 'sonolento' || e === 'hiperfoco') return 'suave';
+    if (e === 'pilhado' || e === 'caotico' || e === 'competitivo') return 'exagerado';
+    return 'normal';
+  }
+
+  /** Animação (com intensidade) e duração de um item para o estado dinâmico. */
+  _catalogData(item, intensity = this._intensity()) {
+    if (item.usa) return { anim: item.usa, ms: item.duracao || 2600, item: item.id };
+    const k = INTENSITIES[intensity] || INTENSITIES.normal;
+    const dur = Math.round((item.duracao || 3000) * k.dur);
+    return { anim: animName(item.id, intensity), ms: item.loop ? dur * 2 : dur, item: item.id };
+  }
+
+  /**
+   * Toca uma animação do catálogo. source: 'chat' | 'evento' | 'comando' | 'ambiente'.
+   * Interação dela (clique, arrasto, /pet) interrompe com transição suave.
+   */
+  playCatalog(id, { source = 'comando', speak = true } = {}) {
+    const item = this.catalogById.get(id);
+    if (!item || this.quitting || !this.started || this.userHidden) return false;
+    const now = this.clock.now();
+    if (item.especial === 'semFiltro') return this._semFiltro();
+    // Precisa ir até um lugar antes (borda, outro canto, perto do cursor): anda e toca na chegada.
+    if (item.mover && !this.reducedMotion && this.movedFor !== item.id && this._catalogMove(item.mover, now)) {
+      this.movedFor = item.id;
+      this.ambientQueue.unshift(item.id);
+      return true;
+    }
+    this.movedFor = null;
+    let ok;
+    if (item.usa && STATES[item.usa] && item.usa !== 'idle' && source !== 'ambiente') ok = this.react(item.usa);
+    else ok = this._requestCatalog(source === 'ambiente' ? 'ambient' : 'act', this._catalogData(item), now, source);
+    if (!ok) return false;
+    this.ambientItem = item;
+    if (source !== 'ambiente') this.variety.note(item.id);
+    if (speak && item.fala && (source !== 'ambiente' || this.rng() < 0.35)) this._ambientLine(item, { force: source === 'chat' || source === 'comando' });
+    this._applyLayout(true);
+    this._schedule(0);
+    return true;
+  }
+
+  _requestCatalog(state, data, now, source) {
+    const st = this.behavior.state;
+    if (['flee', 'hidden', 'dragged', 'goodbye', 'gone', 'avc'].includes(st) || this.dragging) return false;
+    if (this.mover.active && this.mover.kind === 'walk') {
+      this.mover.stop();
+      if (st === 'walk') this.behavior.finish('walk', now);
+    }
+    const force = source !== 'ambiente' && (this.interaction || this.behavior.priority >= PRIORITY.INTERACT);
+    return this.behavior.request(state, { now, data, force });
+  }
+
+  /** Sorteio ambiente (chamado pela máquina de comportamento ao sair do repouso). */
+  _pickAmbient() {
+    const s = this.store.get();
+    let it = null;
+    while (this.ambientQueue.length && !it) it = this.catalogById.get(this.ambientQueue.shift()) || null;
+    const queued = !!it;
+    if (!it) it = this.variety.pickAmbient({ filter: (x) => !(x.mover && this.reducedMotion) });
+    if (!it) return null;
+    if (!queued) {
+      // Algo raro: aviso visual suave antes (dá para desligar nas configurações).
+      if (it.frequencia !== 'comum' && s.avisoRaros && !s.quietMode && !this.bubble) {
+        this.ambientQueue.push(it.id);
+        this.say('…!', 'thought', { spontaneous: true });
+        return { anim: 'lookAround', ms: 1800, item: 'aviso' };
+      }
+      if (it.mover && !this.reducedMotion && this.movedFor !== it.id) {
+        this.clock.setTimeout(() => this.playCatalog(it.id, { source: 'ambiente' }), 0);
+        return { anim: 'idle', ms: 200, item: it.id };
+      }
+    }
+    this.movedFor = null;
+    this.ambientItem = it;
+    if (it.fala && this.rng() < 0.35) this.clock.setTimeout(() => this._ambientLine(it), 700);
+    if (it.especial === 'semFiltro') {
+      this.clock.setTimeout(() => this._semFiltro(), 0);
+      return { anim: 'idle', ms: 200, item: it.id };
+    }
+    return this._catalogData(it);
+  }
+
+  /** Modo "sem filtro": três reações sorteadas em sequência. */
+  _semFiltro() {
+    const picks = [];
+    for (let i = 0; i < 6 && picks.length < 3; i++) {
+      const it = this.variety.pickAmbient({ filter: (x) => !x.mover && !x.especial });
+      if (it && !picks.includes(it.id)) picks.push(it.id);
+    }
+    if (!picks.length) return false;
+    this.ambientQueue.push(...picks.slice(1));
+    return this.playCatalog(picks[0], { source: 'comando' });
+  }
+
+  /** Vai até um lugar antes da animação. Retorna true se começou a andar. */
+  _catalogMove(kind, now) {
+    if (this.paused || this.interaction || this.dragging) return false;
+    const disp = this._currentDisplay();
+    if (!disp) return false;
+    const wa = disp.workArea;
+    const r = this._rects();
+    const v = r.visual;
+    const offX = v.x - this.pos.x;
+    const offY = v.y - this.pos.y;
+    const cx = v.x + v.width / 2;
+    let tx = v.x;
+    let ty = v.y;
+    if (kind === 'atravessa' || kind === 'borda') {
+      const toLeft = kind === 'atravessa' ? cx > wa.x + wa.width / 2 : cx < wa.x + wa.width / 2;
+      tx = toLeft ? wa.x + 4 : wa.x + wa.width - v.width - 4;
+    } else if (kind === 'cursor') {
+      const side = this.cursor.x >= cx ? -1 : 1;
+      const keep = this.store.get().safetyMargin + 60;
+      tx = this.cursor.x + side * (keep + v.width / 2) - v.width / 2;
+      ty = this.cursor.y - v.height / 2;
+    } else if (kind === 'foge') {
+      const side = this.cursor.x >= cx ? -1 : 1;
+      tx = v.x + side * 320;
+    }
+    tx = clamp(tx, wa.x, wa.x + wa.width - v.width);
+    ty = clamp(ty, wa.y, wa.y + wa.height - v.height);
+    if (Math.hypot(tx - v.x, ty - v.y) < 30) return false;
+    this.walkTarget = { x: tx - offX, y: ty - offY };
+    return this.behavior.request('walk', { now, force: true });
+  }
+
+  /** Fala ambiente curta, combinando com a animação que está tocando. */
+  _ambientLine(item = null, { force = false, categories = null } = {}) {
+    const s = this.store.get();
+    if (!force && (!s.falasAmbientes || s.quietMode || s.speechFrequency === 'off')) return false;
+    const line = this.variety.pickLine({ item, categories });
+    if (!line) return false;
+    return this.say(line.t, 'speech', { spontaneous: !force, category: `ambiente:${line.cat}` });
+  }
+
+  /** Evento do sistema/da conversa → animação do catálogo ligada a ele. */
+  fireEvent(name, opts = {}) {
+    const items = this.catalog.itens.filter((it) => it.gatilho && (it.gatilho.eventos || []).includes(name));
+    if (!items.length) return false;
+    const it = items[Math.floor(this.rng() * items.length) % items.length];
+    return this.playCatalog(it.id, { source: 'evento', ...opts });
+  }
+
+  /** Gestos no modo de interação vindos do renderer (clique, duplo clique, segurar, cócegas, jogar). */
+  gesture(name) {
+    if (!this.interaction || !['clique', 'duploClique', 'segurar', 'cocegas', 'jogar'].includes(name)) return false;
+    this.noteActivity();
+    const ok = this.fireEvent(name);
+    if (ok && this.ambientItem) this.variety.like(this.ambientItem.id);
+    return ok;
+  }
+
+  /** Item do catálogo pedido por frase no chat ("faz uma dancinha", "selfie"…). */
+  catalogFromChat(text) {
+    if (!CATALOG_CHAT_INTENTS.has(detectIntent(text))) return null;
+    const n = normalizeText(text);
+    let best = null;
+    for (const it of this.catalog.itens) {
+      for (const f of (it.gatilho && it.gatilho.frases) || []) {
+        const nf = normalizeText(f);
+        if (nf && new RegExp(`\\b${nf.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(n) && (!best || nf.length > best.len)) best = { it, len: nf.length };
+      }
+    }
+    if (best) return best.it;
+    const m = n.match(/^(jojo )?(faz|faca|mostra|manda|da|me da|bora) (um |uma |o |a |de )?(.{4,})$/);
+    if (!m) return null;
+    const want = m[4].trim();
+    return this.catalog.itens.find((it) => normalizeText(it.nome).startsWith(want)) || this.catalog.itens.find((it) => normalizeText(it.nome).includes(want)) || null;
+  }
+
+  /** Busca por id ou nome (comando /anim). */
+  findCatalog(query) {
+    const q = normalizeText(query);
+    if (!q) return null;
+    return this.catalogById.get(query.trim()) || this.catalog.itens.find((it) => it.id.toLowerCase() === q.replace(/\s/g, '')) ||
+      this.catalog.itens.find((it) => normalizeText(it.nome) === q) || this.catalog.itens.find((it) => normalizeText(it.nome).startsWith(q)) ||
+      this.catalog.itens.find((it) => normalizeText(it.nome).includes(q)) || null;
+  }
+
   // ---------------------------------------------------------------- personalidade
 
   applyPersonality(profile) {
@@ -1184,8 +1518,8 @@ export class Companion {
   onForeground({ instagram = false } = {}) {
     const cfg = this.personality.get().instagram;
     const now = this.clock.now();
-    if (!this.instagram.update(now, instagram, cfg)) return false;
-    if (!this._canNag()) return false;
+    if (instagram && !this.instagram.inside) this.log('info', 'Instagram em primeiro plano.');
+    if (!this.instagram.update(now, instagram, cfg, this._canNag() && this.avoid.state !== 'fleeing')) return false;
     // Reincidência: a partir da 3ª bronca em 20 min, raiva de verdade (vermelho).
     this.instagramScolds = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3);
     this.instagramScolds.push(now);
@@ -1206,6 +1540,8 @@ export class Companion {
     this.hideBubble();
     // A reação corporal vem da própria fala (julgamento, dedo em riste…).
     if (!this.sayCategory(category) && !this.interaction) this.react('judge');
+    // Lembretes (refeições, treino): JoJo com o relógio na mão.
+    if (REMINDER_CATS.test(category)) this.fireEvent('lembrete', { speak: false });
     this._schedule(0);
   }
 
@@ -1224,21 +1560,44 @@ export class Companion {
   checkDailyReminder(date = new Date()) {
     const profile = this.personality.get();
     const cfg = profile.lembreteComida;
-    const { due, state } = dailyReminder(date, cfg, this.rng);
-    let deliver = due && this._canNag() && !this.interaction;
-    const next = { ...cfg, horarioDeHoje: state.horarioDeHoje };
-    // Se não puder falar agora (silêncio, oculto…), tenta de novo no próximo minuto.
-    if (deliver) next.ultimoDia = state.ultimoDia;
-    if (JSON.stringify(next) !== JSON.stringify(cfg)) this.personality.update({ lembreteComida: next }, { silent: true });
-    if (deliver) {
-      this._nag('foodReminder', this.clock.now());
-      // Vira uma atividade "Precisa de você" até ela responder na conversa do lembrete.
-      const c = this.conversations.create({ id: 'lembrete-comida', title: 'Lembrete: comida', kind: 'reminder' });
-      if (this.lastSaid) this.conversations.addMessage(c.id, 'jojo', this.lastSaid);
-      this.conversations.setStatus(c.id, 'needsInput', 'Fome ou tédio? Responda quando puder.');
+    const canTalk = this._canNag() && !this.interaction;
+    let delivered = null;
+    // Quatro refeições por dia, cada uma em horário sorteado dentro da faixa.
+    const refeicoes = { ...(cfg.refeicoes || {}) };
+    for (const m of MEALS) {
+      const st = refeicoes[m.id] || {};
+      const { due, state } = dailyReminder(date, { ativo: cfg.ativo, inicio: m.inicio, fim: m.fim, ultimoDia: st.ultimoDia, horarioDeHoje: st.horarioDeHoje }, this.rng);
+      // Se não puder falar agora (silêncio, oculto…), tenta de novo no próximo minuto.
+      const deliver = due && canTalk && !delivered;
+      refeicoes[m.id] = { ultimoDia: deliver ? state.ultimoDia : st.ultimoDia || null, horarioDeHoje: state.horarioDeHoje };
+      if (deliver) delivered = m;
     }
-    return deliver;
+    const next = { ...cfg, refeicoes };
+    if (JSON.stringify(next) !== JSON.stringify(cfg)) this.personality.update({ lembreteComida: next }, { silent: true });
+    if (delivered) {
+      this._nag(`refeicao_${delivered.id}`, this.clock.now());
+      // Vira uma atividade "Precisa de você" até ela responder na conversa do lembrete.
+      const c = this.conversations.create({ id: 'lembrete-comida', title: `Lembrete: ${delivered.nome}`, kind: 'reminder' });
+      if (this.lastSaid) this.conversations.addMessage(c.id, 'jojo', this.lastSaid);
+      this.conversations.setStatus(c.id, 'needsInput', `Hora do ${delivered.nome}. Responda quando puder.`);
+      return true;
+    }
+    // Treinar é essencial: uma vez por dia.
+    const t = profile.lembreteTreino;
+    if (t) {
+      const { due, state } = dailyReminder(date, t, this.rng);
+      const deliver = due && canTalk;
+      const nt = { ...t, horarioDeHoje: state.horarioDeHoje };
+      if (deliver) nt.ultimoDia = state.ultimoDia;
+      if (JSON.stringify(nt) !== JSON.stringify(t)) this.personality.update({ lembreteTreino: nt }, { silent: true });
+      if (deliver) {
+        this._nag('treinoLembrete', this.clock.now());
+        return true;
+      }
+    }
+    return false;
   }
+
 
   /**
    * Data festiva: veste a fantasia do dia e cumprimenta uma vez (no jeito dele —
@@ -1370,6 +1729,7 @@ export class Companion {
       effectKind: this.effect ? this.effect.kind || null : null,
       activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
       reducedMotion: this.reducedMotion,
+      micro: s.microMovimentos || 'normal',
       mode: this.wired ? 'wired' : null,
       costume: this.costume,
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
@@ -1388,7 +1748,8 @@ export class Companion {
   /** Espaço extra (px na escala 1) da animação atual, da anterior (transição) e do efeito. */
   _animRoom() {
     const now = this.clock.now();
-    const anim = this.behavior.anim || 'idle';
+    // Catálogo: as três intensidades usam o espaço da exagerada (a maior).
+    const anim = (this.behavior.anim || 'idle').replace(/~\w+$/, '');
     if (!this.roomPrev || this.roomPrev.anim !== anim) {
       this.roomPrev = { anim, prev: this.roomPrev ? this.roomPrev.anim : null, until: now + 400 };
       if (this.roomPrev.prev) this.clock.setTimeout(() => this._applyLayout(), 450);

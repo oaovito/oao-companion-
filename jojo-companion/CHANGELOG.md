@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## 0.26.0 — 2026-10-29
+
+### Adicionado
+- **Catálogo de 264 animações** (`assets/catalog/animacoes.json`) cobrindo as três listas
+  (base, "sem pudor" e ambientes), geradas por receitas em camadas (corpo + braços + cabeça +
+  rosto + cauda + dorsal + objeto + efeito + humor) em `src/core/catalog/recipes.js`, cada uma
+  em 3 intensidades e com versão estática. Lista completa e gatilhos: `docs/ANIMACOES.md`.
+- 22 objetos novos no boneco (livro, celular, espelho, halter, caneca, pote de peixinhos,
+  troféu, microfone, relógio, peixe de borracha, caderno, frango, toalha, óculos escuros,
+  palito, medalha, notebook, baú, castelo de areia, torre de pesos, alga, coberta), piscadinha
+  de um olho, bochechas de baiacu, guelras mexendo e efeitos (bolhas, notas, lágrimas, chuva,
+  vento, confete, vapor, neve, brilho de dente, aura, tubarão fantasma, dorsal cortando a tela).
+- **Motor de variedade** (`src/core/catalog/variety.js`): sorteio ponderado com memória das
+  últimas 30 ações (nunca repete em sequência), pesos que crescem com o tempo sem aparecer,
+  humor/energia do momento, período do dia, temporada da semana, contador de tédio e
+  adaptação (mais do que ela curte, menos do que ignora). Estado em `variedade.json`.
+- **Animações ambientes** sozinho enquanto ela trabalha e **falas ambientes** (120 da lista +
+  apoio, `assets/dialogue/falas-ambientes.json`) ligadas à animação do momento.
+- Gatilhos: `/anim <nome>`, frases no chat ("faz uma dancinha", "selfie", "modo fera"…),
+  gestos no modo de interação (clique, duplo clique, segurar, cócegas, jogar) e eventos
+  (conversa aberta, pensando, pesquisando, erro, sucesso, ausente, voltou, pausa após 90 min,
+  carência discreta, notificação, sequência de dias, bom dia/boa noite, lembretes, /pet).
+- Configurações → **Animações e estímulos**: frequência, intensidade, energia (calmo/pilhado),
+  micromovimentos, falas ambientes, surpresas e aviso antes de algo raro.
+- **Docinho**: "e se eu comer um docinho?" (e variações) → nojo (tom esverdeado) e
+  "Quer se tornar uma aberração?".
+- **Inglês quando necessário**: entende e responde em inglês se ela escrever em inglês
+  (segurança com João/CVV também); português continua a língua principal.
+- **Quatro lembretes de refeição** por dia (café da manhã, almoço, lanche, jantar) e lembrete
+  diário de que treinar é essencial.
+
+### Alterado
+- Configurações: as seções **Personalidade** e **Sistema** não aparecem mais. O perfil volta ao
+  padrão do desenvolvedor ao atualizar (versão do perfil 2), com o novo texto de comportamento.
+- **Instagram**: a bronca não se perde mais quando o JoJo não podia falar na hora e volta a cada
+  intervalo enquanto ela continua usando.
+- Aviso de falha da conversa online não menciona IA.
+
 ## 0.25.0 — 2026-10-29
 
 ### Corrigido

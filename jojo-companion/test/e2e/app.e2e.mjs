@@ -288,6 +288,8 @@ test('configurações: alterar, persistir e restaurar padrões', async () => {
     const box = (await dbg(app)).box;
     assert.equal(Math.round(box.width), Math.round(180 * 1.3));
     // Interface reflete o valor.
+    // Personalidade e Sistema não aparecem para a usuária.
+    assert.deepEqual(await sw.evaluate(() => ['#personality', '#system'].map((q) => getComputedStyle(document.querySelector(q)).display)), ['none', 'none']);
     const shown = await sw.evaluate(() => document.querySelector('[name=safetyMargin]')?.value);
     assert.equal(shown, '150');
     const hk = await sw.evaluate(() => document.getElementById('hotkeyStatus')?.textContent || '');
@@ -625,5 +627,31 @@ test('conversa online: entende e responde no jeito do JoJo, sem mencionar IA na 
   } finally {
     await quit(app);
     server.close();
+  }
+});
+
+test('catálogo: /anim toca no renderer, docinho faz nojo e o JoJo fica clicável só no modo de interação', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
+    await app.evaluate(() => globalThis.__jojo.companion.chat('/anim selfie'));
+    let anim = null;
+    for (let i = 0; i < 20 && !/^cat_selfie/.test(anim || ''); i++) {
+      await sleep(150);
+      anim = await win.evaluate(() => window.__jojoRenderer.anim);
+    }
+    assert.match(anim, /^cat_selfie/);
+    await sleep(3500);
+    await app.evaluate(() => globalThis.__jojo.companion.chat('e se eu comer um docinho?'));
+    for (let i = 0; i < 30 && !/^cat_nojo/.test(anim || ''); i++) {
+      await sleep(150);
+      anim = await win.evaluate(() => window.__jojoRenderer.anim);
+    }
+    assert.match(anim, /^cat_nojo/);
+    await app.evaluate(() => globalThis.__jojo.companion.exitInteraction('test'));
+    await sleep(300);
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
+  } finally {
+    await quit(app);
   }
 });

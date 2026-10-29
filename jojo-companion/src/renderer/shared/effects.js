@@ -4,6 +4,9 @@
 
 const OUTLINE = '#1b2647';
 
+// Intervalo (ms) de nascimento das partículas de cada efeito do catálogo.
+const FX_EVERY = { bolhas: 320, notas: 650, lagrimas: 110, chuva: 70, vento: 260, confete: 90, vapor: 420, neve: 160, brilhoDente: 1100, velocidade: 110, estrelas: 380, coracaoGrande: 1700 };
+
 export class Effects {
   constructor({ rng = Math.random, ground = 147, center = 90 } = {}) {
     this.rng = rng;
@@ -16,7 +19,7 @@ export class Effects {
   }
 
   get busy() {
-    return this.particles.length > 0;
+    return this.particles.length > 0 || !!(this.fx && this.fx.length);
   }
 
   setEffect(name, now, kind = null) {
@@ -51,6 +54,14 @@ export class Effects {
       if (el > 300 && el < 2200 && every('blood', 120)) this._spawn('blood', now, 0, head);
     }
     if (flags.stink && every('fly', 700) && this.particles.filter((p) => p.kind === 'fly').length < 4) this._spawn('fly', now);
+    // Efeitos do catálogo (bolhas, notas, lágrimas, chuva…): lista em `flags.fx`.
+    this.fx = flags.fx || null;
+    if (this.fx) {
+      for (const f of this.fx) {
+        const ms = FX_EVERY[f];
+        if (ms && every(`fx:${f}`, ms)) this._spawnFx(f, now, head);
+      }
+    }
     this.particles = this.particles.filter((p) => now - p.born < p.life);
   }
 
@@ -92,6 +103,207 @@ export class Effects {
     }
   }
 
+  _spawnFx(kind, now, head) {
+    const r = this.rng;
+    const m = this.mouth || { x: head.x + 30, y: head.y + 64 };
+    const add = (o) => this.particles.push({ kind, born: now, vx: 0, vy: 0, ...o });
+    switch (kind) {
+      case 'bolhas':
+        add({ life: 1600, x: m.x + 30 + r() * 14, y: m.y - 6, vx: 4 + r() * 10, vy: -50, size: 2.5 + r() * 3.5 });
+        break;
+      case 'notas':
+        add({ life: 1500, x: m.x + 28 + r() * 10, y: m.y - 14, vx: 12 + r() * 10, vy: -34, size: 12 + r() * 4, ch: r() < 0.5 ? '♪' : '♫' });
+        break;
+      case 'lagrimas':
+        for (const ex of [this.cx - 16, this.cx + 16]) add({ life: 700, x: ex + r() * 4 - 2, y: head.y + 36, vx: (ex < this.cx ? -1 : 1) * (18 + r() * 14), vy: 40, size: 2.5 + r() * 1.5, grav: 1 });
+        break;
+      case 'chuva':
+        add({ life: 650, x: this.cx - 50 + r() * 100, y: head.y - 26, vx: -4, vy: 150, size: 2 });
+        break;
+      case 'vento':
+        add({ life: 900, x: this.cx - 120, y: 30 + r() * 110, vx: 260, vy: 0, size: 18 + r() * 16 });
+        break;
+      case 'confete':
+        add({ life: 1800, x: this.cx - 90 + r() * 180, y: -20, vx: -10 + r() * 20, vy: 110, size: 3 + r() * 2, hue: Math.floor(r() * 6), spin: r() * 6 });
+        break;
+      case 'vapor':
+        add({ life: 1200, x: this.cx - 30 + r() * 60, y: head.y - 6, vx: 0, vy: -26, size: 9 + r() * 4 });
+        break;
+      case 'neve':
+        add({ life: 2200, x: this.cx - 90 + r() * 180, y: -16, vx: -6 + r() * 12, vy: 70, size: 2 + r() * 2 });
+        break;
+      case 'brilhoDente':
+        add({ life: 600, x: m.x + 18 + r() * 24, y: m.y - 6 + r() * 6, size: 6 + r() * 3 });
+        break;
+      case 'velocidade':
+        add({ life: 350, x: this.cx - 70 - r() * 30, y: 40 + r() * 100, vx: -120, vy: 0, size: 20 + r() * 14 });
+        break;
+      case 'estrelas':
+        add({ life: 1400, x: this.cx - 90 + r() * 180, y: -30 + r() * 40, size: 3 + r() * 3 });
+        break;
+      case 'coracaoGrande':
+        add({ life: 1600, x: this.cx + 10, y: head.y + 10, vx: 0, vy: -30, size: 18 });
+        break;
+      default:
+    }
+  }
+
+  /** Efeitos contínuos do catálogo (nuvem, aura, fantasma, peixinho), desenhados a cada quadro. */
+  _drawFxScene(ctx, now, head) {
+    for (const f of this.fx || []) {
+      if (f === 'chuva') this._cloud(ctx, this.cx, head.y - 32);
+      else if (f === 'aura' || f === 'auraFera') this._aura(ctx, now, f === 'auraFera' ? '#d4202a' : '#ffd84a');
+      else if (f === 'fantasma') this._ghostFin(ctx, now, 0.28);
+      else if (f === 'dorsal') this._ghostFin(ctx, now, 1);
+      else if (f === 'peixinho') this._littleFish(ctx, now);
+    }
+  }
+
+  _cloud(ctx, x, y) {
+    ctx.save();
+    ctx.fillStyle = '#c9d2df';
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x - 26, y + 4, 14, 0, Math.PI * 2);
+    ctx.arc(x, y - 4, 19, 0, Math.PI * 2);
+    ctx.arc(x + 26, y + 4, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Aura suave (sem piscar): anel que respira devagar.
+  _aura(ctx, now, color) {
+    const k = 0.5 + 0.5 * Math.sin(now / 600);
+    ctx.save();
+    ctx.globalAlpha *= 0.18 + 0.12 * k;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.ellipse(this.cx, this.g - 80, 92 + 4 * k, 96 + 4 * k, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Tubarão fantasma: só a nadadeira dorsal, translúcida, passando ao fundo.
+  _ghostFin(ctx, now, alpha) {
+    const t = (now % 5000) / 5000;
+    const x = -60 + t * 300;
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    ctx.fillStyle = '#5f76a8';
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = alpha > 0.5 ? 3 : 0;
+    ctx.beginPath();
+    ctx.moveTo(x - 22, this.g - 2);
+    ctx.quadraticCurveTo(x - 4, this.g - 50, x + 22, this.g - 56);
+    ctx.quadraticCurveTo(x + 10, this.g - 26, x + 18, this.g - 2);
+    ctx.closePath();
+    ctx.fill();
+    if (alpha > 0.5) ctx.stroke();
+    ctx.restore();
+  }
+
+  // Peixinho que sempre escapa (zigue-zague na frente do JoJo).
+  _littleFish(ctx, now) {
+    const t = now / 1000;
+    const x = this.cx + Math.sin(t * 1.7) * 80;
+    const y = 70 + Math.sin(t * 3.1) * 30;
+    const dir = Math.cos(t * 1.7) >= 0 ? 1 : -1;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(dir, 1);
+    ctx.fillStyle = '#f08a2c';
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 9, 5, 0, 0, Math.PI * 2);
+    ctx.moveTo(-8, 0);
+    ctx.lineTo(-15, -5);
+    ctx.lineTo(-15, 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  _fxParticle(ctx, p, x, y, t) {
+    switch (p.kind) {
+      case 'bolhas':
+        ctx.fillStyle = 'rgba(200, 235, 255, 0.35)';
+        ctx.strokeStyle = 'rgba(120, 180, 230, 0.95)';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(x + Math.sin(t * 9) * 3, y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        break;
+      case 'notas':
+        ctx.fillStyle = OUTLINE;
+        ctx.font = `bold ${p.size}px sans-serif`;
+        ctx.fillText(p.ch, x + Math.sin(t * 7) * 4, y);
+        break;
+      case 'lagrimas':
+        this._drop(ctx, x, y + 70 * t * t, p.size);
+        break;
+      case 'chuva':
+        ctx.strokeStyle = '#6fa8dc';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 2, y + 8);
+        ctx.stroke();
+        break;
+      case 'vento':
+      case 'velocidade':
+        ctx.strokeStyle = 'rgba(27, 38, 71, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + p.size, y);
+        ctx.stroke();
+        break;
+      case 'confete':
+        ctx.fillStyle = ['#e8344e', '#ffd84a', '#3c7bd1', '#2f8f5a', '#ff8ad8', '#f08a2c'][p.hue];
+        ctx.save();
+        ctx.translate(x + Math.sin(t * 6) * 6, y);
+        ctx.rotate(p.spin + t * 8);
+        ctx.fillRect(-p.size, -p.size / 2, p.size * 2, p.size);
+        ctx.restore();
+        break;
+      case 'vapor':
+        ctx.strokeStyle = 'rgba(255, 140, 90, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 6; i++) {
+          const yy = y - (i / 6) * p.size * 1.4;
+          const xx = x + Math.sin(i * 1.3 + t * 7) * 3;
+          if (i === 0) ctx.moveTo(xx, yy);
+          else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+        break;
+      case 'neve':
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = 'rgba(27, 38, 71, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(x + Math.sin(t * 5) * 6, y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        break;
+      case 'brilhoDente':
+      case 'estrelas':
+        this._star(ctx, x, y, p.size * (1 - Math.abs(t - 0.5)));
+        break;
+      case 'coracaoGrande':
+        this._heart(ctx, x, y, p.size * (0.6 + t * 0.5));
+        break;
+      default:
+    }
+  }
+
   /** Desenha partículas e objetos (comida, bola, marca) no sistema da caixa. */
   draw(ctx, now, { mark = null, head = { x: 136, y: 74 }, mouth = null, facingSign = 1 }) {
     for (const p of this.particles) {
@@ -110,8 +322,10 @@ export class Effects {
       else if (p.kind === 'stink') this._stink(ctx, x, y, p.size, t);
       else if (p.kind === 'fly') this._fly(ctx, p.x + Math.cos(p.phase + t * 18) * 18, p.y + Math.sin(p.phase + t * 25) * 10, now);
       else if (p.kind === 'puff') this._whitePuff(ctx, x, y, p.size * (1 + t));
+      else this._fxParticle(ctx, p, x, y, t);
       ctx.restore();
     }
+    if (this.fx) this._drawFxScene(ctx, now, head);
     const el = now - this.effectStart;
     if (mouth) this.mouth = mouth;
     if (this.effectName === 'food') this._food(ctx, mouth || { x: head.x + 14, y: head.y + 20 }, el, this.effectKind || 'peixe');

@@ -4,7 +4,7 @@ import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 
 // Intenções que nunca vão pra IA: segurança (João, CVV, SAMU) e gatilhos com animação própria.
-const SCRIPTED_ONLY = new Set(['crisis', 'distress', 'sad', 'avcReal', 'avc', 'pretty', 'lol', 'moon', 'dressDown', 'dressUp', 'bench', 'squat', 'quiet', 'scare', 'eat', 'play', 'sleep', 'wake', 'pet']);
+const SCRIPTED_ONLY = new Set(['crisis', 'distress', 'sad', 'avcReal', 'avc', 'pretty', 'lol', 'moon', 'dressDown', 'dressUp', 'bench', 'squat', 'quiet', 'scare', 'eat', 'play', 'sleep', 'wake', 'pet', 'docinho']);
 // Pausa da IA depois de uma falha: as próximas mensagens respondem na hora.
 const LLM_PAUSE_MS = 90e3;
 

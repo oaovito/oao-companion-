@@ -1,0 +1,1471 @@
+{
+ "_notas": "Falas ambientes do JoJo (no máximo 80 caracteres). Campos: n (número na lista pedida), t (texto), cat (categoria), freq (comum | rara | easter | desligada), anims (animações ambientes em que a fala combina mais), horario (manha, tarde, noite, madrugada). O motor sorteia a fala pela categoria da animação que está tocando (campo 'fala' em assets/catalog/animacoes.json), pelo período do dia e pela temporada, sem repetir em sequência. Para ajustar a frequência, troque 'freq'; para desligar, use 'desligada'.",
+ "falas": [
+  {
+   "n": 1,
+   "t": "Mais uma série. Sempre mais uma série.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "contarRepeticoes",
+    "elastico"
+   ]
+  },
+  {
+   "n": 2,
+   "t": "Tubarão não descansa, tubarão evolui.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "flexoes",
+    "duploBiceps",
+    "flexionarBiceps",
+    "agachamentoNado",
+    "elastico",
+    "toalha",
+    "beberShake",
+    "tapinhaAbdomen",
+    "motivacaoAcademia"
+   ]
+  },
+  {
+   "n": 3,
+   "t": "Sentiu o shape? Eu também.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "duploBiceps",
+    "flexionarBiceps",
+    "tapinhaAbdomen"
+   ]
+  },
+  {
+   "n": 4,
+   "t": "Dor passa, dentada de campeão fica.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "flexoes"
+   ]
+  },
+  {
+   "n": 5,
+   "t": "Hoje é dia de perna. Eu nem tenho perna e treino mesmo assim.",
+   "cat": "treino",
+   "freq": "rara",
+   "anims": [
+    "agachamentoNado"
+   ]
+  },
+  {
+   "n": 6,
+   "t": "Repetição 12... 13... pronto, perdi a conta, mas continuo.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "contarRepeticoes",
+    "halteres"
+   ]
+  },
+  {
+   "n": 7,
+   "t": "Músculo não nasce sozinho, é construído.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "flexoes",
+    "duploBiceps",
+    "flexionarBiceps",
+    "agachamentoNado",
+    "elastico",
+    "toalha",
+    "beberShake",
+    "tapinhaAbdomen",
+    "motivacaoAcademia"
+   ]
+  },
+  {
+   "n": 8,
+   "t": "Quem treina, domina.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "flexoes",
+    "duploBiceps",
+    "flexionarBiceps",
+    "agachamentoNado",
+    "elastico",
+    "toalha",
+    "beberShake",
+    "tapinhaAbdomen",
+    "motivacaoAcademia"
+   ]
+  },
+  {
+   "n": 9,
+   "t": "Esse bíceps não é de enfeite. É de trabalho. 💪",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "flexionarBiceps",
+    "duploBiceps"
+   ]
+  },
+  {
+   "n": 10,
+   "t": "Aquecimento feito. Agora é hora de destruir.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "alongar",
+    "estalar"
+   ]
+  },
+  {
+   "n": 11,
+   "t": "Proteína não se negocia.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "beberShake"
+   ]
+  },
+  {
+   "n": 12,
+   "t": "Treino pago é treino feito.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "toalha"
+   ]
+  },
+  {
+   "n": 13,
+   "t": "Sem desculpas. Só resultado.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "flexoes",
+    "duploBiceps",
+    "flexionarBiceps",
+    "agachamentoNado",
+    "elastico",
+    "toalha",
+    "beberShake",
+    "tapinhaAbdomen",
+    "motivacaoAcademia"
+   ]
+  },
+  {
+   "n": 14,
+   "t": "Se doeu, é porque está funcionando.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "flexoes",
+    "halteres",
+    "elastico"
+   ]
+  },
+  {
+   "n": 15,
+   "t": "Suor é só a água do mar saindo de mim.",
+   "cat": "treino",
+   "freq": "comum",
+   "anims": [
+    "toalha"
+   ]
+  },
+  {
+   "n": 16,
+   "t": "Cérebro também é músculo. Treina ele.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 17,
+   "t": "Músculo sem estudo é só volume.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 18,
+   "t": "Hoje eu aprendo algo novo antes de dormir.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 19,
+   "t": "O melhor estudo é o que a gente termina.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 20,
+   "t": "Aprender dá mais pump que supino.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 21,
+   "t": "Quem estuda, nada mais fundo.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 22,
+   "t": "Mais um conceito dominado. Próximo.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo"
+   ]
+  },
+  {
+   "n": 23,
+   "t": "Estudar é a série mais difícil. Por isso é a que mais conta.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 24,
+   "t": "Foco total. Anotei até a pontuação.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 25,
+   "t": "Revisão é repetição para a mente.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 26,
+   "t": "Conhecimento não pesa na mochila nem na nadadeira.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo"
+   ]
+  },
+  {
+   "n": 27,
+   "t": "Estou lendo, sim. Músculo e livro combinam.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo"
+   ]
+  },
+  {
+   "n": 28,
+   "t": "O dia só acaba quando eu aprender uma coisa nova.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 29,
+   "t": "Quem sabe mais, ganha mais.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 30,
+   "t": "Sou o melhor porque nunca paro de aprender.",
+   "cat": "estudo",
+   "freq": "comum",
+   "anims": [
+    "lendo",
+    "lerJunto",
+    "digitando",
+    "fingirTrabalhar"
+   ]
+  },
+  {
+   "n": 31,
+   "t": "Sim, eu estou me admirando. E daí?",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "admirarMusculos",
+    "espelhoInvisivel"
+   ]
+  },
+  {
+   "n": 32,
+   "t": "Já reparou como eu sou incrível?",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "selfie",
+    "seAcharMaximo",
+    "admirarMusculos",
+    "espelhoInvisivel",
+    "incrivel",
+    "desfile",
+    "brilharDentes"
+   ]
+  },
+  {
+   "n": 33,
+   "t": "Ninguém pediu, mas aqui vai uma pose.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "duploBiceps",
+    "espelhoInvisivel",
+    "selfie"
+   ]
+  },
+  {
+   "n": 34,
+   "t": "Estou tão bonito hoje que até me assusto.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "selfie"
+   ]
+  },
+  {
+   "n": 35,
+   "t": "Se achar o máximo é meu hobby.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "seAcharMaximo",
+    "incrivel"
+   ]
+  },
+  {
+   "n": 36,
+   "t": "Modéstia? Nunca nem vi.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "fingirModestia",
+    "seAcharMaximo"
+   ]
+  },
+  {
+   "n": 37,
+   "t": "Eu me elogio porque alguém precisa.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "pedirElogios"
+   ]
+  },
+  {
+   "n": 38,
+   "t": "Olha esse perfil. Olha.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelhoInvisivel",
+    "admirarMusculos"
+   ]
+  },
+  {
+   "n": 39,
+   "t": "Desculpa, estou brilhando demais?",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "aura",
+    "brilharDentes"
+   ]
+  },
+  {
+   "n": 40,
+   "t": "Não é vaidade, é reconhecer os fatos.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "selfie",
+    "seAcharMaximo",
+    "admirarMusculos",
+    "espelhoInvisivel",
+    "incrivel",
+    "desfile",
+    "brilharDentes"
+   ]
+  },
+  {
+   "n": 41,
+   "t": "Tem espelho aí? Preciso conferir se continuo perfeito.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho"
+   ]
+  },
+  {
+   "n": 42,
+   "t": "Perfeição dá trabalho, mas eu aguento.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "selfie",
+    "seAcharMaximo",
+    "admirarMusculos",
+    "espelhoInvisivel",
+    "incrivel",
+    "desfile",
+    "brilharDentes"
+   ]
+  },
+  {
+   "n": 43,
+   "t": "Eu sei que você está olhando. Pode olhar.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "encarar",
+    "encararDentes",
+    "charmeCauda"
+   ]
+  },
+  {
+   "n": 44,
+   "t": "O mar inteiro me conhece. Quer saber por quê? 🦈",
+   "cat": "vaidade",
+   "freq": "rara",
+   "anims": [
+    "desfile",
+    "poseEpica"
+   ]
+  },
+  {
+   "n": 45,
+   "t": "Eu nasci para ser o melhor e ainda estou me superando.",
+   "cat": "vaidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "selfie",
+    "seAcharMaximo",
+    "admirarMusculos",
+    "espelhoInvisivel",
+    "incrivel",
+    "desfile",
+    "brilharDentes"
+   ]
+  },
+  {
+   "n": 46,
+   "t": "Arrotei. Sem remorso.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "arrotar"
+   ]
+  },
+  {
+   "n": 47,
+   "t": "Alguém ouviu? Eu não ouvi nada.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "peidinho"
+   ]
+  },
+  {
+   "n": 48,
+   "t": "Foi a barriga. Ela é independente.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "barrigaRoncando"
+   ]
+  },
+  {
+   "n": 49,
+   "t": "Eu coço onde quiser, na hora que quiser.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "cocarBarriga"
+   ]
+  },
+  {
+   "n": 50,
+   "t": "Dancei sozinho e gostei.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "dancarSemRitmo",
+    "festaSozinho",
+    "dancinhaViral"
+   ]
+  },
+  {
+   "n": 51,
+   "t": "Se eu tropeçar, finjo que foi proposital.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "baterBorda"
+   ]
+  },
+  {
+   "n": 52,
+   "t": "Vergonha eu deixei no fundo do oceano.",
+   "cat": "descaro",
+   "freq": "comum"
+  },
+  {
+   "n": 53,
+   "t": "Estou cantando mal e com muito orgulho.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "cantarDesafinado",
+    "karaoke"
+   ]
+  },
+  {
+   "n": 54,
+   "t": "Acabei de fazer uma careta e não me arrependo.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "careta",
+    "lingua"
+   ]
+  },
+  {
+   "n": 55,
+   "t": "Tubarão não pede desculpa, só pede mais comida.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "pedirComida"
+   ]
+  },
+  {
+   "n": 56,
+   "t": "Fingir que não vi é uma arte. Eu sou mestre.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "naoFuiEu",
+    "olharLado",
+    "assobiar"
+   ]
+  },
+  {
+   "n": 57,
+   "t": "Fui pego treinando de manhã cedo. De novo.",
+   "cat": "descaro",
+   "freq": "comum",
+   "horario": [
+    "manha"
+   ]
+  },
+  {
+   "n": 58,
+   "t": "Se eu fiz barulho foi o shape crescendo.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "peidinho",
+    "arrotar"
+   ]
+  },
+  {
+   "n": 59,
+   "t": "Se ficar com vergonha, o tubarão aqui faz por você.",
+   "cat": "descaro",
+   "freq": "comum"
+  },
+  {
+   "n": 60,
+   "t": "Se me perguntarem, eu nunca estive aqui.",
+   "cat": "descaro",
+   "freq": "comum",
+   "anims": [
+    "fugirBolhas",
+    "escondeBorda",
+    "naoFuiEu"
+   ]
+  },
+  {
+   "n": 61,
+   "t": "Você está indo bem. Continua.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 62,
+   "t": "Mais um pouco e você bate sua meta.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 63,
+   "t": "Já terminou? Eu sabia que conseguia.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 64,
+   "t": "Foco. Você é mais forte do que o prazo.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 65,
+   "t": "Estou torcendo por você daqui debaixo.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 66,
+   "t": "Quem trabalha hoje, descansa melhor depois.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 67,
+   "t": "Cada tarefa concluída é uma série vencida.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 68,
+   "t": "Respira. Depois a gente destrói esse problema.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 69,
+   "t": "Se travou, eu fico do seu lado até destravar.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 70,
+   "t": "Você não precisa ser perfeito, só constante.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 71,
+   "t": "Orgulhoso de você. Sério.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 72,
+   "t": "Terminou algo? Aplausos de tubarão pra você.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 73,
+   "t": "Tarefa difícil é só tarefa que ainda não tomou dentada.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 74,
+   "t": "Se precisar de ânimo, olha pro meu bíceps.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 75,
+   "t": "Você chegou até aqui. Isso já é vitória.",
+   "cat": "motivacao",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio",
+    "elogiarExagero",
+    "motivacaoAcademia",
+    "aplaudir"
+   ]
+  },
+  {
+   "n": 76,
+   "t": "Bebe água. Hidratação é treino também.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "beberAquario",
+    "beberShake"
+   ]
+  },
+  {
+   "n": 77,
+   "t": "Faz um alongamento. Eu faço junto.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "alongar"
+   ]
+  },
+  {
+   "n": 78,
+   "t": "Já passou tempo demais sentado. Levanta um pouco.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "ajeitarPostura",
+    "horaPausa"
+   ]
+  },
+  {
+   "n": 79,
+   "t": "Hora de olhar para longe e descansar os olhos.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "horaPausa"
+   ]
+  },
+  {
+   "n": 80,
+   "t": "Respira fundo. O oceano é grande, você aguenta.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "preocupado",
+    "alongar"
+   ]
+  },
+  {
+   "n": 81,
+   "t": "Comeu alguma coisa? Tubarão faminto é perigoso.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "horario": [
+    "tarde"
+   ]
+  },
+  {
+   "n": 82,
+   "t": "Descansar faz parte do treino.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "horaPausa"
+   ]
+  },
+  {
+   "n": 83,
+   "t": "Se estiver cansado, uma pausa não é fraqueza.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "horaPausa",
+    "preocupado"
+   ]
+  },
+  {
+   "n": 84,
+   "t": "Dormir bem é o melhor suplemento.",
+   "cat": "cuidado",
+   "freq": "desligada",
+   "nota": "Desligada: contradiz a regra de o JoJo ser radicalmente contra dormir."
+  },
+  {
+   "n": 85,
+   "t": "Postura! Ombros pra trás, igual eu.",
+   "cat": "cuidado",
+   "freq": "comum",
+   "anims": [
+    "ajeitarPostura"
+   ]
+  },
+  {
+   "n": 86,
+   "t": "Estou com fome. De novo.",
+   "cat": "fome",
+   "freq": "comum",
+   "anims": [
+    "devorar",
+    "comerPeixinhos",
+    "pedirComida",
+    "barrigaRoncando"
+   ]
+  },
+  {
+   "n": 87,
+   "t": "Só mais um frango e fecho o dia.",
+   "cat": "fome",
+   "freq": "comum",
+   "anims": [
+    "devorar",
+    "rostoSujo"
+   ]
+  },
+  {
+   "n": 88,
+   "t": "Dieta é para quem não tem estômago de tubarão.",
+   "cat": "fome",
+   "freq": "comum",
+   "anims": [
+    "devorar",
+    "comerPeixinhos",
+    "pedirComida",
+    "barrigaRoncando"
+   ]
+  },
+  {
+   "n": 89,
+   "t": "Quem tem fome, treina melhor. Mas hoje eu quero lanche.",
+   "cat": "fome",
+   "freq": "comum",
+   "anims": [
+    "devorar",
+    "comerPeixinhos",
+    "pedirComida",
+    "barrigaRoncando"
+   ]
+  },
+  {
+   "n": 90,
+   "t": "Pode me dar um peixinho? Só um.",
+   "cat": "fome",
+   "freq": "comum",
+   "anims": [
+    "pedirComida",
+    "comerPeixinhos"
+   ]
+  },
+  {
+   "n": 91,
+   "t": "Aquele shake de proteína não se bebe sozinho.",
+   "cat": "fome",
+   "freq": "comum",
+   "anims": [
+    "beberShake"
+   ]
+  },
+  {
+   "n": 92,
+   "t": "Bom dia! Já treinei, já estudei e ainda são 8h.",
+   "cat": "horario",
+   "freq": "comum",
+   "anims": [
+    "bomDia"
+   ],
+   "horario": [
+    "manha"
+   ]
+  },
+  {
+   "n": 93,
+   "t": "Dia novo, shape novo.",
+   "cat": "horario",
+   "freq": "comum",
+   "anims": [
+    "bomDia",
+    "espreguicar"
+   ],
+   "horario": [
+    "manha"
+   ]
+  },
+  {
+   "n": 94,
+   "t": "Hora do almoço. Preparado? Eu estou.",
+   "cat": "horario",
+   "freq": "comum",
+   "horario": [
+    "tarde"
+   ]
+  },
+  {
+   "n": 95,
+   "t": "Tarde de produtividade. Vamos.",
+   "cat": "horario",
+   "freq": "comum",
+   "horario": [
+    "tarde"
+   ]
+  },
+  {
+   "n": 96,
+   "t": "Está anoitecendo. Última série do dia.",
+   "cat": "horario",
+   "freq": "comum",
+   "horario": [
+    "noite"
+   ]
+  },
+  {
+   "n": 97,
+   "t": "Boa noite, campeão. Amanhã tem mais.",
+   "cat": "horario",
+   "freq": "comum",
+   "anims": [
+    "boaNoite"
+   ],
+   "horario": [
+    "noite"
+   ]
+  },
+  {
+   "n": 98,
+   "t": "Madrugada? Só treino e estudo de quem leva a sério.",
+   "cat": "horario",
+   "freq": "comum",
+   "horario": [
+    "madrugada"
+   ]
+  },
+  {
+   "n": 99,
+   "t": "Vai dormir. Músculo cresce no descanso.",
+   "cat": "horario",
+   "freq": "desligada",
+   "horario": [
+    "noite"
+   ],
+   "nota": "Desligada: contradiz a regra de o JoJo ser radicalmente contra dormir."
+  },
+  {
+   "n": 100,
+   "t": "Fiquei treinando enquanto você sumiu.",
+   "cat": "ausencia",
+   "freq": "comum",
+   "anims": [
+    "voltou",
+    "surtoCarencia",
+    "solitario",
+    "ausente"
+   ]
+  },
+  {
+   "n": 101,
+   "t": "Sentiu minha falta? Eu senti a sua.",
+   "cat": "ausencia",
+   "freq": "comum",
+   "anims": [
+    "voltou",
+    "surtoCarencia",
+    "solitario",
+    "ausente"
+   ]
+  },
+  {
+   "n": 102,
+   "t": "Voltou! Estava na saudade.",
+   "cat": "ausencia",
+   "freq": "comum",
+   "anims": [
+    "voltou"
+   ]
+  },
+  {
+   "n": 103,
+   "t": "Está quietinho aí. Tudo certo?",
+   "cat": "ausencia",
+   "freq": "comum",
+   "anims": [
+    "solitario",
+    "surtoCarencia"
+   ]
+  },
+  {
+   "n": 104,
+   "t": "Estou aqui, se precisar.",
+   "cat": "ausencia",
+   "freq": "comum",
+   "anims": [
+    "solitario"
+   ]
+  },
+  {
+   "n": 105,
+   "t": "Já faz um tempo que não conversamos. Mas eu continuo bonitão.",
+   "cat": "ausencia",
+   "freq": "comum",
+   "anims": [
+    "surtoCarencia",
+    "solitario"
+   ]
+  },
+  {
+   "n": 106,
+   "t": "Ser o melhor não é chegar. É continuar.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 107,
+   "t": "Disciplina vence motivação.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 108,
+   "t": "Todo mundo quer o shape, poucos querem a rotina.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 109,
+   "t": "Quem desiste cedo nunca conhece o próprio limite.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 110,
+   "t": "Não compare seu começo com meu fim.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 111,
+   "t": "Cair faz parte. Levantar é o treino.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 112,
+   "t": "O mar não perdoa preguiça.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 113,
+   "t": "Humildade é saber que posso melhorar. Vaidade é saber que já sou bom.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 114,
+   "t": "Primeiro eu me vencia. Agora eu me supero.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 115,
+   "t": "O melhor tubarão é o que nunca para de nadar.",
+   "cat": "filosofia",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "motivacaoAcademia",
+    "flutuar"
+   ]
+  },
+  {
+   "n": 116,
+   "t": "Se você está lendo isso, é porque eu quis que lesse.",
+   "cat": "especiais",
+   "freq": "rara",
+   "anims": [
+    "encarar",
+    "sussurrar"
+   ]
+  },
+  {
+   "n": 117,
+   "t": "Segredo: eu choro vendo documentário de baleia.",
+   "cat": "especiais",
+   "freq": "rara",
+   "anims": [
+    "confissao",
+    "horaDaVerdade"
+   ]
+  },
+  {
+   "n": 118,
+   "t": "Confissão: gosto mais de estudar do que de treinar. Não conta pra ninguém.",
+   "cat": "especiais",
+   "freq": "rara",
+   "anims": [
+    "confissao",
+    "horaDaVerdade",
+    "sussurrar"
+   ]
+  },
+  {
+   "n": 119,
+   "t": "Eu juro que não sou perigoso. Só muito apaixonado por proteína.",
+   "cat": "especiais",
+   "freq": "rara",
+   "anims": [
+    "modoFera",
+    "sussurrar"
+   ]
+  },
+  {
+   "n": 120,
+   "t": "Easter egg: pose épica desbloqueada. 🦈",
+   "cat": "especiais",
+   "freq": "easter",
+   "anims": [
+    "poseEpica"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Um. Dois. Três. Quatro… tá, já sabe como termina.",
+   "cat": "repeticoes",
+   "freq": "comum",
+   "anims": [
+    "contarRepeticoes"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Repetição 7. A 8 é a que cresce.",
+   "cat": "repeticoes",
+   "freq": "comum",
+   "anims": [
+    "contarRepeticoes"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Contando em voz alta pra você aprender: 1, 2, 3…",
+   "cat": "repeticoes",
+   "freq": "comum",
+   "anims": [
+    "contarRepeticoes"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Mais duas. Mentira, mais cinco.",
+   "cat": "repeticoes",
+   "freq": "comum",
+   "anims": [
+    "contarRepeticoes"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Você é tipo proteína: essencial na minha dieta.",
+   "cat": "cantada",
+   "freq": "comum",
+   "anims": [
+    "cantadaRuim"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Tá cansada? Correu na minha cabeça a manhã toda.",
+   "cat": "cantada",
+   "freq": "comum",
+   "anims": [
+    "cantadaRuim"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Se beleza fosse peso, você batia meu supino.",
+   "cat": "cantada",
+   "freq": "comum",
+   "anims": [
+    "cantadaRuim"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Eu mordo. Mas pra você, só de leve.",
+   "cat": "cantada",
+   "freq": "comum",
+   "anims": [
+    "cantadaRuim"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Sabia que você ia errar. E sabia que ia acertar depois.",
+   "cat": "provocacao",
+   "freq": "comum",
+   "anims": [
+    "sabiaQueIaErrar",
+    "apostar",
+    "quedaBraco"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Aposto um shake que você termina isso antes de mim.",
+   "cat": "provocacao",
+   "freq": "comum",
+   "anims": [
+    "sabiaQueIaErrar",
+    "apostar",
+    "quedaBraco"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Queda de braço? Eu deixo você ganhar. Talvez.",
+   "cat": "provocacao",
+   "freq": "comum",
+   "anims": [
+    "sabiaQueIaErrar",
+    "apostar",
+    "quedaBraco"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Aposta comigo: quem terminar primeiro escolhe o lanche.",
+   "cat": "provocacao",
+   "freq": "comum",
+   "anims": [
+    "sabiaQueIaErrar",
+    "apostar",
+    "quedaBraco"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Lá-lá-lá… afinado é para os fracos.",
+   "cat": "cantar",
+   "freq": "comum",
+   "anims": [
+    "cantarDesafinado",
+    "karaoke"
+   ]
+  },
+  {
+   "n": null,
+   "t": "Esse agudo é de academia, não de escola de canto.",
+   "cat": "cantar",
+   "freq": "comum",
+   "anims": [
+    "cantarDesafinado",
+    "karaoke"
+   ]
+  },
+  {
+   "n": null,
+   "t": "♪ Sou tubarão, sou campeão ♪",
+   "cat": "cantar",
+   "freq": "comum",
+   "anims": [
+    "cantarDesafinado",
+    "karaoke"
+   ]
+  }
+ ]
+}

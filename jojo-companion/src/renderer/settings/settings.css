@@ -79,3 +79,4 @@ footer { color: var(--muted); font-size: 12px; margin-top: 8px; }
 .stack textarea { width: 100%; padding: 6px 8px; border: 1px solid #b9c6da; border-radius: 8px; font: inherit; color: var(--ink); resize: vertical; }
 .pair { display: flex; align-items: center; gap: 6px; }
 .pair input { width: 64px; padding: 5px 6px; border: 1px solid #b9c6da; border-radius: 8px; font: inherit; }
+[hidden] { display: none !important; }

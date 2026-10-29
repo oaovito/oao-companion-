@@ -1,5 +1,6 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
+import { expandCatalog } from '../core/catalog/recipes.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -59,6 +60,34 @@ function sampleVoice(phrases, profile, n) {
 
 function readJSON(rel) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
+}
+
+/** Estado pequeno em JSON (motor de variedade): leitura tolerante e gravação adiada. */
+function jsonState(file, log) {
+  let data = null;
+  try {
+    data = JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch {
+    data = null;
+  }
+  let timer = null;
+  const flush = () => {
+    timer = null;
+    try {
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, JSON.stringify(data));
+    } catch (e) {
+      log('warn', `Falha ao salvar ${path.basename(file)}: ${e.message}`);
+    }
+  };
+  return {
+    get: () => data,
+    set: (v) => {
+      data = v;
+      if (!timer) timer = setTimeout(flush, 2000);
+    },
+    flush: () => timer && (clearTimeout(timer), flush()),
+  };
 }
 
 function main() {
@@ -124,8 +153,13 @@ function main() {
     log('info', `Iniciando JoJo Companion ${app.getVersion()} (${process.platform}, Electron ${process.versions.electron})`);
     const assets = {
       rig: readJSON('assets/character/jojo.rig.json'),
-      animations: readJSON('assets/animations/jojo.animations.json'),
+      // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
+      animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), readJSON('assets/catalog/animacoes.json')),
     };
+    const catalog = readJSON('assets/catalog/animacoes.json');
+    const ambientLines = readJSON('assets/dialogue/falas-ambientes.json');
+    const varietyState = jsonState(path.join(userData, 'variedade.json'), log);
+    app.on('will-quit', () => varietyState.flush());
     const phrases = readJSON('assets/dialogue/pt-BR.json');
     const iconPath = path.join(ROOT, 'assets', 'icons', IS_WIN ? 'tray.ico' : 'tray.png');
     const appIcon = path.join(ROOT, 'assets', 'icons', IS_WIN ? 'app.ico' : 'app.png');
@@ -188,7 +222,7 @@ function main() {
     });
     const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm });
 
-    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), phrases, dialogue, log });
+    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), catalog, ambientLines, variety: varietyState, phrases, dialogue, log });
 
     // Esc global SOMENTE enquanto o modo de interação está ativo: o Windows nem
     // sempre entrega o foco do teclado à janela ativada por atalho. Fora do modo
@@ -213,6 +247,7 @@ function main() {
     ipcMain.on('jojo:capture', (e, on) => fromOverlay(e) && companion.setCapture(!!on));
     ipcMain.on('jojo:activity', (e) => fromOverlay(e) && companion.noteActivity());
     ipcMain.on('jojo:interact', (e, a) => fromOverlay(e) && companion.interact(String(a)));
+    ipcMain.on('jojo:gesture', (e, g) => fromOverlay(e) && companion.gesture(String(g)));
     ipcMain.on('jojo:chat-open', (e, open) => fromOverlay(e) && companion.setChatOpen(!!open));
     ipcMain.handle('jojo:chat', async (e, text) => (fromOverlay(e) ? companion.chat(String(text).slice(0, 500)) : null));
     ipcMain.on('jojo:drag-start', (e) => {
@@ -564,7 +599,10 @@ function main() {
     updater = createAutoUpdater({
       app, net, store, log,
       feed: pkg.jojoUpdate || {},
-      onUpdated: (v) => companion.say(`Fui atualizado pra v${v}. Mais forte. Óbvio.`, 'speech'),
+      onUpdated: (v) => {
+        companion.fireEvent('sucesso', { speak: false });
+        companion.say(`Fui atualizado pra v${v}. Mais forte. Óbvio.`, 'speech');
+      },
     });
     updater.start();
     const idleTimer = setInterval(() => {
