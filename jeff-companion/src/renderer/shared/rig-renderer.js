@@ -7,7 +7,13 @@ export class RigRenderer {
   constructor(rig) {
     this.rig = rig;
     this.paths = new Map();
-    for (const g of rig.groups) for (const p of g.parts) this.paths.set(p.id, new Path2D(p.path));
+    this.partsById = new Map();
+    for (const g of rig.groups) {
+      for (const p of g.parts) {
+        this.paths.set(p.id, new Path2D(p.path));
+        this.partsById.set(p.id, p);
+      }
+    }
     this.box = rig.metrics.box;
     this.ground = rig.metrics.ground ?? this.box.height - 5;
     this.rootPivot = rig.metrics.rootPivot || { x: this.box.width * 0.4, y: this.ground };
@@ -108,14 +114,23 @@ export class RigRenderer {
 
   _part(ctx, part, pose, op) {
     ctx.save();
+    this._xform(ctx, part, pose, 0);
+    op(this.paths.get(part.id));
+    ctx.restore();
+  }
+
+  /** Aplica a transformação da peça; `parent` encadeia (ex.: antebraço segue o braço). */
+  _xform(ctx, part, pose, depth) {
+    if (part.parent && depth < 4) {
+      const parent = this.partsById.get(part.parent);
+      if (parent) this._xform(ctx, parent, pose, depth + 1);
+    }
     if (part.pivot && part.rot) {
       ctx.translate(part.pivot[0], part.pivot[1]);
       ctx.rotate((pose[part.rot] || 0) * (part.rotSign ?? 1) * DEG);
       ctx.translate(-part.pivot[0], -part.pivot[1]);
     }
     if (part.lift) ctx.translate(0, -(pose[part.lift] || 0));
-    op(this.paths.get(part.id));
-    ctx.restore();
   }
 
   _face(ctx, pose) {

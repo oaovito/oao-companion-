@@ -53,8 +53,9 @@ referência do usuário: de frente, cabeça grande e redonda, olhos ovais branco
 com pupilas de ponto, cores chapadas e contorno fino; tubarão bípede azul-ardósia
 com recortes creme serrilhados (focinho, barriga, rabo), sorriso com muitos
 dentinhos, barbatana na cabeça, rabo bifurcado, bermuda preta com faixas cinza.
-Versão adulta e intimidadora: cabeça menor em proporção, ombros largos,
-músculos marcados, olhos de pálpebra pesada, sobrancelhas franzidas e sorriso
+Versão adulta e intimidadora com físico de fisiculturista: trapézio e ombros
+enormes, cintura fina em V, peitoral/abdômen definidos, braços com bíceps e
+cotovelo articulado (pose de duplo bíceps ao comemorar), olhos de pálpebra pesada, sobrancelhas franzidas e sorriso
 entreaberto com duas fileiras de presas assustadoras. Animação também no estilo: 12 quadros por segundo, movimentos secos, saltinhos ao
 andar, boca abrindo e fechando ao falar, virada instantânea. Só o estilo é
 imitado; nenhum personagem da série é copiado. Animações distintas: idle (respira), piscar, olhar ao redor,

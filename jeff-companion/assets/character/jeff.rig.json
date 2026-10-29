@@ -1,8 +1,8 @@
 {
   "format": "jeff-rig/1",
-  "name": "Jeff — recorte de papel, versão adulta (provisório)",
+  "name": "Jeff — recorte de papel, adulto fisiculturista (provisório)",
   "provisional": true,
-  "notes": "Jeff de frente no estilo recorte de papel de South Park, versão adulta/intimidadora: cabeça proporcionalmente menor, ombros largos, peitoral marcado, olhos menores com pálpebras pesadas, sobrancelhas franzidas e sorriso entreaberto com duas fileiras de dentes pontudos. Elementos da referência do usuário (azul-ardósia, creme serrilhado, barbatana, rabo, bermuda preta com faixas). Caixa 180x170, centro x=90. Canais: legFL/legFR = braço esquerdo/direito; legBL/legBR = perna esquerda/direita; com rotSign, positivo = para fora. Ver assets/README.md.",
+  "notes": "Jeff de frente no estilo recorte de papel de South Park, versão adulta fisiculturista: trapézio e ombros enormes, cintura fina em V, peitoral, abdômen e serrátil definidos, braços com bíceps e antebraço articulado no cotovelo (elbowL/elbowR, positivo = flexionar), olhos menores com pálpebras pesadas, sobrancelhas franzidas e sorriso entreaberto com duas fileiras de dentes pontudos. Elementos da referência do usuário (azul-ardósia, creme serrilhado, barbatana, rabo, bermuda preta com faixas). Caixa 180x170, centro x=90. Canais: legFL/legFR = braço esquerdo/direito; legBL/legBR = perna esquerda/direita; com rotSign, positivo = para fora. Ver assets/README.md.",
   "metrics": {
     "box": {
       "width": 180,
@@ -55,10 +55,10 @@
       "parts": [
         {
           "id": "tail",
-          "path": "M58,118 C44,120 32,114 22,102 C24,116 24,128 20,142 C34,134 46,132 58,130 Z",
+          "path": "M64,118 C50,120 36,114 26,102 C28,116 28,128 24,142 C38,134 50,132 64,130 Z",
           "fill": "body",
           "pivot": [
-            58,
+            64,
             124
           ],
           "rot": "tailRot"
@@ -71,10 +71,10 @@
       "parts": [
         {
           "id": "tailUnder",
-          "path": "M58,126 C46,128 34,132 24,138 L20,142 C34,134 46,132 58,130 Z",
+          "path": "M64,126 C52,128 40,132 28,138 L24,142 C38,134 50,132 64,130 Z",
           "fill": "cream",
           "pivot": [
-            58,
+            64,
             124
           ],
           "rot": "tailRot"
@@ -87,10 +87,10 @@
       "parts": [
         {
           "id": "legL",
-          "path": "M60,146 L88,146 L88,159 C92,159 95,163 94,167 L54,167 C53,163 56,159 60,159 Z",
+          "path": "M56,146 L89,146 L89,159 C93,159 96,163 95,167 L50,167 C49,163 51,159 56,159 Z",
           "fill": "body",
           "pivot": [
-            74,
+            73,
             148
           ],
           "rot": "legBL",
@@ -99,10 +99,10 @@
         },
         {
           "id": "legR",
-          "path": "M120,146 L92,146 L92,159 C88,159 85,163 86,167 L126,167 C127,163 124,159 120,159 Z",
+          "path": "M124,146 L91,146 L91,159 C87,159 84,163 85,167 L130,167 C131,163 129,159 124,159 Z",
           "fill": "body",
           "pivot": [
-            106,
+            107,
             148
           ],
           "rot": "legBR",
@@ -117,10 +117,10 @@
       "parts": [
         {
           "id": "clawL",
-          "path": "M55,162 L60,167 L53,167 Z M62,162 L67,167 L60,167 Z M69,163 L73,167 L67,167 Z",
+          "path": "M51,162 L56,167 L49,167 Z M58,162 L63,167 L56,167 Z M65,163 L69,167 L63,167 Z",
           "fill": "cream",
           "pivot": [
-            74,
+            73,
             148
           ],
           "rot": "legBL",
@@ -129,15 +129,21 @@
         },
         {
           "id": "clawR",
-          "path": "M125,162 L120,167 L127,167 Z M118,162 L113,167 L120,167 Z M111,163 L107,167 L113,167 Z",
+          "path": "M129,162 L124,167 L131,167 Z M122,162 L117,167 L124,167 Z M115,163 L111,167 L117,167 Z",
           "fill": "cream",
           "pivot": [
-            106,
+            107,
             148
           ],
           "rot": "legBR",
           "rotSign": -1,
           "lift": "legLiftB"
+        },
+        {
+          "id": "quads",
+          "path": "M64,150 Q70,156 74,152 Q70,154 64,150 Z M116,150 Q110,156 106,152 Q110,154 116,150 Z",
+          "fill": "muscle",
+          "alpha": 0.7
         }
       ]
     },
@@ -146,8 +152,13 @@
       "outline": true,
       "parts": [
         {
+          "id": "traps",
+          "path": "M54,82 C64,70 116,70 126,82 L132,88 L48,88 Z",
+          "fill": "body"
+        },
+        {
           "id": "torso",
-          "path": "M56,86 L124,86 C131,104 130,122 125,134 L55,134 C50,122 49,104 56,86 Z",
+          "path": "M50,84 C60,78 120,78 130,84 C141,90 143,101 137,109 C131,118 123,124 117,132 L63,132 C57,124 49,118 43,109 C37,101 39,90 50,84 Z",
           "fill": "body"
         }
       ]
@@ -158,12 +169,24 @@
       "parts": [
         {
           "id": "belly",
-          "path": "M72,90 L108,90 L103,97 L109,104 L103,111 L109,118 L104,125 L109,134 L71,134 L76,125 L71,118 L77,111 L71,104 L77,97 Z",
+          "path": "M70,88 L110,88 L105,96 L111,104 L105,112 L110,120 L106,132 L74,132 L70,120 L75,112 L69,104 L75,96 Z",
           "fill": "cream"
         },
         {
           "id": "pecs",
-          "path": "M66,99 Q78,107 90,101 Q78,104 66,99 Z M90,101 Q102,107 114,99 Q102,104 90,101 Z M84,114 L96,114 L96,115.5 L84,115.5 Z M85,122 L95,122 L95,123.5 L85,123.5 Z",
+          "path": "M56,100 Q73,112 90,103 Q73,107 56,100 Z M90,103 Q107,112 124,100 Q107,107 90,103 Z",
+          "fill": "muscle",
+          "alpha": 0.85
+        },
+        {
+          "id": "abs",
+          "path": "M89.2,106 L90.8,106 L90.8,131 L89.2,131 Z M79,113 L101,113 L101,114.8 L79,114.8 Z M80,121 L100,121 L100,122.8 L80,122.8 Z",
+          "fill": "muscle",
+          "alpha": 0.75
+        },
+        {
+          "id": "serratus",
+          "path": "M52,106 L60,109 L53,111 Z M54,113 L61,115 L55,117 Z M128,106 L120,109 L127,111 Z M126,113 L119,115 L125,117 Z",
           "fill": "muscle",
           "alpha": 0.8
         }
@@ -175,7 +198,7 @@
       "parts": [
         {
           "id": "shortsBody",
-          "path": "M51,126 L129,126 L132,150 L48,150 Z",
+          "path": "M62,126 L118,126 L125,150 L55,150 Z",
           "fill": "shorts"
         }
       ]
@@ -186,7 +209,7 @@
       "parts": [
         {
           "id": "stripes",
-          "path": "M53,128 L58,128 L56,149 L51,149 Z M122,128 L127,128 L129,149 L124,149 Z",
+          "path": "M64,128 L69,128 L63,149 L58,149 Z M111,128 L116,128 L122,149 L117,149 Z",
           "fill": "stripe"
         }
       ]
@@ -239,27 +262,51 @@
       "parts": [
         {
           "id": "armL",
-          "path": "M58,88 C47,92 41,105 37,119 C33,128 35,138 43,140 C51,141 55,135 52,127 C54,117 58,108 63,99 Z",
+          "path": "M54,84 C38,80 26,92 25,108 C24,120 28,130 36,132 C44,133 48,126 48,118 C52,110 56,100 58,92 Z",
           "fill": "body",
           "pivot": [
-            60,
-            91
+            46,
+            92
           ],
           "rot": "legFL",
           "rotSign": 1,
           "lift": "legLiftF"
         },
         {
-          "id": "armR",
-          "path": "M122,88 C133,92 139,105 143,119 C147,128 145,138 137,140 C129,141 125,135 128,127 C126,117 122,108 117,99 Z",
+          "id": "foreL",
+          "path": "M30,124 C22,132 20,146 28,153 C34,158 44,155 45,148 C46,140 44,132 42,124 Z",
           "fill": "body",
           "pivot": [
-            120,
-            91
+            36,
+            128
+          ],
+          "rot": "elbowL",
+          "rotSign": 1,
+          "parent": "armL"
+        },
+        {
+          "id": "armR",
+          "path": "M126,84 C142,80 154,92 155,108 C156,120 152,130 144,132 C136,133 132,126 132,118 C128,110 124,100 122,92Z",
+          "fill": "body",
+          "pivot": [
+            134,
+            92
           ],
           "rot": "legFR",
           "rotSign": -1,
           "lift": "legLiftF"
+        },
+        {
+          "id": "foreR",
+          "path": "M150,124 C158,132 160,146 152,153 C146,158 136,155 135,148 C134,140 136,132 138,124Z",
+          "fill": "body",
+          "pivot": [
+            144,
+            128
+          ],
+          "rot": "elbowR",
+          "rotSign": -1,
+          "parent": "armR"
         }
       ]
     },
@@ -268,54 +315,58 @@
       "outline": false,
       "parts": [
         {
-          "id": "handClawL",
-          "path": "M37,134 L33,140 L40,139 Z M44,139 L42,145 L48,141 Z",
-          "fill": "cream",
-          "pivot": [
-            60,
-            91
-          ],
-          "rot": "legFL",
-          "rotSign": 1,
-          "lift": "legLiftF"
-        },
-        {
-          "id": "handClawR",
-          "path": "M143,134 L147,140 L140,139 Z M136,139 L138,145 L132,141 Z",
-          "fill": "cream",
-          "pivot": [
-            120,
-            91
-          ],
-          "rot": "legFR",
-          "rotSign": -1,
-          "lift": "legLiftF"
+          "id": "deltL",
+          "path": "M50,88 Q38,90 31,99 Q40,93 52,91 Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armL"
         },
         {
           "id": "bicepL",
-          "path": "M46,108 Q42,114 43,120 Q44,114 48,109 Z",
+          "path": "M33,102 Q28,112 31,122 Q33,112 38,104 Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armL"
+        },
+        {
+          "id": "foreLineL",
+          "path": "M32,134 Q29,140 31,146 Q32,140 35,135 Z",
           "fill": "muscle",
           "alpha": 0.8,
-          "pivot": [
-            60,
-            91
-          ],
-          "rot": "legFL",
-          "rotSign": 1,
-          "lift": "legLiftF"
+          "parent": "foreL"
+        },
+        {
+          "id": "handClawL",
+          "path": "M27,150 L23,156 L30,155 Z M34,155 L33,161 L39,157 Z",
+          "fill": "cream",
+          "parent": "foreL"
+        },
+        {
+          "id": "deltR",
+          "path": "M130,88 Q142,90 149,99 Q140,93 128,91Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armR"
         },
         {
           "id": "bicepR",
-          "path": "M134,108 Q138,114 137,120 Q136,114 132,109 Z",
+          "path": "M147,102 Q152,112 149,122 Q147,112 142,104Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armR"
+        },
+        {
+          "id": "foreLineR",
+          "path": "M148,134 Q151,140 149,146 Q148,140 145,135Z",
           "fill": "muscle",
           "alpha": 0.8,
-          "pivot": [
-            120,
-            91
-          ],
-          "rot": "legFR",
-          "rotSign": -1,
-          "lift": "legLiftF"
+          "parent": "foreR"
+        },
+        {
+          "id": "handClawR",
+          "path": "M153,150 L157,156 L150,155ZM146,155 L147,161 L141,157Z",
+          "fill": "cream",
+          "parent": "foreR"
         }
       ]
     }

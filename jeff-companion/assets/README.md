@@ -36,7 +36,10 @@ mantendo os formatos abaixo; o código não precisa mudar.
 - `groups[]` — desenhados em ordem; `outline: true` desenha o contorno de todas as
   partes do grupo antes do preenchimento (contorno único, sem costuras).
   - `parts[]`: `id`, `path` (SVG `d`), `fill` (chave da paleta), opcionais
-    `pivot` [x,y], `rot` (canal de rotação em graus), `lift` (canal de elevação px), `alpha`.
+    `pivot` [x,y], `rot` (canal de rotação em graus), `rotSign`, `lift` (canal de elevação px),
+    `alpha`, `parent` (id de outra peça cuja transformação é aplicada antes — ex.: antebraço
+    segue o braço; cotovelo com `elbowL`/`elbowR`, positivo = flexionar para fora/cima,
+    negativo = dobrar para dentro).
 - `face` — `eyes[]` (x, y, rx, ry, scale), `brows[]`, boca (Bézier x1,y1 → cx,cy → x2,y2),
   `teeth` (posições 0–1 ao longo do sorriso), `toothSize`, guelras, bochecha,
   `nostrils[]`; giram com `headRot` em torno de `face.pivot`. (Rigs antigos com

@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.5.0 — 2026-10-29
+
+### Alterado
+- Físico de **fisiculturista**: trapézio e ombros enormes, cintura fina em V,
+  peitoral, abdômen e serrátil definidos, deltoides e bíceps marcados, coxas grossas.
+- Braços articulados no **cotovelo** (canais `elbowL`/`elbowR`; peça `parent` no rig):
+  comemoração = pose de **duplo bíceps**; brincar = flexões alternadas; carinho =
+  braços cruzados; comer = punhos à boca; curioso = mão no queixo; corrida com
+  braços dobrados; aceno com o antebraço.
+
+### Verificado
+- CI no Windows real da v0.3.0: unitários, instalador, integração 8/8 (incluindo
+  o Esc corrigido) e E2E 10/10.
+
 ## 0.4.0 — 2026-10-29
 
 ### Alterado
