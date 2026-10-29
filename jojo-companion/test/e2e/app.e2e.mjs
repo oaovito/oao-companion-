@@ -494,7 +494,7 @@ test('atualização automática: acha a versão nova, baixa e confere o arquivo'
   const server = http.createServer((req, res) => {
     hits.push(req.url);
     const base = `http://127.0.0.1:${server.address().port}`;
-    if (req.url === '/repos/oaovito/oao-companion-/releases/latest') {
+    if (req.url === '/repos/oaovito/jojo-companion-releases/releases/latest') {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ tag_name: 'v99.0.0', draft: false, prerelease: false, assets: [{ name: 'JoJoCompanion.exe', browser_download_url: `${base}/dl/JoJoCompanion.exe`, size: exe.length, digest: `sha256:${sha}` }] }));
     } else if (req.url === '/dl/JoJoCompanion.exe') res.end(exe);
@@ -538,6 +538,18 @@ test('"eu deveria jogar lol?": renderer mostra a cena e a oferta no fim', async 
     const r = await p;
     assert.equal(r.text, 'Passa na cara de uma vez.');
     assert.equal(await win.evaluate(() => window.__jojoRenderer.flags.stink), true);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('data festiva: renderer recebe a fantasia e a janela continua click-through', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.companion.checkHoliday(new Date(2026, 11, 25, 12)));
+    await sleep(500);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.state.costume), 'natal');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
   } finally {
     await quit(app);
   }

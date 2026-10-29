@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 0.19.0 — 2026-10-29
+
+### Adicionado
+- **Datas festivas**: o JoJo veste a fantasia do dia e cumprimenta uma vez — às
+  vezes deseja, às vezes se recusa, no jeito dele. Natal (gorro torto, bermuda
+  vermelha), Ano Novo (chapéu de festa, bermuda branca, brilhos), Páscoa (orelhas
+  de coelho, uma caída), Carnaval (coroa de penas, bermuda dourada, brilhos),
+  Festa Junina (chapéu de palha remendado, sardas, bermuda xadrez), Dia das
+  Crianças (boné de hélice) e Halloween (capa de vampiro). Páscoa e Carnaval
+  calculados por ano. Desligável no perfil (`festas.ativo`).
+
+### Alterado
+- Atualização automática passa a buscar as versões no repositório público
+  `oaovito/jojo-companion-releases`; o workflow publica lá quando o segredo
+  `RELEASES_TOKEN` existe.
+
 ## 0.18.0 — 2026-10-29
 
 ### Adicionado

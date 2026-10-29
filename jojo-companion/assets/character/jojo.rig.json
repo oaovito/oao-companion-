@@ -63,11 +63,50 @@
     "poopDark": "#3b200d",
     "poopShine": "#b07a42",
     "corn": "#f2c94c",
-    "poopSlime": "#8a6a2c"
+    "poopSlime": "#8a6a2c",
+    "santaRed": "#c62828",
+    "snow": "#f7f5ee",
+    "gold": "#f2c94c",
+    "partyBlue": "#3f7fd4",
+    "partyPink": "#ff5c86",
+    "earPink": "#f4a7b9",
+    "straw": "#e2c27a",
+    "strawDark": "#b8954a",
+    "capeDark": "#2b1838",
+    "capeRed": "#8e1b2b",
+    "capRed": "#d64541",
+    "capYellow": "#f2c94c",
+    "capBlue": "#3f7fd4",
+    "capGreen": "#3fa66b",
+    "featherRed": "#e53935",
+    "featherGreen": "#43a047",
+    "featherBlue": "#1e88e5",
+    "featherPurple": "#8e24aa",
+    "featherOrange": "#fb8c00",
+    "freckle": "#8a5a3a"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
   "groups": [
+    {
+      "id": "costumeBack",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "capeBody",
+          "fill": "capeDark",
+          "showIf": "costume_halloween",
+          "path": "M28,74 C40,66 140,66 152,74 L172,166 C150,158 130,166 112,160 C100,166 80,166 68,160 C50,166 30,158 8,166 Z"
+        },
+        {
+          "id": "capeCollar",
+          "fill": "capeRed",
+          "showIf": "costume_halloween",
+          "path": "M44,80 L22,28 L72,66 Z M136,80 L158,28 L108,66 Z"
+        }
+      ]
+    },
     {
       "id": "propsBack",
       "outline": true,
@@ -338,6 +377,299 @@
         }
       ],
       "hideIf": "mooning"
+    },
+    {
+      "id": "costumes",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "santaHat",
+          "fill": "santaRed",
+          "showIf": "costume_natal",
+          "path": "M46,22 C52,0 80,-20 112,-22 C132,-22 150,-10 156,6 C146,-2 134,-6 122,-4 C130,2 136,10 136,18 C110,8 70,8 46,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "santaTrim",
+          "fill": "snow",
+          "showIf": "costume_natal",
+          "path": "M40,24 C58,8 122,8 140,24 C142,30 138,34 132,32 C114,20 66,20 48,32 C42,34 38,30 40,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "santaPom",
+          "fill": "snow",
+          "showIf": "costume_natal",
+          "path": "M150,8 C150,3 154,0 158,0 C162,0 166,3 166,8 C166,13 162,16 158,16 C154,16 150,13 150,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyHat",
+          "fill": "gold",
+          "showIf": "costume_anoNovo",
+          "path": "M98,12 L114,-26 L132,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyStripes",
+          "fill": "partyBlue",
+          "showIf": "costume_anoNovo",
+          "path": "M103,2 L127,-3 L129,1 L105,6 Z M108,-10 L122,-14 L124,-10 L110,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyPom",
+          "fill": "partyPink",
+          "showIf": "costume_anoNovo",
+          "path": "M109,-26 C109,-29 111,-31 114,-31 C117,-31 119,-29 119,-26 C119,-23 117,-21 114,-21 C111,-21 109,-23 109,-26 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyEars",
+          "fill": "snow",
+          "showIf": "costume_pascoa",
+          "path": "M62,16 C54,-2 54,-26 64,-28 C74,-26 76,-2 72,16 Z M108,16 C110,4 116,-6 128,-12 C138,-16 142,-8 134,-2 C126,4 118,10 116,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyInner",
+          "fill": "earPink",
+          "showIf": "costume_pascoa",
+          "path": "M64,10 C60,-4 60,-20 65,-22 C70,-20 70,-4 69,10 Z M112,12 C116,4 122,-2 130,-6 C134,-8 135,-5 131,-2 C124,2 118,8 116,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyBand",
+          "fill": "earPink",
+          "showIf": "costume_pascoa",
+          "path": "M54,18 C70,8 110,8 126,18 L124,23 C108,13 72,13 56,23 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather0",
+          "fill": "featherRed",
+          "showIf": "costume_carnaval",
+          "path": "M58,16 C50,0 56,-18 61,-22 C66,-18 70,0 64,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather1",
+          "fill": "featherOrange",
+          "showIf": "costume_carnaval",
+          "path": "M72,16 C64,0 70,-24 75,-28 C80,-24 84,0 78,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather2",
+          "fill": "featherGreen",
+          "showIf": "costume_carnaval",
+          "path": "M86,16 C78,0 84,-26 89,-30 C94,-26 98,0 92,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather3",
+          "fill": "featherBlue",
+          "showIf": "costume_carnaval",
+          "path": "M100,16 C92,0 98,-24 103,-28 C108,-24 112,0 106,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather4",
+          "fill": "featherPurple",
+          "showIf": "costume_carnaval",
+          "path": "M114,16 C106,0 112,-18 117,-22 C122,-18 126,0 120,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnBand",
+          "fill": "gold",
+          "showIf": "costume_carnaval",
+          "path": "M50,20 C66,8 114,8 130,20 L128,26 C112,15 68,15 52,26 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawCrown",
+          "fill": "straw",
+          "showIf": "costume_festaJunina",
+          "path": "M58,6 C58,-22 122,-22 122,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawBrim",
+          "fill": "straw",
+          "showIf": "costume_festaJunina",
+          "path": "M24,10 C36,-4 144,-4 156,10 C144,22 36,22 24,10 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawBand",
+          "fill": "santaRed",
+          "showIf": "costume_festaJunina",
+          "path": "M58,0 L122,0 L122,6 L58,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawPatch",
+          "fill": "partyBlue",
+          "showIf": "costume_festaJunina",
+          "path": "M100,-14 L110,-14 L110,-6 L100,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawLines",
+          "fill": "strawDark",
+          "showIf": "costume_festaJunina",
+          "path": "M40,10 L44,6 L45,7 L41,11 Z M136,6 L140,10 L139,11 L135,7 Z M70,-12 L72,-4 L71,-4 L69,-12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "freckles",
+          "fill": "freckle",
+          "showIf": "costume_festaJunina",
+          "path": "M58,56 C58,54 61,54 61,56 C61,58 58,58 58,56 Z M64,60 C64,58 67,58 67,60 C67,62 64,62 64,60 Z M56,62 C56,61 58,61 58,62 C58,64 56,64 56,62 Z M119,56 C119,54 122,54 122,56 C122,58 119,58 119,56 Z M113,60 C113,58 116,58 116,60 C116,62 113,62 113,60 Z M122,62 C122,61 124,61 124,62 C124,64 122,64 122,62 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capDome",
+          "fill": "capRed",
+          "showIf": "costume_criancas",
+          "path": "M60,14 C60,-6 120,-6 120,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capStripe",
+          "fill": "capYellow",
+          "showIf": "costume_criancas",
+          "path": "M85,-4 L95,-4 L97,14 L83,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capVisor",
+          "fill": "capBlue",
+          "showIf": "costume_criancas",
+          "path": "M104,12 C120,8 138,10 146,16 C130,18 116,18 104,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capStick",
+          "fill": "outline",
+          "showIf": "costume_criancas",
+          "path": "M89,-14 L91,-14 L91,-4 L89,-4 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capBlades",
+          "fill": "capGreen",
+          "showIf": "costume_criancas",
+          "path": "M70,-16 C80,-20 88,-16 90,-14 C88,-12 80,-10 70,-14 Z M110,-16 C100,-20 92,-16 90,-14 C92,-12 100,-10 110,-14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ]
     },
     {
       "id": "arms",
@@ -1083,6 +1415,33 @@
         "body": "#8794bf",
         "bodyShade": "#7683ad",
         "cream": "#f5d6cf"
+      }
+    }
+  },
+  "costumes": {
+    "_notes": "Fantasia de data festiva: canal costume_<id> liga as peças; 'palette' troca cores enquanto ativa.",
+    "anoNovo": {
+      "palette": {
+        "shorts": "#f2f2ec",
+        "stripe": "#d4a72c"
+      }
+    },
+    "carnaval": {
+      "palette": {
+        "shorts": "#d4a72c",
+        "stripe": "#c0392b"
+      }
+    },
+    "festaJunina": {
+      "palette": {
+        "shorts": "#2f5fa8",
+        "stripe": "#d64541"
+      }
+    },
+    "natal": {
+      "palette": {
+        "shorts": "#c62828",
+        "stripe": "#f7f5ee"
       }
     }
   }

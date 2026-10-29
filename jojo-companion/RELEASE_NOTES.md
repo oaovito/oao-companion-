@@ -13,6 +13,8 @@ o `.zip`.
 
 ## O que tem de novo nesta versão
 
+- Em datas festivas ele veste fantasia (Natal, Ano Novo, Páscoa, Carnaval, Festa Junina,
+  Dia das Crianças, Halloween) e deseja feliz dia — ou não.
 - Pergunte **"eu deveria jogar lol?"** e veja o que ele te oferece.
 - **Atualização automática**: a partir desta versão o JoJo baixa as próximas sozinho
   e troca quando o PC fica parado.

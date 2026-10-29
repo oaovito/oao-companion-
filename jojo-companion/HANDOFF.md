@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.18.0, 2026-10-29)
+# HANDOFF — estado atual (v0.19.0, 2026-10-29)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -48,9 +48,9 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 
 ## Pendente / limitado
 
-- Atualização automática (v0.17.0): o repositório é **privado**, então a consulta às
-  Releases dá 404 para quem não tem login — precisa de uma origem pública
-  (repositório público ou um repositório só de versões; `package.json` → `jojoUpdate`).
+- Atualização automática: busca em `oaovito/jojo-companion-releases` (público). Falta
+  criar esse repositório e o segredo `RELEASES_TOKEN` (token com escrita nele) no
+  repositório do código — a integração do Claude não tem permissão para isso.
   A troca do executável no Windows real ainda não foi exercitada (testado: consulta,
   download e conferência do arquivo).
 

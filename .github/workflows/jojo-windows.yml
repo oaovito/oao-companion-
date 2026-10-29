@@ -19,6 +19,9 @@ jobs:
   windows:
     runs-on: windows-latest
     timeout-minutes: 40
+    env:
+      # Token (segredo RELEASES_TOKEN) com escrita no repositório público de versões.
+      RELEASES_TOKEN_SET: ${{ secrets.RELEASES_TOKEN != '' }}
     defaults:
       run:
         working-directory: jojo-companion
@@ -93,6 +96,21 @@ jobs:
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
           target_commitish: ${{ github.sha }}
+          name: JoJo ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
+          body_path: jojo-companion/RELEASE_NOTES.md
+          files: |
+            jojo-companion/dist/JoJoCompanion.exe
+            jojo-companion/dist/JoJoCompanion-Setup-*.exe
+            jojo-companion/dist/JoJoCompanion-*-win-x64.zip
+
+      # Repositório público só de versões: é dele que o app baixa as atualizações.
+      - name: Publicar no repositório público de versões
+        if: success() && env.RELEASES_TOKEN_SET == 'true' && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar || contains(github.event.head_commit.message, '[publicar]'))
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: oaovito/jojo-companion-releases
+          token: ${{ secrets.RELEASES_TOKEN }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
           name: JoJo ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
           body_path: jojo-companion/RELEASE_NOTES.md
           files: |

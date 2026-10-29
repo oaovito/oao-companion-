@@ -48,10 +48,12 @@ export class RigRenderer {
    * alvos de `rig.moods` (raiva avermelha, tristeza acinzenta…). Resultado em cache.
    */
   _applyMoods(pose) {
-    const moods = this.rig.moods;
+    const moods = this.rig.moods || {};
     this.tinted = null;
-    if (!moods) return;
-    let key = '';
+    // Fantasia ativa: troca cores (ex.: bermuda branca no Ano Novo).
+    const costumes = this.rig.costumes || {};
+    const costume = Object.keys(costumes).find((k) => k[0] !== '_' && (pose[`costume_${k}`] ?? 0) >= 0.5) || null;
+    let key = costume ? `c:${costume};` : '';
     for (const ch of Object.keys(moods)) {
       if (ch[0] === '_') continue;
       const v = Math.round(Math.max(0, Math.min(1, pose[ch] || 0)) * 40);
@@ -62,7 +64,7 @@ export class RigRenderer {
       this.tinted = this._tintCache;
       return;
     }
-    const out = { ...this.rig.palette };
+    const out = { ...this.rig.palette, ...(costume ? costumes[costume].palette || {} : {}) };
     for (const ch of Object.keys(moods)) {
       if (ch[0] === '_') continue;
       const amt = Math.max(0, Math.min(1, pose[ch] || 0)) * (moods[ch].max ?? 1);

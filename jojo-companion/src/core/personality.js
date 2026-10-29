@@ -33,6 +33,8 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   ociosidade: { ativo: true, minutos: 5, efeitoMin: 5 },
   // Uma vez por semana, em momento aleatório: "jogar Legends é ideia burra".
   legends: { ativo: true, inicio: 10, fim: 22, ultimaSemana: null, momento: null },
+  // Datas festivas: fantasia do dia e cumprimento (uma vez por dia).
+  festas: { ativo: true, ultimoDia: null },
 });
 
 const PALAVROES = ['nenhum', 'ocasional', 'frequente'];
@@ -67,6 +69,7 @@ export function sanitizePersonality(input) {
     lembreteComida: { ...D.lembreteComida },
     ociosidade: { ...D.ociosidade },
     legends: { ...D.legends },
+    festas: { ...D.festas },
   };
   if ('palavroes' in src && out.palavroes !== src.palavroes) issues.push('palavroes');
   const ig = src.instagram && typeof src.instagram === 'object' ? src.instagram : {};
@@ -89,6 +92,9 @@ export function sanitizePersonality(input) {
   if (typeof oc.ativo === 'boolean') out.ociosidade.ativo = oc.ativo;
   out.ociosidade.minutos = int(oc.minutos, 1, 120, D.ociosidade.minutos);
   out.ociosidade.efeitoMin = int(oc.efeitoMin, 1, 60, D.ociosidade.efeitoMin);
+  const fe = src.festas && typeof src.festas === 'object' ? src.festas : {};
+  if (typeof fe.ativo === 'boolean') out.festas.ativo = fe.ativo;
+  out.festas.ultimoDia = typeof fe.ultimoDia === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fe.ultimoDia) ? fe.ultimoDia : null;
   const lg = src.legends && typeof src.legends === 'object' ? src.legends : {};
   if (typeof lg.ativo === 'boolean') out.legends.ativo = lg.ativo;
   out.legends.inicio = int(lg.inicio, 0, 23, D.legends.inicio);

@@ -45,7 +45,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços, inclina a cabeça e abana o rabo.
 - "Eu deveria jogar lol?": caga no chão, pega e oferece — "Passa na cara de uma vez." (estado `poop`, 7 s).
-- Publicação: tag `v*` → Release com `JoJoCompanion.exe` (workflow do Windows).
+- Datas festivas: fantasia do dia + cumprimento (deseja ou se recusa); `holidays.js`, `rig.costumes`.
+- Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
+  `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`
   (Wake Pet / Tuck Away Pet); movimento reduzido segue o Windows. Sem versão web.

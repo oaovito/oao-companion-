@@ -304,6 +304,70 @@
         "Legends é ideia burra. Não sou eu que tô dizendo. Sou eu sim.",
         { "t": "Legends de novo? Ideia burra pra caralho, {nome}.", "tags": ["palavrao"], "reaction": "judge" }
       ]
+    },
+    "festa_natal": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "judge",
+      "lines": [
+        "Feliz Natal, {nome}. Não espera presente.",
+        "Ho. Ho. Ho. Pronto, cumpri o protocolo.",
+        { "t": "Não vou desejar feliz Natal. Vesti o gorro, já é demais.", "tone": "serio" },
+        { "t": "Feliz Natal, Emanuele. Ceia com moderação. Ou não, é Natal.", "tone": "serio", "reaction": "nod" },
+        { "t": "Papai Noel é um velho que invade casa. Feliz Natal, porra.", "tags": ["palavrao"] }
+      ]
+    },
+    "festa_anoNovo": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Feliz Ano Novo, {nome}. Mesma meta do ano passado?",
+        "Ano novo, shape novo. O meu já tá pronto.",
+        { "t": "Não vou desejar nada. Promessa de ano novo dura até fevereiro.", "tone": "serio", "reaction": "judge" },
+        { "t": "Feliz ano novo, Emanuele. Esse ano sem Instagram. Mentira, nem eu acredito.", "tone": "serio" },
+        { "t": "Bora, caralho. Ano novo. Sete ondas e uma série de supino.", "tags": ["palavrao"] }
+      ]
+    },
+    "festa_pascoa": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "judge",
+      "lines": [
+        "Feliz Páscoa, {nome}. Não comenta as orelhas.",
+        "Chocolate é carboidrato. Feliz Páscoa mesmo assim.",
+        { "t": "Não vou desejar feliz Páscoa. Coelho que bota ovo não faz sentido.", "tone": "serio" },
+        { "t": "Feliz Páscoa, Emanuele. Come o ovo com atenção, sem culpa.", "tone": "serio", "reaction": "nod" }
+      ]
+    },
+    "festa_carnaval": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Carnaval, {nome}. Água entre uma e outra.",
+        "Bom Carnaval. Eu vou de penas e você vai trabalhar.",
+        { "t": "Não vou desejar bom Carnaval. Odeio confete no shape.", "tone": "serio", "reaction": "judge" },
+        { "t": "Carnaval sem pó, hein, {nome}. Eu falo sério.", "tags": ["drogas"], "tone": "serio", "reaction": "lecture" }
+      ]
+    },
+    "festa_festaJunina": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Arraiá, {nome}. Olha a cobra. É mentira.",
+        "Bom São João. Quentão não é pré-treino.",
+        { "t": "Não vou desejar nada. Quadrilha é cardio disfarçado.", "tone": "serio", "reaction": "judge" },
+        { "t": "Anarriê, porra. Feliz São João.", "tags": ["palavrao"] }
+      ]
+    },
+    "festa_criancas": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Feliz Dia das Crianças, {nome}. Olha o boné.",
+        "Dia das Crianças. Hoje pode doce. Amanhã, frango e arroz.",
+        { "t": "Não vou desejar nada. Você tem boleto, não é criança.", "tone": "serio", "reaction": "judge" }
+      ]
+    },
+    "festa_halloween": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "scare",
+      "lines": [
+        "Feliz Halloween, {nome}. A fantasia é a capa. O resto é natural.",
+        "Doce ou travessura? Travessura.",
+        { "t": "Não vou desejar feliz Halloween. Não é feriado brasileiro.", "tone": "serio", "reaction": "judge" },
+        { "t": "Bu, porra. Feliz Halloween.", "tags": ["palavrao"] }
+      ]
     }
   }
 }

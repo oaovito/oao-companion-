@@ -16,10 +16,13 @@ import { displayForRect, allowedDisplays, recoverRect, topologySignature, primar
 import { distPointRect, roundRect, dist, clamp } from './geometry.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS } from './settings-schema.js';
-import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars } from './personality.js';
+import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
+import { holidayFor } from './holidays.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
+// Altura extra acima da caixa para chapéus das fantasias (px lógicos, escala 1).
+const COSTUME_HEADROOM = 36;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800 };
 const ACTIVITY_ROW = 26;
@@ -51,6 +54,7 @@ export class Companion {
     this.activitiesHiddenUntil = 0;
     this.activityRect = null;
     this.reducedMotion = false;
+    this.costume = null; // fantasia da data festiva (natal, pascoa…)
     this.powderKind = null; // 'snort' | 'chug' enquanto senta no chão (PC parado)
     this.wiredKind = null;
     this.wiredUntil = 0;
@@ -125,6 +129,8 @@ export class Companion {
     this.overlay.setMouseMode('passthrough');
     this.started = true;
     this._scheduleSpeech(now, true);
+    // Fantasia da data festiva já aparece ao abrir; o cumprimento vem na checagem.
+    this.costume = this.personality.get().festas.ativo ? holidayFor(new Date()) : null;
     this._scheduleReminderCheck(20000);
     if (this.userHidden) {
       this.overlay.hide();
@@ -1159,6 +1165,7 @@ export class Companion {
       this.reminderTimer = null;
       this.checkDailyReminder(new Date());
       this.checkWeeklyLegends(new Date());
+      this.checkHoliday(new Date());
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);
   }
@@ -1181,6 +1188,26 @@ export class Companion {
       this.conversations.setStatus(c.id, 'needsInput', 'Fome ou tédio? Responda quando puder.');
     }
     return deliver;
+  }
+
+  /**
+   * Data festiva: veste a fantasia do dia e cumprimenta uma vez (no jeito dele —
+   * às vezes deseja, às vezes se recusa). Retorna a festa ativa ou null.
+   */
+  checkHoliday(date = new Date()) {
+    const cfg = this.personality.get().festas;
+    const id = cfg.ativo ? holidayFor(date) : null;
+    if (id !== this.costume) {
+      this.costume = id;
+      this._applyLayout(true);
+    }
+    const hoje = dayKey(date);
+    if (id && cfg.ultimoDia !== hoje && this._canNag() && !this.interaction) {
+      this.personality.update({ festas: { ...cfg, ultimoDia: hoje } }, { silent: true });
+      this.hideBubble();
+      this.sayCategory(`festa_${id}`, { force: true });
+    }
+    return id;
   }
 
   /** Uma vez por semana, em momento aleatório: "jogar Legends é ideia burra". */
@@ -1240,6 +1267,8 @@ export class Companion {
       this.activityRect = activityBox.rect;
     } else this.activityRect = null;
 
+    // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
+    if (this.costume) attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
     const { bounds, rel } = composeWindow(r.box, attachments);
     const b = roundRect(bounds);
     if (!this.lastBounds || b.x !== this.lastBounds.x || b.y !== this.lastBounds.y || b.width !== this.lastBounds.width || b.height !== this.lastBounds.height) {
@@ -1269,6 +1298,7 @@ export class Companion {
       activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
       reducedMotion: this.reducedMotion,
       mode: this.wired ? 'wired' : null,
+      costume: this.costume,
       noseDust: this.wired && this.wiredKind === 'snort',
       moving: this.mover.active ? this.mover.kind : null,
       sounds: s.sounds && !s.quietMode,

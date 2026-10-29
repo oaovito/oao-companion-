@@ -381,6 +381,7 @@ function draw(now) {
     pose.eyeScale = Math.max(pose.eyeScale || 1, 1.2);
   }
   if (s.noseDust) pose.noseDust = 1;
+  if (s.costume) pose[`costume_${s.costume}`] = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);
     puffDone = true;
@@ -393,7 +394,8 @@ function draw(now) {
   const box = s.jojo;
   const scale = s.scale || 1;
   const head = rig.rig.metrics.head;
-  if (!reduced) effects.update(now, s.mode === 'wired' ? { ...sample.flags, sweat: true } : sample.flags, head);
+  const festive = s.costume === 'carnaval' || s.costume === 'anoNovo';
+  if (!reduced) effects.update(now, s.mode === 'wired' || festive ? { ...sample.flags, sweat: sample.flags.sweat || s.mode === 'wired', sparkle: sample.flags.sparkle || festive } : sample.flags, head);
   lastAnimFlags = sample.flags;
 
   // Indicação discreta do modo de interação: anel tracejado sob o JoJo.

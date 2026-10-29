@@ -62,7 +62,14 @@
     "propPoop": 0,
     "poopSize": 1,
     "poopHand": 0,
-    "poopDrip": 0
+    "poopDrip": 0,
+    "costume_natal": 0,
+    "costume_anoNovo": 0,
+    "costume_pascoa": 0,
+    "costume_carnaval": 0,
+    "costume_festaJunina": 0,
+    "costume_criancas": 0,
+    "costume_halloween": 0
   },
   "poses": {
     "neutral": {},
