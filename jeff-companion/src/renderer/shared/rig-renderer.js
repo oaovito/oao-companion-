@@ -10,6 +10,16 @@ export class RigRenderer {
     for (const g of rig.groups) for (const p of g.parts) this.paths.set(p.id, new Path2D(p.path));
     this.box = rig.metrics.box;
     this.ground = rig.metrics.ground ?? this.box.height - 5;
+    this.rootPivot = rig.metrics.rootPivot || { x: this.box.width * 0.4, y: this.ground };
+    this.shadowRx = rig.metrics.shadowRx ?? 58;
+    // Compatibilidade: rigs antigos têm um único olho/sobrancelha/narina.
+    const F = rig.face;
+    this.eyes = F.eyes || [{ ...F.eye, scale: 1 }];
+    this.brows = F.brows || (F.brow ? [F.brow] : []);
+    this.nostrils = F.nostrils || (F.nostril ? [F.nostril] : []);
+    this.teeth = F.teeth || [0.28, 0.5, 0.72];
+    this.toothSize = F.toothSize ?? 4.2;
+    this.faceAfter = rig.faceAfter || 'bodyDetail';
   }
 
   color(key) {
@@ -43,7 +53,7 @@ export class RigRenderer {
     ctx.globalAlpha *= 0.18 * Math.max(0.35, 1 - lift / 40);
     ctx.fillStyle = '#0b1530';
     ctx.beginPath();
-    ctx.ellipse(gx + P('rootX'), gy + 1, 58 * Math.max(0.5, 1 - lift / 60), 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(gx + P('rootX'), gy + 1, this.shadowRx * Math.max(0.5, 1 - lift / 60), 5, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
@@ -53,7 +63,7 @@ export class RigRenderer {
     ctx.translate(gx, gy);
     ctx.scale(s, s);
     ctx.translate(-gx, -gy);
-    const pivot = { x: 72, y: gy };
+    const pivot = this.rootPivot;
     ctx.translate(pivot.x, pivot.y);
     ctx.rotate(P('rootRot') * DEG);
     ctx.translate(-pivot.x, -pivot.y);
@@ -80,7 +90,7 @@ export class RigRenderer {
           ctx.restore();
         } else this._part(ctx, part, pose, (p) => ctx.fill(p));
       }
-      if (group.id === 'bodyDetail') this._face(ctx, pose);
+      if (group.id === this.faceAfter) this._face(ctx, pose);
     }
     ctx.restore();
   }
@@ -130,22 +140,24 @@ export class RigRenderer {
       ctx.restore();
     }
 
-    // Narina.
+    // Narinas.
     ctx.fillStyle = outline;
-    ctx.beginPath();
-    ctx.arc(F.nostril.x, F.nostril.y, F.nostril.r, 0, Math.PI * 2);
-    ctx.fill();
+    for (const n of this.nostrils) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-    this._eye(ctx, pose);
-    this._brow(ctx, pose);
+    for (const e of this.eyes) this._eye(ctx, pose, e);
+    for (const b of this.brows) this._brow(ctx, pose, b);
     this._mouth(ctx, pose);
     ctx.restore();
   }
 
-  _eye(ctx, pose) {
-    const E = this.rig.face.eye;
+  _eye(ctx, pose, E) {
     const P = (k, d = 0) => (pose[k] ?? d);
     const outline = this.color('outline');
+    const k = E.scale ?? 1;
     const es = P('eyeScale', 1);
     const px = P('pupilX') * 1.8;
     const py = P('pupilY') * 1.6;
@@ -155,8 +167,8 @@ export class RigRenderer {
       ctx.strokeStyle = outline;
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(cx - 7, cy + 3);
-      ctx.quadraticCurveTo(cx, cy - 9, cx + 7, cy + 3);
+      ctx.moveTo(cx - 7 * k, cy + 3);
+      ctx.quadraticCurveTo(cx, cy - 9 * k, cx + 7 * k, cy + 3);
       ctx.stroke();
       return;
     }
@@ -165,8 +177,8 @@ export class RigRenderer {
       ctx.strokeStyle = outline;
       ctx.lineWidth = 2.6;
       ctx.beginPath();
-      ctx.moveTo(cx - 7, cy + 1);
-      ctx.quadraticCurveTo(cx, cy + 6, cx + 7, cy + 1);
+      ctx.moveTo(cx - 7 * k, cy + 1);
+      ctx.quadraticCurveTo(cx, cy + 6 * k, cx + 7 * k, cy + 1);
       ctx.stroke();
       return;
     }
@@ -177,10 +189,10 @@ export class RigRenderer {
     if (open > 0.35) {
       ctx.fillStyle = this.color('eyeShine');
       ctx.beginPath();
-      ctx.arc(cx + 2.2 * es + px * 0.3, cy - 3.2 * es * open, 2.7 * es, 0, Math.PI * 2);
+      ctx.arc(cx + 2.2 * es * k + px * 0.3, cy - 3.2 * es * k * open, 2.7 * es * k, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(cx - 2.4 * es, cy + 3 * es * open, 1.2 * es, 0, Math.PI * 2);
+      ctx.arc(cx - 2.4 * es * k, cy + 3 * es * k * open, 1.2 * es * k, 0, Math.PI * 2);
       ctx.fill();
     }
     // Pálpebra quando semicerrado.
@@ -194,14 +206,13 @@ export class RigRenderer {
     }
   }
 
-  _brow(ctx, pose) {
+  _brow(ctx, pose, B) {
     const show = pose.browShow ?? 0;
     if (show < 0.3) return;
-    const B = this.rig.face.brow;
     const b = pose.brow ?? 0;
     ctx.save();
     ctx.globalAlpha *= Math.min(1, (show - 0.3) / 0.4);
-    ctx.strokeStyle = this.color('outline');
+    ctx.strokeStyle = this.color('brow');
     ctx.lineWidth = 2.6;
     ctx.beginPath();
     const y = B.y - b * 3;
@@ -216,7 +227,7 @@ export class RigRenderer {
     const jaw = Math.max(0, Math.min(1.2, pose.jaw ?? 0));
     const outline = this.color('outline');
     if (jaw > 0.05) {
-      const drop = 3 + jaw * 13;
+      const drop = 3 + jaw * 16;
       const mouth = new Path2D();
       mouth.moveTo(M.x1, M.y1);
       mouth.quadraticCurveTo(M.cx, M.cy - 4, M.x2, M.y2);
@@ -229,7 +240,7 @@ export class RigRenderer {
       ctx.clip(mouth);
       ctx.fillStyle = this.color('tongue');
       ctx.beginPath();
-      ctx.ellipse(M.cx + 1, M.cy - 4 + drop * 0.8, 8, 3 + jaw * 4, 0, 0, Math.PI * 2);
+      ctx.ellipse(M.cx + 1, M.cy - 4 + drop * 0.8, 10, 3 + jaw * 5, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
       ctx.strokeStyle = outline;
@@ -252,13 +263,14 @@ export class RigRenderer {
       const cy = jaw > 0.05 ? M.cy - 4 : M.cy;
       return { x: u * u * M.x1 + 2 * u * t * M.cx + t * t * M.x2, y: u * u * M.y1 + 2 * u * t * cy + t * t * M.y2 };
     };
-    for (const t of [0.28, 0.5, 0.72]) {
-      const a = topY(t - 0.07);
-      const b = topY(t + 0.07);
+    const half = this.teeth.length > 3 ? 0.055 : 0.07;
+    for (const t of this.teeth) {
+      const a = topY(t - half);
+      const b = topY(t + half);
       const m = topY(t);
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
-      ctx.lineTo(m.x, m.y + 4.2);
+      ctx.lineTo(m.x, m.y + this.toothSize);
       ctx.lineTo(b.x, b.y);
       ctx.closePath();
       ctx.fill();

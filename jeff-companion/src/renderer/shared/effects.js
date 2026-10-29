@@ -5,8 +5,10 @@
 const OUTLINE = '#1b2647';
 
 export class Effects {
-  constructor({ rng = Math.random } = {}) {
+  constructor({ rng = Math.random, ground = 147, center = 90 } = {}) {
     this.rng = rng;
+    this.g = ground;
+    this.cx = center;
     this.particles = [];
     this.lastSpawn = {};
     this.effectStart = 0;
@@ -54,20 +56,20 @@ export class Effects {
         this.particles.push({ ...base, life: 1300, x: head.x - 10 + r() * 30, y: head.y - 16, vx: -8 + r() * 16, vy: -38, size: 8 + r() * 4 });
         break;
       case 'dust':
-        this.particles.push({ ...base, life: 450, x: 45 + r() * 20, y: 140, vx: -40 - r() * 30, vy: -10, size: 4 + r() * 3 });
+        this.particles.push({ ...base, life: 450, x: this.cx - 45 + r() * 20, y: this.g - 7, vx: -40 - r() * 30, vy: -10, size: 4 + r() * 3 });
         break;
       case 'dustBurst':
-        this.particles.push({ ...base, kind: 'dust', life: 550, x: 90 + (k - 0.5) * 110, y: 142, vx: (k - 0.5) * 120, vy: -14, size: 5 + r() * 3 });
+        this.particles.push({ ...base, kind: 'dust', life: 550, x: this.cx + (k - 0.5) * 110, y: this.g - 5, vx: (k - 0.5) * 120, vy: -14, size: 5 + r() * 3 });
         break;
       case 'sparkle':
-        this.particles.push({ ...base, life: 700, x: 20 + r() * 140, y: 30 + r() * 80, vx: 0, vy: -6, size: 4 + r() * 4 });
+        this.particles.push({ ...base, life: 700, x: this.cx - 70 + r() * 140, y: 20 + r() * (this.g - 60), vx: 0, vy: -6, size: 4 + r() * 4 });
         break;
       default:
     }
   }
 
   /** Desenha partículas e objetos (comida, bola, marca) no sistema da caixa. */
-  draw(ctx, now, { mark = null, head = { x: 136, y: 74 }, facingSign = 1 }) {
+  draw(ctx, now, { mark = null, head = { x: 136, y: 74 }, mouth = null, facingSign = 1 }) {
     for (const p of this.particles) {
       const t = (now - p.born) / p.life;
       const x = p.x + p.vx * t;
@@ -82,7 +84,7 @@ export class Effects {
       ctx.restore();
     }
     const el = now - this.effectStart;
-    if (this.effectName === 'food') this._fish(ctx, head, el);
+    if (this.effectName === 'food') this._fish(ctx, mouth || { x: head.x + 14, y: head.y + 20 }, el);
     if (this.effectName === 'ball') this._ball(ctx, el);
     if (mark) this._mark(ctx, mark, head, facingSign);
   }
@@ -147,8 +149,8 @@ export class Effects {
     const bites = Math.min(5, Math.floor(Math.max(0, el - 300) / 380));
     const size = 1 - bites * 0.18;
     if (size <= 0.1) return;
-    const x = head.x + 30 - (1 - arrive) * -30;
-    const y = head.y + 34 - (1 - arrive) * 40;
+    const x = head.x + 10 + (1 - arrive) * 30;
+    const y = head.y + 4 - (1 - arrive) * 40;
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(size, size);
@@ -175,9 +177,9 @@ export class Effects {
     const life = 3400;
     if (el > life) return;
     const t = el / life;
-    const x = 150 + Math.sin(t * Math.PI * 3) * 14;
+    const x = this.cx + 60 + Math.sin(t * Math.PI * 3) * 14;
     const bounce = Math.abs(Math.sin(t * Math.PI * 5));
-    const y = 132 - bounce * 46;
+    const y = this.g - 15 - bounce * 46;
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(t * 12);

@@ -12,8 +12,8 @@ window.renderIcons = async (rigJson, animJson, sizes) => {
     c.width = size; c.height = size;
     const ctx = c.getContext('2d');
     // Enquadra o corpo inteiro (caixa 180x150) com pequena margem.
-    const s = size / 168;
-    ctx.translate(size / 2 - 92 * s, size / 2 - 92 * s);
+    const s = size / 182;
+    ctx.translate(size / 2 - 88 * s, size / 2 - 86 * s);
     rig.draw(ctx, pose, { origin: { x: 0, y: 0 }, scale: s, facing: 1 });
     out[size] = c.toDataURL('image/png');
   }

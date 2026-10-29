@@ -48,8 +48,10 @@ registro do atalho é exibida nas configurações; bandeja continua funcionando.
 
 ## 5. Aparência e animações
 
-Tubarãozinho azul e branco, patas curtas, olhos grandes, dentinhos, contorno
-escuro de quadrinhos. Animações distintas: idle (respira), piscar, olhar ao redor,
+Versão chibi/fofa da referência do usuário: tubarão bípede azul-ardósia com
+recortes creme serrilhados (barriga, focinho, braços, pernas, rabo), sorriso com
+muitos dentinhos, barbatana na cabeça, rabo bifurcado, bermuda preta com faixa
+cinza, cabeça grande, olhos grandes, membros curtos, contorno escuro de quadrinhos. Animações distintas: idle (respira), piscar, olhar ao redor,
 andar, correr/fugir, virar (procedural), sentar/levantar, deitar, adormecer,
 dormir (Zzz), acordar, falar, feliz, carinho (corações), comer (peixe), brincar
 (bola), curioso (?), surpreso (!), arrastado, pouso (poeira), aparecer, despedir,

@@ -39,6 +39,7 @@ let windowVisible = true;
 async function init() {
   const assets = await api.getAssets();
   rig = new RigRenderer(assets.rig);
+  effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   animator = new Animator(assets.animations);
   resize();
   api.onState(onState);
@@ -289,7 +290,7 @@ function draw(now) {
     ctx.setLineDash([7, 5]);
     ctx.lineDashOffset = -now / 40;
     ctx.beginPath();
-    ctx.ellipse(90, 146, 74, 8, 0, 0, Math.PI * 2);
+    ctx.ellipse(rig.box.width / 2, rig.ground, rig.shadowRx + 16, 8, 0, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
   }
@@ -302,11 +303,11 @@ function draw(now) {
   ctx.translate(box.x, box.y);
   ctx.scale(scale, scale);
   const fs = facing >= 0 ? 1 : -1;
-  ctx.translate(90, 0);
+  ctx.translate(rig.box.width / 2, 0);
   ctx.scale(fs, 1);
-  ctx.translate(-90, 0);
+  ctx.translate(-rig.box.width / 2, 0);
   ctx.translate(pose.rootX || 0, pose.rootY || 0);
-  effects.draw(ctx, now, { mark: sample.flags.mark && sample.t > 0.08 && sample.t < 0.92 ? sample.flags.mark : null, head, facingSign: fs });
+  effects.draw(ctx, now, { mark: sample.flags.mark && sample.t > 0.08 && sample.t < 0.92 ? sample.flags.mark : null, head, mouth: rig.rig.metrics.mouth, facingSign: fs });
   ctx.restore();
 }
 

@@ -15,7 +15,7 @@ app.whenReady().then(async () => {
   const rig = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/character/jeff.rig.json'), 'utf8'));
   const anim = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/animations/jeff.animations.json'), 'utf8'));
   const names = only ? only.split(',') : Object.keys(anim.animations).filter((n) => n !== 'hidden');
-  const url = await win.webContents.executeJavaScript(`window.renderSheet(${JSON.stringify(rig)}, ${JSON.stringify(anim)}, ${JSON.stringify(names)}, ${big ? 2 : 6}, ${big ? '{w:560,h:470,s:3}' : '{w:150,h:130,s:0.78}'}, '#ffffff')`);
+  const url = await win.webContents.executeJavaScript(`window.renderSheet(${JSON.stringify(rig)}, ${JSON.stringify(anim)}, ${JSON.stringify(names)}, ${big ? (process.env.COLS ? Number(process.env.COLS) : 2) : 6}, ${big ? (process.env.COLS ? '{w:300,h:280,s:1.5}' : '{w:560,h:540,s:3}') : '{w:150,h:150,s:0.78}'}, '#ffffff')`);
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, Buffer.from(url.split(',')[1], 'base64'));
   console.log('Folha salva em', out);

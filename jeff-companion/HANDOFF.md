@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.1.0, 2026-10-29)
+# HANDOFF — estado atual (v0.2.0, 2026-10-29)
 
 Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -48,7 +48,8 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 ## Pendente / limitado
 
-- **Arte provisória**: rig vetorial feito à mão (`"provisional": true`). Falta arte final.
+- **Arte provisória**: rig vetorial chibi bípede feito à mão a partir da referência do usuário
+  (`"provisional": true`). Falta arte final; o novo visual ainda não passou por revisão do usuário no Windows.
 - Instalador **não assinado** (SmartScreen avisa).
 - Jogos em tela cheia exclusiva e telas protegidas ficam por cima — limitação aceita.
 - Sons: apenas bipes sintetizados (WebAudio), desligados por padrão.

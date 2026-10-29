@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.2.0 — 2026-10-29
+
+### Alterado
+- Novo visual do Jeff: versão **chibi bípede** baseada na referência do usuário
+  (azul-ardósia com recortes creme, sorriso com dentes, barbatana, rabo bifurcado,
+  bermuda preta com faixa cinza). Continua marcada como arte provisória.
+- Rig com dois olhos, várias sobrancelhas/narinas/dentes, cabeça girando como peça.
+- Poses de sentar, deitar/dormir, agachar, espreguiçar e acenar refeitas para bípede.
+- Efeitos (poeira, bola, comida) e anel do modo de interação seguem as métricas do rig.
+- Ícones, folha de animações e capturas regenerados.
+
 ## 0.1.0 — 2026-10-29
 
 Primeira versão funcional.
