@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## 0.8.0 — 2026-10-29
+
+### Adicionado
+- **Sistema de pet**: o JoJo flutua sobre a área de trabalho, arrastável no modo de
+  interação, com posição salva entre sessões (já existente, mantido).
+- **Balão de status** ao lado do pet com as atividades de cada conversa:
+  *Em andamento*, *Precisa de você*, *Pronto* (concluída e ainda não vista) e
+  *Bloqueado* (falha do provedor ou erro de sistema, como atalho em uso ou detector
+  de tela cheia indisponível). Fora do modo de interação o balão é click-through e
+  some por 4 s quando o cursor chega perto.
+- **Central do JoJo** (janela do app): lista de conversas com status, conversa,
+  comandos e botão *Wake Pet / Tuck Away Pet*. Clicar no pet traz a Central para
+  frente; clicar numa atividade abre aquela conversa. Também pela bandeja
+  (*Abrir JoJo* e submenu *Atividades*).
+- **Comando `/pet`** (e menu "/" no chat do pet e da Central): *Wake Pet* / *Tuck
+  Away Pet*; também `/silencio`, `/nova`, `/config`. Botão equivalente nas
+  Configurações.
+- **Movimento reduzido**: segue o "Efeitos de animação" do Windows
+  (`prefers-reduced-motion`) ou a configuração *Reduzir movimento*
+  (sistema/ligado/desligado). Pose estática por animação, sem partículas, sem
+  piscar, sem passeios e com fuga instantânea do cursor.
+- Crise emocional na conversa ("crise", "ansiedade", "emocionalmente mal",
+  "não aguento mais"…): manda a Emanuele falar com o **João** agora, porque ele
+  sabe cuidar dela, com postura de acolhimento.
+
+### Alterado
+- Clique rápido no pet (modo de interação) agora abre a Central; o carinho continua
+  pelo botão 🤚 e esfregando o mouse sobre ele.
+- A resposta do chat tem um "digitando…" curto (650 ms) para o status *Em andamento*.
+
+### Não aplicável
+- Versão web: o projeto é só desktop (Electron/Windows); não há versão web.
+
 ## 0.7.0 — 2026-10-29
 
 ### Adicionado

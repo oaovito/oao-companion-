@@ -12,6 +12,8 @@ import { DialogueEngine } from '../core/dialogue/engine.js';
 import { createLogger } from './logger.js';
 import { OverlayWindow } from './overlay-window.js';
 import { SettingsWindow } from './settings-window.js';
+import { AppWindow } from './app-window.js';
+import { commandMenu } from '../core/conversations.js';
 import { createTray } from './tray.js';
 import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
 
@@ -166,6 +168,74 @@ function main() {
     ipcMain.on('jeff:drag-end', (e) => fromOverlay(e) && companion.dragEnd());
     ipcMain.on('jeff:exit-interaction', (e) => fromOverlay(e) && companion.exitInteraction('escape'));
     ipcMain.on('jeff:open-settings', (e) => fromOverlay(e) && openSettings());
+    ipcMain.on('jeff:open-app', (e, id) => fromOverlay(e) && companion.openApp(id ? String(id) : null));
+    ipcMain.on('jeff:reduced-motion', (e, on) => {
+      if (!fromOverlay(e)) return;
+      systemReducedMotion = !!on;
+      applyReducedMotion();
+    });
+
+    // ---------------- Redução de movimento (sistema ou configuração)
+    let systemReducedMotion = false;
+    function applyReducedMotion() {
+      const mode = store.get().reduceMotion;
+      companion.setReducedMotion(mode === 'on' || (mode === 'system' && systemReducedMotion));
+    }
+
+    // ---------------- Central do JoJo (janela principal do app)
+    const appWin = new AppWindow({
+      preloadPath: path.join(ROOT, 'src', 'preload', 'app-preload.cjs'),
+      htmlPath: path.join(ROOT, 'src', 'renderer', 'app', 'index.html'),
+      iconPath: appIcon,
+      onVisibility: (showing) => {
+        // Conversa aberta na Central conta como "vista".
+        const conv = companion.conversations.current();
+        companion.conversations.setViewing(conv.id, showing);
+      },
+    });
+    const fromApp = (e) => appWin.isOpen && e.sender === appWin.win.webContents;
+    function appState() {
+      const conv = companion.conversations.current();
+      return {
+        companionName: companion.companionName,
+        petVisible: !companion.userHidden,
+        conversations: companion.conversations.list(),
+        currentId: conv.id,
+        current: companion.conversations.snapshot(conv.id),
+        commands: commandMenu({ petVisible: !companion.userHidden }),
+      };
+    }
+    let appUpdateTimer = null;
+    companion.onConversationsChange = () => {
+      clearTimeout(appUpdateTimer);
+      appUpdateTimer = setTimeout(() => {
+        appWin.send('app:update', appState());
+        trayCtl && trayCtl.refresh();
+      }, 60);
+    };
+    companion.onOpenApp = (id) => appWin.open(id);
+    companion.onOpenSettings = () => openSettings();
+    ipcMain.handle('app:state', (e) => (fromApp(e) ? appState() : null));
+    ipcMain.handle('app:select', (e, id) => {
+      if (!fromApp(e)) return null;
+      const prev = companion.conversations.current().id;
+      companion.conversations.setViewing(prev, false);
+      companion.conversations.setCurrent(id);
+      companion.conversations.setViewing(id, appWin.isShowing);
+      return appState();
+    });
+    ipcMain.handle('app:send', async (e, id, text) => (fromApp(e) ? companion.chat(text, id) : null));
+    ipcMain.handle('app:new', (e) => {
+      if (!fromApp(e)) return null;
+      const c = companion.conversations.newChat();
+      companion.conversations.setViewing(c.id, true);
+      return appState();
+    });
+    ipcMain.handle('app:pet', (e) => {
+      if (fromApp(e)) companion.runCommand('pet');
+      return appState();
+    });
+    ipcMain.on('app:settings', (e) => fromApp(e) && openSettings());
 
     // ---------------- Configurações
     settingsWin = new SettingsWindow({
@@ -188,6 +258,10 @@ function main() {
       return settingsInfo();
     });
     ipcMain.on('settings:open-folder', (e) => fromSettings(e) && shell.openPath(userData));
+    ipcMain.handle('settings:pet', (e) => {
+      if (fromSettings(e)) companion.runCommand('pet');
+      return settingsInfo();
+    });
     ipcMain.handle('personality:set', (e, patch) => {
       if (!fromSettings(e) || !patch || typeof patch !== 'object') return settingsInfo();
       personality.update(patch);
@@ -214,6 +288,8 @@ function main() {
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();
       if (changed.includes('startWithWindows')) applyAutostart();
+      if (changed.includes('reduceMotion')) applyReducedMotion();
+      if (changed.includes('visible')) appWin.send('app:update', appState());
       if (changed.includes('fullscreenBehavior')) {
         startFullscreenWatch();
         if (s.fullscreenBehavior === 'ignore') companion.setFullscreenDisplays([]);
@@ -245,6 +321,8 @@ function main() {
         version: app.getVersion(),
         paths: { userData, log: log.file },
         loadIssues: store.loadIssues,
+        petVisible: !companion.userHidden,
+        companionName: companion.companionName,
       };
     }
 
@@ -268,6 +346,7 @@ function main() {
         error = `Atalho inválido: ${err.message}`;
       }
       hotkeyStatus = { ok, accelerator: acc, error };
+      companion.reportSystem('atalho', 'Sistema: atalho', ok ? null : `Não consegui registrar o atalho ${acc}. ${error} Use a bandeja para o modo de interação.`);
       log(ok ? 'info' : 'warn', ok ? `Atalho registrado: ${acc}` : `Falha ao registrar atalho ${acc}: ${error}`);
       trayCtl && trayCtl.refresh();
       settingsWin && settingsWin.send('settings:changed', settingsInfo());
@@ -305,6 +384,7 @@ function main() {
         if (companion.suspended || busy) return;
         if (!fullscreen.available) {
           clearInterval(fullscreenTimer);
+          companion.reportSystem('detector', 'Sistema: detector de janelas', `Detecção de tela cheia e do Instagram parou: ${fullscreen.reason || 'falha'}.`);
           companion.setFullscreenDisplays([]);
           settingsWin.send('settings:changed', settingsInfo());
           return;
@@ -358,6 +438,7 @@ function main() {
         hotkey: store.get().interactionHotkey,
         hotkeyOk: hotkeyStatus.ok,
         name: personality.get().nomeCompanion || 'JoJo',
+        activities: companion.conversations.activities(6),
       }),
       actions: {
         toggleInteraction: () => {
@@ -368,6 +449,7 @@ function main() {
         togglePaused: () => store.update({ paused: !store.get().paused }),
         toggleQuiet: () => store.update({ quietMode: !store.get().quietMode }),
         openSettings,
+        openApp: (id) => companion.openApp(id || null),
         about: () =>
           dialog.showMessageBox({
             type: 'info',
@@ -442,6 +524,7 @@ function main() {
         fullscreenInfo: () => ({ available: !!fullscreen?.available, reason: fullscreen?.reason || null }),
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
         personality,
+        appWin,
         setTargetTitle: (id, title) => BrowserWindow.fromId(id)?.setTitle(title),
       };
     }

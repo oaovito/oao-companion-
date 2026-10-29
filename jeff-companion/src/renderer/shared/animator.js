@@ -84,6 +84,22 @@ export class Animator {
       flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts },
     };
   }
+
+  /**
+   * Movimento reduzido: pose fixa e representativa da animação atual (quadro
+   * em `anim.staticT`, padrão 0,5), sem piscar e sem transição.
+   */
+  sampleStatic() {
+    if (!this.current) this.play('idle', 0);
+    const { anim } = this.current;
+    const t = Number.isFinite(anim.staticT) ? anim.staticT : 0.5;
+    const pose = this.basePose(anim);
+    for (const [ch, keys] of Object.entries(anim.tracks || {})) {
+      pose[ch] = evalTrack(keys, t, pose[ch], this.defaultEase);
+    }
+    this.pose = pose;
+    return { pose, name: this.current.name, t, done: true, flags: { z: false, dust: false, sparkle: false, mark: anim.mark || null, hearts: false } };
+  }
 }
 
 export function evalTrack(keys, t, fallback, defaultEase = 'inOut') {

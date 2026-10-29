@@ -4,6 +4,7 @@ import { sanitizePersonality, phraseFilter, InstagramWatcher, dailyReminder, pro
 import { PhraseBook } from '../../src/core/phrases.js';
 import { detectIntent } from '../../src/core/dialogue/scripted-provider.js';
 import { makeEnv, loadJSON, seededRng } from './helpers.js';
+import { chatAdv } from './helpers.js';
 
 const PHRASES = loadJSON('assets/dialogue/pt-BR.json');
 const settle = async () => {
@@ -121,12 +122,12 @@ test('conversa: silêncio liga o modo silencioso; conquista flexiona; susto teat
   e.companion.start();
   e.clock.advance(2000);
   e.companion.enterInteraction();
-  let r = await e.companion.chat('consegui!');
+  let r = await chatAdv(e, 'consegui!');
   assert.equal(r.action, 'flex');
   assert.equal(e.companion.behavior.state, 'happy');
-  r = await e.companion.chat('me assusta');
+  r = await chatAdv(e, 'me assusta');
   assert.equal(e.companion.behavior.state, 'scare');
-  r = await e.companion.chat('silêncio');
+  r = await chatAdv(e, 'silêncio');
   assert.equal(r.action, 'quiet');
   assert.equal(e.store.get().quietMode, true);
 });
@@ -153,21 +154,28 @@ test('conversa: chorando/triste → falar com o João, Emanuele, com acolhimento
   assert.equal(detectIntent('estou muito triste hoje'), 'sad');
   assert.equal(detectIntent('to na bad'), 'sad');
   assert.equal(detectIntent('não quero mais viver'), 'crisis');
+  assert.equal(detectIntent('tô em crise'), 'distress');
+  assert.equal(detectIntent('não aguento mais, tô surtando'), 'distress');
+  assert.equal(detectIntent('crise de ansiedade agora'), 'distress');
   const e = makeEnv();
   e.companion.start();
   e.clock.advance(2000);
   e.companion.enterInteraction();
-  let r = await e.companion.chat('hoje eu chorei muito, tô triste');
+  let r = await chatAdv(e, 'hoje eu chorei muito, tô triste');
   assert.match(r.text, /João/);
   assert.match(r.text, /Emanuele/);
   assert.equal(r.action, 'comfort');
   assert.equal(e.companion.behavior.state, 'comfort');
-  r = await e.companion.chat('quero morrer');
+  r = await chatAdv(e, 'tô em crise, emocionalmente mal');
+  assert.match(r.text, /João/);
+  assert.match(r.text, /cuidar de você/);
+  assert.equal(r.action, 'comfort');
+  r = await chatAdv(e, 'quero morrer');
   assert.match(r.text, /João/);
   assert.match(r.text, /188/);
-  r = await e.companion.chat('vamos brincar');
+  r = await chatAdv(e, 'vamos brincar');
   assert.match(r.text, /Manu|Cardio/);
-  r = await e.companion.chat('qual é o seu nome?');
+  r = await chatAdv(e, 'qual é o seu nome?');
   assert.match(r.text, /JoJo/);
 });
 

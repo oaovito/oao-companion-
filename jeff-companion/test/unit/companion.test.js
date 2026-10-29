@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { makeEnv, moveCursor, center, TWO_MONITORS_NEG, ONE_MONITOR } from './helpers.js';
+import { chatAdv } from './helpers.js';
 import { distPointRect, rectInside } from '../../src/core/geometry.js';
 import { SettingsStore } from '../../src/core/settings-store.js';
 
@@ -360,7 +361,7 @@ test('conversa offline sem credenciais usa respostas programadas e dispara açã
   const e = started();
   e.companion.enterInteraction();
   e.companion.setChatOpen(true);
-  const r = await e.companion.chat('vamos brincar?');
+  const r = await chatAdv(e, 'vamos brincar?');
   assert.equal(r.provider.scripted, true);
   assert.equal(r.action, 'play');
   assert.equal(e.companion.behavior.state, 'play');

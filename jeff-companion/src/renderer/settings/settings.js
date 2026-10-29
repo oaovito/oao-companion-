@@ -17,6 +17,9 @@ function prettyHotkey(acc) {
 
 function render(i) {
   info = i;
+  const pt = document.getElementById('petToggle');
+  pt.textContent = i.petVisible ? 'Tuck Away Pet' : 'Wake Pet';
+  pt.title = i.petVisible ? `Esconder o ${i.companionName}` : `Mostrar o ${i.companionName}`;
   renderPersonality(i);
   const s = i.settings;
   document.getElementById('version').textContent = `Versão ${i.version}.`;
@@ -172,5 +175,6 @@ document.getElementById('reset').addEventListener('click', async () => {
   if (confirm('Restaurar todas as configurações para o padrão?')) render(await api.reset());
 });
 document.getElementById('openFolder').addEventListener('click', () => api.openFolder());
+document.getElementById('petToggle').addEventListener('click', async () => render(await api.togglePet()));
 api.onChanged(render);
 api.load().then(render);

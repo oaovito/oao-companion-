@@ -31,6 +31,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   humor com drogas sem incentivar uso). Perfil editável em `personality.json`.
 - Toda fala vem com expressão corporal coerente (campo `reaction` nas falas).
 - Visual: estilo recorte de papel (South Park), adulto, fisiculturista, com presas.
+- Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
+  clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`
+  (Wake Pet / Tuck Away Pet); movimento reduzido segue o Windows. Sem versão web.
+  Crise emocional na conversa: mandar falar com o João.
 
 ## Requisitos que não podem regredir
 
@@ -55,7 +59,7 @@ tela cheia, isolado em `utilityProcess`.
 
 - `src/core/` — lógica pura testável (desvio, movimento, estados, layout, falas, configurações, diálogo)
 - `src/main/` — integração Windows/Electron (overlay, bandeja, atalho, energia, monitores)
-- `src/renderer/` — canvas do Jeff, balões, modo de interação, configurações
+- `src/renderer/` — canvas do Jeff, balões, modo de interação, configurações, Central do JoJo (`app/`)
 - `assets/` — rig, animações e falas em JSON (formato em `assets/README.md`)
 
 Detalhes: `jeff-companion/ARCHITECTURE.md`. Estado e pendências: `jeff-companion/HANDOFF.md`.

@@ -15,6 +15,7 @@ export function normalizeText(s) {
 // Ordem importa: a primeira intenção que casar vence. Crise e tristeza vêm primeiro.
 export const INTENTS = [
   { id: 'crisis', patterns: [/\b(me matar|suicid\w*|nao quero mais viver|quero morrer|acabar com tudo|me machucar|me cortar|automutila\w*)\b/] },
+  { id: 'distress', patterns: [/\b(crise\w*|em crise|panico|ataque de ansiedade|crise de ansiedade|ansiedade|nao aguento mais|nao to aguentando|surtand\w*|surtei|desmoronand\w*|emocionalmente mal|mal emocionalmente|to destruida|desabei|desabando)\b/] },
   { id: 'sad', patterns: [/\b(chorand\w*|chorei|chorar|choro|triste\w*|tristeza|deprimid\w*|depre|pra baixo|arrasad\w*|sofrendo|muito mal|to mal|na bad|desanimad\w*|desesperad\w*)\b/] },
   { id: 'quiet', patterns: [/\b(silencio|cala a boca|fica quieto|quieto|para de falar|shh+|me deixa em paz)\b/] },
   { id: 'goodbye', patterns: [/\b(tchau|adeus|ate logo|ate mais|falou|fui)\b/] },
@@ -35,7 +36,11 @@ export const INTENTS = [
 
 // Textos com variáveis: {nome} (Emanuele em tom sério, Manu em brincadeira), {apoio}, {companion}.
 export const RESPONSES = {
-  crisis: ['Emanuele, isso é sério. Fala agora com o {apoio}. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.'],
+  crisis: ['Emanuele, isso é sério. Fala agora com o {apoio} pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.'],
+  distress: [
+    'Emanuele, para tudo e fala com o {apoio} agora. Ele vai cuidar de você. Respira fundo, devagar.',
+    'Emanuele, isso é com o {apoio}. Chama ele agora pra ele cuidar de você. Eu fico aqui quietinho.',
+  ],
   sad: [
     'Emanuele, isso é com o {apoio}. Vai falar com ele, ele sabe cuidar de você.',
     'Chorando? Para tudo e chama o {apoio}, Emanuele. Ele sabe cuidar de você.',
@@ -65,14 +70,14 @@ export const RESPONSES = {
 
 // Ação/expressão corporal coerente com cada resposta.
 const ACTIONS = {
-  crisis: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
+  crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'sleep', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
   name: 'wave', help: 'lecture', unknown: 'judge',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
-  crisis: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', name: 'serio', sleep: 'serio',
+  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',
 };

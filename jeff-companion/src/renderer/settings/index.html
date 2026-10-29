@@ -146,6 +146,17 @@
       <label class="check"><input type="checkbox" name="startWithWindows"> Iniciar com o Windows</label>
       <p class="hint" id="autostartStatus"></p>
       <div class="buttons">
+        <button type="button" id="petToggle"></button>
+      </div>
+      <label class="row">Reduzir movimento
+        <select name="reduceMotion">
+          <option value="system">Seguir o Windows</option>
+          <option value="on">Sempre (quadros estáticos)</option>
+          <option value="off">Nunca</option>
+        </select>
+      </label>
+      <p class="hint">Com redução de movimento, o companion fica em quadros estáticos e muda de lugar por salto, sem correr pela tela.</p>
+      <div class="buttons">
         <button type="button" id="reset">Restaurar padrões</button>
         <button type="button" id="openFolder">Abrir pasta de dados</button>
       </div>

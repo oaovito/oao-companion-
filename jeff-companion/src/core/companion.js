@@ -17,8 +17,12 @@ import { distPointRect, roundRect, dist, clamp } from './geometry.js';
 import { jeffRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, phraseFilter, phraseWeight, profileVars } from './personality.js';
+import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
+const ACTIVITY_ROW = 26;
+const ACTIVITY_WIDTH = 224;
+const THINK_MS = 650; // "digitando…": tempo em que a conversa fica "Em andamento"
 const CHAT_SIZE = { width: 300, height: 270 };
 const USER_CATEGORIES = new Set(['petted', 'food', 'play', 'interactEnter', 'interactExit', 'alreadyRunning', 'goodbye', 'unpause', 'dragged', 'land', 'achievement', 'quietAck', 'scare']);
 // Intervalo mínimo entre quaisquer falas espontâneas (inclui reações e "Zzz").
@@ -33,6 +37,19 @@ export class Companion {
     this.personality = personality || { get: () => PERSONALITY_DEFAULTS, update: () => [] };
     this.instagram = new InstagramWatcher();
     this.reminderTimer = null;
+    // Conversas e atividades (balão de status). Callbacks definidos pelo main:
+    this.conversations = new ConversationManager({ now: () => Date.now() });
+    this.conversations.onChange(() => {
+      if (this.started) this._applyLayout(true);
+      if (this.onConversationsChange) this.onConversationsChange();
+    });
+    this.onConversationsChange = null; // () => void
+    this.onOpenApp = null; // (conversationId|null) => void — traz a Central do JoJo para frente
+    this.onOpenSettings = null; // () => void
+    this.activitiesHiddenUntil = 0;
+    this.activityRect = null;
+    this.reducedMotion = false;
+    this.lastSaid = null;
     this.platform = platform;
     this.overlay = overlay;
     this.clock = clock;
@@ -64,6 +81,7 @@ export class Companion {
     this.talkingUntil = 0;
 
     this.interaction = false;
+    if (this.chatOpen) this.conversations.setViewing(this.conversations.current().id, false);
     this.chatOpen = false;
     this.capture = false;
     this.lastInteractionActivity = 0;
@@ -437,6 +455,11 @@ export class Companion {
       else if (a.type === 'hide') this._enterGhost(now, a.reason);
       else if (a.type === 'unhide') this._exitGhost(now);
     }
+    // Cartão de atividades perto do cursor: some por alguns segundos (como o balão).
+    if (this.activityRect && distPointRect(this.cursor, this.activityRect) < this.avoid.cfg.margin) {
+      this.activitiesHiddenUntil = now + 4000;
+      this._applyLayout(true);
+    }
     // Mover para um destino de passeio que ficou inseguro? Cancela.
     if (this.mover.active && this.mover.kind === 'walk') {
       const t = this.mover.target;
@@ -455,7 +478,9 @@ export class Companion {
     const target = { x: plan.x - vx, y: plan.y - v.y * s };
     const control = { x: plan.control.x - vx, y: plan.control.y - v.y * s };
     if (this.ghost) this._exitGhost(now, true);
-    this.mover.start(this.pos, target, { control, speed: FLEE_SPEED * s ** 0.5 * this.store.get().moveSpeed, easing: 'out', now, minMs: 200, maxMs: 950, kind: 'flee' });
+    // Redução de movimento: salta direto para o destino (sem correr pela tela).
+    const quick = this.reducedMotion ? { minMs: 1, maxMs: 1 } : { minMs: 200, maxMs: 950 };
+    this.mover.start(this.pos, target, { control, speed: FLEE_SPEED * s ** 0.5 * this.store.get().moveSpeed, easing: 'out', now, ...quick, kind: 'flee' });
     this.stats.flees++;
     if (this.behavior.state !== 'flee') this.behavior.request('flee', { now, force: true, data: { reason: plan.reason } });
     const dx = target.x - this.pos.x;
@@ -539,7 +564,7 @@ export class Companion {
   }
 
   _startWalk(now) {
-    if (this.paused || this.interaction) {
+    if (this.paused || this.interaction || this.reducedMotion) {
       this.behavior.finish('walk', now);
       return;
     }
@@ -630,6 +655,7 @@ export class Companion {
     const p = this.phrases.pick(cat, (tone) => ({ atalho, ...profileVars(this.personality.get(), tone) }));
     if (!p) return false;
     const ok = this.say(p.text, p.kind, { spontaneous, category: cat, reaction: p.reaction });
+    if (ok) this.lastSaid = p.text;
     if (ok && p.reaction) this.react(p.reaction);
     return ok;
   }
@@ -797,24 +823,99 @@ export class Companion {
   setChatOpen(open) {
     if (!this.interaction) return;
     this.chatOpen = !!open;
+    this.conversations.setViewing(this.conversations.current().id, this.chatOpen);
     this.noteActivity();
     if (open) this.hideBubble();
     this._applyLayout(true);
   }
 
-  async chat(text) {
+  /**
+   * Mensagem da usuária para uma conversa (padrão: a atual). Comandos com "/"
+   * (ex.: /pet) são tratados aqui. Atualiza o status da conversa:
+   * running → ready/needsInput/blocked.
+   */
+  async chat(text, conversationId = null) {
+    const conv = (conversationId && this.conversations.get(conversationId)) || this.conversations.current();
+    const cmd = parseCommand(text);
+    if (cmd) return this.runCommand(cmd, conv.id);
     if (!this.dialogue) return null;
     this.noteActivity();
-    const reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
+    this.conversations.addMessage(conv.id, 'user', text);
+    this.conversations.setStatus(conv.id, 'running');
+    await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
+    let reply;
+    try {
+      reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
+    } catch (e) {
+      this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
+      return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
+    }
     const vars = profileVars(this.personality.get(), reply.tone);
     reply.text = reply.text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+    this.conversations.addMessage(conv.id, 'jeff', reply.text);
+    if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Provedor de IA falhou (${reply.error}); respondi com frases programadas.`);
+    else if (/\?\s*$/.test(reply.text)) this.conversations.setStatus(conv.id, 'needsInput', 'Pergunta esperando resposta.');
+    else this.conversations.setStatus(conv.id, 'ready');
     const now = this.clock.now();
     this.noteActivity();
     if (reply.action) this._doChatAction(reply.action, now);
     else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
     this._applyLayout(true);
     this._schedule(0);
-    return { ...reply, provider: this.dialogue.describe() };
+    return { ...reply, conversationId: conv.id, provider: this.dialogue.describe() };
+  }
+
+  /** Comandos do menu "/" (chat da Central ou do pet). */
+  runCommand(cmd, conversationId = null) {
+    const name = this.companionName;
+    let text;
+    if (cmd === 'pet') {
+      const show = this.userHidden;
+      this.setVisible(show);
+      text = show ? `${name} acordou. (Wake Pet)` : `${name} foi guardado. Use /pet para chamar de volta. (Tuck Away Pet)`;
+    } else if (cmd === 'quiet') {
+      const q = !this.store.get().quietMode;
+      this.store.update({ quietMode: q });
+      text = q ? 'Modo silencioso ligado.' : 'Modo silencioso desligado.';
+    } else if (cmd === 'new') {
+      const c = this.conversations.newChat();
+      return { text: 'Conversa nova.', command: cmd, conversationId: c.id };
+    } else if (cmd === 'settings') {
+      if (this.onOpenSettings) this.onOpenSettings();
+      text = 'Abrindo as configurações.';
+    } else {
+      text = 'Comando desconhecido. Use /pet, /silencio, /nova ou /config.';
+    }
+    return { text, command: cmd, conversationId };
+  }
+
+  /** Erro/aviso de sistema como atividade "Bloqueado" (null = resolvido). */
+  reportSystem(key, title, message) {
+    const id = `sistema-${key}`;
+    if (!message) {
+      if (this.conversations.get(id)) this.conversations.setStatus(id, 'idle');
+      return;
+    }
+    const c = this.conversations.create({ id, title, kind: 'system' });
+    const last = c.messages[c.messages.length - 1];
+    if (!last || last.text !== message) this.conversations.addMessage(id, 'jeff', message);
+    this.conversations.setStatus(id, 'blocked', message);
+  }
+
+  /** Clique no pet / numa atividade: traz a Central do JoJo para frente. */
+  openApp(conversationId = null) {
+    this.noteActivity();
+    if (conversationId) this.conversations.setCurrent(conversationId);
+    if (this.onOpenApp) this.onOpenApp(conversationId);
+  }
+
+  setReducedMotion(on) {
+    this.reducedMotion = !!on;
+    if (on && this.mover.active && this.mover.kind === 'walk') {
+      this.mover.stop();
+      if (this.behavior.state === 'walk') this.behavior.finish('walk', this.clock.now());
+    }
+    this._applyLayout(true);
   }
 
   _doChatAction(action, now) {
@@ -945,7 +1046,13 @@ export class Companion {
     // Se não puder falar agora (silêncio, oculto…), tenta de novo no próximo minuto.
     if (deliver) next.ultimoDia = state.ultimoDia;
     if (JSON.stringify(next) !== JSON.stringify(cfg)) this.personality.update({ lembreteComida: next }, { silent: true });
-    if (deliver) this._nag('foodReminder', this.clock.now());
+    if (deliver) {
+      this._nag('foodReminder', this.clock.now());
+      // Vira uma atividade "Precisa de você" até ela responder na conversa do lembrete.
+      const c = this.conversations.create({ id: 'lembrete-comida', title: 'Lembrete: comida', kind: 'reminder' });
+      if (this.lastSaid) this.conversations.addMessage(c.id, 'jeff', this.lastSaid);
+      this.conversations.setStatus(c.id, 'needsInput', 'Fome ou tédio? Responda quando puder.');
+    }
     return deliver;
   }
 
@@ -983,6 +1090,17 @@ export class Companion {
       this.bubbleRect = bubble.rect;
     } else this.bubbleRect = null;
 
+    // Balão de status com as atividades (ao lado do pet).
+    let activityBox = null;
+    const acts = this.conversations.activities(4);
+    const showActs = acts.length && !this.ghost && !this.dragging && (this.interaction || this.clock.now() >= this.activitiesHiddenUntil);
+    if (showActs) {
+      const size = { width: ACTIVITY_WIDTH, height: 12 + acts.length * ACTIVITY_ROW };
+      activityBox = placeAround(r.visual, size, wa, { order: ['left', 'right', 'bottom', 'top'], avoid: [toolbar?.rect, chat?.rect, bubble?.rect], gap: 8 });
+      attachments.push(activityBox);
+      this.activityRect = activityBox.rect;
+    } else this.activityRect = null;
+
     const { bounds, rel } = composeWindow(r.box, attachments);
     const b = roundRect(bounds);
     if (!this.lastBounds || b.x !== this.lastBounds.x || b.y !== this.lastBounds.y || b.width !== this.lastBounds.width || b.height !== this.lastBounds.height) {
@@ -1007,8 +1125,10 @@ export class Companion {
         scale: s.bubbleScale,
       } : null,
       toolbar: toolbar ? { rect: rel(toolbar.rect), side: toolbar.side, hotkey: s.interactionHotkey } : null,
-      chat: chat ? { rect: rel(chat.rect), provider: this.dialogue ? this.dialogue.describe() : null, name: this.companionName } : null,
+      chat: chat ? { rect: rel(chat.rect), provider: this.dialogue ? this.dialogue.describe() : null, name: this.companionName, commands: commandMenu({ petVisible: !this.userHidden }) } : null,
       effect: this.effect ? this.effect.name : null,
+      activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
+      reducedMotion: this.reducedMotion,
       moving: this.mover.active ? this.mover.kind : null,
       sounds: s.sounds && !s.quietMode,
     };

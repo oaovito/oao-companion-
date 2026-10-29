@@ -154,3 +154,13 @@ export function moveCursor(env, clock, from, to, ms, stepMs = 8, onStep) {
 export function center(r) {
   return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
 }
+
+/** Conversa com o relógio simulado (a resposta tem um "digitando…" curto). */
+export async function chatAdv(e, text, conversationId = null) {
+  const p = e.companion.chat(text, conversationId);
+  for (let i = 0; i < 6; i++) {
+    e.clock.advance(300);
+    for (let k = 0; k < 6; k++) await Promise.resolve();
+  }
+  return p;
+}

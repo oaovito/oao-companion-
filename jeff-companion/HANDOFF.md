@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.7.0, 2026-10-29)
+# HANDOFF — estado atual (v0.8.0, 2026-10-29)
 
 Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -7,7 +7,7 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 | Ambiente | O que roda | Comando |
 |---|---|---|
-| Linux (sessão de desenvolvimento) | 62 testes unitários/simulação, 10 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
+| Linux (sessão de desenvolvimento) | 85 testes unitários/simulação, 11 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
 | Windows real (GitHub Actions `windows-latest`) | unitários, build do instalador, 8 testes de integração com mouse/teclado reais do sistema, E2E, medição | workflow `.github/workflows/jeff-windows.yml` |
 
 ## Verificado
@@ -48,6 +48,10 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 ## Pendente / limitado
 
+- Pet/atividades (v0.8.0): conversas só em memória (somem ao encerrar). Movimento
+  reduzido do Windows lido via `prefers-reduced-motion`; não conferido numa máquina
+  com "Efeitos de animação" desligado.
+
 - Fiscal do Instagram: só Windows e só pelo título da janela/nome do executável
   (se o navegador mostrar outro título na aba, não detecta). iPhone exigiria
   integração separada (não implementada).
@@ -70,6 +74,8 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 2. Aproximar o mouse pelos quatro lados e pelos cantos; clicar rápido onde o Jeff estava.
 3. Perseguir o Jeff; confirmar modo discreto e retorno.
 4. Ctrl+Alt+J: carinho (esfregar), comer, brincar, arrastar, conversa, Esc, clique fora, timeout.
+4b. Clique no pet abre a Central; clique numa atividade abre a conversa; `/pet` guarda/acorda;
+    "Efeitos de animação" desligado deixa o pet estático.
 5. Dois monitores com escalas diferentes (ex.: 100% e 150%), um à esquerda do principal.
 6. Desconectar o monitor onde o Jeff está; mudar resolução.
 7. Suspender e retomar; bloquear e desbloquear.
@@ -83,6 +89,11 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Provedor de diálogo opcional (modelo local/API) implementando `DialogueProvider`.
 
 ## Resultado da última execução do CI
+
+Runs #11 (v0.6.0) e #12 (v0.7.0, https://github.com/oaovito/oao-companion-/actions/runs/40809682449):
+**sucesso**. O resultado da v0.8.0 sai no próximo run do workflow.
+
+Histórico:
 
 Run #4 (`c4e7d4c`, https://github.com/oaovito/oao-companion-/actions/runs/40802636763): **sucesso**.
 Unitários 62/62, integração Windows 8/8, E2E 10/10, instalador + ZIP gerados.

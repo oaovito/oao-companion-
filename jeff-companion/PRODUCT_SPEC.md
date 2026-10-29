@@ -85,6 +85,18 @@ comer, brincar, carinho, agradecer, como vai, nome, ajuda). Interface marca
 "Respostas programadas · offline · não é IA". `DialogueProvider` permite
 integrar modelo local ou API no futuro, sempre opcional e com fallback.
 
+## 8b. Pet, atividades e Central
+
+| # | Requisito | Critério de aceitação |
+|---|---|---|
+| A1 | Pet flutuante | Sempre por cima, arrastável no modo de interação, posição salva |
+| A2 | Balão de status | Ao lado do pet, lista conversas com *Em andamento*, *Precisa de você*, *Pronto* (não vista) ou *Bloqueado* (falha/erro de sistema); click-through fora do modo de interação |
+| A3 | Abrir o app | Clique no pet traz a Central do JoJo para frente; clique numa atividade abre aquela conversa |
+| A4 | `/pet` | Alterna mostrar/ocultar; menu "/" e Configurações mostram *Wake Pet* / *Tuck Away Pet* |
+| A5 | Movimento reduzido | Respeita `prefers-reduced-motion` do sistema (ou a configuração): quadros estáticos, sem partículas, sem passeio |
+| A6 | Crise | Se a Emanuele disser que está em crise/emocionalmente mal, mandar falar com o João para cuidar dela |
+| A7 | Versão web | Não aplicável (app só desktop) |
+
 ## 9. Privacidade e desempenho
 
 Sem captura de tela, leitura de janelas, microfone, telemetria ou keylogging.

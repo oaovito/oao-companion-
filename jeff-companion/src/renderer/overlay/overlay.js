@@ -17,6 +17,8 @@ const logEl = document.getElementById('log');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const providerBadge = document.getElementById('providerBadge');
+const activitiesEl = document.getElementById('activities');
+const cmdMenuEl = document.getElementById('cmdMenu');
 
 let state = null;
 let animator = null;
@@ -33,6 +35,8 @@ let dpr = window.devicePixelRatio || 1;
 let lastAnimFlags = {};
 let landBurstDone = false;
 let windowVisible = true;
+let reduced = false; // movimento reduzido (quadros estáticos)
+let cmdSel = 0;
 
 // ------------------------------------------------------------------ setup
 
@@ -61,6 +65,10 @@ async function init() {
     resize();
   });
   setupInteraction();
+  // Movimento reduzido do sistema (Windows: "Efeitos de animação" desligado).
+  const rm = matchMedia('(prefers-reduced-motion: reduce)');
+  api.setReducedMotion(rm.matches);
+  rm.addEventListener?.('change', () => api.setReducedMotion(rm.matches));
   requestFrame();
 }
 
@@ -86,8 +94,13 @@ function onState(s) {
     facingTarget = s.facing;
     turnStart = now;
   }
-  effects.setEffect(s.effect, now);
+  if (!!s.reducedMotion !== reduced) {
+    reduced = !!s.reducedMotion;
+    document.body.classList.toggle('reduced', reduced);
+  }
+  effects.setEffect(reduced ? null : s.effect, now);
   renderBubble(s);
+  renderActivities(s);
   renderToolbar(s);
   renderChat(s, prev);
   if (prev && prev.interaction && !s.interaction) {
@@ -168,6 +181,39 @@ function drawTail(b) {
   }
 }
 
+function renderActivities(s) {
+  const a = s.activities;
+  if (!a || !a.items.length) {
+    activitiesEl.classList.add('hidden');
+    activitiesEl.dataset.key = '';
+    return;
+  }
+  activitiesEl.classList.remove('hidden');
+  activitiesEl.classList.toggle('interactive', !!s.interaction);
+  Object.assign(activitiesEl.style, { left: `${a.rect.x}px`, top: `${a.rect.y}px`, width: `${a.rect.width}px`, height: `${a.rect.height}px` });
+  const key = JSON.stringify(a.items);
+  if (activitiesEl.dataset.key === key) return;
+  activitiesEl.dataset.key = key;
+  activitiesEl.textContent = '';
+  for (const it of a.items) {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = `act ${it.status}`;
+    row.dataset.id = it.id;
+    row.title = it.detail ? `${it.title} — ${it.detail}` : it.title;
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    const t = document.createElement('span');
+    t.className = 't';
+    t.textContent = it.title;
+    const l = document.createElement('span');
+    l.className = 'l';
+    l.textContent = it.label;
+    row.append(dot, t, l);
+    activitiesEl.appendChild(row);
+  }
+}
+
 function renderToolbar(s) {
   if (!s.toolbar) {
     toolbarEl.classList.add('hidden');
@@ -194,9 +240,52 @@ function renderChat(s, prev) {
       ? 'Respostas programadas · offline · não é IA'
       : `${s.chat.provider.label}`;
   }
+  if (cmdMenuEl && !cmdMenuEl.classList.contains('hidden')) renderCmdMenu();
   if (wasHidden || !prev || !prev.chat) {
     if (!logEl.childElementCount) addMsg('jeff', 'Fala. Minhas respostas são programadas (sem IA). Tenta: "oi", "consegui", "treino", "silêncio" ou "me assusta".');
     setTimeout(() => chatInput.focus(), 30);
+  }
+}
+
+// Menu de comandos "/" (Wake Pet / Tuck Away Pet etc.).
+function matchingCommands() {
+  const cmds = (state && state.chat && state.chat.commands) || [];
+  const typed = chatInput.value.trim().toLowerCase();
+  if (!typed.startsWith('/') || typed.includes(' ')) return [];
+  return cmds.filter((c) => c.cmd.startsWith(typed));
+}
+
+function renderCmdMenu() {
+  const list = matchingCommands();
+  if (!list.length) {
+    cmdMenuEl.classList.add('hidden');
+    return;
+  }
+  cmdSel = Math.min(cmdSel, list.length - 1);
+  cmdMenuEl.textContent = '';
+  list.forEach((c, i) => {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'option');
+    li.dataset.cmd = c.cmd;
+    if (i === cmdSel) li.className = 'sel';
+    const b = document.createElement('b');
+    b.textContent = c.label;
+    const sp = document.createElement('span');
+    sp.textContent = `${c.cmd} · ${c.hint}`;
+    li.append(b, sp);
+    cmdMenuEl.appendChild(li);
+  });
+  cmdMenuEl.classList.remove('hidden');
+}
+
+async function sendChat(text) {
+  addMsg('user', text);
+  activity();
+  try {
+    const r = await api.chat(text);
+    if (r) addMsg('jeff', r.text);
+  } catch {
+    addMsg('jeff', 'Glub? Algo deu errado aqui.');
   }
 }
 
@@ -220,6 +309,8 @@ function requestFrame() {
 function targetFps() {
   if (!state) return 10;
   if (!windowVisible) return 0;
+  // Movimento reduzido: desenha só quando o estado muda.
+  if (reduced) return 0;
   if (state.opacity === 0 || state.anim === 'hidden') return 0;
   if (state.moving || dragging || ['run', 'dragged', 'land', 'appear', 'goodbye', 'play', 'happy', 'surprised'].includes(state.anim)) return 60;
   if (state.paused) return 8;
@@ -253,7 +344,7 @@ function draw(now) {
   // Virar: transição contínua do lado (animação de virada com leve achatamento).
   let squashTurn = 1;
   const turnMs = animator.style.turnMs ?? 240;
-  if (turnStart >= 0 && turnMs === 0) {
+  if (turnStart >= 0 && (turnMs === 0 || reduced)) {
     // Estilo recorte de papel: virada instantânea.
     facing = facingTarget;
     turnStart = -1;
@@ -267,18 +358,20 @@ function draw(now) {
     }
   } else facing = facingTarget;
 
-  const sample = animator.sample(now);
+  const sample = reduced ? animator.sampleStatic() : animator.sample(now);
   const pose = { ...sample.pose };
   pose.squashY *= squashTurn;
   // Falar por cima de outras animações (boca mexendo) quando há fala ativa.
-  if (s.talking && sample.name !== 'talk' && sample.name !== 'sleep' && !pose.happyEyes) {
+  if (s.talking && reduced && sample.name !== 'sleep' && !pose.happyEyes) {
+    pose.jaw = Math.max(pose.jaw, 0.35);
+  } else if (s.talking && sample.name !== 'talk' && sample.name !== 'sleep' && !pose.happyEyes) {
     pose.jaw = Math.max(pose.jaw, 0.15 + 0.45 * Math.abs(Math.sin(now / 95)));
   }
   // Olhar para o usuário no modo de interação.
-  if (s.interaction && sample.name === 'interactIdle') {
+  if (s.interaction && sample.name === 'interactIdle' && !reduced) {
     pose.pupilX = 0.3 * Math.sin(now / 1500);
   }
-  if (sample.name === 'land' && !landBurstDone) {
+  if (sample.name === 'land' && !landBurstDone && !reduced) {
     effects.burst('dustBurst', now, 6);
     landBurstDone = true;
   }
@@ -286,7 +379,7 @@ function draw(now) {
   const box = s.jeff;
   const scale = s.scale || 1;
   const head = rig.rig.metrics.head;
-  effects.update(now, sample.flags, head);
+  if (!reduced) effects.update(now, sample.flags, head);
   lastAnimFlags = sample.flags;
 
   // Indicação discreta do modo de interação: anel tracejado sob o Jeff.
@@ -297,7 +390,7 @@ function draw(now) {
     ctx.strokeStyle = 'rgba(63, 127, 212, 0.85)';
     ctx.lineWidth = 2.5;
     ctx.setLineDash([7, 5]);
-    ctx.lineDashOffset = -now / 40;
+    ctx.lineDashOffset = reduced ? 0 : -now / 40;
     ctx.beginPath();
     ctx.ellipse(rig.box.width / 2, rig.ground, rig.shadowRx + 16, 8, 0, 0, Math.PI * 2);
     ctx.stroke();
@@ -316,7 +409,9 @@ function draw(now) {
   ctx.scale(fs, 1);
   ctx.translate(-rig.box.width / 2, 0);
   ctx.translate(pose.rootX || 0, pose.rootY || 0);
-  effects.draw(ctx, now, { mark: sample.flags.mark && sample.t > 0.08 && sample.t < 0.92 ? sample.flags.mark : null, head, mouth: rig.rig.metrics.mouth, facingSign: fs });
+  const mark = sample.flags.mark && (reduced || (sample.t > 0.08 && sample.t < 0.92)) ? sample.flags.mark : null;
+  if (reduced) effects.particles.length = 0;
+  effects.draw(ctx, now, { mark, head, mouth: rig.rig.metrics.mouth, facingSign: fs });
   ctx.restore();
 }
 
@@ -346,7 +441,7 @@ function overJeff(x, y) {
 }
 
 function overUi(target) {
-  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target)));
+  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (!activitiesEl.classList.contains('hidden') && activitiesEl.contains(target))));
 }
 
 function activity() {
@@ -410,10 +505,9 @@ function setupInteraction() {
       /* ignora */
     }
     if (wasDragging) api.dragEnd();
-    else if (quick && e.type === 'pointerup' && performance.now() - lastPet > 800) {
-      lastPet = performance.now();
-      api.interact('pet');
-    }
+    // Clique rápido no pet: traz a Central para frente (carinho continua
+    // no botão 🤚 e esfregando o mouse sobre ele).
+    else if (quick && e.type === 'pointerup') api.openApp(null);
   };
   canvas.addEventListener('pointerup', endPointer);
   canvas.addEventListener('pointercancel', endPointer);
@@ -431,21 +525,53 @@ function setupInteraction() {
     else api.interact(a);
   });
 
-  chatForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const text = chatInput.value.trim();
-    if (!text) return;
-    chatInput.value = '';
-    addMsg('user', text);
+  activitiesEl.addEventListener('click', (e) => {
+    const row = e.target.closest('.act');
+    if (!row || !state || !state.interaction) return;
     activity();
-    try {
-      const r = await api.chat(text);
-      if (r) addMsg('jeff', r.text);
-    } catch {
-      addMsg('jeff', 'Glub? Algo deu errado aqui.');
+    api.openApp(row.dataset.id);
+  });
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let text = chatInput.value.trim();
+    if (!text) return;
+    const list = matchingCommands();
+    if (list.length && !list.some((c) => c.cmd === text.toLowerCase())) text = list[cmdSel].cmd;
+    chatInput.value = '';
+    cmdMenuEl.classList.add('hidden');
+    sendChat(text);
+  });
+  chatInput.addEventListener('input', () => {
+    activity();
+    cmdSel = 0;
+    renderCmdMenu();
+  });
+  chatInput.addEventListener('keydown', (e) => {
+    if (cmdMenuEl.classList.contains('hidden')) return;
+    const n = matchingCommands().length;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      cmdSel = (cmdSel + (e.key === 'ArrowDown' ? 1 : n - 1)) % n;
+      renderCmdMenu();
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      chatInput.value = matchingCommands()[cmdSel].cmd;
+      renderCmdMenu();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      cmdMenuEl.classList.add('hidden');
     }
   });
-  chatInput.addEventListener('input', activity);
+  cmdMenuEl.addEventListener('mousedown', (e) => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    e.preventDefault();
+    chatInput.value = '';
+    cmdMenuEl.classList.add('hidden');
+    sendChat(li.dataset.cmd);
+  });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && state && state.interaction) {
@@ -500,6 +626,9 @@ window.__jeffRenderer = {
   },
   get mouseMode() {
     return mouseMode;
+  },
+  get reduced() {
+    return reduced;
   },
 };
 

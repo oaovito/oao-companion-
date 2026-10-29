@@ -20,6 +20,7 @@ export const DEFAULTS = Object.freeze({
   startWithWindows: false,
   fullscreenBehavior: 'hide',   // hide | pause | ignore
   avoidFallback: 'fade',        // fade | hide  (sem espaço seguro / perseguição)
+  reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -38,6 +39,7 @@ const ENUMS = {
   speechFrequency: ['off', 'rare', 'normal', 'often'],
   fullscreenBehavior: ['hide', 'pause', 'ignore'],
   avoidFallback: ['fade', 'hide'],
+  reduceMotion: ['system', 'on', 'off'],
 };
 
 const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused'];

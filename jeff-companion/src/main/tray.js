@@ -19,6 +19,13 @@ export function createTray({ iconPath, getState, actions }) {
         label: s.interaction ? 'Sair do modo de interação' : `Modo de interação${s.hotkeyOk ? `   (${prettyHotkey(s.hotkey)})` : ''}`,
         click: () => actions.toggleInteraction(),
       },
+      { label: `Abrir ${s.name}`, click: () => actions.openApp() },
+      {
+        label: s.activities && s.activities.length ? `Atividades (${s.activities.length})` : 'Atividades',
+        submenu: s.activities && s.activities.length
+          ? s.activities.map((a) => ({ label: `${a.title} — ${a.label}`, click: () => actions.openApp(a.id) }))
+          : [{ label: 'Nada pendente', enabled: false }],
+      },
       { label: s.visible ? `Ocultar ${s.name}` : `Mostrar ${s.name}`, click: () => actions.toggleVisible() },
       { label: 'Pausar', type: 'checkbox', checked: s.paused, click: () => actions.togglePaused() },
       { label: 'Modo silencioso', type: 'checkbox', checked: s.quiet, click: () => actions.toggleQuiet() },

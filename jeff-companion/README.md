@@ -45,7 +45,10 @@ npm start
 |---|---|
 | Modo de interação | **Ctrl + Alt + J** (configurável) ou ícone da bandeja → *Modo de interação* |
 | Sair do modo de interação | **Esc**, botão ✕, clicar fora do Jeff ou inatividade (45 s por padrão) |
-| Carinho | No modo de interação: passe o mouse esfregando sobre o Jeff, clique nele ou use 🤚 |
+| Carinho | No modo de interação: passe o mouse esfregando sobre o Jeff ou use 🤚 |
+| Abrir a Central do JoJo | Clique no pet (modo de interação) ou bandeja → *Abrir JoJo* |
+| Ver atividades | Balão de status ao lado do pet; clique numa atividade (modo de interação) para abrir a conversa |
+| Guardar/acordar o pet | `/pet` no chat, *Wake Pet / Tuck Away Pet* no menu "/", na Central ou nas Configurações |
 | Comer / Brincar | Botões 🐟 e 🎾 |
 | Arrastar | Clique e arraste o Jeff no modo de interação |
 | Conversar | Botão 💬 (respostas **programadas**, offline — não é IA) |
@@ -54,13 +57,24 @@ npm start
 Fora do modo de interação o Jeff não recebe cliques: ele foge do cursor e os
 cliques passam para a janela de trás, mesmo durante a animação de fuga.
 
+## Pet, atividades e Central
+
+O balão de status ao lado do pet mostra o andamento de cada conversa:
+**Em andamento**, **Precisa de você**, **Pronto** (concluída, ainda não vista) e
+**Bloqueado** (falha ou erro de sistema). Clicar no pet traz a **Central do JoJo**
+para frente; clicar numa atividade abre aquela conversa. Comandos no chat:
+`/pet` (Wake Pet / Tuck Away Pet), `/silencio`, `/nova`, `/config`. As conversas
+ficam só na memória durante a sessão. Com "Efeitos de animação" desligado no
+Windows (ou *Reduzir movimento* ligado), o pet usa quadros estáticos.
+
 ## Configurações
 
 Tamanho, monitor preferido e troca de monitor, área de segurança do cursor
 (100 px lógicos por padrão), velocidade, atividade, frequência e tamanho dos
 balões, modo silencioso, sons (desligados por padrão), atalho, tempo de saída
 automática, iniciar com o Windows (desligado por padrão), comportamento em tela
-cheia (ocultar/pausar/nada) e restaurar padrões.
+cheia (ocultar/pausar/nada), reduzir movimento (segue o Windows por padrão) e
+restaurar padrões.
 
 Arquivo: `%APPDATA%\Jeff Companion\settings.json` (formato versionado; arquivos
 inválidos são preservados como `settings.invalid-<data>.json` e substituídos por

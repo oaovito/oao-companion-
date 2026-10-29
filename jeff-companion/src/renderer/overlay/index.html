@@ -11,6 +11,7 @@
   <svg id="tails" aria-hidden="true"></svg>
   <div id="bubble" class="bubble hidden" role="status" aria-live="polite"></div>
   <div id="measure" class="bubble" aria-hidden="true"></div>
+  <div id="activities" class="hidden" role="status" aria-live="polite" aria-label="Atividades"></div>
 
   <div id="toolbar" class="hidden" role="toolbar" aria-label="Interagir com o Jeff">
     <button data-action="pet" title="Fazer carinho (ou passe o mouse sobre o Jeff)"><span>🤚</span><small>Carinho</small></button>
@@ -26,8 +27,9 @@
       <span id="providerBadge" class="badge">Respostas programadas · offline · não é IA</span>
     </header>
     <div id="log" role="log" aria-live="polite"></div>
+    <ul id="cmdMenu" class="hidden" role="listbox" aria-label="Comandos"></ul>
     <form id="chatForm" autocomplete="off">
-      <input id="chatInput" type="text" maxlength="200" placeholder="Diga oi, ofereça comida, chame pra brincar…" aria-label="Mensagem para o Jeff">
+      <input id="chatInput" type="text" maxlength="200" placeholder="Diga oi… ou digite / para comandos" aria-label="Mensagem para o Jeff">
       <button type="submit" title="Enviar">➤</button>
     </form>
   </section>

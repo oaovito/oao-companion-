@@ -35,12 +35,14 @@ jeff-companion/
     phrases.js         frases sem repetição, tempo de leitura
     settings-schema.js padrões, validação, migração (version)
     settings-store.js  JSON atômico + backup de arquivo inválido (usado também pelo perfil)
+    conversations.js   conversas em memória, status das atividades, comandos "/"
     personality.js     perfil de personalidade, filtro/peso de frases, fiscal do Instagram, lembrete diário
     dialogue/          interface DialogueProvider, provedor programado, engine com fallback
   src/main/            integração com Windows/Electron
     main.js            bootstrap, IPC validado, bandeja, atalho, energia, monitores, autostart
     overlay-window.js  janela overlay = adaptador "overlay" do Companion
     settings-window.js janela de configurações
+    app-window.js      Central do JoJo (conversas, atividades, comandos)
     tray.js            menu da bandeja
     fullscreen-monitor.js + fullscreen-worker.cjs   detecção de tela cheia isolada
     logger.js          log local com rotação
@@ -48,6 +50,7 @@ jeff-companion/
   src/renderer/
     overlay/           canvas do Jeff, balões (DOM), barra, conversa, hover/arraste
     settings/          formulário de configurações
+    app/               Central do JoJo
     shared/            animator.js, rig-renderer.js, effects.js (puros, usados em scripts)
   assets/              personagem, animações, falas, ícones (ver assets/README.md)
   test/unit/           node:test (lógica + simulação completa com relógio falso)

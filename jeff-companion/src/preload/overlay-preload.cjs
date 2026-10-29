@@ -19,5 +19,7 @@ contextBridge.exposeInMainWorld('jeff', {
   dragEnd: () => ipcRenderer.send('jeff:drag-end'),
   exitInteraction: () => ipcRenderer.send('jeff:exit-interaction'),
   openSettings: () => ipcRenderer.send('jeff:open-settings'),
+  openApp: (id) => ipcRenderer.send('jeff:open-app', id ? String(id) : null),
+  setReducedMotion: (on) => ipcRenderer.send('jeff:reduced-motion', !!on),
   platform: process.platform,
 });

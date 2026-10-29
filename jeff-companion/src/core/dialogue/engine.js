@@ -30,15 +30,18 @@ export class DialogueEngine {
     const input = String(text || '').slice(0, 500);
     this.history.push({ role: 'user', text: input });
     let raw;
+    let error = null;
     const provider = this.active;
     try {
       if (provider !== this.fallback && !(await provider.isAvailable())) throw new Error('indisponível');
       raw = await withTimeout(provider.reply({ text: input, history: this.history.slice(-10), context }), this.timeoutMs);
     } catch (e) {
       this.log('warn', `Provedor ${provider.id} falhou (${e.message}); usando respostas programadas.`);
+      error = e.message;
       raw = await this.fallback.reply({ text: input });
     }
     const out = normalizeReply(raw);
+    if (error) out.error = error;
     this.history.push({ role: 'jeff', text: out.text });
     if (this.history.length > 20) this.history.splice(0, this.history.length - 20);
     return out;

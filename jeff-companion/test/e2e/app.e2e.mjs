@@ -149,7 +149,7 @@ test('modo de interação: ações, conversa offline, Esc e restauração do cli
     assert.match(badge, /programadas/i);
     await win.fill('#chatInput', 'hora de dormir');
     await win.press('#chatInput', 'Enter');
-    await sleep(500);
+    await sleep(1200); // inclui o "digitando…" da resposta
     const lastMsg = await win.evaluate(() => document.querySelector('#log .msg.jeff:last-child')?.textContent);
     assert.ok(lastMsg && lastMsg.length > 3);
     assert.equal((await dbg(app)).behavior, 'sleep');
@@ -159,6 +159,59 @@ test('modo de interação: ações, conversa offline, Esc e restauração do cli
     w = await app.evaluate(() => ({ f: globalThis.__jeff.overlay.win.isFocusable(), m: globalThis.__jeff.overlay.mouseMode, i: globalThis.__jeff.companion.interaction }));
     assert.deepEqual(w, { f: false, m: 'passthrough', i: false });
     assert.equal(await win.isVisible('#toolbar'), false);
+  } finally {
+    await quit(app);
+  }
+});
+
+test('pet: atividades, clique abre a Central, /pet guarda e acorda, movimento reduzido', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 5, y: 5 }));
+    // Erro de sistema aparece como atividade "Bloqueado" ao lado do pet.
+    await app.evaluate(() => globalThis.__jeff.companion.reportSystem('teste', 'Teste', 'Falha simulada.'));
+    await sleep(300);
+    assert.equal(await win.isVisible('#activities'), true);
+    assert.match(await win.textContent('#activities'), /Bloqueado/);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.mouseMode), 'passthrough', 'balão não bloqueia cliques');
+
+    // Modo de interação: clicar na atividade abre a Central nessa conversa.
+    await app.evaluate(() => globalThis.__jeff.companion.enterInteraction('test'));
+    await sleep(400);
+    const appWinP = app.waitForEvent('window');
+    await win.click('#activities .act');
+    const central = await appWinP;
+    await central.waitForSelector('#convTitle');
+    await sleep(400);
+    assert.equal(await central.textContent('#convTitle'), 'Teste');
+    assert.equal(await app.evaluate(() => globalThis.__jeff.appWin.isShowing), true);
+
+    // Conversa pela Central: status vai a "Em andamento" e depois volta.
+    await central.click('#newChat');
+    await sleep(200);
+    await central.fill('#input', 'oi');
+    await central.press('#input', 'Enter');
+    await sleep(1200);
+    assert.ok((await central.locator('#log .msg').count()) >= 2);
+
+    // /pet pela Central guarda e acorda o pet.
+    await central.fill('#input', '/pet');
+    await central.press('#input', 'Enter');
+    await sleep(400);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), false);
+    assert.match(await central.textContent('#petToggle'), /Wake Pet/);
+    await central.click('#petToggle');
+    await sleep(400);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.win.isVisible()), true);
+    assert.match(await central.textContent('#petToggle'), /Tuck Away Pet/);
+
+    // Movimento reduzido: quadros estáticos no renderer.
+    await app.evaluate(() => globalThis.__jeff.store.update({ reduceMotion: 'on' }));
+    await sleep(400);
+    assert.equal(await win.evaluate(() => window.__jeffRenderer.reduced), true);
+    await app.evaluate(() => globalThis.__jeff.store.update({ reduceMotion: 'off' }));
+    await sleep(300);
+    assert.equal(await win.evaluate(() => window.__jeffRenderer.reduced), false);
   } finally {
     await quit(app);
   }
@@ -293,7 +346,7 @@ test('instância única: segunda execução encerra e a primeira avisa', async (
     assert.equal(code, 0, 'segunda instância saiu');
     await sleep(800);
     const b = (await dbg(app)).bubble;
-    assert.ok(b && /aqui|Jeff/i.test(b.text), `aviso exibido: ${b && b.text}`);
+    assert.ok(b && /aqui|Jeff|JoJo/i.test(b.text), `aviso exibido: ${b && b.text}`);
   } finally {
     await quit(app);
   }
