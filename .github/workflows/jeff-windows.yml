@@ -29,14 +29,17 @@ jobs:
         run: npm test
 
       - name: Gerar instalador e ZIP
+        if: success() || failure()
         run: npx electron-builder --win --x64
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
       - name: Integração no Windows (entrada real de mouse/teclado)
+        if: success() || failure()
         run: node --test --test-concurrency=1 test/e2e/windows.e2e.mjs
 
       - name: E2E multiplataforma
+        if: success() || failure()
         run: node --test --test-concurrency=1 test/e2e/app.e2e.mjs
 
       - name: Medir CPU e memória

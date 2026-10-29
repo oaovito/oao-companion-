@@ -2,11 +2,12 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Companion } from '../../src/core/companion.js';
 import { SettingsStore } from '../../src/core/settings-store.js';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 
-export const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
+export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 export function loadJSON(rel) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
