@@ -34,6 +34,7 @@ let lastFrame = 0;
 let dpr = window.devicePixelRatio || 1;
 let lastAnimFlags = {};
 let landBurstDone = false;
+let puffDone = false;
 let windowVisible = true;
 let reduced = false; // movimento reduzido (quadros estáticos)
 let cmdSel = 0;
@@ -86,9 +87,12 @@ function onState(s) {
   const prev = state;
   state = s;
   const now = performance.now();
-  if (animator && (!prev || prev.anim !== s.anim)) {
-    animator.play(s.anim, now);
+  const modeChanged = prev && (prev.mode || null) !== (s.mode || null);
+  if (animator && (!prev || prev.anim !== s.anim || modeChanged)) {
+    // Modo "ligadão": sorteia as variações com olhos arregalados, tremedeira etc.
+    animator.play(s.anim, now, { mode: s.mode || null, restart: modeChanged });
     landBurstDone = false;
+    puffDone = false;
   }
   if (s.facing !== facingTarget) {
     facingTarget = s.facing;
@@ -371,6 +375,16 @@ function draw(now) {
   if (s.interaction && sample.name === 'interactIdle' && !reduced) {
     pose.pupilX = 0.3 * Math.sin(now / 1500);
   }
+  // Ligadão: aparência mantida mesmo nas animações sem variação própria.
+  if (s.mode === 'wired') {
+    pose.moodWired = Math.max(pose.moodWired || 0, 0.5);
+    pose.eyeScale = Math.max(pose.eyeScale || 1, 1.2);
+  }
+  if (s.noseDust) pose.noseDust = 1;
+  if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
+    effects.burst('powderPuff', now, 6);
+    puffDone = true;
+  }
   if (sample.name === 'land' && !landBurstDone && !reduced) {
     effects.burst('dustBurst', now, 6);
     landBurstDone = true;
@@ -379,7 +393,7 @@ function draw(now) {
   const box = s.jeff;
   const scale = s.scale || 1;
   const head = rig.rig.metrics.head;
-  if (!reduced) effects.update(now, sample.flags, head);
+  if (!reduced) effects.update(now, s.mode === 'wired' ? { ...sample.flags, sweat: true } : sample.flags, head);
   lastAnimFlags = sample.flags;
 
   // Indicação discreta do modo de interação: anel tracejado sob o Jeff.
@@ -626,6 +640,9 @@ window.__jeffRenderer = {
   },
   get mouseMode() {
     return mouseMode;
+  },
+  get mode() {
+    return animator ? animator.mode : null;
   },
   get variant() {
     return animator && animator.current ? animator.current.variant : null;

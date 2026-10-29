@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 0.10.0 — 2026-10-29
+
+### Adicionado
+- **PC parado** (5 min por padrão, `ociosidade.minutos`): o JoJo senta no chão e
+  cheira uma carreira de pó (animação `snort`, carreira no chão, nuvem de pó). Fica
+  sentado ligadão até a volta. Na volta, **5 min** (`ociosidade.efeitoMin`) de
+  efeito: pó no focinho, olhos arregalados, tom pálido, suor, mandíbula rangendo,
+  tremedeira, variações "ligadão" de parado/andar/falar/olhar, fala muito mais,
+  anda 1,7× mais rápido e não senta nem dorme. Sem o humor com drogas: toma
+  pré-treino (`chug`), mesmo efeito sem pó. Ociosidade lida só como contador do
+  sistema (`powerMonitor.getSystemIdleTime`), sem teclas ou cliques.
+- **Objetivo: fazer a Emanuele sorrir** (`objetivo` no perfil): piadas espontâneas
+  e exibições de **supino** (deitado no banco, anilha na mão) e **agachamento**
+  (barra nos ombros), sozinhas ou pelo chat ("faz supino", "agachamento").
+- **Legends**: uma vez por semana, em momento aleatório (10h–22h), "jogar Legends
+  é ideia burra".
+- Adereços no rig com `showIf` (banco, barra, carreira de pó, coqueteleira, pó no
+  focinho). 100 animações.
+- Publicação: tag `v*` gera uma Release do GitHub com o `JeffCompanion.exe`.
+
+### Alterado
+- Pesquisa: escolhe, entre os 3 primeiros artigos, o que cita mais palavras da pergunta.
+
 ## 0.9.0 — 2026-10-29
 
 ### Adicionado

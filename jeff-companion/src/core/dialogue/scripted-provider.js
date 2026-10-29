@@ -28,6 +28,8 @@ export const INTENTS = [
   { id: 'wake', patterns: [/\b(acord\w*|levanta)\b/] },
   { id: 'eat', patterns: [/\b(com(e|er|ida|endo)|fome|lanche|petisco|peix\w*|almoc\w*|janta\w*|nham)\b/] },
   { id: 'play', patterns: [/\b(brinc\w*|jog(ar|o|a)|bola|bolinha|divert\w*|flexiona|biceps|shape|muscul\w*)\b/] },
+  { id: 'bench', patterns: [/\b(supino|faz (um )?supino|peitoral|peito)\b/] },
+  { id: 'squat', patterns: [/\b(agachamento|agacha\w*|faz (um )?agachamento|leg day)\b/] },
   { id: 'gym', patterns: [/\b(academia|treino|treinar|malhar|malhei|supino|agachamento)\b/] },
   { id: 'pet', patterns: [/\b(carinho|cafune|fofo|fofinho|abraco|lindo|amo|gosto de voce)\b/] },
   { id: 'thanks', patterns: [/\b(obrigad\w*|valeu|brigad\w*)\b/] },
@@ -60,6 +62,8 @@ export const RESPONSES = {
   wake: ['Acordado. O que eu perdi?', 'Tô de pé, {nome}. Bora.'],
   eat: ['Comida de verdade, {nome}? Manda.', 'Peixe. Proteína. Aprovado.'],
   play: ['Olha esse bíceps, {nome}. Aprende.', 'Brincar não. Cardio.'],
+  bench: ['Supino. Olha a técnica, {nome}.', 'Pra você ver, {nome}: carga de respeito.', 'Desce controlado, sobe explosivo. Aprende.'],
+  squat: ['Agachamento. Abaixo da paralela, {nome}.', 'Leg day. Ninguém pula perna aqui.', 'Olha esse agachamento, {nome}. Sorri aí.'],
   gym: ['Treino pago, {nome}? Então descansa direito.', 'Constância. Carga progressiva. Sono. Simples.', 'Não pulou perna, né, {nome}?'],
   pet: ['Tá, {nome}. Chega de carinho.', 'Hm. Aceitável.'],
   thanks: ['Não por isso, Emanuele. Volta pro trabalho.', 'De nada. Agora produz.'],
@@ -81,19 +85,19 @@ export const RESPONSES = {
 const ACTIONS = {
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'sleep', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
-  name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry',
+  name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
-  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', name: 'serio', sleep: 'serio',
+  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',
 };
 
 // Intenções que, numa pergunta de conhecimento ("quantas horas devo dormir?"),
 // dão lugar à pesquisa: a resposta programada não responderia a pergunta.
-const SEARCHABLE = new Set(['unknown', 'sleep', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet']);
+const SEARCHABLE = new Set(['unknown', 'sleep', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
 
 export function detectIntent(text) {
   const n = normalizeText(text);

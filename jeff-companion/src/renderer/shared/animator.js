@@ -30,6 +30,7 @@ export class Animator {
       if (a.variantOf && data.animations[a.variantOf]) (this.variants[a.variantOf] ||= [a.variantOf]).push(key);
     }
     this.lastVariant = {};
+    this.mode = null;
   }
 
   /** Lista de variações da animação (inclui a própria). */
@@ -37,10 +38,16 @@ export class Animator {
     return this.variants[name] || [name];
   }
 
-  /** Sorteia uma variação diferente da última usada para essa animação. */
-  _pickVariant(name) {
-    const list = this.variantsOf(name);
-    if (list.length === 1) return name;
+  /**
+   * Sorteia uma variação diferente da última usada. Com `mode` (ex.: 'wired'),
+   * prefere as variações daquele modo; sem modo, ignora as variações de modo.
+   */
+  _pickVariant(name, mode = this.mode) {
+    const all = this.variantsOf(name);
+    const A = this.data.animations;
+    const inMode = mode ? all.filter((k) => A[k].mode === mode) : [];
+    const list = inMode.length ? inMode : all.filter((k) => !A[k].mode);
+    if (list.length <= 1) return list[0] || name;
     const options = list.filter((k) => k !== this.lastVariant[name]);
     const key = options[Math.floor(this.rng() * options.length) % options.length];
     this.lastVariant[name] = key;
@@ -55,8 +62,9 @@ export class Animator {
    * Inicia uma animação, mesclando a partir da pose atual. `name` é a animação
    * pedida (base); a variação sorteada fica em `current.variant`.
    */
-  play(name, now, { restart = false, variant = null } = {}) {
+  play(name, now, { restart = false, variant = null, mode } = {}) {
     const key = this.data.animations[name] ? name : 'idle';
+    if (mode !== undefined) this.mode = mode;
     if (this.current && this.current.name === key && !restart) return false;
     const v = variant && this.variantsOf(key).includes(variant) ? variant : this._pickVariant(key);
     const anim = this.data.animations[v];
@@ -112,7 +120,7 @@ export class Animator {
       name: this.current.name,
       t,
       done: !anim.loop && now - start >= dur,
-      flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts },
+      flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts, sweat: !!anim.sweat },
     };
   }
 

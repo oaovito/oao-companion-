@@ -431,3 +431,27 @@ test('pergunta sem resposta programada: pesquisa (fonte local falsa) e responde 
     server.close();
   }
 });
+
+test('PC parado: senta e cheira; na volta fica ligadão (renderer usa as variações do modo)', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 5, y: 5 }));
+    assert.equal(await app.evaluate(() => globalThis.__jeff.setIdle(360)), true);
+    await sleep(2500);
+    assert.equal(await win.evaluate(() => window.__jeffRenderer.anim), 'snort');
+    await sleep(4500);
+    assert.equal(await win.evaluate(() => window.__jeffRenderer.anim), 'sitWired');
+    await app.evaluate(() => globalThis.__jeff.setIdle(0));
+    await sleep(800);
+    const st = await win.evaluate(() => ({ mode: window.__jeffRenderer.state.mode, nose: window.__jeffRenderer.state.noseDust, animMode: window.__jeffRenderer.mode }));
+    assert.deepEqual(st, { mode: 'wired', nose: true, animMode: 'wired' });
+    assert.equal(await app.evaluate(() => globalThis.__jeff.overlay.mouseMode), 'passthrough', 'continua click-through');
+    // Exibição pra ela ver.
+    await app.evaluate(() => globalThis.__jeff.companion.react('benchPress'));
+    await sleep(600);
+    assert.equal(await win.evaluate(() => window.__jeffRenderer.anim), 'benchPress');
+  } finally {
+    await app.evaluate(() => globalThis.__jeff.setIdle(null)).catch(() => {});
+    await quit(app);
+  }
+});

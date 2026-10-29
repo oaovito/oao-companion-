@@ -147,6 +147,8 @@ export class RigRenderer {
   }
 
   _part(ctx, part, pose, op) {
+    // Adereços (banco, barra, pó…) só aparecem quando o canal `showIf` está ligado.
+    if (part.showIf && !((pose[part.showIf] ?? 0) >= 0.5)) return;
     ctx.save();
     this._xform(ctx, part, pose, 0);
     op(this.paths.get(part.id));

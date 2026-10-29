@@ -42,6 +42,7 @@ export class Effects {
     if ((flags.hearts || this.effectName === 'hearts') && every('heart', 380)) this._spawn('heart', now, 0, head);
     if (flags.dust === true && every('dust', 120)) this._spawn('dust', now);
     if (flags.sparkle === true && every('sparkle', 160)) this._spawn('sparkle', now, 0, head);
+    if (flags.sweat && every('sweat', 850)) this._spawn('sweat', now, 0, head);
     this.particles = this.particles.filter((p) => now - p.born < p.life);
   }
 
@@ -60,6 +61,12 @@ export class Effects {
         break;
       case 'dustBurst':
         this.particles.push({ ...base, kind: 'dust', life: 550, x: this.cx + (k - 0.5) * 110, y: this.g - 5, vx: (k - 0.5) * 120, vy: -14, size: 5 + r() * 3 });
+        break;
+      case 'sweat':
+        this.particles.push({ ...base, life: 900, x: head.x + (r() < 0.5 ? -46 : 46) + r() * 6, y: head.y + 24, vx: 0, vy: 30, size: 3 + r() * 2 });
+        break;
+      case 'powderPuff':
+        this.particles.push({ ...base, kind: 'puff', life: 700, x: head.x + (k - 0.5) * 30, y: head.y + 44, vx: (k - 0.5) * 50, vy: -18, size: 3 + r() * 3 });
         break;
       case 'sparkle':
         this.particles.push({ ...base, life: 700, x: this.cx - 70 + r() * 140, y: 20 + r() * (this.g - 60), vx: 0, vy: -6, size: 4 + r() * 4 });
@@ -81,6 +88,8 @@ export class Effects {
       else if (p.kind === 'heart') this._heart(ctx, x + Math.sin(t * 8) * 3, y, p.size);
       else if (p.kind === 'dust') this._puff(ctx, x, y, p.size * (1 + t));
       else if (p.kind === 'sparkle') this._star(ctx, x, y, p.size * (1 - Math.abs(t - 0.5)));
+      else if (p.kind === 'sweat') this._drop(ctx, x, y, p.size);
+      else if (p.kind === 'puff') this._whitePuff(ctx, x, y, p.size * (1 + t));
       ctx.restore();
     }
     const el = now - this.effectStart;
@@ -119,6 +128,28 @@ export class Effects {
     ctx.fillStyle = 'rgba(200, 208, 222, 0.9)';
     ctx.strokeStyle = 'rgba(27, 38, 71, 0.5)';
     ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  _drop(ctx, x, y, s) {
+    ctx.fillStyle = '#9fd3ff';
+    ctx.strokeStyle = OUTLINE;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x, y - s * 1.8);
+    ctx.quadraticCurveTo(x + s, y, x, y + s);
+    ctx.quadraticCurveTo(x - s, y, x, y - s * 1.8);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  _whitePuff(ctx, x, y, r) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.strokeStyle = 'rgba(27, 38, 71, 0.35)';
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();

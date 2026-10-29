@@ -62,6 +62,12 @@ export const STATES = {
   lecture: { priority: P.INTERACT, phases: [{ anim: 'lecture', ms: 2600 }], next: 'idle' },
   comfort: { priority: P.INTERACT, phases: [{ anim: 'comfort', ms: 4500 }], next: 'idle' },
   scare: { priority: P.INTERACT, phases: [{ anim: 'scare', ms: 1500 }], next: 'idle' },
+  // PC parado: senta no chão e cheira (ou bebe pré-treino); fica sentado ligadão até a volta.
+  snort: { priority: P.INTERACT, phases: [{ anim: 'sitDown', ms: 700 }, { anim: 'snort', ms: 4200 }, { anim: 'sitWired', loop: true }], external: true, next: 'idle' },
+  chug: { priority: P.INTERACT, phases: [{ anim: 'sitDown', ms: 700 }, { anim: 'chug', ms: 4200 }, { anim: 'sitWired', loop: true }], external: true, next: 'idle' },
+  // Exibição pra Emanuele ver.
+  benchPress: { priority: P.INTERACT, phases: [{ anim: 'benchPress', ms: 5200 }], next: 'happy' },
+  squat: { priority: P.INTERACT, phases: [{ anim: 'squat', ms: 4400 }], next: 'happy' },
   angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },
   sad: { priority: P.INTERACT, phases: [{ anim: 'sad', ms: 3200 }], next: 'idle' },
   interactIdle: { priority: P.COMMAND, phases: [{ anim: 'interactIdle', loop: true }], external: true },
@@ -84,6 +90,9 @@ export function autoWeights(activity, { sleepiness = 0, alert = false } = {}) {
     sit: 1.4 - a * 0.6,
     lie: 0.6 - a * 0.3 + sleepiness * 0.8,
     sleep: (0.15 + sleepiness * 1.5) * (1.2 - a),
+    // Exibições (supino, agachamento): raras, para arrancar um sorriso.
+    benchPress: alert ? 0 : 0.12 + a * 0.1,
+    squat: alert ? 0 : 0.12 + a * 0.1,
   };
   for (const k of Object.keys(w)) w[k] = Math.max(0, w[k]);
   return w;
@@ -246,6 +255,16 @@ export class BehaviorMachine {
       w.curious += 1.5;
     }
     if (ctx.quiet) w.walk *= 0.6;
+    // Ligadão: não para quieto nem dorme.
+    if (ctx.wired) {
+      w.sleep = 0;
+      w.lie = 0;
+      w.sit = 0;
+      w.walk *= 2.2;
+      w.lookAround *= 1.5;
+      w.benchPress *= 2;
+      w.squat *= 2;
+    }
     const recent = this.history.slice(-3);
     return weightedPick(w, this.rng, recent);
   }

@@ -3,8 +3,12 @@ name: Jeff Companion (Windows)
 on:
   push:
     branches: ['main', 'claude/**']
+    tags: ['v*']
     paths: ['jeff-companion/**', '.github/workflows/jeff-windows.yml']
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   windows:
@@ -68,3 +72,15 @@ jobs:
             jeff-companion/measure-windows.json
           if-no-files-found: warn
           retention-days: 14
+
+      # Tag "v*": publica a versão (Release do GitHub) com o executável portátil.
+      - name: Publicar versão
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: JoJo ${{ github.ref_name }}
+          body_path: jeff-companion/RELEASE_NOTES.md
+          files: |
+            jeff-companion/dist/JeffCompanion.exe
+            jeff-companion/dist/JeffCompanion-Setup-*.exe
+            jeff-companion/dist/JeffCompanion-*-win-x64.zip

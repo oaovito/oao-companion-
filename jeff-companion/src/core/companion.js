@@ -16,7 +16,7 @@ import { displayForRect, allowedDisplays, recoverRect, topologySignature, primar
 import { distPointRect, roundRect, dist, clamp } from './geometry.js';
 import { jeffRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS } from './settings-schema.js';
-import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, phraseFilter, phraseWeight, profileVars } from './personality.js';
+import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
@@ -49,6 +49,9 @@ export class Companion {
     this.activitiesHiddenUntil = 0;
     this.activityRect = null;
     this.reducedMotion = false;
+    this.powderKind = null; // 'snort' | 'chug' enquanto senta no chão (PC parado)
+    this.wiredKind = null;
+    this.wiredUntil = 0;
     this.lastSaid = null;
     this.platform = platform;
     this.overlay = overlay;
@@ -408,6 +411,7 @@ export class Companion {
     if (this._avoidanceEnabled()) this._runAvoidance(now);
 
     this.behavior.tick(now);
+    this._updateWired(now);
     this._updateSpeech(now);
     this._updateInteraction(now);
     if (this.effect && now >= this.effect.until) this.effect = null;
@@ -542,7 +546,65 @@ export class Companion {
       alert: this.avoid.isAlert,
       paused: this.paused,
       quiet: this.store.get().quietMode,
+      wired: this.wired,
     };
+  }
+
+  // ---------------------------------------------------------------- PC parado → "ligadão"
+
+  /** Efeito do pó/pré-treino ativo (dura `ociosidade.efeitoMin` após a volta). */
+  get wired() {
+    return this.wiredUntil > this.clock.now();
+  }
+
+  /**
+   * Tempo sem uso do computador (segundos), vindo do sistema (só um contador;
+   * nenhuma tecla ou clique é lido). Parado por `ociosidade.minutos`: o JoJo
+   * senta no chão e cheira uma carreira (ou toma pré-treino se o humor com
+   * drogas estiver desligado). Na volta, fica ligadão por `efeitoMin`.
+   */
+  onSystemIdle(idleSec) {
+    const profile = this.personality.get();
+    const cfg = profile.ociosidade;
+    const now = this.clock.now();
+    if (idleSec >= cfg.minutos * 60) {
+      if (!cfg.ativo || this.powderKind || !this._canIdleAct()) return false;
+      const kind = profile.humorDrogas ? 'snort' : 'chug';
+      if (!this.react(kind)) return false;
+      this.powderKind = kind;
+      this.hideBubble();
+      this._applyLayout(true);
+      return true;
+    }
+    if (idleSec < 10 && this.powderKind) {
+      this._startWired(now);
+      return true;
+    }
+    return false;
+  }
+
+  _canIdleAct() {
+    return this.started && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.interaction && !this.dragging;
+  }
+
+  _startWired(now) {
+    const kind = this.powderKind;
+    this.powderKind = null;
+    this.wiredKind = kind;
+    this.wiredUntil = now + this.personality.get().ociosidade.efeitoMin * 60e3;
+    if (this.behavior.state === kind) this.behavior.finish(kind, now);
+    this.sayCategory(kind === 'snort' ? 'wiredStart' : 'hyperStart', { force: !this.store.get().quietMode });
+    this._scheduleSpeech(now, true);
+    this._applyLayout(true);
+  }
+
+  _updateWired(now) {
+    if (!this.wiredUntil || now < this.wiredUntil) return;
+    this.wiredUntil = 0;
+    this.wiredKind = null;
+    if (this._canNag() && this.rng() < 0.6) this.sayCategory('wiredEnd', { spontaneous: true });
+    this._scheduleSpeech(now, true);
+    this._applyLayout(true);
   }
 
   _onBehavior(ev) {
@@ -557,6 +619,7 @@ export class Companion {
     if (ev.state === 'curious' && this.rng() < 0.35) this.sayCategory('curious', { spontaneous: true });
     if (ev.prev === 'sleep' && ev.state !== 'sleep' && ev.state !== 'flee' && ev.state !== 'hidden' && this.rng() < 0.5) this.sayCategory('wake', { spontaneous: true });
     if (ev.state === 'lie' && this.rng() < 0.3) this.sayCategory('sleepy', { spontaneous: true });
+    if ((ev.state === 'benchPress' || ev.state === 'squat') && this.rng() < 0.75) this.sayCategory('showOff', { spontaneous: true });
   }
 
   _sleepTalk() {
@@ -576,7 +639,8 @@ export class Companion {
     const s = this.store.get();
     const r = this._rects();
     const control = choosePathControl(this.pos, target, { width: r.box.width, height: r.box.height }, this.cursor, s.safetyMargin).control;
-    this.mover.start(this.pos, target, { control, speed: WALK_SPEED * s.moveSpeed * Math.sqrt(s.size), easing: 'inOut', now, minMs: 600, maxMs: 9000, kind: 'walk' });
+    const hurry = this.wired ? 1.7 : 1;
+    this.mover.start(this.pos, target, { control, speed: WALK_SPEED * s.moveSpeed * Math.sqrt(s.size) * hurry, easing: 'inOut', now, minMs: 600, maxMs: 9000, kind: 'walk' });
   }
 
   _pickWanderTarget() {
@@ -622,7 +686,9 @@ export class Companion {
       return;
     }
     if (!reset && Number.isFinite(this.nextSpeechAt)) return;
-    this.nextSpeechAt = now + range[0] + this.rng() * (range[1] - range[0]);
+    // Ligadão: fala muito mais.
+    const r = this.wired ? [Math.min(range[0], 25e3), Math.min(range[1], 60e3)] : range;
+    this.nextSpeechAt = now + r[0] + this.rng() * (r[1] - r[0]);
   }
 
   _updateSpeech(now) {
@@ -641,7 +707,15 @@ export class Companion {
       return;
     }
     if (!CALM_STATES.has(st)) return;
-    const cat = this.rng() < 0.55 ? 'idleSpeech' : 'idleThought';
+    // O objetivo é fazer a Emanuele sorrir: de vez em quando ele brinca ou se exibe.
+    const roll = this.rng();
+    let cat;
+    if (this.wired) cat = roll < 0.75 ? 'wired' : 'joke';
+    else if (roll < 0.18) cat = 'joke';
+    else if (roll < 0.26) {
+      this.react(this.rng() < 0.5 ? 'benchPress' : 'squat');
+      return;
+    } else cat = roll < 0.65 ? 'idleSpeech' : 'idleThought';
     this.sayCategory(cat, { spontaneous: true });
   }
 
@@ -964,6 +1038,8 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'scare') {
       this.behavior.request('scare', { now, force: true });
+    } else if (action === 'bench' || action === 'squat') {
+      this.behavior.request(action === 'bench' ? 'benchPress' : 'squat', { now, force: true });
     } else if (['judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad'].includes(action)) {
       this.behavior.request(action, { now, force: true });
     } else if (action === 'quiet') {
@@ -1064,6 +1140,7 @@ export class Companion {
     this.reminderTimer = this.clock.setTimeout(() => {
       this.reminderTimer = null;
       this.checkDailyReminder(new Date());
+      this.checkWeeklyLegends(new Date());
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);
   }
@@ -1085,6 +1162,18 @@ export class Companion {
       if (this.lastSaid) this.conversations.addMessage(c.id, 'jeff', this.lastSaid);
       this.conversations.setStatus(c.id, 'needsInput', 'Fome ou tédio? Responda quando puder.');
     }
+    return deliver;
+  }
+
+  /** Uma vez por semana, em momento aleatório: "jogar Legends é ideia burra". */
+  checkWeeklyLegends(date = new Date()) {
+    const cfg = this.personality.get().legends;
+    const { due, state } = weeklyReminder(date, cfg, this.rng);
+    const deliver = due && this._canNag() && !this.interaction;
+    const next = { ...cfg, momento: state.momento };
+    if (deliver) next.ultimaSemana = state.ultimaSemana;
+    if (JSON.stringify(next) !== JSON.stringify(cfg)) this.personality.update({ legends: next }, { silent: true });
+    if (deliver) this._nag('legends', this.clock.now());
     return deliver;
   }
 
@@ -1161,6 +1250,8 @@ export class Companion {
       effect: this.effect ? this.effect.name : null,
       activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
       reducedMotion: this.reducedMotion,
+      mode: this.wired ? 'wired' : null,
+      noseDust: this.wired && this.wiredKind === 'snort',
       moving: this.mover.active ? this.mover.kind : null,
       sounds: s.sounds && !s.quietMode,
     };

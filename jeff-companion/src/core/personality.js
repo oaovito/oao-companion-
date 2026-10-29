@@ -20,12 +20,19 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   palavroes: 'ocasional',
   // Humor ácido com referências a cocaína (sem incentivar uso). Pode desligar.
   humorDrogas: true,
+  // Objetivo final do companion (orienta as brincadeiras e os provedores de IA futuros).
+  objetivo: 'Fazer a Emanuele sorrir. Mesmo sério, de vez em quando brinca, faz graça e se exibe (supino, agachamento, dancinha).',
   // Instruções livres "Como quero que o Jeff se comporte" — usadas por provedores de IA futuros.
-  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Respeita quando ela pede silêncio. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora e indique o CVV (188). A expressão corporal acompanha cada fala. Nunca usa peso ou corpo como insulto e não incentiva uso de drogas.',
+  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Respeita quando ela pede silêncio. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora e indique o CVV (188). A expressão corporal acompanha cada fala. Nunca usa peso ou corpo como insulto e não incentiva uso de drogas. Objetivo final: fazer a Emanuele sorrir, então de vez em quando brinca.',
   // Fiscal do Instagram (Windows: título da janela em primeiro plano, só comparação local).
   instagram: { ativo: true, intervaloMinSeg: 120 },
   // Lembrete diário sobre comer com atenção, em horário aleatório dentro da faixa.
   lembreteComida: { ativo: true, inicio: 10, fim: 21, ultimoDia: null, horarioDeHoje: null },
+  // Computador parado: o JoJo senta no chão e cheira pó (ou toma pré-treino se
+  // humorDrogas estiver desligado); o efeito dura `efeitoMin` após a volta.
+  ociosidade: { ativo: true, minutos: 5, efeitoMin: 5 },
+  // Uma vez por semana, em momento aleatório: "jogar Legends é ideia burra".
+  legends: { ativo: true, inicio: 10, fim: 22, ultimaSemana: null, momento: null },
 });
 
 const PALAVROES = ['nenhum', 'ocasional', 'frequente'];
@@ -54,9 +61,12 @@ export function sanitizePersonality(input) {
     humor: str(src.humor, D.humor, 400),
     palavroes: PALAVROES.includes(src.palavroes) ? src.palavroes : D.palavroes,
     humorDrogas: typeof src.humorDrogas === 'boolean' ? src.humorDrogas : D.humorDrogas,
+    objetivo: str(src.objetivo, D.objetivo, 400),
     instrucoes: str(src.instrucoes, D.instrucoes, 4000),
     instagram: { ...D.instagram },
     lembreteComida: { ...D.lembreteComida },
+    ociosidade: { ...D.ociosidade },
+    legends: { ...D.legends },
   };
   if ('palavroes' in src && out.palavroes !== src.palavroes) issues.push('palavroes');
   const ig = src.instagram && typeof src.instagram === 'object' ? src.instagram : {};
@@ -74,6 +84,23 @@ export function sanitizePersonality(input) {
   out.lembreteComida.ultimoDia = typeof lc.ultimoDia === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(lc.ultimoDia) ? lc.ultimoDia : null;
   out.lembreteComida.horarioDeHoje = lc.horarioDeHoje && typeof lc.horarioDeHoje.dia === 'string' && Number.isFinite(lc.horarioDeHoje.minuto)
     ? { dia: lc.horarioDeHoje.dia, minuto: Math.max(0, Math.min(1439, Math.round(lc.horarioDeHoje.minuto))) }
+    : null;
+  const oc = src.ociosidade && typeof src.ociosidade === 'object' ? src.ociosidade : {};
+  if (typeof oc.ativo === 'boolean') out.ociosidade.ativo = oc.ativo;
+  out.ociosidade.minutos = int(oc.minutos, 1, 120, D.ociosidade.minutos);
+  out.ociosidade.efeitoMin = int(oc.efeitoMin, 1, 60, D.ociosidade.efeitoMin);
+  const lg = src.legends && typeof src.legends === 'object' ? src.legends : {};
+  if (typeof lg.ativo === 'boolean') out.legends.ativo = lg.ativo;
+  out.legends.inicio = int(lg.inicio, 0, 23, D.legends.inicio);
+  out.legends.fim = int(lg.fim, 1, 24, D.legends.fim);
+  if (out.legends.fim <= out.legends.inicio) {
+    issues.push('legends.faixa');
+    out.legends.inicio = D.legends.inicio;
+    out.legends.fim = D.legends.fim;
+  }
+  out.legends.ultimaSemana = typeof lg.ultimaSemana === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(lg.ultimaSemana) ? lg.ultimaSemana : null;
+  out.legends.momento = lg.momento && typeof lg.momento.semana === 'string' && Number.isInteger(lg.momento.dia) && Number.isFinite(lg.momento.minuto)
+    ? { semana: lg.momento.semana, dia: Math.max(0, Math.min(6, lg.momento.dia)), minuto: Math.max(0, Math.min(1439, Math.round(lg.momento.minuto))) }
     : null;
   return { settings: out, issues };
 }
@@ -163,6 +190,43 @@ export function dailyReminder(date, cfg, rng = Math.random) {
   const minuto = date.getHours() * 60 + date.getMinutes();
   if (minuto >= state.horarioDeHoje.minuto && minuto < fim) {
     state.ultimoDia = hoje;
+    return { due: true, state };
+  }
+  return { due: false, state };
+}
+
+/** Segunda-feira (data local, "AAAA-MM-DD") da semana de `date`. */
+export function weekKey(date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return dayKey(d);
+}
+
+/**
+ * Lembrete semanal em momento aleatório: sorteia um dia (de hoje até domingo)
+ * e um minuto dentro de [inicio, fim). Puro, como `dailyReminder`; devolve
+ * {due, state} — `state` deve ser persistido no perfil.
+ */
+export function weeklyReminder(date, cfg, rng = Math.random) {
+  const state = { ultimaSemana: cfg.ultimaSemana || null, momento: cfg.momento || null };
+  if (!cfg.ativo) return { due: false, state };
+  const semana = weekKey(date);
+  if (state.ultimaSemana === semana) return { due: false, state };
+  const ini = cfg.inicio * 60;
+  const fim = cfg.fim * 60;
+  const hoje = (date.getDay() + 6) % 7; // 0 = segunda
+  const agora = date.getHours() * 60 + date.getMinutes();
+  if (!state.momento || state.momento.semana !== semana) {
+    // Se a faixa de hoje já passou, começa amanhã (no domingo, fica para hoje mesmo).
+    const primeiro = agora >= fim - 1 && hoje < 6 ? hoje + 1 : hoje;
+    const dia = primeiro + Math.floor(rng() * (7 - primeiro));
+    const de = dia === hoje ? Math.max(ini, Math.min(agora, fim - 1)) : ini;
+    state.momento = { semana, dia, minuto: Math.floor(de + rng() * Math.max(1, fim - de)) };
+  }
+  // Dia sorteado já passou sem o app aberto: entrega no primeiro momento possível.
+  if (hoje > state.momento.dia || (hoje === state.momento.dia && agora >= state.momento.minuto)) {
+    if (agora < ini || agora >= fim) return { due: false, state };
+    state.ultimaSemana = semana;
     return { due: true, state };
   }
   return { due: false, state };

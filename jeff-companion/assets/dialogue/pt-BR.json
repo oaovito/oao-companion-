@@ -235,6 +235,75 @@
         "De novo. Fecha isso agora, {nome}.",
         { "t": "Chega. Fecha o Instagram, porra.", "tags": ["palavrao"] }
       ]
+    },
+    "wiredStart": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        { "t": "VOLTOU, {nome}! Eu? Nada. Só tava organizando o chão. Com o nariz.", "tags": ["drogas"] },
+        { "t": "Oi! Oi! Tudo ótimo! Por que você tá me olhando assim, {nome}?", "tags": ["drogas"] },
+        { "t": "Não aconteceu nada aqui. Bora trabalhar! Bora! BORA!", "tags": ["drogas"] },
+        { "t": "Que pó? Não tem pó nenhum. Foca na tela, {nome}.", "tags": ["drogas"] }
+      ]
+    },
+    "hyperStart": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Voltou! Tomei três doses de pré-treino. BORA, {nome}!",
+        "Pré-treino batendo. Eu consigo levantar esse monitor. Quer ver?",
+        "Tô elétrico, {nome}. Me dá uma tarefa. Duas. Dez."
+      ]
+    },
+    "wired": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Bora organizar a área de trabalho inteira? Agora! Por cor!",
+        "Eu tive uma ideia de negócio. Três ideias. Esquece. Quatro.",
+        "Tá calor aqui ou sou eu, {nome}?",
+        "Minha mandíbula tá fazendo isso sozinha. Normal. Normal.",
+        { "t": "Não faz isso em casa, {nome}. Sério. Só tubarão de desenho.", "tags": ["drogas"], "tone": "serio", "reaction": "lecture" },
+        { "t": "Esse pó era farinha. Provavelmente. Talvez.", "tags": ["drogas"] },
+        { "t": "Fungada técnica. Rinite. Não pergunta.", "tags": ["drogas"] },
+        { "t": "Puta merda, eu consigo ouvir a CPU pensando.", "tags": ["palavrao"] }
+      ]
+    },
+    "wiredEnd": {
+      "kind": "speech", "tone": "serio", "reaction": "nod",
+      "lines": [
+        "Pronto. Normal de novo. Isso nunca aconteceu{vocativo}.",
+        "Passou. Ninguém precisa saber disso.",
+        "Voltei ao normal. Cadê a lista de tarefas, {nome}?"
+      ]
+    },
+    "showOff": {
+      "kind": "speech", "tone": "brincadeira", "reaction": null,
+      "lines": [
+        "Olha aqui, {nome}. Aprende.",
+        "Isso é pra você ver, {nome}. De nada.",
+        "Série extra só pra te fazer rir, {nome}.",
+        "Repara na técnica. Repara no shape.",
+        { "t": "Olha essa porra de forma perfeita, {nome}.", "tags": ["palavrao"] }
+      ]
+    },
+    "joke": {
+      "kind": "speech", "tone": "brincadeira", "reaction": "happy",
+      "lines": [
+        "Sabe por que tubarão não usa Instagram? Porque já vive mordendo isca.",
+        "Fiz uma piada ontem. Ninguém riu. Eu ri. Conta.",
+        "Sorri aí, {nome}. É uma ordem.",
+        "Tô sério, mas faço exceção pra você sorrir, {nome}.",
+        "Dancinha autorizada. Só hoje.",
+        "Se você sorrir eu faço mais uma série. Combinado, {nome}?",
+        { "t": "Eu tenho cara de mau, mas sou um docinho. De cartilagem.", "reaction": "petted" }
+      ]
+    },
+    "legends": {
+      "kind": "speech", "tone": "serio", "reaction": "lecture",
+      "lines": [
+        "Lembrete semanal{vocativo}: jogar Legends é ideia burra.",
+        "Jogar Legends? Ideia burra, {nome}. Anotado na sua ficha.",
+        "Legends é ideia burra. Não sou eu que tô dizendo. Sou eu sim.",
+        { "t": "Legends de novo? Ideia burra pra caralho, {nome}.", "tags": ["palavrao"], "reaction": "judge" }
+      ]
     }
   }
 }

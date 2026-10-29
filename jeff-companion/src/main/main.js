@@ -507,6 +507,16 @@ function main() {
     startFullscreenWatch();
     companion.start();
     trayCtl.refresh();
+    // Ociosidade do sistema: só o contador de segundos sem uso (não lê teclas nem cliques).
+    let idleOverride = null;
+    const idleTimer = setInterval(() => {
+      try {
+        companion.onSystemIdle(idleOverride ?? powerMonitor.getSystemIdleTime());
+      } catch (err) {
+        log('warn', `Falha ao ler ociosidade: ${err.message}`);
+      }
+    }, 3000);
+    app.on('will-quit', () => clearInterval(idleTimer));
     log('info', `Pronto${process.env.PORTABLE_EXECUTABLE_FILE ? ' (executável portátil)' : ''}.`);
     topTimer = setInterval(() => !companion.interaction && overlay.reassertTop(), 8000);
 
@@ -543,6 +553,10 @@ function main() {
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
         personality,
         appWin,
+        setIdle: (sec) => {
+          idleOverride = sec == null ? null : Number(sec);
+          return companion.onSystemIdle(idleOverride ?? 0);
+        },
         setTargetTitle: (id, title) => BrowserWindow.fromId(id)?.setTitle(title),
       };
     }

@@ -44,11 +44,36 @@
     "tongue": "#b9455a",
     "teeth": "#f4f0e2",
     "blush": "#d9798d",
-    "brow": "#17171f"
+    "brow": "#17171f",
+    "metal": "#9aa1ad",
+    "plate": "#2b2d33",
+    "bench": "#7a3b2e",
+    "benchLeg": "#3a3d44",
+    "powder": "#fbfbf7",
+    "shaker": "#e8e1d0",
+    "shakerCap": "#c2453a"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
   "groups": [
+    {
+      "id": "propsBack",
+      "outline": true,
+      "parts": [
+        {
+          "id": "benchPad",
+          "fill": "bench",
+          "showIf": "propBench",
+          "path": "M30,2 L46,2 L46,150 L30,150 Z"
+        },
+        {
+          "id": "benchLegs",
+          "fill": "benchLeg",
+          "showIf": "propBench",
+          "path": "M14,20 L30,20 L30,28 L14,28 Z M14,124 L30,124 L30,132 L14,132 Z M10,16 L16,16 L16,32 L10,32 Z M10,120 L16,120 L16,136 L10,136 Z"
+        }
+      ]
+    },
     {
       "id": "tail",
       "outline": true,
@@ -215,6 +240,24 @@
       ]
     },
     {
+      "id": "propsBar",
+      "outline": true,
+      "parts": [
+        {
+          "id": "squatBar",
+          "fill": "metal",
+          "showIf": "propBar",
+          "path": "M2,74 L178,74 L178,80 L2,80 Z"
+        },
+        {
+          "id": "squatPlates",
+          "fill": "plate",
+          "showIf": "propBar",
+          "path": "M4,56 L16,56 L16,98 L4,98 Z M164,56 L176,56 L176,98 L164,98 Z M17,64 L22,64 L22,90 L17,90 Z M158,64 L163,64 L163,90 L158,90 Z"
+        }
+      ]
+    },
+    {
       "id": "head",
       "outline": true,
       "parts": [
@@ -253,6 +296,22 @@
             86
           ],
           "rot": "headRot"
+        }
+      ]
+    },
+    {
+      "id": "headProps",
+      "parts": [
+        {
+          "id": "noseDust",
+          "fill": "powder",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot",
+          "showIf": "noseDust",
+          "path": "M80,50 C82,47 86,47 87,50 C86,53 82,53 80,50 Z M93,50 C94,47 98,47 100,50 C98,53 94,53 93,50 Z M88,46 L90,44 L92,46 L90,48 Z"
         }
       ]
     },
@@ -367,6 +426,39 @@
           "path": "M153,150 L157,156 L150,155ZM146,155 L147,161 L141,157Z",
           "fill": "cream",
           "parent": "foreR"
+        },
+        {
+          "id": "benchPlate",
+          "fill": "plate",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "path": "M152,136 A17,17 0 1 1 151.9,136 Z M152,147 A6,6 0 1 0 152.1,147 Z"
+        },
+        {
+          "id": "shaker",
+          "fill": "shaker",
+          "parent": "foreR",
+          "showIf": "propShaker",
+          "path": "M146,140 L160,140 L158,166 L148,166 Z"
+        },
+        {
+          "id": "shakerCap",
+          "fill": "shakerCap",
+          "parent": "foreR",
+          "showIf": "propShaker",
+          "path": "M145,134 L161,134 L161,141 L145,141 Z"
+        }
+      ]
+    },
+    {
+      "id": "propsFloor",
+      "outline": true,
+      "parts": [
+        {
+          "id": "powderLine",
+          "fill": "powder",
+          "showIf": "propPowder",
+          "path": "M104,161 C112,159 132,159 142,161 C134,164 112,164 104,161 Z"
         }
       ]
     }
@@ -546,6 +638,14 @@
       "to": {
         "body": "#8a7fb8",
         "cream": "#f2c2c6"
+      }
+    },
+    "moodWired": {
+      "max": 0.6,
+      "to": {
+        "body": "#8794bf",
+        "bodyShade": "#7683ad",
+        "cream": "#f5d6cf"
       }
     }
   }

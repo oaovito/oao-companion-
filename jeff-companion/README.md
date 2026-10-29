@@ -14,7 +14,7 @@ aplicativo que está atrás.
 
 ## Instalação (Windows)
 
-**Só o `JeffCompanion.exe`**: é um executável portátil único. Basta abrir — não
+**Só o `JeffCompanion.exe`**: é um executável portátil único (página **Releases** do repositório). Basta abrir — não
 precisa instalar nada (nem Node, nem runtime, nem permissão de administrador). As
 configurações ficam em `%APPDATA%\Jeff Companion`.
 
@@ -61,6 +61,17 @@ npm start
 
 Fora do modo de interação o Jeff não recebe cliques: ele foge do cursor e os
 cliques passam para a janela de trás, mesmo durante a animação de fuga.
+
+## PC parado, exibições e Legends
+
+- **PC parado por 5 min**: o JoJo senta no chão e cheira uma carreira de pó
+  (humor de desenho; ele diz para não fazer isso em casa). Quando você volta, ele
+  fica **ligadão por 5 min**: pó no focinho, olhos arregalados, suor, mandíbula
+  rangendo, fala sem parar e anda mais rápido. Sem o humor com drogas, toma
+  pré-treino. Tempos e liga/desliga em Configurações → Personalidade.
+- **Objetivo: fazer a Emanuele sorrir** — piadas e exibições de **supino** e
+  **agachamento** de vez em quando (ou no chat: "faz supino", "agachamento").
+- **Uma vez por semana**: "jogar Legends é ideia burra".
 
 ## Perguntas e emoções
 
@@ -122,7 +133,8 @@ Configurações: quando você faz uma **pergunta de conhecimento** que as respos
 programadas não cobrem ("o que é…", "quem foi…", "qual…"), só o texto dessa
 pergunta é enviado à Wikipédia (e, se ela não tiver nada, ao DuckDuckGo) para o
 JoJo responder. Conversa comum nunca acessa a rede. O cursor é consultado apenas
-para calcular a distância até o Jeff. A detecção de tela cheia usa o estado do
+para calcular a distância até o Jeff. O tempo sem uso do computador é lido como
+um contador do sistema (segundos), sem registrar teclas ou cliques. A detecção de tela cheia usa o estado do
 shell e o retângulo/classe da janela em primeiro plano. O fiscal do Instagram
 (Windows) compara o **título da janela em primeiro plano** e o nome do executável
 com "Instagram" dentro de um processo isolado; só um sim/não sai dele, nada é

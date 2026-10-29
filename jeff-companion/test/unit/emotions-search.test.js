@@ -62,7 +62,9 @@ test('animator sorteia variações sem repetir a anterior e troca nas que repete
     prev = an.current.variant;
     seen.add(prev);
   }
-  assert.equal(seen.size, an.variantsOf('talk').length, 'todas as variações aparecem');
+  const normal = an.variantsOf('talk').filter((k) => !ANIMS.animations[k].mode);
+  assert.equal(seen.size, normal.length, 'todas as variações normais aparecem');
+  assert.ok(![...seen].some((k) => ANIMS.animations[k].mode), 'variações "ligadão" só no modo');
   // idle troca de variação a cada 2 ciclos.
   an.play('idle', 0, { restart: true });
   const first = an.current.variant;
@@ -179,6 +181,14 @@ test('WebSearch: Wikipédia primeiro, DuckDuckGo de reserva, erro quando a rede 
   ws = new WebSearch({ fetch: fakeFetch([[/w\/api\.php/, { query: {} }], [/duckduckgo/, { AbstractText: 'Canberra é a capital da Austrália.', AbstractSource: 'Wikipedia', Heading: 'Canberra' }]]) });
   r = await ws.search('qual a capital da Austrália?');
   assert.match(r.extract, /Canberra/);
+
+  // Entre os resultados, escolhe o que cita mais palavras da pergunta.
+  ws = new WebSearch({ fetch: fakeFetch([[/w\/api\.php/, { query: { pages: {
+    1: { index: 1, title: 'Austrália', extract: 'Austrália é um país da Oceania.' },
+    2: { index: 2, title: 'Canberra', extract: 'Canberra é a capital da Austrália.' },
+  } } }]]) });
+  r = await ws.search('qual a capital da Austrália?');
+  assert.equal(r.title, 'Canberra');
 
   ws = new WebSearch({ fetch: fakeFetch([[/./, new Error('offline')]]) });
   await assert.rejects(() => ws.search('quem foi Santos Dumont?'), /offline/);

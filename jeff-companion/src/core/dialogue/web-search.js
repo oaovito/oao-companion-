@@ -96,13 +96,22 @@ export class WebSearch {
   async _wikipedia(query) {
     const p = new URLSearchParams({
       action: 'query', format: 'json', utf8: '1', redirects: '1', origin: '*',
-      generator: 'search', gsrsearch: query, gsrlimit: '1',
+      generator: 'search', gsrsearch: query, gsrlimit: '3',
       prop: 'extracts|info', exintro: '1', explaintext: '1', exsentences: '3', inprop: 'url',
     });
     const data = await this._json(`${this.wiki}/w/api.php?${p}`);
     const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
-    const page = pages.sort((a, b) => (a.index ?? 0) - (b.index ?? 0))[0];
-    if (!page || !page.extract || /desambigua/i.test(page.extract.slice(0, 200))) return null;
+    // Entre os 3 primeiros, prefere o resumo que cita mais palavras da pergunta
+    // ("capital da Austrália" → Canberra, não o artigo do país).
+    const words = normalizeText(query).split(' ').filter((w) => w.length >= 4);
+    const score = (p) => {
+      const text = normalizeText(`${p.title} ${(p.extract || '').slice(0, 400)}`);
+      return words.filter((w) => text.includes(w)).length;
+    };
+    const page = pages
+      .filter((p) => p.extract && !/desambigua/i.test(p.extract.slice(0, 200)))
+      .sort((a, b) => score(b) - score(a) || (a.index ?? 0) - (b.index ?? 0))[0];
+    if (!page) return null;
     return { title: page.title, extract: page.extract, source: 'Wikipédia', url: page.fullurl || null };
   }
 

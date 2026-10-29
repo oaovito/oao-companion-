@@ -35,6 +35,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
 - Pergunta sem resposta programada: pesquisa (Wikipédia → DuckDuckGo) e responde no jeito do
   JoJo (abertura/fecho das falas filtradas pelo perfil) citando a fonte.
+- Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).
+- PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por
+  5 min após a volta (modo `wired`). Legends: "ideia burra" 1×/semana em momento aleatório.
+- Publicação: tag `v*` → Release com `JeffCompanion.exe` (workflow do Windows).
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`
   (Wake Pet / Tuck Away Pet); movimento reduzido segue o Windows. Sem versão web.
@@ -54,7 +58,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    nunca acessa a rede. Integrações de IA só opcionais.
 5. Sons e "iniciar com o Windows" desligados por padrão.
 6. Conversa marcada como **respostas programadas** (+ pesquisa na internet quando ativa; não é IA).
-8. Distribuição: **`JeffCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).
+8. Ociosidade: só o contador `powerMonitor.getSystemIdleTime()` (nunca teclas/cliques).
+9. Distribuição: **`JeffCompanion.exe` portátil** roda sem instalar nada (instalador e ZIP continuam).
 7. Arte atual é **provisória** — não declarar arte final sem que exista.
 
 Requisitos completos e critérios de aceitação: `jeff-companion/PRODUCT_SPEC.md`.

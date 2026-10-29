@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.9.0, 2026-10-29)
+# HANDOFF — estado atual (v0.10.0, 2026-10-29)
 
 Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -7,7 +7,7 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 | Ambiente | O que roda | Comando |
 |---|---|---|
-| Linux (sessão de desenvolvimento) | 98 testes unitários/simulação, 12 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
+| Linux (sessão de desenvolvimento) | 107 testes unitários/simulação, 13 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
 | Windows real (GitHub Actions `windows-latest`) | unitários, build do instalador, 8 testes de integração com mouse/teclado reais do sistema, E2E, medição | workflow `.github/workflows/jeff-windows.yml` |
 
 ## Verificado
@@ -47,6 +47,10 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Barra de tarefas cobrindo o Jeff (mitigado reafirmando topmost a cada 8 s).
 
 ## Pendente / limitado
+
+- v0.10.0: supino desenhado com o rig de frente girado (leitura de desenho
+  animado, não anatômica). O efeito "ligadão" é piada de desenho; desligar o
+  humor com drogas troca por pré-treino.
 
 - Pesquisa (v0.9.0): resposta montada a partir do resumo da fonte (não é IA; não
   "entende" a pergunta). Perguntas muito específicas podem cair num artigo
@@ -96,6 +100,10 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Provedor de diálogo opcional (modelo local/API) implementando `DialogueProvider`.
 
 ## Resultado da última execução do CI
+
+Run #14 (v0.9.0, https://github.com/oaovito/oao-companion-/actions/runs/40812808265): **sucesso**.
+Portátil abriu sem instalação em 21,9 s; pesquisa real na Wikipédia respondeu às 3
+perguntas; integração Windows 9/9; E2E 12/12. Ocioso 2,3% CPU, 371 MB.
 
 Run #13 (v0.8.0, https://github.com/oaovito/oao-companion-/actions/runs/40810888984): **sucesso**.
 
