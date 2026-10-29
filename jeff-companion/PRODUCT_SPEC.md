@@ -91,6 +91,25 @@ Sem captura de tela, leitura de janelas, microfone, telemetria ou keylogging.
 Loop por timers adaptativos (sem busy loop); renderer limita FPS por estado
 (8–60) e para quando oculto.
 
+## 9b. Personalidade (perfil editável)
+
+Perfil separado da aparência/animações em `personality.json`, validado e versionado.
+Padrão: majoritariamente sério, autoritário, mandão e direto; humor seco, ácido e
+inconveniente ("fiscal que acha que é engraçado"); frases curtas, ordens claras,
+palavrões ocasionais; carinho discreto; tom de treinador exigente sobre academia;
+referências ocasionais a cocaína como humor ácido, **sem recomendar consumo, ensinar
+uso ou associar a emagrecimento/desempenho**; expressões: olhar de julgamento,
+braços cruzados, sobrancelha levantada, dentes à mostra, ataque teatral só sob pedido.
+
+| ID | Requisito | Critério de aceitação |
+|---|---|---|
+| P1 | Instagram | Bronca curta (animação de julgamento) a cada **entrada** no Instagram (navegador ou app no Windows), no máximo uma por intervalo (padrão 120 s); nunca contínua enquanto aberto |
+| P2 | Lembrete de comida | Uma vez por dia, horário aleatório na faixa (padrão 10h–21h); firme **sem usar peso ou corpo como insulto** nem incentivar restrição |
+| P3 | Silêncio | Modo silencioso/pausa suprimem broncas e lembretes; "silêncio" na conversa liga o modo silencioso |
+| P4 | Palavrões | nenhum / ocasional / frequente filtra e pondera as falas marcadas |
+| P5 | Privacidade | Só título da janela em primeiro plano/nome do executável, comparados localmente; nada é guardado ou enviado; sem bloquear apps, fechar páginas ou impedir cliques |
+| P6 | IA futura | `instrucoes` do perfil é passado como `context.persona` aos provedores de diálogo |
+
 ## 10. Fora do escopo atual
 
 Arte final, sons gravados, assinatura de código, auto-update, idiomas além de pt-BR,

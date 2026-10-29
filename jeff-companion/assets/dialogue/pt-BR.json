@@ -1,138 +1,180 @@
 {
-  "format": "jeff-phrases/1",
+  "format": "jeff-phrases/2",
   "language": "pt-BR",
-  "notes": "Falas locais do Jeff (fan-made). kind: speech | thought | sleep. Categorias usadas pelo app em src/core/phrases.js.",
+  "notes": "Falas do Jeff com a personalidade padrão (sério, mandão, humor seco e ácido). Cada frase é texto ou {t, tags}. Tags: 'palavrao' (filtrada se palavrões = nenhum; mais rara em 'ocasional'), 'drogas' (humor ácido com referência a cocaína, sem incentivar uso; desligável). Variáveis: {vocativo} (', Nome' ou vazio), {nome} (nome ou 'você'), {atalho}. Nunca usar peso ou corpo como insulto.",
   "categories": {
     "greeting": {
       "kind": "speech",
       "lines": [
-        "Oi! Cheguei pra fazer companhia.",
-        "Glub glub! Bom te ver!",
-        "Opa! Tô por aqui, quietinho.",
-        "Oi, oi! Pode trabalhar que eu fico de olho.",
-        "Cheguei! Prometo não atrapalhar.",
-        "Olá, humano favorito!"
+        "Cheguei{vocativo}. Bora trabalhar.",
+        "Tô de olho. Pode começar.",
+        "Presente. Agora produz.",
+        "Expediente aberto. Sem enrolação.",
+        { "t": "Voltei. Cadê a porra da lista de tarefas?", "tags": ["palavrao"] }
       ]
     },
     "morning": {
       "kind": "speech",
-      "lines": ["Bom dia! Já tomou água hoje?", "Bom dia! Que o dia seja leve.", "Bom diaaa! *se espreguiça*"]
+      "lines": [
+        "Bom dia{vocativo}. Água, café e foco. Nessa ordem.",
+        "Bom dia. O dia não vai se resolver sozinho.",
+        "Manhã é hora de fazer o difícil. Começa."
+      ]
     },
     "afternoon": {
       "kind": "speech",
-      "lines": ["Boa tarde! Tô curtindo o solzinho do monitor.", "Boa tarde! Lanchinho mais tarde?"]
+      "lines": [
+        "Boa tarde{vocativo}. Metade do dia já foi. E aí?",
+        "Tarde. Hora de terminar o que você começou de manhã.",
+        { "t": "Boa tarde. Sem sonequinha, caralho.", "tags": ["palavrao"] }
+      ]
     },
     "night": {
       "kind": "speech",
-      "lines": ["Boa noite! Ainda acordado?", "Boa noite... eu já tô quase cochilando.", "Noite tranquila por aqui."]
+      "lines": [
+        "Boa noite{vocativo}. Termina isso e vai dormir.",
+        "Noite. Recuperação também é treino.",
+        "Tarde da noite e você aqui. Anotado."
+      ]
     },
     "idleSpeech": {
       "kind": "speech",
       "lines": [
-        "Tubarões de terra também gostam de sossego.",
-        "Só passando pra dizer: você tá indo bem.",
-        "Esse cantinho da tela é bem confortável.",
-        "Se precisar de mim, é só apertar {atalho}.",
-        "Hoje eu contei três pixels brilhando. Foi ótimo.",
-        "Que tal alongar os ombros um pouquinho?",
-        "Glub! (isso quer dizer 'tô feliz')",
-        "Eu fico aqui do ladinho, combinado?",
-        "Lembrete amigável: piscar faz bem pros olhos.",
-        "Barbatana ao alto! Quer dizer: tudo certo!"
+        "Postura. Ombro pra trás.",
+        "Bebe água. Não é sugestão.",
+        "Constância ganha de motivação. Todo dia.",
+        "Uma tarefa de cada vez. Termina essa.",
+        "Se precisar de mim: {atalho}. Se não, trabalha.",
+        "Treino de hoje tá pago? Pergunta retórica.",
+        "Descanso faz parte. Preguiça não.",
+        "Fiscalização de rotina. Pode continuar.",
+        { "t": "Foco, porra. O resto é distração.", "tags": ["palavrao"] },
+        { "t": "Essa energia aí é café ou outra coisa? Não responde.", "tags": ["drogas"] },
+        { "t": "Calma, Scarface. É só uma planilha.", "tags": ["drogas"] }
       ]
     },
     "idleThought": {
       "kind": "thought",
       "lines": [
-        "Hmm... será que peixe empanado sonha?",
-        "Barbatanas... patinhas... por que não os dois?",
-        "Aquela janela parece interessante.",
-        "Se eu ficar parado, viro decoração?",
-        "Petisco... petisco... petisco...",
-        "Quantos cliques será que tem num dia?",
-        "Nuvem em formato de sardinha!"
+        "Hmm. Isso podia estar pronto já.",
+        "Série de 12. Descanso de 60. Simples.",
+        "Alguém aqui tá enrolando. Não sou eu.",
+        "Proteína. Sono. Repetição.",
+        "Esse cursor tá perdido de novo."
       ]
     },
     "curious": {
       "kind": "thought",
-      "lines": ["Hmm? O que é aquilo?", "Ooh, curioso...", "Tem algo se mexendo ali?", "Investigando..."]
+      "lines": ["Hm. O que você tá aprontando?", "Interessante. Ou inútil. Vamos ver.", "Isso aí é trabalho mesmo?"]
     },
     "surprised": {
       "kind": "speech",
-      "lines": ["Opa!", "Eita!", "Uau!", "Glub?!"]
+      "lines": ["Ei!", "Opa. Calma aí.", { "t": "Caralho!", "tags": ["palavrao"] }]
     },
     "petted": {
       "kind": "speech",
       "lines": [
-        "Hehehe, faz cosquinha!",
-        "Mais carinho, por favor!",
-        "Isso é o melhor da vida.",
-        "*ronrona de um jeito tubarônico*",
-        "Ahhh, bem atrás da barbatana!",
-        "Você é muito gentil.",
-        "Glub glub glub! (feliz demais)"
+        "Tá. Chega.",
+        "Ok. Isso foi... aceitável.",
+        "Não se acostuma.",
+        "Valeu. Agora volta pro trabalho.",
+        "Carinho registrado. Não conta pra ninguém."
       ]
     },
     "food": {
       "kind": "speech",
       "lines": [
-        "Nhac! Delícia!",
-        "Peixinho! Meu favorito!",
-        "Hmmm, crocante!",
-        "Obrigado pelo lanche!",
-        "Nham nham nham...",
-        "Isso merece uma dancinha!"
+        "Peixe. Proteína de verdade.",
+        "Comida de verdade. Aprovado.",
+        "Mastiga devagar. Atenção no prato.",
+        "Isso sim é pré-treino."
       ]
     },
     "play": {
       "kind": "speech",
       "lines": [
-        "Bolinha! Bolinha!",
-        "Peguei! Peguei!",
-        "De novo, de novo!",
-        "Sou o tubarão mais rápido da terra firme!",
-        "Isso foi divertido!"
+        "Bíceps. Olha e aprende.",
+        "Isso não é brincadeira. É cardio.",
+        "Mais uma série. Vai.",
+        "Ninguém pediu, mas tá aí o shape."
       ]
     },
     "sleep": {
       "kind": "sleep",
-      "lines": ["Zzz...", "Zzz... peixinho... zzz", "Zzzzz...", "zz... glub... zz"]
+      "lines": ["Zzz...", "Zzz... recuperação... zzz", "Zzz... mais uma série... zzz"]
     },
     "sleepy": {
       "kind": "thought",
-      "lines": ["*bocejo* Acho que vou descansar um pouco.", "Que soninho...", "Só um cochilinho..."]
+      "lines": ["Descanso programado. Não confunda com folga.", "Recuperando. Não perturba."]
     },
     "wake": {
       "kind": "speech",
-      "lines": ["Hã? Eu tava acordado! Juro.", "*espreguiça* Que soneca boa!", "Bom dia de novo!"]
+      "lines": ["Acordado. O que eu perdi?", "Descansado. Bora.", "Não estava dormindo. Estava recuperando."]
     },
     "dragged": {
       "kind": "speech",
-      "lines": ["Wheee!", "Voandooo!", "Ei, para onde vamos?", "Uhuuu!"]
+      "lines": ["Ei, me solta.", "Cuidado com o shape.", { "t": "Que porra é essa?", "tags": ["palavrao"] }]
     },
     "land": {
       "kind": "speech",
-      "lines": ["Pouso perfeito!", "Ufa, chão firme.", "Aqui tá ótimo!"]
+      "lines": ["Aterrissagem perfeita. Óbvio.", "Ok. Aqui serve.", "Nunca mais faz isso."]
     },
     "interactEnter": {
       "kind": "speech",
-      "lines": ["Oi! Tô prontinho pra brincar.", "Modo carinho ativado!", "Opa, atenção total pra você!"]
+      "lines": ["Fala{vocativo}. Rápido.", "Tô ouvindo.", "Que foi?"]
     },
     "interactExit": {
       "kind": "speech",
-      "lines": ["Voltando ao meu cantinho!", "Valeu! Até já.", "Vou ficar por perto."]
+      "lines": ["De volta ao trabalho.", "Dispensado.", "Fechou."]
     },
     "alreadyRunning": {
       "kind": "speech",
-      "lines": ["Eu já tô aqui!", "Só cabe um Jeff por vez!"]
+      "lines": ["Eu já tô aqui. Presta atenção.", "Um Jeff só. Já basta."]
     },
     "goodbye": {
       "kind": "speech",
-      "lines": ["Tchau! Até a próxima!", "Fui! Glub!", "Até logo!"]
+      "lines": ["Fui. Não faz besteira.", "Até. Sem Instagram.", "Saindo. Você continua."]
     },
     "unpause": {
       "kind": "speech",
-      "lines": ["De volta à ativa!", "Pronto, voltei!"]
+      "lines": ["Voltei. Cadê o progresso?", "Pausa acabou."]
+    },
+    "instagram": {
+      "kind": "speech",
+      "lines": [
+        "Instagram de novo. O departamento de perder tempo agradece.",
+        "Abriu pra ver uma coisa. Essa ficção eu já conheço.",
+        "Pode entrar. Sua concentração já pediu demissão.",
+        "Fiscalização: cadê aquela tarefa que era tão urgente?",
+        "Rolagem infinita, progresso zero.",
+        "Instagram. Que surpresa. Nenhuma.",
+        "Isso aí não conta como descanso.",
+        { "t": "Instagram de novo? Fecha essa merda.", "tags": ["palavrao"] },
+        { "t": "Puta que pariu. Instagram outra vez.", "tags": ["palavrao"] },
+        { "t": "Nem o Pablo Escobar rolava o feed tanto assim.", "tags": ["drogas"] }
+      ]
+    },
+    "foodReminder": {
+      "kind": "speech",
+      "lines": [
+        "Vai comer no automático de novo? Presta atenção no prato.",
+        "Lembrete do dia: come com calma e para quando estiver satisfeito.",
+        "Fome ou tédio? Responde com sinceridade antes de abrir a geladeira.",
+        "Comida de verdade, prato na mesa, sem tela. Simples.",
+        { "t": "Vai comer no automático de novo? Presta atenção nessa porra.", "tags": ["palavrao"] }
+      ]
+    },
+    "achievement": {
+      "kind": "speech",
+      "lines": ["Aí sim. Eu sabia.", "Finalmente. Já tava criando craca aqui.", "Isso. Agora a próxima.", "Bom trabalho. Não se empolga."]
+    },
+    "quietAck": {
+      "kind": "speech",
+      "lines": ["Fechou.", "Silêncio. Entendido."]
+    },
+    "scare": {
+      "kind": "speech",
+      "lines": ["Tem certeza?", "RAAAH!", "Pediu, levou."]
     }
   }
 }

@@ -75,10 +75,14 @@ entreaberta), `mouthDepth` (px de abertura com jaw=1), `teeth`/`toothSize`
 Para trocar por sprites no futuro: implemente um renderer alternativo com a mesma
 interface de `RigRenderer.draw(ctx, pose, opts)` e selecione-o em `overlay.js`.
 
-## `dialogue/pt-BR.json` (formato `jeff-phrases/1`)
+## `dialogue/pt-BR.json` (formato `jeff-phrases/2`)
 
-`categories.<nome>` com `kind` (`speech` | `thought` | `sleep`) e `lines`.
-`{atalho}` é substituído pelo atalho configurado.
+`categories.<nome>` com `kind` (`speech` | `thought` | `sleep`) e `lines`. Cada
+frase é texto ou `{ "t": "...", "tags": [...] }`. Tags: `palavrao` (removida com
+palavrões = nenhum, mais rara em "ocasional", mais comum em "frequente") e
+`drogas` (humor ácido; removida se desligado). Variáveis: `{atalho}`,
+`{vocativo}` (", Nome" ou vazio) e `{nome}` (nome ou "você"). Categorias
+novas: `instagram`, `foodReminder`, `achievement`, `quietAck`, `scare`.
 
 ## `icons/`
 

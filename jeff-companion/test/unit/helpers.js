@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { Companion } from '../../src/core/companion.js';
 import { SettingsStore } from '../../src/core/settings-store.js';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
+import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -113,11 +114,14 @@ export const TWO_MONITORS_NEG = [
   { id: 2, bounds: { x: -1920, y: 200, width: 1920, height: 1080 }, workArea: { x: -1920, y: 200, width: 1920, height: 1040 }, scaleFactor: 1 },
 ];
 
-export function makeEnv({ displays = ONE_MONITOR, settings = {}, seed = 7, dir = null } = {}) {
+export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, seed = 7, dir = null } = {}) {
   const tmp = dir || fs.mkdtempSync(path.join(os.tmpdir(), 'jeff-test-'));
   const store = new SettingsStore(tmp);
   store.load();
   store.update(settings, { silent: true, debounceMs: 1e9 });
+  const personality = new SettingsStore(tmp, { fileName: 'personality.json', sanitize: sanitizePersonality, defaults: PERSONALITY_DEFAULTS, keepOnReset: [] });
+  personality.load();
+  personality.update(profile, { silent: true, debounceMs: 1e9 });
   const clock = new FakeClock();
   const overlay = new FakeOverlay();
   const env = { cursor: { x: 5, y: 5 }, displays: displays.map((d) => ({ ...d })) };
@@ -127,13 +131,13 @@ export function makeEnv({ displays = ONE_MONITOR, settings = {}, seed = 7, dir =
     primaryDisplayId: () => env.displays[0].id,
   };
   const companion = new Companion({
-    platform, overlay, clock, store,
+    platform, overlay, clock, store, personality,
     rig: loadJSON('assets/character/jeff.rig.json'),
     phrases: loadJSON('assets/dialogue/pt-BR.json'),
     dialogue: new DialogueEngine(),
     rng: seededRng(seed),
   });
-  return { companion, clock, overlay, store, env, platform, dir: tmp };
+  return { companion, clock, overlay, store, personality, env, platform, dir: tmp };
 }
 
 /** Move o cursor em linha reta de `from` a `to` em `ms`, avançando o relógio. */

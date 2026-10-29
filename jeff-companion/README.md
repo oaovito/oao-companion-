@@ -66,12 +66,26 @@ Arquivo: `%APPDATA%\Jeff Companion\settings.json` (formato versionado; arquivos
 inválidos são preservados como `settings.invalid-<data>.json` e substituídos por
 padrões). Log local: `%APPDATA%\Jeff Companion\logs\jeff.log`.
 
+## Personalidade
+
+O jeito do Jeff fica num **perfil separado** da aparência
+(`%APPDATA%\Jeff Companion\personality.json`), editável em Configurações →
+Personalidade: como ele te chama, palavrões (nenhum/ocasionais/frequentes),
+humor ácido com referências a cocaína (sem incentivar uso; desligável), bronca ao
+abrir o Instagram (intervalo mínimo, padrão 2 min), lembrete diário para comer com
+atenção (horário aleatório, padrão 10h–21h) e instruções livres para uma IA futura.
+Padrão: sério, mandão, humor seco e ácido. Respeita o modo silencioso e a pausa;
+na conversa, "silêncio" liga o modo silencioso.
+
 ## Privacidade
 
-Funciona 100% offline. Não captura a tela, não lê conteúdo de janelas, não usa
-microfone, não registra teclas, cliques ou histórico, e não envia dados. O
-cursor é consultado apenas para calcular a distância até o Jeff. A detecção de
-tela cheia usa só o estado do shell e o retângulo/classe da janela em primeiro plano.
+Funciona 100% offline. Não captura a tela, não usa microfone, não registra
+teclas, cliques ou histórico, e não envia dados. O cursor é consultado apenas
+para calcular a distância até o Jeff. A detecção de tela cheia usa o estado do
+shell e o retângulo/classe da janela em primeiro plano. O fiscal do Instagram
+(Windows) compara o **título da janela em primeiro plano** e o nome do executável
+com "Instagram" dentro de um processo isolado; só um sim/não sai dele, nada é
+guardado. Pode ser desligado nas configurações.
 
 ## Testes e build
 

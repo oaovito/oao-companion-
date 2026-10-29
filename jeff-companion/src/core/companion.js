@@ -16,10 +16,11 @@ import { displayForRect, allowedDisplays, recoverRect, topologySignature, primar
 import { distPointRect, roundRect, dist, clamp } from './geometry.js';
 import { jeffRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS } from './settings-schema.js';
+import { PERSONALITY_DEFAULTS, InstagramWatcher, dailyReminder, phraseFilter, phraseWeight, profileVars } from './personality.js';
 
 const TOOLBAR_SIZE = { width: 278, height: 50 };
 const CHAT_SIZE = { width: 300, height: 270 };
-const USER_CATEGORIES = new Set(['petted', 'food', 'play', 'interactEnter', 'interactExit', 'alreadyRunning', 'goodbye', 'unpause', 'dragged', 'land']);
+const USER_CATEGORIES = new Set(['petted', 'food', 'play', 'interactEnter', 'interactExit', 'alreadyRunning', 'goodbye', 'unpause', 'dragged', 'land', 'achievement', 'quietAck', 'scare']);
 // Intervalo mínimo entre quaisquer falas espontâneas (inclui reações e "Zzz").
 const MIN_SPONTANEOUS_GAP = { off: Infinity, rare: 240e3, normal: 90e3, often: 40e3 };
 const WALK_SPEED = 70;
@@ -27,7 +28,11 @@ const FLEE_SPEED = 1150;
 const CALM_STATES = new Set(['idle', 'sit', 'lookAround', 'curious', 'lie']);
 
 export class Companion {
-  constructor({ platform, overlay, clock, store, rig = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+  constructor({ platform, overlay, clock, store, personality = null, rig = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+    // Perfil de personalidade (separado da aparência): {get()} — ex.: SettingsStore de personality.json.
+    this.personality = personality || { get: () => PERSONALITY_DEFAULTS, update: () => [] };
+    this.instagram = new InstagramWatcher();
+    this.reminderTimer = null;
     this.platform = platform;
     this.overlay = overlay;
     this.clock = clock;
@@ -36,6 +41,7 @@ export class Companion {
     this.log = log;
     this.metrics = metricsFrom(rig);
     this.phrases = new PhraseBook(phrases, { rng });
+    this.applyPersonality(this.personality.get());
     this.dialogue = dialogue;
 
     const s = store.get();
@@ -96,6 +102,7 @@ export class Companion {
     this.overlay.setMouseMode('passthrough');
     this.started = true;
     this._scheduleSpeech(now, true);
+    this._scheduleReminderCheck(20000);
     if (this.userHidden) {
       this.overlay.hide();
       return;
@@ -109,6 +116,8 @@ export class Companion {
 
   stop() {
     this._cancelTimer();
+    if (this.reminderTimer) this.clock.clearTimeout(this.reminderTimer);
+    this.reminderTimer = null;
     this.started = false;
   }
 
@@ -617,7 +626,7 @@ export class Companion {
     if (!force && s.quietMode && !USER_CATEGORIES.has(category)) return false;
     const cat = this.phrases.has(category) ? category : fallback;
     if (!cat) return false;
-    const p = this.phrases.pick(cat, { atalho: this.hotkeyLabel.replace(/Control/g, 'Ctrl').replace(/\+/g, ' + ') });
+    const p = this.phrases.pick(cat, { atalho: this.hotkeyLabel.replace(/Control/g, 'Ctrl').replace(/\+/g, ' + '), ...profileVars(this.personality.get()) });
     if (!p) return false;
     return this.say(p.text, p.kind, { spontaneous, category: cat });
   }
@@ -793,7 +802,7 @@ export class Companion {
   async chat(text) {
     if (!this.dialogue) return null;
     this.noteActivity();
-    const reply = await this.dialogue.reply(text, { state: this.behavior.state });
+    const reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
     const now = this.clock.now();
     this.noteActivity();
     if (reply.action) this._doChatAction(reply.action, now);
@@ -816,6 +825,15 @@ export class Companion {
       this.behavior.request('happy', { now, force: true });
     } else if (action === 'lookAround' || action === 'curious') {
       this.behavior.request('curious', { now, force: true });
+    } else if (action === 'flex') {
+      this.behavior.request('happy', { now, force: true });
+    } else if (action === 'scare') {
+      this.behavior.request('scare', { now, force: true });
+    } else if (action === 'judge') {
+      this.behavior.request('judge', { now, force: true });
+    } else if (action === 'quiet') {
+      // "Silêncio": ativa o modo silencioso (sem falas espontâneas nem broncas).
+      this.store.update({ quietMode: true });
     }
   }
 
@@ -842,6 +860,65 @@ export class Companion {
     if (this.rng() < 0.4) this.clock.setTimeout(() => this.sayCategory('land', { force: true }), 700);
     this._savePosition();
     this._schedule(0);
+  }
+
+  // ---------------------------------------------------------------- personalidade
+
+  applyPersonality(profile) {
+    this.phrases.setProfile({ filter: phraseFilter(profile), weight: phraseWeight(profile) });
+  }
+
+  /** Pode dar uma bronca/lembrete agora? Respeita silêncio, pausa, ocultação e despedida. */
+  _canNag() {
+    const s = this.store.get();
+    return this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost;
+  }
+
+  /**
+   * Informação sobre o app em primeiro plano, vinda do detector (apenas um
+   * booleano "é Instagram"; títulos não chegam aqui nem são guardados).
+   */
+  onForeground({ instagram = false } = {}) {
+    const cfg = this.personality.get().instagram;
+    const now = this.clock.now();
+    if (!this.instagram.update(now, instagram, cfg)) return false;
+    if (!this._canNag()) return false;
+    this._nag('instagram', now);
+    return true;
+  }
+
+  _nag(category, now) {
+    if (!this.interaction) {
+      this.mover.stop();
+      if (this.behavior.state === 'walk') this.behavior.finish('walk', now);
+      this.behavior.request('judge', { now, force: this.behavior.priority > PRIORITY.INTERACT || this.behavior.state === 'sleep' });
+    }
+    this.hideBubble();
+    this.sayCategory(category);
+    this._schedule(0);
+  }
+
+  _scheduleReminderCheck(ms = 60000) {
+    if (this.reminderTimer) this.clock.clearTimeout(this.reminderTimer);
+    this.reminderTimer = this.clock.setTimeout(() => {
+      this.reminderTimer = null;
+      this.checkDailyReminder(new Date());
+      if (this.started) this._scheduleReminderCheck(60000);
+    }, ms);
+  }
+
+  /** Lembrete diário sobre comer com atenção, em horário aleatório na faixa configurada. */
+  checkDailyReminder(date = new Date()) {
+    const profile = this.personality.get();
+    const cfg = profile.lembreteComida;
+    const { due, state } = dailyReminder(date, cfg, this.rng);
+    let deliver = due && this._canNag() && !this.interaction;
+    const next = { ...cfg, horarioDeHoje: state.horarioDeHoje };
+    // Se não puder falar agora (silêncio, oculto…), tenta de novo no próximo minuto.
+    if (deliver) next.ultimoDia = state.ultimoDia;
+    if (JSON.stringify(next) !== JSON.stringify(cfg)) this.personality.update({ lembreteComida: next }, { silent: true });
+    if (deliver) this._nag('foodReminder', this.clock.now());
+    return deliver;
   }
 
   // ---------------------------------------------------------------- outros comandos

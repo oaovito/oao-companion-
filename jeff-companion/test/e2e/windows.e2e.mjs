@@ -264,6 +264,32 @@ test('Windows: detecção de tela cheia oculta e reexibe o Jeff', { skip }, asyn
   }
 });
 
+test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)', { skip }, async () => {
+  const app = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jeff.setCursor({ x: 1, y: 1 }));
+    await sleep(2500);
+    await app.evaluate(() => globalThis.__jeff.companion.hideBubble());
+    const id = await app.evaluate(() => globalThis.__jeff.makeClickTarget({ x: 20, y: 20, width: 500, height: 400 }));
+    await app.evaluate((_e, i) => globalThis.__jeff.setTargetTitle(i, 'Instagram'), id);
+    let said = null;
+    for (let i = 0; i < 20 && !said; i++) {
+      await sleep(400);
+      said = await app.evaluate(() => {
+        const c = globalThis.__jeff.companion;
+        return c.behavior.state === 'judge' && c.bubble ? c.bubble.text : null;
+      });
+    }
+    assert.ok(said, 'Jeff deu bronca ao abrir o Instagram');
+    // Continua aberto: não repete.
+    const first = await app.evaluate(() => globalThis.__jeff.companion.instagram.lastScold);
+    await sleep(4000);
+    assert.equal(await app.evaluate(() => globalThis.__jeff.companion.instagram.lastScold), first);
+  } finally {
+    await quit(app);
+  }
+});
+
 test('Windows: iniciar com o Windows liga e desliga', { skip }, async () => {
   const app = await launch();
   try {

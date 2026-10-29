@@ -14,9 +14,10 @@
 //
 // DialogueReply:
 //   { text: string, kind?: 'speech'|'thought'|'sleep', action?: string|null, intent?: string }
-//   action: comando opcional para o Jeff (sleep | eat | play | pet | wake | goodbye | lookAround | happy)
+//   action: comando opcional para o Jeff (sleep | eat | play | pet | wake | lookAround | happy | quiet | flex | scare | judge)
+//   context.persona: instruções livres do perfil de personalidade (para provedores de IA futuros)
 
-export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit']);
+export const ALLOWED_ACTIONS = new Set(['sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge']);
 
 export class DialogueProvider {
   constructor({ id, label, kind }) {

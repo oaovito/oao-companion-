@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 0.6.0 — 2026-10-29
+
+### Adicionado
+- **Perfil de personalidade** separado da aparência (`personality.json`), editável
+  em Configurações → Personalidade. Padrão: sério, mandão, humor seco e ácido,
+  palavrões ocasionais, carinho discreto, tom de treinador.
+- **Fiscal do Instagram** (Windows, navegador ou app): bronca curta com animação de
+  julgamento a cada entrada, intervalo mínimo de 2 min, sem repetir enquanto aberto.
+  Detecção pelo título da janela/nome do executável no processo isolado; só um
+  sim/não sai dele.
+- **Lembrete diário** para comer com atenção em horário aleatório (10h–21h), sem
+  usar peso ou corpo como insulto.
+- Falas reescritas no novo tom, com marcações de palavrão e de humor ácido
+  (referências a cocaína sem incentivar uso), filtradas pelo perfil.
+- Estados e animações novos: **julgamento** (braços cruzados, olhar de lado) e
+  **susto teatral**. Conversa: "silêncio" liga o modo silencioso, "consegui" faz o
+  duplo bíceps, "me assusta" dá o bote, "treino" responde como treinador.
+- Instruções livres do perfil passadas aos provedores de diálogo (`context.persona`).
+
 ## 0.5.0 — 2026-10-29
 
 ### Alterado

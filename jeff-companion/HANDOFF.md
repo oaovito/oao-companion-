@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.5.0, 2026-10-29)
+# HANDOFF — estado atual (v0.6.0, 2026-10-29)
 
 Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -47,6 +47,10 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 - Barra de tarefas cobrindo o Jeff (mitigado reafirmando topmost a cada 8 s).
 
 ## Pendente / limitado
+
+- Fiscal do Instagram: só Windows e só pelo título da janela/nome do executável
+  (se o navegador mostrar outro título na aba, não detecta). iPhone exigiria
+  integração separada (não implementada).
 
 - **Arte provisória**: rig vetorial de frente no estilo recorte de papel (South Park), versão adulta fisiculturista com presas e cotovelos articulados, feito à mão
   a partir da referência do usuário (`"provisional": true`). Falta arte final; o visual ainda não

@@ -14,11 +14,15 @@ export function normalizeText(s) {
 
 // Ordem importa: a primeira intenção que casar vence.
 export const INTENTS = [
+  { id: 'quiet', patterns: [/\b(silencio|cala a boca|fica quieto|quieto|para de falar|shh+|me deixa em paz)\b/] },
   { id: 'goodbye', patterns: [/\b(tchau|adeus|ate logo|ate mais|falou|fui)\b/] },
+  { id: 'scare', patterns: [/\b(me assusta|susto|assusta|me da medo)\b/] },
+  { id: 'achievement', patterns: [/\b(consegui|terminei|acabei|finalizei|entreguei|passei|bati a meta|conclui)\b/] },
   { id: 'sleep', patterns: [/\b(dorm\w*|sono|soneca|cochil\w*|descans\w*|nana|deitar?)\b/] },
   { id: 'wake', patterns: [/\b(acord\w*|levanta)\b/] },
   { id: 'eat', patterns: [/\b(com(e|er|ida|endo)|fome|lanche|petisco|peix\w*|almoc\w*|janta\w*|nham)\b/] },
-  { id: 'play', patterns: [/\b(brinc\w*|jog(ar|o|a)|bola|bolinha|divert\w*)\b/] },
+  { id: 'play', patterns: [/\b(brinc\w*|jog(ar|o|a)|bola|bolinha|divert\w*|flexiona|biceps|shape|muscul\w*)\b/] },
+  { id: 'gym', patterns: [/\b(academia|treino|treinar|malhar|malhei|supino|agachamento)\b/] },
   { id: 'pet', patterns: [/\b(carinho|cafune|fofo|fofinho|abraco|lindo|amo|gosto de voce)\b/] },
   { id: 'thanks', patterns: [/\b(obrigad\w*|valeu|brigad\w*)\b/] },
   { id: 'howAreYou', patterns: [/\b(tudo bem|como (voce )?(esta|vai)|beleza|td bem|como vc ta)\b/] },
@@ -28,25 +32,29 @@ export const INTENTS = [
 ];
 
 export const RESPONSES = {
-  greet: ['Oi! Que bom falar com você!', 'Olá! Glub glub!', 'Oi, oi! Tô aqui!'],
-  goodbye: ['Tchau! Vou ficar por perto.', 'Até mais! Glub!'],
-  sleep: ['Boa ideia... *boceja* Vou tirar um cochilo.', 'Soneca! Me acorda depois?'],
-  wake: ['Tô acordado! Tô acordado!', 'Prontinho, olhos abertos!'],
-  eat: ['Comida?! Sim, por favor!', 'Peixinho! Nhac!'],
-  play: ['Brincar! Pega a bolinha!', 'Oba! Vamos brincar!'],
-  pet: ['Awn! Você também é demais.', 'Hehe, que fofura!'],
-  thanks: ['Por nada! Sempre que precisar.', 'De nada! Glub!'],
-  howAreYou: ['Tô ótimo! E você?', 'Tudo nadando bem... quer dizer, andando!'],
-  name: ['Eu sou o Jeff! Um tubarãozinho de terra (versão fã, não oficial).'],
-  help: ['Posso comer, brincar, dormir, acordar e ganhar carinho! Tente: "vamos brincar?", "tá com fome?" ou "hora de dormir".'],
+  greet: ['Fala. Rápido.', 'Oi. O que você quer?', 'Tô aqui. Desembucha.'],
+  goodbye: ['Vai. E nada de Instagram.', 'Até. Faz o que tem que fazer.'],
+  quiet: ['Fechou.', 'Silêncio. Entendido.'],
+  scare: ['Tem certeza?', 'Pediu, levou.'],
+  achievement: ['Aí sim. Eu sabia.', 'Finalmente. Já tava criando craca aqui.', 'Isso. Agora a próxima.'],
+  sleep: ['Descanso aprovado. Recuperação é treino.', 'Vou recuperar. Não perturba.'],
+  wake: ['Acordado. O que eu perdi?', 'Tô de pé. Bora.'],
+  eat: ['Comida de verdade? Manda.', 'Peixe. Proteína. Aprovado.'],
+  play: ['Olha esse bíceps. Aprende.', 'Brincar não. Cardio.'],
+  gym: ['Treino pago? Então descansa direito.', 'Constância. Carga progressiva. Sono. Simples.', 'Não pulou perna, né?'],
+  pet: ['Tá. Chega de carinho.', 'Hm. Aceitável.'],
+  thanks: ['Não por isso. Volta pro trabalho.', 'De nada. Agora produz.'],
+  howAreYou: ['Bem. E sua lista de tarefas?', 'Melhor que sua postura.'],
+  name: ['Jeff. Tubarão de terra, fiscal da sua produtividade. Projeto de fã, não oficial.'],
+  help: ['Entendo pouca coisa e de propósito: "comer", "treino", "brincar", "dormir", "consegui", "silêncio", "me assusta".'],
   unknown: [
-    'Hmm, ainda não sei responder isso. Minhas respostas são programadas!',
-    'Glub? Não entendi... tente "brincar", "comer" ou "dormir".',
-    'Sou um tubarão simples: entendo cumprimentos, comida, brincadeira e soneca.',
+    'Não entendi. E respostas aqui são programadas, então reformula.',
+    'Hã? Fala direito: comer, treino, dormir, silêncio.',
+    'Isso aí não tá na minha lista. Tenta de novo.',
   ],
 };
 
-const ACTIONS = { sleep: 'sleep', wake: 'wake', eat: 'eat', play: 'play', pet: 'pet', greet: 'happy', thanks: 'happy' };
+const ACTIONS = { sleep: 'sleep', wake: 'wake', eat: 'eat', play: 'play', pet: 'pet', greet: 'happy', thanks: 'happy', quiet: 'quiet', achievement: 'flex', scare: 'scare', gym: 'flex' };
 
 export function detectIntent(text) {
   const n = normalizeText(text);

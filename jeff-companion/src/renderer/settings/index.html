@@ -64,6 +64,45 @@
       <p class="hint" id="fullscreenStatus"></p>
     </fieldset>
 
+    <fieldset id="personality">
+      <legend>Personalidade</legend>
+      <p class="hint">Perfil separado da aparência: muda o jeito do Jeff sem mexer no boneco.</p>
+      <label class="row">Como o Jeff te chama
+        <input type="text" data-p="tratamento" maxlength="40" placeholder="você">
+      </label>
+      <label class="row">Palavrões
+        <select data-p="palavroes">
+          <option value="nenhum">Nenhum</option>
+          <option value="ocasional">Ocasionais</option>
+          <option value="frequente">Frequentes</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" data-p="humorDrogas"> Humor ácido com referências a cocaína (nunca incentiva uso)</label>
+      <label class="check"><input type="checkbox" data-p="instagram.ativo"> Dar bronca quando o Instagram for aberto</label>
+      <label class="row">Intervalo mínimo entre broncas
+        <input type="number" data-p="instagram.intervaloMinSeg" data-scale="60" min="1" max="60" step="1"><span class="unit">min</span>
+      </label>
+      <p class="hint" id="foregroundStatus"></p>
+      <label class="check"><input type="checkbox" data-p="lembreteComida.ativo"> Lembrete diário para comer com atenção (horário aleatório)</label>
+      <label class="row">Faixa do lembrete
+        <span class="pair"><input type="number" data-p="lembreteComida.inicio" min="0" max="23"> às <input type="number" data-p="lembreteComida.fim" min="1" max="24"> h</span>
+      </label>
+      <label class="stack">Jeito de ser
+        <textarea data-p="jeito" rows="2" maxlength="400"></textarea>
+      </label>
+      <label class="stack">Humor
+        <textarea data-p="humor" rows="2" maxlength="400"></textarea>
+      </label>
+      <label class="stack">Como quero que o Jeff se comporte (instruções para uma IA futura)
+        <textarea data-p="instrucoes" rows="5" maxlength="4000"></textarea>
+      </label>
+      <p class="hint">Hoje as falas são programadas; estas instruções serão usadas quando um modelo de IA for conectado.</p>
+      <div class="buttons">
+        <button type="button" id="resetPersonality">Restaurar personalidade padrão</button>
+        <button type="button" id="openPersonality">Abrir arquivo do perfil</button>
+      </div>
+    </fieldset>
+
     <fieldset>
       <legend>Falas e sons</legend>
       <label class="row">Falas espontâneas
@@ -105,7 +144,7 @@
   </form>
 
   <footer>
-    Funciona totalmente offline. Não captura a tela, não lê janelas, não usa microfone, não registra teclas nem cliques e não envia dados.
+    Funciona totalmente offline. Não captura a tela, não usa microfone, não registra teclas nem cliques e não envia dados. Para tela cheia e para o fiscal do Instagram, olha só o retângulo e o título da janela em primeiro plano, sem guardar nada.
     Arte atual: desenho vetorial articulado provisório.
   </footer>
   <script type="module" src="settings.js"></script>

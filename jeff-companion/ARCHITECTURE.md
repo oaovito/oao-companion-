@@ -34,7 +34,8 @@ jeff-companion/
     rig-metrics.js     dimensões do personagem (do asset)
     phrases.js         frases sem repetição, tempo de leitura
     settings-schema.js padrões, validação, migração (version)
-    settings-store.js  JSON atômico + backup de arquivo inválido
+    settings-store.js  JSON atômico + backup de arquivo inválido (usado também pelo perfil)
+    personality.js     perfil de personalidade, filtro/peso de frases, fiscal do Instagram, lembrete diário
     dialogue/          interface DialogueProvider, provedor programado, engine com fallback
   src/main/            integração com Windows/Electron
     main.js            bootstrap, IPC validado, bandeja, atalho, energia, monitores, autostart

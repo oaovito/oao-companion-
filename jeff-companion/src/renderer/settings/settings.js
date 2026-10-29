@@ -17,6 +17,7 @@ function prettyHotkey(acc) {
 
 function render(i) {
   info = i;
+  renderPersonality(i);
   const s = i.settings;
   document.getElementById('version').textContent = `Versão ${i.version}.`;
   const sel = document.getElementById('displaySelect');
@@ -58,6 +59,47 @@ function render(i) {
   }
 }
 
+// ---------------- Personalidade (campos com data-p="caminho.no.perfil")
+const pFields = () => Array.from(document.querySelectorAll('[data-p]'));
+
+function getPath(obj, path) {
+  return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+}
+
+function renderPersonality(i) {
+  const p = i.personality;
+  if (!p) return;
+  for (const el of pFields()) {
+    if (el === document.activeElement && el.type !== 'checkbox') continue;
+    const v = getPath(p, el.dataset.p);
+    const scale = Number(el.dataset.scale || 1);
+    if (el.type === 'checkbox') el.checked = !!v;
+    else el.value = v == null ? '' : el.type === 'number' ? String(Math.round(v / scale)) : String(v);
+  }
+  const fg = document.getElementById('foregroundStatus');
+  fg.textContent = i.foreground.available
+    ? 'Funciona no navegador e no app do Windows: compara só o título da janela em primeiro plano com "Instagram". Nada é lido, salvo ou enviado. Respeita o modo silencioso e a pausa.'
+    : 'A detecção do Instagram só funciona no Windows.';
+}
+
+async function sendPersonality(el) {
+  const path = el.dataset.p.split('.');
+  const scale = Number(el.dataset.scale || 1);
+  let v = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Math.round(Number(el.value) * scale) : el.value;
+  let patch;
+  if (path.length === 1) patch = { [path[0]]: v };
+  else patch = { [path[0]]: { ...(info.personality[path[0]] || {}), [path[1]]: v } };
+  render(await api.setPersonality(patch));
+}
+
+for (const el of pFields()) {
+  el.addEventListener('change', () => sendPersonality(el));
+}
+document.getElementById('resetPersonality').addEventListener('click', async () => {
+  if (confirm('Restaurar a personalidade padrão do Jeff?')) render(await api.resetPersonality());
+});
+document.getElementById('openPersonality').addEventListener('click', () => api.openPersonalityFile());
+
 function valueOf(el) {
   if (el.type === 'checkbox') return el.checked;
   if (el.type === 'range' || el.type === 'number') return Number(el.value);
@@ -70,7 +112,7 @@ async function send(patch) {
 
 form.addEventListener('input', (e) => {
   const el = e.target;
-  if (!el.name || el.id === 'hotkeyInput') return;
+  if (!el.name || el.id === 'hotkeyInput' || el.dataset.p) return;
   const o = document.querySelector(`output[data-for="${el.name}"]`);
   if (o) o.textContent = FMT[o.dataset.fmt](valueOf(el));
   if (el.type === 'range') send({ [el.name]: valueOf(el) });
@@ -78,7 +120,7 @@ form.addEventListener('input', (e) => {
 
 form.addEventListener('change', (e) => {
   const el = e.target;
-  if (!el.name || el.id === 'hotkeyInput') return;
+  if (!el.name || el.id === 'hotkeyInput' || el.dataset.p) return;
   send({ [el.name]: valueOf(el) });
 });
 

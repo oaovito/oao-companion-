@@ -5,5 +5,8 @@ contextBridge.exposeInMainWorld('settingsApi', {
   set: (patch) => ipcRenderer.invoke('settings:set', patch),
   reset: () => ipcRenderer.invoke('settings:reset'),
   openFolder: () => ipcRenderer.send('settings:open-folder'),
+  setPersonality: (patch) => ipcRenderer.invoke('personality:set', patch),
+  resetPersonality: () => ipcRenderer.invoke('personality:reset'),
+  openPersonalityFile: () => ipcRenderer.send('personality:open-file'),
   onChanged: (fn) => ipcRenderer.on('settings:changed', (_e, info) => fn(info)),
 });

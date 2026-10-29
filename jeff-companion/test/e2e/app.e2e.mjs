@@ -236,9 +236,17 @@ test('configurações: alterar, persistir e restaurar padrões', async () => {
     assert.equal(shown, '150');
     const hk = await sw.evaluate(() => document.getElementById('hotkeyStatus')?.textContent || '');
     assert.ok(hk.length > 0);
+    // Perfil de personalidade: separado das configurações.
+    await sw.evaluate(() => window.settingsApi.setPersonality({ tratamento: 'João', palavroes: 'nenhum' }));
+    await sleep(300);
+    assert.equal(await sw.evaluate(() => document.querySelector('[data-p=tratamento]').value), 'João');
+    assert.equal(await sw.evaluate(() => document.querySelector('[data-p=palavroes]').value), 'nenhum');
   } finally {
     await quit(app);
   }
+  const savedP = JSON.parse(fs.readFileSync(path.join(userData, 'personality.json'), 'utf8'));
+  assert.equal(savedP.tratamento, 'João');
+  assert.equal(savedP.palavroes, 'nenhum');
   const saved = JSON.parse(fs.readFileSync(path.join(userData, 'settings.json'), 'utf8'));
   assert.equal(saved.size, 1.3);
   assert.equal(saved.safetyMargin, 150);

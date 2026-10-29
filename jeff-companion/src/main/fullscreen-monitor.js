@@ -1,4 +1,4 @@
-// Gerencia a detecção de tela cheia (somente Windows) em um processo
+// Gerencia a detecção de tela cheia e do app em primeiro plano (somente Windows) em um processo
 // utilitário isolado. Falhas desativam o recurso sem afetar o Jeff.
 import { utilityProcess } from 'electron';
 import path from 'node:path';
@@ -10,7 +10,7 @@ const MAX_CRASHES = 2;
 
 export function createFullscreenDetector(log = () => {}) {
   if (process.platform !== 'win32') {
-    return { available: false, reason: 'Disponível apenas no Windows', detect: async () => [], setOwnHandles() {}, dispose() {} };
+    return { available: false, reason: 'Disponível apenas no Windows', detect: async () => ({ fullscreenIds: [], instagram: false }), setOwnHandles() {}, dispose() {} };
   }
   const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [] };
 
@@ -66,20 +66,21 @@ export function createFullscreenDetector(log = () => {}) {
       state.own = handles.map(String);
       if (state.child) state.child.postMessage({ type: 'init', own: state.own });
     },
-    /** @returns Promise<ids de displays ocupados por app em tela cheia> */
-    async detect(toDip, displays) {
-      if (!state.available || !state.child || !state.ready) return [];
+    /** @returns Promise<{fullscreenIds, instagram}> */
+    async detect(toDip, displays, opts = {}) {
+      if (!state.available || !state.child || !state.ready) return { fullscreenIds: [], instagram: false };
       const id = ++state.seq;
       const result = await new Promise((resolve, reject) => {
         state.pending.set(id, { resolve, reject });
-        state.child.postMessage({ type: 'detect', id });
+        state.child.postMessage({ type: 'detect', id, opts });
         setTimeout(() => {
           if (state.pending.delete(id)) reject(new Error('tempo esgotado'));
         }, 1500);
       });
-      if (!result || !result.fullscreen || !result.monitor) return [];
+      const instagram = !!(result && result.instagram);
+      if (!result || !result.fullscreen || !result.monitor) return { fullscreenIds: [], instagram };
       const d = matchFullscreenDisplay(toDip(result.monitor), displays);
-      return d ? [d.id] : [];
+      return { fullscreenIds: d ? [d.id] : [], instagram };
     },
     dispose() {
       state.available = false;

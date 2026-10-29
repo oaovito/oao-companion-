@@ -56,6 +56,8 @@ export const STATES = {
   petted: { priority: P.INTERACT, phases: [{ anim: 'petted', ms: 2200 }], next: 'happy' },
   eat: { priority: P.INTERACT, phases: [{ anim: 'eat', ms: 2800 }], next: 'happy' },
   play: { priority: P.INTERACT, phases: [{ anim: 'play', ms: 3400 }], next: 'happy' },
+  judge: { priority: P.INTERACT, phases: [{ anim: 'judge', ms: 3200 }], next: 'idle' },
+  scare: { priority: P.INTERACT, phases: [{ anim: 'scare', ms: 1500 }], next: 'idle' },
   interactIdle: { priority: P.COMMAND, phases: [{ anim: 'interactIdle', loop: true }], external: true },
   dragged: { priority: P.COMMAND, phases: [{ anim: 'dragged', loop: true }], external: true, next: 'land' },
   land: { priority: P.COMMAND, phases: [{ anim: 'land', ms: 750 }], next: 'idle' },

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { Companion } from '../core/companion.js';
 import { SettingsStore } from '../core/settings-store.js';
 import { DEFAULTS } from '../core/settings-schema.js';
+import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../core/personality.js';
 import { DialogueEngine } from '../core/dialogue/engine.js';
 import { createLogger } from './logger.js';
 import { OverlayWindow } from './overlay-window.js';
@@ -36,6 +37,14 @@ function main() {
   const userData = app.getPath('userData');
   const log = createLogger(path.join(userData, 'logs'), { echo: TEST || !app.isPackaged });
   const store = new SettingsStore(userData, { log });
+  // Perfil de personalidade: arquivo separado, editável (personality.json).
+  const personality = new SettingsStore(userData, {
+    log,
+    fileName: 'personality.json',
+    sanitize: sanitizePersonality,
+    defaults: PERSONALITY_DEFAULTS,
+    keepOnReset: ['lembreteComida'],
+  });
   let companion = null;
   let overlay = null;
   let trayCtl = null;
@@ -72,6 +81,7 @@ function main() {
   app.on('before-quit', () => {
     quitting = true;
     store.flush();
+    personality.flush();
   });
 
   app.whenReady().then(() => startApp()).catch((e) => {
@@ -82,6 +92,7 @@ function main() {
 
   function startApp() {
     store.load();
+    personality.load();
     log('info', `Iniciando Jeff Companion ${app.getVersion()} (${process.platform}, Electron ${process.versions.electron})`);
     const assets = {
       rig: readJSON('assets/character/jeff.rig.json'),
@@ -120,7 +131,7 @@ function main() {
     };
     const dialogue = new DialogueEngine({ log });
 
-    companion = new Companion({ platform, overlay, clock, store, rig: assets.rig, phrases, dialogue, log });
+    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, phrases, dialogue, log });
 
     // Esc global SOMENTE enquanto o modo de interação está ativo: o Windows nem
     // sempre entrega o foco do teclado à janela ativada por atalho. Fora do modo
@@ -177,6 +188,26 @@ function main() {
       return settingsInfo();
     });
     ipcMain.on('settings:open-folder', (e) => fromSettings(e) && shell.openPath(userData));
+    ipcMain.handle('personality:set', (e, patch) => {
+      if (!fromSettings(e) || !patch || typeof patch !== 'object') return settingsInfo();
+      personality.update(patch);
+      return settingsInfo();
+    });
+    ipcMain.handle('personality:reset', (e) => {
+      if (fromSettings(e)) personality.reset();
+      return settingsInfo();
+    });
+    ipcMain.on('personality:open-file', (e) => {
+      if (!fromSettings(e)) return;
+      personality.saveNow();
+      shell.openPath(personality.file);
+    });
+    personality.onChange((p, changed) => {
+      log('info', `Perfil de personalidade alterado: ${changed.join(', ')}`);
+      companion.applyPersonality(p);
+      if (changed.includes('instagram')) startFullscreenWatch();
+      settingsWin.send('settings:changed', settingsInfo());
+    });
 
     store.onChange((s, changed) => {
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
@@ -195,6 +226,8 @@ function main() {
       const prim = screen.getPrimaryDisplay().id;
       return {
         settings: store.get(),
+        personality: personality.get(),
+        personalityFile: personality.file,
         defaults: DEFAULTS,
         displays: screen.getAllDisplays().map((d, i) => ({
           id: String(d.id),
@@ -206,6 +239,7 @@ function main() {
         hotkey: hotkeyStatus,
         autostart: { supported: IS_WIN || process.platform === 'darwin', packaged: app.isPackaged },
         fullscreen: { available: !!fullscreen?.available, reason: fullscreen?.reason || null },
+        foreground: { available: !!fullscreen?.available, platform: process.platform },
         dialogue: dialogue.describe(),
         version: app.getVersion(),
         paths: { userData, log: log.file },
@@ -257,7 +291,9 @@ function main() {
     // ---------------- Tela cheia
     function startFullscreenWatch() {
       clearInterval(fullscreenTimer);
-      if (store.get().fullscreenBehavior === 'ignore') return;
+      const wantFullscreen = () => store.get().fullscreenBehavior !== 'ignore';
+      const wantInstagram = () => personality.get().instagram.ativo;
+      if (!wantFullscreen() && !wantInstagram()) return;
       if (!fullscreen) {
         fullscreen = createFullscreenDetector(log);
         if (fullscreen.available && overlay.alive) fullscreen.setOwnHandles([hwndToString(overlay.win.getNativeWindowHandle())].filter(Boolean));
@@ -274,8 +310,9 @@ function main() {
         }
         busy = true;
         try {
-          const ids = await fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays());
-          companion.setFullscreenDisplays(ids);
+          const res = await fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays(), { instagram: wantInstagram() });
+          companion.setFullscreenDisplays(wantFullscreen() ? res.fullscreenIds : []);
+          companion.onForeground({ instagram: wantInstagram() && res.instagram });
         } catch (err) {
           log('warn', `Falha na detecção de tela cheia: ${err.message}`);
         } finally {
@@ -402,6 +439,8 @@ function main() {
         loginItem: () => app.getLoginItemSettings(loginOptions()),
         fullscreenInfo: () => ({ available: !!fullscreen?.available, reason: fullscreen?.reason || null }),
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
+        personality,
+        setTargetTitle: (id, title) => BrowserWindow.fromId(id)?.setTitle(title),
       };
     }
   }
