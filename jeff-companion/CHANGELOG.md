@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 0.4.0 — 2026-10-29
+
+### Alterado
+- Jeff mais **adulto e intimidador**, mantendo o estilo recorte de papel: cabeça
+  proporcionalmente menor, ombros largos, peitoral e bíceps marcados, braços mais
+  longos com garras, olhos menores com pálpebras pesadas, sobrancelhas sempre franzidas.
+- **Dentes assustadores**: sorriso sempre entreaberto com duas fileiras de presas
+  grandes e espaçadas (superior e inferior) e o fundo escuro da boca aparecendo.
+- Animações menos infantis: sem quique no repouso, comemoração contida, rubor só no carinho.
+- Rig: `face.restingLid`, `browAlways`, `browFrown`, `restJaw`, `mouthDepth`,
+  `lowerTeeth`, `lowerToothSize`, `toothWidth`.
+
 ## 0.3.0 — 2026-10-29
 
 ### Alterado

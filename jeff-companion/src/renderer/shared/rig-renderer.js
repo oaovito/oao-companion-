@@ -23,6 +23,14 @@ export class RigRenderer {
     this.faceStyle = F.style || 'classic';
     this.faceCenter = F.center ?? this.box.width / 2;
     this.blushes = Array.isArray(F.blush) ? F.blush : F.blush ? [F.blush] : [];
+    this.restingLid = F.restingLid ?? 0;       // pálpebra pesada em repouso (0..1)
+    this.browAlways = !!F.browAlways;          // sobrancelhas sempre visíveis
+    this.browFrown = F.browFrown ?? 0;         // px: ponta interna para baixo (cara fechada)
+    this.restJaw = F.restJaw ?? 0;             // boca sempre entreaberta
+    this.mouthDepth = F.mouthDepth ?? 16;      // px de abertura com jaw = 1
+    this.toothWidth = F.toothWidth ?? 0.48;    // largura do dente relativa ao espaçamento
+    this.lowerTeeth = F.lowerTeeth || [];
+    this.lowerToothSize = F.lowerToothSize ?? this.toothSize * 0.8;
   }
 
   color(key) {
@@ -223,7 +231,9 @@ export class RigRenderer {
     const es = P('eyeScale', 1);
     const rx = E.rx * es;
     const ry = E.ry * es;
-    const open = Math.max(0, Math.min(1, P('eyeOpen', 1)));
+    // Pálpebra pesada em repouso; some quando os olhos arregalam (surpresa).
+    const lid = es > 1.1 ? 0 : this.restingLid;
+    const open = Math.max(0, Math.min(1 - lid, P('eyeOpen', 1)));
     const happy = P('happyEyes') > 0.5;
     const eye = new Path2D();
     eye.ellipse(E.x, E.y, rx, ry, 0, 0, Math.PI * 2);
@@ -282,14 +292,15 @@ export class RigRenderer {
 
   /** Sobrancelha estilo South Park: traço reto e grosso; brow<0 bravo/preocupado, >0 surpreso. */
   _browSP(ctx, pose, B) {
-    const show = pose.browShow ?? 0;
+    const show = this.browAlways ? 1 : (pose.browShow ?? 0);
     if (show < 0.3) return;
     const b = pose.brow ?? 0;
     const inner = B.x < this.faceCenter ? 1 : -1; // lado voltado para o centro
     const half = B.w / 2;
     const y = B.y - Math.max(0, b) * 4;
     // Ponta interna sobe quando preocupado (b<0) e levemente quando surpreso (b>0).
-    const innerY = y + (b < 0 ? b * 6 : -b * 2);
+    const frown = b > 0.3 ? 0 : this.browFrown;
+    const innerY = y + (b < 0 ? b * 6 : -b * 2) + frown;
     ctx.save();
     ctx.globalAlpha *= Math.min(1, (show - 0.3) / 0.4);
     ctx.strokeStyle = this.color('brow');
@@ -320,10 +331,10 @@ export class RigRenderer {
 
   _mouth(ctx, pose) {
     const M = this.rig.face.mouth;
-    const jaw = Math.max(0, Math.min(1.2, pose.jaw ?? 0));
+    const jaw = Math.max(this.restJaw, Math.min(1.2, pose.jaw ?? 0));
     const outline = this.color('outline');
     if (jaw > 0.05) {
-      const drop = 3 + jaw * 16;
+      const drop = 3 + jaw * this.mouthDepth;
       const mouth = new Path2D();
       mouth.moveTo(M.x1, M.y1);
       mouth.quadraticCurveTo(M.cx, M.cy - 4, M.x2, M.y2);
@@ -336,7 +347,7 @@ export class RigRenderer {
       ctx.clip(mouth);
       ctx.fillStyle = this.color('tongue');
       ctx.beginPath();
-      ctx.ellipse(M.cx + 1, M.cy - 4 + drop * 0.8, 10, 3 + jaw * 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(M.cx + 1, M.cy - 4 + drop * 0.85, 10, 2 + jaw * 4, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
       ctx.strokeStyle = outline;
@@ -359,7 +370,30 @@ export class RigRenderer {
       const cy = jaw > 0.05 ? M.cy - 4 : M.cy;
       return { x: u * u * M.x1 + 2 * u * t * M.cx + t * t * M.x2, y: u * u * M.y1 + 2 * u * t * cy + t * t * M.y2 };
     };
-    const half = this.teeth.length > 3 ? 0.055 : 0.07;
+    // Fileira de baixo (apontando para cima), ao longo do lábio inferior.
+    if (this.lowerTeeth.length && jaw > 0.05) {
+      const drop = 3 + jaw * this.mouthDepth;
+      const bot = (t) => {
+        const u = 1 - t;
+        const cx = M.cx + 2;
+        const cy = M.cy + drop;
+        return { x: u * u * M.x1 + 2 * u * t * cx + t * t * M.x2, y: u * u * M.y1 + 2 * u * t * cy + t * t * M.y2 };
+      };
+      const lh = this.lowerTeeth.length > 1 ? (this.lowerTeeth[1] - this.lowerTeeth[0]) * this.toothWidth : 0.06;
+      for (const t of this.lowerTeeth) {
+        const a = bot(t - lh);
+        const b = bot(t + lh);
+        const m = bot(t);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(m.x, m.y - this.lowerToothSize);
+        ctx.lineTo(b.x, b.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+    const half = this.teeth.length > 1 ? Math.min(0.07, (this.teeth[1] - this.teeth[0]) * this.toothWidth) : 0.07;
     for (const t of this.teeth) {
       const a = topY(t - half);
       const b = topY(t + half);

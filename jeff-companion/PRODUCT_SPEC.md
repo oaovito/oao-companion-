@@ -53,7 +53,9 @@ referência do usuário: de frente, cabeça grande e redonda, olhos ovais branco
 com pupilas de ponto, cores chapadas e contorno fino; tubarão bípede azul-ardósia
 com recortes creme serrilhados (focinho, barriga, rabo), sorriso com muitos
 dentinhos, barbatana na cabeça, rabo bifurcado, bermuda preta com faixas cinza.
-Animação também no estilo: 12 quadros por segundo, movimentos secos, saltinhos ao
+Versão adulta e intimidadora: cabeça menor em proporção, ombros largos,
+músculos marcados, olhos de pálpebra pesada, sobrancelhas franzidas e sorriso
+entreaberto com duas fileiras de presas assustadoras. Animação também no estilo: 12 quadros por segundo, movimentos secos, saltinhos ao
 andar, boca abrindo e fechando ao falar, virada instantânea. Só o estilo é
 imitado; nenhum personagem da série é copiado. Animações distintas: idle (respira), piscar, olhar ao redor,
 andar, correr/fugir, virar (procedural), sentar/levantar, deitar, adormecer,

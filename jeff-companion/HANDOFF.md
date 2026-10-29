@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.3.0, 2026-10-29)
+# HANDOFF — estado atual (v0.4.0, 2026-10-29)
 
 Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -48,7 +48,7 @@ Leia também: `README.md` (uso), `PRODUCT_SPEC.md` (requisitos), `ARCHITECTURE.m
 
 ## Pendente / limitado
 
-- **Arte provisória**: rig vetorial de frente no estilo recorte de papel (South Park), feito à mão
+- **Arte provisória**: rig vetorial de frente no estilo recorte de papel (South Park), versão adulta com presas, feito à mão
   a partir da referência do usuário (`"provisional": true`). Falta arte final; o visual ainda não
   passou por revisão do usuário no Windows.
 - Instalador **não assinado** (SmartScreen avisa).

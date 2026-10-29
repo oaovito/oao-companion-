@@ -47,6 +47,11 @@ mantendo os formatos abaixo; o código não precisa mudar.
 espelham a rotação: valor positivo = membro para fora/levantar, negativo = para dentro.
 `face.style: "sp"` usa olhos/sobrancelhas no estilo recorte (`eyes[].pupil`, `pupilOffset`);
 `face.blush` pode ser lista.
+Expressão adulta (v0.4): `restingLid` (pálpebra pesada 0–1), `browAlways` +
+`browFrown` (sobrancelhas sempre visíveis e franzidas, px), `restJaw` (boca sempre
+entreaberta), `mouthDepth` (px de abertura com jaw=1), `teeth`/`toothSize`
+(presas de cima), `lowerTeeth`/`lowerToothSize` (presas de baixo), `toothWidth`
+(largura relativa ao espaçamento; menor = mais espaço escuro entre os dentes).
 
 ## `animations/jeff.animations.json` (formato `jeff-anim/1`)
 
