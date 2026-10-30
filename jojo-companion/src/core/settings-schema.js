@@ -47,6 +47,15 @@ export const DEFAULTS = Object.freeze({
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
+  // Modo Trabalho: medita quieto num canto, sem nenhuma distração.
+  trabalhoAtivo: false,
+  trabalhoPerfil: 'trabalho',   // trabalho | deep | invisivel
+  trabalhoCanto: 'inferiorDireito', // inferiorDireito | inferiorEsquerdo | superiorDireito | superiorEsquerdo
+  trabalhoTamanho: 0.35,        // fração do tamanho normal (0.2 – 1)
+  trabalhoOpacidade: 0.65,      // 0.2 – 1
+  trabalhoMargem: 16,           // px até a borda (0 – 200)
+  trabalhoRestaurar: true,      // reabrir o app ainda no Modo Trabalho
+  trabalhoFim: 0,               // fim do temporizador (ms desde 1970); 0 = sem tempo
   position: null,               // {x, y, displayId} — última posição válida
   visible: true,
   paused: false,
@@ -60,6 +69,10 @@ const RANGES = {
   bubbleScale: [0.8, 1.6],
   interactionTimeoutSec: [10, 600],
   agendaAvisoMin: [5, 60],
+  trabalhoTamanho: [0.2, 1],
+  trabalhoOpacidade: [0.2, 1],
+  trabalhoMargem: [0, 200],
+  trabalhoFim: [0, 8.64e15],
 };
 
 const ENUMS = {
@@ -72,9 +85,11 @@ const ENUMS = {
   ambienteIntensidade: ['auto', 'suave', 'normal', 'exagerado'],
   ambienteModo: ['auto', 'calmo', 'pilhado'],
   microMovimentos: ['normal', 'discreto', 'desligado'],
+  trabalhoPerfil: ['trabalho', 'deep', 'invisivel'],
+  trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };

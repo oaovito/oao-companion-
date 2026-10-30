@@ -4,7 +4,7 @@
 // online usa os mesmos ids (campo "comando" da resposta). Puro e testável.
 
 /** Ações que podem ser pedidas por frase (ou pela conversa online). */
-export const COMANDOS = ['foco_iniciar', 'foco_parar', 'jogo', 'jogo_parar', 'calma', 'ritmo', 'bolhas', 'estimulo', 'parar_atividade', 'resumo', 'colecao', 'guarda_roupa', 'pausar', 'retomar', 'esconder', 'mostrar', 'silencio_ligar', 'silencio_desligar', 'configuracoes', 'nova_conversa'];
+export const COMANDOS = ['trabalho_iniciar', 'trabalho_parar', 'foco_iniciar', 'foco_parar', 'jogo', 'jogo_parar', 'calma', 'ritmo', 'bolhas', 'estimulo', 'parar_atividade', 'resumo', 'colecao', 'guarda_roupa', 'pausar', 'retomar', 'esconder', 'mostrar', 'silencio_ligar', 'silencio_desligar', 'configuracoes', 'nova_conversa'];
 
 function norm(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -65,6 +65,13 @@ export function interpretCommand(text, ctx = {}) {
   const toks = tokens(n);
   // Perguntas de conhecimento ("o que é foco?") não são comandos.
   if (/^(o que|oque|que|qual|quais|quem|quando|onde|por que|porque|pq)\b/.test(n) && !/\b(foco|jogo|pausa)\b.*\b(parar|encerrar|acabar|terminar)\b/.test(n)) return null;
+
+  // Modo Trabalho: entrar e sair (vem antes de tudo: "pode voltar" com o modo ligado é sair dele).
+  if (ctx.trabalho && /^(jojo )?(pode voltar|volta|voltar|terminei|acabei|sai do modo trabalho|desliga o modo trabalho|fim do trabalho|terminei de trabalhar|acabei de trabalhar|chega de trabalhar|pode sair)\b/.test(n)) return { cmd: 'trabalho_parar' };
+  if (/\b(sai|desliga|encerra|termina)\w* (do |o )?modo trabalho\b|\bterminei de (trabalhar|estudar)\b/.test(n)) return { cmd: 'trabalho_parar' };
+  if (/\b(vou trabalhar|modo trabalho|preciso (me )?concentrar|preciso focar|hora de estudar|vou estudar sozinha|deep focus|modo invisivel|work mode)\b/.test(n) && !/\bnao\b/.test(n)) {
+    return { cmd: 'trabalho_iniciar', arg: `${/deep focus|profundo/.test(n) ? 'deep' : /invisivel/.test(n) ? 'invisivel' : ''} ${(n.match(/\b(\d{1,3})\s*(min|minutos?|h)\b/) || [])[1] || ''}`.trim() };
+  }
 
   // Esconder vem antes de "parar" ("sai da tela", "vai embora").
   if (/\b(some|sumir|suma|desaparece|desaparecer|se esconde|esconde|esconder|vai embora|sai da tela|se guarda|guarda o (jojo|pet)|tuck away)\b/.test(n) && !/\bnao\b/.test(n)) return { cmd: 'esconder' };

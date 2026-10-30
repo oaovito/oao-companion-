@@ -358,6 +358,8 @@ function targetFps() {
   if (state.moving || dragging || ['run', 'dragged', 'land', 'appear', 'goodbye', 'play', 'happy', 'surprised'].includes(state.anim)) return 60;
   if (state.paused) return 8;
   if (state.anim === 'sleep') return 15;
+  // Modo Trabalho: meditação lenta, poucos quadros (leve e discreto).
+  if (state.work) return state.moving ? 30 : 8;
   if (turnStart >= 0 || effects.busy || state.effect || state.talking || state.interaction) return 30;
   return 24;
 }

@@ -73,6 +73,12 @@ results.cursorPerseguindo = await sample(app, SECONDS, async () => {
   }
 });
 await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
+// Modo Trabalho: meditando no canto (deve gastar menos que o ocioso normal).
+await app.evaluate(() => globalThis.__jojo.companion.startWork({ perfil: 'trabalho' }));
+await sleep(5000);
+results.modoTrabalho = await sample(app, SECONDS);
+await app.evaluate(() => globalThis.__jojo.companion.endWork());
+await sleep(2000);
 await app.evaluate(() => globalThis.__jojo.store.update({ visible: false }));
 await sleep(1500);
 results.oculto = await sample(app, Math.min(15, SECONDS));

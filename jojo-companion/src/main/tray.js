@@ -29,6 +29,7 @@ export function createTray({ iconPath, getState, actions }) {
       { label: s.visible ? `Ocultar ${s.name}` : `Mostrar ${s.name}`, click: () => actions.toggleVisible() },
       { label: 'Pausar', type: 'checkbox', checked: s.paused, click: () => actions.togglePaused() },
       { label: 'Modo silencioso', type: 'checkbox', checked: s.quiet, click: () => actions.toggleQuiet() },
+      { label: 'Modo Trabalho', type: 'checkbox', checked: s.work, click: () => actions.toggleWork() },
       { type: 'separator' },
       { label: 'Configurações…', click: () => actions.openSettings() },
       { label: 'Sobre', click: () => actions.about() },

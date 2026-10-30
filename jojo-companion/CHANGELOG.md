@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## 0.36.0 — 2026-10-30
+
+### Novidades
+- **Modo Trabalho**: o JoJo nada até o canto escolhido, fica pequeno (35%) e meio transparente (65%)
+  e **medita** de olhos fechados, respirando devagar (animação nova `meditate`; não é sono). Enquanto
+  isso: nenhuma fala, balão, animação, bronca do Instagram, lembrete, aviso de agenda, reação a
+  música/LoL, jogo, evento raro ou reação de ociosidade; nada fica guardado para depois. Cursor perto:
+  ele não sai do canto, só fica quase invisível. Os cliques continuam atravessando.
+- Perfis **Trabalho**, **Deep Focus** (quase imóvel, mais transparente) e **Invisível** (some da tela).
+- Liga e desliga por frase ("vou trabalhar", "preciso me concentrar", "hora de estudar", "terminei de
+  trabalhar", "pode voltar"), por `/trabalho` (`/trabalho 50` com temporizador, `/trabalho deep`,
+  `/trabalho invisivel`, `/trabalho sair`), pela bandeja, pela Central e pelas Configurações.
+- Temporizador opcional: no fim só marca "Sessão concluída" na Central, sem tirar o JoJo da meditação.
+- Configurações → Modo Trabalho: perfil, canto, tamanho, opacidade, distância da borda e "continuar no
+  Modo Trabalho ao reabrir" (volta meditando, sem cumprimento).
+
+### Melhorias
+- Desenho mais leve no Modo Trabalho (8 quadros/s): CPU média 1,18% contra 1,98% parado no modo
+  normal (`scripts/measure.mjs`, Linux/Xvfb; no Windows o CI mede).
+
+### Como testar
+- Diga "vou trabalhar" e abra o Instagram: nada acontece. Diga "terminei de trabalhar".
+- Bandeja → Modo Trabalho; Configurações → Modo Trabalho → mude o canto com o modo ligado.
+
 ## 0.35.0 — 2026-10-30
 
 ### Novidades

@@ -186,6 +186,31 @@
     </fieldset>
 
     <fieldset>
+      <legend>Modo Trabalho</legend>
+      <label class="check"><input type="checkbox" name="trabalhoAtivo"> Ligado (o JoJo medita quieto no canto: sem falas, sons, animações, broncas ou lembretes)</label>
+      <label class="row">Perfil
+        <select name="trabalhoPerfil">
+          <option value="trabalho">Trabalho (discreto)</option>
+          <option value="deep">Deep Focus (quase imóvel, mais transparente)</option>
+          <option value="invisivel">Invisível</option>
+        </select>
+      </label>
+      <label class="row">Canto
+        <select name="trabalhoCanto">
+          <option value="inferiorDireito">Inferior direito</option>
+          <option value="inferiorEsquerdo">Inferior esquerdo</option>
+          <option value="superiorDireito">Superior direito</option>
+          <option value="superiorEsquerdo">Superior esquerdo</option>
+        </select>
+      </label>
+      <label class="row">Tamanho <input type="range" name="trabalhoTamanho" min="0.2" max="1" step="0.05"> <output data-for="trabalhoTamanho" data-fmt="pct"></output></label>
+      <label class="row">Opacidade <input type="range" name="trabalhoOpacidade" min="0.2" max="1" step="0.05"> <output data-for="trabalhoOpacidade" data-fmt="pct"></output></label>
+      <label class="row">Distância da borda (px) <input type="number" name="trabalhoMargem" min="0" max="200" step="4"></label>
+      <label class="check"><input type="checkbox" name="trabalhoRestaurar"> Ao reabrir o app, continuar no Modo Trabalho</label>
+      <p class="hint">Também pelo chat ("vou trabalhar", "terminei de trabalhar"), por /trabalho 50 (temporizador) e pelo menu da bandeja.</p>
+    </fieldset>
+
+    <fieldset>
       <legend>Agenda (Google ou iCloud)</legend>
       <label class="check"><input type="checkbox" name="agendaAtiva"> Avisar meus compromissos</label>
       <label class="row">Endereço da agenda

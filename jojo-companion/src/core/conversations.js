@@ -158,6 +158,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/ritmo', label: 'Ritmo', hint: 'Sequência rítmica previsível por 30 s' },
     { cmd: '/bolhas', label: 'Bolhas', hint: 'Bolhas para estourar com clique, sem placar' },
     { cmd: '/resumo', label: 'Resumo do dia', hint: 'O que rolou hoje' },
+    { cmd: '/trabalho', label: 'Modo Trabalho', hint: 'JoJo medita quieto no canto: /trabalho, /trabalho 50, /trabalho deep, /trabalho invisivel, /trabalho sair' },
     { cmd: '/vestir', label: 'Guarda-roupa', hint: 'Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar' },
     { cmd: '/rotina', label: 'Rotina fixa', hint: '/rotina bom dia: texto que ele diz sempre igual' },
     { cmd: '/pausa', label: 'Pausa', hint: 'Pausa/retoma o JoJo na hora' },
@@ -174,7 +175,7 @@ export function parseCommand(text) {
   if (name === '/nova') return 'new';
   if (name === '/config' || name === '/configuracoes') return 'settings';
   if (name === '/anim' || name === '/animacao' || name === '/animação') return 'anim';
-  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/colecao': 'colecao', '/coleção': 'colecao', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
+  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/colecao': 'colecao', '/coleção': 'colecao', '/trabalho': 'trabalho', '/trabalhar': 'trabalho', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
   if (MAP[name]) return MAP[name];
   return 'unknown';
 }

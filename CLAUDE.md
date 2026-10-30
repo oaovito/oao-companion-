@@ -36,6 +36,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (`assets/catalog/animacoes.json`, `src/core/catalog/`), 3 intensidades, motor de variedade (memória 30,
   pesos dinâmicos, humor, horário, temporada), animações e falas ambientes; `/anim <nome>`; doc `docs/ANIMACOES.md`. Cor por emoção
   (canais `mood*` + `rig.moods`): raiva avermelha, tristeza acinzenta, medo empalidece etc.
+- **Modo Trabalho** (prioridade sobre tudo, exceto segurança): medita no canto (estado `meditate`, não é sono), sem falas,
+  animações, broncas, lembretes ou reações; bloqueio central em `say`/`playCatalog`/`react`/`_canNag`; perfis trabalho/deep/invisível;
+  `/trabalho`, frases, bandeja, Central, Configurações; persiste ao reabrir.
 - Antitédio: rotinas, mini-jogos, progressão/coleção (Central), foco junto (`/foco`), estímulos (💪 ✨ /calma /ritmo /bolhas),
   adaptação; tudo desligável e interrompível; doc `jojo-companion/docs/ANTITEDIO.md`.
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".

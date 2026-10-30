@@ -807,3 +807,28 @@ test('silêncio absoluto: todas as janelas do app estão mutadas', async () => {
     await quit(app);
   }
 });
+
+test('Modo Trabalho: medita no canto (clique atravessa), nada de reação ao Instagram, sai suave', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.companion.chat('/trabalho'));
+    let st = null;
+    for (let i = 0; i < 30 && !(st && st.anim === 'meditate' && !st.moving); i++) {
+      await sleep(200);
+      st = await win.evaluate(() => window.__jojoRenderer.state);
+    }
+    assert.equal(st.anim, 'meditate');
+    assert.equal(st.work, 'trabalho');
+    assert.ok(st.opacity <= 0.65);
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.companion.onForeground({ instagram: true })), false);
+    assert.equal(await app.evaluate(() => globalThis.__jojo.store.get().trabalhoAtivo), true);
+    await app.evaluate(() => globalThis.__jojo.companion.chat('terminei de trabalhar'));
+    await sleep(600);
+    st = await win.evaluate(() => window.__jojoRenderer.state);
+    assert.equal(st.work, null);
+    assert.equal(st.opacity, 1);
+  } finally {
+    await quit(app);
+  }
+});

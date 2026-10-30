@@ -51,6 +51,10 @@ export const STATES = {
     next: 'idle',
     sleeping: true,
   },
+  // Modo Trabalho: medita no canto (não é sono); só sai quando o modo termina.
+  meditate: { priority: P.COMMAND, phases: [{ anim: 'meditate', loop: true }], external: true, next: 'idle' },
+  // Saída do Modo Trabalho: abre os olhos e se espreguiça devagar.
+  workWake: { priority: P.INTERACT, phases: [{ anim: 'wake', ms: 1500 }], next: 'idle' },
   talk: { priority: P.INTERACT, phases: [{ anim: 'talk', loop: true }], external: true, next: 'idle' },
   happy: { priority: P.INTERACT, phases: [{ anim: 'happy', ms: 1600 }], next: 'idle' },
   petted: { priority: P.INTERACT, phases: [{ anim: 'petted', ms: 2200 }], next: 'happy' },
@@ -281,6 +285,7 @@ export class BehaviorMachine {
     // Sorteio ambiente (catálogo): o companion escolhe a animação (abaixo).
     else if (next === 'afterSit') next = this.rng() < 0.3 + (ctx.sleepiness || 0) * 0.4 ? 'lie' : 'idle';
     else if (next === 'afterLie') next = this.canSleep() && this.rng() < 0.45 + (ctx.sleepiness || 0) * 0.4 ? 'sleep' : 'idle';
+    if (ctx.work && next !== 'meditate') next = 'meditate';
     if (ctx.hasQueue && !ctx.paused && STATES[next].priority >= P.AUTO && next !== 'ambient') next = 'ambient';
     if (next === 'ambient') {
       const data = ctx.pickAmbient ? ctx.pickAmbient() : null;
@@ -296,6 +301,7 @@ export class BehaviorMachine {
   }
 
   pickAuto(ctx = {}) {
+    if (ctx.work) return 'meditate';
     // 1 em 1 bilhão: o "vai tomar no cu" sozinho, sem ninguém pedir.
     if (!ctx.paused && !ctx.alert && this.rareRng() < MOON_IDLE_CHANCE) return 'moon';
     const w = autoWeights(this.activity, ctx);

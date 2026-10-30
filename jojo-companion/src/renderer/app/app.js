@@ -33,6 +33,7 @@ function render(s) {
   $('name').textContent = s.companionName;
   document.title = s.companionName;
   $('petToggle').textContent = s.petVisible ? 'Tuck Away Pet' : 'Wake Pet';
+  $('trabalhoBtn').textContent = s.trabalho ? '🧘 Sair do Modo Trabalho' : '🧘 Modo Trabalho';
   $('petToggle').title = s.petVisible ? `Esconder o ${s.companionName}` : `Mostrar o ${s.companionName}`;
   listEl.innerHTML = '';
   for (const c of s.conversations) {
@@ -313,6 +314,10 @@ $('newChat').addEventListener('click', async () => {
   input.focus();
 });
 $('petToggle').addEventListener('click', async () => render(await api.togglePet()));
+$('trabalhoBtn').addEventListener('click', async () => {
+  await api.send(selected, st && st.trabalho ? '/trabalho sair' : '/trabalho');
+  render(await api.state());
+});
 $('settings').addEventListener('click', () => api.openSettings());
 
 api.onUpdate((s) => {

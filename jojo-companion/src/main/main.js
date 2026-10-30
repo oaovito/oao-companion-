@@ -305,6 +305,7 @@ function main() {
         colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome, recorde: companion._record(j.id) == null ? null : companion._fmtRecord(j.id, companion._record(j.id)) })) : [] },
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
+        trabalho: !!companion.work,
         abrirGuardaRoupa,
       };
     }
@@ -448,7 +449,8 @@ function main() {
         appWin.send('app:update', appState());
         companion._applyLayout(true);
       }
-      if (changed.includes('visible')) appWin.send('app:update', appState());
+      if (changed.includes('visible') || changed.includes('trabalhoAtivo')) appWin.send('app:update', appState());
+      if (changed.includes('trabalhoAtivo')) trayCtl && trayCtl.refresh();
       if (['fullscreenBehavior', 'lolBronca', 'spotifyReacoes'].some((k) => changed.includes(k))) {
         startFullscreenWatch();
         if (s.fullscreenBehavior === 'ignore') companion.setFullscreenDisplays([]);
@@ -604,6 +606,7 @@ function main() {
         visible: !companion.userHidden,
         paused: store.get().paused,
         quiet: store.get().quietMode,
+        work: !!companion.work,
         hotkey: store.get().interactionHotkey,
         hotkeyOk: hotkeyStatus.ok,
         name: personality.get().nomeCompanion || 'JoJo',
@@ -617,6 +620,11 @@ function main() {
         toggleVisible: () => store.update({ visible: companion.userHidden }),
         togglePaused: () => store.update({ paused: !store.get().paused }),
         toggleQuiet: () => store.update({ quietMode: !store.get().quietMode }),
+        toggleWork: () => {
+          if (companion.work) companion.endWork();
+          else companion.startWork();
+          trayCtl && trayCtl.refresh();
+        },
         openSettings,
         openApp: (id) => companion.openApp(id || null),
         about: () =>

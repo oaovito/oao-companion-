@@ -239,11 +239,19 @@ export class Companion {
       this.overlay.hide();
       return;
     }
+    // Reabriu no Modo Trabalho: volta direto a meditar, sem cumprimento nem animação de chegada.
+    const st0 = this.store.get();
+    if (st0.trabalhoAtivo && st0.trabalhoRestaurar) {
+      this._enterWork(st0.trabalhoPerfil, { silent: true, instant: true });
+      return;
+    }
+    if (st0.trabalhoAtivo) this.store.update({ trabalhoAtivo: false, trabalhoFim: 0 }, { silent: true });
     this.overlay.show();
     this.behavior.request('appear', { now, force: true });
     this._applyLayout(true);
     this._schedule(0);
     this.clock.setTimeout(() => {
+      if (this.work) return;
       const per = periodOf(new Date());
       // Rotina previsível definida por ela ("bom dia" sempre igual).
       const fixa = this.progress.st.rotinaFixa || {};
@@ -439,6 +447,13 @@ export class Companion {
       if (this.behavior.state === 'walk') this.behavior.finish('walk', this.clock.now());
       this._recoverPosition();
     }
+    // Modo Trabalho pelas Configurações (ligar/desligar e ajustes ao vivo).
+    if (changed.includes('trabalhoAtivo') && this.started) {
+      if (settings.trabalhoAtivo && !this.work) this._enterWork(settings.trabalhoPerfil);
+      else if (!settings.trabalhoAtivo && this.work) this.endWork();
+    } else if (this.work && ['trabalhoPerfil', 'trabalhoCanto', 'trabalhoTamanho', 'trabalhoOpacidade', 'trabalhoMargem'].some((k) => changed.includes(k))) {
+      this._enterWork(settings.trabalhoPerfil, { silent: true });
+    }
     if (changed.includes('paused')) this.setPaused(settings.paused, { fromSettings: true });
     if (changed.includes('visible')) this.setVisible(settings.visible, { fromSettings: true });
     if (changed.includes('bubbleScale') && this.bubble) this._remeasureBubble();
@@ -482,7 +497,7 @@ export class Companion {
   }
 
   _showAgain() {
-    if (this.userHidden || this.fullscreenHidden || this.suspended || this.lolHidden) return;
+    if (this.userHidden || this.fullscreenHidden || this.suspended || this.lolHidden || this.workHidden) return;
     const now = this.clock.now();
     this.refreshDisplays();
     this.avoid.reset();
@@ -525,7 +540,7 @@ export class Companion {
   // ---------------------------------------------------------------- tick principal
 
   tick() {
-    if (!this.started || this.suspended || this.userHidden || this.fullscreenHidden || this.lolHidden) return;
+    if (!this.started || this.suspended || this.userHidden || this.fullscreenHidden || this.lolHidden || this.workHidden) return;
     const now = this.clock.now();
     this.stats.ticks++;
     this.lastTick = now;
@@ -552,6 +567,7 @@ export class Companion {
     }
 
     if (this._avoidanceEnabled()) this._runAvoidance(now);
+    else if (this.work) this._workFade();
 
     this._gamePega(now);
     this.behavior.tick(now);
@@ -564,8 +580,8 @@ export class Companion {
   }
 
   _avoidanceEnabled() {
-    // Morto no chão (AVC) não foge do cursor.
-    return !this.interaction && !this.dragging && !this.quitting && this.behavior.state !== 'goodbye' && this.behavior.state !== 'avc';
+    // Morto no chão (AVC) não foge do cursor; no Modo Trabalho não sai do canto (só fica transparente).
+    return !this.work && !this.interaction && !this.dragging && !this.quitting && this.behavior.state !== 'goodbye' && this.behavior.state !== 'avc';
   }
 
   _sampleCursor(now) {
@@ -583,7 +599,7 @@ export class Companion {
   }
 
   _rects(pos = this.pos) {
-    return jojoRects(this.metrics, pos, this.store.get().size, this.facing);
+    return jojoRects(this.metrics, pos, this._size(), this.facing);
   }
 
   _runAvoidance(now) {
@@ -653,6 +669,7 @@ export class Companion {
   _onArrive(now) {
     const kind = this.mover.kind;
     this.mover.stop();
+    if (kind === 'work' && this.work && this.behavior.state !== 'meditate') this.behavior.request('meditate', { now, force: true });
     if (kind === 'walk' && this.behavior.state === 'walk') this.behavior.finish('walk', now);
     if (kind === 'flee' && this.behavior.state === 'flee') this.behavior.finish('flee', now);
     this._savePosition();
@@ -690,6 +707,7 @@ export class Companion {
       sleepiness: clamp((night ? 0.6 : 0) + idleMin / 90, 0, 1),
       alert: this.avoid.isAlert,
       paused: this.paused,
+      work: !!this.work,
       quiet: this.store.get().quietMode,
       wired: this.wired,
       // Catálogo: peso do sorteio ambiente e fila (sequências, "sem filtro", aviso de raro).
@@ -780,7 +798,7 @@ export class Companion {
   }
 
   _canIdleAct() {
-    return this.started && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.lolHidden && !this.suspended && !this.quitting && !this.ghost && !this.interaction && !this.dragging;
+    return !this.work && this.started && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.lolHidden && !this.suspended && !this.quitting && !this.ghost && !this.interaction && !this.dragging;
   }
 
   _startWired(now) {
@@ -942,8 +960,10 @@ export class Companion {
   }
 
   /** Mostra um balão. No máximo um por vez; o novo substitui o anterior. */
-  say(text, kind = 'speech', { spontaneous = false, category = null, reaction = null } = {}) {
+  say(text, kind = 'speech', { spontaneous = false, category = null, reaction = null, work = false } = {}) {
     if (!this.started || this.userHidden || this.ghost || this.lolHidden) return false;
+    // Modo Trabalho: nenhum balão (só a frase curta de entrar/sair do modo).
+    if (this.work && !work) return false;
     if (spontaneous && this.bubble) return false;
     // Fala importante (bronca, resposta) ainda sendo medida: a espontânea não passa por cima.
     if (spontaneous && this.clock.now() - (this.importantSayAt ?? -Infinity) < 1500) return false;
@@ -1270,6 +1290,7 @@ export class Companion {
     const anim = this.behavior.anim || '';
     return {
       foco: !!this.focus,
+      trabalho: !!this.work,
       jogo: !!(this.game && this.game.tipo !== 'bolhas'),
       bolhas: !!(this.game && this.game.tipo === 'bolhas'),
       calma: /^cat_calma/.test(anim),
@@ -1286,6 +1307,14 @@ export class Companion {
     const run = (c, raw) => this.runCommand(c, conversationId, raw).text;
     let text;
     switch (cmd) {
+      case 'trabalho_iniciar': {
+        const perfil = /deep|profundo/.test(arg) ? 'deep' : /invis/.test(arg) ? 'invisivel' : null;
+        text = this.startWork({ perfil, min: Number((String(arg).match(/\d+/) || [0])[0]) });
+        break;
+      }
+      case 'trabalho_parar':
+        text = this.endWork() || 'O Modo Trabalho não está ligado.';
+        break;
       case 'foco_parar':
         text = this._endFocus(false) || 'Não tem foco rolando.';
         break;
@@ -1441,6 +1470,12 @@ export class Companion {
       if (this.onOpenApp) this.onOpenApp('colecao');
       return { text: `Nível ${p.nivel} (${p.nomeNivel}), ${p.poses} poses, ${p.conquistas.filter((q) => q.ok).length} conquistas. Abri a coleção na Central.`, command: cmd, conversationId };
     }
+    if (cmd === 'trabalho') {
+      if (/^(sair|parar|fim|terminei|desligar|off)/i.test(arg)) return { text: this.endWork() || 'O Modo Trabalho não está ligado.', command: cmd, conversationId };
+      const perfil = /deep|foco profundo|profundo/i.test(arg) ? 'deep' : /invis/i.test(arg) ? 'invisivel' : /trabalho/i.test(arg) ? 'trabalho' : null;
+      const min = Number((arg.match(/\d+/) || [0])[0]);
+      return { text: this.startWork({ perfil, min: clamp(min, 0, 600) }), command: cmd, conversationId };
+    }
     if (cmd === 'vestir') {
       // Guarda-roupa: sem nome abre o painel na Central; com nome veste/tira a peça.
       if (!arg) {
@@ -1515,6 +1550,7 @@ export class Companion {
   }
 
   _doChatAction(action, now) {
+    if (this.work) return; // Modo Trabalho: responde no chat, sem animação
     if (action === 'boaNoite') {
       // Depois das 21h: dormir liberado, ele dá boa noite.
       this.playCatalog('boaNoite', { source: 'chat', speak: false });
@@ -1618,7 +1654,7 @@ export class Companion {
    * fuga, arraste, sono profundo de outro estado prioritário ou despedida.
    */
   react(name) {
-    if (!STATES[name] || this.quitting) return false;
+    if (!STATES[name] || this.quitting || this.work) return false;
     const st = this.behavior.state;
     if (st === name || st === 'flee' || st === 'hidden' || st === 'dragged' || st === 'goodbye' || st === 'gone' || st === 'avc' || this.dragging) return false;
     const now = this.clock.now();
@@ -1657,6 +1693,7 @@ export class Companion {
     const item = this.catalogById.get(id);
     if (!item || this.quitting || !this.started || this.userHidden) return false;
     if (SLEEP_ANIMS.has(id) && !this.canSleep()) return false; // dormir de dia: nunca
+    if (this.work) return false; // Modo Trabalho: nenhuma animação
     const now = this.clock.now();
     if (item.especial === 'semFiltro') return this._semFiltro();
     // Precisa ir até um lugar antes (borda, outro canto, perto do cursor): anda e toca na chegada.
@@ -1743,6 +1780,116 @@ export class Companion {
     this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
     if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
     return this._catalogData(it);
+  }
+
+  // ---------------------------------------------------------------- Modo Trabalho
+
+  /** Tamanho efetivo (menor no Modo Trabalho). */
+  _size() {
+    const s = this.store.get();
+    if (!this.work) return s.size;
+    return s.size * s.trabalhoTamanho * (this.work.perfil === 'deep' ? 0.85 : 1);
+  }
+
+  _workOpacity() {
+    const s = this.store.get();
+    return this.work && this.work.perfil === 'deep' ? Math.min(s.trabalhoOpacidade, 0.4) : s.trabalhoOpacidade;
+  }
+
+  /** Cursor perto: some quase todo em vez de fugir (não sai do canto, não atrapalha). */
+  _workFade() {
+    if (!this.work || this.work.perfil === 'invisivel') return;
+    const near = distPointRect(this.cursor, this._rects().visual) < this.avoid.cfg.margin;
+    const want = near ? 0.1 : this._workOpacity();
+    if (this.opacity !== want) this.opacity = want;
+  }
+
+  /** Canto escolhido, com margem, no monitor atual. */
+  _workCorner() {
+    const s = this.store.get();
+    const disp = this._currentDisplay() || this.displays[0];
+    const r = this._rects({ x: 0, y: 0 });
+    const wa = disp.workArea;
+    const m = s.trabalhoMargem;
+    const right = /Direito$/.test(s.trabalhoCanto);
+    const bottom = /^inferior/.test(s.trabalhoCanto);
+    // jojoRects: a caixa sai do ponto (0,0); compensa o deslocamento visual.
+    const x = right ? wa.x + wa.width - m - r.visual.width - r.visual.x : wa.x + m - r.visual.x;
+    const y = bottom ? wa.y + wa.height - m - r.visual.height - r.visual.y : wa.y + m - r.visual.y;
+    return { x, y };
+  }
+
+  /**
+   * Entra no Modo Trabalho: só medita no canto. Nenhuma fala, animação, bronca,
+   * lembrete, jogo ou reação até sair (nada fica guardado para depois).
+   */
+  startWork({ perfil = null, min = 0 } = {}) {
+    const s = this.store.get();
+    const p = ['trabalho', 'deep', 'invisivel'].includes(perfil) ? perfil : s.trabalhoPerfil;
+    this._enterWork(p);
+    this.store.update({ trabalhoAtivo: true, trabalhoPerfil: p, trabalhoFim: min > 0 ? Date.now() + min * 60e3 : 0 });
+    const c = this.conversations.create({ id: 'trabalho', title: 'Modo Trabalho', kind: 'reminder' });
+    this.conversations.setStatus(c.id, 'running', min > 0 ? `Modo Trabalho: ${min} min.` : 'Modo Trabalho ligado.');
+    return ['Entendido.', 'Vou ficar quieto.', 'Trabalhe. Eu vigio o silêncio.', 'Finalmente. Produtividade.'][Math.floor(this.rng() * 4) % 4];
+  }
+
+  _enterWork(perfil, { silent = false, instant = false } = {}) {
+    const now = this.clock.now();
+    this.work = { perfil, desde: now };
+    // Descarta tudo o que estava na fila: nada de reações atrasadas depois.
+    this.ambientQueue.length = 0;
+    this.game = null;
+    this.focus = null;
+    this.effect = null;
+    this.calmUntil = 0;
+    this.nextSpeechAt = Infinity;
+    this.mover.stop();
+    this.hideBubble();
+    if (this.ghost) this._exitGhost(now, true);
+    if (perfil === 'invisivel') {
+      this.workHidden = true;
+      this.overlay.hide();
+      return;
+    }
+    this.workHidden = false;
+    this.overlay.show();
+    this.opacity = this._workOpacity();
+    const to = this._workCorner();
+    this.behavior.request('meditate', { now, force: true });
+    if (instant || this.reducedMotion) this.pos = to;
+    else this.mover.start(this.pos, to, { speed: 160, easing: 'inOut', now, minMs: 900, maxMs: 4000, kind: 'work' });
+    if (!silent) this.clock.setTimeout(() => this.work && this.say(['Entendido.', 'Vou ficar quieto.'][0], 'thought', { work: true }), 50);
+    this._applyLayout(true);
+    this._schedule(0);
+  }
+
+  /** Sai do Modo Trabalho: abre os olhos, se espreguiça e volta ao normal. */
+  endWork() {
+    if (!this.work) return null;
+    const now = this.clock.now();
+    this.work = null;
+    this.workHidden = false;
+    this.store.update({ trabalhoAtivo: false, trabalhoFim: 0 });
+    this.opacity = 1;
+    this.ambientQueue.length = 0;
+    if (this.conversations.get('trabalho')) this.conversations.setStatus('trabalho', 'idle');
+    if (!this.userHidden) this.overlay.show();
+    if (this.behavior.state === 'meditate') this.behavior.finish('meditate', now);
+    this.behavior.request('workWake', { now, force: true });
+    this._scheduleSpeech(now, true);
+    this._applyLayout(true);
+    this._schedule(0);
+    return ['Terminou? Excelente.', 'Finalmente posso voltar a julgar suas decisões.', 'O silêncio foi agradável.', 'Muito bem. Voltei.'][Math.floor(this.rng() * 4) % 4];
+  }
+
+  /** Temporizador: no fim só marca na Central (sem som, sem balão, continua meditando). */
+  _checkWorkTimer() {
+    const fim = this.store.get().trabalhoFim;
+    if (!this.work || !fim || Date.now() < fim) return false;
+    this.store.update({ trabalhoFim: 0 });
+    const c = this.conversations.create({ id: 'trabalho', title: 'Modo Trabalho', kind: 'reminder' });
+    this.conversations.setStatus(c.id, 'ready', 'Sessão de trabalho concluída. Diga "terminei de trabalhar" para eu voltar.');
+    return true;
   }
 
   /** Pode dormir agora? Só das 21h às 6h (horário local). */
@@ -1912,7 +2059,7 @@ export class Companion {
   /** Pode dar uma bronca/lembrete agora? Respeita silêncio, pausa, ocultação e despedida. */
   _canNag() {
     const s = this.store.get();
-    return this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.lolHidden;
+    return !this.work && this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.lolHidden;
   }
 
   /**
@@ -1945,6 +2092,7 @@ export class Companion {
    * Volta (emburrado) quando ela fica 20 s fora do LoL. Nunca mexe no jogo.
    */
   _onLol(lol, now) {
+    if (this.work) return; // Modo Trabalho: nenhuma reação
     if (lol) this.lolSeenAt = now;
     if (lol && !this.lolHidden && !this.lolLeaving && this.started && !this.userHidden) {
       this.lolLeaving = true;
@@ -2587,6 +2735,7 @@ export class Companion {
     this.reminderTimer = this.clock.setTimeout(() => {
       this.reminderTimer = null;
       this.behavior.wakeIfForbidden(this.clock.now()); // 6h: acorda
+      this._checkWorkTimer();
       this.checkDailyReminder(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
@@ -2685,7 +2834,7 @@ export class Companion {
 
   _applyLayout(forceRender = false) {
     if (!this.displays.length) return;
-    const s = this.store.get();
+    const s = { ...this.store.get(), size: this._size() };
     const r = this._rects();
     const disp = this._currentDisplay();
     const wa = disp ? disp.workArea : r.box;
@@ -2715,7 +2864,7 @@ export class Companion {
     // Balão de status com as atividades (ao lado do pet).
     let activityBox = null;
     const acts = this.conversations.activities(4);
-    const showActs = acts.length && !this.ghost && !this.dragging && (this.interaction || this.clock.now() >= this.activitiesHiddenUntil);
+    const showActs = acts.length && !this.work && !this.ghost && !this.dragging && (this.interaction || this.clock.now() >= this.activitiesHiddenUntil);
     if (showActs) {
       const size = { width: ACTIVITY_WIDTH, height: 12 + acts.length * ACTIVITY_ROW };
       activityBox = placeAround(r.visual, size, wa, { order: ['left', 'right', 'bottom', 'top'], avoid: [toolbar?.rect, chat?.rect, bubble?.rect], gap: 8 });
@@ -2783,6 +2932,7 @@ export class Companion {
       // Acessórios liberados por nível aparecem às vezes (camada extra de variedade).
       layer: this.behavior.state === 'ambient' ? this.layer || null : null,
       mode: this.wired ? 'wired' : null,
+      work: this.work ? this.work.perfil : null,
       // Roupa do guarda-roupa vale mais que a fantasia da data festiva.
       costume: vestido ? null : this.costume,
       outfit: vestido ? outfitChannels(this.outfit, { semMao: !this._handFree() }) : null,
