@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.42.0, 2026-10-30)
+# HANDOFF — estado atual (v0.43.0, 2026-10-30)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -12,8 +12,13 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 - Atalho na área de trabalho (`garantirAtalho`, NSIS `createDesktopShortcut: "always"`).
 - Barra de status do pet e menu "🎭 Reações" removidos; reações por contexto (`reacaoDeContexto`).
 - Configurações v5 (`COMPORTAMENTO_V5`); `interactionTimeoutSec` eliminado.
-- Pendentes dos prompts: motor de pesquisa (fontes sem login/chave, SSRF, cache, citações), modo professor e
-  balão expansível, auditoria/performance de animações com ferramenta de teste e matriz de validação.
+
+## v0.43.0 (pesquisa e modo professor)
+- `src/core/dialogue/pesquisa.js` (MotorPesquisa: Wikipédia/DDG via WebSearch, Europe PMC, Crossref, README do
+  MNE_Lab; SSRF + DNS; cache; bloco isolado para o Qwen) e `professor.js` (seriedade, continuidade). Doc
+  `docs/PESQUISA.md`. Testado com fetch falso; as APIs reais não foram chamadas daqui.
+- Balão longo (`LONGO_CHARS`, classe `.bubble.longo`, rolagem automática).
+- Pendente: auditoria/performance de animações com ferramenta de teste e matriz de validação.
 
 ## Onde verificar
 

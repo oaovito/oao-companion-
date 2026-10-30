@@ -113,16 +113,18 @@ function onState(s) {
 }
 
 function onMeasure(req) {
-  measureEl.className = `bubble ${req.kind || 'speech'}`;
-  applyBubbleScale(measureEl, req.scale || 1);
+  measureEl.className = `bubble ${req.kind || 'speech'}${req.longo ? ' longo' : ''}`;
+  applyBubbleScale(measureEl, req.scale || 1, req.longo);
   measureEl.textContent = req.text;
   const r = measureEl.getBoundingClientRect();
   api.reportMeasure(req.id, { width: Math.ceil(r.width) + 4, height: Math.ceil(r.height) + 4 });
 }
 
-function applyBubbleScale(el, scale) {
+function applyBubbleScale(el, scale, longo = false) {
   el.style.fontSize = `${15 * scale}px`;
-  el.style.maxWidth = `${260 * scale}px`;
+  // Resposta longa: mais larga e com altura limitada (rola sozinha; no modo de interação, com a roda do mouse).
+  el.style.maxWidth = `${(longo ? 400 : 260) * scale}px`;
+  el.style.maxHeight = longo ? `${240 * scale}px` : '';
   el.style.padding = `${8 * scale}px ${13 * scale}px ${9 * scale}px`;
 }
 
@@ -135,8 +137,8 @@ function renderBubble(s) {
     return;
   }
   const changed = bubbleEl.dataset.text !== b.text || bubbleEl.classList.contains('hidden');
-  bubbleEl.className = `bubble ${b.kind}`;
-  applyBubbleScale(bubbleEl, b.scale || 1);
+  bubbleEl.className = `bubble ${b.kind}${b.longo ? ' longo' : ''}${b.longo && s.interaction ? ' interativo' : ''}`;
+  applyBubbleScale(bubbleEl, b.scale || 1, b.longo);
   bubbleEl.style.left = `${b.rect.x}px`;
   bubbleEl.style.top = `${b.rect.y}px`;
   bubbleEl.style.width = `${b.rect.width - 4}px`;
@@ -148,8 +150,31 @@ function renderBubble(s) {
     bubbleEl.style.animation = 'none';
     void bubbleEl.offsetWidth;
     bubbleEl.style.animation = '';
+    bubbleEl.scrollTop = 0;
+    bubbleEl.dataset.manual = '';
+    rolarBalao(b);
   }
   drawTail(b);
+}
+
+// Leitura de resposta longa sem precisar clicar: depois de 2,5 s o texto desce devagar
+// até o fim, dentro do tempo do balão. Com a roda do mouse (modo de interação) ela assume.
+let rolagem = null;
+function rolarBalao(b) {
+  clearInterval(rolagem);
+  rolagem = null;
+  if (!b.longo) return;
+  const inicio = performance.now() + 2500;
+  const dur = Math.max(4000, (b.dur || 20000) * 0.8 - 2500);
+  const passo = (state && state.reducedMotion) ? 1200 : 120;
+  rolagem = setInterval(() => {
+    const max = bubbleEl.scrollHeight - bubbleEl.clientHeight;
+    if (max <= 0 || bubbleEl.classList.contains('hidden')) return;
+    if (bubbleEl.dataset.manual === '1') return;
+    const k = Math.min(1, Math.max(0, (performance.now() - inicio) / dur));
+    bubbleEl.scrollTop = Math.round(max * k);
+    if (k >= 1) clearInterval(rolagem);
+  }, passo);
 }
 
 function drawTail(b) {
@@ -507,7 +532,7 @@ function overJoJo(x, y) {
 }
 
 function overUi(target) {
-  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target))));
+  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target)) || (bubbleEl.classList.contains('interativo') && bubbleEl.contains(target))));
 }
 
 function activity() {
@@ -626,6 +651,18 @@ function setupInteraction() {
   canvas.addEventListener('pointercancel', endPointer);
   canvas.addEventListener('lostpointercapture', (e) => {
     if (dragging) endPointer(e);
+  });
+
+  // Resposta longa no modo de interação: a roda rola (ela assume a leitura); clique abre a conversa inteira.
+  bubbleEl.addEventListener('wheel', () => {
+    if (!bubbleEl.classList.contains('interativo')) return;
+    bubbleEl.dataset.manual = '1';
+    activity();
+  }, { passive: true });
+  bubbleEl.addEventListener('click', () => {
+    if (!bubbleEl.classList.contains('interativo')) return;
+    activity();
+    api.openApp(null);
   });
 
   toolbarEl.addEventListener('click', (e) => {

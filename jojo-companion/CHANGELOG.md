@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## 0.43.0 — 2026-10-30
+
+### Novidades
+- **Motor de pesquisa** (`docs/PESQUISA.md`): o JoJo pesquisa sozinho só quando precisa (pergunta de
+  conhecimento, ciência/medicina, MNE_Lab ou "pesquisa…"), em fontes grátis e sem login: Wikipédia,
+  DuckDuckGo, Europe PMC (inclui o PubMed), Crossref e a documentação pública do MNE_Lab. O resultado
+  vai para a conversa local, que explica no jeito dele e cita as fontes discretamente no fim. Enquanto
+  pesquisa, aparece "Consultando fontes...". Cache de 6 h na memória.
+- **Modo professor**: antes de responder ele classifica a conversa (casual, científica, técnica, saúde,
+  emocional, emergência). Em ciência e assunto técnico explica de verdade (o que é, como funciona,
+  exemplo, erro comum). Entende continuidade: "não entendi essa parte", "me dá um exemplo",
+  "aprofunda", "resume".
+
+### Melhorias
+- Balão de resposta longa: mais largo, com altura limitada e rolagem automática no tempo de leitura;
+  no modo de interação rola com a roda do mouse e o clique abre a conversa inteira. Respostas longas
+  não são mais cortadas em 400 caracteres e nenhuma fala espontânea passa por cima delas.
+- Segurança da pesquisa: só https público (sem rede interna, IP literal ou credenciais, com checagem
+  de DNS e de redirecionamentos), limites de tempo e tamanho, e o texto da internet chega ao modelo
+  isolado como dado, sem obedecer instruções escondidas nele.
+
+### Como testar
+- Pergunte "o que os estudos dizem sobre potencial zeta?": aparece "Consultando fontes...", vem a
+  explicação e, no fim, "(Fontes: …)". Depois: "me dá um exemplo", "aprofunda", "não entendi essa parte".
+- "como exportar o gráfico no MNE_Lab?" consulta a documentação do MNE_Lab.
+- "oi jojo" ou "tô triste" não pesquisam nada.
+
 ## 0.42.0 — 2026-10-30
 
 ### Novidades

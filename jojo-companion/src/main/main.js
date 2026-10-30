@@ -17,6 +17,8 @@ import { DEFAULTS } from '../core/settings-schema.js';
 import { sanitizePersonality, PERSONALITY_DEFAULTS, phraseFilter } from '../core/personality.js';
 import { DialogueEngine } from '../core/dialogue/engine.js';
 import { WebSearch } from '../core/dialogue/web-search.js';
+import { MotorPesquisa } from '../core/dialogue/pesquisa.js';
+import dns from 'node:dns';
 import { LlmProvider } from '../core/dialogue/llm-provider.js';
 import { HOLIDAYS } from '../core/holidays.js';
 import { createLogger } from './logger.js';
@@ -219,6 +221,16 @@ function main() {
       bases: searchBase ? { wikipedia: searchBase, duckduckgo: `${searchBase}/ddg` } : {},
       log,
     });
+    // Motor de pesquisa: fontes públicas sem login (Wikipédia, DuckDuckGo, Europe PMC, Crossref,
+    // README do MNE_Lab). DNS conferido para nunca buscar endereço da rede interna.
+    const pesquisa = new MotorPesquisa({
+      fetch: (url, opts) => net.fetch(url, opts),
+      web: webSearch,
+      resolver: searchBase ? null : async (host) => (await dns.promises.lookup(host, { all: true })).map((a) => a.address),
+      bases: searchBase ? { europepmc: `${searchBase}/epmc`, crossref: `${searchBase}/crossref`, mnelab: `${searchBase}/mnelab/README.md` } : {},
+      checarUrl: searchBase ? () => true : undefined,
+      log,
+    });
     // Conversa: Qwen 3.5 2B no Ollama deste PC, instalado sozinho e ligado só enquanto ela conversa.
     // Em testes, JOJO_LLM_BASE aponta para um servidor local falso (e nada é baixado).
     let avisoConversa = null;
@@ -275,7 +287,7 @@ function main() {
       baseOverride: TEST && process.env.JOJO_LLM_BASE ? process.env.JOJO_LLM_BASE : null,
       log,
     });
-    const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm });
+    const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm, pesquisa });
 
     companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), catalog, ambientLines, variety: varietyState,
       antitedio: { rotinas: readJSON('assets/catalog/rotinas.json'), minijogos: readJSON('assets/catalog/minijogos.json'), progressao: readJSON('assets/catalog/progressao.json') }, phrases, dialogue, log });

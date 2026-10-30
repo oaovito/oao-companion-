@@ -4,6 +4,7 @@
 // continuam no código só para reversão manual: nunca são usados sozinhos.
 // O JoJo responde no jeito dele e devolve ação de corpo e comando validados.
 // Puro: `fetch` é injetado.
+import { blocoPesquisa } from './pesquisa.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 
 // Modelo oficial (quantização leve) e parâmetros enxutos para o 2B.
@@ -174,7 +175,7 @@ export class LlmProvider extends DialogueProvider {
   }
 
   /** Qwen no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
-  async _replyOllama({ text, history, cfg, onDelta }) {
+  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '' }) {
     let base = this.baseOverride;
     let modelo = cfg.modelo || OLLAMA_MODEL;
     if (!base) {
@@ -183,9 +184,14 @@ export class LlmProvider extends DialogueProvider {
       modelo = p.modelo;
       this.brain.usar();
     }
-    const tecnico = isTechnical(text);
+    // Com pesquisa, a resposta é explicação de verdade: contexto e tamanho de pergunta técnica.
+    const tecnico = isTechnical(text) || !!pesquisa || /MODO PROFESSOR/.test(professor);
     const opts = tecnico ? OLLAMA_OPTS.tecnico : OLLAMA_OPTS.curto;
     const messages = [{ role: 'system', content: buildSystemPrompt(this.getProfile(), this.getContext(), this.getExamples().slice(0, 6), { tecnico }) }];
+    // Resultados da pesquisa entram isolados (dados, nunca instruções).
+    if (pesquisa) messages.push({ role: 'system', content: blocoPesquisa(pesquisa) });
+    // Seriedade e continuidade ("me dá um exemplo", "aprofunda") decididas antes.
+    if (professor) messages.push({ role: 'system', content: professor });
     // Contexto curto: as últimas trocas bastam (a memória fica fora do modelo).
     for (const h of history.slice(tecnico ? -8 : -6, -1)) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 400) });
     messages.push({ role: 'user', content: String(text).slice(0, 500) });
@@ -209,13 +215,13 @@ export class LlmProvider extends DialogueProvider {
     return content;
   }
 
-  async reply({ text, history = [], onDelta = null }) {
+  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '' }) {
     const cfg = this.getConfig() || {};
     const preset = this.preset;
     if (preset.native) {
-      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta }));
+      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor }));
       if (!parsed) throw new Error('resposta vazia');
-      const why = outOfCharacter(parsed.text, { max: isTechnical(text) ? 1200 : 280 });
+      const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280 });
       if (why) throw new Error(`fora do personagem (${why})`);
       return { ...parsed, kind: 'speech', intent: 'ia' };
     }

@@ -58,6 +58,19 @@ html, body {
   pointer-events: none;
 }
 
+.bubble.longo {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  font-weight: 500;
+  line-height: 1.38;
+}
+
+/* No modo de interação a resposta longa recebe o mouse: rola com a roda, clique abre a conversa inteira. */
+.bubble.longo.interativo {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
 .bubble.thought {
   border-radius: 28px;
   background: var(--thought);

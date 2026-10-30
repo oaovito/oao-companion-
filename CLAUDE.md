@@ -65,8 +65,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Dormir: antes das 21h qualquer menção a dormir/sono/cochilo/cama → JoJo furioso e contra (estado `angry`);
   das 21h às 6h é permitido e ele reafirma (ação `boaNoite`); falas ambientes de dormir com `apos: 21`.
 - Janela cresce por animação (`assets/animations/jojo.room.json`; regenerar com `scripts/anim-room.mjs` ao mudar desenho/animação).
-- Pergunta sem resposta programada: pesquisa (Wikipédia → DuckDuckGo) e responde no jeito do
-  JoJo (abertura/fecho das falas filtradas pelo perfil) citando a fonte.
+- **Pesquisa** (`dialogue/pesquisa.js`, doc `docs/PESQUISA.md`): só quando precisa; Wikipédia, DuckDuckGo, Europe PMC,
+  Crossref, README do MNE_Lab (grátis, sem login/chave; ChatGPT/Gemini não); SSRF/DNS, cache 6 h, dados isolados no
+  prompt; "Consultando fontes..." e "(Fontes: …)". **Modo professor** (`dialogue/professor.js`): seriedade antes de
+  responder, explicação de verdade, continuidade ("me dá um exemplo", "aprofunda"); balão longo rola, sem corte.
 - Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).
 - PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por
   5 min após a volta (modo `wired`). Legends: "ideia burra" 1×/semana em momento aleatório.
@@ -119,7 +121,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    Percepção de tela (opcional, desligada por padrão): só a CATEGORIA do app em primeiro plano pelo nome do executável
    (`categoriaApp` no worker). Nunca captura de tela.
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
-   conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
+   conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. **Silêncio absoluto**: nenhum som (sem áudio no código, janelas mutadas, sem opções de som);
    **"iniciar com o Windows" ligado por padrão** (desmarcável).

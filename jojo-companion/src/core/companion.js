@@ -40,6 +40,8 @@ const COSTUME_HEADROOM = 36;
 const COSTUME_FOOTROOM = 40;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800, avc: 3500 + 1600 + 900 + 60000 + 1500 };
+// Resposta longa (explicação, pesquisa): balão mais largo, com rolagem e tempo de leitura de verdade.
+export const LONGO_CHARS = 260;
 const THINK_BUBBLE_MS = 1200; // resposta demorando: balão de pensamento "…"
 const THINK_MS = 650; // "digitando…": tempo em que a conversa fica "Em andamento"
 const CHAT_SIZE = { width: 300, height: 270 };
@@ -978,11 +980,13 @@ export class Companion {
     // Não abrir balão sobre o cursor.
     const seq = ++this.measureSeq;
     const scale = this.store.get().bubbleScale;
-    Promise.resolve(this.overlay.measureBubble({ text, kind, scale }))
+    const longo = text.length > LONGO_CHARS;
+    Promise.resolve(this.overlay.measureBubble({ text, kind, scale, longo }))
       .then((size) => {
         if (seq !== this.measureSeq || !size) return;
         const now = this.clock.now();
-        this.bubble = { text, kind, size, category, until: now + readingTimeMs(text) * (kind === 'sleep' ? 0.8 : 1) };
+        const dur = longo ? readingTimeMs(text, { max: 75e3, perChar: 65 }) : readingTimeMs(text) * (kind === 'sleep' ? 0.8 : 1);
+        this.bubble = { text, kind, size, category, longo, dur, until: now + dur };
         this.lastSpokeAt = now;
         if (kind === 'speech') {
           this.talkingUntil = now + Math.min(2600, 500 + text.length * 45);
@@ -1301,7 +1305,16 @@ export class Companion {
       this.fireEvent(isFactualQuestion(text) ? 'pesquisando' : 'pensando', { speak: false });
     }, THINK_BUBBLE_MS);
     try {
-      reply = await this.dialogue.reply(text, { state: this.behavior.state, persona: this.personality.get().instrucoes });
+      reply = await this.dialogue.reply(text, {
+        state: this.behavior.state,
+        persona: this.personality.get().instrucoes,
+        // Indicação temporária enquanto pesquisa (some quando a resposta chega).
+        onStatus: (t) => {
+          this.clock.clearTimeout(thinkTimer);
+          thinking = this.say(t, 'thought');
+          this.fireEvent('pesquisando', { speak: false });
+        },
+      });
     } catch (e) {
       this.clock.clearTimeout(thinkTimer);
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
@@ -1309,7 +1322,7 @@ export class Companion {
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
     this.clock.clearTimeout(thinkTimer);
-    if (thinking && this.bubble && this.bubble.text === '…') this.hideBubble();
+    if (thinking && this.bubble && (this.bubble.text === '…' || this.bubble.text === 'Consultando fontes...')) this.hideBubble();
     // Modo cientista: abre com "Erm, na verdade..." na primeira resposta do assunto.
     if (this.nerdAbertura && reply && reply.text) {
       reply.text = `${this.nerdAbertura} ${reply.text}`;
@@ -1327,6 +1340,8 @@ export class Companion {
     const vars = profileVars(profile, reply.tone);
     reply.text = reply.text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
     if (reply.web || reply.webNotFound || reply.webError) Object.assign(reply, this._webReply(reply, profile));
+    // Fontes da pesquisa, discretas no fim da resposta.
+    else if (reply.linhaFontes) reply.text = `${reply.text} (${reply.linhaFontes})`;
     if (prefixo) reply.text = `${prefixo} ${reply.text}`;
     this.conversations.addMessage(conv.id, 'jojo', reply.text);
     if (reply.webError) this.conversations.setStatus(conv.id, 'blocked', `Pesquisa na internet falhou (${reply.webError}).`);
@@ -1671,11 +1686,11 @@ export class Companion {
     const src = ` (Fonte: ${reply.web.source})`;
     const head = intro ? `${intro.text} ` : '';
     const tail = outro ? ` ${outro.text}` : '';
-    // normalizeReply limita o texto a 400 caracteres: o resumo cede espaço.
+    // Resposta longa vai inteira (o balão rola); só corta acima de 1200 caracteres.
     let body = reply.web.extract;
-    const room = 400 - head.length - src.length - tail.length;
+    const room = 1200 - head.length - src.length - tail.length;
     if (body.length > room) body = `${body.slice(0, Math.max(40, room - 1)).replace(/\s+\S*$/, '')}…`;
-    return { text: `${head}${body}${src}${tail}`.slice(0, 400), action: null, tone: intro ? intro.tone : 'serio' };
+    return { text: `${head}${body}${src}${tail}`, action: null, tone: intro ? intro.tone : 'serio' };
   }
 
   /** Comandos do menu "/" (chat da Central ou do pet). */
@@ -3325,7 +3340,7 @@ export class Companion {
       paused: this.paused,
       interaction: this.interaction,
       bubble: bubble ? {
-        text: this.bubble.text, kind: this.bubble.kind, side: bubble.side, rect: rel(bubble.rect),
+        text: this.bubble.text, kind: this.bubble.kind, longo: !!this.bubble.longo, dur: this.bubble.dur || 0, side: bubble.side, rect: rel(bubble.rect),
         tail: { x: bubble.tail.x - bounds.x, y: bubble.tail.y - bounds.y }, target: { x: r.head.x - bounds.x, y: r.head.y - bounds.y },
         scale: s.bubbleScale,
       } : null,

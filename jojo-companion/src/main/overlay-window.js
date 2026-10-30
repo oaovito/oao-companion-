@@ -219,11 +219,13 @@ export class OverlayWindow {
   }
 }
 
-function estimateBubble({ text, scale = 1 }) {
+function estimateBubble({ text, scale = 1, longo = false }) {
   const chars = String(text || '').length;
-  const w = Math.min(260, 48 + chars * 7.2) * scale;
-  const lines = Math.max(1, Math.ceil((chars * 7.2) / (220 * 1)));
-  return { width: Math.round(w), height: Math.round((30 + lines * 20) * scale) };
+  const largura = longo ? 400 : 260;
+  const w = Math.min(largura, 48 + chars * 7.2) * scale;
+  const lines = Math.max(1, Math.ceil((chars * 7.2) / (largura - 40)));
+  const h = (30 + lines * 20) * scale;
+  return { width: Math.round(w), height: Math.round(longo ? Math.min(h, 240 * scale) : h) };
 }
 
 export const OVERLAY_HTML = (root) => path.join(root, 'src', 'renderer', 'overlay', 'index.html');

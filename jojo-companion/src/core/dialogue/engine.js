@@ -2,6 +2,11 @@
 // programado (offline). Mantém um histórico curto apenas em memória.
 import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
+import { precisaPesquisar, linhaFontes } from './pesquisa.js';
+import { classificarSeriedade, seguimento, instrucaoProfessor } from './professor.js';
+
+// Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
+const TEMA_MS = 15 * 60e3;
 
 // Intenções que nunca vão pra IA: segurança (João, CVV, SAMU) e gatilhos com animação própria.
 const SCRIPTED_ONLY = new Set(['crisis', 'distress', 'sad', 'avcReal', 'avc', 'pretty', 'lol', 'moon', 'dressDown', 'dressUp', 'bench', 'squat', 'quiet', 'scare', 'eat', 'play', 'sleep', 'wake', 'pet', 'docinho']);
@@ -13,7 +18,9 @@ export class DialogueEngine {
    * @param search pesquisa na internet (WebSearch) para perguntas sem resposta
    *   programada; `searchEnabled()` diz se a usuária permitiu.
    */
-  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true, llm = null, now = () => new Date() } = {}) {
+  constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true, llm = null, pesquisa = null, now = () => new Date() } = {}) {
+    // Motor de pesquisa (fontes públicas sem login): alimenta o Qwen local quando precisa.
+    this.pesquisa = pesquisa;
     // Conversa com IA (API gratuita): entende e responde no jeito do JoJo.
     this.llm = llm;
     this.llmOk = false;
@@ -51,11 +58,37 @@ export class DialogueEngine {
     // o resto vai pra IA (se ativa e disponível), com volta às programadas se falhar.
     const intent = detectIntent(input);
     // Depois de uma falha (rede lenta/fora), pausa a IA um pouco para não fazer esperar de novo.
+    // Modo professor: seriedade decidida antes de responder; continuidade usa o assunto anterior.
+    const seriedade = classificarSeriedade(input);
+    const temaVivo = this.tema && Date.now() - this.tema.t < TEMA_MS ? this.tema : null;
+    const seg = temaVivo ? seguimento(input) : null;
+    // Pesquisa só quando precisa (pergunta de conhecimento, ciência, MNE_Lab, "pesquisa…").
+    let achado = seg ? temaVivo.pesquisa : null;
+    let erroPesquisa = null;
+    const tipo = !seg && this.pesquisa && !SCRIPTED_ONLY.has(intent) && this.searchEnabled() ? precisaPesquisar(input) : null;
+    if (tipo) {
+      if (context.onStatus) context.onStatus('Consultando fontes...');
+      try {
+        achado = await withTimeout(this.pesquisa.pesquisar(input, tipo), 9000);
+      } catch (e) {
+        this.log('warn', `Pesquisa falhou: ${e.message}`);
+        erroPesquisa = e.message;
+      }
+    }
+    if (!seg && (achado || seriedade === 'cientifico' || seriedade === 'tecnico')) this.tema = { texto: input, pesquisa: achado, t: Date.now(), parte: 0 };
+    else if (seg) temaVivo.t = Date.now();
+    const professor = instrucaoProfessor({ seriedade, seg, tema: temaVivo && temaVivo.texto });
     if (this.llm && !SCRIPTED_ONLY.has(intent) && Date.now() >= this.llmPauseUntil && (await this.llm.isAvailable().catch(() => false))) {
       try {
-        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context }), this.llm.timeoutFor ? this.llm.timeoutFor(input) : this.llm.timeoutMs || this.timeoutMs);
+        const base = this.llm.timeoutFor ? this.llm.timeoutFor(input) : this.llm.timeoutMs || this.timeoutMs;
+        const longo = achado || professor;
+        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor }), longo ? Math.max(base, 45e3) : base);
         const out = normalizeReply(r);
         out.intent = 'ia';
+        if (achado) {
+          out.fontes = achado.fontes;
+          out.linhaFontes = linhaFontes(achado);
+        }
         this.llmOk = true;
         this.history.push({ role: 'jeff', text: out.text });
         if (this.history.length > 20) this.history.splice(0, this.history.length - 20);
@@ -77,7 +110,29 @@ export class DialogueEngine {
     }
     const out = normalizeReply(raw);
     if (error) out.error = error;
-    if (raw && raw.search && this.search && this.searchEnabled()) {
+    // Sem a conversa local: continuidade responde com o próximo trecho do que foi pesquisado.
+    if (seg && achado && achado.trechos.length) {
+      const com = achado.trechos.filter((x) => x.texto);
+      const lista = com.length ? com : achado.trechos;
+      temaVivo.parte = seg === 'simplificar' || seg === 'resumir' ? 0 : (temaVivo.parte + 1) % lista.length;
+      const t = lista[temaVivo.parte];
+      const frase = (x) => (String(x || '').match(/^[^.!?]+[.!?]/) || [x])[0];
+      const texto = seg === 'resumir' || seg === 'simplificar' ? frase(t.texto || t.titulo) : t.texto || t.titulo;
+      out.intent = 'web';
+      out.web = { query: achado.consulta, title: t.titulo, extract: texto, source: t.fonte, url: t.url, lang: 'pt' };
+      out.action = null;
+      out.fontes = achado.fontes;
+    } else if (achado && raw && raw.search) {
+      const t = achado.trechos.find((x) => x.texto) || achado.trechos[0];
+      out.intent = 'web';
+      out.web = { query: achado.consulta, title: t.titulo, extract: t.texto || t.titulo, source: t.fonte, url: t.url, lang: 'pt' };
+      out.action = null;
+      out.fontes = achado.fontes;
+    } else if (raw && raw.search && tipo) {
+      // Já pesquisou (sem resultado ou sem rede): não repete a busca.
+      if (erroPesquisa) out.webError = erroPesquisa;
+      else out.webNotFound = true;
+    } else if (raw && raw.search && this.search && this.searchEnabled()) {
       try {
         const found = await this.search.search(input);
         if (found) {
