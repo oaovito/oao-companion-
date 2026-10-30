@@ -82,3 +82,18 @@ test('tipo de instalação detectado', () => {
   assert.equal(detectMode({ app, env: {}, platform: 'linux' }), null);
   assert.equal(detectMode({ app: { ...app, isPackaged: false }, env: {}, platform: 'win32' }), null);
 });
+
+test('atualização com o JoJo aberto: avisa que já volta (no Modo Trabalho, em silêncio)', async () => {
+  const { makeEnv } = await import('./helpers.js');
+  const e = makeEnv({ profile: { lembreteComida: { ativo: false }, lembreteTreino: { ativo: false } } });
+  e.companion.start();
+  e.env.cursor = { x: 5, y: 5 };
+  e.clock.advance(3000);
+  const ditas = [];
+  const orig = e.companion.say.bind(e.companion);
+  e.companion.say = (t, k, o) => (ditas.push(t), orig(t, k, o));
+  assert.equal(e.companion.avisarAtualizacao('9.9.9'), true);
+  assert.match(ditas.pop(), /Já volto/);
+  e.companion.startWork();
+  assert.equal(e.companion.avisarAtualizacao('9.9.9'), false);
+});

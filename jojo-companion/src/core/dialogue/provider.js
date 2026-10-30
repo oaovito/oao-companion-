@@ -46,6 +46,7 @@ export function normalizeReply(r) {
   const tone = r?.tone === 'brincadeira' ? 'brincadeira' : 'serio';
   const out = { text: text || '...', kind, action, tone, intent: typeof r?.intent === 'string' ? r.intent : null };
   if (r?.lang === 'en') out.lang = 'en';
+  if (Array.isArray(r?.acoes) && r.acoes.length) out.acoes = r.acoes.slice(0, 4);
   if (typeof r?.command === 'string' && COMANDOS.includes(r.command)) {
     out.command = r.command;
     out.commandArg = typeof r.commandArg === 'string' ? r.commandArg.slice(0, 30) : '';

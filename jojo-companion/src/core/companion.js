@@ -25,7 +25,7 @@ import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyRem
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
-import { interpretCommand } from './dialogue/intencoes.js';
+import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
@@ -1210,9 +1210,30 @@ export class Companion {
     if (!safety && !this.game && this.lastGame && this.clock.now() - this.lastGame.at < 5 * 60e3 && /^(de novo|denovo|mais uma|outra|outra vez|revanche|joga de novo|jogar de novo|bora de novo|again|quero revanche)\b/.test(normalizeText(text))) {
       return this._quickReply(conv, this.startGame(this.lastGame.id), 'jogo');
     }
-    // Pedido de comando dito de qualquer jeito ("pare com a sessão de foco", "some daqui"…).
-    const pedido = safety ? null : interpretCommand(text, this._commandContext());
-    if (pedido) return this._quickReply(conv, this.runInterpreted(pedido, conv.id), 'comando');
+    // "Lembra daquele assunto de ontem sobre DLS?": procura no que foi conversado (sem fingir memória).
+    const lembra = !safety && normalizeText(text).match(/\blembra (d[aoe]s?|daquele|daquela|que|quando)\b.*?\b(sobre|de|do|da) ([a-z0-9 ]{2,40})\??$/);
+    if (lembra) return this._quickReply(conv, this._lembrar(lembra[3]), 'memoria');
+    // Motor de intenções: ela fala normal; uma mensagem pode ter várias ações, perguntas
+    // sobre funções são explicadas, negação não executa e o contexto conta.
+    let prefixo = null;
+    if (!safety) {
+      const it = interpretar(text, { ...this._commandContext(), ultima: this.ultimaAcao || null, pendente: this.pendente || null });
+      if (it.cancelado) {
+        this.pendente = null;
+        return this._quickReply(conv, 'Tá. Deixa como está.', 'comando');
+      }
+      if (it.explicar) return this._quickReply(conv, this._explicar(it.explicar), 'explicacao');
+      if (it.perguntar) return this._quickReply(conv, this._perguntarCurto(it), 'pergunta');
+      if (it.acoes.length) {
+        this.pendente = null;
+        const fb = this.runActions(it.acoes, conv.id);
+        if (it.futuro) this.contextoFuturo = it.futuro; // fica de contexto; nada é agendado
+        const fala = it.futuro ? `${fb} Quando quiser ajuda com aquilo, é só chamar.` : fb;
+        if (!it.resto) return this._quickReply(conv, fala, 'comando');
+        prefixo = fala; // e responde a pergunta que veio junto
+        text = it.resto;
+      }
+    }
     // Pacotes: namorado/João, comida, memes e anime pedidos por frase.
     if (!safety) {
       const pk = this._packFromChat(text, nam, intent0);
@@ -1224,7 +1245,8 @@ export class Companion {
     }
     if (!safety) {
       const nt = normalizeText(text);
-      if (this.games && /\b(vamos jogar|bora jogar|quero jogar|joga comigo|um jogo|mini ?jogo)\b/.test(nt)) return this._quickReply(conv, this.startGame(text), 'jogo');
+      // Jogo pelo nome ("bora jogar quiz") começa direto; sem nome, o motor de intenções mostra as opções.
+      if (this.games && /\b(vamos jogar|bora jogar|quero jogar|joga comigo|um jogo|mini ?jogo)\b/.test(nt) && this.games.find(text)) return this._quickReply(conv, this.startGame(text), 'jogo');
       if (/\b(vamos|bora) focar\b|\bmodo foco\b|\bestuda comigo\b|\btreina comigo\b/.test(nt)) return this._quickReply(conv, this.startFocus(25, /treina/.test(nt) ? 'treino' : 'estudo'), 'foco');
       if (/\bme da (um )?estimulo\b|\bto entediad[ao]\b|\bque tedio\b/.test(nt)) {
         this.estimulo();
@@ -1306,6 +1328,7 @@ export class Companion {
     const vars = profileVars(profile, reply.tone);
     reply.text = reply.text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
     if (reply.web || reply.webNotFound || reply.webError) Object.assign(reply, this._webReply(reply, profile));
+    if (prefixo) reply.text = `${prefixo} ${reply.text}`;
     this.conversations.addMessage(conv.id, 'jojo', reply.text);
     if (reply.webError) this.conversations.setStatus(conv.id, 'blocked', `Pesquisa na internet falhou (${reply.webError}).`);
     else if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Conversa online indisponível (${reply.error}); respondi do meu jeito mesmo.`);
@@ -1319,9 +1342,194 @@ export class Companion {
     else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
     // A conversa online entendeu um pedido de comando que as frases programadas não pegaram.
     if (reply.command) this.runInterpreted({ cmd: reply.command, arg: reply.commandArg || '' }, conv.id, { silent: true });
+    // Ações entendidas pelo Qwen (já validadas pelo registro): o app executa e confirma o resultado real.
+    if (reply.acoes && reply.acoes.length) {
+      const fb = this.runActions(reply.acoes, conv.id);
+      if (fb && fb !== 'Feito.') this.conversations.addMessage(conv.id, 'jojo', fb);
+    }
     this._applyLayout(true);
     this._schedule(0);
     return { ...reply, conversationId: conv.id, provider: this.dialogue.describe() };
+  }
+
+  /** Versão nova pronta com o JoJo aberto: avisa que já volta (no Modo Trabalho, troca em silêncio). */
+  avisarAtualizacao(versao = null) {
+    if (!this.started || this.work || this.userHidden) return false;
+    this.hideBubble();
+    this.playCatalog('acenar', { source: 'comando', speak: false });
+    return this.say(`Saiu versão nova${versao ? ` (v${versao})` : ''}. Vou me atualizar. Já volto.`, 'speech');
+  }
+
+  /** Busca o assunto nas conversas guardadas (só desta sessão; nada inventado). */
+  _lembrar(assunto) {
+    const q = normalizeText(assunto).replace(/\b(ontem|hoje|aquele|aquela|assunto|conversa)\b/g, '').trim();
+    if (q.length < 2) return 'Lembrar do quê, exatamente?';
+    const achadas = [];
+    for (const c of this.conversations.list()) {
+      const snap = this.conversations.snapshot(c.id);
+      for (const m of (snap && snap.messages) || []) if (m.who === 'user' && !/\blembra\b/.test(normalizeText(m.text)) && normalizeText(m.text).includes(q)) achadas.push(m.text);
+    }
+    if (!achadas.length) return `Não tenho registro de conversa sobre "${assunto.trim()}". Eu só lembro do que foi falado desde que abri; me conta de novo que eu ajudo.`;
+    return `Lembro. Você falou: "${achadas[achadas.length - 1].slice(0, 140)}". Continua daí.`;
+  }
+
+  /** Explicação de uma função (pergunta ≠ pedido: nada é executado). */
+  _explicar(chave) {
+    if (chave === 'estadoTamanho') {
+      const pct = Math.round(this._size() * 100);
+      return this.work ? `Tô no Modo Trabalho: fico pequeno (${pct}%) no canto pra não te atrapalhar.` : `Tô com ${pct}% do tamanho porque você ajustou${this.ultimaAcao && this.ultimaAcao.acao === 'tamanho' ? ' agora há pouco' : ''}. "Volta ao normal" desfaz.`;
+    }
+    return EXPLICA[chave] || 'Isso eu não sei explicar.';
+  }
+
+  /** Pergunta curta quando o pedido é ambíguo; a resposta seguinte resolve. */
+  _perguntarCurto(it) {
+    if (it.perguntar === 'animacao') {
+      const nomes = it.opcoes.map((id) => (this.catalogById.get(id) || {}).nome || id);
+      this.pendente = { tipo: 'animacao', opcoes: it.opcoes, nomes };
+      return `Qual: ${nomes.join(' ou ')}?`;
+    }
+    if (it.perguntar === 'espaco') {
+      this.pendente = { tipo: 'espaco' };
+      return 'Diminuo, mudo de canto ou os dois?';
+    }
+    if (it.perguntar === 'trabalho') {
+      this.pendente = { tipo: 'trabalho' };
+      return 'Quer que eu entre no Modo Trabalho e fique quieto no canto?';
+    }
+    return 'Como assim?';
+  }
+
+  /** Estado que dá para desfazer ("não era isso", "volta ao normal"). */
+  _foto() {
+    const s = this.store.get();
+    return { size: s.size, trabalhoTamanho: s.trabalhoTamanho, trabalhoCanto: s.trabalhoCanto, ambienteFrequencia: s.ambienteFrequencia, quietMode: s.quietMode, pos: { ...this.pos }, work: !!this.work };
+  }
+
+  _voltarFoto(f) {
+    if (!f) return false;
+    this.store.update({ size: f.size, trabalhoTamanho: f.trabalhoTamanho, trabalhoCanto: f.trabalhoCanto, ambienteFrequencia: f.ambienteFrequencia, quietMode: f.quietMode });
+    if (!this.work && f.pos) this._moveTo(f.pos);
+    if (f.work && !this.work) this.startWork();
+    if (!f.work && this.work) this.endWork();
+    return true;
+  }
+
+  _moveTo(to) {
+    const now = this.clock.now();
+    if (this.reducedMotion) this.pos = { ...to };
+    else this.mover.start(this.pos, to, { speed: 260, easing: 'inOut', now, minMs: 300, maxMs: 2500, kind: 'walk' });
+    this._applyLayout(true);
+    this._schedule(0);
+  }
+
+  /** Lugar na tela: canto, esquerda/direita ou longe do cursor. */
+  _lugar(lugar) {
+    const disp = this._currentDisplay() || this.displays[0];
+    const wa = disp.workArea;
+    const r = this._rects({ x: 0, y: 0 });
+    const m = 16;
+    const xEsq = wa.x + m - r.visual.x;
+    const xDir = wa.x + wa.width - m - r.visual.width - r.visual.x;
+    const yBaixo = wa.y + wa.height - m - r.visual.height - r.visual.y;
+    const yCima = wa.y + m - r.visual.y;
+    if (lugar === 'longe') return { x: this.cursor.x > wa.x + wa.width / 2 ? xEsq : xDir, y: yBaixo };
+    if (lugar === 'esquerda') return { x: xEsq, y: this.pos.y };
+    if (lugar === 'direita') return { x: xDir, y: this.pos.y };
+    return { x: /Esquerdo$/.test(lugar) ? xEsq : xDir, y: /^superior/.test(lugar) ? yCima : yBaixo };
+  }
+
+  /**
+   * Executa ações do motor de intenções (já validadas) e devolve o retorno real
+   * de cada uma ("Pronto. 80%.", "Não consegui…"). Guarda a última e a foto para desfazer.
+   */
+  runActions(acoes, conversationId = null) {
+    const textos = [];
+    for (const a of acoes) {
+      const antes = this._foto();
+      let t = null;
+      const s = this.store.get();
+      switch (a.acao) {
+        case 'tamanho': {
+          const v = a.params.valor;
+          const chave = this.work ? 'trabalhoTamanho' : 'size';
+          const [lo, hi] = this.work ? [0.2, 1] : [0.6, 1.8];
+          const atual = s[chave];
+          const novo = v === 'minimo' ? lo : v === 'normal' ? (this.work ? 0.35 : 1) : v === 'maior' ? Math.min(hi, atual * 1.25) : Math.max(lo, atual * 0.8);
+          if (Math.abs(novo - atual) < 0.005) t = v === 'maior' ? 'Já tô no máximo.' : v === 'normal' ? 'Já tô no tamanho normal.' : 'Menor que isso não dá.';
+          else {
+            this.store.update({ [chave]: Math.round(novo * 100) / 100 });
+            if (this.work) this._enterWork(this.work.perfil, { silent: true });
+            t = `Pronto: ${Math.round((this.work ? s.size * novo : novo) * 100)}%. Melhor assim?`;
+          }
+          break;
+        }
+        case 'posicao': {
+          const lugar = a.params.lugar || 'inferiorDireito';
+          if (this.work) {
+            if (/^(inferior|superior)/.test(lugar)) {
+              this.store.update({ trabalhoCanto: lugar });
+              this._enterWork(this.work.perfil, { silent: true });
+            }
+            t = 'Fui pro canto.';
+          } else {
+            this._moveTo(this._lugar(lugar));
+            t = lugar === 'longe' ? 'Saí da frente.' : /esquerda|Esquerdo/.test(lugar) ? 'Fui pra esquerda.' : 'Fui pro canto.';
+          }
+          break;
+        }
+        case 'animacoes_frequencia': {
+          const ordem = ['desligado', 'pouca', 'normal', 'muita'];
+          const i = ordem.indexOf(s.ambienteFrequencia);
+          const ni = a.params.valor === 'normal' ? 2 : a.params.valor === 'mais' ? Math.min(3, i + 1) : Math.max(0, i - 1);
+          this.store.update({ ambienteFrequencia: ordem[ni] });
+          t = ni === i ? 'Já tá no limite.' : a.params.valor === 'menos' ? (ni === 0 ? 'Parei com as animações sozinho.' : 'Menos animação daqui pra frente.') : 'Mais animação, então.';
+          break;
+        }
+        case 'animacao': {
+          const id = a.params.id;
+          const it = this.catalogById.get(id) || this.findCatalog(id);
+          if (!it) t = 'Não achei essa animação.';
+          else if (it.pacote) t = this.playPack(it.id, { source: 'comando', falar: false }) || 'Agora não.';
+          else t = this.playCatalog(it.id, { source: 'comando', speak: false }) ? `${it.nome}. Assiste.` : 'Agora não.';
+          break;
+        }
+        case 'menu_jogos': {
+          const jogos = this.games ? this.games.data.jogos : [];
+          this.pendente = { tipo: 'jogo' };
+          t = `Bora. ${jogos.slice(0, 6).map((j) => j.nome).join(', ')}… Qual? (ou "surpresa")`;
+          break;
+        }
+        case 'reacoes':
+          t = this.runCommand('reacao', conversationId, '/reacao').text;
+          break;
+        case 'restaurar': {
+          const u = this.ultimaAcao;
+          if (this.work && (!u || u.acao === 'trabalho_iniciar')) t = this.endWork();
+          else {
+            this.store.update({ size: 1, ambienteFrequencia: 'normal' });
+            if (this.work) this.store.update({ trabalhoTamanho: 0.35 });
+            t = 'De volta ao normal.';
+          }
+          break;
+        }
+        case 'desfazer':
+          t = this._voltarFoto(this.fotoAnterior) ? 'Desfeito.' : 'Não tem nada pra desfazer.';
+          break;
+        case 'jogo':
+          t = a.params.nome && /surpresa|qualquer|tanto faz/.test(a.params.nome) ? this.startGame('') : this.startGame(a.params.nome || '');
+          break;
+        default: {
+          // Ações já existentes (Modo Trabalho, foco, pausa, silêncio, telas…).
+          const arg = a.acao === 'trabalho_iniciar' ? `${a.params.perfil || ''} ${a.params.min || ''}`.trim() : a.acao === 'foco_iniciar' ? `${a.params.min || 25}${a.params.tipo === 'treino' ? ' treino' : ''}` : a.params.nome || '';
+          t = this.runInterpreted({ cmd: a.acao, arg }, conversationId);
+        }
+      }
+      if (a.acao !== 'desfazer') this.fotoAnterior = antes;
+      if (a.acao !== 'desfazer' && a.acao !== 'restaurar') this.ultimaAcao = a;
+      if (t) textos.push(t);
+    }
+    return [...new Set(textos)].join(' ') || 'Feito.';
   }
 
   /** O que está ativo agora (para entender "para", "chega", "volta"…). */

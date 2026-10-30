@@ -51,8 +51,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?".
-- Entende pedidos de qualquer forma (regra geral): frases livres viram comandos (`dialogue/intencoes.js`, offline)
-  e a conversa online devolve `comando` de uma lista fechada; nunca responder "não está na lista" a um pedido claro.
+- **Motor de intenções** (regra geral, nenhum /comando obrigatório): `dialogue/motor-intencoes.js` (registro `ACOES`,
+  compostas, contexto, negação, indiretas, pergunta curta) + `Companion.runActions`; o Qwen devolve `acoes` validadas.
+  Doc `docs/INTENCOES.md`. Nunca responder "não está na lista" a um pedido claro.
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
 - Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
 - Configurações: seções Personalidade e Sistema **ocultas**; perfil volta ao padrão a cada versão nova do perfil.
@@ -90,7 +91,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
 - Notas da Release: geradas de `CHANGELOG.md` (seção da versão: Novidades/Melhorias/Correções/Remoções/Como testar)
   por `scripts/release-notes.mjs`; só o que mudou; nunca editar releases antigas; sem seção → publicação bloqueada.
-- Atualização 100% automática e imediata (checa a cada 10 min, troca e reabre assim que baixa); ela nunca faz nada.
+- Atualização 100% automática e imediata (checa a cada 10 min, avisa "já volto", troca e reabre); ela nunca faz nada.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);

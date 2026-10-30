@@ -739,12 +739,18 @@ function main() {
       },
     });
     updater.start();
+    let updatingNow = false;
     const idleTimer = setInterval(() => {
       try {
         const idle = idleOverride ?? powerMonitor.getSystemIdleTime();
         companion.onSystemIdle(idle);
         // Versão nova pronta: troca na hora (só espera terminar arrasto/modo de interação) e reabre sozinho.
-        if (updater.onIdle(idle, { busyNow: companion.interaction || companion.dragging || quitting })) setTimeout(() => quit(), 300);
+        // Avisa "já volto" (fora do Modo Trabalho), dá tempo de ler e troca.
+        if (!updatingNow && updater.onIdle(idle, { busyNow: companion.interaction || companion.dragging || quitting })) {
+          updatingNow = true;
+          const falou = companion.avisarAtualizacao(updater.state.version);
+          setTimeout(() => quit(), falou ? 3500 : 300);
+        }
       } catch (err) {
         log('warn', `Falha ao ler ociosidade: ${err.message}`);
       }

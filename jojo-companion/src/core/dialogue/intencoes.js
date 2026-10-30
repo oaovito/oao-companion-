@@ -69,7 +69,7 @@ export function interpretCommand(text, ctx = {}) {
   // Modo Trabalho: entrar e sair (vem antes de tudo: "pode voltar" com o modo ligado é sair dele).
   if (ctx.trabalho && /^(jojo )?(pode voltar|volta|voltar|terminei|acabei|sai do modo trabalho|desliga o modo trabalho|fim do trabalho|terminei de trabalhar|acabei de trabalhar|chega de trabalhar|pode sair)\b/.test(n)) return { cmd: 'trabalho_parar' };
   if (/\b(sai|desliga|encerra|termina)\w* (do |o )?modo trabalho\b|\bterminei de (trabalhar|estudar)\b/.test(n)) return { cmd: 'trabalho_parar' };
-  if (/\b(vou trabalhar|modo trabalho|preciso (me )?concentrar|preciso focar|hora de estudar|vou estudar sozinha|deep focus|modo invisivel|work mode)\b/.test(n) && !/\bnao\b/.test(n)) {
+  if (/\b(vou trabalhar|modo trabalho|preciso (me )?concentrar|preciso focar|hora de estudar|vou estudar sozinha|deep focus|modo invisivel|work mode|modo foco|me deixa (me )?concentrar|nao quero distrac\w*|sem distrac\w*|fica na sua|vou fazer (minha|a) pesquisa|preciso terminar (um|o|meu|esse) (relatorio|trabalho|artigo)|preciso estudar)\b/.test(n) && !/\bnao (vou|quero) (trabalhar|estudar|focar)\b|\bnao (ativa|liga|entra)\b/.test(n)) {
     return { cmd: 'trabalho_iniciar', arg: `${/deep focus|profundo/.test(n) ? 'deep' : /invisivel/.test(n) ? 'invisivel' : ''} ${(n.match(/\b(\d{1,3})\s*(min|minutos?|h)\b/) || [])[1] || ''}`.trim() };
   }
 

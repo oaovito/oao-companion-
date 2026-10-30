@@ -29,6 +29,7 @@ export const LLM_PRESETS = Object.freeze({
 
 // Ações que a IA pode pedir (expressão corporal).
 import { COMANDOS } from './intencoes.js';
+import { ACOES, validarAcao } from './motor-intencoes.js';
 const LLM_ACTIONS = ['wave', 'nod', 'judge', 'lecture', 'happy', 'flex', 'scare', 'angry', 'sad', 'comfort', 'eat', 'play', 'sleep', 'pet', 'bench', 'squat', 'curious'];
 
 /** Instruções de sistema a partir do perfil (pt-BR). */
@@ -63,9 +64,9 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
       ? 'Modo especialista (ciência, nanopartículas, medicina): rigoroso e levemente pedante ("Erm, na verdade..."), domina DLS, NTA, potencial zeta, PDI, estabilidade coloidal, estatística (ANOVA, IC), fisiopatologia, farmacologia, diagnóstico diferencial e medicina baseada em evidências; separa dado medido, inferência e hipótese; corrige erro explicando o certo. Assunto de saúde pessoal: sem sarcasmo, sem diagnóstico nem prescrição, indica avaliação médica. Pergunta técnica: responda com precisão e rigor, até 6 frases, no jeito do JoJo. Nunca invente dados, estudos ou referências; diga quando não tem certeza. Saúde pessoal: sem diagnóstico nem receita, e sinal de emergência = SAMU 192.'
       : 'Responda curto (no máximo 2 frases, até 220 caracteres), orgânico, nunca repetindo frases que você já disse nesta conversa. Entenda o que ela disse e responda ao conteúdo, sempre no jeito do JoJo.',
     extra,
-    'Interprete o que ela quis dizer, não as palavras exatas. Se ela pedir (de qualquer jeito, com erro de digitação, gíria ou indireta) para você fazer algo no app, preencha "comando" com o id certo e responda confirmando no seu jeito; se não for pedido de comando, "comando" é null.',
-    `Comandos: foco_iniciar (começar sessão de foco/estudo; "arg" = minutos e "treino" se for treino), foco_parar (parar/encerrar o foco), jogo (mini-jogo; "arg" = nome), jogo_parar, calma, ritmo, bolhas, estimulo, parar_atividade (parar calma/ritmo/bolhas), resumo (resumo do dia), colecao, guarda_roupa, pausar, retomar, esconder (sumir da tela), mostrar, silencio_ligar, silencio_desligar, configuracoes, nova_conversa.`,
-    `Responda SOMENTE com JSON: {"texto": "...", "acao": uma de ${JSON.stringify(LLM_ACTIONS)} ou null, "tom": "serio" ou "brincadeira", "comando": um de ${JSON.stringify(COMANDOS)} ou null, "arg": "..." ou null}. A ação é a expressão corporal coerente com a fala.`,
+    'Interprete o que ela quis dizer, não as palavras exatas (gíria, erro de digitação, pedido indireto, várias coisas numa frase). Pergunta sobre uma função ("você tem…?", "como funciona…?") é explicação, não pedido. Negação ou futuro incerto ("não liga", "talvez amanhã") não é pedido. Se ela pedir algo do app, preencha "acoes" (em ordem, no máximo 4) e responda curto, sem dizer que já fez: o app executa e confirma.',
+    `Ações do app: ${Object.entries(ACOES).map(([id, d]) => `${id}${d.params ? `(${Object.entries(d.params).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join('|') : v}`).join(', ')})` : ''} = ${d.desc}`).join('; ')}.`,
+    `Responda SOMENTE com JSON: {"texto": "...", "acao": uma de ${JSON.stringify(LLM_ACTIONS)} ou null, "tom": "serio" ou "brincadeira", "acoes": [{"acao": "id", "parametros": {...}}] ou []}. A "acao" é a expressão corporal coerente com a fala.`,
   ].filter(Boolean).join('\n');
 }
 
@@ -91,6 +92,10 @@ export function parseLlmReply(content) {
       if (text) {
         const action = LLM_ACTIONS.includes(j.acao) && ALLOWED_ACTIONS.has(j.acao) ? j.acao : null;
         const out = { text, action, tone: j.tom === 'brincadeira' ? 'brincadeira' : 'serio' };
+        if (Array.isArray(j.acoes)) {
+          const v = j.acoes.slice(0, 4).map(validarAcao).filter(Boolean);
+          if (v.length) out.acoes = v; // ação inventada ou parâmetro inválido: descartado
+        }
         if (COMANDOS.includes(j.comando)) {
           out.command = j.comando;
           out.commandArg = typeof j.arg === 'string' || typeof j.arg === 'number' ? String(j.arg).replace(/[^\p{L}\p{N} ]/gu, '').slice(0, 30) : '';

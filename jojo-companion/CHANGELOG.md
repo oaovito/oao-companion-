@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 0.40.0 — 2026-10-30
+
+### Novidades
+- **Motor de intenções em linguagem natural** (`docs/INTENCOES.md`): o JoJo entende pedidos ditos de
+  qualquer jeito, várias coisas numa frase só ("fica menor e vai pro canto", "vou trabalhar, fica
+  pequenininho naquele canto e depois me ajuda com o programa do João"), contexto ("mais um pouco",
+  "não era isso", "volta ao normal"), pedidos indiretos ("tá gigante", "tô entediada", "não aguento
+  essas animações toda hora") e faz uma pergunta curta quando fica ambíguo ("Sharingan ou Fúria
+  berserker?"). Perguntas sobre funções ("você tem Modo Trabalho?") são explicadas, não executadas;
+  negação e "talvez amanhã" não disparam nada.
+- Ações novas por conversa: tamanho, lugar na tela (canto, esquerda/direita, "sai da frente"),
+  frequência das animações, lista de jogos para escolher, animação/reação pela descrição, desfazer e
+  voltar ao normal.
+- O Qwen devolve uma lista de ações, validada antes de executar; a confirmação mostra o resultado real.
+- "Lembra daquele assunto…": procura no que foi conversado; sem registro, diz que não lembra.
+- Atualização com o JoJo aberto: ele avisa "Vou me atualizar. Já volto." e troca (no Modo Trabalho,
+  em silêncio).
+
+### Melhorias
+- "Bora jogar" sem dizer qual mostra a lista de jogos em vez de sortear um.
+
+### Como testar
+- "fica menor e vai pro canto", depois "mais um pouco", depois "não era isso".
+- "faz aquela coisa dos olhos vermelhos" → responda "o primeiro".
+- "você tá ocupando muito espaço na minha tela" → "os dois".
+
 ## 0.39.0 — 2026-10-30
 
 ### Novidades
