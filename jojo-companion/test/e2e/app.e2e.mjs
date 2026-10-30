@@ -861,7 +861,9 @@ test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" re
   }
 });
 
-test('presença: JoJo morto sem motivo reabre sozinho; encerrado de propósito não reabre', async () => {
+// No Windows a reabertura passa por cmd/start (coberto pelos unitários do vigia); aqui o
+// processo reaberto ficaria preso ao console do CI.
+test('presença: JoJo morto sem motivo reabre sozinho; encerrado de propósito não reabre', { skip: process.platform === 'win32' && 'coberto por test/unit/presenca.test.js' }, async () => {
   const { app, userData } = await launch({ env: { JOJO_VIGIA: '1' } });
   const logs = () => fs.readdirSync(path.join(userData, 'logs')).map((f) => fs.readFileSync(path.join(userData, 'logs', f), 'utf8')).join('\n');
   const inicios = () => [...logs().matchAll(/Iniciando JoJo Companion .*pid (\d+)\)/g)].map((m) => Number(m[1]));
@@ -887,6 +889,6 @@ test('presença: JoJo morto sem motivo reabre sozinho; encerrado de propósito n
     } catch {
       /* já fechado */
     }
-    await app.close().catch(() => {});
+    await Promise.race([app.close().catch(() => {}), sleep(5000)]);
   }
 });
