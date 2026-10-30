@@ -53,7 +53,7 @@ export class DialogueEngine {
     // Depois de uma falha (rede lenta/fora), pausa a IA um pouco para não fazer esperar de novo.
     if (this.llm && !SCRIPTED_ONLY.has(intent) && Date.now() >= this.llmPauseUntil && (await this.llm.isAvailable().catch(() => false))) {
       try {
-        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context }), this.llm.timeoutMs || this.timeoutMs);
+        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context }), this.llm.timeoutFor ? this.llm.timeoutFor(input) : this.llm.timeoutMs || this.timeoutMs);
         const out = normalizeReply(r);
         out.intent = 'ia';
         this.llmOk = true;

@@ -4,7 +4,7 @@
 import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
 
-export const SETTINGS_VERSION = 2;
+export const SETTINGS_VERSION = 3;
 
 export const DEFAULTS = Object.freeze({
   version: SETTINGS_VERSION,
@@ -26,8 +26,9 @@ export const DEFAULTS = Object.freeze({
   webSearch: true,              // pesquisar na internet perguntas sem resposta programada
   autoUpdate: true,             // baixar e instalar versões novas automaticamente
   iaAtivo: true,                // conversa com IA por API gratuita
-  iaProvedor: 'pollinations',   // pollinations (sem chave) | groq | gemini | openrouter
-  iaChave: '',                  // chave grátis do provedor (fica só neste PC)
+  iaProvedor: 'ollama',         // ollama (Qwen 3.5 2B no servidor) | pollinations | groq | gemini | openrouter (só reversão manual)
+  iaServidor: '',               // endereço do servidor com o Ollama (ex.: http://100.64.0.5:11435, via Tailscale)
+  iaChave: '',                  // chave do servidor (gateway) ou do provedor (fica só neste PC)
   iaModelo: '',                 // modelo (vazio = padrão do provedor)
   // Animações e falas ambientes (motor de variedade / antitédio).
   ambienteFrequencia: 'normal', // desligado | pouca | normal | muita
@@ -66,7 +67,7 @@ const ENUMS = {
   fullscreenBehavior: ['hide', 'pause', 'ignore'],
   avoidFallback: ['fade', 'hide'],
   reduceMotion: ['system', 'on', 'off'],
-  iaProvedor: ['pollinations', 'groq', 'gemini', 'openrouter'],
+  iaProvedor: ['ollama', 'pollinations', 'groq', 'gemini', 'openrouter'],
   ambienteFrequencia: ['desligado', 'pouca', 'normal', 'muita'],
   ambienteIntensidade: ['auto', 'suave', 'normal', 'exagerado'],
   ambienteModo: ['auto', 'calmo', 'pilhado'],
@@ -130,6 +131,11 @@ export function sanitize(input) {
       else issues.push(k);
     }
   }
+  if ('iaServidor' in src) {
+    const u = String(src.iaServidor || '').trim().replace(/\/+$/, '');
+    if (u === '' || /^https?:\/\/[a-z0-9.-]+(:\d{2,5})?$/i.test(u)) out.iaServidor = u;
+    else issues.push('iaServidor');
+  }
   if ('agendaUrl' in src) {
     if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');
@@ -161,6 +167,11 @@ export function migrate(obj, issues = []) {
     // v0 (hipotético/manual): "margin" → safetyMargin; "hotkey" → interactionHotkey.
     if ('margin' in o && !('safetyMargin' in o)) o.safetyMargin = o.margin;
     if ('hotkey' in o && !('interactionHotkey' in o)) o.interactionHotkey = o.hotkey;
+  }
+  if (v < 3) {
+    // v3: o motor da conversa passa a ser o Qwen 3.5 2B no servidor (Ollama) para todo mundo.
+    o.iaProvedor = 'ollama';
+    if (o.iaModelo && !/^qwen3\.5:2b/.test(o.iaModelo)) o.iaModelo = '';
   }
   if (v < 2) {
     // v2: "iniciar com o Windows" passou a vir ligado; quem tinha o padrão antigo ganha o novo.

@@ -40,7 +40,7 @@ export class DialogueProvider {
 
 /** Valida/normaliza respostas de qualquer provedor (inclusive futuros). */
 export function normalizeReply(r) {
-  const text = typeof r?.text === 'string' ? r.text.trim().slice(0, 400) : '';
+  const text = typeof r?.text === 'string' ? r.text.trim().slice(0, 1200) : '';
   const kind = ['speech', 'thought', 'sleep'].includes(r?.kind) ? r.kind : 'speech';
   const action = ALLOWED_ACTIONS.has(r?.action) ? r.action : null;
   const tone = r?.tone === 'brincadeira' ? 'brincadeira' : 'serio';

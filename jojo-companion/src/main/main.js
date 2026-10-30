@@ -205,14 +205,16 @@ function main() {
       bases: searchBase ? { wikipedia: searchBase, duckduckgo: `${searchBase}/ddg` } : {},
       log,
     });
-    // Conversa com IA (API gratuita). Em testes, JOJO_LLM_BASE aponta para um servidor local falso.
+    // Conversa: Qwen 3.5 2B no Ollama de outro computador (o notebook não roda o modelo).
+    // Em testes, JOJO_LLM_BASE aponta para um servidor local falso.
     const llm = new LlmProvider({
+      timeoutMs: 15000,
       fetch: (url, opts) => net.fetch(url, opts),
       getConfig: () => {
         const s = store.get();
         // Testes automáticos só usam a IA com o servidor falso (nunca a API de verdade).
         const ativo = s.iaAtivo && (!TEST || !!process.env.JOJO_LLM_BASE);
-        return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo };
+        return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo, servidor: s.iaServidor };
       },
       getProfile: () => personality.get(),
       getContext: () => ({
@@ -357,6 +359,12 @@ function main() {
       }
     };
     syncCalendar();
+    // Conversa online sem servidor: aviso discreto (atividade "Bloqueado"), sem fingir resposta.
+    const avisoConversa = () => {
+      const motivo = dialogue.llm && dialogue.llm.unavailableReason();
+      companion.reportSystem('conversa', 'Sistema: conversa online', motivo === 'sem servidor configurado' && !TEST ? 'Servidor da conversa não configurado (Configurações → Servidor da conversa). Enquanto isso eu respondo do meu jeito, sem ele.' : null);
+    };
+    avisoConversa();
     const calTimer = setInterval(syncCalendar, 10 * 60e3);
     app.on('will-quit', () => clearInterval(calTimer));
     companion.onOpenSettings = () => openSettings();
@@ -431,6 +439,7 @@ function main() {
 
     store.onChange((s, changed) => {
       if (changed.includes('agendaUrl') || changed.includes('agendaAtiva')) syncCalendar();
+      if (changed.some((k) => /^ia/.test(k))) avisoConversa();
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();
       if (changed.includes('startWithWindows')) applyAutostart();

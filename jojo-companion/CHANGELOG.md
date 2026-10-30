@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 0.35.0 — 2026-10-30
+
+### Novidades
+- **Motor da conversa: Qwen 3.5 2B no Ollama**, rodando em outro computador (ex.: o PC do João); o
+  notebook só envia o texto e recebe a resposta (nunca roda o modelo). Respostas em streaming,
+  contexto curto (2048) para conversa e maior (4096) para perguntas técnicas, modelo conferido no
+  servidor antes de usar (outro modelo nunca entra no lugar). Ver `docs/SERVIDOR.md`.
+- **Kit do servidor** (`servidor/`): instalador para Windows (Ollama enxuto, modelo, portão iniciando
+  com o Windows), portão com chave que só libera o que o JoJo usa, e script de medição.
+- Configurações: **Servidor da conversa** e **Chave do servidor**.
+
+### Melhorias
+- Todo mundo migra para o motor novo automaticamente; os serviços antigos (Pollinations, Groq,
+  Gemini, OpenRouter) deixam de ser usados.
+- Sem servidor configurado, aparece a atividade "Sistema: conversa online" explicando, e o JoJo
+  responde com as falas programadas (sem fingir resposta do servidor).
+
+### Como testar
+- No PC servidor: siga `docs/SERVIDOR.md` (uma vez). No notebook: preencha Servidor e Chave nas
+  Configurações e converse.
+- Sem preencher: veja a atividade "Sistema: conversa online" na Central.
+
 ## 0.34.0 — 2026-10-30
 
 ### Melhorias

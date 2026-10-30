@@ -601,19 +601,24 @@ test('comida de tubarão com arroto e fantasia ousada/comportada no renderer', a
   }
 });
 
-test('conversa online: entende e responde no jeito do JoJo, sem mencionar IA na tela', async () => {
+test('conversa online: Qwen 3.5 2B no servidor (Ollama /api/chat, streaming) responde no jeito do JoJo, sem mencionar IA na tela', async () => {
   const bodies = [];
+  const urls = [];
+  // Servidor falso no formato do Ollama: uma linha JSON por pedaço (streaming).
   const server = http.createServer((req, res) => {
     let b = '';
     req.on('data', (c) => (b += c));
     req.on('end', () => {
+      urls.push(req.url);
       bodies.push(JSON.parse(b));
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ choices: [{ message: { content: '{"texto":"Dia bom é dia de supino, Manu. O seu foi no Instagram.","acao":"judge","tom":"brincadeira"}' } }] }));
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      const full = '{"texto":"Dia bom é dia de supino, Manu. O seu foi no Instagram.","acao":"judge","tom":"brincadeira"}';
+      for (const piece of [full.slice(0, 20), full.slice(20, 60), full.slice(60)]) res.write(`${JSON.stringify({ message: { role: 'assistant', content: piece }, done: false })}\n`);
+      res.end(`${JSON.stringify({ message: { role: 'assistant', content: '' }, done: true })}\n`);
     });
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
-  const { app, win } = await launch({ env: { JOJO_LLM_BASE: `http://127.0.0.1:${server.address().port}/chat` } });
+  const { app, win } = await launch({ env: { JOJO_LLM_BASE: `http://127.0.0.1:${server.address().port}` } });
   try {
     await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
     await win.click('#toolbar button[data-action="chat"]');
@@ -627,6 +632,10 @@ test('conversa online: entende e responde no jeito do JoJo, sem mencionar IA na 
     }
     assert.equal(last, 'Dia bom é dia de supino, Manu. O seu foi no Instagram.');
     assert.equal(bodies.length, 1);
+    assert.equal(urls[0], '/api/chat');
+    assert.equal(bodies[0].model, 'qwen3.5:2b-q4_K_M');
+    assert.equal(bodies[0].stream, true);
+    assert.ok(bodies[0].options.num_ctx <= 4096 && bodies[0].options.num_predict <= 512);
     assert.match(bodies[0].messages[0].content, /REGRA IRREDUTÍVEL/);
     assert.match(bodies[0].messages[0].content, /Exemplos de como o JoJo fala/);
     const text = await win.evaluate(() => document.body.innerText);
