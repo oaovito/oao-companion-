@@ -1199,7 +1199,7 @@ export class Companion {
       // Brincar de boneca: abre o guarda-roupa (só se ela quiser).
       if (/\b(guarda ?roupa|brincar de boneca|te vestir|vestir voce|vestir vc|trocar (a )?(sua|tua) roupa|mudar (a )?(sua|tua) roupa|escolher (a )?(sua|tua) roupa)\b/.test(nt)) {
         if (this.onOpenApp) this.onOpenApp('guardaRoupa');
-        this.playCatalog('espelho', { source: 'chat', speak: false });
+        this.playCatalog('seAcharMaximo', { source: 'chat', speak: false });
         return this._quickReply(conv, 'Abri o guarda-roupa na Central. Pode me vestir. Com cuidado com o bíceps.', 'guardaRoupa');
       }
       const at = this._antitedioChat(text);
@@ -1927,7 +1927,8 @@ export class Companion {
     const t = lines[Math.floor(this.rng() * lines.length) % lines.length];
     if (this.started) {
       this.say(t, 'speech');
-      this.playCatalog(kind === 'surpresa' ? 'desfile' : kind === 'tira' ? 'ajeitarPostura' : 'espelho', { source: 'comando', speak: false });
+      // Poses sem objeto na mão: a peça escolhida aparece na hora (o espelho tomava o lugar dela).
+      this.playCatalog(kind === 'surpresa' ? 'orgulhoso' : kind === 'tira' ? 'ajeitarPostura' : 'seAcharMaximo', { source: 'comando', speak: false });
       this._applyLayout(true);
     }
     if (this.onConversationsChange) this.onConversationsChange();

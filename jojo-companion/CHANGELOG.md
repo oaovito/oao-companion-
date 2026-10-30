@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.37.1 — 2026-10-30
+
+### Correções
+- Guarda-roupa: a peça escolhida para a mão (flor, café, microfone…) agora aparece na hora. Antes,
+  ao vestir qualquer peça, o JoJo se olhava num espelho, que ficava na mão no lugar da peça.
+
+### Como testar
+- Central → Guarda-roupa → Na mão → escolha qualquer item: ele aparece na mão do JoJo.
+
 ## 0.37.0 — 2026-10-30
 
 ### Melhorias

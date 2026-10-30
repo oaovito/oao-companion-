@@ -132,3 +132,20 @@ test('companion: "vamos brincar de boneca" abre o guarda-roupa; comando aparece 
   const { commandMenu } = await import('../../src/core/conversations.js');
   assert.ok(commandMenu({ petVisible: true }).some((c) => c.cmd === '/vestir'));
 });
+
+test('peça na mão aparece logo depois de vestir (sem espelho no lugar)', async () => {
+  const e = makeEnv({ profile: { lembreteComida: { ativo: false }, lembreteTreino: { ativo: false } } });
+  e.companion.start();
+  e.env.cursor = { x: 5, y: 5 };
+  e.clock.advance(3000);
+  e.companion.enterInteraction('test');
+  for (const peca of ['flor', 'cafe', 'microfone', 'trofeu']) {
+    await chatAdv(e, `/vestir ${peca}`);
+    e.clock.advance(300);
+    e.companion._applyLayout(true);
+    const canal = { flor: 'costume_flor', cafe: 'prop_cafe', microfone: 'prop_microfone', trofeu: 'prop_trofeu' }[peca];
+    assert.equal(e.overlay.state.outfit[canal], 1, `${peca} na mão`);
+    assert.equal(e.overlay.state.outfit.prop_espelho, undefined, 'sem espelho');
+    assert.doesNotMatch(e.companion.behavior.anim || '', /espelho/);
+  }
+});
