@@ -77,7 +77,7 @@ export function createFullscreenDetector(log = () => {}) {
           if (state.pending.delete(id)) reject(new Error('tempo esgotado'));
         }, 1500);
       });
-      const extra = { instagram: !!(result && result.instagram), lol: !!(result && result.lol), spotify: (result && result.spotify) || null };
+      const extra = { instagram: !!(result && result.instagram), lol: !!(result && result.lol), spotify: (result && result.spotify) || null, categoria: (result && result.categoria) || null };
       if (!result || !result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
       const d = matchFullscreenDisplay(toDip(result.monitor), displays);
       return { fullscreenIds: d ? [d.id] : [], ...extra };

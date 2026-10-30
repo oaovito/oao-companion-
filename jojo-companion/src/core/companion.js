@@ -371,6 +371,12 @@ export class Companion {
       const pref = this.displays.find((d) => String(d.id) === String(s.preferredDisplay));
       if (pref) list = [pref];
     }
+    // Nunca anda nem foge para um monitor com app em tela cheia.
+    const fs = this.fullscreenIds || [];
+    if (fs.length) {
+      const livres = list.filter((d) => !fs.includes(String(d.id)));
+      if (livres.length) list = livres;
+    }
     return list.map((d) => ({ id: d.id, workArea: d.workArea }));
   }
 
@@ -506,38 +512,42 @@ export class Companion {
     this.refreshDisplays();
     this.avoid.reset();
     this.ghost = false;
-    this.opacity = 1;
+    this.opacity = this.work ? this._workOpacity() : 1;
     this.overlay.setMouseMode('passthrough');
     this.overlay.show();
-    this.behavior.request('appear', { now, force: true });
+    // No Modo Trabalho volta direto a meditar (sem animação de chegada).
+    this.behavior.request(this.work ? 'meditate' : 'appear', { now, force: true });
     this._applyLayout(true);
     this._schedule(0);
   }
 
   /** Recebe do monitor de tela cheia os ids dos monitores ocupados. */
+  /**
+   * Proteção absoluta de tela cheia: nada do JoJo (corpo, balão, painel, efeito,
+   * atividades) aparece no monitor com um app em tela cheia — sem exceção, nem no
+   * modo de interação. "hideAll": some de todos os monitores. Nada fica guardado
+   * para depois: ao voltar, reaparece normal (ou meditando, no Modo Trabalho).
+   */
   setFullscreenDisplays(ids) {
+    this.fullscreenIds = (ids || []).map(String);
     const mode = this.store.get().fullscreenBehavior;
     const cur = this._currentDisplay();
-    const onMine = !!cur && ids.some((id) => String(id) === String(cur.id));
-    const hide = mode === 'hide' && onMine && !this.interaction;
-    const pause = mode === 'pause' && onMine;
-    if (hide !== this.fullscreenHidden) {
-      this.fullscreenHidden = hide;
-      if (hide) {
-        this._cancelTimer();
-        this.hideBubble();
-        this.overlay.hide();
-      } else this._showAgain();
-    }
-    if (pause !== this.fullscreenPaused) {
-      this.fullscreenPaused = pause;
-      const now = this.clock.now();
-      if (pause && !this.interaction) {
-        this.mover.stop();
-        this.behavior.request('paused', { now, force: true });
-        this.hideBubble();
-      } else if (!pause && this.behavior.state === 'paused' && !this.store.get().paused) this.behavior.finish('paused', now);
-      this._applyLayout(true);
+    const onMine = !!cur && this.fullscreenIds.includes(String(cur.id));
+    const hide = onMine || (mode === 'hideAll' && this.fullscreenIds.length > 0);
+    if (hide === this.fullscreenHidden) return;
+    this.fullscreenHidden = hide;
+    if (hide) {
+      if (this.interaction) this.exitInteraction('fullscreen');
+      this._cancelTimer();
+      this.mover.stop();
+      this.hideBubble();
+      this.overlay.hide();
+      this.ambientQueue.length = 0;
+      this.fullscreenSince = this.clock.now();
+    } else {
+      this.ambientQueue.length = 0; // nada de reação acumulada
+      this.effect = null;
+      this._showAgain();
     }
   }
 
@@ -968,6 +978,7 @@ export class Companion {
     if (!this.started || this.userHidden || this.ghost || this.lolHidden) return false;
     // Modo Trabalho: nenhum balão (só a frase curta de entrar/sair do modo).
     if (this.work && !work) return false;
+    if (this.fullscreenHidden) return false; // tela cheia: nada aparece
     if (spontaneous && this.bubble) return false;
     // Fala importante (bronca, resposta) ainda sendo medida: a espontânea não passa por cima.
     if (spontaneous && this.clock.now() - (this.importantSayAt ?? -Infinity) < 1500) return false;
@@ -1021,6 +1032,7 @@ export class Companion {
   }
 
   enterInteraction(source = 'hotkey') {
+    if (this.fullscreenHidden) return false; // não abre por cima de tela cheia
     if (this.interaction || this.quitting) return;
     if (this.userHidden) this.setVisible(true);
     if (this.fullscreenHidden) return;
@@ -1952,6 +1964,7 @@ export class Companion {
     if (!item || this.quitting || !this.started || this.userHidden) return false;
     if (SLEEP_ANIMS.has(id) && !this.canSleep()) return false; // dormir de dia: nunca
     if (this.work) return false; // Modo Trabalho: nenhuma animação
+    if (this.fullscreenHidden) return false; // tela cheia: nada aparece nem fica guardado
     const now = this.clock.now();
     if (item.especial === 'semFiltro') return this._semFiltro();
     // Precisa ir até um lugar antes (borda, outro canto, perto do cursor): anda e toca na chegada.
@@ -2516,6 +2529,34 @@ export class Companion {
         this.phrases.pick('musica', (tone) => ({ ...profileVars(this.personality.get(), tone), ...vars }));
       if (p) this.say(p.text, 'speech', { spontaneous: true, category: 'musica' });
     }
+    return true;
+  }
+
+  /**
+   * Percepção de tela (opcional): reage, de vez em quando, ao TIPO de app que ela
+   * abriu. Nunca em tela cheia nem no Modo Trabalho; nada fica acumulado.
+   */
+  onAppCategoria(cat) {
+    if (cat === this.appCategoria) return false;
+    this.appCategoria = cat;
+    if (!cat || cat === 'outro' || cat === 'navegador') return false;
+    const now = this.clock.now();
+    if (this.fullscreenHidden || this.work || !this._canNag() || this.interaction) return false;
+    this.categoriaVista = this.categoriaVista || {};
+    if (now - (this.categoriaVista[cat] || -Infinity) < 30 * 60e3 || now - (this.lastCategoriaAt || -Infinity) < 5 * 60e3) return false;
+    this.categoriaVista[cat] = now;
+    this.lastCategoriaAt = now;
+    const R = {
+      jogo: { anim: 'sabiaQueIaErrar', falas: ['Vai jogar? Treino de dedo também conta. Pouco.', 'Jogo aberto. Vou fingir que é estudo de reflexo.'] },
+      video: { pack: 'pk_chillGuy', falas: ['Vídeo? Tá. Eu fico de boa aqui.', 'Sessão de vídeo. Respira entre um e outro.'] },
+      escritorio: { pack: 'pk_letHimCook', falas: ['Documento aberto. Deixa cozinhar.', 'Trabalho de verdade. Finalmente.'] },
+      codigo: { pack: 'pk_letHimCook', falas: ['Código. Deixa cozinhar.', 'Programando? Sem pressa, sem bug.'] },
+      mnelab: { anim: 'pensando', falas: ['O programa do João. Se travar no gráfico, me pergunta.', 'MNE_Lab aberto. A obra do Supremo. Dúvida? Me chama.'] },
+    }[cat];
+    if (!R) return false;
+    if (R.pack) this.playPack(R.pack, { source: 'contexto', falar: false });
+    else this.playCatalog(R.anim, { source: 'evento', speak: false });
+    this.say(R.falas[Math.floor(this.rng() * R.falas.length) % R.falas.length], 'speech', { spontaneous: true, category: 'percepcao' });
     return true;
   }
 

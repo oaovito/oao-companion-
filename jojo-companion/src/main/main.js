@@ -507,7 +507,7 @@ function main() {
       if (changed.includes('trabalhoAtivo')) trayCtl && trayCtl.refresh();
       if (['fullscreenBehavior', 'lolBronca', 'spotifyReacoes'].some((k) => changed.includes(k))) {
         startFullscreenWatch();
-        if (s.fullscreenBehavior === 'ignore') companion.setFullscreenDisplays([]);
+        companion.setFullscreenDisplays(companion.fullscreenIds || []);
       }
       companion.applySettings(s, changed);
       trayCtl && trayCtl.refresh();
@@ -588,7 +588,7 @@ function main() {
     // ---------------- Tela cheia
     function startFullscreenWatch() {
       clearInterval(fullscreenTimer);
-      const wantFullscreen = () => store.get().fullscreenBehavior !== 'ignore';
+      const wantFullscreen = () => true; // proteção de tela cheia sempre ligada
       const wantInstagram = () => personality.get().instagram.ativo;
       const wantLol = () => store.get().lolBronca;
       const wantSpotify = () => store.get().spotifyReacoes;
@@ -614,17 +614,19 @@ function main() {
             instagram: wantInstagram(),
             lol: wantLol(),
             spotify: wantSpotify(),
+            percepcao: store.get().percepcaoTela,
             spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
           });
           companion.setFullscreenDisplays(wantFullscreen() ? res.fullscreenIds : []);
           companion.onForeground({ instagram: wantInstagram() && res.instagram, lol: wantLol() && res.lol });
           companion.onSpotify(wantSpotify() ? res.spotify : null);
+          companion.onAppCategoria(store.get().percepcaoTela ? res.categoria : null);
         } catch (err) {
           log('warn', `Falha na detecção de tela cheia: ${err.message}`);
         } finally {
           busy = false;
         }
-      }, 1500);
+      }, 500); // tela cheia some em até meio segundo
     }
 
     // ---------------- Monitores e energia

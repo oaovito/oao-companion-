@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 0.41.0 — 2026-10-30
+
+### Melhorias
+- **Proteção absoluta de tela cheia**: com um app em tela cheia no monitor do JoJo (jogo exclusivo ou
+  sem borda, vídeo, navegador em F11, apresentação), nada dele aparece: corpo, balão, efeitos,
+  atividades e modo de interação somem na hora (a checagem passou de 1,5 s para 0,5 s) e o atalho
+  não abre por cima. Durante a tela cheia nenhuma reação fica guardada; ao sair, ele reaparece
+  normal (ou meditando, no Modo Trabalho). Também usa o aviso do Windows de jogo exclusivo e
+  apresentação; na dúvida, some.
+- Vários monitores: ele nunca anda nem foge para um monitor com tela cheia. Nova opção "Sumir de todos
+  os monitores".
+- **Percepção de tela** (opcional, desligada por padrão): ligada, o JoJo reage de vez em quando ao
+  tipo de app aberto (jogo, vídeo, escritório, código, MNE_Lab), só pelo nome do programa, neste PC,
+  sem captura de tela. No máximo uma reação a cada 5 min; nunca em tela cheia nem no Modo Trabalho.
+
+### Remoções
+- Opções "Pausar o JoJo" e "Não fazer nada" para tela cheia (deixavam o JoJo por cima); quem usava
+  passa para "Sumir do monitor com a tela cheia".
+
+### Como testar
+- Abra um vídeo em tela cheia ou um jogo: o JoJo some na hora; saia da tela cheia: ele volta.
+- Configurações → Monitores → "Percepção de tela" ligada → abra o Word: ele comenta (no máximo 1×/5 min).
+
 ## 0.40.0 — 2026-10-30
 
 ### Novidades

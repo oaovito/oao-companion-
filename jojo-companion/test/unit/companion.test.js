@@ -283,13 +283,10 @@ test('tela cheia: oculta no monitor do JoJo e volta depois', () => {
   assert.equal(e.overlay.visible, true);
 });
 
-test('tela cheia com opção pausar mantém visível e pausado', () => {
+test('tela cheia: a antiga opção "pausar" (que deixava o JoJo por cima) virou ocultar', () => {
   const e = started({ settings: { fullscreenBehavior: 'pause' } });
   e.companion.setFullscreenDisplays([1]);
-  assert.equal(e.overlay.visible, true);
-  assert.equal(e.companion.paused, true);
-  e.companion.setFullscreenDisplays([]);
-  assert.equal(e.companion.paused, false);
+  assert.equal(e.overlay.visible, false);
 });
 
 test('comportamento autônomo ao longo de 30 min: varia estados, sem agitação excessiva', () => {

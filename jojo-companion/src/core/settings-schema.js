@@ -4,7 +4,7 @@
 import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
 
-export const SETTINGS_VERSION = 3;
+export const SETTINGS_VERSION = 4;
 
 export const DEFAULTS = Object.freeze({
   version: SETTINGS_VERSION,
@@ -20,7 +20,7 @@ export const DEFAULTS = Object.freeze({
   interactionHotkey: 'Control+Alt+J',
   interactionTimeoutSec: 45,    // saída automática do modo de interação (10 – 600)
   startWithWindows: true,       // inicia junto com o Windows (desmarcável)
-  fullscreenBehavior: 'hide',   // hide | pause | ignore
+  fullscreenBehavior: 'hide',   // hide (some do monitor com tela cheia) | hideAll (some de todos); nunca cobre tela cheia
   avoidFallback: 'fade',        // fade | hide  (sem espaço seguro / perseguição)
   reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
   webSearch: true,              // pesquisar na internet perguntas sem resposta programada
@@ -45,6 +45,7 @@ export const DEFAULTS = Object.freeze({
   agendaSugerida: false,        // o JoJo já sugeriu conectar a agenda
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
+  percepcaoTela: false,         // percepção de tela: só o tipo do app em primeiro plano (local, sem captura); desligada por padrão
   guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
   // Pacotes de reação (memes, anime, comida, namorado, João): ligados por padrão.
   pacoteMemes: true,
@@ -89,7 +90,7 @@ const RANGES = {
 
 const ENUMS = {
   speechFrequency: ['off', 'rare', 'normal', 'often'],
-  fullscreenBehavior: ['hide', 'pause', 'ignore'],
+  fullscreenBehavior: ['hide', 'hideAll'],
   avoidFallback: ['fade', 'hide'],
   reduceMotion: ['system', 'on', 'off'],
   iaProvedor: ['ollama', 'pollinations', 'groq', 'gemini', 'openrouter'],
@@ -101,7 +102,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -189,6 +190,10 @@ export function migrate(obj, issues = []) {
     // v0 (hipotético/manual): "margin" → safetyMargin; "hotkey" → interactionHotkey.
     if ('margin' in o && !('safetyMargin' in o)) o.safetyMargin = o.margin;
     if ('hotkey' in o && !('interactionHotkey' in o)) o.interactionHotkey = o.hotkey;
+  }
+  if (v < 4) {
+    // v4: proteção de tela cheia é absoluta ("pausar"/"não fazer nada" deixavam o JoJo por cima).
+    if (o.fullscreenBehavior !== 'hideAll') o.fullscreenBehavior = 'hide';
   }
   if (v < 3) {
     // v3: o motor da conversa passa a ser o Qwen 3.5 2B (Ollama neste PC) para todo mundo.

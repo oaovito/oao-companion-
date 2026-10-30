@@ -118,6 +118,22 @@ function musicaDaJanela(title, exe, spotifyExe = 'spotify.exe') {
   return `${m[2].trim()} - ${m[1].trim()}`.slice(0, 200);
 }
 
+// Percepção de tela (opcional, desligada por padrão): só o TIPO do app em primeiro
+// plano, pelo nome do executável (sem título, sem captura). Sai daqui só a categoria.
+const CATEGORIAS = [
+  ['mnelab', /mne[_ -]?lab/i],
+  ['jogo', /^(steam|epicgameslauncher|riotclientservices|battle\.net|minecraft\w*|javaw|robloxplayerbeta|gta5|valorant\w*|fortniteclient\w*|r5apex|cs2|eldenring|genshinimpact)\.exe$/i],
+  ['video', /^(vlc|mpc-hc64|mpc-be64|potplayermini64|netflix|primevideo|disney\w*|wmplayer)\.exe$/i],
+  ['escritorio', /^(winword|excel|powerpnt|onenote|acrord32|acrobat|soffice\w*|notion|obsidian)\.exe$/i],
+  ['codigo', /^(code|devenv|idea64|pycharm64|rstudio|matlab|spyder|jupyter\w*|windowsterminal)\.exe$/i],
+  ['navegador', /^(chrome|msedge|firefox|brave|opera|vivaldi)\.exe$/i],
+];
+function categoriaApp(exe) {
+  const e = String(exe || '');
+  for (const [cat, re] of CATEGORIAS) if (re.test(e)) return cat;
+  return e ? 'outro' : null;
+}
+
 function spotifyTitle(exe = 'Spotify.exe') {
   for (const cls of ['Chrome_WidgetWin_0', 'Chrome_WidgetWin_1', 'MozillaWindowClass']) {
     let h = 0;
@@ -138,10 +154,11 @@ function detect(opts = {}) {
   const result = detectFullscreen();
   result.instagram = false;
   result.lol = false;
-  const hwnd = opts.instagram || opts.lol ? api.GetForegroundWindow() : 0;
+  const hwnd = opts.instagram || opts.lol || opts.percepcao ? api.GetForegroundWindow() : 0;
   if (hwnd && !own.has(String(hwnd))) {
     if (opts.instagram) result.instagram = isInstagram(hwnd);
     if (opts.lol) result.lol = isLol(hwnd);
+    if (opts.percepcao) result.categoria = categoriaApp(exeName(hwnd));
   }
   result.spotify = opts.spotify ? spotifyTitle(opts.spotifyExe || 'Spotify.exe') : null;
   return result;
@@ -164,15 +181,17 @@ function detectFullscreen() {
   const m = mi.rcMonitor;
   const covers = wr.left <= m.left && wr.top <= m.top && wr.right >= m.right && wr.bottom >= m.bottom;
   const shellFull = [QUNS_BUSY, QUNS_RUNNING_D3D_FULL_SCREEN, QUNS_PRESENTATION_MODE].includes(shell);
+  // Tela cheia = a janela ativa cobre o monitor inteiro (sem borda, F11, vídeo, jogo
+  // em janela cheia) OU o Windows avisa jogo exclusivo/apresentação. Na dúvida, esconde.
   return {
-    fullscreen: covers,
+    fullscreen: covers || shellFull,
     shellFull,
     shell,
     monitor: { x: m.left, y: m.top, width: m.right - m.left, height: m.bottom - m.top },
   };
 }
 
-module.exports = { musicaDaJanela };
+module.exports = { musicaDaJanela, categoriaApp };
 
 if (process.parentPort) process.parentPort.on('message', (e) => {
   const msg = e.data || {};

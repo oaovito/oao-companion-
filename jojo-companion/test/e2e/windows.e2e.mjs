@@ -264,6 +264,41 @@ test('Windows: detecção de tela cheia oculta e reexibe o JoJo', { skip }, asyn
   }
 });
 
+test('Windows: tela cheia some na hora mesmo no modo de interação com balão; janela sem borda do tamanho do monitor também', { skip }, async () => {
+  const app = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
+    await sleep(2500);
+    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
+    await app.evaluate(() => globalThis.__jojo.companion.say('Balão aberto antes da tela cheia.', 'speech'));
+    const id = await app.evaluate(() => globalThis.__jojo.makeClickTarget({ x: 0, y: 0, width: 400, height: 300 }, { fullscreen: true }));
+    let visivel = true;
+    for (let i = 0; i < 30 && visivel; i++) {
+      await sleep(100);
+      visivel = await app.evaluate(() => globalThis.__jojo.overlay.win.isVisible());
+    }
+    assert.equal(visivel, false, 'oculto em tela cheia (com interação e balão)');
+    assert.equal(await app.evaluate(() => globalThis.__jojo.companion.interaction), false);
+    await app.evaluate((_e, i) => globalThis.__jojo.closeTarget(i), id);
+    await sleep(3000);
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.win.isVisible()), true, 'reexibido');
+    // "Borderless": janela comum, sem moldura, exatamente do tamanho do monitor.
+    const b = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().bounds);
+    const id2 = await app.evaluate((_e, bb) => globalThis.__jojo.makeClickTarget(bb), b);
+    await app.evaluate(({ BrowserWindow }, i) => BrowserWindow.fromId(i)?.focus(), id2);
+    visivel = true;
+    for (let i = 0; i < 40 && visivel; i++) {
+      await sleep(150);
+      await app.evaluate(({ BrowserWindow }, i) => BrowserWindow.fromId(i)?.focus(), id2);
+      visivel = await app.evaluate(() => globalThis.__jojo.overlay.win.isVisible());
+    }
+    assert.equal(visivel, false, 'oculto com janela sem borda cobrindo o monitor');
+    await app.evaluate((_e, i) => globalThis.__jojo.closeTarget(i), id2);
+  } finally {
+    await quit(app);
+  }
+});
+
 test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)', { skip }, async () => {
   const app = await launch();
   try {

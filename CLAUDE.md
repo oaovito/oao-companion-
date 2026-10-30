@@ -105,11 +105,15 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    (`setIgnoreMouseEvents(true)`), inclusive durante animações. O app nunca simula cliques.
 2. JoJo **desvia do cursor** (margem padrão 100 px lógicos) sem tremer nem fazer pingue-pongue.
 3. Overlay transparente, sem moldura, sem foco, fora da barra de tarefas, sempre por cima.
+   **Tela cheia é intocável**: app em tela cheia no monitor do JoJo → tudo some (inclusive modo de interação), sem opção
+   de cobrir; nunca anda para monitor em tela cheia; nada acumulado; checagem a cada 0,5 s (`setFullscreenDisplays`).
 4. Funciona **offline**; sem telemetria, captura de tela, microfone ou registro de
    teclado/cliques. Única leitura de janela: título/executável da janela em primeiro plano,
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
    Também local e desligável: título da janela do **Spotify** ("Artista - Música", para reagir à música) e
    detecção do **League of Legends** em primeiro plano (título/executável → sim/não; JoJo fica de mau humor e some).
+   Percepção de tela (opcional, desligada por padrão): só a CATEGORIA do app em primeiro plano pelo nome do executável
+   (`categoriaApp` no worker). Nunca captura de tela.
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
    conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
