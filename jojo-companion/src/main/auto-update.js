@@ -1,6 +1,6 @@
-// Atualização automática no Windows: verifica as Releases, baixa a versão nova
-// em segundo plano e troca o executável quando o PC fica parado (ou ao
-// encerrar). Executável portátil: troca o próprio JoJoCompanion.exe. Instalado:
+// Atualização automática no Windows, sem nenhuma ação dela: verifica as
+// Releases a cada 10 min, baixa a versão nova em segundo plano e troca na hora
+// (só espera ela terminar de arrastar o JoJo ou de usar o modo de interação). Executável portátil: troca o próprio JoJoCompanion.exe. Instalado:
 // roda o instalador novo em modo silencioso.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,9 +8,9 @@ import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { UpdateChecker, portableSwapScript } from '../core/updater.js';
 
-const FIRST_CHECK_MS = 60e3;
-const CHECK_EVERY_MS = 6 * 3600e3;
-const APPLY_IDLE_SEC = 120;
+const FIRST_CHECK_MS = 15e3;
+const CHECK_EVERY_MS = 10 * 60e3;
+const APPLY_IDLE_SEC = 0; // aplica assim que estiver pronta
 
 /** Tipo de instalação: 'portable' | 'installer' | null. */
 export function detectMode({ app, env = process.env, platform = process.platform, exists = fs.existsSync }) {
@@ -92,7 +92,7 @@ export function createAutoUpdater({ app, net, store, log, feed, onUpdated = () =
       state.file = await download(found);
       state.status = 'ready';
       state.error = null;
-      log('info', `Atualização ${found.version} pronta; aplica quando o PC ficar parado ou ao encerrar.`);
+      log('info', `Atualização ${found.version} pronta; aplicando agora.`);
     } catch (e) {
       state.status = 'error';
       state.error = e.message;

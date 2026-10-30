@@ -2,9 +2,12 @@
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
 import { parseIcs } from '../core/calendar.js';
 import { wardrobeSnapshot } from '../core/wardrobe.js';
+import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
+import { spawn } from 'node:child_process';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Companion } from '../core/companion.js';
@@ -205,16 +208,50 @@ function main() {
       bases: searchBase ? { wikipedia: searchBase, duckduckgo: `${searchBase}/ddg` } : {},
       log,
     });
-    // Conversa: Qwen 3.5 2B no Ollama de outro computador (o notebook não roda o modelo).
-    // Em testes, JOJO_LLM_BASE aponta para um servidor local falso.
+    // Conversa: Qwen 3.5 2B no Ollama deste PC, instalado sozinho e ligado só enquanto ela conversa.
+    // Em testes, JOJO_LLM_BASE aponta para um servidor local falso (e nada é baixado).
+    let avisoConversa = null;
+    const cerebro = criarCerebroLocal({
+      dir: path.join(app.getPath('userData'), 'cerebro'),
+      fetch: (url, opts) => net.fetch(url, opts),
+      fs: { ...fs.promises, existsSync: fs.existsSync },
+      spawn: (cmd, args, opts) => spawn(cmd, args, opts),
+      extract: (zip, dest) => new Promise((resolve, reject) => {
+        fs.mkdirSync(dest, { recursive: true });
+        // tar.exe vem no Windows 10/11 e abre .zip.
+        const t = spawn('tar', ['-xf', zip, '-C', dest], { windowsHide: true, stdio: 'ignore' });
+        t.on('exit', (c) => (c === 0 ? resolve() : reject(new Error(`tar saiu com ${c}`))));
+        t.on('error', reject);
+      }),
+      freeBytes: async (d) => {
+        try {
+          fs.mkdirSync(d, { recursive: true });
+          const st = await fs.promises.statfs(d);
+          return st.bavail * st.bsize;
+        } catch {
+          return Infinity;
+        }
+      },
+      setLowPriority: (pid) => {
+        try {
+          os.setPriority(pid, os.constants.priority.PRIORITY_BELOW_NORMAL);
+        } catch {
+          /* sem permissão: segue normal */
+        }
+      },
+      log,
+      onStatus: (e) => avisoConversa && avisoConversa(e),
+    });
+    app.on('will-quit', () => cerebro.parar('encerrando'));
     const llm = new LlmProvider({
-      timeoutMs: 15000,
+      timeoutMs: 25000,
+      brain: TEST ? null : cerebro,
       fetch: (url, opts) => net.fetch(url, opts),
       getConfig: () => {
         const s = store.get();
         // Testes automáticos só usam a IA com o servidor falso (nunca a API de verdade).
         const ativo = s.iaAtivo && (!TEST || !!process.env.JOJO_LLM_BASE);
-        return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo, servidor: s.iaServidor };
+        return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo };
       },
       getProfile: () => personality.get(),
       getContext: () => ({
@@ -360,12 +397,18 @@ function main() {
       }
     };
     syncCalendar();
-    // Conversa online sem servidor: aviso discreto (atividade "Bloqueado"), sem fingir resposta.
-    const avisoConversa = () => {
-      const motivo = dialogue.llm && dialogue.llm.unavailableReason();
-      companion.reportSystem('conversa', 'Sistema: conversa online', motivo === 'sem servidor configurado' && !TEST ? 'Servidor da conversa não configurado (Configurações → Servidor da conversa). Enquanto isso eu respondo do meu jeito, sem ele.' : null);
+    // Primeira vez: progresso do download como atividade (sem fingir resposta enquanto isso).
+    avisoConversa = (e = cerebro.estado) => {
+      if (!companion || TEST) return;
+      const FASE = { baixando: 'Baixando o motor da conversa', instalando: 'Instalando o motor da conversa', ligando: 'Ligando o motor da conversa', baixandoModelo: 'Baixando o cérebro do JoJo (Qwen 3.5 2B)' };
+      if (e.fase === 'erro') companion.reportSystem('conversa', 'Sistema: conversa online', `Não consegui preparar a conversa online (${e.erro}). Eu tento de novo na próxima mensagem; enquanto isso respondo do meu jeito.`);
+      else if (FASE[e.fase]) {
+        const c = companion.conversations.create({ id: 'sistema-conversa', title: 'Sistema: conversa online', kind: 'system' });
+        companion.conversations.setStatus(c.id, 'running', `${FASE[e.fase]}${e.progresso ? ` (${e.progresso}%)` : '…'} Só na primeira vez.`);
+      } else companion.reportSystem('conversa', 'Sistema: conversa online', null);
     };
-    avisoConversa();
+    // Conversa ligada: prepara em segundo plano (download na primeira vez, sem esperar a primeira mensagem).
+    if (!TEST && store.get().iaAtivo && store.get().iaProvedor === 'ollama') setTimeout(() => cerebro.preparar().then(() => cerebro.usar()).catch(() => {}), 30000);
     const calTimer = setInterval(syncCalendar, 10 * 60e3);
     app.on('will-quit', () => clearInterval(calTimer));
     companion.onOpenSettings = () => openSettings();
@@ -440,7 +483,7 @@ function main() {
 
     store.onChange((s, changed) => {
       if (changed.includes('agendaUrl') || changed.includes('agendaAtiva')) syncCalendar();
-      if (changed.some((k) => /^ia/.test(k))) avisoConversa();
+      if (changed.includes('iaAtivo') && !s.iaAtivo) cerebro.parar('conversa desligada');
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();
       if (changed.includes('startWithWindows')) applyAutostart();
@@ -689,7 +732,7 @@ function main() {
       try {
         const idle = idleOverride ?? powerMonitor.getSystemIdleTime();
         companion.onSystemIdle(idle);
-        // Versão nova pronta: troca quando o PC está parado e nada acontece.
+        // Versão nova pronta: troca na hora (só espera terminar arrasto/modo de interação) e reabre sozinho.
         if (updater.onIdle(idle, { busyNow: companion.interaction || companion.dragging || quitting })) setTimeout(() => quit(), 300);
       } catch (err) {
         log('warn', `Falha ao ler ociosidade: ${err.message}`);

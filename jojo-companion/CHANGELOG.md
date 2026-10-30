@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 0.37.0 — 2026-10-30
+
+### Melhorias
+- **O motor da conversa (Qwen 3.5 2B no Ollama) agora roda no próprio PC dela**, sem outro computador.
+  Na primeira vez ele é baixado e instalado sozinho pela internet (Ollama portátil + modelo, uns 3 GB;
+  precisa de 6 GB livres), com o progresso na Central ("Sistema: conversa online"). Enquanto isso, o
+  JoJo responde com as falas programadas.
+- Leve para notebook fraco: o motor só liga quando ela conversa e desliga sozinho depois de 10 min
+  sem conversa (a memória volta toda); roda com prioridade baixa, um modelo e uma conversa por vez,
+  contexto curto, escutando só em 127.0.0.1. Se ela já tiver um Ollama com o Qwen 3.5 2B, usa ele.
+- **Atualização imediata**: o JoJo procura versão nova a cada 10 min e, quando baixa, já troca e
+  reabre sozinho (só espera terminar de arrastar o JoJo ou o modo de interação). Ninguém precisa fazer
+  nada.
+
+### Remoções
+- Kit de servidor remoto (`servidor/`, `docs/SERVIDOR.md`) e as opções "Servidor da conversa" e
+  "Chave do servidor".
+
+### Como testar
+- Com "Conversa de verdade" ligada, espere a atividade "Sistema: conversa online" terminar o download
+  e converse. Feche a conversa por 10 min: o processo `ollama` some do Gerenciador de Tarefas.
+
 ## 0.36.0 — 2026-10-30
 
 ### Novidades

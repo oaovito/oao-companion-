@@ -1,57 +1,52 @@
-// Motor da conversa: Qwen 3.5 2B no Ollama de outro computador, atrás de um portão com chave.
+// Motor da conversa: Qwen 3.5 2B no Ollama do próprio PC, instalado sozinho e
+// ligado só enquanto ela conversa.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { LlmProvider, OLLAMA_MODEL, readNdjson, isTechnical, normalizeServer } from '../../src/core/dialogue/llm-provider.js';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { LlmProvider, OLLAMA_MODEL, readNdjson, isTechnical } from '../../src/core/dialogue/llm-provider.js';
 import { sanitize, migrate } from '../../src/core/settings-schema.js';
-import { criarPortao, chaveOk } from '../../servidor/jojo-gateway.mjs';
+import { criarCerebroLocal, escolherModelo, ambienteOllama, PORTA, MODELO } from '../../src/main/cerebro-local.js';
 
 const listen = (srv) => new Promise((r) => srv.listen(0, '127.0.0.1', () => r(`http://127.0.0.1:${srv.address().port}`)));
 
-function fakeOllama({ modelos = [OLLAMA_MODEL], resposta = '{"texto":"Supino primeiro, conversa depois.","acao":"judge","tom":"serio"}', atraso = 0 } = {}) {
+function fakeOllama({ modelos = [OLLAMA_MODEL], resposta = '{"texto":"Supino primeiro, conversa depois.","acao":"judge","tom":"serio"}' } = {}) {
   const pedidos = [];
   const srv = http.createServer((req, res) => {
     let b = '';
     req.on('data', (c) => (b += c));
     req.on('end', () => {
-      pedidos.push({ url: req.url, body: b ? JSON.parse(b) : null, auth: req.headers.authorization });
+      pedidos.push({ url: req.url, body: b ? JSON.parse(b) : null });
       if (req.url === '/api/tags') return res.end(JSON.stringify({ models: modelos.map((name) => ({ name })) }));
-      setTimeout(() => {
-        res.setHeader('Content-Type', 'application/x-ndjson');
-        res.write(`${JSON.stringify({ message: { content: resposta.slice(0, 10) } })}\n`);
-        res.end(`${JSON.stringify({ message: { content: resposta.slice(10) }, done: true })}\n`);
-      }, atraso);
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      res.write(`${JSON.stringify({ message: { content: resposta.slice(0, 10) } })}\n`);
+      res.end(`${JSON.stringify({ message: { content: resposta.slice(10) }, done: true })}\n`);
     });
   });
   return { srv, pedidos };
 }
 
-function provider(cfg) {
-  return new LlmProvider({ fetch: (u, o) => fetch(u, o), getConfig: () => ({ ativo: true, provedor: 'ollama', ...cfg }), getProfile: () => ({ nomeSerio: 'Emanuele' }), getExamples: () => ['Mais uma série.'], timeoutMs: 3000 });
+function provider(brain, cfg = {}) {
+  return new LlmProvider({ fetch: (u, o) => fetch(u, o), getConfig: () => ({ ativo: true, provedor: 'ollama', ...cfg }), getProfile: () => ({ nomeSerio: 'Emanuele' }), getExamples: () => ['Mais uma série.'], timeoutMs: 3000, brain });
 }
 
-test('sem servidor configurado: conversa online indisponível, com motivo (nada de resposta fingida)', async () => {
-  const p = provider({ servidor: '' });
-  assert.equal(await p.isAvailable(), false);
-  assert.equal(p.unavailableReason(), 'sem servidor configurado');
-  assert.equal(normalizeServer('http://100.64.0.5:11435/'), 'http://100.64.0.5:11435');
-  assert.equal(normalizeServer('ftp://x'), '');
-});
-
-test('Qwen 3.5 2B: confere o modelo, chama /api/chat com streaming, contexto curto e chave', async () => {
+test('Qwen 3.5 2B local: /api/chat com streaming, contexto curto, e mantém o motor ligado enquanto conversa', async () => {
   const { srv, pedidos } = fakeOllama();
   const base = await listen(srv);
+  let usos = 0;
+  const brain = { pronto: () => true, preparar: async () => ({ base, modelo: OLLAMA_MODEL }), usar: () => usos++, estado: { fase: 'pronto' } };
   try {
-    const p = provider({ servidor: base, chave: 'segredo' });
+    const p = provider(brain);
+    assert.equal(await p.isAvailable(), true);
     const r = await p.reply({ text: 'oi jojo', history: [{ role: 'user', text: 'oi jojo' }] });
     assert.equal(r.text, 'Supino primeiro, conversa depois.');
-    assert.equal(r.action, 'judge');
     const chat = pedidos.find((x) => x.url === '/api/chat');
     assert.equal(chat.body.model, OLLAMA_MODEL);
     assert.equal(chat.body.stream, true);
     assert.deepEqual([chat.body.options.num_ctx, chat.body.options.num_predict], [2048, 128]);
-    assert.equal(chat.auth, 'Bearer segredo');
-    // Pergunta técnica: mais contexto e resposta maior.
+    assert.equal(usos, 1);
     await p.reply({ text: 'explica o potencial zeta das nanopartículas', history: [] });
     const tec = pedidos.filter((x) => x.url === '/api/chat').pop();
     assert.deepEqual([tec.body.options.num_ctx, tec.body.options.num_predict], [4096, 512]);
@@ -60,23 +55,14 @@ test('Qwen 3.5 2B: confere o modelo, chama /api/chat com streaming, contexto cur
   }
 });
 
-test('modelo: aceita outra quantização do mesmo Qwen 3.5 2B; nunca outro tamanho', async () => {
-  let f = fakeOllama({ modelos: ['qwen3.5:2b'] });
-  let base = await listen(f.srv);
-  try {
-    await provider({ servidor: base }).reply({ text: 'oi', history: [] });
-    assert.equal(f.pedidos.find((x) => x.url === '/api/chat').body.model, 'qwen3.5:2b');
-  } finally {
-    f.srv.close();
-  }
-  f = fakeOllama({ modelos: ['qwen3.5:9b', 'llama3:8b'] });
-  base = await listen(f.srv);
-  try {
-    await assert.rejects(provider({ servidor: base }).reply({ text: 'oi', history: [] }), /não está no servidor/);
-    assert.equal(f.pedidos.filter((x) => x.url === '/api/chat').length, 0, 'não usa outro modelo');
-  } finally {
-    f.srv.close();
-  }
+test('motor ainda não pronto: prepara em segundo plano e, enquanto isso, a conversa online fica indisponível (sem fingir)', async () => {
+  let preparou = 0;
+  const brain = { pronto: () => false, preparar: async () => (preparou++, { base: 'x', modelo: MODELO }), usar() {}, estado: { fase: 'baixandoModelo', progresso: 40 } };
+  const p = provider(brain);
+  assert.equal(await p.isAvailable(), false);
+  assert.equal(preparou, 1);
+  assert.equal(p.unavailableReason(), 'baixandoModelo');
+  assert.equal(provider(null).unavailableReason(), 'sem motor');
 });
 
 test('streaming: junta os pedaços NDJSON; erro do Ollama vira erro', async () => {
@@ -89,34 +75,87 @@ test('streaming: junta os pedaços NDJSON; erro do Ollama vira erro', async () =
   assert.equal(isTechnical('oi tudo bem'), false);
 });
 
-test('configurações: todo mundo migra para o Qwen no servidor; endereço validado', () => {
+test('configurações: todo mundo migra para o Qwen deste PC', () => {
   const { settings } = sanitize(migrate({ version: 2, iaProvedor: 'pollinations', iaModelo: 'openai' }));
   assert.equal(settings.iaProvedor, 'ollama');
   assert.equal(settings.iaModelo, '');
-  assert.equal(sanitize({ iaServidor: 'http://100.64.0.5:11435/' }).settings.iaServidor, 'http://100.64.0.5:11435');
-  assert.equal(sanitize({ iaServidor: 'javascript:alert(1)' }).settings.iaServidor, '');
+  assert.equal('iaServidor' in settings, false);
 });
 
-test('portão do servidor: sem chave não entra, só as rotas do JoJo, uma conversa por vez', async () => {
-  const { srv: oll, pedidos } = fakeOllama({ atraso: 150 });
-  const ollBase = await listen(oll);
-  const portao = criarPortao({ chave: 'abc123', ollama: ollBase, log: () => {} });
-  const base = await listen(portao);
-  try {
-    assert.equal((await fetch(`${base}/api/tags`)).status, 401);
-    assert.equal((await fetch(`${base}/api/tags`, { headers: { Authorization: 'Bearer errada' } })).status, 401);
-    assert.equal((await fetch(`${base}/api/pull`, { method: 'POST', headers: { Authorization: 'Bearer abc123' }, body: '{}' })).status, 404, 'não deixa baixar/apagar modelos');
-    assert.equal((await fetch(`${base}/api/tags`, { headers: { Authorization: 'Bearer abc123' } })).status, 200);
-    const corpo = JSON.stringify({ model: OLLAMA_MODEL, messages: [] });
-    const h = { Authorization: 'Bearer abc123' };
-    const t0 = Date.now();
-    await Promise.all([fetch(`${base}/api/chat`, { method: 'POST', headers: h, body: corpo }).then((r) => r.text()), fetch(`${base}/api/chat`, { method: 'POST', headers: h, body: corpo }).then((r) => r.text())]);
-    assert.ok(Date.now() - t0 >= 290, 'em fila, uma por vez');
-    assert.equal(pedidos.filter((x) => x.url === '/api/chat').length, 2);
-    assert.equal(chaveOk('Bearer abc123', 'abc123'), true);
-    assert.equal(chaveOk('abc123', 'abc123'), false);
-  } finally {
-    portao.close();
-    oll.close();
-  }
+test('cérebro local: modelo certo (nunca outro tamanho) e Ollama enxuto, só em 127.0.0.1', () => {
+  assert.equal(escolherModelo(['llama3:8b', 'qwen3.5:2b-q4_K_M']), 'qwen3.5:2b-q4_K_M');
+  assert.equal(escolherModelo(['qwen3.5:2b']), 'qwen3.5:2b');
+  assert.equal(escolherModelo(['qwen3.5:9b', 'qwen3.5:0.8b']), null);
+  const env = ambienteOllama('C:/x');
+  assert.equal(env.OLLAMA_HOST, `127.0.0.1:${PORTA}`);
+  assert.equal(env.OLLAMA_MAX_LOADED_MODELS, '1');
+  assert.equal(env.OLLAMA_NUM_PARALLEL, '1');
+  assert.equal(env.OLLAMA_NO_CLOUD, '1');
+});
+
+test('cérebro local: primeira vez baixa e instala o Ollama, liga com prioridade baixa e baixa o Qwen; depois desliga ocioso', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-cerebro-'));
+  const chamadas = [];
+  let modeloBaixado = false;
+  let servindo = false;
+  const linhas = (objs) => ({ ok: true, body: null, text: async () => objs.map((o) => JSON.stringify(o)).join('\n') });
+  const fakeFetch = async (url, opts = {}) => {
+    chamadas.push(url);
+    if (url.includes('11434')) throw new Error('sem ollama próprio');
+    if (url.endsWith('.zip')) {
+      const dados = new Uint8Array([1, 2, 3, 4]);
+      let lido = false;
+      return { ok: true, headers: { get: () => '4' }, body: { getReader: () => ({ read: async () => (lido ? { done: true } : ((lido = true), { value: dados, done: false })) }) } };
+    }
+    if (url.endsWith('/api/tags')) {
+      if (!servindo) throw new Error('não ligado');
+      return { ok: true, json: async () => ({ models: modeloBaixado ? [{ name: MODELO }] : [] }) };
+    }
+    if (url.endsWith('/api/pull')) {
+      modeloBaixado = true;
+      return linhas([{ status: 'pulling', total: 100, completed: 50 }, { status: 'success' }]);
+    }
+    throw new Error(`url inesperada ${url}`);
+  };
+  let prioridadeBaixa = null;
+  let mortos = 0;
+  const fases = [];
+  const brain = criarCerebroLocal({
+    dir,
+    platform: 'win32',
+    fetch: fakeFetch,
+    fs: { ...fs.promises, existsSync: fs.existsSync },
+    extract: async (zip, dest) => {
+      fs.mkdirSync(dest, { recursive: true });
+      fs.writeFileSync(path.join(dest, 'ollama.exe'), 'exe');
+    },
+    spawn: (cmd, args, opts) => {
+      assert.equal(args[0], 'serve');
+      assert.equal(opts.env.OLLAMA_HOST, `127.0.0.1:${PORTA}`);
+      servindo = true;
+      return { pid: 4321, on() {}, kill: () => mortos++ };
+    },
+    setLowPriority: (pid) => (prioridadeBaixa = pid),
+    onStatus: (e) => fases.push(e.fase),
+  });
+  const r = await brain.preparar();
+  assert.equal(r.modelo, MODELO);
+  assert.equal(r.base, `http://127.0.0.1:${PORTA}`);
+  assert.equal(prioridadeBaixa, 4321);
+  for (const f of ['baixando', 'instalando', 'ligando', 'baixandoModelo', 'pronto']) assert.ok(fases.includes(f), f);
+  assert.ok(!fs.existsSync(path.join(dir, 'ollama.zip')), 'zip apagado depois de instalar');
+  // Segunda vez: nada a baixar.
+  const n = chamadas.filter((u) => u.endsWith('.zip')).length;
+  await brain.preparar();
+  assert.equal(chamadas.filter((u) => u.endsWith('.zip')).length, n);
+  brain.parar('ocioso');
+  assert.equal(mortos, 1);
+  assert.equal(brain.estado.fase, 'parado');
+});
+
+test('cérebro local: sem espaço em disco não baixa nada e avisa', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-cerebro-'));
+  const brain = criarCerebroLocal({ dir, platform: 'win32', fetch: async () => { throw new Error('offline'); }, fs: { ...fs.promises, existsSync: fs.existsSync }, freeBytes: async () => 1e9, spawn() {}, extract() {} });
+  await assert.rejects(brain.preparar(), /pouco espaço/);
+  assert.equal(brain.estado.fase, 'erro');
 });

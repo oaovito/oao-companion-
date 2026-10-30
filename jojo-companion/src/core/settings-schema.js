@@ -26,9 +26,8 @@ export const DEFAULTS = Object.freeze({
   webSearch: true,              // pesquisar na internet perguntas sem resposta programada
   autoUpdate: true,             // baixar e instalar versões novas automaticamente
   iaAtivo: true,                // conversa com IA por API gratuita
-  iaProvedor: 'ollama',         // ollama (Qwen 3.5 2B no servidor) | pollinations | groq | gemini | openrouter (só reversão manual)
-  iaServidor: '',               // endereço do servidor com o Ollama (ex.: http://100.64.0.5:11435, via Tailscale)
-  iaChave: '',                  // chave do servidor (gateway) ou do provedor (fica só neste PC)
+  iaProvedor: 'ollama',         // ollama (Qwen 3.5 2B neste PC) | pollinations | groq | gemini | openrouter (só reversão manual)
+  iaChave: '',                  // chave de provedor antigo (só reversão manual; fica só neste PC)
   iaModelo: '',                 // modelo (vazio = padrão do provedor)
   // Animações e falas ambientes (motor de variedade / antitédio).
   ambienteFrequencia: 'normal', // desligado | pouca | normal | muita
@@ -146,11 +145,6 @@ export function sanitize(input) {
       else issues.push(k);
     }
   }
-  if ('iaServidor' in src) {
-    const u = String(src.iaServidor || '').trim().replace(/\/+$/, '');
-    if (u === '' || /^https?:\/\/[a-z0-9.-]+(:\d{2,5})?$/i.test(u)) out.iaServidor = u;
-    else issues.push('iaServidor');
-  }
   if ('agendaUrl' in src) {
     if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');
@@ -184,7 +178,7 @@ export function migrate(obj, issues = []) {
     if ('hotkey' in o && !('interactionHotkey' in o)) o.interactionHotkey = o.hotkey;
   }
   if (v < 3) {
-    // v3: o motor da conversa passa a ser o Qwen 3.5 2B no servidor (Ollama) para todo mundo.
+    // v3: o motor da conversa passa a ser o Qwen 3.5 2B (Ollama neste PC) para todo mundo.
     o.iaProvedor = 'ollama';
     if (o.iaModelo && !/^qwen3\.5:2b/.test(o.iaModelo)) o.iaModelo = '';
   }

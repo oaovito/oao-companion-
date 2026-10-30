@@ -75,14 +75,15 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Comida de tubarão sorteada (peixe, foca, lula, tartaruga, pinguim, às vezes gente), gore e arroto.
 - "AVC": força de frente até ficar vermelho, segura o peito, morto 1 min, "Essa foi por pouco."; AVC real → SAMU 192.
 - Dedo do meio: mão de verdade só nessa animação (punho + dedo para cima).
-- **Conversa com IA**: **Qwen 3.5 2B no Ollama em outro computador** (servidor + portão com chave via Tailscale,
-  `servidor/`, `docs/SERVIDOR.md`); o notebook dela nunca roda o modelo; sem fallback para outro modelo.
+- **Conversa com IA**: **Qwen 3.5 2B no Ollama do PRÓPRIO PC dela** (`src/main/cerebro-local.js`): baixado e instalado
+  sozinho, liga só quando ela conversa, desliga após 10 min, prioridade baixa, 127.0.0.1:11439; sem outro computador;
+  sem fallback para outro modelo.
   **Regra irredutível:** a IA responde sempre no jeito do JoJo (prompt com perfil + falas reais; resposta
   com cara de assistente é descartada e cai nas programadas). Segurança e gatilhos com animação ficam programados.
 - O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
 - Notas da Release: geradas de `CHANGELOG.md` (seção da versão: Novidades/Melhorias/Correções/Remoções/Como testar)
   por `scripts/release-notes.mjs`; só o que mudou; nunca editar releases antigas; sem seção → publicação bloqueada.
-- Atualização 100% automática: quem já tem o app nunca baixa nada à mão.
+- Atualização 100% automática e imediata (checa a cada 10 min, troca e reabre assim que baixa); ela nunca faz nada.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
@@ -101,7 +102,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    comparado localmente com "Instagram" no processo isolado (só sai um sim/não; desligável).
    Também local e desligável: título da janela do **Spotify** ("Artista - Música", para reagir à música) e
    detecção do **League of Legends** em primeiro plano (título/executável → sim/não; JoJo fica de mau humor e some).
-   Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **conversa online** (texto da conversa ao servidor da conversa, Ollama/Qwen), perguntas de
+   Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
    conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. **Silêncio absoluto**: nenhum som (sem áudio no código, janelas mutadas, sem opções de som);

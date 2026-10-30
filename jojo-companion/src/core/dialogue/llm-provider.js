@@ -1,6 +1,6 @@
-// Conversa do JoJo. Motor oficial: Qwen 3.5 2B rodando no Ollama em OUTRO
-// computador (o notebook dela só envia o texto e recebe a resposta; nunca roda
-// o modelo). Os provedores antigos (Pollinations, Groq, Gemini, OpenRouter)
+// Conversa do JoJo. Motor oficial: Qwen 3.5 2B no Ollama do PRÓPRIO PC dela,
+// instalado sozinho (src/main/cerebro-local.js), ligado só enquanto ela conversa.
+// Os provedores antigos (Pollinations, Groq, Gemini, OpenRouter)
 // continuam no código só para reversão manual: nunca são usados sozinhos.
 // O JoJo responde no jeito dele e devolve ação de corpo e comando validados.
 // Puro: `fetch` é injetado.
@@ -11,7 +11,7 @@ export const OLLAMA_MODEL = 'qwen3.5:2b-q4_K_M';
 export const OLLAMA_OPTS = Object.freeze({
   curto: { num_ctx: 2048, num_predict: 128 },
   tecnico: { num_ctx: 4096, num_predict: 512 },
-  keepAlive: '15m', // modelo carregado entre mensagens (resposta rápida); o servidor descarrega depois
+  keepAlive: '5m', // modelo carregado entre mensagens (resposta rápida); depois sai da RAM
 });
 
 /** Pergunta técnica (ciência, medicina, MNE_Lab…) pede contexto e resposta maiores. */
@@ -19,14 +19,8 @@ export function isTechnical(text) {
   return /\b(dls|nta|zeta|pdi|nanopart\w*|nano\w*|anova|estat[ií]stic\w*|fisiopatolog\w*|farmac\w*|diagn[oó]stic\w*|hemograma|exame|sintoma\w*|mecanismo|mne_?lab|lightscattering|nanobrook|explica|por que|como funciona)\b/i.test(String(text || ''));
 }
 
-/** Endereço do servidor (Tailscale/rede local); aceita só http(s) e sem caminho estranho. */
-export function normalizeServer(url) {
-  const u = String(url || '').trim().replace(/\/+$/, '');
-  return /^https?:\/\/[a-z0-9.-]+(:\d{2,5})?$/i.test(u) ? u : '';
-}
-
 export const LLM_PRESETS = Object.freeze({
-  ollama: { label: 'Qwen 3.5 2B (servidor)', url: null, model: OLLAMA_MODEL, key: false, native: true },
+  ollama: { label: 'Qwen 3.5 2B (neste PC)', url: null, model: OLLAMA_MODEL, key: false, native: true },
   pollinations: { label: 'Pollinations (grátis, sem chave)', url: 'https://text.pollinations.ai/openai', model: 'openai', key: false },
   groq: { label: 'Groq (chave grátis)', url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile', key: true },
   gemini: { label: 'Google Gemini (chave grátis)', url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.0-flash', key: true },
@@ -117,7 +111,10 @@ export class LlmProvider extends DialogueProvider {
    * @param getContext () => {hora, festa, ligadao}
    * @param baseOverride URL do endpoint (só testes)
    */
-  constructor({ fetch, getConfig, getProfile, getContext = () => ({}), getExamples = () => [], timeoutMs = 8000, baseOverride = null, log = () => {} }) {
+  /**
+   * @param brain cérebro local ({pronto(), preparar() → {base, modelo}, usar(), estado}); só no app
+   */
+  constructor({ fetch, getConfig, getProfile, getContext = () => ({}), getExamples = () => [], timeoutMs = 8000, baseOverride = null, brain = null, log = () => {} }) {
     super({ id: 'llm', label: 'IA', kind: 'remote-api' });
     this.getExamples = getExamples;
     this.fetch = fetch;
@@ -126,6 +123,7 @@ export class LlmProvider extends DialogueProvider {
     this.getContext = getContext;
     this.timeoutMs = timeoutMs;
     this.baseOverride = baseOverride;
+    this.brain = brain;
     this.log = log;
   }
 
@@ -141,12 +139,19 @@ export class LlmProvider extends DialogueProvider {
   async isAvailable() {
     const cfg = this.getConfig() || {};
     if (!cfg.ativo || !this.fetch) return false;
-    if (this.preset.native) return !!(this.baseOverride || normalizeServer(cfg.servidor));
+    if (this.preset.native) {
+      if (this.baseOverride) return true;
+      if (!this.brain) return false;
+      if (this.brain.pronto()) return true;
+      // Primeira vez (ou desligado por ociosidade): prepara em segundo plano; enquanto isso, falas programadas.
+      this.brain.preparar().catch(() => {});
+      return false;
+    }
     if (this.preset.key && !cfg.chave) return false;
     return true;
   }
 
-  /** Tempo máximo da resposta (pergunta técnica no servidor demora mais). */
+  /** Tempo máximo da resposta (pergunta técnica demora mais). */
   timeoutFor(text) {
     return this.preset.native && isTechnical(text) ? this.timeoutMs * 3 + 1000 : this.timeoutMs + 1000;
   }
@@ -155,46 +160,22 @@ export class LlmProvider extends DialogueProvider {
   unavailableReason() {
     const cfg = this.getConfig() || {};
     if (!cfg.ativo) return 'desligada';
-    if (this.preset.native && !this.baseOverride && !normalizeServer(cfg.servidor)) return 'sem servidor configurado';
-    return null;
-  }
-
-  /** Confere no servidor se o modelo certo está instalado (cache de 5 min). */
-  async checkModel() {
-    const now = Date.now();
-    if (this._modelCheck && now - this._modelCheck.at < 5 * 60e3) return this._modelCheck.ok;
-    const cfg = this.getConfig() || {};
-    const base = this.baseOverride || normalizeServer(cfg.servidor);
-    const want = cfg.modelo || OLLAMA_MODEL;
-    let found = null;
-    try {
-      const res = await this.fetch(`${base}/api/tags`, { headers: this._headers(cfg) });
-      if (res.status === 401 || res.status === 403) throw new Error('chave do servidor recusada');
-      const data = res.ok ? await res.json() : null;
-      const names = ((data && data.models) || []).map((m) => m.name || m.model);
-      // A variante pedida; senão, outra quantização do MESMO Qwen 3.5 2B (nunca outro tamanho).
-      found = names.find((n) => n === want) || names.find((n) => /^qwen3\.5:2b(\b|-)/.test(n)) || null;
-    } catch (e) {
-      if (/chave/.test(e.message)) throw e;
-      found = null;
-    }
-    this._modelCheck = { at: now, ok: !!found, name: found };
-    if (!found) throw new Error(`modelo ${want} não está no servidor`);
-    return true;
-  }
-
-  _headers(cfg) {
-    const h = { 'Content-Type': 'application/json' };
-    // Chave do gateway do servidor (o Ollama nunca fica exposto sem ela).
-    if (cfg.chave) h.Authorization = `Bearer ${cfg.chave}`;
-    return h;
+    if (!this.preset.native || this.baseOverride) return null;
+    if (!this.brain) return 'sem motor';
+    const e = this.brain.estado;
+    return e.fase === 'pronto' ? null : e.fase === 'erro' ? `erro: ${e.erro}` : e.fase;
   }
 
   /** Qwen no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
   async _replyOllama({ text, history, cfg, onDelta }) {
-    const base = this.baseOverride || normalizeServer(cfg.servidor);
-    if (!base) throw new Error('sem servidor configurado');
-    if (!this.baseOverride) await this.checkModel();
+    let base = this.baseOverride;
+    let modelo = cfg.modelo || OLLAMA_MODEL;
+    if (!base) {
+      const p = await this.brain.preparar();
+      base = p.base;
+      modelo = p.modelo;
+      this.brain.usar();
+    }
     const tecnico = isTechnical(text);
     const opts = tecnico ? OLLAMA_OPTS.tecnico : OLLAMA_OPTS.curto;
     const messages = [{ role: 'system', content: buildSystemPrompt(this.getProfile(), this.getContext(), this.getExamples().slice(0, 6), { tecnico }) }];
@@ -207,9 +188,9 @@ export class LlmProvider extends DialogueProvider {
     try {
       const res = await this.fetch(`${base}/api/chat`, {
         method: 'POST',
-        headers: this._headers(cfg),
+        headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: (this._modelCheck && this._modelCheck.name) || cfg.modelo || OLLAMA_MODEL, messages, stream: true, think: false, format: 'json', keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.9 } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, think: false, format: 'json', keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.9 } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
