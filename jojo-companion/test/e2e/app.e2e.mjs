@@ -785,3 +785,16 @@ test('antitédio: Central mostra a coleção, bolhas aparecem e estouram, foco j
     await quit(app);
   }
 });
+
+test('silêncio absoluto: todas as janelas do app estão mutadas', async () => {
+  const { app } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.openSettings());
+    await sleep(800);
+    const r = await app.evaluate(({ webContents }) => webContents.getAllWebContents().map((w) => w.isAudioMuted()));
+    assert.ok(r.length >= 2, `janelas: ${r.length}`);
+    assert.ok(r.every(Boolean), JSON.stringify(r));
+  } finally {
+    await quit(app);
+  }
+});

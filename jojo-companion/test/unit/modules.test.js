@@ -195,7 +195,7 @@ test('configurações: valores inválidos voltam ao padrão, faixas são limitad
 });
 
 test('configurações: padrões exigidos (sons off, iniciar com Windows off, margem 100)', () => {
-  assert.equal(DEFAULTS.sounds, false);
+  assert.equal('sounds' in DEFAULTS, false, 'sem som: não existe opção de som');
   assert.equal(DEFAULTS.startWithWindows, true);
   assert.equal(DEFAULTS.safetyMargin, 100);
   assert.equal(DEFAULTS.interactionHotkey, 'Control+Alt+J');

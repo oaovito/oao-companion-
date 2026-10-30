@@ -46,6 +46,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
 - Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
 - Configurações: seções Personalidade e Sistema **ocultas**; perfil volta ao padrão a cada versão nova do perfil.
+- Vigília: das 6h às 21h o estado de sono é bloqueado na máquina de estados (`canSleep`/`SLEEP_ANIMS`); às 6h acorda.
 - Dormir: antes das 21h qualquer menção a dormir/sono/cochilo/cama → JoJo furioso e contra (estado `angry`);
   das 21h às 6h é permitido e ele reafirma (ação `boaNoite`); falas ambientes de dormir com `apos: 21`.
 - Janela cresce por animação (`assets/animations/jojo.room.json`; regenerar com `scripts/anim-room.mjs` ao mudar desenho/animação).
@@ -99,7 +100,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **conversa online** (texto da conversa ao provedor de IA), perguntas de
    conhecimento (Wikipédia/DuckDuckGo, quando a conversa online está desligada ou falha) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
-5. Sons desligados por padrão; **"iniciar com o Windows" ligado por padrão** (desmarcável).
+5. **Silêncio absoluto**: nenhum som (sem áudio no código, janelas mutadas, sem opções de som);
+   **"iniciar com o Windows" ligado por padrão** (desmarcável).
 6. Conversa: IA por API gratuita com a personalidade do JoJo (irredutível). A tela **não menciona IA**;
    Configurações só mostram "Conversa online" com o aviso de que o texto vai para um serviço online.
 8. Ociosidade: só o contador `powerMonitor.getSystemIdleTime()` (nunca teclas/cliques).

@@ -137,8 +137,10 @@ export class BehaviorMachine {
   /**
    * @param opts {rng, activity (0..1), onEnter(state, info), getContext()}
    */
-  constructor({ rng = Math.random, activity = 0.5, getContext = () => ({}), rareRng = Math.random } = {}) {
+  constructor({ rng = Math.random, activity = 0.5, getContext = () => ({}), rareRng = Math.random, canSleep = () => true } = {}) {
     this.rng = rng;
+    // Regra de vigília: entre 6h e 21h o estado de sono não existe (ver sleepAllowed).
+    this.canSleep = canSleep;
     // Sorteio separado para eventos raríssimos (não mexe na sequência do rng principal).
     this.rareRng = rareRng;
     this.activity = activity;
@@ -174,6 +176,13 @@ export class BehaviorMachine {
   }
 
   /** Pode iniciar `name` agora (sem efetivar)? */
+  /** 6h chegou com ele dormindo: acorda (animação de despertar e volta ao normal). */
+  wakeIfForbidden(now = 0) {
+    if (!this.cur || !this.cur.def.sleeping || this.canSleep() || this.cur.exiting) return false;
+    this._complete(now);
+    return true;
+  }
+
   canEnter(name, priority = STATES[name]?.priority) {
     if (!STATES[name]) return false;
     if (!this.cur) return true;
@@ -192,6 +201,12 @@ export class BehaviorMachine {
   }
 
   _enter(name, now, data, prio) {
+    // Sono proibido agora (6h–21h): nenhum caminho entra no estado de sono.
+    if (STATES[name].sleeping && !this.canSleep()) {
+      name = 'idle';
+      data = null;
+      prio = undefined;
+    }
     const def = STATES[name];
     const prev = this.cur ? this.cur.name : null;
     const hold = pickRange(def.hold, this.rng);
@@ -265,7 +280,7 @@ export class BehaviorMachine {
     if (next === 'auto') next = this.pickAuto(ctx);
     // Sorteio ambiente (catálogo): o companion escolhe a animação (abaixo).
     else if (next === 'afterSit') next = this.rng() < 0.3 + (ctx.sleepiness || 0) * 0.4 ? 'lie' : 'idle';
-    else if (next === 'afterLie') next = this.rng() < 0.45 + (ctx.sleepiness || 0) * 0.4 ? 'sleep' : 'idle';
+    else if (next === 'afterLie') next = this.canSleep() && this.rng() < 0.45 + (ctx.sleepiness || 0) * 0.4 ? 'sleep' : 'idle';
     if (ctx.hasQueue && !ctx.paused && STATES[next].priority >= P.AUTO && next !== 'ambient') next = 'ambient';
     if (next === 'ambient') {
       const data = ctx.pickAmbient ? ctx.pickAmbient() : null;
@@ -284,6 +299,7 @@ export class BehaviorMachine {
     // 1 em 1 bilhão: o "vai tomar no cu" sozinho, sem ninguém pedir.
     if (!ctx.paused && !ctx.alert && this.rareRng() < MOON_IDLE_CHANCE) return 'moon';
     const w = autoWeights(this.activity, ctx);
+    if (!this.canSleep()) w.sleep = 0;
     if (ctx.alert) {
       w.walk = 0;
       w.sleep = 0;

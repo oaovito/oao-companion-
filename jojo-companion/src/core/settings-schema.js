@@ -16,8 +16,7 @@ export const DEFAULTS = Object.freeze({
   activity: 0.5,                // 0 calmo … 1 agitado
   speechFrequency: 'normal',    // off | rare | normal | often
   bubbleScale: 1.0,             // tamanho do texto dos balões (0.8 – 1.6)
-  quietMode: false,             // sem falas espontâneas e sem sons
-  sounds: false,                // sons desativados por padrão
+  quietMode: false,             // sem falas espontâneas e sem broncas
   interactionHotkey: 'Control+Alt+J',
   interactionTimeoutSec: 45,    // saída automática do modo de interação (10 – 600)
   startWithWindows: true,       // inicia junto com o Windows (desmarcável)
@@ -39,7 +38,6 @@ export const DEFAULTS = Object.freeze({
   falasAmbientes: true,         // frases curtas sozinho enquanto ela trabalha
   microMovimentos: 'normal',    // normal | discreto | desligado (respiração, guelras, bolhas…)
   animacoesPesadas: true,       // giros, confete, tremidas (desligue para só as suaves)
-  volume: 60,                   // volume dos sons (quando ligados), 0 – 100
   // Agenda (só leitura): endereço iCal do Google ou link público do iCloud; fica só neste PC.
   agendaUrl: '',
   agendaAtiva: true,
@@ -61,7 +59,6 @@ const RANGES = {
   bubbleScale: [0.8, 1.6],
   interactionTimeoutSec: [10, 600],
   agendaAvisoMin: [5, 60],
-  volume: [0, 100],
 };
 
 const ENUMS = {
@@ -76,7 +73,7 @@ const ENUMS = {
   microMovimentos: ['normal', 'discreto', 'desligado'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'sounds', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };

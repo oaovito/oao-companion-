@@ -111,7 +111,6 @@ function onState(s) {
     setCaptureLocal(false);
     dragging = false;
   }
-  if (s.sounds && prev && s.effect && s.effect !== prev.effect) chirp(s.effect);
   requestFrame();
 }
 
@@ -719,31 +718,7 @@ function setupInteraction() {
   });
 }
 
-// ------------------------------------------------------------------ sons (desativados por padrão)
-
-let audio = null;
-function chirp(kind) {
-  try {
-    audio = audio || new AudioContext();
-    const notes = { hearts: [660, 880], food: [440, 520, 600], ball: [700, 500, 800] }[kind] || [600];
-    let t = audio.currentTime;
-    for (const f of notes) {
-      const o = audio.createOscillator();
-      const g = audio.createGain();
-      o.type = 'triangle';
-      o.frequency.value = f;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(Math.max(0.0002, 0.1 * ((state && state.volume) ?? 60) / 100), t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
-      o.connect(g).connect(audio.destination);
-      o.start(t);
-      o.stop(t + 0.15);
-      t += 0.09;
-    }
-  } catch {
-    /* sem áudio */
-  }
-}
+// Silêncio absoluto: o JoJo não emite nenhum som (sem áudio no app).
 
 // Exposto apenas para testes automatizados de renderização.
 window.__jojoRenderer = {

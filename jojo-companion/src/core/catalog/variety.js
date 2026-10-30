@@ -53,6 +53,9 @@ export function isHeavy(it) {
   return [].concat(r.corpo || []).some((c) => HEAVY_BODY.has(c)) || [].concat(r.fx || []).some((f) => HEAVY_FX.has(f));
 }
 
+// Animações em que ele dorme/cochila: proibidas entre 6h e 21h (regra de vigília).
+export const SLEEP_ANIMS = new Set(['cochilar', 'dormirProfundo', 'fingirDormir', 'cochilarBoiando', 'dormirRonco', 'acordarAssustado']);
+
 export const FREQ_DEFAULT = Object.freeze({ comum: 10, rara: 2.5, easter: 0.35 });
 const MEMORY = 30;
 
@@ -122,6 +125,7 @@ export class VarietyEngine {
     const freq = this._freq();
     if (prefs.surpresas === false && it.frequencia !== 'comum') return 0;
     if (prefs.semPesadas && isHeavy(it)) return 0;
+    if (prefs.semSono && SLEEP_ANIMS.has(it.id)) return 0;
     let w = freq[it.frequencia] ?? freq.comum;
     if (w <= 0) return 0;
     const t = this.now();

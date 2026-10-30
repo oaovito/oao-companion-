@@ -143,6 +143,9 @@ function main() {
     personality.flush();
   });
 
+  // Silêncio absoluto: toda janela do app nasce sem áudio (nenhum som sai, nem por engano).
+  app.on('web-contents-created', (_e, wc) => wc.setAudioMuted(true));
+
   app.whenReady().then(() => startApp()).catch((e) => {
     log('error', `Falha ao iniciar: ${e.stack || e.message}`);
     dialog.showErrorBox('JoJo Companion', `Não foi possível iniciar o JoJo.\n\n${e.message}\n\nDetalhes em: ${log.file}`);

@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## 0.34.0 — 2026-10-30
+
+### Melhorias
+- **Silêncio absoluto**: o JoJo não emite nenhum som. O efeito sonoro que existia foi removido do
+  código, toda janela do app nasce mutada e as opções de som e volume saíram das Configurações.
+  Tudo é texto, expressão e animação.
+- **Regra de vigília**: das 6h às 21h o JoJo não dorme de jeito nenhum: o estado interno de sono é
+  bloqueado (inatividade, sorteio, deitar, pedido da conversa ou `/anim cochilar` não o fazem dormir)
+  e as animações de cochilo saem do sorteio. Às 6h, se estiver dormindo, ele acorda. Das 21h às 6h,
+  dormir é permitido (não obrigatório).
+
+### Remoções
+- Configurações "Sons nas interações" e "Volume dos sons".
+
+### Como testar
+- Durante o dia, deixe o PC parado bastante tempo: ele descansa e deita, mas não dorme.
+- `/anim cochilar` de dia: ele não faz. Depois das 21h, faz.
+
 ## 0.33.0 — 2026-10-30
 
 ### Melhorias

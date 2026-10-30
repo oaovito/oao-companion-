@@ -15,9 +15,9 @@ import { placeAround, composeWindow } from './layout.js';
 import { displayForRect, allowedDisplays, recoverRect, topologySignature, primaryDisplay } from './displays.js';
 import { distPointRect, roundRect, dist, clamp, intersection } from './geometry.js';
 import { animName, INTENSITIES } from './catalog/recipes.js';
-import { VarietyEngine, periodOf, seasonOf } from './catalog/variety.js';
+import { VarietyEngine, periodOf, seasonOf, SLEEP_ANIMS } from './catalog/variety.js';
 import { Progress, Games, pickRoutine, routineSteps } from './catalog/antitedio.js';
-import { detectIntent, normalizeText } from './dialogue/scripted-provider.js';
+import { detectIntent, normalizeText, sleepAllowed } from './dialogue/scripted-provider.js';
 import { isFactualQuestion } from './dialogue/web-search.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
@@ -83,7 +83,7 @@ const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 const NOD_AFTER = new Set(['foco_parar', 'jogo_parar', 'parar_atividade', 'retomar', 'mostrar', 'silencio_ligar', 'silencio_desligar', 'configuracoes', 'nova_conversa', 'resumo']);
 
 export class Companion {
-  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, antitedio = null, phrases = null, dialogue = null, rng = Math.random, log = () => {} }) {
+  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, antitedio = null, phrases = null, dialogue = null, rng = Math.random, log = () => {}, dateNow = () => new Date() }) {
     // Quanto cada animação/efeito passa da caixa (assets/animations/jojo.room.json).
     this.room = room || { anims: {}, effects: {} };
     this.roomPrev = null; // espaço da animação anterior durante a transição
@@ -110,6 +110,7 @@ export class Companion {
     this.activityRect = null;
     this.reducedMotion = false;
     this.costume = null; // fantasia da data festiva (natal, pascoa…)
+    this.dateNow = dateNow; // relógio de parede (regra de sono 6h–21h); injetável nos testes
     this.powderKind = null; // 'snort' | 'chug' enquanto senta no chão (PC parado)
     this.wiredKind = null;
     this.wiredUntil = 0;
@@ -140,7 +141,7 @@ export class Companion {
         const quieto = this.progress && this.progress.st.diasQuietos === dayKey(new Date());
         // Humor do dia dela (cansada/triste → calmo; animada → pilhado) quando a energia é automática.
         const humorDia = this.progress && this.progress.st.humorDia && this.progress.st.humorDia.dia === dayKey(new Date()) ? this.progress.st.humorDia.modo : null;
-        return { modo: st.ambienteModo === 'auto' ? (quieto ? 'calmo' : humorDia || 'auto') : st.ambienteModo, surpresas: st.surpresas, desligadas: vs.desligadas || [], semPesadas: !st.animacoesPesadas };
+        return { modo: st.ambienteModo === 'auto' ? (quieto ? 'calmo' : humorDia || 'auto') : st.ambienteModo, surpresas: st.surpresas, desligadas: vs.desligadas || [], semPesadas: !st.animacoesPesadas, semSono: !this.canSleep() };
       },
     });
     // Antitédio: progressão/coleções, rotinas e mini-jogos (assets/catalog/*.json).
@@ -173,7 +174,7 @@ export class Companion {
     const s = store.get();
     this.avoid = new AvoidanceController({ margin: s.safetyMargin });
     this.mover = new Mover();
-    this.behavior = new BehaviorMachine({ rng, activity: s.activity, getContext: () => this._behaviorContext() });
+    this.behavior = new BehaviorMachine({ rng, activity: s.activity, getContext: () => this._behaviorContext(), canSleep: () => this.canSleep() });
     this.behavior.on((ev) => this._onBehavior(ev));
 
     this.displays = [];
@@ -1655,6 +1656,7 @@ export class Companion {
   playCatalog(id, { source = 'comando', speak = true } = {}) {
     const item = this.catalogById.get(id);
     if (!item || this.quitting || !this.started || this.userHidden) return false;
+    if (SLEEP_ANIMS.has(id) && !this.canSleep()) return false; // dormir de dia: nunca
     const now = this.clock.now();
     if (item.especial === 'semFiltro') return this._semFiltro();
     // Precisa ir até um lugar antes (borda, outro canto, perto do cursor): anda e toca na chegada.
@@ -1741,6 +1743,11 @@ export class Companion {
     this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
     if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
     return this._catalogData(it);
+  }
+
+  /** Pode dormir agora? Só das 21h às 6h (horário local). */
+  canSleep() {
+    return sleepAllowed(this.dateNow());
   }
 
   // ---------------------------------------------------------------- guarda-roupa
@@ -2579,6 +2586,7 @@ export class Companion {
     if (this.reminderTimer) this.clock.clearTimeout(this.reminderTimer);
     this.reminderTimer = this.clock.setTimeout(() => {
       this.reminderTimer = null;
+      this.behavior.wakeIfForbidden(this.clock.now()); // 6h: acorda
       this.checkDailyReminder(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
@@ -2770,7 +2778,6 @@ export class Companion {
       micro: s.microMovimentos || 'normal',
       // Olhar acompanha o cursor de leve quando está perto (micromovimento).
       gaze: this._gaze(r),
-      volume: s.volume ?? 60,
       // Mini-jogo de bolhas: o renderer solta bolhas clicáveis em volta.
       minigame: this.game && this.game.tipo === 'bolhas' && this.interaction ? { tipo: 'bolhas', ate: this.game.ate - now + Date.now() } : null,
       // Acessórios liberados por nível aparecem às vezes (camada extra de variedade).
@@ -2783,7 +2790,6 @@ export class Companion {
       sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
       moving: this.mover.active ? this.mover.kind : null,
-      sounds: s.sounds && !s.quietMode,
     };
     const key = JSON.stringify(state);
     if (forceRender || key !== this.lastRender) {
