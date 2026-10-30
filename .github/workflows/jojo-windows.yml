@@ -82,8 +82,10 @@ jobs:
           MEASURE_SECONDS: '20'
           JOJO_GPU: '1'
 
+      # Cópia de conferência do CI (a versão de verdade vai na Release). Cota cheia não bloqueia a publicação.
       - name: Publicar artefatos
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: JoJoCompanion-windows-x64
@@ -93,7 +95,7 @@ jobs:
             jojo-companion/measure-windows.json
             jojo-companion/measure-windows-gpu.json
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 2
 
       # Publica a versão (Release do GitHub) com o executável portátil: por tag "v*"
       # pela execução manual com "publicar" ou por commit com "[publicar]" na mensagem

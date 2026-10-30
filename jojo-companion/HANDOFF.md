@@ -7,8 +7,10 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 - Vigia (`src/main/presenca.js`, `src/main/vigia.cjs`): processo Node do próprio app (ELECTRON_RUN_AS_NODE),
   marcador `saida.json` (manual/atualizacao/desligamento), `reaberturas.json` (máx. 3 em 10 min). No Windows a
   espera da reabertura fica num `cmd` para não prender arquivos do portátil. Testado de verdade no Linux
-  (unitário com processo real + E2E matando o Electron); no Windows, pelo CI. Não verificado: desligar/reiniciar
-  o Windows de verdade e atualização real do instalador com o vigia ativo.
+  (unitário com processo real + E2E matando o Electron) e no **Windows do CI com o `JoJoCompanion.exe` portátil**
+  (`scripts/presenca-windows.mjs`: crash → reabre; bandeja → não reabre; atalho criado na área de trabalho).
+  Não verificado: desligar/reiniciar o Windows de verdade e atualização real do instalador com o vigia ativo.
+- CI: cota de artefatos do GitHub cheia não bloqueia mais a publicação (upload com `continue-on-error`, 2 dias).
 - Atalho na área de trabalho (`garantirAtalho`, NSIS `createDesktopShortcut: "always"`).
 - Barra de status do pet e menu "🎭 Reações" removidos; reações por contexto (`reacaoDeContexto`).
 - Configurações v5 (`COMPORTAMENTO_V5`); `interactionTimeoutSec` eliminado.
