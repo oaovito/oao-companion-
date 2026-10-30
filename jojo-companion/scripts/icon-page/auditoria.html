@@ -1,0 +1,82 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>auditoria</title></head>
+<body style="margin:0">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+import { Animator } from '../../src/renderer/shared/animator.js';
+import { Effects } from '../../src/renderer/shared/effects.js';
+// Auditoria de cada animação no renderer real: toca do início ao fim (24 qps),
+// mede o tempo de desenho, procura valores inválidos, confere se cabe no espaço
+// reservado (jojo.room.json) e se de fato se mexe.
+const O = 400, SIZE = 1000;
+function canvas() {
+  const c = document.createElement('canvas'); c.width = SIZE; c.height = SIZE;
+  return c.getContext('2d', { willReadFrequently: true });
+}
+function bbox(ctx, box) {
+  const d = ctx.getImageData(0, 0, SIZE, SIZE).data;
+  let x0 = SIZE, y0 = SIZE, x1 = -1, y1 = -1;
+  for (let y = 0; y < SIZE; y += 2) for (let x = 0; x < SIZE; x += 2) {
+    if (d[(y * SIZE + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  if (x1 < 0) return null;
+  return { l: O - x0, t: O - y0, r: x1 + 1 - (O + box.width), b: y1 + 1 - (O + box.height) };
+}
+function assinatura(ctx) {
+  const d = ctx.getImageData(O - 150, O - 150, 600, 700).data;
+  let h = 0;
+  for (let i = 3; i < d.length; i += 4 * 37) h = (h * 31 + d[i] + d[i - 3]) >>> 0;
+  return h;
+}
+window.auditar = (rigJson, animJson, room, nomes) => {
+  const rig = new RigRenderer(rigJson);
+  const box = rigJson.metrics.box, head = rigJson.metrics.head, mouth = rigJson.metrics.mouth;
+  const out = {};
+  for (const name of nomes) {
+    const anim = animJson.animations[name];
+    const r = { ok: true, erro: null, quadros: 0, mediaMs: 0, maxMs: 0, cabe: true, excesso: 0, mexe: false };
+    try {
+      const a = new Animator(animJson, { rng: () => 0.5 });
+      a.play(name, 0, { variant: name });
+      const fx = new Effects({ rng: () => 0.5 });
+      const ctx = canvas();
+      const marcas = new Set();
+      const dur = anim.duration || 1000;
+      let soma = 0;
+      for (let t = 0; t <= dur; t += 1000 / 24) {
+        const s = a.sample(t);
+        for (const [k, v] of Object.entries(s.pose)) if (typeof v === 'number' && !Number.isFinite(v)) throw new Error(`canal ${k} inválido`);
+        const c2 = canvas();
+        const t0 = performance.now();
+        rig.draw(c2, s.pose, { origin: { x: O, y: O }, scale: 1, facing: 1 });
+        fx.update(t, s.flags, head);
+        c2.save(); c2.translate(O, O); c2.translate(s.pose.rootX || 0, s.pose.rootY || 0);
+        fx.drawBack(c2, t, { head, facingSign: 1 });
+        fx.draw(c2, t, { mark: s.flags.mark, head, mouth, facingSign: 1 });
+        c2.restore();
+        const ms = performance.now() - t0;
+        soma += ms; r.maxMs = Math.max(r.maxMs, ms); r.quadros++;
+        if (r.quadros % 6 === 1) marcas.add(assinatura(c2));
+        ctx.drawImage(c2.canvas, 0, 0);
+      }
+      r.mediaMs = soma / Math.max(1, r.quadros);
+      // Transição sem trilhas (ex.: standUp): o movimento é a mistura com a pose anterior.
+      r.transicao = !Object.keys(anim.tracks || {}).length && (anim.blendIn || 0) > 0;
+      r.mexe = marcas.size > 1 || name === 'hidden' || r.transicao;
+      const b = bbox(ctx, box);
+      const base = (anim.variantOf || name).replace(/~.*$/, '');
+      const sala = room[base] || { l: 0, t: 0, r: 0, b: 0 };
+      if (b) {
+        // Mesma folga da medição do espaço (arredondamento + amostragem a cada 2 px).
+        r.excesso = Math.max(0, b.l - sala.l - 4, b.t - sala.t - 4, b.r - sala.r - 4, b.b - sala.b - 4);
+        r.cabe = r.excesso === 0;
+      }
+    } catch (e) {
+      r.ok = false; r.erro = e.message;
+    }
+    out[name] = r;
+  }
+  return out;
+};
+window.ready = true;
+</script></body></html>

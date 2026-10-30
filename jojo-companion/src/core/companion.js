@@ -79,6 +79,20 @@ export function musicVibe(title) {
 }
 
 // Intenções do chat que deixam o catálogo responder por frase (as outras têm resposta própria).
+// O que ela sente na conversa → expressão do JoJo junto da resposta (sem menu nem comando).
+const EMOCAO_CONVERSA = [
+  [/\b(que nojo|eca+|nojent\w*)\b/, 'nojo'],
+  [/\b(que vergonha|passei vergonha|(to|tou|estou) com vergonha|morri de vergonha)\b/, 'envergonhado'],
+  [/\b(que medo|(to|tou|estou) com medo|me assustei|que susto)\b/, 'assustado'],
+  [/\b(voce nao vai acreditar|(to|tou|estou|fiquei) chocad\w*|que absurdo)\b/, 'chocado'],
+  [/\b(que saco|que raiva|(to|tou|estou) irritad\w*|que odio)\b/, 'irritadoLeve'],
+  [/\b((to|tou|estou) nervos\w*|que nervoso)\b/, 'nervoso'],
+  [/\b((to|tou|estou) ansios\w*)\b/, 'ansioso'],
+  [/\b(que decepcao|(to|tou|estou|fiquei) decepcionad\w*|me decepcion\w*)\b/, 'decepcionado'],
+  [/\b(olha (isso|ali|so isso)|ta vendo isso)\b/, 'apontar'],
+  [/\b(obrigad\w*|brigad\w*|valeu)\b/, 'agradecer'],
+];
+
 const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 'howAreYou', 'help', 'name', 'thanks', 'scare', 'pet']);
 const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
@@ -1282,6 +1296,12 @@ export class Companion {
       this.conversations.setStatus(conv.id, 'ready');
       this.fireEvent('ouvindo') || this.playCatalog('ouvirMusica', { source: 'chat', speak: false });
       return { text: out, action: null, intent: 'musica', conversationId: conv.id, provider: this.dialogue.describe() };
+    }
+    // Expressão do que ela sente ("que nojo", "que vergonha"…) junto da resposta normal.
+    if (!safety) {
+      const ne = normalizeText(text);
+      const em = EMOCAO_CONVERSA.find(([re]) => re.test(ne));
+      if (em) this.playCatalog(em[1], { source: 'chat', speak: false });
     }
     // Pedido de animação por frase ("faz uma dancinha", "selfie", "modo fera"…).
     const hit = this.catalogFromChat(text);

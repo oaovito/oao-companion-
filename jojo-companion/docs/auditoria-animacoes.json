@@ -1,0 +1,20 @@
+{
+ "erros": [],
+ "fora": [
+  "cat_jogado~suave",
+  "cat_jogado",
+  "cat_sustoBorda~suave",
+  "cat_sustoBorda",
+  "cat_dorsalTela~suave",
+  "cat_dorsalTela",
+  "cat_fantasma~suave",
+  "cat_fantasma",
+  "cat_fidget~suave",
+  "cat_fidget"
+ ],
+ "paradas": [
+  "standUp"
+ ],
+ "semGatilho": 39,
+ "mediaMs": 2.967972768557581
+}

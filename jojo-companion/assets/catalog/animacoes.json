@@ -7049,7 +7049,7 @@
    "nome": "Fidget de bíceps (bombar)",
    "categoria": "estimulo",
    "listas": {},
-   "gatilho": {},
+   "gatilho": { "ambiente": true },
    "duracao": 900,
    "loop": false,
    "entrada": 60,
