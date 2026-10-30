@@ -1,0 +1,1504 @@
+{
+ "_notas": "Pacotes de reação (memes, anime, comida, namorado, João). Cada reação vira um item do catálogo (animação real pelas receitas em camadas + efeitos silenciosos de fx-pacotes.js). Gatilhos: frases (pedido direto), eventos do app e as intenções de src/core/pacotes.js. Raridade vale só para o sorteio espontâneo.",
+ "pacotes": {
+  "memes": {
+   "nome": "Memes Gen Z"
+  },
+  "anime": {
+   "nome": "Referências de anime"
+  },
+  "comida": {
+   "nome": "Reações extremas de comida"
+  },
+  "namorado": {
+   "nome": "Operação Namorado"
+  },
+  "joao": {
+   "nome": "Protocolo do Divino João"
+  }
+ },
+ "reacoes": [
+  {
+   "id": "pk_sideEye",
+   "pacote": "memes",
+   "nome": "Bombastic side eye",
+   "duracao": 4200,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "cabeca": "olhaUsuario",
+    "rosto": "irritado",
+    "bracos": "cruzados",
+    "cauda": "baixa",
+    "fx": [
+     "bolhaUnica"
+    ],
+    "semPiscar": true,
+    "humor": {
+     "raiva": 0.3
+    }
+   },
+   "falas": [
+    "Eu vi essa merda.",
+    "Você realmente achou isso inteligente?",
+    "Patético.",
+    "Vou fingir que não presenciei isso."
+   ],
+   "eventos": [
+    "instagram",
+    "erro"
+   ],
+   "frases": [
+    "bombastic side eye",
+    "side eye"
+   ]
+  },
+  {
+   "id": "pk_chillGuy",
+   "pacote": "memes",
+   "nome": "Chill guy",
+   "duracao": 5600,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "flutua",
+    "bracos": "cintura",
+    "cabeca": "inclina",
+    "rosto": "zen",
+    "cauda": "devagar",
+    "fx": [
+     "bolhaUnica"
+    ]
+   },
+   "falas": [
+    "O mundo desmoronando e eu absolutamente tranquilo.",
+    "Problema seu. Eu sou um cara tranquilo.",
+    "Impressionante o quanto isso não me interessa."
+   ],
+   "eventos": [
+    "ocioso",
+    "notificacoes"
+   ],
+   "frases": [
+    "chill guy",
+    "cara tranquilo"
+   ]
+  },
+  {
+   "id": "pk_auraFarming",
+   "pacote": "memes",
+   "nome": "Aura farming",
+   "duracao": 6500,
+   "raridade": "incomum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "flexDuplo",
+    "cabeca": "encara",
+    "rosto": "dente",
+    "cauda": "abana",
+    "fx": [
+     "escuro",
+     "auraNegra",
+     "contador:+1000 de aura"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Presença não se compra.",
+    "Você perdeu aura só de olhar.",
+    "Observe e aprenda."
+   ],
+   "eventos": [
+    "conquista",
+    "tarefaConcluida",
+    "treino"
+   ],
+   "frases": [
+    "aura farming",
+    "aura"
+   ]
+  },
+  {
+   "id": "pk_letHimCook",
+   "pacote": "memes",
+   "nome": "Let him cook",
+   "duracao": 5000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "cruzados",
+    "cabeca": "assente",
+    "rosto": "focado",
+    "cauda": "devagar",
+    "fx": [
+     "painel:DEIXA COZINHAR..."
+    ]
+   },
+   "falas": [
+    "Deixa cozinhar.",
+    "Talvez você tenha um plano. Duvido.",
+    "Cozinhou tanto pra servir essa porcaria?"
+   ],
+   "eventos": [
+    "atividade"
+   ],
+   "frases": [
+    "let him cook",
+    "deixa cozinhar",
+    "deixa ele cozinhar"
+   ]
+  },
+  {
+   "id": "pk_broCooked",
+   "pacote": "memes",
+   "nome": "Bro is cooked",
+   "duracao": 4800,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "recua",
+    "bracos": "cobreRosto",
+    "cabeca": "nega",
+    "rosto": "decepcionado",
+    "cauda": "baixa",
+    "fx": [
+     "fumaca"
+    ]
+   },
+   "falas": [
+    "Acabou pra você.",
+    "Você tá completamente cooked.",
+    "Nem eu consigo defender essa.",
+    "Situação terminal de burrice."
+   ],
+   "eventos": [
+    "erroRepetido",
+    "derrota"
+   ],
+   "frases": [
+    "bro is cooked",
+    "cooked",
+    "to cooked",
+    "tô cooked"
+   ]
+  },
+  {
+   "id": "pk_sixSeven",
+   "pacote": "memes",
+   "nome": "Six seven (6-7)",
+   "duracao": 3200,
+   "raridade": "comum",
+   "cooldownMin": 2,
+   "receita": {
+    "corpo": "morde",
+    "cabeca": "encara",
+    "rosto": "irritado",
+    "fx": [
+     "numeros67"
+    ],
+    "semPiscar": true,
+    "humor": {
+     "raiva": 0.4
+    }
+   },
+   "falas": [
+    "Não começa.",
+    "Seis, sete... vai trabalhar.",
+    "A internet foi um erro."
+   ],
+   "eventos": [
+    "sixSeven"
+   ],
+   "frases": [
+    "six seven",
+    "seis sete",
+    "6 7",
+    "6-7"
+   ]
+  },
+  {
+   "id": "pk_brainrot",
+   "pacote": "memes",
+   "nome": "Italian brainrot",
+   "duracao": 6800,
+   "raridade": "rara",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "circula",
+    "bracos": "agita",
+    "cabeca": "olhaCima",
+    "rosto": "chocado",
+    "fx": [
+     "alarmeDourado",
+     "notas",
+     "legenda:Tralalero tralalá"
+    ]
+   },
+   "falas": [
+    "Tralalero tralalá... que desgraça foi essa?",
+    "Meu cérebro acabou de pedir demissão.",
+    "Isso é o auge da degeneração digital."
+   ],
+   "eventos": [
+    "absurdo"
+   ],
+   "frases": [
+    "italian brainrot",
+    "brainrot",
+    "tralalero"
+   ]
+  },
+  {
+   "id": "pk_npc",
+   "pacote": "memes",
+   "nome": "NPC streaming",
+   "duracao": 7000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "marcha",
+    "bracos": "acena",
+    "cabeca": "reto",
+    "rosto": "sorriso",
+    "fx": [
+     "presentes",
+     "legenda:Obrigado pela rosa. Uau. Incrível."
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Obrigado pela rosa. Uau. Incrível.",
+    "Sistema operacional: paciência esgotada.",
+    "Eu me recuso a continuar essa humilhação."
+   ],
+   "eventos": [
+    "repetitivo"
+   ],
+   "frases": [
+    "npc",
+    "npc streaming",
+    "modo npc"
+   ]
+  },
+  {
+   "id": "pk_demure",
+   "pacote": "memes",
+   "nome": "Very demure, very mindful",
+   "duracao": 5000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "desfile",
+    "bracos": "maoNoPeito",
+    "cabeca": "inclinaOutro",
+    "rosto": "canto",
+    "cauda": "charme",
+    "fx": [
+     "luzDourada"
+    ]
+   },
+   "falas": [
+    "Muito discreto. Muito consciente. Diferente de você.",
+    "Observe a elegância, animal.",
+    "Very demure. Very mindful. Agora sai do Instagram."
+   ],
+   "eventos": [
+    "instagram"
+   ],
+   "frases": [
+    "very demure",
+    "demure",
+    "very mindful"
+   ]
+  },
+  {
+   "id": "pk_gta6",
+   "pacote": "memes",
+   "nome": "We got this before GTA 6",
+   "duracao": 5500,
+   "raridade": "incomum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "aplausoLento",
+    "cabeca": "inclina",
+    "rosto": "surpreso",
+    "fx": [
+     "legenda:Conseguimos isso antes de GTA 6"
+    ]
+   },
+   "falas": [
+    "Conseguimos isso antes de GTA 6.",
+    "Inacreditável. Até você terminou algo.",
+    "O impossível aconteceu. Vou registrar."
+   ],
+   "eventos": [
+    "conquistaImprovavel",
+    "tarefaConcluida"
+   ],
+   "frases": [
+    "gta 6",
+    "antes do gta 6"
+   ]
+  },
+  {
+   "id": "pk_menacing",
+   "pacote": "anime",
+   "nome": "Menacing",
+   "duracao": 6500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "inclina",
+    "bracos": "cintura",
+    "cabeca": "encara",
+    "rosto": "fera",
+    "fx": [
+     "menacing",
+     "escuro"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Yare yare daze...",
+    "Você está se aproximando de mim?",
+    "O nome é JoJo. Evidentemente.",
+    "Sua próxima frase vai ser alguma idiotice."
+   ],
+   "eventos": [
+    "provocacao",
+    "instagramRepetido"
+   ],
+   "frases": [
+    "menacing",
+    "yare yare",
+    "jojo reference"
+   ]
+  },
+  {
+   "id": "pk_ultraInstinto",
+   "pacote": "anime",
+   "nome": "Ultra instinto",
+   "duracao": 8000,
+   "raridade": "incomum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "flutua",
+    "bracos": "protege",
+    "cabeca": "reto",
+    "rosto": "zen",
+    "fx": [
+     "auraPrata",
+     "velocidade",
+     "olhosBrilho:#dfe7f2"
+    ]
+   },
+   "falas": [
+    "Você pensa. Eu simplesmente ajo.",
+    "Reflexos superiores. Intelecto também.",
+    "Nem preciso olhar pra desviar das suas besteiras."
+   ],
+   "eventos": [
+    "desafioDificil"
+   ],
+   "frases": [
+    "ultra instinto",
+    "ultra instinct"
+   ]
+  },
+  {
+   "id": "pk_berserker",
+   "pacote": "anime",
+   "nome": "Fúria berserker",
+   "duracao": 9500,
+   "raridade": "lendaria",
+   "cooldownMin": 60,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "soco",
+    "cabeca": "olhaBaixo",
+    "rosto": "fera",
+    "dorsal": "treme",
+    "fx": [
+     "escuro",
+     "auraNegra",
+     "olhosBrilho:#ff2a2a",
+     "onda"
+    ],
+    "humor": {
+     "raiva": 1
+    },
+    "semPiscar": true
+   },
+   "falas": [
+    "Você conseguiu me irritar.",
+    "Não confunda silêncio com misericórdia.",
+    "Hoje eu acordei particularmente intolerante."
+   ],
+   "eventos": [
+    "irritacaoExtrema"
+   ],
+   "frases": [
+    "berserker",
+    "berserk"
+   ]
+  },
+  {
+   "id": "pk_dominio",
+   "pacote": "anime",
+   "nome": "Expansão de domínio",
+   "duracao": 8500,
+   "raridade": "incomum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "poder",
+    "bracos": "maosAlto",
+    "cabeca": "reto",
+    "rosto": "focado",
+    "fx": [
+     "vazio",
+     "auraRoxa",
+     "olhosBrilho:#b07bff"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Expansão de domínio: paciência inexistente.",
+    "Aqui dentro, quem manda sou eu.",
+    "Você entrou no meu território. Péssima escolha."
+   ],
+   "eventos": [
+    "provocacao",
+    "vitoriaEspecial"
+   ],
+   "frases": [
+    "expansao de dominio",
+    "domain expansion",
+    "dominio"
+   ]
+  },
+  {
+   "id": "pk_sharingan",
+   "pacote": "anime",
+   "nome": "Sharingan",
+   "duracao": 5500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "cabeca": "encara",
+    "rosto": "focado",
+    "bracos": "cruzados",
+    "fx": [
+     "sharingan"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Eu já sabia que você faria isso.",
+    "Previsível. Dolorosamente previsível.",
+    "Eu enxergo suas más decisões antes de você tomá-las."
+   ],
+   "eventos": [
+    "instagramRepetido",
+    "padrao"
+   ],
+   "frases": [
+    "sharingan"
+   ]
+  },
+  {
+   "id": "pk_haki",
+   "pacote": "anime",
+   "nome": "Haki do conquistador",
+   "duracao": 7500,
+   "raridade": "rara",
+   "cooldownMin": 30,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "cintura",
+    "cabeca": "encara",
+    "rosto": "orgulhoso",
+    "dorsal": "destaque",
+    "fx": [
+     "onda",
+     "escuro",
+     "auraNegra"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Eu não preciso levantar a voz.",
+    "Alguns nasceram pra obedecer.",
+    "Presença é isso. O resto é teatro."
+   ],
+   "eventos": [
+    "conquista",
+    "nivel"
+   ],
+   "frases": [
+    "haki",
+    "haki do conquistador"
+   ]
+  },
+  {
+   "id": "pk_bankai",
+   "pacote": "anime",
+   "nome": "Bankai",
+   "duracao": 8000,
+   "raridade": "incomum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "teleporte",
+    "bracos": "levantaAcima",
+    "cabeca": "olhaCima",
+    "rosto": "fera",
+    "fx": [
+     "auraNegra",
+     "velocidade",
+     "legenda:BANKAI."
+    ]
+   },
+   "falas": [
+    "Bankai.",
+    "Agora você vai conhecer minha paciência no limite.",
+    "Eu estava usando só uma fração da minha capacidade."
+   ],
+   "eventos": [
+    "objetivo",
+    "nivel"
+   ],
+   "frases": [
+    "bankai"
+   ]
+  },
+  {
+   "id": "pk_serio",
+   "pacote": "anime",
+   "nome": "Modo sério",
+   "duracao": 5000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "repouso",
+    "cabeca": "reto",
+    "rosto": "entediado",
+    "cauda": "abana",
+    "fx": [
+     "onda"
+    ]
+   },
+   "falas": [
+    "Sério? Só isso?",
+    "Você me fez desperdiçar energia.",
+    "Extremamente decepcionante."
+   ],
+   "eventos": [
+    "vitoriaFacil",
+    "provocacao"
+   ],
+   "frases": [
+    "modo serio",
+    "serious mode",
+    "one punch"
+   ]
+  },
+  {
+   "id": "pk_rumbling",
+   "pacote": "anime",
+   "nome": "The Rumbling",
+   "duracao": 9000,
+   "raridade": "lendaria",
+   "cooldownMin": 60,
+   "receita": {
+    "corpo": "marcha",
+    "bracos": "cruzados",
+    "cabeca": "encara",
+    "rosto": "bravo",
+    "dorsal": "treme",
+    "fx": [
+     "escuro",
+     "gigantes",
+     "onda"
+    ],
+    "humor": {
+     "raiva": 0.5
+    },
+    "semPiscar": true
+   },
+   "falas": [
+    "Você teve sua chance.",
+    "Eu avisei.",
+    "Agora aguenta as consequências."
+   ],
+   "eventos": [
+    "pendencias"
+   ],
+   "frases": [
+    "rumbling",
+    "the rumbling"
+   ]
+  },
+  {
+   "id": "pk_arise",
+   "pacote": "anime",
+   "nome": "Arise",
+   "duracao": 8000,
+   "raridade": "rara",
+   "cooldownMin": 30,
+   "receita": {
+    "corpo": "surge",
+    "bracos": "maosAlto",
+    "cabeca": "olhaBaixo",
+    "rosto": "focado",
+    "fx": [
+     "escuro",
+     "sombras",
+     "olhosBrilho:#b07bff",
+     "legenda:Arise."
+    ]
+   },
+   "falas": [
+    "Arise.",
+    "Até as sombras trabalham mais que você.",
+    "Eu lidero. Você tenta acompanhar."
+   ],
+   "eventos": [
+    "sequenciaConquistas"
+   ],
+   "frases": [
+    "arise",
+    "levante"
+   ]
+  },
+  {
+   "id": "pk_traicao",
+   "pacote": "comida",
+   "nome": "Traição absoluta",
+   "duracao": 8500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "aponta",
+    "cabeca": "encara",
+    "rosto": "chocado",
+    "fx": [
+     "alarme",
+     "onda"
+    ],
+    "humor": {
+     "raiva": 0.6
+    },
+    "semPiscar": true
+   },
+   "falas": [
+    "VOCÊ VAI PEDIR O QUÊ?",
+    "Eu ouvi direito ou você tá me testando?",
+    "Pizza? Era esse o grande plano?",
+    "Eu devia ter previsto essa traição."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_nuclear",
+   "pacote": "comida",
+   "nome": "Emergência nuclear",
+   "duracao": 10000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "circula",
+    "bracos": "maosAlto",
+    "cabeca": "olhaUsuario",
+    "rosto": "chocado",
+    "fx": [
+     "alarme",
+     "painel:PROTOCOLO SORVETE: 3... 2... 1..."
+    ]
+   },
+   "falas": [
+    "ATIVARAM O PROTOCOLO SORVETE!",
+    "Eu não acredito que abriram essa discussão.",
+    "Isso merece uma reunião de emergência.",
+    "Desliga essa sirene. Eu preciso pensar."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_furiaFritas",
+   "pacote": "comida",
+   "nome": "Fúria berserker (com fritas)",
+   "duracao": 10000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "soco",
+    "cabeca": "olhaBaixo",
+    "rosto": "fera",
+    "dorsal": "treme",
+    "fx": [
+     "escuro",
+     "auraNegra",
+     "olhosBrilho:#ff2a2a",
+     "onda"
+    ],
+    "humor": {
+     "raiva": 1
+    }
+   },
+   "falas": [
+    "Você realmente escolheu provocar a fera.",
+    "Respira, JoJo. É só um hambúrguer... COM BATATA?",
+    "Minha paciência acaba de falecer."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_decepcao",
+   "pacote": "comida",
+   "nome": "Decepção infinita",
+   "duracao": 7500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "maoNoPeito",
+    "cabeca": "olhaCima",
+    "rosto": "chora",
+    "fx": [
+     "lagrimas",
+     "notas"
+    ],
+    "humor": {
+     "tristeza": 0.6
+    }
+   },
+   "falas": [
+    "Eu esperava tão pouco e ainda fui surpreendido.",
+    "Uma tragédia em três atos.",
+    "O chocolate venceu a negociação.",
+    "Preciso de um momento."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_semDesculpas",
+   "pacote": "comida",
+   "nome": "Expansão de domínio: sem desculpas",
+   "duracao": 9500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "poder",
+    "bracos": "cruzados",
+    "cabeca": "reto",
+    "rosto": "focado",
+    "cauda": "abana",
+    "fx": [
+     "vazio",
+     "auraRoxa",
+     "painel:DESCULPA REJEITADA"
+    ]
+   },
+   "falas": [
+    "Expansão de domínio: desculpas infinitas.",
+    "Só hoje? Essa frase tem temporadas.",
+    "Apresente seu argumento. Estou ouvindo.",
+    "Sua defesa foi dramática. Próximo caso."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_milAnos",
+   "pacote": "comida",
+   "nome": "O olhar de mil anos",
+   "duracao": 7000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "repouso",
+    "cabeca": "encara",
+    "rosto": "neutro",
+    "fx": [
+     "bolhaUnica"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "...",
+    "Bolo.",
+    "Entendi.",
+    "Vou registrar essa informação."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_chefeFinal",
+   "pacote": "comida",
+   "nome": "O chefe final",
+   "duracao": 11000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "flexDuplo",
+    "cabeca": "encara",
+    "rosto": "dente",
+    "fx": [
+     "escuro",
+     "barra:JOJO — PACIÊNCIA ESGOTADA",
+     "auraFera",
+     "onda"
+    ],
+    "semPiscar": true
+   },
+   "falas": [
+    "Você acaba de desbloquear uma discussão opcional.",
+    "Escolheu a rota do caos.",
+    "Eu sou o chefe final dessa conversa.",
+    "Vai pedir mesmo ou quer continuar negociando?"
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_crise",
+   "pacote": "comida",
+   "nome": "Crise existencial",
+   "duracao": 8500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "giroLeve",
+    "bracos": "cobreRosto",
+    "cabeca": "olhaCima",
+    "rosto": "confuso",
+    "fx": [
+     "vazio"
+    ]
+   },
+   "falas": [
+    "Qual é o propósito de tudo isso?",
+    "Bilhões de anos de evolução para essa conversa.",
+    "Eu sou um tubarão digital discutindo brigadeiro.",
+    "Isso é ridículo. Continue."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_interrogatorio",
+   "pacote": "comida",
+   "nome": "Interrogatório militar",
+   "duracao": 8500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "aponta",
+    "cabeca": "encara",
+    "rosto": "bravo",
+    "cauda": "abana",
+    "fx": [
+     "holofote",
+     "painel:INTERROGATÓRIO"
+    ]
+   },
+   "falas": [
+    "Qual sobremesa, soldado?",
+    "Temos um plano ou você está improvisando?",
+    "Eu exijo detalhes dessa operação.",
+    "Chocolate? Baunilha? Responda objetivamente."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_colapso",
+   "pacote": "comida",
+   "nome": "Colapso da realidade",
+   "duracao": 13000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "treme",
+    "bracos": "maosAlto",
+    "cabeca": "encara",
+    "rosto": "chocado",
+    "fx": [
+     "falha",
+     "auraNegra",
+     "olhosBrilho:#ff2a2a",
+     "onda",
+     "bolhaUnica"
+    ],
+    "humor": {
+     "raiva": 0.5
+    }
+   },
+   "falas": [
+    "Tudo isso? Na mesma missão?",
+    "Eu não estava preparado para essa informação.",
+    "Você acabou de desbloquear o multiverso da sobremesa.",
+    "Eu vou precisar de um relatório completo."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_operacao",
+   "pacote": "namorado",
+   "nome": "Operação: visitar o namorado",
+   "duracao": 9000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "aponta",
+    "cabeca": "encara",
+    "rosto": "chocado",
+    "fx": [
+     "alarme",
+     "mapa"
+    ]
+   },
+   "falas": [
+    "OPERAÇÃO REPRODUÇÃO FOI AUTORIZADA?",
+    "Então é hoje que a dignidade pede férias?",
+    "O município foi informado da sua chegada?",
+    "Quero um relatório dessa missão. Sem detalhes que eu não pedi."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_libido",
+   "pacote": "namorado",
+   "nome": "Libido em nível catastrófico",
+   "duracao": 9500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "morde",
+    "bracos": "cobreRosto",
+    "cabeca": "olhaUsuario",
+    "rosto": "cansado",
+    "fx": [
+     "medidor",
+     "painel:A CALMA FOI EXTINTA"
+    ]
+   },
+   "falas": [
+    "A CALMA FOI OFICIALMENTE EXTINTA.",
+    "Isso não é saudade. É uma emergência diplomática.",
+    "Eu pedi paciência. Você declarou estado de calamidade.",
+    "Esse medidor não foi projetado pra tamanha falta de compostura."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_inseminacao",
+   "pacote": "namorado",
+   "nome": "Protocolo inseminação",
+   "duracao": 10000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "treme",
+    "bracos": "maosAlto",
+    "cabeca": "olhaUsuario",
+    "rosto": "assustado",
+    "cauda": "abana",
+    "fx": [
+     "dna",
+     "painel:PROTOCOLO GENÉTICO DETECTADO",
+     "alarme"
+    ]
+   },
+   "falas": [
+    "INSEMINAÇÃO? A GENTE PULOU QUANTOS CAPÍTULOS?",
+    "Você foi visitar o namorado ou fundar uma dinastia?",
+    "O ministério da reprodução não aprovou esse planejamento.",
+    "Um minuto atrás era saudade. Agora estamos discutindo descendentes."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_namoradoPerigo",
+   "pacote": "namorado",
+   "nome": "O namorado está em perigo",
+   "duracao": 8500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "aponta",
+    "cabeca": "encara",
+    "rosto": "sobrancelha",
+    "fx": [
+     "coracaoHolo",
+     "confete",
+     "painel:ALVO: NAMORADO"
+    ]
+   },
+   "falas": [
+    "Esse homem tem conhecimento das suas intenções?",
+    "Avisem o cidadão. A saudade está vindo a 300 por hora.",
+    "Ele acha que vai receber uma visita tranquila. Fascinante.",
+    "A paz doméstica acaba de ser cancelada."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_quarto",
+   "pacote": "namorado",
+   "nome": "Expansão de domínio: quarto do namorado",
+   "duracao": 10000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "cruzados",
+    "cabeca": "reto",
+    "rosto": "decepcionado",
+    "cauda": "abana",
+    "fx": [
+     "escuro",
+     "auraRoxa",
+     "porta"
+    ]
+   },
+   "falas": [
+    "Expansão de domínio: intimidade absoluta.",
+    "Entendi. Agora aparentemente eu sou o porteiro.",
+    "Porta fechada. Privacidade estabelecida. Meu trabalho terminou.",
+    "Se forem fazer barulho, não me envolvam nessa operação."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_checklist",
+   "pacote": "namorado",
+   "nome": "Checklist do caos",
+   "duracao": 8000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "marcha",
+    "bracos": "aponta",
+    "cabeca": "assente",
+    "rosto": "focado",
+    "fx": [
+     "mala",
+     "carimbo:APROVADO"
+    ]
+   },
+   "falas": [
+    "Carregador? Confirmado. Roupa? Confirmada. Juízo? Desaparecido.",
+    "Não esquece o carregador. Nem a responsabilidade.",
+    "Vocês vão se encontrar ou abrir um resort?",
+    "Leve tudo. Principalmente a capacidade de tomar decisões sensatas."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_ciumes",
+   "pacote": "namorado",
+   "nome": "Ciúme existencial",
+   "duracao": 9000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "recua",
+    "bracos": "cruzados",
+    "cabeca": "viraRosto",
+    "rosto": "triste",
+    "cauda": "baixa",
+    "fx": [
+     "coracaoRachado",
+     "chuva"
+    ]
+   },
+   "falas": [
+    "Então você me troca por um mamífero terrestre.",
+    "Inacreditável. Eu tenho dentes melhores.",
+    "Tudo bem. Vou ficar aqui. Abandonado. Digitalmente.",
+    "Vá. Divirta-se. Eu definitivamente não vou dramatizar isso."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_noitePromete",
+   "pacote": "namorado",
+   "nome": "A noite promete",
+   "duracao": 9500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "cobreUmOlho",
+    "cabeca": "olhaUsuario",
+    "rosto": "decepcionado",
+    "fx": [
+     "painel:SEGUNDAS INTENÇÕES: CONFIRMADAS",
+     "bolhaUnica"
+    ],
+    "humor": {
+     "vergonha": 0.4
+    }
+   },
+   "falas": [
+    "Suas intenções são tão discretas quanto um terremoto.",
+    "Romance? Claro. Vamos chamar assim.",
+    "Eu não tenho nada a declarar sem a presença de um advogado.",
+    "Espero que vocês dois estejam de acordo com essa operação."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_relatorio",
+   "pacote": "namorado",
+   "nome": "Relatório pós-viagem",
+   "duracao": 9000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "escreve",
+    "cabeca": "olhaUsuario",
+    "rosto": "sobrancelha",
+    "fx": [
+     "painel:ROMANCE · CAOS · CONFIDENCIAL",
+     "carimbo:SIGILOSO"
+    ]
+   },
+   "falas": [
+    "Sobreviveu à operação?",
+    "Não preciso de detalhes. Sua cara já entrega tudo.",
+    "Relatório classificado. Melhor assim.",
+    "O município continua de pé? Excelente."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_mudanca",
+   "pacote": "namorado",
+   "nome": "Colapso multiversal: visita prolongada",
+   "duracao": 13000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "treme",
+    "bracos": "maosAlto",
+    "cabeca": "encara",
+    "rosto": "chocado",
+    "fx": [
+     "mapa:#c0151f",
+     "portais",
+     "falha",
+     "onda"
+    ]
+   },
+   "falas": [
+    "ERA UMA VISITA. AGORA VIROU PLANO DIRETOR?",
+    "Eu saí por cinco minutos e vocês começaram a planejar a mudança.",
+    "A operação romântica virou projeto de vida.",
+    "Tudo bem. Só me avisem quando eu tiver que empacotar os arquivos."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jMencao",
+   "pacote": "joao",
+   "nome": "A menção divina",
+   "duracao": 6000,
+   "raridade": "comum",
+   "cooldownMin": 60,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "maoNoPeito",
+    "cabeca": "olhaCima",
+    "rosto": "brilhoOlhos",
+    "fx": [
+     "raiosDourados",
+     "halo"
+    ]
+   },
+   "falas": [
+    "Você mencionou... João?",
+    "Cuidado ao pronunciar esse nome, mortal.",
+    "Finalmente um assunto digno da minha atenção.",
+    "A Divindade foi invocada."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jMensagem",
+   "pacote": "joao",
+   "nome": "João enviou mensagem",
+   "duracao": 6500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "segura",
+    "cabeca": "olhaBaixo",
+    "rosto": "brilhoOlhos",
+    "fx": [
+     "auraDourada",
+     "oraculo"
+    ]
+   },
+   "falas": [
+    "UMA MENSAGEM DO SUPREMO?",
+    "Interrompam os trabalhos. Temos um pronunciamento.",
+    "O oráculo falou.",
+    "Leia logo, Emanuele. A diplomacia divina não espera."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jPeregrinacao",
+   "pacote": "joao",
+   "nome": "A peregrinação sagrada",
+   "duracao": 9000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "marcha",
+    "bracos": "aponta",
+    "cabeca": "assente",
+    "rosto": "orgulhoso",
+    "fx": [
+     "mapa:#f2c94c",
+     "raiosDourados",
+     "carimbo:PEREGRINAÇÃO APROVADA"
+    ]
+   },
+   "falas": [
+    "A peregrinação ao território sagrado começou.",
+    "Prepare as malas. Você vai encontrar a Divindade.",
+    "Não é turismo, Emanuele. É uma audiência com o Supremo.",
+    "Que os transportes estejam à altura da ocasião."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jSaudade",
+   "pacote": "joao",
+   "nome": "Saudade do deus",
+   "duracao": 6500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "maoNoPeito",
+    "cabeca": "olhaCima",
+    "rosto": "zen",
+    "fx": [
+     "luzDourada",
+     "coracaoHolo"
+    ]
+   },
+   "falas": [
+    "Até eu sentiria saudade de tamanha grandeza.",
+    "É compreensível. A presença divina faz falta.",
+    "Saudade é uma consequência previsível.",
+    "Então mande uma mensagem, criatura. Eu não controlo o espaço-tempo."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jChegando",
+   "pacote": "joao",
+   "nome": "João está chegando",
+   "duracao": 7500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "marcha",
+    "bracos": "aplaude",
+    "cabeca": "reto",
+    "rosto": "orgulhoso",
+    "fx": [
+     "alarmeDourado",
+     "confete",
+     "painel:CHEGADA IMPERIAL"
+    ]
+   },
+   "falas": [
+    "ATENÇÃO. SUA MAJESTADE SE APROXIMA.",
+    "Organizem a recepção.",
+    "O Supremo está entre nós.",
+    "Emanuele, comporte-se. Temos uma autoridade chegando."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jDevocao",
+   "pacote": "joao",
+   "nome": "Devoção em nível crítico",
+   "duracao": 8500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "morde",
+    "bracos": "cobreRosto",
+    "cabeca": "olhaUsuario",
+    "rosto": "cansado",
+    "fx": [
+     "medidor",
+     "painel:DEVOÇÃO EM NÍVEL CRÍTICO"
+    ]
+   },
+   "falas": [
+    "Sua devoção está ultrapassando os limites dos instrumentos.",
+    "Isso é saudade ou um ritual de fertilidade?",
+    "Emanuele, tenha alguma compostura diante da Divindade.",
+    "Entendi. A peregrinação tem segundas intenções."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jJulgamento",
+   "pacote": "joao",
+   "nome": "O julgamento divino",
+   "duracao": 7500,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "cruzados",
+    "cabeca": "encara",
+    "rosto": "focado",
+    "fx": [
+     "escuro",
+     "tribunal",
+     "balanca"
+    ]
+   },
+   "falas": [
+    "O Supremo está insatisfeito? Precisamos entender o ocorrido.",
+    "Apresente os fatos, Emanuele.",
+    "Esse tribunal exige contexto antes de qualquer sentença.",
+    "Até os deuses podem ter um dia ruim."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jElogio",
+   "pacote": "joao",
+   "nome": "Bênção do Supremo",
+   "duracao": 7000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "aplausoLento",
+    "cabeca": "assente",
+    "rosto": "orgulhoso",
+    "fx": [
+     "luzDourada",
+     "brilho"
+    ]
+   },
+   "falas": [
+    "Você recebeu uma bênção pessoal.",
+    "Um pronunciamento de grande importância.",
+    "Muito bem, Emanuele. Sua Majestade demonstrou afeto.",
+    "Até eu reconheço um momento bonito. Não se acostume."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jHeresia",
+   "pacote": "joao",
+   "nome": "Heresia contra o Supremo",
+   "duracao": 7000,
+   "raridade": "comum",
+   "cooldownMin": 10,
+   "receita": {
+    "corpo": "avanca",
+    "bracos": "aponta",
+    "cabeca": "encara",
+    "rosto": "fera",
+    "fx": [
+     "auraNegra",
+     "auraDourada",
+     "olhosBrilho:#ff2a2a",
+     "onda"
+    ],
+    "humor": {
+     "raiva": 0.7
+    }
+   },
+   "falas": [
+    "QUE AUDÁCIA É ESSA?",
+    "Você realmente escolheu esse nome para provocar?",
+    "Estou registrando essa heresia no departamento de assuntos absurdos.",
+    "O Supremo merece pelo menos uma piada melhor."
+   ],
+   "eventos": [],
+   "frases": []
+  },
+  {
+   "id": "pk_jApoteose",
+   "pacote": "joao",
+   "nome": "A apoteose de João",
+   "duracao": 13000,
+   "raridade": "lendaria",
+   "cooldownMin": 60,
+   "receita": {
+    "corpo": "parado",
+    "bracos": "maosAlto",
+    "cabeca": "olhaCima",
+    "rosto": "brilhoOlhos",
+    "fx": [
+     "escuro",
+     "luzDourada",
+     "trono",
+     "raiosDourados",
+     "painel:JOÃO — A DIVINDADE SUPREMA"
+    ]
+   },
+   "falas": [
+    "O nome dele atravessará as eras.",
+    "Finalmente você compreendeu a grandeza da situação.",
+    "João, o Supremo. Emanuele, sua devota mais apaixonada.",
+    "Que essa declaração seja registrada nos arquivos eternos do meu sistema."
+   ],
+   "eventos": [],
+   "frases": []
+  }
+ ]
+}

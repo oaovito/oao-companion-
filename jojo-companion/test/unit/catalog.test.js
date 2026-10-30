@@ -243,3 +243,22 @@ test('Spotify: reage à troca de música com animação e fala no jeito dele', a
   const r = await chatAdv(e, 'o que tá tocando?');
   assert.match(r.text, /One More Time, de Daft Punk/);
 });
+
+test('Spotify: título do web player (navegador) também vale; enquanto toca, ele curte de novo a cada ~3 min', async () => {
+  const { createRequire } = await import('node:module');
+  const require = createRequire(import.meta.url);
+  const { musicaDaJanela } = require('../../src/main/fullscreen-worker.cjs');
+  assert.equal(musicaDaJanela('Survivor - Eye of the Tiger', 'Spotify.exe'), 'Survivor - Eye of the Tiger');
+  assert.equal(musicaDaJanela('Spotify Premium', 'Spotify.exe'), null);
+  assert.equal(musicaDaJanela('Eye of the Tiger • Survivor - Google Chrome', 'chrome.exe'), 'Survivor - Eye of the Tiger');
+  assert.equal(musicaDaJanela('Blinding Lights • The Weeknd', 'msedge.exe'), 'The Weeknd - Blinding Lights');
+  assert.equal(musicaDaJanela('Vídeo • canal - YouTube - Google Chrome', 'chrome.exe'), null);
+  assert.equal(musicaDaJanela('Relatório - Word', 'winword.exe'), null);
+  const e = started();
+  e.companion.dateNow = () => new Date(2026, 9, 30, 15);
+  assert.equal(e.companion.onSpotify('Survivor - Eye of the Tiger'), true);
+  const g0 = e.companion.lastGroove;
+  assert.ok(g0);
+  e.clock.advance(4 * 60e3);
+  assert.ok(e.companion.lastGroove > g0, 'curtiu de novo enquanto tocava');
+});

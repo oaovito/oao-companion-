@@ -46,6 +46,7 @@ export const INTENTS = [
   { id: 'pet', patterns: [/\b(carinho|cafune|fofo|fofinho|abraco|lindo|amo|gosto de voce)\b/] },
   { id: 'thanks', patterns: [/\b(obrigad\w*|valeu|brigad\w*)\b/] },
   { id: 'howAreYou', patterns: [/\b(tudo bem|como (voce )?(esta|vai)|beleza|td bem|como vc ta)\b/] },
+  { id: 'criador', patterns: [/\b(quem (te |o )?(criou|fez|programou|desenvolveu|inventou)|seu criador|quem (e|eh) seu (criador|dono|pai)|quem (criou|fez|desenvolveu) (o )?(mne ?lab|jojo|esse app|o app))\b/] },
   { id: 'name', patterns: [/\b(seu nome|quem e voce|quem (e|eh) vc|como (voce )?se chama)\b/] },
   { id: 'help', patterns: [/\b(ajuda|o que voce faz|comandos|como (voce|vc|isso aqui|o jojo) funciona)\b/] },
   { id: 'greet', patterns: [/\b(oi|ola|eai|e ai|bom dia|boa tarde|boa noite|hey|opa|salve)\b/] },
@@ -53,6 +54,10 @@ export const INTENTS = [
 
 // Textos com variáveis: {nome} (Emanuele em tom sério, Manu em brincadeira), {apoio}, {companion}.
 export const RESPONSES = {
+  criador: [
+    '{apoio}, evidentemente. O Supremo resolveu criar um tubarão musculoso com intelecto superior e tolerância limitada à estupidez.',
+    '{apoio}. O homem transforma ideia em software por esporte. Eu sou uma das criações dele. A mais impressionante, claro.',
+  ],
   crisis: ['Emanuele, isso é sério. Fala agora com o {apoio} pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.'],
   distress: [
     'Emanuele, para tudo e fala com o {apoio} agora. Ele vai cuidar de você. Respira fundo, devagar.',
@@ -123,7 +128,7 @@ export const RESPONSES = {
 const ACTIONS = {
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'angry', sleepOk: 'boaNoite', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
-  name: 'wave', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',
+  name: 'wave', criador: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).

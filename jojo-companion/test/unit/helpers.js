@@ -7,6 +7,7 @@ import { Companion } from '../../src/core/companion.js';
 import { SettingsStore } from '../../src/core/settings-store.js';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
+import { fullCatalog } from '../../src/core/catalog/load.js';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -140,7 +141,7 @@ export function makeEnv({ displays = ONE_MONITOR, settings = {}, profile = {}, s
     platform, overlay, clock, store, personality,
     rig: loadJSON('assets/character/jojo.rig.json'),
     room: loadJSON('assets/animations/jojo.room.json'),
-    catalog: loadJSON('assets/catalog/animacoes.json'),
+    catalog: fullCatalog(loadJSON),
     ambientLines: loadJSON('assets/dialogue/falas-ambientes.json'),
     variety: memState(),
     antitedio: { rotinas: loadJSON('assets/catalog/rotinas.json'), minijogos: loadJSON('assets/catalog/minijogos.json'), progressao: loadJSON('assets/catalog/progressao.json') },

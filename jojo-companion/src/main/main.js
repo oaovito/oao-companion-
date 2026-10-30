@@ -4,6 +4,8 @@ import { parseIcs } from '../core/calendar.js';
 import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
+import { fullCatalog } from '../core/catalog/load.js';
+import { PACOTE_CONFIG } from '../core/pacotes.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
@@ -162,9 +164,9 @@ function main() {
     const assets = {
       rig: readJSON('assets/character/jojo.rig.json'),
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
-      animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), readJSON('assets/catalog/animacoes.json')),
+      animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)),
     };
-    const catalog = readJSON('assets/catalog/animacoes.json');
+    const catalog = fullCatalog(readJSON);
     const ambientLines = readJSON('assets/dialogue/falas-ambientes.json');
     const varietyState = jsonState(path.join(userData, 'variedade.json'), log);
     app.on('will-quit', () => varietyState.flush());
@@ -343,6 +345,13 @@ function main() {
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
         trabalho: !!companion.work,
+        reacoes: Object.entries(catalog.pacotes.pacotes).map(([id, p]) => ({
+          id,
+          nome: p.nome,
+          ligado: !!store.get()[PACOTE_CONFIG[id]],
+          itens: catalog.itens.filter((it) => it.pacote === id && !it.leve).map((it) => ({ id: it.id, nome: it.nome, raridade: it.raridade })),
+        })),
+        abrirReacoes,
         abrirGuardaRoupa,
       };
     }
@@ -356,9 +365,11 @@ function main() {
     };
     let abrirColecao = 0;
     let abrirGuardaRoupa = 0;
+    let abrirReacoes = 0;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
-      const painel = id === 'colecao' || id === 'guardaRoupa';
+      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'reacoes';
+      if (id === 'reacoes') abrirReacoes++;
       if (id === 'colecao') abrirColecao++;
       if (id === 'guardaRoupa') abrirGuardaRoupa++;
       appWin.open(painel ? null : id);

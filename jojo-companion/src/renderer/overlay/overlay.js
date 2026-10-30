@@ -481,18 +481,27 @@ function draw(now) {
     ctx.restore();
   }
 
+  // Efeitos no espaço da caixa, espelhados conforme o lado (fundo antes do JoJo, o resto depois).
+  const fs = facing >= 0 ? 1 : -1;
+  const fxSpace = () => {
+    ctx.save();
+    ctx.globalAlpha = s.opacity;
+    ctx.translate(box.x, box.y);
+    ctx.scale(scale, scale);
+    ctx.translate(rig.box.width / 2, 0);
+    ctx.scale(fs, 1);
+    ctx.translate(-rig.box.width / 2, 0);
+    ctx.translate(pose.rootX || 0, pose.rootY || 0);
+  };
+  if (!reduced) {
+    fxSpace();
+    effects.drawBack(ctx, now, { head, facingSign: fs });
+    ctx.restore();
+  }
+
   rig.draw(ctx, pose, { origin: { x: box.x, y: box.y }, scale, facing, alpha: s.opacity });
 
-  // Efeitos no espaço da caixa, espelhados conforme o lado.
-  ctx.save();
-  ctx.globalAlpha = s.opacity;
-  ctx.translate(box.x, box.y);
-  ctx.scale(scale, scale);
-  const fs = facing >= 0 ? 1 : -1;
-  ctx.translate(rig.box.width / 2, 0);
-  ctx.scale(fs, 1);
-  ctx.translate(-rig.box.width / 2, 0);
-  ctx.translate(pose.rootX || 0, pose.rootY || 0);
+  fxSpace();
   const mark = sample.flags.mark && (reduced || (sample.t > 0.08 && sample.t < 0.92)) ? sample.flags.mark : null;
   if (reduced) effects.particles.length = 0;
   effects.draw(ctx, now, { mark, head, mouth: rig.rig.metrics.mouth, facingSign: fs });

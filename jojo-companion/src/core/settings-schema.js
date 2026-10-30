@@ -46,6 +46,14 @@ export const DEFAULTS = Object.freeze({
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
+  // Pacotes de reação (memes, anime, comida, namorado, João): ligados por padrão.
+  pacoteMemes: true,
+  pacoteAnime: true,
+  pacoteComida: true,
+  pacoteNamorado: true,
+  pacoteJoao: true,
+  pacotesEspontaneos: true,     // memes/anime também sozinhos (pela raridade), não só por contexto
+  comidaNivel: 3,               // 1 sarcasmo · 2 indignação · 3 fúria cinematográfica · 4 apocalipse
   // Modo Trabalho: medita quieto num canto, sem nenhuma distração.
   trabalhoAtivo: false,
   trabalhoPerfil: 'trabalho',   // trabalho | deep | invisivel
@@ -69,6 +77,7 @@ const RANGES = {
   interactionTimeoutSec: [10, 600],
   agendaAvisoMin: [5, 60],
   trabalhoTamanho: [0.2, 1],
+  comidaNivel: [1, 4],
   trabalhoOpacidade: [0.2, 1],
   trabalhoMargem: [0, 200],
   trabalhoFim: [0, 8.64e15],
@@ -88,7 +97,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };

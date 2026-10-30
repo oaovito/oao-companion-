@@ -26,6 +26,7 @@ function drawFrame(ctx, rig, s, fx, now, head, mouth) {
   if (!fx) return;
   fx.update(now, s.flags, head);
   ctx.save(); ctx.translate(O, O); ctx.translate(s.pose.rootX || 0, s.pose.rootY || 0);
+  fx.drawBack(ctx, now, { head, facingSign: 1 });
   fx.draw(ctx, now, { mark: s.flags.mark, head, mouth, facingSign: 1 });
   ctx.restore();
 }

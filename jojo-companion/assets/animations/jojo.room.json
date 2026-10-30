@@ -1794,6 +1794,366 @@
    "t": 5,
    "r": 24,
    "b": 5
+  },
+  "cat_pk_sideEye": {
+   "l": 0,
+   "t": 14,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_chillGuy": {
+   "l": 0,
+   "t": 20,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_auraFarming": {
+   "l": 63,
+   "t": 55,
+   "r": 74,
+   "b": 29
+  },
+  "cat_pk_letHimCook": {
+   "l": 0,
+   "t": 72,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_broCooked": {
+   "l": 0,
+   "t": 87,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_sixSeven": {
+   "l": 0,
+   "t": 30,
+   "r": 6,
+   "b": 5
+  },
+  "cat_pk_brainrot": {
+   "l": 83,
+   "t": 84,
+   "r": 79,
+   "b": 49
+  },
+  "cat_pk_npc": {
+   "l": 7,
+   "t": 27,
+   "r": 19,
+   "b": 8
+  },
+  "cat_pk_demure": {
+   "l": 20,
+   "t": 62,
+   "r": 18,
+   "b": 5
+  },
+  "cat_pk_gta6": {
+   "l": 9,
+   "t": 34,
+   "r": 9,
+   "b": 8
+  },
+  "cat_pk_menacing": {
+   "l": 62,
+   "t": 45,
+   "r": 62,
+   "b": 29
+  },
+  "cat_pk_ultraInstinto": {
+   "l": 126,
+   "t": 57,
+   "r": 19,
+   "b": 9
+  },
+  "cat_pk_berserker": {
+   "l": 81,
+   "t": 61,
+   "r": 81,
+   "b": 36
+  },
+  "cat_pk_dominio": {
+   "l": 63,
+   "t": 54,
+   "r": 63,
+   "b": 24
+  },
+  "cat_pk_sharingan": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_haki": {
+   "l": 81,
+   "t": 55,
+   "r": 81,
+   "b": 39
+  },
+  "cat_pk_bankai": {
+   "l": 126,
+   "t": 49,
+   "r": 52,
+   "b": 13
+  },
+  "cat_pk_serio": {
+   "l": 81,
+   "t": 54,
+   "r": 81,
+   "b": 38
+  },
+  "cat_pk_rumbling": {
+   "l": 151,
+   "t": 56,
+   "r": 149,
+   "b": 38
+  },
+  "cat_pk_arise": {
+   "l": 62,
+   "t": 45,
+   "r": 62,
+   "b": 29
+  },
+  "cat_pk_traicao": {
+   "l": 81,
+   "t": 90,
+   "r": 81,
+   "b": 44
+  },
+  "cat_pk_traicao_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 26,
+   "b": 5
+  },
+  "cat_pk_nuclear": {
+   "l": 92,
+   "t": 84,
+   "r": 92,
+   "b": 48
+  },
+  "cat_pk_nuclear_leve": {
+   "l": 27,
+   "t": 5,
+   "r": 27,
+   "b": 5
+  },
+  "cat_pk_furiaFritas": {
+   "l": 81,
+   "t": 61,
+   "r": 81,
+   "b": 35
+  },
+  "cat_pk_furiaFritas_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 27,
+   "b": 5
+  },
+  "cat_pk_decepcao": {
+   "l": 0,
+   "t": 5,
+   "r": 13,
+   "b": 5
+  },
+  "cat_pk_decepcao_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_semDesculpas": {
+   "l": 63,
+   "t": 76,
+   "r": 63,
+   "b": 24
+  },
+  "cat_pk_semDesculpas_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_milAnos": {
+   "l": 0,
+   "t": 14,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_milAnos_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_chefeFinal": {
+   "l": 81,
+   "t": 86,
+   "r": 81,
+   "b": 35
+  },
+  "cat_pk_chefeFinal_leve": {
+   "l": 20,
+   "t": 5,
+   "r": 20,
+   "b": 5
+  },
+  "cat_pk_crise": {
+   "l": 62,
+   "t": 50,
+   "r": 62,
+   "b": 24
+  },
+  "cat_pk_crise_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_pk_interrogatorio": {
+   "l": 0,
+   "t": 72,
+   "r": 26,
+   "b": 5
+  },
+  "cat_pk_interrogatorio_leve": {
+   "l": 0,
+   "t": 5,
+   "r": 26,
+   "b": 5
+  },
+  "cat_pk_colapso": {
+   "l": 82,
+   "t": 55,
+   "r": 82,
+   "b": 39
+  },
+  "cat_pk_colapso_leve": {
+   "l": 27,
+   "t": 5,
+   "r": 27,
+   "b": 5
+  },
+  "cat_pk_operacao": {
+   "l": 62,
+   "t": 84,
+   "r": 62,
+   "b": 48
+  },
+  "cat_pk_libido": {
+   "l": 0,
+   "t": 72,
+   "r": 71,
+   "b": 5
+  },
+  "cat_pk_inseminacao": {
+   "l": 65,
+   "t": 84,
+   "r": 65,
+   "b": 48
+  },
+  "cat_pk_namoradoPerigo": {
+   "l": 18,
+   "t": 78,
+   "r": 48,
+   "b": 13
+  },
+  "cat_pk_quarto": {
+   "l": 62,
+   "t": 46,
+   "r": 63,
+   "b": 29
+  },
+  "cat_pk_checklist": {
+   "l": 0,
+   "t": 5,
+   "r": 75,
+   "b": 5
+  },
+  "cat_pk_ciumes": {
+   "l": 0,
+   "t": 58,
+   "r": 45,
+   "b": 5
+  },
+  "cat_pk_noitePromete": {
+   "l": 27,
+   "t": 72,
+   "r": 27,
+   "b": 5
+  },
+  "cat_pk_relatorio": {
+   "l": 13,
+   "t": 72,
+   "r": 69,
+   "b": 5
+  },
+  "cat_pk_mudanca": {
+   "l": 82,
+   "t": 55,
+   "r": 82,
+   "b": 39
+  },
+  "cat_pk_jMencao": {
+   "l": 51,
+   "t": 74,
+   "r": 51,
+   "b": 38
+  },
+  "cat_pk_jMensagem": {
+   "l": 19,
+   "t": 46,
+   "r": 43,
+   "b": 10
+  },
+  "cat_pk_jPeregrinacao": {
+   "l": 51,
+   "t": 74,
+   "r": 126,
+   "b": 40
+  },
+  "cat_pk_jSaudade": {
+   "l": 2,
+   "t": 62,
+   "r": 48,
+   "b": 5
+  },
+  "cat_pk_jChegando": {
+   "l": 61,
+   "t": 85,
+   "r": 61,
+   "b": 48
+  },
+  "cat_pk_jDevocao": {
+   "l": 0,
+   "t": 72,
+   "r": 71,
+   "b": 5
+  },
+  "cat_pk_jJulgamento": {
+   "l": 62,
+   "t": 45,
+   "r": 62,
+   "b": 29
+  },
+  "cat_pk_jElogio": {
+   "l": 2,
+   "t": 62,
+   "r": 2,
+   "b": 5
+  },
+  "cat_pk_jHeresia": {
+   "l": 81,
+   "t": 60,
+   "r": 81,
+   "b": 37
+  },
+  "cat_pk_jApoteose": {
+   "l": 62,
+   "t": 75,
+   "r": 62,
+   "b": 39
   }
  },
  "effects": {

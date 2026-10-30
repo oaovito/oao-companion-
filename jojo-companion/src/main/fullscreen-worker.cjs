@@ -7,7 +7,7 @@
 // Para o "fiscal do Instagram" e o mau humor com o League of Legends (opcionais,
 // pedidos pelo usuário) compara o título da janela em primeiro plano e o nome do
 // executável AQUI dentro: só booleanos saem deste processo. Para reagir ao
-// Spotify (opcional), lê só o título da janela do Spotify ("Artista - Música").
+// Spotify (opcional), lê só o título da janela do Spotify (app ou web player).
 // Nada é salvo nem enviado para fora do PC. Não lê conteúdo, pixels, histórico
 // nem entrada do usuário.
 
@@ -97,18 +97,37 @@ function isLol(hwnd) {
   return LOL_TITLE.test(windowTitle(hwnd)) || LOL_EXE.test(exeName(hwnd));
 }
 
-// Spotify: título da janela principal é "Artista - Música" tocando, "Spotify…" parado.
+// Spotify: o app do Windows mostra "Artista - Música" no título quando toca
+// ("Spotify…" parado). No navegador (web player ou app instalado pelo
+// navegador) o título é "Música • Artista" (às vezes "… - Google Chrome").
 const SPOTIFY_IDLE = /^spotify( (premium|free))?$/i;
+const NAVEGADORES = new Set(['chrome.exe', 'msedge.exe', 'brave.exe', 'opera.exe', 'opera_gx.exe', 'vivaldi.exe', 'firefox.exe', 'arc.exe']);
+const SUFIXO_NAV = / [-—] (google chrome|microsoft​? ?edge|brave|opera|vivaldi|mozilla firefox|arc)$/i;
+
+/** "Artista - Música" a partir do título e do executável da janela, ou null. */
+function musicaDaJanela(title, exe, spotifyExe = 'spotify.exe') {
+  const t = String(title || '').trim();
+  const e = String(exe || '').toLowerCase();
+  if (!t) return null;
+  if (e === spotifyExe.toLowerCase()) return SPOTIFY_IDLE.test(t) || !t.includes(' - ') ? null : t.slice(0, 200);
+  if (!NAVEGADORES.has(e)) return null;
+  const sem = t.replace(SUFIXO_NAV, '').replace(/^\(\d+\)\s*/, '');
+  // Web player: "Música • Artista" (sem "YouTube", "Instagram"… no título).
+  const m = sem.match(/^(.+?) • (.+)$/);
+  if (!m || /youtube|instagram|netflix|twitch|whatsapp|discord/i.test(sem)) return null;
+  return `${m[2].trim()} - ${m[1].trim()}`.slice(0, 200);
+}
+
 function spotifyTitle(exe = 'Spotify.exe') {
-  const want = exe.toLowerCase();
-  for (const cls of ['Chrome_WidgetWin_0', 'Chrome_WidgetWin_1']) {
+  for (const cls of ['Chrome_WidgetWin_0', 'Chrome_WidgetWin_1', 'MozillaWindowClass']) {
     let h = 0;
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 400; i++) {
       h = api.FindWindowExW(0, h, cls, null);
       if (!h) break;
       const t = windowTitle(h);
-      if (!t || SPOTIFY_IDLE.test(t) || !t.includes(' - ')) continue;
-      if (exeName(h).toLowerCase() === want) return t.slice(0, 200);
+      if (!t || SPOTIFY_IDLE.test(t) || (!t.includes(' - ') && !t.includes(' • '))) continue;
+      const m = musicaDaJanela(t, exeName(h), exe);
+      if (m) return m;
     }
   }
   return null;
@@ -153,7 +172,9 @@ function detectFullscreen() {
   };
 }
 
-process.parentPort.on('message', (e) => {
+module.exports = { musicaDaJanela };
+
+if (process.parentPort) process.parentPort.on('message', (e) => {
   const msg = e.data || {};
   try {
     if (msg.type === 'init') {

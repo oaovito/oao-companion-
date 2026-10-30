@@ -39,6 +39,11 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - **Modo Trabalho** (prioridade sobre tudo, exceto segurança): medita no canto (estado `meditate`, não é sono), sem falas,
   animações, broncas, lembretes ou reações; bloqueio central em `say`/`playCatalog`/`react`/`_canNag`; perfis trabalho/deep/invisível;
   `/trabalho`, frases, bandeja, Central, Configurações; persiste ao reabrir.
+- **Pacotes de reação** (50: memes, anime, comida, namorado, João): `assets/catalog/pacotes.json`, `src/core/pacotes.js`,
+  efeitos `fx-pacotes.js` (fundo atrás do JoJo); `/reacao`, Central → 🎭 Reações; doc `docs/PACOTES.md`.
+- **João** = namorado e, na ficção do JoJo, o Deus Supremo (reverência teatral; nunca obediência real; se ele a magoar → acolher,
+  190/180/CVV 188). Criador do JoJo e do MNE_Lab = João; o JoJo não especula sobre ferramentas de desenvolvimento.
+- Spotify também no navegador (título "Música • Artista"); curte de novo a cada ~3 min.
 - Antitédio: rotinas, mini-jogos, progressão/coleção (Central), foco junto (`/foco`), estímulos (💪 ✨ /calma /ritmo /bolhas),
   adaptação; tudo desligável e interrompível; doc `jojo-companion/docs/ANTITEDIO.md`.
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".

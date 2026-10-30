@@ -2,6 +2,8 @@
 // marcas "!"/"?", peixe (comida) e bolinha (brincadeira). Coordenadas na caixa
 // do JoJo (180x150, olhando para a direita); o chamador aplica escala/espelho.
 
+import { drawPackFx, FX_FUNDO, fxNome } from './fx-pacotes.js';
+
 const OUTLINE = '#1b2647';
 
 // Intervalo (ms) de nascimento das partículas de cada efeito do catálogo.
@@ -149,8 +151,15 @@ export class Effects {
   }
 
   /** Efeitos contínuos do catálogo (nuvem, aura, fantasma, peixinho), desenhados a cada quadro. */
-  _drawFxScene(ctx, now, head) {
+  /** Efeitos de fundo dos pacotes (escuro, vazio, raios, auras, sombras…): antes do JoJo. */
+  drawBack(ctx, now, { head = { x: 136, y: 74 }, facingSign = 1 } = {}) {
+    for (const f of this.fx || []) if (FX_FUNDO.has(fxNome(f))) drawPackFx(ctx, f, now, { cx: this.cx, g: this.g, head, facingSign });
+  }
+
+  _drawFxScene(ctx, now, head, facingSign = 1) {
     for (const f of this.fx || []) {
+      if (FX_FUNDO.has(fxNome(f))) continue; // já desenhado atrás
+      if (drawPackFx(ctx, f, now, { cx: this.cx, g: this.g, head, facingSign })) continue;
       if (f === 'chuva') this._cloud(ctx, this.cx, head.y - 32);
       else if (f === 'aura' || f === 'auraFera') this._aura(ctx, now, f === 'auraFera' ? '#d4202a' : '#ffd84a');
       else if (f === 'fantasma') this._ghostFin(ctx, now, 0.28);
@@ -366,7 +375,7 @@ export class Effects {
       else this._fxParticle(ctx, p, x, y, t);
       ctx.restore();
     }
-    if (this.fx) this._drawFxScene(ctx, now, head);
+    if (this.fx) this._drawFxScene(ctx, now, head, facingSign);
     const el = now - this.effectStart;
     if (mouth) this.mouth = mouth;
     if (this.effectName === 'food') this._food(ctx, mouth || { x: head.x + 14, y: head.y + 20 }, el, this.effectKind || 'peixe');

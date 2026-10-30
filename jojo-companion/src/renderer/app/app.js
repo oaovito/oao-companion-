@@ -24,6 +24,12 @@ function render(s) {
     showingColecao = true;
     showingGuarda = false;
   }
+  if (s.abrirReacoes && s.abrirReacoes !== lastReacoesReq) {
+    lastReacoesReq = s.abrirReacoes;
+    showingReacoes = true;
+    showingGuarda = false;
+    showingColecao = false;
+  }
   if (s.abrirGuardaRoupa && s.abrirGuardaRoupa !== lastGuardaReq) {
     lastGuardaReq = s.abrirGuardaRoupa;
     showingGuarda = true;
@@ -55,6 +61,7 @@ function render(s) {
   renderConversation();
   renderColecao();
   renderGuarda();
+  renderReacoes();
 }
 
 // ---------------- coleção, progressão, mini-jogos e estímulos
@@ -69,7 +76,7 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  const painel = showingColecao || showingGuarda;
+  const painel = showingColecao || showingGuarda || showingReacoes;
   for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
@@ -175,9 +182,53 @@ async function vestir(cmd) {
 $('guardaBtn').addEventListener('click', async () => {
   showingGuarda = !showingGuarda;
   showingColecao = false;
+  showingReacoes = false;
+  renderReacoes();
   if (showingGuarda) render(await api.state());
   else {
     renderGuarda();
+    renderColecao();
+    renderConversation();
+  }
+});
+
+// ---------------- reações dos pacotes (testar cada uma)
+let showingReacoes = false;
+let lastReacoesReq = 0;
+function renderReacoes() {
+  const box = $('reacoes');
+  box.classList.toggle('hidden', !showingReacoes);
+  if (!showingReacoes || !st || !st.reacoes) return;
+  $('convTitle').textContent = 'Reações';
+  chip($('convStatus'), 'idle', '');
+  box.innerHTML = '';
+  for (const pac of st.reacoes) {
+    const card = el('div', 'card');
+    card.append(el('h3', null, `${pac.nome}${pac.ligado ? '' : ' (desligado nas Configurações)'}`));
+    const r = el('div', 'buttons');
+    for (const it of pac.itens) {
+      const b = el('button', 'chipbtn', it.nome);
+      b.title = it.raridade;
+      b.addEventListener('click', async () => {
+        const res = await api.send(selected, `/reacao ${it.id}`);
+        if (res && res.text && $('reacaoFala')) $('reacaoFala').textContent = `${st.companionName}: ${res.text}`;
+      });
+      r.append(b);
+    }
+    card.append(r);
+    box.append(card);
+  }
+  const fala = el('p', 'muted');
+  fala.id = 'reacaoFala';
+  box.append(fala);
+}
+$('reacoesBtn').addEventListener('click', async () => {
+  showingReacoes = !showingReacoes;
+  showingGuarda = false;
+  showingColecao = false;
+  if (showingReacoes) render(await api.state());
+  else {
+    renderReacoes();
     renderColecao();
     renderConversation();
   }
@@ -192,7 +243,9 @@ async function playCmd(cmd) {
 $('colecaoBtn').addEventListener('click', async () => {
   showingColecao = !showingColecao;
   showingGuarda = false;
+  showingReacoes = false;
   renderGuarda();
+  renderReacoes();
   if (showingColecao) render(await api.state());
   else {
     renderColecao();
@@ -209,6 +262,7 @@ async function select(id) {
   }
   showingColecao = false;
   showingGuarda = false;
+  showingReacoes = false;
   selected = id;
   const s = await api.select(id);
   render(s);

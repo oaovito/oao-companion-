@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## 0.38.0 — 2026-10-30
+
+### Novidades
+- **5 pacotes de reação, 50 reações** com animação própria, efeitos visuais silenciosos e falas
+  (`docs/PACOTES.md`): **Memes Gen Z** (side eye, chill guy, aura farming, let him cook, bro is cooked,
+  6-7, italian brainrot, NPC, very demure, antes do GTA 6), **Anime** (menacing, ultra instinto,
+  berserker, expansão de domínio, sharingan, haki, bankai, modo sério, rumbling, arise),
+  **Comida** (pizza, sorvete, hambúrguer com fritas, chocolate, "só hoje", bolo, fast food, doces,
+  sobremesa, tudo junto; 4 intensidades), **Operação Namorado** (visita, libido, filhos, mala,
+  ciúme, volta da viagem…) e **Protocolo do Divino João** (menção, mensagem, peregrinação, saudade,
+  chegada, devoção, julgamento, bênção, heresia, apoteose).
+- Gatilhos por contexto (Instagram, conquistas, nível, foco concluído, derrotas seguidas, provocação
+  repetida, intenção de comer com negação/passado/pergunta descartados, frases sobre o namorado e o
+  João) e por pedido: Central → 🎭 Reações ou `/reacao <nome>`.
+- Configurações → Pacotes de reação: cada pacote, reações espontâneas e intensidade da comida.
+- O JoJo trata o João como figura divina (ficção teatral) também na conversa online; se ela contar
+  que o João a magoou, ele acolhe sério, sem piada (violência: 190/180; CVV 188). "Quem te criou?":
+  o João.
+
+### Correções
+- **Reação à música**: agora reconhece também o Spotify no navegador (web player ou app instalado
+  pelo navegador), e o JoJo curte de novo a cada ~3 min enquanto a música toca (antes só reagia uma vez
+  e só ao app do Windows).
+- Efeitos de fundo (escurecer, raios, auras) são desenhados atrás do JoJo, sem cobrir o corpo.
+
+### Como testar
+- Toque uma música no Spotify (app ou navegador) e espere o JoJo dançar/curtir.
+- No chat: "vou pedir pizza", "o João me mandou mensagem", "vou arrumar minha mala", `/reacao bankai`.
+
 ## 0.37.1 — 2026-10-30
 
 ### Correções

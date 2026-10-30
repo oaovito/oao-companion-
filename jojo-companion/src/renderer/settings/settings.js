@@ -106,7 +106,7 @@ document.getElementById('openPersonality').addEventListener('click', () => api.o
 
 function valueOf(el) {
   if (el.type === 'checkbox') return el.checked;
-  if (el.type === 'range' || el.type === 'number') return Number(el.value);
+  if (el.type === 'range' || el.type === 'number' || el.dataset.num) return Number(el.value);
   return el.value;
 }
 

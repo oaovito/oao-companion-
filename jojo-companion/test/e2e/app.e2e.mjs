@@ -832,3 +832,26 @@ test('Modo Trabalho: medita no canto (clique atravessa), nada de reação ao Ins
     await quit(app);
   }
 });
+
+test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" reage', async () => {
+  const { app, win } = await launch();
+  try {
+    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
+    const r = await app.evaluate(() => globalThis.__jojo.companion.chat('/reacao bankai'));
+    assert.ok(r.text && r.text.length > 2);
+    let anim = null;
+    let fx = null;
+    for (let i = 0; i < 25 && !/^cat_pk_bankai/.test(anim || ''); i++) {
+      await sleep(150);
+      anim = await win.evaluate(() => window.__jojoRenderer.anim);
+      fx = await win.evaluate(() => window.__jojoRenderer.flags && window.__jojoRenderer.flags.fx);
+    }
+    assert.match(anim, /^cat_pk_bankai/);
+    assert.ok(Array.isArray(fx) && fx.includes('auraNegra'), JSON.stringify(fx));
+    await sleep(9000);
+    const p = await app.evaluate(() => globalThis.__jojo.companion.chat('vou pedir pizza'));
+    assert.equal(p.intent, 'pacote:pk_traicao');
+  } finally {
+    await quit(app);
+  }
+});

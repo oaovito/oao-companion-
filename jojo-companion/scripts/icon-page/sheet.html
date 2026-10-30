@@ -20,9 +20,14 @@ window.renderSheet = (rigJson, animJson, names, cols, cell, bg) => {
     for (let k = 0; k < cols; k++) {
       const t = (anim.duration || 1000) * (k / (cols - (anim.loop ? 0 : 1)));
       const s = a.sample(t + 1);
-      const fx = new Effects({ rng: () => 0.5 });
+      const fx = new Effects({ rng: () => 0.5, ground: rigJson.metrics.ground, center: rigJson.metrics.box.width / 2 });
       const ox = k * cell.w + (cell.w - 180 * cell.s) / 2, oy = r * cell.h + 14;
+      const head = rigJson.metrics.head;
+      fx.update(t + 1, s.flags, head);
+      const space = () => { ctx.save(); ctx.translate(ox, oy); ctx.scale(cell.s, cell.s); ctx.translate(s.pose.rootX || 0, s.pose.rootY || 0); };
+      space(); fx.drawBack(ctx, t + 1, { head }); ctx.restore();
       rig.draw(ctx, s.pose, { origin: { x: ox, y: oy }, scale: cell.s, facing: 1 });
+      space(); fx.draw(ctx, t + 1, { head }); ctx.restore();
       ctx.fillStyle = '#333'; ctx.fillText(k === 0 ? name : '', k * cell.w + 3, r * cell.h + 11);
     }
   });
