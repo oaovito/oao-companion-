@@ -26,6 +26,7 @@ import { ConversationManager, parseCommand, commandMenu } from './conversations.
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
 import { interpretCommand } from './dialogue/intencoes.js';
+import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 
@@ -1190,6 +1191,21 @@ export class Companion {
       this.react('comfort');
       return this._quickReply(conv, t, 'cuidado');
     }
+    // Emergência médica: segurança antes de tudo (192), sem óculos nem piada.
+    const ciencia = intent0 === 'avcReal' ? null : modoCiencia(text);
+    if (ciencia === 'emergencia') {
+      this.react('comfort');
+      return this._quickReply(conv, RESPOSTA_EMERGENCIA, 'emergencia');
+    }
+    // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
+    if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
+      const novo = !(this.nerdUntil > this.clock.now());
+      this.nerdUntil = this.clock.now() + 3 * 60e3;
+      if (novo) {
+        this.nerdAbertura = ABERTURAS[Math.floor(this.rng() * ABERTURAS.length) % ABERTURAS.length];
+        this.playCatalog('pensando', { source: 'chat', speak: false });
+      }
+    } else if (ciencia === 'pessoal') this.nerdUntil = 0; // saúde dela: sério, sem fantasia
     // Revanche: "de novo", "mais uma", "outra" logo depois de um jogo.
     if (!safety && !this.game && this.lastGame && this.clock.now() - this.lastGame.at < 5 * 60e3 && /^(de novo|denovo|mais uma|outra|outra vez|revanche|joga de novo|jogar de novo|bora de novo|again|quero revanche)\b/.test(normalizeText(text))) {
       return this._quickReply(conv, this.startGame(this.lastGame.id), 'jogo');
@@ -1273,6 +1289,11 @@ export class Companion {
     }
     this.clock.clearTimeout(thinkTimer);
     if (thinking && this.bubble && this.bubble.text === '…') this.hideBubble();
+    // Modo cientista: abre com "Erm, na verdade..." na primeira resposta do assunto.
+    if (this.nerdAbertura && reply && reply.text) {
+      reply.text = `${this.nerdAbertura} ${reply.text}`;
+      this.nerdAbertura = null;
+    }
     // Respostas que só saem no meio da animação: "É" no último suspiro (bonita?)
     // e "Passa na cara de uma vez" quando ele oferece o cocô (lol?).
     const delayed = DELAYED_REPLY_MS[reply.action];
@@ -1809,6 +1830,20 @@ export class Companion {
     this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
     if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
     return this._catalogData(it);
+  }
+
+  /** Canais da roupa + óculos e dentes de nerd no modo cientista (temporários). */
+  _outfitComNerd(vestido) {
+    const base = vestido ? outfitChannels(this.outfit, { semMao: !this._handFree() }) : null;
+    const s = this.store.get();
+    if (!(this.nerdUntil > this.clock.now()) || this.work || !s.cienciaModo) return base;
+    const o = { ...(base || {}) };
+    if (s.cienciaOculos) {
+      delete o.prop_oculos;
+      o.prop_oculosNerd = 1;
+    }
+    if (s.cienciaDentes) o.prop_dentesNerd = 1;
+    return Object.keys(o).length ? o : null;
   }
 
   // ---------------------------------------------------------------- pacotes de reação
@@ -3072,7 +3107,7 @@ export class Companion {
       work: this.work ? this.work.perfil : null,
       // Roupa do guarda-roupa vale mais que a fantasia da data festiva.
       costume: vestido ? null : this.costume,
-      outfit: vestido ? outfitChannels(this.outfit, { semMao: !this._handFree() }) : null,
+      outfit: this._outfitComNerd(vestido),
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
       sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',

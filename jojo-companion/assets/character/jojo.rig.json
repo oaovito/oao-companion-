@@ -640,6 +640,28 @@
             86
           ],
           "rot": "headRot"
+        },
+        {
+          "id": "oculosNerd",
+          "fill": "outline",
+          "path": "M65,38 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 Z M68,38 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0 Z M87,38 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 Z M90,38 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0 Z M60,35 L65.5,35 L65.5,39 L60,39 Z M114.5,35 L120,35 L120,39 L114.5,39 Z",
+          "showIf": "prop_oculosNerd",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "dentesNerd",
+          "fill": "teeth",
+          "path": "M83.5,60 L89.6,60 L89.6,75 Q86.5,78 83.5,75 Z M90.4,60 L96.5,60 L96.5,75 Q93.5,78 90.4,75 Z",
+          "showIf": "prop_dentesNerd",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
         }
       ]
     },

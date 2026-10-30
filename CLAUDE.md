@@ -44,6 +44,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - **João** = namorado e, na ficção do JoJo, o Deus Supremo (reverência teatral; nunca obediência real; se ele a magoar → acolher,
   190/180/CVV 188). Criador do JoJo e do MNE_Lab = João; o JoJo não especula sobre ferramentas de desenvolvimento.
 - Spotify também no navegador (título "Música • Artista"); curte de novo a cada ~3 min.
+- **Modo cientista/médico**: `src/core/ciencia.js` (acadêmico → óculos/dentes de nerd `prop_oculosNerd`/`prop_dentesNerd` + "Erm";
+  saúde pessoal → sério; emergência → 192); prompt técnico no `llm-provider.js`.
 - Antitédio: rotinas, mini-jogos, progressão/coleção (Central), foco junto (`/foco`), estímulos (💪 ✨ /calma /ritmo /bolhas),
   adaptação; tudo desligável e interrompível; doc `jojo-companion/docs/ANTITEDIO.md`.
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".

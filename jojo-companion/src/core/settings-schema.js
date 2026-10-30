@@ -54,6 +54,10 @@ export const DEFAULTS = Object.freeze({
   pacoteJoao: true,
   pacotesEspontaneos: true,     // memes/anime também sozinhos (pela raridade), não só por contexto
   comidaNivel: 3,               // 1 sarcasmo · 2 indignação · 3 fúria cinematográfica · 4 apocalipse
+  // Modo cientista/médico ("Erm, ackshually"): ciência, nanopartículas e medicina.
+  cienciaModo: true,
+  cienciaOculos: true,
+  cienciaDentes: true,
   // Modo Trabalho: medita quieto num canto, sem nenhuma distração.
   trabalhoAtivo: false,
   trabalhoPerfil: 'trabalho',   // trabalho | deep | invisivel
@@ -97,7 +101,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos'];
+const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };

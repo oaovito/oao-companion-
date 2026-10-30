@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 0.39.0 — 2026-10-30
+
+### Novidades
+- **Modo cientista/médico ("Erm, ackshually")**: em conversa de ciência, nanopartículas, estatística ou
+  medicina (potencial zeta, DLS, ANOVA, fisiopatologia, mecanismo de ação, hemograma…), o JoJo põe
+  **óculos de nerd** e **dentes de nerd** (peças temporárias, sem mudar o resto do boneco), abre com
+  "Erm, na verdade..." e responde como especialista rigoroso (separa medido, inferência e hipótese;
+  não inventa estudos). Os acessórios somem quando o assunto acaba.
+- Saúde pessoal ("estou com febre", "posso tomar…"): sério, sem fantasia, sem diagnóstico nem receita.
+  Sinal de emergência (dor no peito forte, falta de ar, convulsão, overdose…): manda ligar 192 na hora.
+- Configurações → Modo cientista: ligar/desligar o modo, os óculos e os dentes.
+
+### Como testar
+- No chat: "o que é potencial zeta?" (óculos e dentes aparecem) e "to com dor no peito forte" (192).
+
 ## 0.38.0 — 2026-10-30
 
 ### Novidades
