@@ -50,6 +50,11 @@ jobs:
         if: success() || failure()
         run: node scripts/smoke-portable.mjs dist/JoJoCompanion.exe
 
+      - name: Presença permanente (crash reabre; bandeja não; atalho na área de trabalho)
+        if: success() || failure()
+        timeout-minutes: 6
+        run: node scripts/presenca-windows.mjs dist/JoJoCompanion.exe
+
       - name: Pesquisa na internet (fontes reais)
         if: success() || failure()
         continue-on-error: true
