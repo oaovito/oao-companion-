@@ -3,33 +3,6 @@
 ## 0.43.0 — 2026-10-30
 
 ### Novidades
-- **Motor de pesquisa** (`docs/PESQUISA.md`): o JoJo pesquisa sozinho só quando precisa (pergunta de
-  conhecimento, ciência/medicina, MNE_Lab ou "pesquisa…"), em fontes grátis e sem login: Wikipédia,
-  DuckDuckGo, Europe PMC (inclui o PubMed), Crossref e a documentação pública do MNE_Lab. O resultado
-  vai para a conversa local, que explica no jeito dele e cita as fontes discretamente no fim. Enquanto
-  pesquisa, aparece "Consultando fontes...". Cache de 6 h na memória.
-- **Modo professor**: antes de responder ele classifica a conversa (casual, científica, técnica, saúde,
-  emocional, emergência). Em ciência e assunto técnico explica de verdade (o que é, como funciona,
-  exemplo, erro comum). Entende continuidade: "não entendi essa parte", "me dá um exemplo",
-  "aprofunda", "resume".
-
-### Melhorias
-- Balão de resposta longa: mais largo, com altura limitada e rolagem automática no tempo de leitura;
-  no modo de interação rola com a roda do mouse e o clique abre a conversa inteira. Respostas longas
-  não são mais cortadas em 400 caracteres e nenhuma fala espontânea passa por cima delas.
-- Segurança da pesquisa: só https público (sem rede interna, IP literal ou credenciais, com checagem
-  de DNS e de redirecionamentos), limites de tempo e tamanho, e o texto da internet chega ao modelo
-  isolado como dado, sem obedecer instruções escondidas nele.
-
-### Como testar
-- Pergunte "o que os estudos dizem sobre potencial zeta?": aparece "Consultando fontes...", vem a
-  explicação e, no fim, "(Fontes: …)". Depois: "me dá um exemplo", "aprofunda", "não entendi essa parte".
-- "como exportar o gráfico no MNE_Lab?" consulta a documentação do MNE_Lab.
-- "oi jojo" ou "tô triste" não pesquisam nada.
-
-## 0.42.0 — 2026-10-30
-
-### Novidades
 - **O JoJo não fica fechado**: se ele encerrar sozinho (erro, travamento, processo encerrado), um vigia
   mínimo reabre em segundos. Encerrar pela bandeja continua fechando de verdade. Depois de se
   atualizar ele sempre volta: se a troca não reabrir, o vigia abre em até 2 min. Se o overlay travar
@@ -40,6 +13,20 @@
   no Instagram" → olhar de lado; "perdi pra esse chefe dez vezes" → frustração; "o João vem amanhã"
   → o Divino João chegando) ou pela cara pedida ("faz uma cara de julgamento"). "Para com essas
   reações" suspende as reações espontâneas e por contexto; "pode voltar com as reações" religa.
+- **Motor de pesquisa** (`docs/PESQUISA.md`): o JoJo pesquisa sozinho só quando precisa (pergunta de
+  conhecimento, ciência/medicina, MNE_Lab ou "pesquisa…"), em fontes grátis e sem login: Wikipédia,
+  DuckDuckGo, Europe PMC (inclui o PubMed), Crossref e a documentação pública do MNE_Lab. O resultado
+  vai para a conversa local, que explica no jeito dele e cita as fontes discretamente no fim. Enquanto
+  pesquisa, aparece "Consultando fontes...". Cache de 6 h na memória.
+- **Modo professor**: antes de responder ele classifica a conversa (casual, científica, técnica, saúde,
+  emocional, emergência). Em ciência e assunto técnico explica de verdade (o que é, como funciona,
+  exemplo, erro comum). Entende continuidade: "não entendi essa parte", "me dá um exemplo",
+  "aprofunda", "resume".
+- **Auditoria de 100% das animações** (`docs/AUDITORIA_ANIMACOES.md`): as 1043 animações (feitas à mão,
+  catálogo nas 3 intensidades e pacotes) tocadas no renderer real: nenhuma com erro, nenhuma cortada, nenhuma
+  parada e todas com gatilho natural; desenho médio de 3 ms por quadro.
+- Reações recuperadas: o que ela sente na conversa vira expressão do JoJo junto da resposta ("que nojo",
+  "que vergonha", "que medo", "que saco", "tô nervosa", "tô ansiosa", "que decepção", "olha isso", "obrigada").
 
 ### Melhorias
 - Comportamento pré-configurado: falas frequentes, muitas animações (intensidade e energia
@@ -48,11 +35,20 @@
   falando ("fica quieto", "menos animação").
 - Configurações mais simples: ficam Aparência, Movimento, Monitores, Privacidade (conversa, pesquisa,
   atualização, Spotify, LoL), Modo Trabalho, Agenda e Modo de interação.
+- Balão de resposta longa: mais largo, com altura limitada e rolagem automática no tempo de leitura;
+  no modo de interação rola com a roda do mouse e o clique abre a conversa inteira. Respostas longas
+  não são mais cortadas em 400 caracteres e nenhuma fala espontânea passa por cima delas.
+- Segurança da pesquisa: só https público (sem rede interna, IP literal ou credenciais, com checagem
+  de DNS e de redirecionamentos), limites de tempo e tamanho, e o texto da internet chega ao modelo
+  isolado como dado, sem obedecer instruções escondidas nele.
 
 ### Correções
 - Atualização do portátil: se o arquivo ficasse preso, o JoJo não reabria; agora reabre a versão atual
   e tenta de novo na próxima checagem.
 - Detecção de janela sem borda do tamanho do monitor com folga de 2 px (arredondamento de DPI).
+- Animações suaves e normais de 5 reações (jogado, susto na borda, dorsal na tela, fantasma, fidget) passavam
+  alguns pixels do espaço da janela e eram cortadas; o espaço agora é medido nas 3 intensidades.
+- Perguntas para o JoJo ou sobre a vida dela ("como foi seu dia?") não disparam pesquisa.
 
 ### Remoções
 - Barra de status ao lado do JoJo ("Em andamento", "Precisa de você"…): as atividades ficam só na Central.
@@ -67,6 +63,11 @@
 - Área de trabalho: o ícone "JoJo Companion" abre o JoJo.
 - No chat: "passei o dia inteiro no Instagram", "perdi pra esse chefe dez vezes", "o João vem amanhã",
   "faz uma cara de julgamento", "agora chega, para com essas reações" e "pode voltar com as reações".
+- Pergunte "o que os estudos dizem sobre potencial zeta?": aparece "Consultando fontes...", vem a
+  explicação e, no fim, "(Fontes: …)". Depois: "me dá um exemplo", "aprofunda", "não entendi essa parte".
+- "como exportar o gráfico no MNE_Lab?" consulta a documentação do MNE_Lab.
+- "oi jojo" ou "tô triste" não pesquisam nada.
+- No chat: "que nojo", "que vergonha", "tô nervosa": o JoJo faz a cara junto da resposta.
 
 ## 0.41.0 — 2026-10-30
 

@@ -29,6 +29,9 @@ test('decide quando pesquisar: só quando precisa', () => {
   assert.equal(precisaPesquisar('tudo bem?'), null);
   assert.equal(precisaPesquisar('tô triste hoje'), null);
   assert.equal(precisaPesquisar('fica menor'), null);
+  assert.equal(precisaPesquisar('como foi seu dia?'), null);
+  assert.equal(precisaPesquisar('o que você acha de mim?'), null);
+  assert.equal(precisaPesquisar('quando eu devo treinar?'), null);
   assert.equal(precisaPesquisar('o que é fotossíntese?'), 'geral');
   assert.equal(precisaPesquisar('pesquisa quem ganhou a copa de 2022'), 'geral');
   assert.equal(precisaPesquisar('o que os estudos dizem sobre potencial zeta?'), 'cientifica');

@@ -15,6 +15,8 @@ const CIENCIA = /\b(estudo|estudos|artigo|artigos|paper|evidencia\w*|literatura|
 const MNELAB = /\bmne ?_?lab\b|\bprograma do joao\b/;
 const PEDIDO = /\b(pesquisa|pesquise|procura|procure|busca|busque|confere|confira|verifica|verifique|qual a fonte|tem fonte|me passa a fonte|cita a fonte)\b/;
 const ATUAL = /\b(hoje|agora|atual|atualmente|ultim[oa]s?|recente\w*|esse ano|este ano|20[2-3]\d)\b/;
+// Pergunta para o JoJo ou sobre a vida dela ("como foi seu dia?", "o que eu como hoje?") é conversa, não pesquisa.
+const PESSOAL = /\b(seu|sua|seus|suas|voce|vc|tu|te|contigo|meu|minha|meus|minhas|eu|me|mim|comigo|a gente|nos)\b/;
 const CASUAL = /^(oi|ola|eai|e ai|bom dia|boa tarde|boa noite|tudo bem|como (voce|vc) (ta|esta)|obrigad\w*|valeu|kkk+|haha+)\b/;
 
 /**
@@ -28,6 +30,7 @@ export function precisaPesquisar(text) {
   const pergunta = isFactualQuestion(text) || /\?\s*$/.test(String(text).trim());
   if (CIENCIA.test(n) && (pergunta || PEDIDO.test(n))) return 'cientifica';
   if (PEDIDO.test(n) && n.split(' ').length >= 3) return 'geral';
+  if (PESSOAL.test(n)) return null;
   if (pergunta && (isFactualQuestion(text) || ATUAL.test(n))) return 'geral';
   return null;
 }

@@ -3,7 +3,7 @@
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
 
-## v0.42.0 (presença permanente)
+## v0.42–0.43 (presença permanente; a 0.42.0 não foi publicada e entrou na 0.43.0)
 - Vigia (`src/main/presenca.js`, `src/main/vigia.cjs`): processo Node do próprio app (ELECTRON_RUN_AS_NODE),
   marcador `saida.json` (manual/atualizacao/desligamento), `reaberturas.json` (máx. 3 em 10 min). No Windows a
   espera da reabertura fica num `cmd` para não prender arquivos do portátil. Testado de verdade no Linux
@@ -18,7 +18,7 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
   MNE_Lab; SSRF + DNS; cache; bloco isolado para o Qwen) e `professor.js` (seriedade, continuidade). Doc
   `docs/PESQUISA.md`. Testado com fetch falso; as APIs reais não foram chamadas daqui.
 - Balão longo (`LONGO_CHARS`, classe `.bubble.longo`, rolagem automática).
-- Pendente: auditoria/performance de animações com ferramenta de teste e matriz de validação.
+- Auditoria de animações: `scripts/auditoria-animacoes.mjs` (Electron real) → `docs/AUDITORIA_ANIMACOES.md`; teste estático `test/unit/auditoria.test.js`. Ferramenta de teste: `/anim <nome>`. Ver no Windows real: a matriz foi medida no Linux (Xvfb, desenho em CPU).
 
 ## Onde verificar
 
