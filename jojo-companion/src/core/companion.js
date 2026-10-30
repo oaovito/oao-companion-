@@ -27,7 +27,7 @@ import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
-import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, PACOTE_CONFIG } from './pacotes.js';
+import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
@@ -40,8 +40,6 @@ const COSTUME_HEADROOM = 36;
 const COSTUME_FOOTROOM = 40;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800, avc: 3500 + 1600 + 900 + 60000 + 1500 };
-const ACTIVITY_ROW = 26;
-const ACTIVITY_WIDTH = 224;
 const THINK_BUBBLE_MS = 1200; // resposta demorando: balão de pensamento "…"
 const THINK_MS = 650; // "digitando…": tempo em que a conversa fica "Em andamento"
 const CHAT_SIZE = { width: 300, height: 270 };
@@ -108,8 +106,6 @@ export class Companion {
     this.onConversationsChange = null; // () => void
     this.onOpenApp = null; // (conversationId|null) => void — traz a Central do JoJo para frente
     this.onOpenSettings = null; // () => void
-    this.activitiesHiddenUntil = 0;
-    this.activityRect = null;
     this.reducedMotion = false;
     this.costume = null; // fantasia da data festiva (natal, pascoa…)
     this.dateNow = dateNow; // relógio de parede (regra de sono 6h–21h); injetável nos testes
@@ -144,7 +140,7 @@ export class Companion {
         // Humor do dia dela (cansada/triste → calmo; animada → pilhado) quando a energia é automática.
         const humorDia = this.progress && this.progress.st.humorDia && this.progress.st.humorDia.dia === dayKey(new Date()) ? this.progress.st.humorDia.modo : null;
         // Pacotes desligados (ou sem espontâneas) não entram no sorteio.
-        const semPacote = this.catalog.itens.filter((it) => it.pacote && (!st.pacotesEspontaneos || !st[PACOTE_CONFIG[it.pacote]])).map((it) => it.id);
+        const semPacote = this.catalog.itens.filter((it) => it.pacote && (this.reacoesPausadas || !st.pacotesEspontaneos || !st[PACOTE_CONFIG[it.pacote]])).map((it) => it.id);
         return { modo: st.ambienteModo === 'auto' ? (quieto ? 'calmo' : humorDia || 'auto') : st.ambienteModo, surpresas: st.surpresas, desligadas: [...(vs.desligadas || []), ...semPacote], semPesadas: !st.animacoesPesadas, semSono: !this.canSleep() };
       },
     });
@@ -587,7 +583,6 @@ export class Companion {
     this.behavior.tick(now);
     this._updateWired(now);
     this._updateSpeech(now);
-    this._updateInteraction(now);
     if (this.effect && now >= this.effect.until) this.effect = null;
     this._applyLayout();
     this._schedule(this._nextDelay(now));
@@ -633,11 +628,6 @@ export class Companion {
       else if (a.type === 'flee') this._startFlee(a.plan, now);
       else if (a.type === 'hide') this._enterGhost(now, a.reason);
       else if (a.type === 'unhide') this._exitGhost(now);
-    }
-    // Cartão de atividades perto do cursor: some por alguns segundos (como o balão).
-    if (this.activityRect && distPointRect(this.cursor, this.activityRect) < this.avoid.cfg.margin) {
-      this.activitiesHiddenUntil = now + 4000;
-      this._applyLayout(true);
     }
     // Mover para um destino de passeio que ficou inseguro? Cancela.
     if (this.mover.active && this.mover.kind === 'walk') {
@@ -1090,11 +1080,8 @@ export class Companion {
     this._schedule(0);
   }
 
-  _updateInteraction(now) {
-    if (!this.interaction) return;
-    const timeout = this.store.get().interactionTimeoutSec * 1000;
-    if (!this.dragging && now - this.lastInteractionActivity > timeout) this.exitInteraction('timeout');
-  }
+  // Sem saída por inatividade: o modo de interação só fecha por Esc, pelo botão,
+  // pela tela cheia ou por segurança. Fora das regiões interativas o clique atravessa.
 
   /** Atividade do usuário dentro do modo de interação (renderer). */
   noteActivity() {
@@ -1619,6 +1606,15 @@ export class Companion {
         this.setVisible(true);
         text = 'Voltei. Sentiu falta, né.';
         break;
+      case 'reacoes_pausar':
+        // Até ela pedir de volta (ou reabrir o app): nada de reação sozinho nem por contexto.
+        this.reacoesPausadas = true;
+        text = 'Tá. Sem reações. Vou ficar aqui sendo um tubarão sem graça.';
+        break;
+      case 'reacoes_voltar':
+        this.reacoesPausadas = false;
+        text = 'Voltei com tudo. Você pediu.';
+        break;
       case 'silencio_ligar':
         this.store.update({ quietMode: true });
         text = 'Modo silencioso. Sem falas sozinho e sem broncas.';
@@ -1732,8 +1728,8 @@ export class Companion {
     if (cmd === 'reacao') {
       const packs = this.catalog.itens.filter((it) => it.pacote && !it.leve);
       if (!arg) {
-        if (this.onOpenApp) this.onOpenApp('reacoes');
-        return { text: `${packs.length} reações (memes, anime, comida, namorado, João). Abri a lista na Central. Ou: /reacao side eye.`, command: cmd, conversationId };
+        // Sem menu público: as reações vêm do contexto e da conversa.
+        return { text: `Não tem menu, Manu: eu reajo ao que você fala. Ou pede pela cara: "faz uma cara de julgamento".`, command: cmd, conversationId };
       }
       const it = findReacao(packs, arg);
       if (!it) return { text: 'Não conheço essa reação.', command: cmd, conversationId };
@@ -2082,7 +2078,7 @@ export class Companion {
     const now = this.clock.now();
     this.packSeen = this.packSeen || {};
     if (!manual) {
-      if (!s[PACOTE_CONFIG[it.pacote]]) return null;
+      if (this.reacoesPausadas || !s[PACOTE_CONFIG[it.pacote]]) return null;
       if (this.packSeen[id] && now - this.packSeen[id] < (it.cooldownMin ?? 10) * 60e3) return null;
       // Reação automática não emenda em outra; o que ela diz no chat sempre tem resposta.
       if (source !== 'chat' && this.lastPackAt && now - this.lastPackAt < 15e3) return null;
@@ -2125,6 +2121,9 @@ export class Companion {
         if (r) return r;
       }
     }
+    // Reação pelo que ela conta ("passei o dia no Instagram", "perdi pro chefe dez vezes").
+    const ctxR = reacaoDeContexto(text);
+    if (ctxR && this.playPack(ctxR.id, { source: 'chat', falar: false })) return ctxR;
     // Memes/anime citados pelo nome ("side eye", "bankai", "six seven"…).
     const n = normalizeText(text);
     const it = this.catalog.itens.find((x) => x.pacote && !x.leve && (x.pacote === 'memes' || x.pacote === 'anime') && (x.gatilho.frases || []).some((f) => new RegExp(`\\b${normalizeText(f).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(n)));
@@ -3282,16 +3281,7 @@ export class Companion {
       this.bubbleRect = bubble.rect;
     } else this.bubbleRect = null;
 
-    // Balão de status com as atividades (ao lado do pet).
-    let activityBox = null;
-    const acts = this.conversations.activities(4);
-    const showActs = acts.length && !this.work && !this.ghost && !this.dragging && (this.interaction || this.clock.now() >= this.activitiesHiddenUntil);
-    if (showActs) {
-      const size = { width: ACTIVITY_WIDTH, height: 12 + acts.length * ACTIVITY_ROW };
-      activityBox = placeAround(r.visual, size, wa, { order: ['left', 'right', 'bottom', 'top'], avoid: [toolbar?.rect, chat?.rect, bubble?.rect], gap: 8 });
-      attachments.push(activityBox);
-      this.activityRect = activityBox.rect;
-    } else this.activityRect = null;
+    // Sem barra de status ao lado do pet: as atividades ficam só na Central.
 
     // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
     const vestido = Object.keys(this.outfit).length > 0;
@@ -3343,7 +3333,6 @@ export class Companion {
       chat: chat ? { rect: rel(chat.rect), provider: this.dialogue ? this.dialogue.describe() : null, name: this.companionName, commands: commandMenu({ petVisible: !this.userHidden }) } : null,
       effect: this.effect ? this.effect.name : null,
       effectKind: this.effect ? this.effect.kind || null : null,
-      activities: activityBox ? { rect: rel(activityBox.rect), side: activityBox.side, items: acts } : null,
       reducedMotion: this.reducedMotion,
       micro: s.microMovimentos || 'normal',
       // Olhar acompanha o cursor de leve quando está perto (micromovimento).

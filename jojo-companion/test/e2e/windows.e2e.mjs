@@ -292,7 +292,8 @@ test('Windows: tela cheia some na hora mesmo no modo de interação com balão; 
       await app.evaluate(({ BrowserWindow }, i) => BrowserWindow.fromId(i)?.focus(), id2);
       visivel = await app.evaluate(() => globalThis.__jojo.overlay.win.isVisible());
     }
-    assert.equal(visivel, false, 'oculto com janela sem borda cobrindo o monitor');
+    const diag = visivel ? JSON.stringify({ alvo: await app.evaluate((_e, i) => globalThis.__jojo.targetBounds(i), id2), monitor: b, detector: await app.evaluate(() => globalThis.__jojo.fullscreenInfo()) }) : '';
+    assert.equal(visivel, false, `oculto com janela sem borda cobrindo o monitor ${diag}`);
     await app.evaluate((_e, i) => globalThis.__jojo.closeTarget(i), id2);
   } finally {
     await quit(app);

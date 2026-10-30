@@ -122,88 +122,15 @@
       </div>
     </fieldset>
 
+    <!-- Falas, animações, pacotes e modo cientista ficam pré-configurados (sem opções aqui).
+         Ficam só os controles de privacidade: tudo que lê janelas ou usa a internet. -->
     <fieldset>
-      <legend>Falas</legend>
-      <label class="row">Falas espontâneas
-        <select name="speechFrequency">
-          <option value="off">Desligadas</option>
-          <option value="rare">Raras</option>
-          <option value="normal">Normais</option>
-          <option value="often">Frequentes</option>
-        </select>
-      </label>
-      <label class="check"><input type="checkbox" name="quietMode"> Modo silencioso (sem falas espontâneas e sem broncas)</label>
+      <legend>Privacidade</legend>
       <label class="check"><input type="checkbox" name="iaAtivo"> Conversa de verdade (o motor da conversa roda neste PC; na primeira vez ele é baixado sozinho, uns 3 GB)</label>
-      <label class="check"><input type="checkbox" name="autoUpdate"> Atualizar automaticamente (baixa a versão nova e troca quando o PC fica parado)</label>
+      <label class="check"><input type="checkbox" name="webSearch"> Pesquisar na internet perguntas sem resposta programada (só a pergunta é enviada a fontes públicas)</label>
+      <label class="check"><input type="checkbox" name="autoUpdate"> Atualizar automaticamente (baixa a versão nova e troca sozinho)</label>
       <label class="check"><input type="checkbox" name="spotifyReacoes"> Reagir ao que toca no Spotify (lê só o nome da música na janela do Spotify, neste PC)</label>
       <label class="check"><input type="checkbox" name="lolBronca"> Ficar de mau humor e sumir quando o League of Legends abrir</label>
-      <label class="check"><input type="checkbox" name="webSearch"> Pesquisar na internet perguntas sem resposta programada (só a pergunta é enviada à Wikipédia/DuckDuckGo)</label>
-    </fieldset>
-
-    <fieldset>
-      <legend>Animações e estímulos</legend>
-      <label class="row">Animações sozinho (enquanto você trabalha)
-        <select name="ambienteFrequencia">
-          <option value="desligado">Desligadas</option>
-          <option value="pouca">Poucas</option>
-          <option value="normal">Normais</option>
-          <option value="muita">Muitas</option>
-        </select>
-      </label>
-      <label class="row">Intensidade
-        <select name="ambienteIntensidade">
-          <option value="auto">Pelo humor do momento</option>
-          <option value="suave">Discreta</option>
-          <option value="normal">Normal</option>
-          <option value="exagerado">Exagerada</option>
-        </select>
-      </label>
-      <label class="row">Energia
-        <select name="ambienteModo">
-          <option value="auto">Varia ao longo do dia</option>
-          <option value="calmo">Modo calmo</option>
-          <option value="pilhado">Modo pilhado</option>
-        </select>
-      </label>
-      <label class="row">Micromovimentos (respiração, guelras, bolhas)
-        <select name="microMovimentos">
-          <option value="normal">Normais</option>
-          <option value="discreto">Discretos</option>
-          <option value="desligado">Desligados</option>
-        </select>
-      </label>
-      <label class="check"><input type="checkbox" name="animacoesPesadas"> Animações mais agitadas (giros, confete, tremidas)</label>
-      <label class="check"><input type="checkbox" name="falasAmbientes"> Falas curtas sozinho (combinando com a animação)</label>
-      <label class="check"><input type="checkbox" name="surpresas"> Surpresas (animações raras e easter eggs)</label>
-      <label class="check"><input type="checkbox" name="avisoRaros"> Avisar antes de algo raro (balão "…!")</label>
-      <p class="hint">Nada pisca rápido nem treme a tela. Com "Reduzir movimento" do Windows, tudo vira quadro estático. Clicar, arrastar ou usar /pet interrompe qualquer animação.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>Pacotes de reação</legend>
-      <label class="check"><input type="checkbox" name="pacoteMemes"> Memes (side eye, chill guy, aura farming…)</label>
-      <label class="check"><input type="checkbox" name="pacoteAnime"> Referências de anime (menacing, sharingan, bankai…)</label>
-      <label class="check"><input type="checkbox" name="pacoteComida"> Reações extremas de comida (pizza, sorvete, hambúrguer…)</label>
-      <label class="check"><input type="checkbox" name="pacoteNamorado"> Operação Namorado (visitas, saudade, viagem…)</label>
-      <label class="check"><input type="checkbox" name="pacoteJoao"> Protocolo do Divino João</label>
-      <label class="check"><input type="checkbox" name="pacotesEspontaneos"> Também sozinho, de vez em quando (memes e anime pela raridade)</label>
-      <label class="row">Intensidade das reações de comida
-        <select name="comidaNivel" data-num="1">
-          <option value="1">1 · Sarcasmo</option>
-          <option value="2">2 · Indignação</option>
-          <option value="3">3 · Fúria cinematográfica</option>
-          <option value="4">4 · Apocalipse</option>
-        </select>
-      </label>
-      <p class="hint">Testar cada reação: Central → 🎭 Reações, ou /reacao no chat. Tudo sem som; no Modo Trabalho nada aparece.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>Modo cientista</legend>
-      <label class="check"><input type="checkbox" name="cienciaModo"> Ciência, nanopartículas e medicina no modo especialista ("Erm, na verdade...")</label>
-      <label class="check"><input type="checkbox" name="cienciaOculos"> Óculos de nerd durante o assunto</label>
-      <label class="check"><input type="checkbox" name="cienciaDentes"> Dentes de nerd durante o assunto</label>
-      <p class="hint">Saúde pessoal: ele fica sério, sem fantasia. Emergência: manda ligar para o SAMU (192). Não substitui consulta.</p>
     </fieldset>
 
     <fieldset>
@@ -250,9 +177,6 @@
         <button type="button" id="hotkeyDefault">Padrão</button>
       </label>
       <p class="hint" id="hotkeyStatus"></p>
-      <label class="row">Sair sozinho após inatividade
-        <input type="number" name="interactionTimeoutSec" min="10" max="600" step="5"><span class="unit">s</span>
-      </label>
       <p class="hint">No modo de interação o JoJo para de fugir: faça carinho (passe o mouse sobre ele), dê comida, brinque, arraste ou converse. <kbd>Esc</kbd> ou clicar fora encerra.</p>
     </fieldset>
 

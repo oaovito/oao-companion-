@@ -5,7 +5,6 @@ import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
-import { PACOTE_CONFIG } from '../core/pacotes.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
@@ -28,6 +27,7 @@ import { AppWindow } from './app-window.js';
 import { commandMenu } from '../core/conversations.js';
 import { createTray } from './tray.js';
 import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
+import { criarPresenca, garantirAtalho } from './presenca.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TEST = process.env.JOJO_TEST === '1';
@@ -135,9 +135,18 @@ function main() {
     log('error', `Promise rejeitada sem tratamento: ${(e && e.stack) || e}`);
   });
 
-  app.on('second-instance', () => {
+  // Vigia: reabre o JoJo se ele encerrar sem ser pela bandeja (ver presenca.js).
+  const presenca = criarPresenca({ app, log });
+
+  app.on('second-instance', (_e, argv = []) => {
     log('info', 'Segunda instância detectada; mantendo a atual.');
+    // Conferência do vigia depois de atualizar: a cópia fecha calada.
+    if (argv.includes('--vigia')) return;
     if (companion) companion.notifyAlreadyRunning();
+  });
+
+  app.on('child-process-gone', (_e, d) => {
+    if (d.reason !== 'clean-exit') log('warn', `Processo auxiliar encerrou (${d.type}): ${d.reason}`);
   });
 
   app.on('window-all-closed', (e) => e.preventDefault?.());
@@ -160,7 +169,7 @@ function main() {
   function startApp() {
     store.load();
     personality.load();
-    log('info', `Iniciando JoJo Companion ${app.getVersion()} (${process.platform}, Electron ${process.versions.electron})`);
+    log('info', `Iniciando JoJo Companion ${app.getVersion()} (${process.platform}, Electron ${process.versions.electron}, pid ${process.pid})`);
     const assets = {
       rig: readJSON('assets/character/jojo.rig.json'),
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
@@ -345,13 +354,6 @@ function main() {
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
         trabalho: !!companion.work,
-        reacoes: Object.entries(catalog.pacotes.pacotes).map(([id, p]) => ({
-          id,
-          nome: p.nome,
-          ligado: !!store.get()[PACOTE_CONFIG[id]],
-          itens: catalog.itens.filter((it) => it.pacote === id && !it.leve).map((it) => ({ id: it.id, nome: it.nome, raridade: it.raridade })),
-        })),
-        abrirReacoes,
         abrirGuardaRoupa,
       };
     }
@@ -365,11 +367,9 @@ function main() {
     };
     let abrirColecao = 0;
     let abrirGuardaRoupa = 0;
-    let abrirReacoes = 0;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
-      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'reacoes';
-      if (id === 'reacoes') abrirReacoes++;
+      const painel = id === 'colecao' || id === 'guardaRoupa';
       if (id === 'colecao') abrirColecao++;
       if (id === 'guardaRoupa') abrirGuardaRoupa++;
       appWin.open(painel ? null : id);
@@ -697,9 +697,11 @@ function main() {
       },
     });
 
-    async function quit() {
+    // motivo: 'manual' (bandeja) ou 'atualizacao' (o vigia confere a volta).
+    async function quit(motivo = 'manual') {
       if (quitting) return;
       quitting = true;
+      presenca.marcarSaida(motivo);
       clearInterval(fullscreenTimer);
       clearInterval(topTimer);
       try {
@@ -718,6 +720,15 @@ function main() {
     }
 
     app.on('will-quit', () => globalShortcut.unregisterAll());
+    // Desligar/sair do Windows: não é crash, o vigia não reabre.
+    powerMonitor.on('shutdown', () => presenca.marcarSaida('desligamento'));
+    overlay.onSessionEnd = () => presenca.marcarSaida('desligamento');
+    presenca.armar({
+      // Em desenvolvimento reabre com os mesmos argumentos (sem os de depuração).
+      args: app.isPackaged ? [] : process.argv.slice(1).filter((a) => !/^--(inspect|remote-debugging)/.test(a)),
+      esperas: TEST ? { esperaReabrirMs: 300, esperaAtualizacaoMs: 500, intervaloMs: 200 } : {},
+    });
+    garantirAtalho({ app, shell, log });
 
     registerHotkey();
     // Testes automáticos não registram o app no Windows sozinhos (só quando o teste pede).
@@ -751,7 +762,7 @@ function main() {
         if (!updatingNow && updater.onIdle(idle, { busyNow: companion.interaction || companion.dragging || quitting })) {
           updatingNow = true;
           const falou = companion.avisarAtualizacao(updater.state.version);
-          setTimeout(() => quit(), falou ? 3500 : 300);
+          setTimeout(() => quit('atualizacao'), falou ? 3500 : 300);
         }
       } catch (err) {
         log('warn', `Falha ao ler ociosidade: ${err.message}`);
@@ -781,6 +792,8 @@ function main() {
           const w = new BrowserWindow({ ...bounds, show: false, frame: false, fullscreen, title: 'JoJo test target', webPreferences: { sandbox: true } });
           await w.loadURL('data:text/html,' + encodeURIComponent('<body style="margin:0;background:#cfe0f5"><script>window.__clicks=[];addEventListener("mousedown",e=>window.__clicks.push({x:e.screenX,y:e.screenY}));</script></body>'));
           w.show();
+          if (!fullscreen) w.setBounds(bounds);
+          w.moveTop();
           w.focus();
           return w.id;
         },
@@ -790,7 +803,8 @@ function main() {
         overlayHwnd: () => hwndToString(overlay.win.getNativeWindowHandle()),
         closeTarget: (id) => BrowserWindow.fromId(id)?.destroy(),
         loginItem: () => app.getLoginItemSettings(loginOptions()),
-        fullscreenInfo: () => ({ available: !!fullscreen?.available, reason: fullscreen?.reason || null }),
+        fullscreenInfo: () => ({ available: !!fullscreen?.available, reason: fullscreen?.reason || null, last: fullscreen?.last || null }),
+        targetBounds: (id) => BrowserWindow.fromId(id)?.getBounds(),
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
         personality,
         appWin,

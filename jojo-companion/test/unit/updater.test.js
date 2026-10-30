@@ -72,6 +72,9 @@ test('script de troca do portátil: espera liberar, move e reabre', () => {
   assert.ok(!s.includes('%~f0'), 'não se apaga enquanto roda (cmd daria erro)');
   assert.match(s, /exit \/b 0\r\n$/);
   assert.ok(!portableSwapScript({ newPath: 'a"b', targetPath: 'c' }).includes('a"b'), 'sem aspas soltas');
+  // Troca presa: reabre a versão atual mesmo assim; ao encerrar de propósito, não reabre.
+  assert.match(s, /start "" "D:\\Downloads\\JoJoCompanion.exe"\r\nexit \/b 1/);
+  assert.ok(!portableSwapScript({ newPath: 'a', targetPath: 'c', relaunch: false }).includes('start'));
 });
 
 test('tipo de instalação detectado', () => {

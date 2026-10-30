@@ -67,7 +67,6 @@ test('conversa: em andamento → pronto; pergunta → precisa de você', async (
   const p = e.companion.chat('consegui terminar');
   const id = e.companion.conversations.current().id;
   assert.equal(e.companion.conversations.get(id).status, 'running');
-  assert.equal(e.overlay.state.activities.items[0].label, 'Em andamento');
   e.clock.advance(300);
   for (let k = 0; k < 6; k++) await Promise.resolve();
   e.clock.advance(800);
@@ -75,7 +74,7 @@ test('conversa: em andamento → pronto; pergunta → precisa de você', async (
   await p;
   assert.equal(e.companion.conversations.get(id).status, 'ready');
   e.clock.advance(100);
-  assert.equal(e.overlay.state.activities.items[0].status, 'ready');
+  assert.equal(e.companion.conversations.activities()[0].status, 'ready');
   // Pergunta do JoJo deixa a conversa esperando a usuária.
   e.companion.conversations.setStatus(id, 'idle');
   await chatAdv(e, 'qual seu nome');
@@ -98,11 +97,11 @@ test('erro de sistema vira atividade "Bloqueado" e some quando resolvido', () =>
   const e = started();
   e.companion.reportSystem('atalho', 'Atalho', 'Atalho em uso por outro programa.');
   e.clock.advance(100);
-  const it = e.overlay.state.activities.items.find((x) => x.id === 'sistema-atalho');
+  const it = e.companion.conversations.activities(8).find((x) => x.id === 'sistema-atalho');
   assert.equal(it.status, 'blocked');
   e.companion.reportSystem('atalho', 'Atalho', null);
   e.clock.advance(100);
-  assert.equal(e.overlay.state.activities, null);
+  assert.equal(e.companion.conversations.activities(8).some((x) => x.id === 'sistema-atalho'), false);
 });
 
 test('clique no pet / numa atividade abre a Central na conversa certa', () => {
@@ -116,17 +115,15 @@ test('clique no pet / numa atividade abre a Central na conversa certa', () => {
   assert.equal(e.companion.conversations.current().id, c.id);
 });
 
-test('balão de atividades é click-through fora do modo de interação e fica ao lado do pet', () => {
+test('sem barra de status ao lado do pet (atividades só na Central)', () => {
   const e = started();
   e.companion.reportSystem('detector', 'Detector', 'Falhou.');
   e.clock.advance(100);
-  const s = e.overlay.state;
-  assert.ok(s.activities);
-  assert.equal(e.overlay.mouseMode, 'passthrough');
-  const a = s.activities.rect;
-  const v = s.visual;
-  const overlaps = a.x < v.x + v.width && a.x + a.width > v.x && a.y < v.y + v.height && a.y + a.height > v.y;
-  assert.equal(overlaps, false, 'não cobre o pet');
+  assert.equal('activities' in e.overlay.state, false);
+  e.companion.enterInteraction('test');
+  e.clock.advance(100);
+  assert.equal('activities' in e.overlay.state, false);
+  assert.ok(e.companion.conversations.activities(8).some((x) => x.id === 'sistema-detector'));
 });
 
 test('crise emocional: manda falar com o João', async () => {

@@ -111,7 +111,7 @@ export function createAutoUpdater({ app, net, store, log, feed, onUpdated = () =
         const target = env.PORTABLE_EXECUTABLE_FILE;
         if (!target) return false;
         const script = path.join(dir, 'trocar.cmd');
-        fs.writeFileSync(script, portableSwapScript({ newPath: state.file, targetPath: target }).replace(/^start .*$/m, relaunch ? '$&' : 'rem sem reabrir'));
+        fs.writeFileSync(script, portableSwapScript({ newPath: state.file, targetPath: target, relaunch }));
         spawn('cmd.exe', ['/d', '/c', script], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
       } else if (mode === 'installer') {
         spawn(state.file, relaunch ? ['/S', '--force-run'] : ['/S'], { detached: true, stdio: 'ignore' }).unref();

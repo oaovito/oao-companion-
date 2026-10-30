@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { BehaviorMachine, STATES, PRIORITY, autoWeights } from '../../src/core/behavior.js';
-import { sanitize, DEFAULTS, isValidAccelerator, SETTINGS_VERSION } from '../../src/core/settings-schema.js';
+import { sanitize, DEFAULTS, isValidAccelerator, SETTINGS_VERSION, COMPORTAMENTO_V5 } from '../../src/core/settings-schema.js';
 import { SettingsStore } from '../../src/core/settings-store.js';
 import { detectIntent, ScriptedProvider } from '../../src/core/dialogue/scripted-provider.js';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
@@ -183,7 +183,7 @@ test('máquina de estados: evita repetir o mesmo comportamento em sequência', (
 // ------------------------------------------------------------ configurações
 
 test('configurações: valores inválidos voltam ao padrão, faixas são limitadas', () => {
-  const { settings, issues } = sanitize({ size: 99, safetyMargin: 'x', speechFrequency: 'muito', quietMode: 'sim', interactionHotkey: 'J', position: { x: NaN, y: 2 } });
+  const { settings, issues } = sanitize({ version: SETTINGS_VERSION, size: 99, safetyMargin: 'x', speechFrequency: 'muito', quietMode: 'sim', interactionHotkey: 'J', position: { x: NaN, y: 2 } });
   assert.equal(settings.size, 1.8);
   assert.equal(settings.safetyMargin, DEFAULTS.safetyMargin);
   assert.equal(settings.speechFrequency, DEFAULTS.speechFrequency);
@@ -199,6 +199,18 @@ test('configurações: padrões exigidos (sons off, iniciar com Windows off, mar
   assert.equal(DEFAULTS.startWithWindows, true);
   assert.equal(DEFAULTS.safetyMargin, 100);
   assert.equal(DEFAULTS.interactionHotkey, 'Control+Alt+J');
+});
+
+test('configurações v5: comportamento pré-configurado; valores antigos não voltam; sem saída por inatividade', () => {
+  const antigo = { version: 4, speechFrequency: 'rare', quietMode: true, ambienteFrequencia: 'pouca', comidaNivel: 1, pacoteComida: false, cienciaOculos: false, webSearch: false, interactionTimeoutSec: 600, size: 1.2 };
+  const { settings } = sanitize(antigo);
+  for (const [k, v] of Object.entries(COMPORTAMENTO_V5)) assert.deepEqual(settings[k], v, k);
+  assert.equal(settings.size, 1.2, 'o resto fica como ela deixou');
+  assert.equal('interactionTimeoutSec' in settings, false);
+  // Já na v5, o que ela mudar falando continua valendo.
+  assert.equal(sanitize({ ...settings, quietMode: true }).settings.quietMode, true);
+  assert.equal(DEFAULTS.speechFrequency, 'often');
+  assert.equal(DEFAULTS.comidaNivel, 4);
 });
 
 test('configurações: migração v0 e aceleradores', () => {

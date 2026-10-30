@@ -179,7 +179,10 @@ function detectFullscreen() {
   const mi = { cbSize: api.koffi.sizeof(api.MONITORINFO), rcMonitor: {}, rcWork: {}, dwFlags: 0 };
   if (!mon || !api.GetMonitorInfoW(mon, mi)) return { fullscreen: false, shell };
   const m = mi.rcMonitor;
-  const covers = wr.left <= m.left && wr.top <= m.top && wr.right >= m.right && wr.bottom >= m.bottom;
+  // Folga de 2 px: arredondamento de DPI em janelas sem borda; janela maximizada comum
+  // fica bem longe disso (a barra de tarefas ocupa dezenas de pixels).
+  const T = 2;
+  const covers = wr.left <= m.left + T && wr.top <= m.top + T && wr.right >= m.right - T && wr.bottom >= m.bottom - T;
   const shellFull = [QUNS_BUSY, QUNS_RUNNING_D3D_FULL_SCREEN, QUNS_PRESENTATION_MODE].includes(shell);
   // Tela cheia = a janela ativa cobre o monitor inteiro (sem borda, F11, vídeo, jogo
   // em janela cheia) OU o Windows avisa jogo exclusivo/apresentação. Na dúvida, esconde.
@@ -187,6 +190,7 @@ function detectFullscreen() {
     fullscreen: covers || shellFull,
     shellFull,
     shell,
+    janela: { x: wr.left, y: wr.top, width: wr.right - wr.left, height: wr.bottom - wr.top },
     monitor: { x: m.left, y: m.top, width: m.right - m.left, height: m.bottom - m.top },
   };
 }

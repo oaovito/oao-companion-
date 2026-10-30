@@ -41,7 +41,9 @@ export const ACOES = {
   resumo: { desc: 'resumo do dia' },
   colecao: { desc: 'abrir coleção e conquistas' },
   guarda_roupa: { desc: 'abrir o guarda-roupa' },
-  reacoes: { desc: 'abrir a lista de reações' },
+  reacoes: { desc: 'explicar que as reações vêm da conversa (sem menu)' },
+  reacoes_pausar: { desc: 'parar as reações espontâneas (memes, anime, comida…)' },
+  reacoes_voltar: { desc: 'voltar com as reações espontâneas' },
   pausar: { desc: 'pausar o JoJo' },
   retomar: { desc: 'tirar da pausa' },
   esconder: { desc: 'sumir da tela' },
@@ -88,7 +90,7 @@ export const EXPLICA = {
   jogos: 'Tenho quiz, verdade ou mentira, pedra-papel-nadadeira, memória, O JoJo mandou, caça-palavras, corrida, pega-pega, esconde-esconde e mais. Diga "bora jogar".',
   tamanho: 'Diga "fica menor", "maior" ou "volta ao normal" que eu mudo de tamanho. "Vai pro canto" eu mudo de lugar.',
   guardaRoupa: 'Guarda-roupa: você me veste peça por peça. Diga "vou te vestir" ou abra na Central.',
-  reacoes: 'Tenho 50 reações (memes, anime, comida, namorado e João). Peça pelo nome ou pela cara: "faz aquela dos olhos vermelhos".',
+  reacoes: 'Tenho 50 reações (memes, anime, comida, namorado e João) e uso conforme a conversa. Também dá pra pedir pela cara: "faz uma cara de julgamento", "faz aquela dos olhos vermelhos".',
   cientista: 'Pergunta de ciência ou medicina e eu ponho os óculos de nerd e explico direito. Saúde sua é sério: sem diagnóstico, e emergência é 192.',
   silencio: 'Modo silencioso: eu paro de falar sozinho e de dar bronca. "Pode voltar a falar" desliga.',
 };
@@ -141,6 +143,12 @@ function detFrequencia(n) {
   return null;
 }
 
+function detReacoes(n) {
+  if (/\b(chega|para|pare|parar|chega de|cansei)\b.*\b(reac\w*|memes?|referencias? de anime)\b|\bsem (reac\w*|memes)\b|\bdesliga (as )?reac\w*\b/.test(n) && !/\b(volta|pode voltar|liga)\b/.test(n)) return { acao: 'reacoes_pausar', params: {} };
+  if (/\b(volta|voltar|pode voltar|liga|religa|libera)\b.*\b(reac\w*|memes?)\b/.test(n)) return { acao: 'reacoes_voltar', params: {} };
+  return null;
+}
+
 function detJogos(n) {
   if (/\b(bora|vamos|vamo|quero|queria|que tal|tem algum|me mostra os)\b.*\b(jogar|jogo|jogos)\b|\b(to|tou|estou) (entediad\w*|de bobeira)\b/.test(n) && !/\b(lol|league|valorant|fortnite|minecraft)\b/.test(n)) {
     // Nome de jogo junto ("bora jogar quiz") fica para o comando antigo.
@@ -162,7 +170,7 @@ const DESCRICOES = [
   ['pk_rumbling', /\b(titas?|gigantes)\b/],
   ['pk_dominio', /\b(dominio|universo roxo)\b/],
   ['pk_ultraInstinto', /\b(aura prateada|instinto)\b/],
-  ['pk_sideEye', /\b(olhar de lado|side eye|olhadinha de lado)\b/],
+  ['pk_sideEye', /\b(olhar de lado|side eye|olhadinha de lado|cara de (julgamento|julgador|deboche|desdem)|olhar de julgamento)\b/],
   ['pk_chillGuy', /\b(chill|tranquilao|de boa)\b/],
   ['pk_npc', /\b(npc|robozinho|presentes? de live)\b/],
   ['pk_demure', /\b(demure|discreto e elegante)\b/],
@@ -239,7 +247,7 @@ export function interpretar(texto, ctx = {}) {
     }
     const cmd = interpretCommand(t, ctx);
     if (cmd) achados.push({ acao: cmd.cmd, params: cmd.arg ? argParaParams(cmd.cmd, cmd.arg) : {} });
-    for (const d of [detTamanho, detPosicao, detFrequencia, detJogos, detSilencio]) {
+    for (const d of [detTamanho, detPosicao, detFrequencia, detJogos, detSilencio, detReacoes]) {
       const a = d(t, ctx);
       if (a) achados.push(a);
     }

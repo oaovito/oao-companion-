@@ -4,7 +4,7 @@
 import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
 
-export const SETTINGS_VERSION = 4;
+export const SETTINGS_VERSION = 5;
 
 export const DEFAULTS = Object.freeze({
   version: SETTINGS_VERSION,
@@ -14,11 +14,10 @@ export const DEFAULTS = Object.freeze({
   safetyMargin: 100,            // px lógicos (40 – 300)
   moveSpeed: 1.0,               // multiplicador de velocidade (0.5 – 2)
   activity: 0.5,                // 0 calmo … 1 agitado
-  speechFrequency: 'normal',    // off | rare | normal | often
+  speechFrequency: 'often',     // off | rare | normal | often
   bubbleScale: 1.0,             // tamanho do texto dos balões (0.8 – 1.6)
   quietMode: false,             // sem falas espontâneas e sem broncas
   interactionHotkey: 'Control+Alt+J',
-  interactionTimeoutSec: 45,    // saída automática do modo de interação (10 – 600)
   startWithWindows: true,       // inicia junto com o Windows (desmarcável)
   fullscreenBehavior: 'hide',   // hide (some do monitor com tela cheia) | hideAll (some de todos); nunca cobre tela cheia
   avoidFallback: 'fade',        // fade | hide  (sem espaço seguro / perseguição)
@@ -30,7 +29,7 @@ export const DEFAULTS = Object.freeze({
   iaChave: '',                  // chave de provedor antigo (só reversão manual; fica só neste PC)
   iaModelo: '',                 // modelo (vazio = padrão do provedor)
   // Animações e falas ambientes (motor de variedade / antitédio).
-  ambienteFrequencia: 'normal', // desligado | pouca | normal | muita
+  ambienteFrequencia: 'muita',  // desligado | pouca | normal | muita
   ambienteIntensidade: 'auto',  // auto (pelo humor) | suave | normal | exagerado
   ambienteModo: 'auto',         // auto | calmo | pilhado — energia preferida
   surpresas: true,              // animações raras e easter eggs
@@ -54,7 +53,7 @@ export const DEFAULTS = Object.freeze({
   pacoteNamorado: true,
   pacoteJoao: true,
   pacotesEspontaneos: true,     // memes/anime também sozinhos (pela raridade), não só por contexto
-  comidaNivel: 3,               // 1 sarcasmo · 2 indignação · 3 fúria cinematográfica · 4 apocalipse
+  comidaNivel: 4,               // 1 sarcasmo · 2 indignação · 3 fúria cinematográfica · 4 apocalipse
   // Modo cientista/médico ("Erm, ackshually"): ciência, nanopartículas e medicina.
   cienciaModo: true,
   cienciaOculos: true,
@@ -73,13 +72,42 @@ export const DEFAULTS = Object.freeze({
   paused: false,
 });
 
+// Valores efetivos do comportamento (falas, animações, pacotes, ciência), aplicados
+// uma vez na migração para a v5. Ela ainda muda tudo falando ("fica quieto", "menos animação").
+export const COMPORTAMENTO_V5 = Object.freeze({
+  speechFrequency: 'often',
+  quietMode: false,
+  iaAtivo: true,
+  autoUpdate: true,
+  spotifyReacoes: true,
+  lolBronca: true,
+  webSearch: true,
+  ambienteFrequencia: 'muita',
+  ambienteIntensidade: 'auto',
+  ambienteModo: 'auto',
+  microMovimentos: 'normal',
+  animacoesPesadas: true,
+  falasAmbientes: true,
+  surpresas: true,
+  avisoRaros: true,
+  pacoteMemes: true,
+  pacoteAnime: true,
+  pacoteComida: true,
+  pacoteNamorado: true,
+  pacoteJoao: true,
+  pacotesEspontaneos: true,
+  comidaNivel: 4,
+  cienciaModo: true,
+  cienciaOculos: true,
+  cienciaDentes: true,
+});
+
 const RANGES = {
   size: [0.6, 1.8],
   safetyMargin: [40, 300],
   moveSpeed: [0.5, 2],
   activity: [0, 1],
   bubbleScale: [0.8, 1.6],
-  interactionTimeoutSec: [10, 600],
   agendaAvisoMin: [5, 60],
   trabalhoTamanho: [0.2, 1],
   comidaNivel: [1, 4],
@@ -190,6 +218,11 @@ export function migrate(obj, issues = []) {
     // v0 (hipotético/manual): "margin" → safetyMargin; "hotkey" → interactionHotkey.
     if ('margin' in o && !('safetyMargin' in o)) o.safetyMargin = o.margin;
     if ('hotkey' in o && !('interactionHotkey' in o)) o.interactionHotkey = o.hotkey;
+  }
+  if (v < 5) {
+    // v5: comportamento pré-configurado (sem opções na tela); valores antigos não valem mais.
+    Object.assign(o, COMPORTAMENTO_V5);
+    delete o.interactionTimeoutSec;
   }
   if (v < 4) {
     // v4: proteção de tela cheia é absoluta ("pausar"/"não fazer nada" deixavam o JoJo por cima).

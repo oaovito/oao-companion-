@@ -16,7 +16,6 @@ const chatEl = document.getElementById('chat');
 const logEl = document.getElementById('log');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
-const activitiesEl = document.getElementById('activities');
 const cmdMenuEl = document.getElementById('cmdMenu');
 
 let state = null;
@@ -104,7 +103,6 @@ function onState(s) {
   effects.setEffect(reduced ? null : s.effect, now, s.effectKind || null);
   renderBubble(s);
   renderBubbleGame(s);
-  renderActivities(s);
   renderToolbar(s);
   renderChat(s, prev);
   if (prev && prev.interaction && !s.interaction) {
@@ -227,39 +225,6 @@ function renderBubbleGame(s) {
   };
   spawn();
   bubbleGame.timer = setInterval(spawn, reduced ? 1200 : 650);
-}
-
-function renderActivities(s) {
-  const a = s.activities;
-  if (!a || !a.items.length) {
-    activitiesEl.classList.add('hidden');
-    activitiesEl.dataset.key = '';
-    return;
-  }
-  activitiesEl.classList.remove('hidden');
-  activitiesEl.classList.toggle('interactive', !!s.interaction);
-  Object.assign(activitiesEl.style, { left: `${a.rect.x}px`, top: `${a.rect.y}px`, width: `${a.rect.width}px`, height: `${a.rect.height}px` });
-  const key = JSON.stringify(a.items);
-  if (activitiesEl.dataset.key === key) return;
-  activitiesEl.dataset.key = key;
-  activitiesEl.textContent = '';
-  for (const it of a.items) {
-    const row = document.createElement('button');
-    row.type = 'button';
-    row.className = `act ${it.status}`;
-    row.dataset.id = it.id;
-    row.title = it.detail ? `${it.title} — ${it.detail}` : it.title;
-    const dot = document.createElement('span');
-    dot.className = 'dot';
-    const t = document.createElement('span');
-    t.className = 't';
-    t.textContent = it.title;
-    const l = document.createElement('span');
-    l.className = 'l';
-    l.textContent = it.label;
-    row.append(dot, t, l);
-    activitiesEl.appendChild(row);
-  }
 }
 
 function renderToolbar(s) {
@@ -542,7 +507,7 @@ function overJoJo(x, y) {
 }
 
 function overUi(target) {
-  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target)) || (!activitiesEl.classList.contains('hidden') && activitiesEl.contains(target))));
+  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target))));
 }
 
 function activity() {
@@ -671,13 +636,6 @@ function setupInteraction() {
     if (a === 'exit') api.exitInteraction();
     else if (a === 'chat') api.setChatOpen(!(state && state.chat));
     else api.interact(a);
-  });
-
-  activitiesEl.addEventListener('click', (e) => {
-    const row = e.target.closest('.act');
-    if (!row || !state || !state.interaction) return;
-    activity();
-    api.openApp(row.dataset.id);
   });
 
   chatForm.addEventListener('submit', (e) => {

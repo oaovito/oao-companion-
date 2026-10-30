@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## 0.42.0 — 2026-10-30
+
+### Novidades
+- **O JoJo não fica fechado**: se ele encerrar sozinho (erro, travamento, processo encerrado), um vigia
+  mínimo reabre em segundos. Encerrar pela bandeja continua fechando de verdade. Depois de se
+  atualizar ele sempre volta: se a troca não reabrir, o vigia abre em até 2 min. Se o overlay travar
+  por 10 s, a janela é recriada. Até 3 reaberturas em 10 min (evita laço); tudo fica no log.
+- **Ícone na área de trabalho** "JoJo Companion", para abrir na mão se precisar. O instalador cria e
+  recria a cada atualização; o portátil cria (ou corrige) sozinho ao abrir.
+- **Reações naturais, sem menu**: o JoJo escolhe a reação pelo que ela conta ("passei o dia inteiro
+  no Instagram" → olhar de lado; "perdi pra esse chefe dez vezes" → frustração; "o João vem amanhã"
+  → o Divino João chegando) ou pela cara pedida ("faz uma cara de julgamento"). "Para com essas
+  reações" suspende as reações espontâneas e por contexto; "pode voltar com as reações" religa.
+
+### Melhorias
+- Comportamento pré-configurado: falas frequentes, muitas animações (intensidade e energia
+  automáticas), surpresas, falas ambientes, todos os pacotes ligados (comida no nível 4) e modo
+  cientista com óculos e dentes. Quem tinha valores antigos passa para esses. Ela ainda ajusta
+  falando ("fica quieto", "menos animação").
+- Configurações mais simples: ficam Aparência, Movimento, Monitores, Privacidade (conversa, pesquisa,
+  atualização, Spotify, LoL), Modo Trabalho, Agenda e Modo de interação.
+
+### Correções
+- Atualização do portátil: se o arquivo ficasse preso, o JoJo não reabria; agora reabre a versão atual
+  e tenta de novo na próxima checagem.
+- Detecção de janela sem borda do tamanho do monitor com folga de 2 px (arredondamento de DPI).
+
+### Remoções
+- Barra de status ao lado do JoJo ("Em andamento", "Precisa de você"…): as atividades ficam só na Central.
+- Botão e página "🎭 Reações" da Central.
+- Seções Falas, Animações e estímulos, Pacotes de reação e Modo cientista das Configurações.
+- "Sair sozinho após inatividade" do modo de interação: ele não sai mais por inatividade
+  (Esc, o botão ou clicar fora encerram). Nada no JoJo encerra o app por inatividade.
+
+### Como testar
+- Gerenciador de Tarefas → finalize "JoJo Companion": ele volta em poucos segundos. Bandeja → Encerrar:
+  ele não volta.
+- Área de trabalho: o ícone "JoJo Companion" abre o JoJo.
+- No chat: "passei o dia inteiro no Instagram", "perdi pra esse chefe dez vezes", "o João vem amanhã",
+  "faz uma cara de julgamento", "agora chega, para com essas reações" e "pode voltar com as reações".
+
 ## 0.41.0 — 2026-10-30
 
 ### Melhorias

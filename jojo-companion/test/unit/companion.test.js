@@ -153,14 +153,14 @@ test('pedido de captura fora do modo de interação é recusado', () => {
   assert.equal(e.overlay.mouseMode, 'passthrough');
 });
 
-test('saída automática por inatividade no modo de interação', () => {
+test('sem saída por inatividade: o modo de interação fica até ela sair', () => {
   const e = started({ settings: { interactionTimeoutSec: 10 } });
   e.companion.enterInteraction();
-  e.clock.advance(9000);
+  e.clock.advance(60 * 60e3);
   assert.equal(e.companion.interaction, true);
-  e.clock.advance(1500);
+  assert.equal('interactionTimeoutSec' in e.store.get(), false, 'opção eliminada');
+  e.companion.exitInteraction('esc');
   assert.equal(e.companion.interaction, false);
-  assert.equal(e.overlay.mouseMode, 'passthrough');
 });
 
 test('erro ao focar no modo de interação restaura click-through', () => {

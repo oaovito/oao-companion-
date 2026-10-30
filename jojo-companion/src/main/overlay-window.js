@@ -64,6 +64,17 @@ export class OverlayWindow {
       this.log('error', `Renderer do overlay encerrou: ${details.reason}`);
       this.onCrash && this.onCrash(details);
     });
+    // Travou (não responde há 10 s): derruba o renderer para recriar a janela.
+    let travado = null;
+    win.on('unresponsive', () => {
+      clearTimeout(travado);
+      travado = setTimeout(() => {
+        this.log('error', 'Overlay sem responder; recriando.');
+        if (!win.isDestroyed()) win.webContents.forcefullyCrashRenderer();
+      }, 10e3);
+    });
+    win.on('responsive', () => clearTimeout(travado));
+    win.on('session-end', () => this.onSessionEnd && this.onSessionEnd());
     win.webContents.on('will-navigate', (e) => e.preventDefault());
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     win.webContents.on('did-finish-load', () => {

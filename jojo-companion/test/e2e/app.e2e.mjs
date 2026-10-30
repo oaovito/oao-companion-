@@ -169,22 +169,19 @@ test('modo de interação: ações, conversa offline, Esc e restauração do cli
   }
 });
 
-test('pet: atividades, clique abre a Central, /pet guarda e acorda, movimento reduzido', async () => {
+test('pet: sem barra de status, clique abre a Central, /pet guarda e acorda, movimento reduzido', async () => {
   const { app, win } = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
-    // Erro de sistema aparece como atividade "Bloqueado" ao lado do pet.
+    // Erro de sistema vira atividade só na Central: nada de barra ao lado do pet.
     await app.evaluate(() => globalThis.__jojo.companion.reportSystem('teste', 'Teste', 'Falha simulada.'));
     await sleep(300);
-    assert.equal(await win.isVisible('#activities'), true);
-    assert.match(await win.textContent('#activities'), /Bloqueado/);
-    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough', 'balão não bloqueia cliques');
+    assert.equal(await win.locator('#activities').count(), 0);
+    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.mouseMode), 'passthrough');
 
-    // Modo de interação: clicar na atividade abre a Central nessa conversa.
-    await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
-    await sleep(400);
+    // Abrir a Central na atividade.
     const appWinP = app.waitForEvent('window');
-    await win.click('#activities .act');
+    await app.evaluate(() => globalThis.__jojo.companion.openApp('sistema-teste'));
     const central = await appWinP;
     await central.waitForSelector('#convTitle');
     await sleep(400);
@@ -254,6 +251,14 @@ test('todas as animações dos estados são exibidas pelo renderer', async () =>
   try {
     const states = ['idle', 'lookAround', 'curious', 'surprised', 'walk', 'sit', 'lie', 'sleep', 'talk', 'happy', 'petted', 'eat', 'play', 'dragged', 'land', 'flee', 'hidden', 'paused', 'interactIdle'];
     const seen = {};
+    // Dormir só vale das 21h às 6h: o teste fixa a noite (não depende da hora do CI).
+    await app.evaluate(() => {
+      globalThis.__jojo.companion.dateNow = () => {
+        const d = new Date();
+        d.setHours(22, 0, 0, 0);
+        return d;
+      };
+    });
     for (const s of states) {
       await app.evaluate((_e, name) => {
         const c = globalThis.__jojo.companion;
@@ -853,5 +858,35 @@ test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" re
     assert.equal(p.intent, 'pacote:pk_traicao');
   } finally {
     await quit(app);
+  }
+});
+
+test('presença: JoJo morto sem motivo reabre sozinho; encerrado de propósito não reabre', async () => {
+  const { app, userData } = await launch({ env: { JOJO_VIGIA: '1' } });
+  const logs = () => fs.readdirSync(path.join(userData, 'logs')).map((f) => fs.readFileSync(path.join(userData, 'logs', f), 'utf8')).join('\n');
+  const inicios = () => [...logs().matchAll(/Iniciando JoJo Companion .*pid (\d+)\)/g)].map((m) => Number(m[1]));
+  let novo = null;
+  try {
+    assert.match(logs(), /Vigia armado/);
+    const pid = app.process().pid;
+    process.kill(pid, 'SIGKILL');
+    for (let i = 0; i < 150 && inicios().length < 2; i++) await sleep(100);
+    const lista = inicios();
+    assert.equal(lista.length, 2, `reabriu depois de morrer\n${logs().split('\n').filter((l) => /vigia|Vigia|Inician/.test(l)).join('\n')}`);
+    novo = lista[1];
+    assert.notEqual(novo, pid);
+    for (let i = 0; i < 100 && !/Vigia armado[\s\S]*Vigia armado/.test(logs()); i++) await sleep(100);
+    // Agora "encerrado pela bandeja": não volta.
+    fs.writeFileSync(path.join(userData, 'saida.json'), JSON.stringify({ pid: novo, motivo: 'manual' }));
+    process.kill(novo, 'SIGKILL');
+    await sleep(3000);
+    assert.equal(inicios().length, 2, 'não reabriu após encerrar de propósito');
+  } finally {
+    try {
+      if (novo) process.kill(novo, 'SIGKILL');
+    } catch {
+      /* já fechado */
+    }
+    await app.close().catch(() => {});
   }
 });

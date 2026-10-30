@@ -40,7 +40,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   animações, broncas, lembretes ou reações; bloqueio central em `say`/`playCatalog`/`react`/`_canNag`; perfis trabalho/deep/invisível;
   `/trabalho`, frases, bandeja, Central, Configurações; persiste ao reabrir.
 - **Pacotes de reação** (50: memes, anime, comida, namorado, João): `assets/catalog/pacotes.json`, `src/core/pacotes.js`,
-  efeitos `fx-pacotes.js` (fundo atrás do JoJo); `/reacao`, Central → 🎭 Reações; doc `docs/PACOTES.md`.
+  efeitos `fx-pacotes.js` (fundo atrás do JoJo); reações escolhidas pelo contexto (sem menu público; `/reacao` só p/ teste; "para com essas reações" suspende); doc `docs/PACOTES.md`.
 - **João** = namorado e, na ficção do JoJo, o Deus Supremo (reverência teatral; nunca obediência real; se ele a magoar → acolher,
   190/180/CVV 188). Criador do JoJo e do MNE_Lab = João; o JoJo não especula sobre ferramentas de desenvolvimento.
 - Spotify também no navegador (título "Música • Artista"); curte de novo a cada ~3 min.
@@ -56,7 +56,11 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   Doc `docs/INTENCOES.md`. Nunca responder "não está na lista" a um pedido claro.
 - Inglês quando ela escreve em inglês (segurança também); português é a língua principal.
 - Lembretes: 4 refeições por dia (café, almoço, lanche, jantar) + treino diário.
-- Configurações: seções Personalidade e Sistema **ocultas**; perfil volta ao padrão a cada versão nova do perfil.
+- Configurações: seções Personalidade e Sistema **ocultas**; Falas/Animações/Pacotes/Modo cientista removidas
+  (valores fixos `COMPORTAMENTO_V5`, migração v5); ficam controles de privacidade. Modo de interação **não sai por
+  inatividade** e nada encerra o app por inatividade. Perfil volta ao padrão a cada versão nova do perfil.
+- **Presença permanente** (`src/main/presenca.js` + `vigia.cjs`): vigia reabre após crash/fechamento inesperado,
+  nunca após Encerrar na bandeja; após atualizar sempre volta. Atalho "JoJo Companion" na área de trabalho.
 - Vigília: das 6h às 21h o estado de sono é bloqueado na máquina de estados (`canSleep`/`SLEEP_ANIMS`); às 6h acorda.
 - Dormir: antes das 21h qualquer menção a dormir/sono/cochilo/cama → JoJo furioso e contra (estado `angry`);
   das 21h às 6h é permitido e ele reafirma (ação `boaNoite`); falas ambientes de dormir com `apos: 21`.
@@ -94,7 +98,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Atualização 100% automática e imediata (checa a cada 10 min, avisa "já volto", troca e reabre); ela nunca faz nada.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
-- Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);
+- Pet: **sem barra de status** ao lado dele (status das conversas só na Central);
   clique no pet abre a Central do JoJo, clique numa atividade abre a conversa; `/pet`
   (Wake Pet / Tuck Away Pet); movimento reduzido segue o Windows. Sem versão web.
   Crise emocional na conversa: mandar falar com o João.

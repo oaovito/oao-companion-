@@ -42,7 +42,7 @@ Ctrl+Alt+J (configurável) ou bandeja. Desvio suspenso; captura de mouse só nas
 regiões interativas (JoJo, barra, painel) via `forward: true`; indicação discreta
 (anel tracejado + barra). Carinho, comer, brincar, arrastar, conversar. Esc
 encerra (só quando o overlay tem foco; sem atalho global de Esc). Clique fora
-encerra. Saída automática por inatividade (padrão 45 s, 10–600). Ao sair:
+encerra. Sem saída automática por inatividade. Ao sair:
 click-through e desvio restaurados imediatamente, inclusive em erro. Falha no
 registro do atalho é exibida nas configurações; bandeja continua funcionando.
 
@@ -90,7 +90,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | # | Requisito | Critério de aceitação |
 |---|---|---|
 | A1 | Pet flutuante | Sempre por cima, arrastável no modo de interação, posição salva |
-| A2 | Balão de status | Ao lado do pet, lista conversas com *Em andamento*, *Precisa de você*, *Pronto* (não vista) ou *Bloqueado* (falha/erro de sistema); click-through fora do modo de interação |
+| A2 | Status das conversas | Só na Central: *Em andamento*, *Precisa de você*, *Pronto* (não vista) ou *Bloqueado*; nada de barra ao lado do pet (removida na 0.42) |
 | A3 | Abrir o app | Clique no pet traz a Central do JoJo para frente; clique numa atividade abre aquela conversa |
 | A4 | `/pet` | Alterna mostrar/ocultar; menu "/" e Configurações mostram *Wake Pet* / *Tuck Away Pet* |
 | A5 | Movimento reduzido | Respeita `prefers-reduced-motion` do sistema (ou a configuração): quadros estáticos, sem partículas, sem passeio |

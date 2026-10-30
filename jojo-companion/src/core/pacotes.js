@@ -112,7 +112,7 @@ export function detectNamorado(text, { joao = 'João', jaMencionou = false } = {
   if (nam && /\b(e|eh) (o )?(amor da minha vida|tudo pra mim|meu tudo)\b|\bamo (muito |demais )?o\b.{0,8}\b(joao|meu namorado)\b|\bamo (muito |demais )?(o )?joao\b/.test(n)) return { id: 'pk_jApoteose' };
   if (nam && /\b(me elogiou|disse que me ama|falou que me ama|disse que eu sou linda|me chamou de linda|disse que me adora)\b/.test(n)) return { id: 'pk_jElogio' };
   if (nam && /\b(mandou|me mandou|enviou|respondeu) (uma )?(mensagem|msg|zap|audio|foto)\b|\b(me chamou|me ligou)\b/.test(n)) return { id: 'pk_jMensagem' };
-  if (nam && /\b(ta|esta|tá) chegando\b|\b(chegou|vai chegar|vem pra ca|ta vindo)\b/.test(n)) return { id: 'pk_jChegando' };
+  if (nam && /\b(ta|esta|tá) chegando\b|\b(chegou|vai chegar|vem pra ca|ta vindo)\b|\b(vem|chega|volta) (amanha|hoje|aqui|me ver|no fim de semana|nesse fim de semana|sabado|domingo|sexta)\b/.test(n)) return { id: 'pk_jChegando' };
   if (nam && /\b(ta|esta|ficou) (chateado|bravo|puto|irritado|magoado) comigo|\b(ta|esta|ficou) (chateado|bravo|puto|irritado)\b/.test(n)) return { id: 'pk_jJulgamento' };
   if (ehJoao && /\b(e|eh) (burro|chato|feio|idiota|lixo|um bosta|horroroso|otario)\b/.test(n)) return { id: 'pk_jHeresia' };
   if (/\b(tesao|com fogo|morrendo de vontade dele|louca por ele|segundas intencoes)\b/.test(n) && (ele || /\btesao\b/.test(n))) return { id: ehJoao ? 'pk_jDevocao' : 'pk_libido' };
@@ -127,6 +127,24 @@ export function detectNamorado(text, { joao = 'João', jaMencionou = false } = {
   if (/\b(vou|vou viajar|indo|vou pra|vou para) (visitar|ver|encontrar)?\s?(o )?(joao|meu namorado)\b|\b(pra|para) (a )?(cidade|casa) (dele|do joao|do meu namorado)\b/.test(n)) return { id: ehJoao ? 'pk_jPeregrinacao' : 'pk_operacao' };
   if (nam && /\bsaudade\b/.test(n)) return { id: 'pk_jSaudade' };
   if (ehJoao && !jaMencionou) return { id: 'pk_jMencao' };
+  return null;
+}
+
+// ------------------------------------------------------------------ reação pelo contexto da conversa
+
+/**
+ * Reações escolhidas pelo que ela conta (sem menu nem comando): {id, fala} ou null.
+ * Ex.: "passei o dia inteiro no Instagram" → olhar de lado; "perdi pra esse chefe dez vezes" → frustração.
+ */
+export function reacaoDeContexto(text) {
+  const n = norm(text);
+  if (!n || /\b(nao|nunca|sem) (passei|fiquei|perdi)\b/.test(n)) return null;
+  if (/\b(passei|fiquei|gastei|perdi) (o dia|a tarde|a manha|a noite|horas|o dia inteiro|a tarde inteira|a noite inteira)( todo| toda| inteiro| inteira)? (no|na|rolando o|vendo) (insta|instagram|tiktok|reels|celular|feed|twitter|x)\b|\brolei o feed\b/.test(n)) {
+    return { id: 'pk_sideEye', fala: 'O dia inteiro. No feed. Que orgulho. Tô anotando no seu prontuário.' };
+  }
+  if (/\b(perdi|morri|apanhei)\b.*\b(\d+|dez|cinco|tres|mil|varias|mil) vezes\b|\b(perdi|morri) de novo\b|\bnao consigo passar (dess[ae]|do|da)\b|\besse chefe\b.*\b(perdi|morri|impossivel)\b/.test(n)) {
+    return { id: 'pk_broCooked', fala: 'De novo? Respira. Esse chefe tá te fazendo de supino. Mais uma e vai.' };
+  }
   return null;
 }
 

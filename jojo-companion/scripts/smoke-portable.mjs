@@ -16,7 +16,7 @@ if (!fs.existsSync(exe)) {
 }
 const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-portable-'));
 const logFile = path.join(userData, 'logs', 'jojo.log');
-const child = spawn(exe, [], { env: { ...process.env, JOJO_USER_DATA: userData }, stdio: 'ignore', detached: false });
+const child = spawn(exe, [], { env: { ...process.env, JOJO_USER_DATA: userData, JOJO_VIGIA: '0' }, stdio: 'ignore', detached: false });
 const t0 = Date.now();
 const timeoutMs = Number(process.env.SMOKE_TIMEOUT_MS || 120000);
 

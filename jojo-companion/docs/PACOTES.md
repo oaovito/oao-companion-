@@ -2,7 +2,10 @@
 
 50 reações em 5 pacotes (`assets/catalog/pacotes.json`), cada uma com animação real gerada pelas receitas do catálogo (`src/core/catalog/recipes.js`), efeitos visuais silenciosos (`src/renderer/shared/fx-pacotes.js`; os de fundo são desenhados atrás do JoJo), falas próprias, raridade e intervalo mínimo. Reconhecimento de intenção em `src/core/pacotes.js`; reprodução e eventos em `Companion.playPack`/`packEvent`.
 
-- **Testar cada uma**: Central → 🎭 Reações, ou `/reacao <nome>` (pedido manual ignora raridade, intervalo e pacote desligado).
+- **Sem menu público**: as reações vêm do contexto e da conversa (`reacaoDeContexto` em `pacotes.js`,
+  descrições no motor de intenções: "faz uma cara de julgamento"). "Para com essas reações" suspende
+  as espontâneas e por contexto até "pode voltar com as reações". Teste/dev: `/reacao <nome>`
+  (pedido manual ignora raridade, intervalo e pacote desligado).
 - **Configurações → Pacotes de reação**: ligar/desligar cada pacote, reações espontâneas e a intensidade da comida (1 sarcasmo, 2 indignação, 3 fúria cinematográfica, 4 apocalipse; 1–2 sem efeitos).
 - **Modo Trabalho** bloqueia todas; **silêncio absoluto**: nenhuma tem som.
 - Reações automáticas não atropelam outra animação especial nem emendam uma na outra (15 s).

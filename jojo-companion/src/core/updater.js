@@ -90,8 +90,10 @@ export class UpdateChecker {
  * apaga (o cmd reclamaria "arquivo em lote não encontrado"): o app remove o
  * script na próxima abertura.
  */
-export function portableSwapScript({ newPath, targetPath, tries = 60 }) {
+export function portableSwapScript({ newPath, targetPath, tries = 60, relaunch = true }) {
   const q = (p) => `"${String(p).replace(/"/g, '')}"`;
+  // Se a troca falhar (arquivo preso), reabre a versão atual: o JoJo nunca fica fechado.
+  const abrir = relaunch ? `start "" ${q(targetPath)}` : 'rem sem reabrir';
   return [
     '@echo off',
     'setlocal',
@@ -102,9 +104,10 @@ export function portableSwapScript({ newPath, targetPath, tries = 60 }) {
     'if not errorlevel 1 goto ok',
     'set /a n+=1',
     `if %n% lss ${tries} goto retry`,
+    abrir,
     'exit /b 1',
     ':ok',
-    `start "" ${q(targetPath)}`,
+    abrir,
     'exit /b 0',
     '',
   ].join('\r\n');

@@ -133,3 +133,36 @@ test('conversa online conhece João (namorado e figura divina, ficção) e a aut
   assert.match(p, /nunca justifique se João a magoar/);
   assert.match(p, /Não especule sobre ferramentas/);
 });
+
+test('reação natural pelo contexto (sem menu): Instagram, chefe, julgamento, João e "para com essas reações"', async () => {
+  const e = makeEnv({ profile: { lembreteComida: { ativo: false }, lembreteTreino: { ativo: false } } });
+  e.companion.dateNow = () => new Date(2026, 9, 30, 15);
+  e.companion.start();
+  e.env.cursor = { x: 5, y: 5 };
+  e.clock.advance(3000);
+  e.companion.enterInteraction('test');
+  let r = await chatAdv(e, 'Passei o dia inteiro no Instagram');
+  assert.equal(r.intent, 'pacote:pk_sideEye');
+  assert.match(r.text, /dia inteiro/);
+  e.clock.advance(20e3);
+  r = await chatAdv(e, 'perdi pra esse chefe dez vezes');
+  assert.equal(r.intent, 'pacote:pk_broCooked');
+  e.clock.advance(20e3);
+  r = await chatAdv(e, 'O João vem amanhã');
+  assert.equal(r.intent, 'pacote:pk_jChegando');
+  e.clock.advance(20e3);
+  r = await chatAdv(e, 'faz uma cara de julgamento');
+  assert.match(e.companion.behavior.anim, /^cat_pk_sideEye/);
+  e.clock.advance(20e3);
+  r = await chatAdv(e, 'agora chega, para com essas reações');
+  assert.equal(e.companion.reacoesPausadas, true);
+  e.clock.advance(20 * 60e3);
+  r = await chatAdv(e, 'vou pedir pizza');
+  assert.notEqual(r.intent, 'pacote:pk_traicao', 'pausado: sem reação por contexto');
+  assert.ok(e.companion.packEvent('derrota', { sobrepor: true }) === null);
+  r = await chatAdv(e, 'pode voltar com as reações');
+  assert.equal(e.companion.reacoesPausadas, false);
+  // Sem menu público: /reacao sem nome só explica.
+  r = await e.companion.chat('/reacao');
+  assert.match(r.text, /Não tem menu/);
+});

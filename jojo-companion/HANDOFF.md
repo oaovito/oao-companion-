@@ -1,7 +1,19 @@
-# HANDOFF — estado atual (v0.41.0, 2026-10-29)
+# HANDOFF — estado atual (v0.42.0, 2026-10-30)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
+
+## v0.42.0 (presença permanente)
+- Vigia (`src/main/presenca.js`, `src/main/vigia.cjs`): processo Node do próprio app (ELECTRON_RUN_AS_NODE),
+  marcador `saida.json` (manual/atualizacao/desligamento), `reaberturas.json` (máx. 3 em 10 min). No Windows a
+  espera da reabertura fica num `cmd` para não prender arquivos do portátil. Testado de verdade no Linux
+  (unitário com processo real + E2E matando o Electron); no Windows, pelo CI. Não verificado: desligar/reiniciar
+  o Windows de verdade e atualização real do instalador com o vigia ativo.
+- Atalho na área de trabalho (`garantirAtalho`, NSIS `createDesktopShortcut: "always"`).
+- Barra de status do pet e menu "🎭 Reações" removidos; reações por contexto (`reacaoDeContexto`).
+- Configurações v5 (`COMPORTAMENTO_V5`); `interactionTimeoutSec` eliminado.
+- Pendentes dos prompts: motor de pesquisa (fontes sem login/chave, SSRF, cache, citações), modo professor e
+  balão expansível, auditoria/performance de animações com ferramenta de teste e matriz de validação.
 
 ## Onde verificar
 
