@@ -1,6 +1,6 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
-import { parseIcs } from '../core/calendar.js';
+import { parseIcs, falhaAgenda, mensagemAgenda } from '../core/calendar.js';
 import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
@@ -397,18 +397,28 @@ function main() {
       if (!/BEGIN:VCALENDAR/.test(text)) throw new Error('não é uma agenda');
       return parseIcs(text);
     };
+    // Falha de rede (ligou o PC, acordou, Wi-Fi caiu) tenta de novo calada; só avisa depois de 1 h.
+    const agendaFalha = { falhas: 0, desde: 0 };
+    let agendaRetry = null;
     const syncCalendar = async () => {
+      clearTimeout(agendaRetry);
       const s = store.get();
       if (!s.agendaUrl || !s.agendaAtiva) return;
       try {
         companion.setCalendar({ events: await fetchCalendar(s.agendaUrl) });
+        agendaFalha.falhas = 0;
+        agendaFalha.desde = 0;
         companion.reportSystem('agenda', 'Sistema: Agenda', null);
       } catch (err) {
         log('warn', `Agenda: ${err.message}`);
+        const f = falhaAgenda(agendaFalha, err.message);
         companion.setCalendar({ events: companion.calendar.events, error: err.message });
-        companion.reportSystem('agenda', 'Sistema: Agenda', `Não consegui ler a agenda (${err.message}).`);
+        if (f.avisar) companion.reportSystem('agenda', 'Sistema: Agenda', mensagemAgenda(err.message));
+        agendaRetry = setTimeout(syncCalendar, f.proximaMs);
       }
     };
+    // Voltou da suspensão: a rede demora uns segundos; lê a agenda de novo depois.
+    powerMonitor.on('resume', () => setTimeout(syncCalendar, 20e3));
     companion.onCalendarConnect = async (url) => {
       try {
         const events = await fetchCalendar(url);
@@ -416,10 +426,11 @@ function main() {
         companion.setCalendar({ events });
         return { ok: true, count: events.length };
       } catch (err) {
-        return { ok: false, error: err.message };
+        return { ok: false, error: mensagemAgenda(err.message) };
       }
     };
-    syncCalendar();
+    // Ao abrir junto com o Windows a internet pode ainda não estar pronta: espera um pouco.
+    setTimeout(syncCalendar, TEST ? 0 : 15e3);
     // Primeira vez: progresso do download como atividade (sem fingir resposta enquanto isso).
     avisoConversa = (e = cerebro.estado) => {
       if (!companion || TEST) return;

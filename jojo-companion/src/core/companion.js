@@ -1191,6 +1191,20 @@ export class Companion {
     const cmd = parseCommand(text);
     if (cmd) return this.runCommand(cmd, conv.id, text);
     if (!this.dialogue) return null;
+    // A mesma mensagem enviada de novo enquanto ele ainda responde (demorou, ela reenviou):
+    // não duplica nem começa outra resposta; espera a que já está vindo.
+    const chave = `${conv.id}:${normalizeText(text)}`;
+    if (this.chatPendente && this.chatPendente.chave === chave) return this.chatPendente.p;
+    const p = this._chat(text, conv);
+    this.chatPendente = { chave, p };
+    try {
+      return await p;
+    } finally {
+      if (this.chatPendente && this.chatPendente.p === p) this.chatPendente = null;
+    }
+  }
+
+  async _chat(text, conv) {
     this.noteActivity();
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
@@ -3108,7 +3122,7 @@ export class Companion {
     if (url) {
       if (!this.onCalendarConnect) return 'Não consigo conectar agora. Tenta de novo depois.';
       const r = await this.onCalendarConnect(url);
-      if (!r || !r.ok) return `Esse link não funcionou${r && r.error ? ` (${r.error})` : ''}. ${/icloud/i.test(url) ? 'Confere se o "Calendário Público" está ligado e se copiou o link inteiro.' : 'Confere se copiou o "Endereço secreto no formato iCal" inteiro.'}`;
+      if (!r || !r.ok) return `Esse link não funcionou. ${r && r.error ? `${r.error} ` : ''}${/icloud/i.test(url) ? 'Confere se o "Calendário Público" está ligado e se copiou o link inteiro.' : 'Confere se copiou o "Endereço secreto no formato iCal" inteiro.'}`;
       this.conversations.setStatus('agenda', 'idle');
       this.fireEvent('sucesso', { speak: false });
       const hoje = agendaDoDia(this.calendar.events, new Date());

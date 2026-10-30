@@ -3,7 +3,7 @@
 import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 import { precisaPesquisar, linhaFontes } from './pesquisa.js';
-import { classificarSeriedade, seguimento, instrucaoProfessor } from './professor.js';
+import { classificarSeriedade, seguimento, instrucaoProfessor, respostaFalaDoAssunto } from './professor.js';
 
 // Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
 const TEMA_MS = 15 * 60e3;
@@ -82,8 +82,15 @@ export class DialogueEngine {
       try {
         const base = this.llm.timeoutFor ? this.llm.timeoutFor(input) : this.llm.timeoutMs || this.timeoutMs;
         const longo = achado || professor;
-        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor }), longo ? Math.max(base, 45e3) : base);
+        // Com a pesquisa em mãos, não faz esperar demais: se o modelo demorar, responde com a fonte.
+        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor }), achado ? Math.max(base, 25e3) : longo ? Math.max(base, 45e3) : base);
         const out = normalizeReply(r);
+        // Pergunta de conhecimento: a resposta tem de falar do assunto (senão vale a pesquisa).
+        if ((achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) {
+          const fora = new Error('resposta fora do assunto');
+          fora.foraDoAssunto = true;
+          throw fora;
+        }
         out.intent = 'ia';
         if (achado) {
           out.fontes = achado.fontes;
@@ -94,9 +101,12 @@ export class DialogueEngine {
         if (this.history.length > 20) this.history.splice(0, this.history.length - 20);
         return out;
       } catch (e) {
-        this.llmOk = false;
-        this.llmPauseUntil = Date.now() + LLM_PAUSE_MS;
-        this.log('warn', `IA indisponível (${e.message}); usando respostas programadas.`);
+        // Resposta fora do assunto não é falha do motor: só desta vez vale a pesquisa.
+        if (!e.foraDoAssunto) {
+          this.llmOk = false;
+          this.llmPauseUntil = Date.now() + LLM_PAUSE_MS;
+        }
+        this.log('warn', `IA: ${e.message}; usando ${achado ? 'a pesquisa' : 'respostas programadas'}.`);
       }
     }
     const provider = this.active;
@@ -122,7 +132,7 @@ export class DialogueEngine {
       out.web = { query: achado.consulta, title: t.titulo, extract: texto, source: t.fonte, url: t.url, lang: 'pt' };
       out.action = null;
       out.fontes = achado.fontes;
-    } else if (achado && raw && raw.search) {
+    } else if (achado && !seg) {
       const t = achado.trechos.find((x) => x.texto) || achado.trechos[0];
       out.intent = 'web';
       out.web = { query: achado.consulta, title: t.titulo, extract: t.texto || t.titulo, source: t.fonte, url: t.url, lang: 'pt' };

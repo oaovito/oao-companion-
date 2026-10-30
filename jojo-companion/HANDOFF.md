@@ -1,4 +1,4 @@
-# HANDOFF — estado atual (v0.43.0, 2026-10-30)
+# HANDOFF — estado atual (v0.43.1, 2026-10-30)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -21,6 +21,11 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
   `docs/PESQUISA.md`. Testado com fetch falso; as APIs reais não foram chamadas daqui.
 - Balão longo (`LONGO_CHARS`, classe `.bubble.longo`, rolagem automática).
 - Auditoria de animações: `scripts/auditoria-animacoes.mjs` (Electron real) → `docs/AUDITORIA_ANIMACOES.md`; teste estático `test/unit/auditoria.test.js`. Ferramenta de teste: `/anim <nome>`. Ver no Windows real: a matriz foi medida no Linux (Xvfb, desenho em CPU).
+
+## v0.43.1 (uso real)
+- Agenda: erro de rede tenta de novo calado (`falhaAgenda`/`mensagemAgenda` em `calendar.js`), aviso só após 1 h.
+- Conversa: `respostaFalaDoAssunto` (professor.js) descarta resposta do Qwen fora do assunto → vale a pesquisa;
+  `Companion.chat` deduplica mensagem reenviada (`chatPendente`).
 
 ## Onde verificar
 

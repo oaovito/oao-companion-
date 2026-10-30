@@ -195,3 +195,35 @@ export function eventKind(titulo) {
 
 /** Animação do catálogo para cada tipo de compromisso. */
 export const KIND_ANIMS = { treino: 'duploBiceps', saude: 'lembrete', reuniao: 'modoFoco', estudo: 'lendo', festa: 'comemorar', comida: 'pedirComida', outro: 'lembrete' };
+
+// Falha de rede passageira (PC acabou de ligar/acordar, Wi-Fi caiu): tenta de novo
+// em silêncio. Só depois de 1 h seguida sem conseguir é que avisa — sem código técnico.
+const REDE = /ERR_(NAME_NOT_RESOLVED|INTERNET_DISCONNECTED|NETWORK_CHANGED|CONNECTION_(RESET|REFUSED|CLOSED|TIMED_OUT|ABORTED)|TIMED_OUT|ADDRESS_UNREACHABLE|NETWORK_IO_SUSPENDED|PROXY_CONNECTION_FAILED)|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET|tempo esgotado|fetch failed|HTTP 5\d\d/i;
+export const AGENDA_RETENTATIVAS_MS = [30e3, 2 * 60e3, 5 * 60e3];
+export const AGENDA_AVISO_APOS_MS = 60 * 60e3;
+
+/** Erro de rede passageiro (tentar de novo calado) ou problema do link (avisar)? */
+export function erroDeRede(msg) {
+  return REDE.test(String(msg || ''));
+}
+
+/** Mensagem para ela, sem código técnico. */
+export function mensagemAgenda(msg) {
+  const m = String(msg || '');
+  if (erroDeRede(m)) return 'Faz um tempo que não consigo falar com a agenda: parece que a internet está fora. Eu continuo tentando sozinho.';
+  if (/HTTP 40[134]/.test(m)) return 'A agenda não deixou eu ler: o link pode ter mudado ou deixado de ser público. Cola o link de novo no chat ("conectar agenda").';
+  if (/não é uma agenda/.test(m)) return 'Esse link não é de agenda. Cola o link de novo no chat ("conectar agenda").';
+  return 'Não consegui ler a agenda agora. Eu tento de novo daqui a pouco.';
+}
+
+/**
+ * Estado das falhas: decide se avisa e quando tentar de novo.
+ * @returns {{avisar: boolean, proximaMs: number}}
+ */
+export function falhaAgenda(estado, msg, agora = Date.now()) {
+  estado.falhas = (estado.falhas || 0) + 1;
+  if (estado.falhas === 1) estado.desde = agora;
+  const rede = erroDeRede(msg);
+  const proximaMs = AGENDA_RETENTATIVAS_MS[Math.min(estado.falhas - 1, AGENDA_RETENTATIVAS_MS.length - 1)];
+  return { avisar: !rede || agora - estado.desde >= AGENDA_AVISO_APOS_MS, proximaMs };
+}

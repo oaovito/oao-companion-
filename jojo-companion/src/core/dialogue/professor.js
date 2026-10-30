@@ -53,3 +53,21 @@ export function instrucaoProfessor({ seriedade = 'casual', seg = null, tema = nu
   if (seg && tema) linhas.push(`Assunto em andamento: "${tema}". ${PEDIDO[seg]}`);
   return linhas.join('\n');
 }
+
+const VAZIAS = new Set(['sobre', 'quais', 'qual', 'quando', 'onde', 'porque', 'explica', 'explique', 'sabe', 'voce', 'diferenca', 'entre', 'funciona', 'significa', 'pesquisa', 'procura', 'estudos', 'dizem', 'dizer', 'mesmo', 'coisa', 'tipo', 'jojo']);
+
+/** Palavras do assunto da pergunta (radical de 5 letras): "diabetes mellitus 2" → ["diabe", "melli"]. */
+export function termosDoAssunto(pergunta) {
+  return [...new Set(normalizeText(pergunta).split(' ').filter((w) => w.length >= 5 && !VAZIAS.has(w)).map((w) => w.slice(0, 5)))];
+}
+
+/**
+ * A resposta fala do que foi perguntado? O modelo pequeno às vezes se perde e responde
+ * outra coisa ("Bem-vindo ao João…"); aí a resposta é descartada e vale a pesquisa.
+ */
+export function respostaFalaDoAssunto(pergunta, resposta) {
+  const termos = termosDoAssunto(pergunta);
+  if (!termos.length) return true;
+  const r = normalizeText(resposta);
+  return termos.some((t) => r.includes(t));
+}

@@ -239,7 +239,7 @@ test('de costas o JoJo continua fisiculturista (memes usam a mesma vista)', () =
 test('"eu sou bonita?": cai de costas apaixonado e responde "É" no último suspiro', async () => {
   const e = started();
   const flush = async () => {
-    for (let k = 0; k < 8; k++) await Promise.resolve();
+    for (let k = 0; k < 16; k++) await Promise.resolve();
   };
   for (const msg of ['eu sou bonita?', 'Sou linda?', 'você me acha bonita?', 'tô bonita hoje?', 'estou linda?']) {
     let done = null;
@@ -300,7 +300,7 @@ test('em repouso o JoJo nunca fica parado: toda animação de idle se mexe', () 
 test('"eu deveria jogar lol?": caga no chão, pega e oferece dizendo "Passa na cara de uma vez."', async () => {
   const e = started();
   const flush = async () => {
-    for (let k = 0; k < 8; k++) await Promise.resolve();
+    for (let k = 0; k < 16; k++) await Promise.resolve();
   };
   for (const msg of ['eu deveria jogar lol?', 'Devo jogar LoL?', 'posso jogar league of legends?', 'bora de lol']) {
     let done = null;

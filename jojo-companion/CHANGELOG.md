@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.43.1 — 2026-10-30
+
+### Correções
+- **Agenda**: quando a internet ainda não está pronta (PC acabou de ligar ou acordar, Wi-Fi caiu), o JoJo tenta
+  de novo sozinho em 30 s, 2 min e 5 min, sem marcar "Bloqueado" nem mostrar código técnico
+  (ERR_NAME_NOT_RESOLVED). Só avisa se ficar mais de 1 h sem conseguir, em português claro. Também lê a agenda
+  de novo ao voltar da suspensão e espera 15 s depois de abrir com o Windows.
+- **Respostas fora do assunto**: se o motor da conversa se perder e responder outra coisa (ex.: "o que é a
+  diabetes mellitus 2?" → "Bem-vindo ao João…"), a resposta é descartada e o JoJo responde com o que pesquisou,
+  citando a fonte. Com a pesquisa pronta, ele não faz esperar mais de 25 s.
+- Doenças comuns (diabetes, hipertensão, asma, anemia…) entram no modo cientista: explicação séria e de verdade.
+- Mensagem reenviada enquanto ele ainda responde não aparece duplicada nem gera duas respostas.
+
+### Como testar
+- Pergunte "o que é a diabetes mellitus 2?": vem uma explicação sobre diabetes, com "(Fonte: …)".
+- Com a agenda conectada, desligue o Wi-Fi por alguns minutos: nada de "Bloqueado"; religue e ela volta sozinha.
+
 ## 0.43.0 — 2026-10-30
 
 ### Novidades
