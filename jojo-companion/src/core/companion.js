@@ -1298,10 +1298,11 @@ export class Companion {
       return { text: out, action: null, intent: 'musica', conversationId: conv.id, provider: this.dialogue.describe() };
     }
     // Expressão do que ela sente ("que nojo", "que vergonha"…) junto da resposta normal.
+    let emocao = false;
     if (!safety) {
       const ne = normalizeText(text);
       const em = EMOCAO_CONVERSA.find(([re]) => re.test(ne));
-      if (em) this.playCatalog(em[1], { source: 'chat', speak: false });
+      if (em) emocao = this.playCatalog(em[1], { source: 'chat', speak: false });
     }
     // Pedido de animação por frase ("faz uma dancinha", "selfie", "modo fera"…).
     const hit = this.catalogFromChat(text);
@@ -1372,7 +1373,8 @@ export class Companion {
     this.noteActivity();
     if (delayed) this.say(reply.text, 'speech');
     else if (reply.web) this.fireEvent('respostaPronta', { speak: false });
-    else if (reply.action) this._doChatAction(reply.action, now);
+    // A expressão do que ela sente já está tocando: a resposta só fala junto.
+    else if (reply.action && !emocao) this._doChatAction(reply.action, now);
     else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
     // A conversa online entendeu um pedido de comando que as frases programadas não pegaram.
     if (reply.command) this.runInterpreted({ cmd: reply.command, arg: reply.commandArg || '' }, conv.id, { silent: true });
