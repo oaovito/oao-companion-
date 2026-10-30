@@ -75,6 +75,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   **Regra irredutível:** a IA responde sempre no jeito do JoJo (prompt com perfil + falas reais; resposta
   com cara de assistente é descartada e cai nas programadas). Segurança e gatilhos com animação ficam programados.
 - O usuário usa majoritariamente **Windows**: toda funcionalidade nova precisa passar no CI do Windows.
+- Notas da Release: geradas de `CHANGELOG.md` (seção da versão: Novidades/Melhorias/Correções/Remoções/Como testar)
+  por `scripts/release-notes.mjs`; só o que mudou; nunca editar releases antigas; sem seção → publicação bloqueada.
+- Atualização 100% automática: quem já tem o app nunca baixa nada à mão.
 - Publicação: commit com `[publicar]` (ou tag `v*`) → Release com `JoJoCompanion.exe`, também em
   `oaovito/jojo-companion-releases` (público; segredo `RELEASES_TOKEN`), de onde vêm as atualizações.
 - Pet: balão de status das conversas (Em andamento / Precisa de você / Pronto / Bloqueado);

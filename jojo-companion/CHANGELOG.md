@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## 0.33.0 — 2026-10-30
+
+### Melhorias
+- **Mini-jogos refeitos para serem jogáveis do começo ao fim**: quiz (5 perguntas, 40 no banco, sem
+  repetir, aceita "b", "letra b", "é a b" ou o texto), verdade ou mentira (5 rodadas, 30 no banco),
+  emoção do tubarão (4 rodadas), pedra-papel-nadadeira (melhor de 3), memória que cresce a cada
+  acerto (até 8 poses), "O JoJo mandou" (novo, no lugar do siga o líder), série em dupla até 20,
+  caça-palavras com palavras na vertical também e dica, pega-pega (pegar 3 vezes, ele acelera),
+  cabo de guerra (3 tentativas, ele puxa de volta) e clique rápido com contagem.
+- **Recordes** por jogo, salvos e mostrados na Central; "de novo"/"revanche" repete o último jogo.
+- Notas da Release geradas só com o que mudou na versão (`scripts/release-notes.mjs`); sem a seção da
+  versão no CHANGELOG, a publicação é bloqueada.
+
+### Correções
+- Esconde-esconde: o JoJo agora se esconde de verdade (canto longe do cursor, camuflado) e só vale
+  clicando nele; antes ficava no lugar e bastava escrever "achei".
+- Pega-pega chamava uma animação que não existe.
+- Aviso de missão/conquista não apaga mais a bronca que está na tela.
+
+### Como testar
+- Central → Coleção e jogos → escolha um jogo; jogue até o fim e veja o placar e o 🏆 recorde.
+- No chat: `/jogo quiz`, responda "letra b"; no fim diga "de novo".
+- `/jogo pega` e `/jogo esconde` (o JoJo entra no modo de interação; clique nele).
+
 ## 0.32.0 — 2026-10-29
 
 ### Adicionado

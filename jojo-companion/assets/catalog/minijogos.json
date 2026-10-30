@@ -1,5 +1,5 @@
 {
- "_notas": "Mini-jogos (antitédio 46–60): todos opcionais, começam só quando ela pede (Central → Mini-jogos, ou no chat). Campos: id, nome, n, gatilho (frases), duracao (s), tipo. Nunca o mesmo jogo duas vezes seguidas quando sorteado ('/jogo').",
+ "_notas": "Mini-jogos (antitédio 46–60): todos opcionais, começam só quando ela pede (Central → Mini-jogos, ou no chat). Campos: id, nome, n, gatilho (frases), duracao (s), tipo. Nunca o mesmo jogo duas vezes seguidas quando sorteado ('/jogo'). Jogos de conversa têm rodadas e placar; recordes ficam salvos na progressão; 'de novo' repete o último jogo; 'sair' encerra.",
  "jogos": [
   {
    "id": "cliqueRapido",
@@ -29,7 +29,7 @@
    "nome": "Cabo de guerra com o cursor",
    "n": 48,
    "tipo": "cabo",
-   "duracao": 20,
+   "duracao": 40,
    "frases": [
     "cabo de guerra"
    ]
@@ -39,7 +39,7 @@
    "nome": "Quiz de estudo",
    "n": 49,
    "tipo": "quiz",
-   "duracao": 60,
+   "duracao": 180,
    "frases": [
     "quiz",
     "me faz uma pergunta"
@@ -50,7 +50,7 @@
    "nome": "Contagem de repetições em dupla",
    "n": 50,
    "tipo": "repeticoes",
-   "duracao": 90,
+   "duracao": 180,
    "frases": [
     "conta comigo",
     "contar repeticoes",
@@ -62,7 +62,7 @@
    "nome": "Esconde-esconde",
    "n": 51,
    "tipo": "esconde",
-   "duracao": 30,
+   "duracao": 45,
    "frases": [
     "esconde-esconde",
     "esconde esconde"
@@ -70,13 +70,16 @@
   },
   {
    "id": "lider",
-   "nome": "Siga o líder",
+   "nome": "O JoJo mandou",
    "n": 52,
-   "tipo": "lider",
-   "duracao": 60,
+   "tipo": "mandou",
+   "duracao": 180,
    "frases": [
     "siga o lider",
-    "siga o líder"
+    "siga o líder",
+    "o jojo mandou",
+    "jojo mandou",
+    "o mestre mandou"
    ]
   },
   {
@@ -84,7 +87,7 @@
    "nome": "Memória de poses",
    "n": 53,
    "tipo": "memoria",
-   "duracao": 60,
+   "duracao": 180,
    "frases": [
     "memoria de poses",
     "memória de poses",
@@ -118,7 +121,7 @@
    "nome": "Pergunta e resposta rápida de curiosidades",
    "n": 56,
    "tipo": "curiosidade",
-   "duracao": 30,
+   "duracao": 180,
    "frases": [
     "curiosidade",
     "verdade ou mentira"
@@ -129,7 +132,7 @@
    "nome": "Adivinhar a emoção do tubarão",
    "n": 57,
    "tipo": "emocao",
-   "duracao": 30,
+   "duracao": 180,
    "frases": [
     "adivinha a emocao",
     "adivinhar a emoção",
@@ -142,7 +145,7 @@
    "nome": "Pedra, papel e nadadeira",
    "n": 58,
    "tipo": "ppn",
-   "duracao": 30,
+   "duracao": 180,
    "frases": [
     "pedra papel",
     "jokenpo",
@@ -154,7 +157,7 @@
    "nome": "Pega-pega suave",
    "n": 59,
    "tipo": "pega",
-   "duracao": 25,
+   "duracao": 40,
    "frases": [
     "pega-pega",
     "pega pega"
@@ -165,7 +168,7 @@
    "nome": "Caça-palavras no balão",
    "n": 60,
    "tipo": "cacaPalavras",
-   "duracao": 90,
+   "duracao": 180,
    "frases": [
     "caca-palavras",
     "caça-palavras",
@@ -308,6 +311,231 @@
     "Nitrogênio"
    ],
    "r": 1
+  },
+  {
+   "p": "Quantos dentes um tubarão pode trocar na vida?",
+   "o": [
+    "Uns 30",
+    "Milhares",
+    "Nenhum"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual é o músculo mais forte do corpo pelo tamanho?",
+   "o": [
+    "Masseter (mandíbula)",
+    "Bíceps",
+    "Língua"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Quanto é 15% de 200?",
+   "o": [
+    "30",
+    "15",
+    "20"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é o maior oceano da Terra?",
+   "o": [
+    "Atlântico",
+    "Índico",
+    "Pacífico"
+   ],
+   "r": 2
+  },
+  {
+   "p": "Quem pintou a Mona Lisa?",
+   "o": [
+    "Michelangelo",
+    "Leonardo da Vinci",
+    "Van Gogh"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual vitamina o sol ajuda o corpo a produzir?",
+   "o": [
+    "Vitamina C",
+    "Vitamina D",
+    "Vitamina B12"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual é o osso mais longo do corpo?",
+   "o": [
+    "Fêmur",
+    "Tíbia",
+    "Úmero"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Quanto é 9 × 12?",
+   "o": [
+    "108",
+    "98",
+    "112"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é o símbolo químico do ouro?",
+   "o": [
+    "Ag",
+    "Au",
+    "Go"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Quantos minutos tem um pomodoro clássico?",
+   "o": [
+    "25",
+    "45",
+    "10"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é a capital do Canadá?",
+   "o": [
+    "Toronto",
+    "Ottawa",
+    "Vancouver"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual animal é um mamífero?",
+   "o": [
+    "Tubarão",
+    "Golfinho",
+    "Arraia"
+   ],
+   "r": 1
+  },
+  {
+   "p": "O que o agachamento trabalha mais?",
+   "o": [
+    "Pernas e glúteos",
+    "Ombro",
+    "Antebraço"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é o plural de 'cidadão'?",
+   "o": [
+    "Cidadões",
+    "Cidadãos",
+    "Cidadães"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Quantos lados tem um hexágono?",
+   "o": [
+    "5",
+    "6",
+    "8"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Qual é o planeta mais perto do Sol?",
+   "o": [
+    "Vênus",
+    "Mercúrio",
+    "Marte"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Quem descobriu a penicilina?",
+   "o": [
+    "Alexander Fleming",
+    "Louis Pasteur",
+    "Marie Curie"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é a velocidade da luz (aprox.)?",
+   "o": [
+    "300 mil km/s",
+    "3 mil km/s",
+    "30 mil km/s"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Quantos cromossomos tem uma célula humana comum?",
+   "o": [
+    "46",
+    "23",
+    "48"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual destes NÃO é um tubarão?",
+   "o": [
+    "Tubarão-baleia",
+    "Orca",
+    "Tubarão-martelo"
+   ],
+   "r": 1
+  },
+  {
+   "p": "Quanto é 2 elevado a 10?",
+   "o": [
+    "1024",
+    "512",
+    "2048"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é o rio mais extenso do Brasil (só em território brasileiro)?",
+   "o": [
+    "São Francisco",
+    "Amazonas",
+    "Paraná"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Creatina serve principalmente para…",
+   "o": [
+    "Força e explosão",
+    "Emagrecer",
+    "Dormir melhor"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Qual é o resultado de 0,5 + 0,25?",
+   "o": [
+    "0,75",
+    "0,30",
+    "0,725"
+   ],
+   "r": 0
+  },
+  {
+   "p": "Quem foi o primeiro presidente do Brasil?",
+   "o": [
+    "Deodoro da Fonseca",
+    "Getúlio Vargas",
+    "Dom Pedro II"
+   ],
+   "r": 0
   }
  ],
  "curiosidades": [
@@ -350,6 +578,86 @@
   {
    "p": "A Lua tem terremotos (lunemotos).",
    "r": true
+  },
+  {
+   "p": "Tubarões não têm ossos, só cartilagem.",
+   "r": true
+  },
+  {
+   "p": "O tubarão-baleia come gente.",
+   "r": false
+  },
+  {
+   "p": "Polvos têm três corações.",
+   "r": true
+  },
+  {
+   "p": "Os humanos usam só 10% do cérebro.",
+   "r": false
+  },
+  {
+   "p": "A Grande Muralha da China dá pra ver da Lua a olho nu.",
+   "r": false
+  },
+  {
+   "p": "Abacaxi amolece carne por causa de uma enzima.",
+   "r": true
+  },
+  {
+   "p": "Água quente pode congelar mais rápido que fria em certas condições.",
+   "r": true
+  },
+  {
+   "p": "Raio nunca cai duas vezes no mesmo lugar.",
+   "r": false
+  },
+  {
+   "p": "Morcegos são cegos.",
+   "r": false
+  },
+  {
+   "p": "O coração de uma baleia-azul é do tamanho de um carro pequeno.",
+   "r": true
+  },
+  {
+   "p": "Alongar antes do treino evita qualquer lesão.",
+   "r": false
+  },
+  {
+   "p": "Tubarões detectam campos elétricos.",
+   "r": true
+  },
+  {
+   "p": "O Everest é a montanha mais alta medida do nível do mar.",
+   "r": true
+  },
+  {
+   "p": "Estudar com intervalos funciona melhor que virar a noite.",
+   "r": true
+  },
+  {
+   "p": "Camelos guardam água na corcova.",
+   "r": false
+  },
+  {
+   "p": "Formigas não dormem.",
+   "r": false
+  },
+  {
+   "p": "Uma colher de mel é o trabalho da vida inteira de várias abelhas.",
+   "r": true
+  },
+  {
+   "p": "Tomate é fruta.",
+   "r": true
+  },
+  {
+   "p": "Peixe-palhaço pode mudar de sexo.",
+   "r": true
+  },
+  {
+   "p": "Cachorro só enxerga em preto e branco.",
+   "r": false
   }
  ],
  "emocoes": [
@@ -410,18 +718,53 @@
   {
    "anim": "tchau",
    "nome": "tchau"
+  },
+  {
+   "anim": "selfie",
+   "nome": "selfie"
+  },
+  {
+   "anim": "piscadinha",
+   "nome": "piscadinha"
   }
  ],
  "palavras": [
-  "SHAPE",
-  "TREINO",
-  "FOCO",
-  "SUPINO",
-  "DORSAL",
-  "PUMP",
-  "SERIE",
-  "ESTUDO",
+  "BICEPS",
+  "CADERNO",
   "CAMPEAO",
-  "BICEPS"
+  "CARDUME",
+  "DIETA",
+  "DORSAL",
+  "ESTUDO",
+  "FOCA",
+  "FOCO",
+  "GLUTEO",
+  "MUSCULO",
+  "ONDA",
+  "PEITORAL",
+  "PROVA",
+  "PUMP",
+  "RECIFE",
+  "SARDINHA",
+  "SERIE",
+  "SHAPE",
+  "SUPINO",
+  "TREINO",
+  "TUBARAO",
+  "WHEY"
+ ],
+ "mandou": [
+  "SUPINO",
+  "SARDINHA",
+  "WHEY",
+  "FRANGO",
+  "FOCA",
+  "CARDUME",
+  "BICEPS",
+  "PROTEINA",
+  "AGACHA",
+  "PEIXE",
+  "DORSAL",
+  "SHAPE"
  ]
 }

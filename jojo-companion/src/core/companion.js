@@ -1156,6 +1156,10 @@ export class Companion {
     // Mini-jogo em andamento: a mensagem é a jogada (segurança sempre vem antes).
     const safety = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text));
     if (safety && this.game) this.game = null;
+    // Revanche: "de novo", "mais uma", "outra" logo depois de um jogo.
+    if (!safety && !this.game && this.lastGame && this.clock.now() - this.lastGame.at < 5 * 60e3 && /^(de novo|denovo|mais uma|outra|outra vez|revanche|joga de novo|jogar de novo|bora de novo|again|quero revanche)\b/.test(normalizeText(text))) {
+      return this._quickReply(conv, this.startGame(this.lastGame.id), 'jogo');
+    }
     // Pedido de comando dito de qualquer jeito ("pare com a sessão de foco", "some daqui"…).
     const pedido = safety ? null : interpretCommand(text, this._commandContext());
     if (pedido) return this._quickReply(conv, this.runInterpreted(pedido, conv.id), 'comando');
@@ -1586,8 +1590,18 @@ export class Companion {
     // Cabo de guerra: arrastou longe o bastante?
     if (this.game && this.game.tipo === 'cabo' && this.dragFrom) {
       const d = Math.hypot(this.pos.x - this.dragFrom.x, this.pos.y - this.dragFrom.y);
-      if (d > 250) this.clock.setTimeout(() => this.say(this._finishGame(true, 'Você venceu o cabo de guerra. Braço de campeã.'), 'speech'), 800);
-      else this.clock.setTimeout(() => this.say('Puxa mais! Mais de 250 px.', 'speech'), 800);
+      const g = this.game;
+      g.tentativas = (g.tentativas || 0) + 1;
+      if (d > 250) this.clock.setTimeout(() => this.say(this._finishGame(true, `Você venceu o cabo de guerra (${Math.round(d)} px). Braço de campeã.`, null, Math.round(d)), 'speech'), 800);
+      else if (g.tentativas >= 3) this.clock.setTimeout(() => this.say(this._finishGame(false, `${Math.round(d)} px. Três tentativas e nada. Eu ganhei.`), 'speech'), 800);
+      else {
+        const back = { ...this.dragFrom };
+        this.clock.setTimeout(() => {
+          if (this.game !== g) return;
+          this.say(`${Math.round(d)} px. Puxa mais! (${3 - g.tentativas} tentativa${3 - g.tentativas > 1 ? 's' : ''})`, 'speech');
+          this.mover.start(this.pos, back, { speed: 220, easing: 'inOut', now: this.clock.now(), kind: 'walk' });
+        }, 800);
+      }
     }
     this.noteActivity();
     this._recoverPosition();
@@ -2006,10 +2020,14 @@ export class Companion {
     for (const q of novas) msgs.push(`Conquista: ${q.nome}!`);
     if (lvl) msgs.push(`Subi pro nível ${lvl.nivel}: ${lvl.nome}. Shape evoluindo.`);
     if (!msgs.length) return;
-    this.clock.setTimeout(() => {
+    // Não passa por cima de uma fala com categoria (bronca, lembrete): espera ela acabar.
+    let tries = 0;
+    const show = () => {
+      if (this.bubble && this.bubble.category && tries++ < 10) return this.clock.setTimeout(show, 1500);
       this.say(msgs.join(' '), 'speech');
       if (lvl) this.fireEvent('nivel', { speak: false });
-    }, 900);
+    };
+    this.clock.setTimeout(show, 900);
   }
 
   /** Item tocou: entra na coleção de poses e alimenta a memória de "curtiu"/"ignorou". */
@@ -2177,12 +2195,70 @@ export class Companion {
     // Jogos de clique precisam do modo de interação (o JoJo para de fugir).
     if (['cliques', 'bolhas', 'pega', 'cabo', 'esconde'].includes(g.tipo) && !this.interaction) this.enterInteraction('jogo');
     if (r.sequence) this.ambientQueue.push(...r.sequence.slice(1));
-    const first = r.sequence ? r.sequence[0] : r.anim;
+    const first = r.sequence ? r.sequence[0] : r.emocao ? g.q.anim : r.anim;
     if (first) this.playCatalog(first, { source: 'comando', speak: false });
     if (r.timer === 'reflexo') this.clock.setTimeout(() => this._reflexGo(g), 2000 + this.rng() * 3000);
+    if (g.tipo === 'esconde') this.clock.setTimeout(() => this._hide(g), 1200);
+    if (g.tipo === 'cliques') this.clock.setTimeout(() => this.game === g && this.say(`${g.cliques}… mais rápido!`, 'thought'), 5000);
     this.clock.setTimeout(() => this._gameTimeout(g), jogo.duracao * 1000);
     this._applyLayout(true);
-    return r.text;
+    const rec = this._record(jogo.id);
+    return rec != null ? `${r.text}\n(Recorde: ${this._fmtRecord(jogo.id, rec)})` : r.text;
+  }
+
+  _record(id) {
+    const recs = this.progress.st.jogos.recordes || {};
+    return recs[id] ?? null;
+  }
+
+  _fmtRecord(id, v) {
+    const j = this.games && this.games.byId.get(id);
+    return j && j.tipo === 'reflexo' ? `${(v / 1000).toFixed(2).replace('.', ',')} s` : String(v);
+  }
+
+  /** Guarda o recorde; devolve true se é novo. */
+  _saveRecord(id, score, menorMelhor = false) {
+    if (score == null) return false;
+    const st = this.progress.st.jogos;
+    st.recordes = st.recordes || {};
+    const old = st.recordes[id];
+    if (old != null && (menorMelhor ? score >= old : score <= old)) return false;
+    st.recordes[id] = score;
+    this.progress.save(this.progress.st);
+    return true;
+  }
+
+  /** Esconde-esconde: some para um canto longe do cursor, camuflado. */
+  _hide(g) {
+    if (this.game !== g) return;
+    const disp = this._currentDisplay();
+    if (!disp) return;
+    const r = this._rects();
+    const wa = disp.workArea;
+    const spots = [
+      { x: wa.x + 10, y: wa.y + wa.height - r.box.height },
+      { x: wa.x + wa.width - r.box.width - 10, y: wa.y + wa.height - r.box.height },
+      { x: wa.x + 10, y: wa.y + 40 },
+      { x: wa.x + wa.width - r.box.width - 10, y: wa.y + 40 },
+      { x: wa.x + wa.width / 2 - r.box.width / 2, y: wa.y + 40 },
+    ];
+    spots.sort((a, b) => dist(b, this.cursor) - dist(a, this.cursor));
+    const to = spots[Math.floor(this.rng() * 2)];
+    this.pos = { x: to.x, y: to.y };
+    this.opacity = 0.35; // camuflado
+    this.hideBubble();
+    this.playCatalog('espiarUmOlho', { source: 'comando', speak: false });
+    this._applyLayout(true);
+  }
+
+  /** Pega-pega: depois de pego, reaparece em outro lugar. */
+  _teleportAway() {
+    const disp = this._currentDisplay();
+    if (!disp) return;
+    const r = this._rects();
+    const wa = disp.workArea;
+    this.pos = { x: wa.x + this.rng() * Math.max(1, wa.width - r.box.width), y: wa.y + wa.height - r.box.height - this.rng() * Math.max(1, wa.height / 2) };
+    this._applyLayout(true);
   }
 
   _reflexGo(g) {
@@ -2195,14 +2271,22 @@ export class Companion {
   _gameTimeout(g) {
     if (this.game !== g) return;
     let text;
-    if (g.tipo === 'cliques') text = this._finishGame(g.cliques >= 15, `${g.cliques} cliques em 10 s. ${g.cliques >= 15 ? 'Dedo de campeã.' : 'Dá pra mais.'}`);
-    else if (g.tipo === 'bolhas') text = this._finishGame(g.bolhas >= 10, `${g.bolhas} bolhas estouradas. ${g.bolhas >= 10 ? 'Destruidora.' : 'Fracote. Brincadeira.'}`);
-    else text = this._finishGame(false, g.tipo === 'pega' || g.tipo === 'esconde' ? 'Tempo! Ganhei. Sou rápido demais.' : 'Acabou o tempo.');
+    if (g.tipo === 'cliques') text = this._finishGame(g.cliques >= 15, `${g.cliques} cliques em 10 s. ${g.cliques >= 15 ? 'Dedo de campeã.' : 'Dá pra mais.'}`, null, g.cliques);
+    else if (g.tipo === 'bolhas') text = this._finishGame(g.bolhas >= 10, `${g.bolhas} bolhas estouradas. ${g.bolhas >= 10 ? 'Destruidora.' : 'Fracote. Brincadeira.'}`, null, g.bolhas);
+    else if (g.tipo === 'pega') text = this._finishGame(false, `Tempo! Me pegou ${g.pegos} de 3. Sou rápido demais.`, null, g.pegos);
+    else if (g.tipo === 'esconde') text = this._finishGame(false, 'Tempo! Ganhei. Eu tava bem ali.');
+    else if (g.tipo === 'cabo') text = this._finishGame(false, 'Tempo! Eu ganhei o cabo de guerra.');
+    else if (['quiz', 'curiosidade', 'emocao', 'mandou'].includes(g.tipo)) text = this._finishGame(g.pontos * 2 > g.total, `Tempo! Placar: ${g.pontos}/${g.total}.`, null, g.pontos);
+    else text = this._finishGame(false, 'Acabou o tempo.');
     this.say(text, 'speech');
   }
 
-  _finishGame(win, text, anim = null) {
+  _finishGame(win, text, anim = null, score = null, menorMelhor = false) {
+    const g = this.game;
     this.game = null;
+    if (g && g.tipo === 'esconde') this.opacity = 1;
+    if (g) this.lastGame = { id: g.id, at: this.clock.now() };
+    if (g && score != null && (win || !menorMelhor) && this._saveRecord(g.id, score, menorMelhor)) text = `${text} Recorde novo: ${this._fmtRecord(g.id, score)}!`;
     if (win) {
       this.progress.log('vitoria');
       this._progress('jogoVitoria', { conta: 'vitorias' });
@@ -2217,13 +2301,19 @@ export class Companion {
   _gameAnswer(text) {
     const g = this.game;
     if (!g || !this.games) return null;
-    if (/^(parar|sair|chega|para o jogo|cancelar)\b/i.test(normalizeText(text))) {
+    if (/^(parar|sair|chega|para o jogo|cancelar|desisto)\b/i.test(normalizeText(text))) {
+      if (g.tipo === 'esconde') this.opacity = 1;
       this.game = null;
+      this.lastGame = { id: g.id, at: this.clock.now() };
+      this._applyLayout(true);
       return 'Jogo encerrado. Medrosa. Brincadeira.';
     }
     const r = this.games.answer(g, text, { now: this.clock.now() });
-    if (r.done) return this._finishGame(!!r.win, r.text, r.anim);
-    if (r.anim) this.playCatalog(r.anim, { source: 'comando', speak: false });
+    if (r.done) return this._finishGame(!!r.win, r.text, r.anim, r.score ?? null, !!r.menorMelhor);
+    if (r.sequence) {
+      this.ambientQueue.push(...r.sequence.slice(1));
+      this.playCatalog(r.sequence[0], { source: 'comando', speak: false });
+    } else if (r.anim) this.playCatalog(r.anim, { source: 'comando', speak: false });
     return r.text;
   }
 
@@ -2233,8 +2323,20 @@ export class Companion {
     if (!g) return false;
     if (name === 'bolha' && g.tipo === 'bolhas') return (g.bolhas++, true);
     if (name === 'clique' && g.tipo === 'cliques') return (g.cliques++, true);
-    if (name === 'clique' && (g.tipo === 'esconde' || g.tipo === 'pega')) {
-      this.say(this._finishGame(true, g.tipo === 'esconde' ? 'Me achou! Tubarão desse tamanho não se esconde.' : 'Me pegou! Dessa vez.'), 'speech');
+    if (name === 'clique' && g.tipo === 'esconde') {
+      const s = Math.round((this.clock.now() - (g.ate - (this.games.byId.get(g.id) || {}).duracao * 1000)) / 1000);
+      this.say(this._finishGame(true, `Me achou em ${s} s! Tubarão desse tamanho não se esconde.`, null, s, true), 'speech');
+      return true;
+    }
+    if (name === 'clique' && g.tipo === 'pega') {
+      g.pegos = (g.pegos || 0) + 1;
+      if (g.pegos >= 3) {
+        this.say(this._finishGame(true, 'Três! Me pegou. Dessa vez.', null, 3), 'speech');
+        return true;
+      }
+      g.nivel = g.pegos;
+      this.say(`${g.pegos}! ${g.pegos === 1 ? 'Sorte.' : 'Última. Agora eu acelero.'}`, 'speech');
+      this._teleportAway();
       return true;
     }
     return false;
@@ -2250,8 +2352,9 @@ export class Companion {
     const disp = this._currentDisplay();
     if (!disp) return;
     const dir = this.cursor.x > r.visual.x + r.visual.width / 2 ? -1 : 1;
-    const to = { x: clamp(this.pos.x + dir * 120, disp.workArea.x, disp.workArea.x + disp.workArea.width - r.box.width), y: this.pos.y };
-    this.mover.start(this.pos, to, { speed: 260, easing: 'out', now, kind: 'flee' });
+    const k = 1 + (g.nivel || 0) * 0.6; // cada pegada, foge mais longe e mais rápido
+    const to = { x: clamp(this.pos.x + dir * 120 * k, disp.workArea.x, disp.workArea.x + disp.workArea.width - r.box.width), y: this.pos.y };
+    this.mover.start(this.pos, to, { speed: 260 * k, easing: 'out', now, kind: 'flee' });
   }
 
   // -------- conversa: comandos e adaptação

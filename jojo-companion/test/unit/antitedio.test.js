@@ -71,34 +71,81 @@ test('rotinas: nunca a mesma duas vezes seguidas; torre cresce ao longo do dia; 
   assert.match(routineSteps(hist, s2)[0].fala, /^Episódio 2/);
 });
 
-test('mini-jogos de conversa: quiz, verdade ou mentira, pedra-papel-nadadeira, repetições, caça-palavras, memória', () => {
+test('mini-jogos de conversa: rodadas com placar, sem repetir pergunta, respostas flexíveis', () => {
   const g = new Games({ data: JOGOS, rng: seededRng(3) });
+  // Quiz: 5 perguntas, aceita "b", "letra b", "é a b" ou o texto da opção; placar no fim.
   let r = g.start(g.byId.get('quiz'));
-  const right = 'abc'[r.game.q.r];
-  assert.equal(g.answer(r.game, right).win, true);
+  assert.match(r.text, /Pergunta 1\/5/);
+  const vistas = new Set([r.game.q.p]);
+  let a;
+  for (let k = 0; k < 5; k++) {
+    const q = r.game.q;
+    const resp = ['abc'[q.r], `letra ${'abc'[q.r]}`, `é a ${'abc'[q.r]}`, q.o[q.r], `${'abc'[q.r]})`][k];
+    a = g.answer(r.game, resp);
+    if (!a.done) {
+      assert.ok(!vistas.has(r.game.q.p), 'não repete pergunta');
+      vistas.add(r.game.q.p);
+    }
+  }
+  assert.equal(a.done, true);
+  assert.equal(a.win, true);
+  assert.equal(a.score, 5);
+  assert.match(a.text, /5\/5/);
+  assert.equal(g.answer(g.start(g.byId.get('quiz')).game, 'xyz').done, false, 'resposta inválida pede de novo');
+  // Verdade ou mentira: 5 rodadas.
   r = g.start(g.byId.get('curiosidades'));
-  assert.equal(g.answer(r.game, r.game.q.r ? 'verdade' : 'mentira').win, true);
+  for (let k = 0; k < 5; k++) a = g.answer(r.game, r.game.q.r ? 'verdade' : 'mentira');
+  assert.equal(a.done && a.win, true);
+  // Pedra-papel-nadadeira: melhor de 3.
   r = g.start(g.byId.get('ppn'));
-  const a = g.answer(r.game, 'pedra');
-  assert.ok(a.done || /Empate/.test(a.text));
+  for (let k = 0; k < 30 && !(a = g.answer(r.game, 'pedra')).done; k++);
+  assert.equal(a.done, true);
+  assert.match(a.text, /\d x \d/);
+  // Repetições até 20; errar a conta recomeça.
   r = g.start(g.byId.get('repeticoes'));
-  for (const n of [2, 4, 6, 8]) assert.equal(g.answer(r.game, String(n)).done, false);
-  assert.equal(g.answer(r.game, '10').win, true);
+  assert.equal(g.answer(r.game, '5').done, false);
+  r = g.start(g.byId.get('repeticoes'));
+  for (let n = 2; n < 20; n += 2) assert.equal(g.answer(r.game, String(n)).done, false);
+  assert.equal(g.answer(r.game, '20').win, true);
+  // Caça-palavras: palavra na grade (horizontal ou vertical), 3 tentativas com dica.
   r = g.start(g.byId.get('cacaPalavras'));
-  assert.ok(r.text.includes(r.game.word.split('').join(' ')), 'palavra está na grade');
+  const grid = r.text.split('\n').slice(1).map((l) => l.replace(/ /g, ''));
+  const cols = grid[0].split('').map((_, x) => grid.map((row) => row[x]).join(''));
+  assert.ok([...grid, ...cols].some((l) => l.includes(r.game.word)), 'palavra está na grade');
+  assert.equal(g.answer(r.game, 'nada').done, false);
+  assert.match(g.answer(r.game, 'nada').text, /Dica/);
   assert.equal(g.answer(r.game, r.game.word.toLowerCase()).win, true);
+  // Memória: a sequência cresce a cada acerto.
   r = g.start(g.byId.get('memoria'));
-  assert.equal(g.answer(r.game, r.game.seq.map((p) => p.nome).join(', ')).win, true);
+  a = g.answer(r.game, r.game.seq.map((p) => p.nome).join(', '));
+  assert.equal(a.done, false);
+  assert.equal(a.sequence.length, 4);
+  a = g.answer(r.game, 'errado');
+  assert.equal(a.done, true);
+  assert.equal(a.score, 3);
+  // O JoJo mandou: obedece só quando ele manda.
+  r = g.start(g.byId.get('lider'));
+  for (let k = 0; k < 6; k++) a = g.answer(r.game, r.game.mandou ? r.game.palavra.toLowerCase() : 'não');
+  assert.equal(a.done && a.win && a.score, 6);
+  // Esconde-esconde não se ganha digitando.
+  assert.equal(g.answer(g.start(g.byId.get('esconde')).game, 'achei').done, false);
   assert.equal(g.find('bora jogar quiz').id, 'quiz');
+  assert.equal(g.find('o jojo mandou').id, 'lider');
 });
 
-test('companion: /jogo no chat, reflexo com "JÁ", clique rápido e bolhas contam gestos', async () => {
+test('companion: /jogo no chat, rodadas, reflexo com "JÁ", recordes, revanche, pega-pega e esconde', async () => {
   const e = started();
   e.companion.enterInteraction('test');
   let r = await chatAdv(e, '/jogo quiz');
   assert.ok(e.companion.game && e.companion.game.tipo === 'quiz', r.text);
-  r = await chatAdv(e, 'abc'[e.companion.game.q.r]);
-  assert.match(r.text, /Acertou/);
+  for (let k = 0; k < 5; k++) r = await chatAdv(e, 'abc'[e.companion.game.q.r]);
+  assert.match(r.text, /5\/5/);
+  assert.match(r.text, /Recorde novo/);
+  assert.equal(e.companion.game, null);
+  r = await chatAdv(e, 'de novo');
+  assert.equal(e.companion.game.tipo, 'quiz', 'revanche');
+  assert.match(r.text, /Recorde: 5/);
+  r = await chatAdv(e, 'sair');
   assert.equal(e.companion.game, null);
   r = await chatAdv(e, '/jogo corrida');
   e.clock.advance(6000);
@@ -108,7 +155,24 @@ test('companion: /jogo no chat, reflexo com "JÁ", clique rápido e bolhas conta
   for (let i = 0; i < 16; i++) e.companion.gesture('clique');
   e.clock.advance(11000);
   assert.equal(e.companion.game, null);
-  assert.ok(e.companion.progress.st.contas.vitorias >= 2);
+  assert.equal(e.companion._record('cliqueRapido'), 16);
+  // Pega-pega: precisa pegar 3 vezes; ele reaparece em outro lugar.
+  await chatAdv(e, '/jogo pega');
+  const p0 = { ...e.companion.pos };
+  e.companion.gesture('clique');
+  assert.equal(e.companion.game.pegos, 1);
+  assert.notDeepEqual(e.companion.pos, p0);
+  e.companion.gesture('clique');
+  e.companion.gesture('clique');
+  assert.equal(e.companion.game, null);
+  // Esconde-esconde: some camuflado e só vale clicando.
+  await chatAdv(e, '/jogo esconde');
+  e.clock.advance(1500);
+  assert.equal(e.companion.opacity, 0.35);
+  e.companion.gesture('clique');
+  assert.equal(e.companion.game, null);
+  assert.equal(e.companion.opacity, 1);
+  assert.ok(e.companion.progress.st.contas.vitorias >= 3);
   r = await chatAdv(e, '/bolhas');
   assert.equal(e.overlay.state.minigame.tipo, 'bolhas');
   assert.equal(e.companion.gesture('bolha'), true);

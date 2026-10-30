@@ -115,6 +115,7 @@ export function interpretCommand(text, ctx = {}) {
   if (st >= 0 && obj) {
     const min = (n.match(/\b(\d{1,3})\s*(min|minutos?|m)\b/) || [])[1];
     if (obj === 'foco' && !ctx.foco) return { cmd: 'foco_iniciar', arg: `${min || 25}${/\btreino\b|\btreinar\b/.test(n) ? ' treino' : ''}` };
+    if (obj === 'jogo' && !ctx.jogo && !/\b(lol|league|valorant|fortnite|minecraft)\b/.test(n)) return { cmd: 'jogo', arg: n };
     if (obj === 'calma') return { cmd: 'calma' };
     if (obj === 'ritmo') return { cmd: 'ritmo' };
     if (obj === 'bolhas') return { cmd: 'bolhas' };

@@ -226,6 +226,20 @@ export function routineSteps(r, st, date = new Date()) {
  * Estados de mini-jogos jogados no chat. `start` devolve {game, text, anim};
  * `answer(game, texto)` devolve {text, done, win, anim}.
  */
+// Rodadas por jogo de conversa (placar no fim; ganha com a maioria).
+const RODADAS = { quiz: 5, curiosidade: 5, emocao: 4, mandou: 6 };
+const SAIR = '(escreve "sair" pra parar)';
+
+/** Letra/opção escolhida no quiz ("b", "letra b", "é a b", "b)", o texto da opção) ou -1. */
+export function quizChoice(text, opts) {
+  const n = norm(text);
+  const m = n.match(/^(?:(?:e|eh|letra|opcao|alternativa|resposta|a resposta e|acho que e|acho que|e a|vou de|chuto)\s+)*([abc])$/);
+  if (m) return 'abc'.indexOf(m[1]);
+  const idx = opts.findIndex((o) => norm(o) === n);
+  if (idx >= 0) return idx;
+  return opts.findIndex((o) => norm(o).length >= 3 && n.includes(norm(o)));
+}
+
 export class Games {
   constructor({ data, rng = Math.random }) {
     this.data = data;
@@ -248,56 +262,89 @@ export class Games {
     return pickOne(opts, this.rng);
   }
 
+  /** Sorteia um item ainda não usado nesta partida. */
+  _fresh(list, g) {
+    g.usados = g.usados || [];
+    const free = list.filter((_, i) => !g.usados.includes(i));
+    const item = pickOne(free.length ? free : list, this.rng);
+    g.usados.push(list.indexOf(item));
+    return item;
+  }
+
+  _quizText(g) {
+    return `Pergunta ${g.rodada + 1}/${g.total}: ${g.q.p}\na) ${g.q.o[0]}   b) ${g.q.o[1]}   c) ${g.q.o[2]}`;
+  }
+
+  _emocaoRound(g) {
+    const r = this.rng;
+    g.q = this._fresh(this.data.emocoes, g);
+    g.opts = [g.q, ...this.data.emocoes.filter((e) => e !== g.q).sort(() => r() - 0.5).slice(0, 2)].sort(() => r() - 0.5).map((o) => o.nome);
+    return `Rodada ${g.rodada + 1}/${g.total}: que emoção é essa? ${g.opts.join(', ')}?`;
+  }
+
+  _mandouRound(g) {
+    g.palavra = pickOne(this.data.mandou || ['SUPINO'], this.rng);
+    g.mandou = this.rng() < 0.6;
+    return `${g.rodada + 1}/${g.total} — ${g.mandou ? 'O JoJo mandou: escreve' : 'Escreve'} ${g.palavra}.`;
+  }
+
+  _grid(word) {
+    const r = this.rng;
+    const size = Math.max(7, word.length + 1);
+    const letters = 'ABCDEFGHIJLMNOPRSTUV';
+    const cells = Array.from({ length: size }, () => Array.from({ length: size }, () => letters[Math.floor(r() * letters.length)]));
+    const vertical = r() < 0.4;
+    const a = Math.floor(r() * size);
+    const b = Math.floor(r() * (size - word.length + 1));
+    for (let k = 0; k < word.length; k++) {
+      if (vertical) cells[b + k][a] = word[k];
+      else cells[a][b + k] = word[k];
+    }
+    return { rows: cells.map((row) => row.join(' ')), vertical };
+  }
+
   start(jogo) {
-    const g = { id: jogo.id, tipo: jogo.tipo, nome: jogo.nome, rodada: 0, pontos: 0 };
+    const g = { id: jogo.id, tipo: jogo.tipo, nome: jogo.nome, rodada: 0, pontos: 0, total: RODADAS[jogo.tipo] || 1 };
     const r = this.rng;
     switch (jogo.tipo) {
       case 'quiz': {
-        g.q = pickOne(this.data.quiz, r);
-        return { game: g, text: `${g.q.p} ${g.q.o.map((o, i) => `${'abc'[i]}) ${o}`).join('  ')}`, anim: 'pensando' };
+        g.q = this._fresh(this.data.quiz, g);
+        return { game: g, text: `Quiz, ${g.total} perguntas. Responde a, b ou c ${SAIR}.\n${this._quizText(g)}`, anim: 'pensando' };
       }
       case 'curiosidade': {
-        g.q = pickOne(this.data.curiosidades, r);
-        return { game: g, text: `Verdade ou mentira? ${g.q.p}`, anim: 'sobrancelha' };
+        g.q = this._fresh(this.data.curiosidades, g);
+        return { game: g, text: `Verdade ou mentira, ${g.total} rodadas ${SAIR}.\n1/${g.total}: ${g.q.p}`, anim: 'sobrancelha' };
       }
-      case 'emocao': {
-        g.q = pickOne(this.data.emocoes, r);
-        const opts = [g.q, ...this.data.emocoes.filter((e) => e !== g.q).sort(() => r() - 0.5).slice(0, 2)].sort(() => r() - 0.5);
-        g.opts = opts.map((o) => o.nome);
-        return { game: g, text: `Que emoção é essa? ${g.opts.join(', ')}?`, anim: g.q.anim };
-      }
+      case 'emocao':
+        return { game: g, text: `Olha a minha cara. ${this._emocaoRound(g)}`, anim: null, emocao: true };
       case 'ppn':
-        return { game: g, text: 'Pedra, papel ou nadadeira? Escolhe. (Nadadeira corta papel, pedra amassa nadadeira.)', anim: 'quedaBraco' };
-      case 'memoria':
-      case 'lider': {
-        g.seq = [...this.data.poses].sort(() => r() - 0.5).slice(0, 3);
-        return { game: g, text: jogo.tipo === 'lider' ? `Repete o que eu faço: ${g.seq.map((p) => p.nome).join(', ')}. Escreve na ordem.` : 'Presta atenção nas três poses. Depois escreve na ordem.', sequence: g.seq.map((p) => p.anim) };
+        g.placar = [0, 0];
+        return { game: g, text: `Pedra, papel ou nadadeira, melhor de 3 ${SAIR}. Nadadeira corta papel, papel embrulha pedra, pedra amassa nadadeira. Escolhe!`, anim: 'quedaBraco' };
+      case 'memoria': {
+        g.seq = [pickOne(this.data.poses, r), pickOne(this.data.poses, r), pickOne(this.data.poses, r)];
+        g.recorde = 0;
+        return { game: g, text: `Memória: vou fazer ${g.seq.length} poses. Depois escreve na ordem, separado por vírgula. Poses: ${this.data.poses.map((p) => p.nome).join(', ')}. Olha!`, sequence: g.seq.map((p) => p.anim) };
       }
+      case 'mandou':
+        return { game: g, text: `O JoJo mandou: só obedece quando eu disser "O JoJo mandou". Se eu não disser, escreve "não". ${SAIR}\n${this._mandouRound(g)}`, anim: 'apontar' };
       case 'cacaPalavras': {
         g.word = pickOne(this.data.palavras, r);
-        const size = Math.max(6, g.word.length);
-        const letters = 'ABCDEFGHIJLMNOPRSTUV';
-        const rows = [];
-        const row = Math.floor(r() * size);
-        const col = Math.floor(r() * (size - g.word.length + 1));
-        for (let y = 0; y < size; y++) {
-          let line = '';
-          for (let x = 0; x < size; x++) line += y === row && x >= col && x < col + g.word.length ? g.word[x - col] : letters[Math.floor(r() * letters.length)];
-          rows.push(line.split('').join(' '));
-        }
-        return { game: g, text: `Ache a palavra (na horizontal):\n${rows.join('\n')}`, anim: 'lendo' };
+        const { rows } = this._grid(g.word);
+        return { game: g, text: `Caça-palavras: tem uma palavra de treino/estudo escondida (horizontal ou vertical). ${g.word.length} letras. Escreve qual é.\n${rows.join('\n')}`, anim: 'lendo' };
       }
       case 'repeticoes':
         g.n = 1;
-        return { game: g, text: 'Repetições em dupla: eu falo os ímpares, você os pares. 1!', anim: 'contarRepeticoes' };
+        return { game: g, text: `Série em dupla: eu falo os ímpares, você os pares, até 20. ${SAIR}\n1!`, anim: 'contarRepeticoes' };
       case 'reflexo':
-        return { game: g, text: jogo.id === 'corrida' ? 'Corrida de nado: quando eu disser JÁ, escreve qualquer coisa. Prepara…' : 'Equilíbrio: quando eu disser AGORA, escreve qualquer coisa pra me segurar. Prepara…', anim: jogo.id === 'corrida' ? 'nadarCirculos' : 'balancar', timer: 'reflexo' };
+        return { game: g, text: jogo.id === 'corrida' ? 'Corrida de nado: quando eu disser JÁ, escreve qualquer coisa e manda. Se mandar antes, queimou. Prepara…' : 'Equilíbrio: quando eu disser AGORA, escreve qualquer coisa pra me segurar. Antes disso, nada. Prepara…', anim: jogo.id === 'corrida' ? 'nadarCirculos' : 'balancar', timer: 'reflexo' };
       case 'esconde':
-        return { game: g, text: 'Me acha! Clica em mim (modo de interação) ou escreve "achei" quando me ver.', anim: 'escondeBorda' };
+        return { game: g, text: `Esconde-esconde: conta até 3… Me ache e clique em mim (eu fico camuflado em algum canto). ${jogo.duracao} s.`, anim: 'espiarUmOlho' };
       case 'pega':
-        return { game: g, text: 'Pega-pega: tenta clicar em mim. Eu fujo devagar.', anim: 'pulinho' };
+        g.pegos = 0;
+        return { game: g, text: `Pega-pega: me pega 3 vezes clicando em mim. Eu fujo, e cada vez mais rápido. ${jogo.duracao} s.`, anim: 'pular' };
       case 'cabo':
-        return { game: g, text: 'Cabo de guerra: me arrasta pra longe (mais de 250 px). Eu puxo de volta.', anim: 'quedaBraco' };
+        g.tentativas = 0;
+        return { game: g, text: 'Cabo de guerra: me arrasta pra longe (mais de 250 px) e solta. Eu puxo de volta. 3 tentativas.', anim: 'quedaBraco' };
       case 'cliques':
         return { game: g, text: 'Clique rápido: clica em mim o máximo que der em 10 s. Valendo!', anim: 'encarar' };
       case 'bolhas':
@@ -307,52 +354,93 @@ export class Games {
     }
   }
 
+  /** Próxima rodada ou fim com placar. */
+  _next(g, acertou, feedback, roundText) {
+    if (acertou) g.pontos++;
+    g.rodada++;
+    if (g.rodada >= g.total) {
+      const win = g.pontos * 2 > g.total;
+      const final = g.pontos === g.total ? 'Gabaritou. Respeito.' : win ? 'Ganhou. Dessa vez.' : 'Perdeu. Treina esse cérebro.';
+      return { text: `${feedback} Placar: ${g.pontos}/${g.total}. ${final}`, done: true, win, score: g.pontos, anim: win ? 'aplaudir' : 'sabiaQueIaErrar' };
+    }
+    return { text: `${feedback}\n${roundText()}`, done: false, anim: acertou ? 'sorrisoSuave' : 'linguaVitoria' };
+  }
+
   answer(g, text, { now = 0 } = {}) {
     const n = norm(text);
     const r = this.rng;
     switch (g.tipo) {
       case 'quiz': {
-        const idx = /^[abc]$/.test(n) ? 'abc'.indexOf(n) : g.q.o.findIndex((o) => norm(o) === n || n.includes(norm(o)));
+        const idx = quizChoice(text, g.q.o);
         if (idx < 0) return { text: 'Responde a, b ou c.', done: false };
         const win = idx === g.q.r;
-        return { text: win ? 'Acertou. Cérebro de campeã.' : `Errou. Era "${g.q.o[g.q.r]}". Sabia que você ia errar.`, done: true, win, anim: win ? 'aplaudir' : 'sabiaQueIaErrar' };
+        const fb = win ? pickOne(['Acertou.', 'Isso.', 'Cérebro de campeã.'], r) : `Errou. Era ${'abc'[g.q.r]}) ${g.q.o[g.q.r]}.`;
+        return this._next(g, win, fb, () => {
+          g.q = this._fresh(this.data.quiz, g);
+          return this._quizText(g);
+        });
       }
       case 'curiosidade': {
-        const v = /\b(verdade|v|sim|true)\b/.test(n) ? true : /\b(mentira|m|nao|false)\b/.test(n) ? false : null;
+        const v = /\b(verdade|verdadeiro|v|sim|s|true|real|e sim)\b/.test(n) ? true : /\b(mentira|falso|m|f|nao|n|false|fake)\b/.test(n) ? false : null;
         if (v === null) return { text: 'Verdade ou mentira?', done: false };
         const win = v === g.q.r;
-        return { text: win ? 'Isso. Sabe das coisas.' : `Nope. É ${g.q.r ? 'verdade' : 'mentira'}.`, done: true, win, anim: win ? 'aplaudir' : 'linguaVitoria' };
+        const fb = win ? pickOne(['Isso. Sabe das coisas.', 'Certa.', 'Acertou.'], r) : `Nope. É ${g.q.r ? 'verdade' : 'mentira'}.`;
+        return this._next(g, win, fb, () => {
+          g.q = this._fresh(this.data.curiosidades, g);
+          return `${g.rodada + 1}/${g.total}: ${g.q.p}`;
+        });
       }
       case 'emocao': {
-        const win = n.includes(norm(g.q.nome));
-        return { text: win ? 'Isso. Você me lê fácil.' : `Era ${g.q.nome}. Eu sou um mistério.`, done: true, win, anim: win ? 'feliz' : 'sorrisoCanto' };
+        const pick = g.opts.find((o) => n.includes(norm(o)) || (n.length >= 4 && norm(o).startsWith(n.slice(0, 4))));
+        if (!pick) return { text: `É ${g.opts.join(', ')}?`, done: false };
+        const win = norm(pick) === norm(g.q.nome);
+        const res = this._next(g, win, win ? 'Isso. Você me lê fácil.' : `Era ${g.q.nome}. Sou um mistério.`, () => this._emocaoRound(g));
+        if (!res.done) res.anim = g.q.anim;
+        return res;
       }
       case 'ppn': {
         const opts = ['pedra', 'papel', 'nadadeira'];
-        const me = opts.find((o) => n.includes(o));
+        const me = opts.find((o) => n.includes(o)) || ({ tesoura: 'nadadeira', barbatana: 'nadadeira' }[n] || null);
         if (!me) return { text: 'Pedra, papel ou nadadeira?', done: false };
         const jo = pickOne(opts, r);
         const beats = { pedra: 'nadadeira', papel: 'pedra', nadadeira: 'papel' };
-        if (me === jo) return { text: `${jo}! Empate. De novo: pedra, papel ou nadadeira?`, done: false };
+        if (me === jo) return { text: `Eu: ${jo}. Empate! De novo. (${g.placar[0]} x ${g.placar[1]})`, done: false, anim: 'surpreso' };
         const win = beats[me] === jo;
-        return { text: `Eu: ${jo}. ${win ? 'Você ganhou. Dessa vez.' : 'Ganhei. Óbvio.'}`, done: true, win, anim: win ? 'aplausoLento' : 'dancaVitoria' };
+        g.placar[win ? 0 : 1]++;
+        const [a, b] = g.placar;
+        if (a === 2 || b === 2) return { text: `Eu: ${jo}. ${a === 2 ? 'Você levou a melhor de 3' : 'Ganhei a melhor de 3. Óbvio'}. (${a} x ${b})`, done: true, win: a === 2, score: a, anim: a === 2 ? 'aplausoLento' : 'dancaVitoria' };
+        return { text: `Eu: ${jo}. ${win ? 'Ponto seu.' : 'Ponto meu.'} (${a} x ${b}) Próxima!`, done: false, anim: win ? 'chocado' : 'linguaVitoria' };
       }
-      case 'memoria':
-      case 'lider': {
+      case 'memoria': {
         const want = g.seq.map((p) => norm(p.nome));
         const tokens = n.split(/[\s,;-]+/).filter((x) => x && x !== 'e');
-        const win = want.every((w, i) => tokens[i] && tokens[i].startsWith(w.slice(0, 3)));
-        return { text: win ? 'Memória de elefante. De tubarão, no caso.' : `Era: ${g.seq.map((p) => p.nome).join(', ')}.`, done: true, win, anim: win ? 'aplaudir' : 'sabiaQueIaErrar' };
+        const ok = want.length === tokens.length && want.every((w, i) => tokens[i].startsWith(w.slice(0, 3)));
+        if (!ok) return { text: `Era: ${g.seq.map((p) => p.nome).join(', ')}. Você lembrou ${g.recorde} pose${g.recorde === 1 ? '' : 's'} seguidas.`, done: true, win: g.recorde >= 4, score: g.recorde, anim: 'sabiaQueIaErrar' };
+        g.recorde = g.seq.length;
+        if (g.seq.length >= 8) return { text: '8 poses! Memória de elefante. De tubarão, no caso.', done: true, win: true, score: 8, anim: 'comemorar' };
+        g.seq.push(pickOne(this.data.poses, r));
+        return { text: `Certo! Agora ${g.seq.length} poses. Olha de novo.`, done: false, sequence: g.seq.map((p) => p.anim) };
+      }
+      case 'mandou': {
+        const obedeceu = n.replace(/\s/g, '') === norm(g.palavra);
+        const certo = g.mandou ? obedeceu : !obedeceu;
+        const fb = certo ? pickOne(['Boa.', 'Esperta.', 'Isso.'], r) : g.mandou ? `Eu mandei! Era ${g.palavra}.` : 'Eu não mandei! Caiu.';
+        return this._next(g, certo, fb, () => this._mandouRound(g));
       }
       case 'cacaPalavras': {
         const win = n.replace(/\s/g, '') === norm(g.word).replace(/\s/g, '');
-        if (!win && g.rodada++ < 2) return { text: 'Não é essa. Tenta de novo.', done: false };
-        return { text: win ? `${g.word}! Achou.` : `Era ${g.word}.`, done: true, win, anim: win ? 'comemorar' : 'ombros' };
+        if (!win && g.rodada++ < 2) return { text: g.rodada === 2 ? `Não. Dica: começa com ${g.word[0]}.` : 'Não é essa. Tenta de novo.', done: false };
+        return { text: win ? `${g.word}! Achou.` : `Era ${g.word}.`, done: true, win, score: win ? 3 - g.rodada : 0, anim: win ? 'comemorar' : 'ombros' };
       }
       case 'repeticoes': {
         const v = Number(n);
-        if (v !== g.n + 1) return { text: `Errou a conta. Era ${g.n + 1}. Recomeça: 1!`, done: (g.n = 1, false), anim: 'chocado' };
-        if (v >= 10) return { text: '10! Série completa. Toca aqui.', done: true, win: true, anim: 'highFive' };
+        if (!Number.isFinite(v) || !n) return { text: `Número! Agora é ${g.n + 1}.`, done: false };
+        if (v !== g.n + 1) {
+          const feitos = g.n;
+          g.n = 1;
+          return { text: `Errou a conta (era ${feitos + 1}). Recomeça: 1!`, done: false, anim: 'chocado' };
+        }
+        if (v >= 20) return { text: '20! Série completa. Toca aqui.', done: true, win: true, score: 20, anim: 'highFive' };
         g.n = v + 1;
         return { text: `${g.n}!`, done: false, anim: 'contarRepeticoes' };
       }
@@ -360,14 +448,12 @@ export class Games {
         if (!g.goAt) return { text: 'Queimou a largada! Espera eu dizer.', done: true, win: false, anim: 'linguaVitoria' };
         const ms = Math.max(0, now - g.goAt);
         const win = ms < 2500;
-        return { text: win ? `${(ms / 1000).toFixed(2).replace('.', ',')} s. Rápida.` : `${(ms / 1000).toFixed(1).replace('.', ',')} s. Lenta igual tartaruga.`, done: true, win, anim: win ? 'aplaudir' : 'dancaVitoria' };
+        return { text: win ? `${(ms / 1000).toFixed(2).replace('.', ',')} s. Rápida.` : `${(ms / 1000).toFixed(1).replace('.', ',')} s. Lenta igual tartaruga.`, done: true, win, score: ms, menorMelhor: true, anim: win ? 'aplaudir' : 'dancaVitoria' };
       }
-      case 'esconde': {
-        const win = /\b(achei|te achei|ali|ta ai|esta ai)\b/.test(n);
-        return win ? { text: 'Me achou. Tubarão desse tamanho não se esconde bem.', done: true, win, anim: 'feliz' } : { text: 'Tô escondido. Procura.', done: false };
-      }
+      case 'esconde':
+        return { text: /\b(achei|te achei|ali|ta ai|esta ai)\b/.test(n) ? 'Achou? Então clica em mim pra provar.' : 'Tô escondido. Procura e clica.', done: false };
       default:
-        return { text: 'Isso é com clique, não com texto.', done: false };
+        return { text: 'Esse é com clique, não com texto.', done: false };
     }
   }
 }

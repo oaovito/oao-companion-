@@ -99,6 +99,13 @@ jobs:
         shell: bash
         run: echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
+      # Notas só com o que mudou desde a versão anterior (seção da versão no CHANGELOG).
+      # Sem seção ou seção vazia: a publicação para aqui.
+      - name: Notas da versão
+        if: success() && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar || contains(github.event.head_commit.message, '[publicar]'))
+        shell: bash
+        run: node scripts/release-notes.mjs dist/RELEASE_NOTES.md
+
       - name: Publicar versão
         if: success() && (startsWith(github.ref, 'refs/tags/v') || inputs.publicar || contains(github.event.head_commit.message, '[publicar]'))
         # A cópia no repositório do código é só conveniência; as atualizações vêm do repositório público.
@@ -108,7 +115,7 @@ jobs:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
           target_commitish: ${{ github.sha }}
           name: JoJo ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
-          body_path: jojo-companion/RELEASE_NOTES.md
+          body_path: jojo-companion/dist/RELEASE_NOTES.md
           files: |
             jojo-companion/dist/JoJoCompanion.exe
             jojo-companion/dist/JoJoCompanion-Setup-*.exe
@@ -123,7 +130,7 @@ jobs:
           token: ${{ secrets.RELEASES_TOKEN }}
           tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
           name: JoJo ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || steps.versao.outputs.tag }}
-          body_path: jojo-companion/RELEASE_NOTES.md
+          body_path: jojo-companion/dist/RELEASE_NOTES.md
           files: |
             jojo-companion/dist/JoJoCompanion.exe
             jojo-companion/dist/JoJoCompanion-Setup-*.exe

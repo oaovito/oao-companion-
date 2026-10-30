@@ -297,7 +297,7 @@ function main() {
         current: companion.conversations.snapshot(conv.id),
         commands: commandMenu({ petVisible: !companion.userHidden }),
         provider: dialogue.describe(),
-        colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome })) : [] },
+        colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome, recorde: companion._record(j.id) == null ? null : companion._fmtRecord(j.id, companion._record(j.id)) })) : [] },
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
         abrirGuardaRoupa,

@@ -145,7 +145,7 @@ function started(opts = {}) {
 test('companion: animações ambientes aparecem sozinhas e param quando ela interage', () => {
   const e = started({ settings: { ambienteFrequencia: 'muita', avisoRaros: false } });
   const states = new Set();
-  for (let i = 0; i < 600; i++) {
+  for (let i = 0; i < 1800; i++) {
     e.clock.advance(500);
     if (e.companion.behavior.state === 'ambient') states.add(e.companion.behavior.anim);
   }

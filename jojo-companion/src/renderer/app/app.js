@@ -95,7 +95,7 @@ function renderColecao() {
   jogos.append(el('h3', null, 'Mini-jogos'));
   const jr = el('div', 'buttons');
   for (const j of c.jogos || []) {
-    const b = el('button', 'chipbtn', j.nome);
+    const b = el('button', 'chipbtn', j.recorde != null ? `${j.nome} · 🏆 ${j.recorde}` : j.nome);
     b.addEventListener('click', () => playCmd(`/jogo ${j.id}`));
     jr.append(b);
   }
