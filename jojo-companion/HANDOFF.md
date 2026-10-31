@@ -27,6 +27,12 @@
 - Linux: npm ci; Electron instalado com `NODE_USE_ENV_PROXY=1 node node_modules/electron/install.js`.
   Xvfb extraído de pacote Debian verificado pelo APT em `/tmp/jojo-xvfb/root`; usar seu `usr/bin`
   no PATH para E2E nesta sessão. Este caminho temporário não é requisito do app nem setup publicado.
+- Ferramenta de build atualizada: electron-builder 26.0.12 → 26.18.0; auditoria npm de produção
+  sem vulnerabilidades. Auditoria completa: eliminados 11 alertas altos e 1 crítico; restam
+  15 moderados na cadeia de desenvolvimento. Não executar npm audit fix --force (sugere downgrade
+  incompatível); reavaliar quando houver atualização compatível dos transitivos.
+- E2E Linux: corrigido cleanup do teste de crash para encerrar somente processos Electron do
+  userData temporário; SIGKILL do main deixava filhos Chromium segurando pipes do runner.
 - Pendências físicas permanecem: Windows 11 doméstico, DPI misto, suspensão e atualização real
   portátil/NSIS com vigia. CI Windows Server não substitui esses testes.
 - Não foi acessado/modificado nenhum projeto externo. O canal público foi somente consultado.
@@ -37,7 +43,7 @@ Os relatos abaixo pertencem às respectivas versões. Números antigos, mençõe
 sons, autostart e restrições de rede não descrevem necessariamente o código atual.
 Prevalecem o usuário, AGENTS.md, código recente e evidências da execução atual.
 
-## Estado recebido (v0.43.1) 
+## Estado recebido (v0.43.1)
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).

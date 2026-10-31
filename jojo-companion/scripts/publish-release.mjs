@@ -32,7 +32,18 @@ export async function preflight({ request, version, tag }) {
   }
 }
 
-export async function publicar({ request, publicRequest, version, tag, files, notes }) {
+export async function verificarDownload(asset, file) {
+  const url = new URL(asset.browser_download_url);
+  if (url.origin !== 'https://github.com' || !url.pathname.startsWith(`/${REPO}/releases/download/`)) throw new Error('URL pública de download inválida');
+  const res = await fetch(url, { signal: AbortSignal.timeout(300000) });
+  if (!res.ok || !res.body) throw new Error(`Download público falhou: HTTP ${res.status}`);
+  const hash = crypto.createHash('sha256');
+  let size = 0;
+  for await (const chunk of res.body) { hash.update(chunk); size += chunk.length; }
+  if (size !== file.size || `sha256:${hash.digest('hex')}` !== file.digest) throw new Error(`Download público não confere: ${file.name}`);
+}
+
+export async function publicar({ request, publicRequest, version, tag, files, notes, verifyDownload = verificarDownload }) {
   await preflight({ request, version, tag });
   const release = await request('POST', `/repos/${REPO}/releases`, { tag_name: tag, name: `JoJo ${tag}`, body: notes, draft: true, prerelease: false });
   const uploads = [];
@@ -45,9 +56,15 @@ export async function publicar({ request, publicRequest, version, tag, files, no
   const current = await request('GET', `/repos/${REPO}/releases/${release.id}`);
   if (!current.draft) throw new Error('Release deixou de ser rascunho durante o upload');
   await request('PATCH', `/repos/${REPO}/releases/${release.id}`, { draft: false, make_latest: 'true' });
-  const visible = await publicRequest('GET', `/repos/${REPO}/releases/latest`);
-  if (visible.tag_name !== tag || visible.draft || visible.prerelease) throw new Error('Versão ainda não detectável sem login');
+  let visible;
+  for (let attempt = 0; attempt < 6; attempt++) {
+    visible = await publicRequest('GET', `/repos/${REPO}/releases/latest`);
+    if (visible.tag_name === tag && !visible.draft && !visible.prerelease) break;
+    if (attempt < 5) await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+  if (visible.tag_name !== tag || visible.draft || visible.prerelease) throw new Error('Versão ainda não detectável sem login; inspecionar sem republicar');
   conferirAssets(visible.assets, files);
+  for (const file of files) await verifyDownload(visible.assets.find((a) => a.name === file.name), file);
   console.log(`Release pública verificada: ${visible.html_url}`);
 }
 

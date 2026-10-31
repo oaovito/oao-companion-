@@ -7,6 +7,8 @@
 - CI reconhece branches codex/**. Publicação somente por nova tag oficial após os gates Windows, com verificação dos três formatos, hashes e consulta pública sem login.
 
 ### Correções
+- Ferramenta de build electron-builder atualizada para 26.18.0, removendo alertas altos/críticos de sua cadeia de dependências.
+- Teste E2E de crash limpa os processos Chromium do perfil temporário, evitando runner Linux preso após concluir as asserções.
 - Publicação falha explicitamente sem RELEASES_TOKEN, com tag divergente ou versão pública existente; uploads ocorrem em rascunho antes da exposição ao atualizador.
 - Simulação unitária usa data fixa: feriados reais não interrompem respostas nem alteram a altura inicial das fantasias nos testes.
 

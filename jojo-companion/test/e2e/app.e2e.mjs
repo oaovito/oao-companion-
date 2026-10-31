@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
@@ -888,6 +888,17 @@ test('presença: JoJo morto sem motivo reabre sozinho; encerrado de propósito n
       if (novo) process.kill(novo, 'SIGKILL');
     } catch {
       /* já fechado */
+    }
+    // SIGKILL do main não encerra os processos Chromium no Linux. Eles podem
+    // reter os pipes do Playwright, impedindo o runner de finalizar mesmo com
+    // todas as asserções aprovadas. Limpar só processos deste userData de teste.
+    if (process.platform === 'linux') {
+      const rows = execFileSync('ps', ['-eo', 'pid=,args='], { encoding: 'utf8' }).split('\n');
+      for (const row of rows) {
+        const m = row.trim().match(/^(\d+)\s+(.+)$/);
+        if (!m || !m[2].startsWith(`${ELECTRON} `) || !m[2].includes(userData)) continue;
+        try { process.kill(Number(m[1]), 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; }
+      }
     }
     await Promise.race([app.close().catch(() => {}), sleep(5000)]);
   }
