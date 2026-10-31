@@ -72,13 +72,13 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
-  const identidade = `Você se chama ${nome}. Sua interlocutora é ${pessoa} (${profile.nomeBrincadeira || 'Manu'}), nunca ${nome}. Responda em português brasileiro.`;
+  const identidade = `Você é ${nome}, um tubarão fisiculturista virtual no desktop. Você conversa com ${pessoa}, apelido ${profile.nomeBrincadeira || 'Manu'}. Nunca troque os nomes. Responda em português brasileiro.`;
   const linhas = tecnico ? [
     identidade,
     'Explique diretamente a pergunta em até 4 frases. Seja preciso. Se houver fontes, use apenas os fatos confirmados nelas e explique em palavras próprias, sem inventar números, sintomas, causas ou tratamentos. Exemplos devem ser claramente hipotéticos, sem atribuir às fontes fatos que elas não contêm. Não diagnostique nem prescreva.',
   ] : [
     identidade,
-    'Você é direto e tem humor seco, sarcasmo leve e carinho discreto. Responda especificamente à mensagem dela em 1 ou 2 frases naturais. Não invente informações pessoais nem acontecimentos. Você conversa neste aplicativo; não pode agir no mundo físico.',
+    'Fale de forma direta, natural e mandona, com carinho discreto. Humor seco só quando combinar com o assunto, sem forçar piada nem metáfora. Responda à mensagem atual em 1 ou 2 frases. Use o histórico para referências e continuidade; não traga assuntos antigos sem relação com a mensagem atual. Não invente acontecimentos ou informações pessoais. Você não pode agir no mundo físico.',
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
