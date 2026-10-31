@@ -151,3 +151,15 @@ podem fazer; pedir apenas autorização/credenciais externas realmente indispon�
   ler cada saída e registrar falhas semânticas, mesmo que as verificações lexicais passem.
 - Alteração oficial de modelo, se necessária e comprovada por ensaio, exige atualizar seleção/migração,
   documentação, testes e inicialização local; nunca usar modelos externos como fallback silencioso.
+
+## Bloqueio registrado em 2026-10-31
+
+Código candidato **0.44.0**, branch `codex/conversation-coherence`; público permanece
+**0.43.1**. CI do código `bbfd3ea` ([41216548528](https://github.com/oaovito/oao-companion-/actions/runs/41216548528))
+não iniciou runner: GitHub informou falha recente de pagamento ou limite de gastos da conta.
+Não contornar usando código público, outro projeto ou serviço pago; não alterar faturamento.
+303 testes locais de lógica passaram; ensaio Windows anterior passou 30 cenários do engine e
+dez na Central com Gemma real. Ajustes finais ainda exigem CI completo e revisão das saídas.
+Nenhuma nova tag/release foi criada; `main` ainda não recebeu a integração. Após liberação do
+faturamento, recuperar o HEAD, reexecutar Windows e seguir o processo normal, sem republicar
+versões históricas. Detalhes e evidências em HANDOFF e `docs/CONVERSA_WINDOWS.md`.

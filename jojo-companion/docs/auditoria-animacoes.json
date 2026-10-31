@@ -1,7 +1,13 @@
 {
- "erros": [],
- "fora": [],
- "paradas": [],
- "semGatilho": 0,
- "mediaMs": 2.9769276549358326
+  "platform": "win32",
+  "run": 41206258451,
+  "commit": "e4dee80",
+  "total": 1043,
+  "erros": [],
+  "fora": [],
+  "paradas": [],
+  "semGatilho": 0,
+  "mediaMs": 0.31,
+  "precisao": "média arredondada no log Windows; matriz completa indisponível",
+  "headFinalValidado": false
 }

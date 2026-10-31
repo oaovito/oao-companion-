@@ -80,6 +80,8 @@
 ## Evidências verificadas
 
 - Unitários locais atuais: **303/303**, sem pulos; host executa apenas lógica pura em Node.
+- No CI `49dfbe1`, os **301 unitários Windows** passaram antes do cancelamento
+  por substituição do código. O código final tem **303** locais; CI completo bloqueado.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;
@@ -119,7 +121,22 @@ No Windows, em `jojo-companion/`: `npm ci`, `npm test`, `npm run test:windows`,
 `npm run test:e2e`, `npm run audit:animations`, `npm run build:win`.
 No host de edição, somente testes de lógica pura (`npm test`).
 
-Continuar corrigindo qualidade livre e validando modelo/reação/latência reais. Depois validar
-CI no commit exato, consolidar changelog incremental desde 0.43.1 e preparar versão apenas
-se houver alteração justificável. Release só concluída com os três arquivos públicos íntegros,
-notas incrementais reais e atualização detectável. Não declarar perfeição geral por testes lexicais.
+Bloqueio atual: o GitHub recusou iniciar o runner por faturamento/limite de gastos da conta.
+[CI 41216548528](https://github.com/oaovito/oao-companion-/actions/runs/41216548528), código
+`bbfd3eabea4373ba1531cc5bde423f777b7013d9`, falhou antes de executar qualquer passo:
+“The job was not started because recent account payments have failed or your spending limit
+needs to be increased. Please check the 'Billing & plans' section in your settings”.
+A conta precisa ser regularizada pelo titular; não alterar pagamentos/limites, criar serviços
+pagos ou transferir o código para repositório público para contornar isso.
+
+Após liberação, recuperar o HEAD e reexecutar o CI da configuração final. Ler as 30 saídas
+mais dez da Central, especialmente após encurtar explicações e confirmar recusas. Conferir
+303 unitários, integração, E2E, 1.043 animações e três binários. Só então integrar por
+fast-forward se a ancestralidade ainda permitir, criar a nova tag e acompanhar publicação.
+O relatório Windows anterior está em `docs/CONVERSA_WINDOWS.md`; não representa validação
+integral do código final. `main` continua preservada sem integração de código não validado.
+
+Não existe nova tag/release. As 17 releases históricas, incluindo v0.32.0, foram comparadas
+novamente: mesmos IDs, descrições e assets (IDs/nomes/tamanhos/digests); nenhuma alteração.
+Release só concluída com os três arquivos públicos íntegros, notas incrementais reais e
+atualização detectável. Não declarar perfeição geral por testes lexicais.

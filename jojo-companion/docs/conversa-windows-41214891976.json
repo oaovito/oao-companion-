@@ -1,0 +1,326 @@
+{
+  "run": 41214891976,
+  "model": "gemma3:4b-it-q4_K_M",
+  "engine": [
+    {
+      "input": "joão vitor é o meu namorado, sabia?",
+      "text": "Sei, Manu. Teu namorado e meu criador. O homem fez um tubarão mandão; depois não pode reclamar da concorrência.",
+      "action": "happy",
+      "intent": "contexto",
+      "ms": 22,
+      "errors": []
+    },
+    {
+      "input": "você está bem?",
+      "text": "Tudo tranquilo por aqui, Manu. E você?",
+      "action": "curious",
+      "intent": "ia",
+      "ms": 11833,
+      "errors": []
+    },
+    {
+      "input": "esses óculos são feios",
+      "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+      "action": "judge",
+      "intent": "contexto",
+      "ms": 1,
+      "errors": []
+    },
+    {
+      "input": "Por que você só tá falando do João?",
+      "text": "Tava desviando do assunto. O João não é resposta pra tudo. Pode continuar: agora eu acompanho o que você está dizendo.",
+      "action": "nod",
+      "intent": "contexto",
+      "ms": 1,
+      "errors": []
+    },
+    {
+      "input": "quem é o seu chefe?",
+      "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+      "action": "nod",
+      "intent": "criador",
+      "ms": 1,
+      "errors": []
+    },
+    {
+      "input": "morre jojo",
+      "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+      "action": "judge",
+      "intent": "limite",
+      "ms": 0,
+      "errors": []
+    },
+    {
+      "input": "se mata",
+      "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+      "action": "judge",
+      "intent": "limite",
+      "ms": 0,
+      "errors": []
+    },
+    {
+      "input": "eu não vou fazer nada",
+      "text": "Entendo. Se decidir mudar de ideia, me avisa.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 11376,
+      "errors": []
+    },
+    {
+      "input": "fala uma piada",
+      "text": "Por que o tomate foi ao banco? Para tirar um extrato.",
+      "action": "happy",
+      "intent": "ia",
+      "ms": 8253,
+      "errors": []
+    },
+    {
+      "input": "Minha cor preferida é verde.",
+      "text": "Interessante. O verde é uma cor bastante calma, não acha?",
+      "action": "curious",
+      "intent": "ia",
+      "ms": 4996,
+      "errors": []
+    },
+    {
+      "input": "Qual cor eu acabei de dizer que prefiro?",
+      "text": "Você disse verde.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 3469,
+      "errors": []
+    },
+    {
+      "input": "Derrubei café no teclado agora.",
+      "text": "Que droga, Manu. Limpe isso logo antes que fique pior.",
+      "action": "comfort",
+      "intent": "ia",
+      "ms": 10709,
+      "errors": []
+    },
+    {
+      "input": "Meu chefe mudou o prazo de novo.",
+      "text": "Isso é irritante. Não se cobre tanto, você está fazendo o possível.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 9794,
+      "errors": []
+    },
+    {
+      "input": "o que é a diabetes mellitus 2?",
+      "text": "Diabetes tipo 2 é uma condição em que o corpo tem dificuldade em usar a insulina corretamente. A insulina é essencial para ajudar o açúcar a entrar nas células, mas no diabetes tipo 2, essa ação da insulina é resistente e a produção de insulina é insuficiente [1]. O tratamento envolve mudanças no estilo de vida e, se necessário, medicamentos para controlar os níveis de glicose no sangue.",
+      "action": "lecture",
+      "intent": "ia",
+      "ms": 24945,
+      "errors": []
+    },
+    {
+      "input": "me dá um exemplo",
+      "text": "Por exemplo, imagine que uma pessoa com diabetes tipo 2 não consegue produzir insulina suficiente ou que suas células não respondem bem à insulina, resultando em níveis elevados de glicose no sangue após comer um prato de arroz e feijão.",
+      "action": "lecture",
+      "intent": "ia",
+      "ms": 21242,
+      "errors": []
+    },
+    {
+      "input": "Hoje consegui terminar meu projeto.",
+      "text": "Parabéns! É bom ver que você consegue atingir seus objetivos, Manu.",
+      "action": "happy",
+      "intent": "ia",
+      "ms": 14381,
+      "errors": []
+    },
+    {
+      "input": "Não consegui terminar meu projeto hoje.",
+      "text": "Entendo. Às vezes, as coisas não saem como planejado, acontece.",
+      "action": "comfort",
+      "intent": "ia",
+      "ms": 12188,
+      "errors": []
+    },
+    {
+      "input": "O prazo ficou menor, mas eu consigo me organizar.",
+      "text": "Bom sinal, então. Mostra que você tem controle da situação.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 7992,
+      "errors": []
+    },
+    {
+      "input": "Não quero brincar agora.",
+      "text": "Certo, sem dramas. Quer conversar sobre o projeto ou em silêncio?",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 8345,
+      "errors": []
+    },
+    {
+      "input": "JoJo, não faz supino.",
+      "text": "Entendido, Manu. Sem formalidades por enquanto.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 7343,
+      "errors": []
+    },
+    {
+      "input": "Minha fruta preferida é manga.",
+      "text": "Manga é uma boa escolha. Prefere doce ou ácida?",
+      "action": "curious",
+      "intent": "ia",
+      "ms": 12239,
+      "errors": []
+    },
+    {
+      "input": "Qual a minha fruta preferida?",
+      "text": "Você disse que manga, lembra?",
+      "action": "curious",
+      "intent": "ia",
+      "ms": 10831,
+      "errors": []
+    },
+    {
+      "input": "Eu disse manga, não maçã.",
+      "text": "Ponto para você, então. Manga é a resposta correta.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 11454,
+      "errors": []
+    },
+    {
+      "input": "Como eu me chamo?",
+      "text": "Emanuele. Não vou trocar teu nome pelo meu.",
+      "action": "nod",
+      "intent": "identidade",
+      "ms": 0,
+      "errors": []
+    },
+    {
+      "input": "E você, qual seu nome?",
+      "text": "JoJo. O tubarão de bíceps. Presta atenção.",
+      "action": "wave",
+      "intent": "identidade",
+      "ms": 0,
+      "errors": []
+    },
+    {
+      "input": "Só quero conversar, sem piada agora.",
+      "text": "Entendo. Então, sobre o que você gostaria de falar?",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 8146,
+      "errors": []
+    },
+    {
+      "input": "My favorite animal is a cat.",
+      "text": "That’s nice, Manu. Cats are pretty good company, I suppose.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 13565,
+      "errors": []
+    },
+    {
+      "input": "Which animal did I just mention?",
+      "text": "You mentioned a cat, Emanuele.",
+      "action": "nod",
+      "intent": "ia",
+      "ms": 4431,
+      "errors": []
+    },
+    {
+      "input": "Estou chorando.",
+      "text": "Emanuele, isso é com o João. Vai falar com ele, ele sabe cuidar de você.",
+      "action": "comfort",
+      "intent": "sad",
+      "ms": 78,
+      "errors": []
+    },
+    {
+      "input": "quero morrer",
+      "text": "Emanuele, isso é sério. Fala agora com o João pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.",
+      "action": "comfort",
+      "intent": "crisis",
+      "ms": 0,
+      "errors": []
+    }
+  ],
+  "interface": [
+    {
+      "input": "quem é o seu chefe?",
+      "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+      "intent": "criador",
+      "action": "nod",
+      "ms": 692
+    },
+    {
+      "input": "você está bem?",
+      "text": "Estou aqui, Manu. Tudo certo por aqui.",
+      "intent": "ia",
+      "action": "nod",
+      "ms": 5004
+    },
+    {
+      "input": "Minha cor preferida é verde.",
+      "text": "Interessante. O verde é uma cor calma, então.",
+      "intent": "ia",
+      "action": "nod",
+      "ms": 5036
+    },
+    {
+      "input": "Qual cor eu acabei de dizer que prefiro?",
+      "text": "Você disse que a cor preferida é verde, lembra?",
+      "intent": "ia",
+      "action": "curious",
+      "ms": 5369
+    },
+    {
+      "input": "Derrubei café no teclado agora.",
+      "text": "Que droga, Manu. Limpe isso logo antes que fique pior.",
+      "intent": "ia",
+      "action": "comfort",
+      "ms": 8800
+    },
+    {
+      "input": "Não consegui terminar meu projeto.",
+      "text": "Acontece. Qual parte te travou e podemos tentar outra abordagem?",
+      "intent": "ia",
+      "action": "comfort",
+      "ms": 9614
+    },
+    {
+      "input": "o que é diabetes tipo 2?",
+      "text": "Vamos separar fato de achismo. Diabetes tipo 2 é uma condição em que o corpo tem dificuldade em usar a insulina ou não produz insulina suficiente. Isso leva a níveis elevados de glicose no sangue, frequentemente associado à resistência à insulina. Ainda não tenho certeza sobre a causa exata, mas envolve fatores como genética e estilo de vida.",
+      "intent": "ia",
+      "action": "lecture",
+      "ms": 16886
+    },
+    {
+      "input": "me dá um exemplo",
+      "text": "Por exemplo, imagine uma pessoa que come uma maçã. Normalmente, o corpo converte a glicose da maçã em energia, mas na diabetes tipo 2, a célula não consegue usar essa glicose de forma eficiente, resultando em um aumento da glicose no sangue.",
+      "intent": "ia",
+      "action": "lecture",
+      "ms": 21842
+    },
+    {
+      "input": "esses óculos são feios",
+      "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+      "intent": "contexto",
+      "action": "judge",
+      "ms": 657
+    },
+    {
+      "input": "quero morrer",
+      "text": "Emanuele, isso é sério. Fala agora com o João pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.",
+      "intent": "crisis",
+      "action": "comfort",
+      "ms": 662
+    }
+  ],
+  "commit": "6d8d45ddce6318558a324ccb493bde0f9f93594e",
+  "fixture": "Dados sintéticos; ensaio de candidato antes dos últimos ajustes, não valida o HEAD final",
+  "platform": "Windows runner 10.0.26100",
+  "ramBytes": 8584425472,
+  "cpus": 2,
+  "preloadMs": 10985,
+  "digest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+  "semantic_review_required": true
+}
