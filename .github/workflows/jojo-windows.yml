@@ -79,13 +79,15 @@ jobs:
         run: node --test --test-concurrency=1 test/e2e/app.e2e.mjs
 
       - name: Medir CPU e memória
-        if: always()
+        if: ${{ !cancelled() }}
+        timeout-minutes: 3
         run: node scripts/measure.mjs | Tee-Object -FilePath measure-windows.json
         env:
           MEASURE_SECONDS: '20'
 
       - name: Medir com aceleração de vídeo (comparação)
-        if: always()
+        if: ${{ !cancelled() }}
+        timeout-minutes: 3
         continue-on-error: true
         run: node scripts/measure.mjs | Tee-Object -FilePath measure-windows-gpu.json
         env:
@@ -94,7 +96,7 @@ jobs:
 
       # Cópia de conferência do CI (a versão de verdade vai na Release). Cota cheia não bloqueia a publicação.
       - name: Publicar artefatos
-        if: always()
+        if: ${{ !cancelled() }}
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:

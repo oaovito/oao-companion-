@@ -11,6 +11,7 @@
 - `package.json.jojoUpdate` permanece `oaovito/jojo-companion-releases`. UpdateChecker detectou
   0.43.1 a partir de 0.43.0 nos modos portable/installer usando os metadados públicos reais;
   a versão já instalada não propõe atualização para si mesma. Nenhuma alteração no runtime do atualizador.
+- CI respeita cancelamentos nas etapas de diagnóstico/artefatos e limita medições a 3 min.
 - CI agora reconhece `codex/**`. Push comum e dispatch só validam; tags oficiais novas
   publicam após todos os gates obrigatórios. Removido o gatilho por mensagem `[publicar]`.
 - Novo `scripts/publish-release.mjs`: bloqueio de tag divergente, token ausente, canal privado

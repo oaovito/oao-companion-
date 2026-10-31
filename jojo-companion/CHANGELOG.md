@@ -4,7 +4,7 @@
 
 ### Melhorias
 - Diretrizes permanentes em AGENTS.md e continuidade documentada no HANDOFF.
-- CI reconhece branches codex/**. Publicação somente por nova tag oficial após os gates Windows, com verificação dos três formatos, hashes e consulta pública sem login.
+- CI respeita cancelamentos e limita o tempo das medições; reconhece branches codex/**. Publicação somente por nova tag oficial após os gates Windows, com verificação dos três formatos, hashes e consulta pública sem login.
 
 ### Correções
 - Ferramenta de build electron-builder atualizada para 26.18.0, removendo alertas altos/críticos de sua cadeia de dependências.
