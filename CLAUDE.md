@@ -9,8 +9,11 @@ Diretrizes atuais em [AGENTS.md](AGENTS.md) e [HANDOFF](jojo-companion/HANDOFF.m
 Este arquivo preserva a referência técnica/histórica. O produto é exclusivamente
 Windows 11 x64; a configuração local candidata atual é Gemma 3 4B, definida em
 `src/core/dialogue/local-model.js`. Menções abaixo ao Qwen descrevem a versão antiga.
-Publicação atual ocorre somente por nova tag oficial após todos os gates Windows,
-incluindo inferência real; mensagens de commit e push comum não publicam.
+Executor atual em `ci/windows.cmd`, independente do Actions. Workflows antigos abaixo
+são referência histórica; foram arquivados em `ci/legacy/github-actions/` para não gerar
+custos. Azure/CircleCI só podem ser ativados após autenticação e plano gratuito efetivo.
+Publicação exige tag e relatório Windows íntegro do mesmo commit, incluindo inferência
+real; mensagens de commit e push comum não publicam. Ver `jojo-companion/docs/CI_GRATUITO.md`.
 
 ## O que é
 

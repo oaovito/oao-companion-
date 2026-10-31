@@ -4,6 +4,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { notasDaRelease } from './release-notes.mjs';
+import { verifyPublication } from '../../ci/validation.mjs';
+import { UpdateChecker } from '../src/core/updater.js';
 
 export const REPO = 'oaovito/jojo-companion-releases';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -89,6 +91,17 @@ function client(token) {
   };
 }
 
+export async function verificarAtualizadorPublicado({ fetch: fetchFn = fetch, version, previous, files }) {
+  for (const mode of ['portable', 'installer']) {
+    const checker = new UpdateChecker({ fetch: fetchFn, owner: 'oaovito', repo: 'jojo-companion-releases', current: previous, mode });
+    const update = await checker.check();
+    const file = files.find((f) => f.name === update?.asset.name);
+    if (update?.version !== version || !file || update.asset.size !== file.size || `sha256:${update.asset.sha256}` !== file.digest) throw new Error('Atualizador nao detectou os artefatos publicados sem login');
+    checker.current = version;
+    if (await checker.check()) throw new Error('Atualizador ofereceu novamente a versao instalada');
+  }
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
@@ -104,11 +117,20 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
         console.log('RELEASES_TOKEN autenticado: canal público acessível e permissão push anunciada; nenhuma escrita executada.');
         process.exit(0);
       }
-      if (process.env.GITHUB_REF_TYPE !== 'tag') throw new Error('Publicação exige tag oficial');
-      const tag = process.env.GITHUB_REF_NAME;
+      const option = (name) => { const i = process.argv.indexOf(name); return i >= 0 ? process.argv[i + 1] : null; };
+      const tag = option('--tag');
+      if (tag !== `v${version}`) throw new Error('Publicacao exige --tag oficial igual a versao');
       const notes = notasDaRelease(fs.readFileSync(path.join(ROOT, 'CHANGELOG.md'), 'utf8'), version);
       if (process.argv.includes('--check')) await preflight({ request, version, tag });
-      else await publicar({ request, publicRequest: client(), version, tag, files: conferirArtefatos(dir, version), notes });
+      else {
+        const files = conferirArtefatos(dir, version);
+        verifyPublication(path.resolve(ROOT, '..'), { reportPath: option('--validation'), tag, version, files });
+        const previous = [...fs.readFileSync(path.join(ROOT, 'CHANGELOG.md'), 'utf8').matchAll(/^## (\d+\.\d+\.\d+)/gm)][1]?.[1];
+        if (!previous) throw new Error('Versao anterior nao identificada no changelog');
+        await publicar({ request, publicRequest: client(), version, tag, files, notes });
+        await verificarAtualizadorPublicado({ version, previous, files });
+        console.log('Atualizacao detectavel sem login nos modos portable e installer.');
+      }
     }
   } catch (e) { console.error(`Publicação bloqueada: ${e.message}`); process.exitCode = 1; }
 }

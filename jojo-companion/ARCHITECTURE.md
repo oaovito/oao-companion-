@@ -123,7 +123,11 @@ após testes, build, auditoria visual e conversa real no Windows, pode publicar 
 binários em `oaovito/jojo-companion-releases` (público). API Releases e assets com SHA-256
 são os metadados do atualizador próprio. Push comum não publica; versões históricas,
 seus arquivos e tags são imutáveis. `scripts/check-conversation-windows.ps1` é compartilhado
-pela avaliação de candidatos e pelo gate obrigatório da publicação.
+pelo executor independente `ci/windows.mjs`. Ele preserva as suítes, controla cache,
+locks/timeouts e gera logs privados/TAP/JUnit/JSON; não depende de Actions. O publicador
+exige relatório Windows, tag/commit/artefatos correspondentes. Integrações Azure/CircleCI
+são templates desativados até comprovação de plano gratuito e autorização. Agente próprio
+pode consultar Git/tags com o Agendador do Windows, em sessão de testes isolada.
 
 ## Animações: variações e emoção
 

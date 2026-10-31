@@ -79,9 +79,9 @@
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **303/303**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **312/312**, sem pulos; host executa apenas lógica pura em Node.
 - No CI `49dfbe1`, os **301 unitários Windows** passaram antes do cancelamento
-  por substituição do código. O código final tem **303** locais; CI completo bloqueado.
+  por substituição do código. O código anterior tinha **303** locais; novo executor tem **312** de lógica aprovados; Windows final pendente.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;
@@ -99,8 +99,11 @@
 
 ## Publicação e recuperação
 
-- Push comum/dispatch só validam; CI reconhece `codex/**`. Só nova tag oficial publica
-  após gates Windows. Não criar release artificial para demonstrar transferência.
+- Executor oficial gratuito/independente em `../ci/windows.cmd` e `../ci/windows.mjs`.
+  Actions arquivado sem gatilhos. Templates externos desativados até autorização de
+  executor/plano Free; detalhes em [CI_GRATUITO.md](docs/CI_GRATUITO.md).
+- Publicador exige `--tag` + `--validation`, Windows nativo, checkout/tag/commit e hashes
+  correspondentes a todos os gates. Só tag oficial publica; push comum não publica.
 - `scripts/publish-release.mjs` impede tag/versão divergente e alteração de release/tag pública
   existente; exige RELEASES_TOKEN, envia os três formatos em rascunho, verifica hashes/tamanhos,
   publica e consulta anonimamente `/releases/latest` e downloads.
@@ -121,22 +124,45 @@ No Windows, em `jojo-companion/`: `npm ci`, `npm test`, `npm run test:windows`,
 `npm run test:e2e`, `npm run audit:animations`, `npm run build:win`.
 No host de edição, somente testes de lógica pura (`npm test`).
 
-Bloqueio atual: o GitHub recusou iniciar o runner por faturamento/limite de gastos da conta.
-[CI 41216548528](https://github.com/oaovito/oao-companion-/actions/runs/41216548528), código
-`bbfd3eabea4373ba1531cc5bde423f777b7013d9`, falhou antes de executar qualquer passo:
-“The job was not started because recent account payments have failed or your spending limit
-needs to be increased. Please check the 'Billing & plans' section in your settings”.
-A conta precisa ser regularizada pelo titular; não alterar pagamentos/limites, criar serviços
-pagos ou transferir o código para repositório público para contornar isso.
+## CI gratuito — transferência desta sessão
 
-Após liberação, recuperar o HEAD e reexecutar o CI da configuração final. Ler as 30 saídas
-mais dez da Central, especialmente após encurtar explicações e confirmar recusas. Conferir
-303 unitários, integração, E2E, 1.043 animações e três binários. Só então integrar por
-fast-forward se a ancestralidade ainda permitir, criar a nova tag e acompanhar publicação.
-O relatório Windows anterior está em `docs/CONVERSA_WINDOWS.md`; não representa validação
-integral do código final. `main` continua preservada sem integração de código não validado.
+- Mantido o código candidato 0.44.0 de `c0e07f8`, sem refazer funcionalidades.
+- Executor independente com bootstrap Node 22.23.4/MinGit de contingência e SHA-256,
+  cache npm/Electron/builder/Ollama, exclusão mútua, timeout de processos, logs filtrados,
+  relatórios TAP/JUnit/JSON e retenção de três execuções/14 dias.
+- Mantidas todas as suítes e diagnósticos. Acrescentados preflight de conta isolada e
+  smoke de instalação/abertura/desinstalação NSIS; limpeza de processos limitada aos PIDs
+  do teste. Não encerrar todos os aplicativos JoJo pelo nome.
+- Publicação bloqueia relatório ausente/incompleto, origem/commit/tag divergentes e binários
+  alterados. Consulta também o UpdateChecker após publicar, nos dois modos, sem login.
+- Agente Windows opcional consulta Git/tags a cada 120 s e guarda estado; reutiliza relatório
+  só quando commit/artefatos ainda conferem. Publicação parcial não é repetida automaticamente.
+- Azure e CircleCI têm templates com autorização padrão falsa, FORA dos caminhos de
+  ativação automática. Actions preservado em `ci/legacy/github-actions/`, sem disparos.
+- Verificações realizadas: **312/312 lógica no Node 22.23.4**, sem falhas/pulos; lint JS/JSON;
+  cinco arquivos PowerShell sem erros de parser; YAML sintaticamente válido. A validação
+  de sintaxe não é execução Windows. O host não compilou aplicativo Linux/Wine.
 
-Não existe nova tag/release. As 17 releases históricas, incluindo v0.32.0, foram comparadas
-novamente: mesmos IDs, descrições e assets (IDs/nomes/tamanhos/digests); nenhuma alteração.
-Release só concluída com os três arquivos públicos íntegros, notas incrementais reais e
-atualização detectável. Não declarar perfeição geral por testes lexicais.
+## Dependência restante e retomada
+
+Não existe conexão autenticada com Azure DevOps/CircleCI nem acesso a Windows nesta
+sessão. A inspeção mostrou manifesto de identidades vazio, nenhum perfil Azure, credencial
+CircleCI, VPN, configuração SSH ou agente SSH. Webhooks GitHub retornaram 403; isso não
+prova que não exista conta externa, apenas que não pode ser consultada por este acesso.
+
+Azure oferece franquia privada permanente quando já habilitada; não vincular assinatura
+nem configurar billing. CircleCI documenta Windows/projetos privados no plano Free com
+30.000 créditos/mês e interrupção ao esgotar, sem cobrança automática no Free. Nenhum
+plano real desta conta foi autenticado/verificado. AppVeyor gratuito só permite projetos
+públicos; trials/serviços pagos foram descartados. Fontes em CI_GRATUITO.md.
+
+Após haver conexão autorizada com um executor Windows gratuito, o Codex deve conferir a
+franquia real e integrar UM provedor, ou instalar o agente na máquina própria isolada já
+autorizada. Executar o pipeline completo e ler as saídas do modelo, incluindo os últimos
+ajustes de contexto/retomada. Só então integrar por fast-forward se a ancestralidade permitir,
+criar a tag 0.44.0 e verificar os três arquivos públicos/atualizador. Nenhuma operação do
+Actions, runner auto-hospedado vinculado a ele ou comando manual do usuário é necessária.
+
+Nenhuma nova tag/release. Público continua **v0.43.1**. Sem Windows real, a 0.44.0
+permanece bloqueada. As 17 releases históricas devem continuar sem qualquer modificação.
+Nenhum serviço contratado, pagamento/plano ativado ou projeto externo alterado.

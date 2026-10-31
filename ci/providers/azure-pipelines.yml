@@ -1,0 +1,45 @@
+# Rascunho seguro: nao aloca runner ate existir autorizacao e franquia gratuita VERIFICADA.
+# A sessao atual nao possui conexao Azure. Nao habilitar billing para executar este arquivo.
+trigger: none
+pr: none
+parameters:
+  - name: freeWindowsAuthorized
+    type: boolean
+    default: false
+jobs:
+  - job: Windows
+    condition: and(succeeded(), ${{ eq(parameters.freeWindowsAuthorized, true) }})
+    pool:
+      vmImage: windows-2022
+    timeoutInMinutes: 60
+    steps:
+      - checkout: self
+        clean: true
+        fetchDepth: 0
+        fetchTags: true
+        persistCredentials: false
+      - task: Cache@2
+        inputs:
+          key: 'jojo-win | "$(Agent.OS)" | ci/windows-toolchain.json | jojo-companion/package-lock.json'
+          path: $(Pipeline.Workspace)/jojo-cache
+      - powershell: |
+          if ($env:BUILD_SOURCEBRANCH -match '^refs/tags/(v\d+\.\d+\.\d+)$') {
+            & ./ci/windows.ps1 -Mode release -Tag $Matches[1] -CacheDirectory "$env:PIPELINE_WORKSPACE/jojo-cache"
+          } else {
+            & ./ci/windows.ps1 -CacheDirectory "$env:PIPELINE_WORKSPACE/jojo-cache"
+          }
+          exit $LASTEXITCODE
+        displayName: Executor Windows completo e publicacao condicionada
+        env:
+          RELEASES_TOKEN: $(RELEASES_TOKEN)
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: jojo-companion/out/windows-ci/summary/junit/*.xml
+          failTaskOnFailedTests: true
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          targetPath: jojo-companion/out/windows-ci/summary
+          artifact: jojo-private-windows-reports

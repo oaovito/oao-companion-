@@ -18,7 +18,8 @@
     "build:win": "node scripts/build-win.mjs",
     "build:dir": "node scripts/build-win.mjs --dir",
     "test:windows": "node test/e2e/run-e2e.mjs --integration",
-    "sheet": "electron scripts/preview-sheet.mjs"
+    "sheet": "electron scripts/preview-sheet.mjs",
+    "lint": "node scripts/lint.mjs"
   },
   "dependencies": {
     "koffi": "3.3.3"

@@ -37,7 +37,9 @@ async function esperar(cond, ms, msg) {
 let falhou = false;
 const pids = [];
 try {
-  spawn(exe, [], { env: { ...process.env, JOJO_USER_DATA: userData }, stdio: 'ignore', detached: true }).unref();
+  const launcher = spawn(exe, [], { env: { ...process.env, JOJO_USER_DATA: userData }, stdio: 'ignore', detached: true });
+  pids.push(launcher.pid);
+  launcher.unref();
   await esperar(() => /Vigia armado/.test(logs()), 120e3, 'O vigia não armou.');
   const p1 = inicios()[0];
   pids.push(p1);
@@ -66,10 +68,5 @@ try {
 } finally {
   for (const p of pids) matar(p, true);
   for (const p of inicios()) matar(p, true);
-  try {
-    execFileSync('taskkill', ['/IM', 'JoJoCompanion.exe', '/F', '/T'], { stdio: 'ignore' });
-  } catch {
-    /* nada aberto */
-  }
 }
 process.exit(falhou ? 1 : 0);

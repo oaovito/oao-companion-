@@ -76,7 +76,7 @@ npm run build:win
 node scripts/publish-release.mjs --artifacts
 ```
 
-CI usa Node 22 e runners Windows para build, E2E, integração, medição e modelo real.
+CI usa Node **22.23.4** (bootstrap Windows com SHA-256) para build, E2E, integração, medição e modelo real.
 `npm run test:windows` executa entrada nativa e processos do vigia; `npm run test:e2e`
 executa a aplicação Windows. `npm run build:win` usa Node, sem Bash.
 Não instalar runtimes gráficos/modelos de outro sistema no host do editor.
@@ -84,12 +84,22 @@ Respeitar proxy/CA e verificações de assinatura/checksum.
 `test/unit/helpers.js` fixa Date numa data não festiva para isolar a simulação do
 calendário real; testes de feriados devem fornecer datas explícitas.
 
-`.github/workflows/jojo-windows.yml` valida pushes em `main`, `claude/**`, `codex/**`
-e tags `v*`; `workflow_dispatch` só valida. Conferir unitários, build dos três formatos,
-smoke do portátil, vigia, integração Windows, E2E, 1.043 animações, medição e conversa
-com inferência/interface reais. `scripts/check-conversation-windows.ps1` é o gate
-compartilhado; falha nele impede publicação. Pesquisa real e comparação
-GPU são diagnósticos opcionais; falha de upload de artefatos não equivale a falha do build.
+O executor oficial é `ci/windows.cmd` / `ci/windows.mjs`, independente de GitHub Actions.
+O modo padrão valida; `release` exige tag oficial e relatório do MESMO commit/artefatos.
+Definições antigas do Actions foram preservadas em `ci/legacy/github-actions/`, sem gatilhos.
+Templates Azure/CircleCI ficam em `ci/providers/`, fora da descoberta automática, desativados.
+Só ativar UM provedor após autenticação e confirmação efetiva de plano/franquia permanentes
+com custo adicional R$ 0; não anexar assinatura, pagamento, trial ou habilitar plano pago.
+Windows próprio requer acesso autorizado e sessão interativa dedicada sem instalação JoJo
+anterior. `ci/register-windows-agent.ps1` prepara consulta periódica ao Git privado sem Actions;
+nenhuma máquina foi conectada/registrada nesta sessão. Sem executor real, release bloqueada.
+
+Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
+NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
+E2E, 1.043 animações, medição, conversa REAL (30 engine + dez Central), artefatos,
+compatibilidade do atualizador e notas. Pesquisa web/GPU permanecem diagnósticos opcionais.
+Logs privados filtram credenciais; TAP/JUnit/JSON e hashes são retidos localmente (três
+execuções/14 dias). Cache confere SHA-256 do bootstrap/runtime e integridade npm.
 Não alegar teste em Windows físico: runner Windows Server de um monitor não comprova
 Windows 11 doméstico, DPI misto, suspensão física ou troca real do instalador.
 
@@ -103,10 +113,14 @@ Não incrementar para demonstrar transferência. Registrar mudanças não lança
 2. Manter versão, tag `vX.Y.Z`, nomes e metadados consistentes. Preservar
    `scripts/release-notes.mjs`; seções aplicáveis: Novidades, Melhorias, Correções,
    Remoções e Como testar. Sem seção válida, publicação deve falhar.
-3. Commit/push no privado; acompanhar validação. Criar/push da **nova tag oficial**
-   aciona novamente todos os gates Windows e só então publica automaticamente.
-   Mensagem `[publicar]` e dispatch não publicam mais; nenhuma release é criada por push comum.
-4. `scripts/publish-release.mjs` exige RELEASES_TOKEN no Actions, tag igual à versão,
+3. Commit/push no privado; acompanhar validação pelo executor Windows autorizado e gratuito.
+   Criar/push da **nova tag oficial** somente após os testes e revisão das falas. Agente
+   independente consulta tags e publica após conferir o relatório/hashes; pode reutilizar
+   validação íntegra do MESMO commit. Templates externos devem usar o mesmo executor.
+   Mensagem `[publicar]` e push comum não publicam; não depender do Actions para isso.
+4. `scripts/publish-release.mjs --tag vX.Y.Z --validation <relatório>` exige Windows real,
+   checkout limpo, tag/commit, todos os gates/hashes correspondentes e RELEASES_TOKEN
+   no executor (ou autorização segura equivalente), tag igual à versão,
    destino público e ausência de release **e tag** públicas existentes. Faz upload em
    rascunho e confere nomes/tamanhos/hashes antes de torná-lo visível ao atualizador.
 5. Artefatos exatos: `JoJoCompanion.exe`, `JoJoCompanion-Setup-X.Y.Z.exe`,
@@ -152,14 +166,17 @@ podem fazer; pedir apenas autorização/credenciais externas realmente indispon�
 - Alteração oficial de modelo, se necessária e comprovada por ensaio, exige atualizar seleção/migração,
   documentação, testes e inicialização local; nunca usar modelos externos como fallback silencioso.
 
-## Bloqueio registrado em 2026-10-31
+## Estado após migração de CI em 2026-10-31
 
-Código candidato **0.44.0**, branch `codex/conversation-coherence`; público permanece
-**0.43.1**. CI do código `bbfd3ea` ([41216548528](https://github.com/oaovito/oao-companion-/actions/runs/41216548528))
-não iniciou runner: GitHub informou falha recente de pagamento ou limite de gastos da conta.
-Não contornar usando código público, outro projeto ou serviço pago; não alterar faturamento.
-303 testes locais de lógica passaram; ensaio Windows anterior passou 30 cenários do engine e
-dez na Central com Gemma real. Ajustes finais ainda exigem CI completo e revisão das saídas.
-Nenhuma nova tag/release foi criada; `main` ainda não recebeu a integração. Após liberação do
-faturamento, recuperar o HEAD, reexecutar Windows e seguir o processo normal, sem republicar
-versões históricas. Detalhes e evidências em HANDOFF e `docs/CONVERSA_WINDOWS.md`.
+Código candidato **0.44.0**, branch `codex/conversation-coherence`; público **0.43.1**.
+Actions bloqueou o código `bbfd3ea` por faturamento em [41216548528](https://github.com/oaovito/oao-companion-/actions/runs/41216548528).
+Esse registro é histórico: a missão atual NÃO depende de regularizar o Actions.
+Executor independente e templates gratuitos implementados, mas nenhum Windows foi
+conectado. Ambiente: sem identidade/organização Azure acessível, sem credencial CircleCI,
+VPN ou Windows autorizado. Falta conexão autenticada com executor Windows R$ 0, não código
+nem comandos manuais do usuário. Não pedir senhas/tokens no chat. Depois da conexão,
+confirmar plano Free/franquia já disponível, ativar a integração e executar a validação real.
+**312/312 testes de lógica passaram no Node 22.23.4**, além de lint, análise PowerShell e YAML.
+Isso NÃO comprova Windows: ensaio anterior de 30+dez turnos é de código anterior.
+Nenhuma nova tag/release; `main` ainda não recebeu a integração. Estado completo em
+`jojo-companion/docs/CI_GRATUITO.md` e HANDOFF. Nunca reduzir gates para publicar.

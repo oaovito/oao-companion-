@@ -12,6 +12,8 @@ import { expandCatalog } from '../src/core/catalog/recipes.js';
 import { fullCatalog } from '../src/core/catalog/load.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const OUT = path.resolve(process.env.JOJO_ANIMATION_REPORT_DIR || path.join(ROOT, 'docs'));
+fs.mkdirSync(OUT, { recursive: true });
 const rj = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 
 /** Como cada animação é alcançada (estado, código, catálogo, pacote). */
@@ -97,10 +99,10 @@ app.whenReady().then(async () => {
     }),
     '',
   ];
-  fs.writeFileSync(path.join(ROOT, 'docs', 'AUDITORIA_ANIMACOES.md'), linhas.join('\n'));
-  fs.writeFileSync(path.join(ROOT, 'docs', 'auditoria-animacoes.json'), JSON.stringify({ erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, null, 1) + '\n');
+  fs.writeFileSync(path.join(OUT, 'AUDITORIA_ANIMACOES.md'), linhas.join('\n'));
+  fs.writeFileSync(path.join(OUT, 'auditoria-animacoes.json'), JSON.stringify({ total: nomes.length, erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, null, 1) + '\n');
   const png = (await win.webContents.executeJavaScript(`window.contato(${JSON.stringify(rig)}, ${JSON.stringify(anims)})`)).split(',')[1];
-  fs.writeFileSync(path.join(ROOT, 'docs', 'auditoria-animacoes.png'), Buffer.from(png, 'base64'));
+  fs.writeFileSync(path.join(OUT, 'auditoria-animacoes.png'), Buffer.from(png, 'base64'));
   // Pequena evidência visual recuperável mesmo quando a cota de artefatos está cheia.
   if (process.env.GITHUB_ACTIONS) {
     for (const part of png.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_PREVIEW:${part}`);
