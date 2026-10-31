@@ -1,48 +1,27 @@
 # CHANGELOG
 
-## Não lançado — conversa única e coerência
+## 0.44.0 — 2026-10-31
 
 ### Melhorias
-- Conversa local migra do Qwen 3.5 2B para Gemma 3 4B; seleção aceita só a variante avaliada/alias, com preparação automática no PC e preservação das preferências e dados.
-- Desenvolvimento e validação oficiais exclusivos para Windows; build nativo por Node sem Bash/Wine, sem infraestrutura gráfica para outros sistemas.
-- Uma conversa contínua na Central, incluindo lembretes e avisos; comandos legados não apagam nem dividem o histórico.
-- O histórico entregue ao modelo inclui as respostas de atalhos e eventos realmente vistas na conversa.
-- Mensagens diferentes são processadas em ordem; emergências passam à frente e cancelam a geração antiga.
-- Conversa local usa instruções menores e separa redação da fala da escolha de expressão corporal.
-- Preparação local só anuncia o cérebro pronto após carregar os pesos; contexto e lotes menores limitam memória temporária na geração.
-- Ensaio reproduzível com inferência local real e relatório que exige revisão semântica, além dos testes com servidores falsos.
-- Auditoria completa de animações executada como gate obrigatório no renderer Windows.
+- Conversa local passa do Qwen 3.5 2B para Gemma 3 4B, com instruções menores, texto sem narração corporal e separação entre fala e expressão. Preparação automática carrega os pesos antes de anunciar pronto.
+- Uma conversa contínua na Central, incluindo avisos e lembretes. Comandos antigos de nova conversa preservam o histórico.
+- Mensagens diferentes seguem em ordem e reenvios pendentes não duplicam o turno; emergências cancelam a geração antiga.
+- A boca acompanha a duração do texto, e exemplos técnicos mantêm a expressão do assunto mesmo sem pesquisa externa.
 
 ### Correções
-- Bloqueadas ameaças, identidade inventada e menções ao João fora do assunto; fatos do personagem e provocações têm respostas protegidas.
-- Perguntas sobre o próprio JoJo não disparam pesquisa genérica na internet; menção ao namorado não engole a mensagem inteira.
-- Perguntas de conhecimento e sintomas pessoais não viram ações de sono, comida ou exercício por conter palavras parecidas; perguntar como o músculo cresce não aumenta o tamanho do personagem.
-- JSON incompleto não aparece como fala; uma resposta inválida não desliga o motor por 90 segundos.
-- Instalação do runtime Windows usa versão fixa com SHA-256 verificado antes da extração; migração do modelo também confere espaço livre.
-- O limite da geração com pesquisa é de até 25 segundos e cancela a requisição, evitando trabalho em segundo plano após timeout.
-- Óculos técnicos saem ao mudar de assunto; expressão e movimento da boca acompanham a resposta, respeitando fuga, tela cheia e Modo Trabalho.
-- Negações não viram comemoração, preferência falsa ou ação de brincar/exercitar-se; referências ao tamanho de outras coisas não redimensionam o personagem.
-- Trecho bruto de fonte, no caminho degradado, é identificado como trecho em vez de ser apresentado como explicação original com bronca aleatória.
+- Fatos sobre identidade e João são protegidos; provocações não geram ameaças, nomes trocados ou João como resposta para qualquer assunto.
+- Perguntas pessoais não disparam pesquisa genérica; perguntas de conhecimento não viram ações de comer, dormir ou exercitar-se por palavra-chave.
+- Negações não viram comemoração, preferência falsa, treino ou brincadeira; referências ao tamanho de outros objetos não redimensionam o personagem.
+- Óculos técnicos saem ao mudar de assunto; respostas e indicadores atrasados não atropelam acolhimento, tela cheia, fuga ou Modo Trabalho.
+- Resposta malformada não exibe JSON nem desliga a conversa por 90 segundos. Geração vencida é cancelada de fato; trecho bruto de pesquisa é identificado como trecho da fonte.
+- Instalação do motor Windows verifica SHA-256; download do novo modelo confere espaço. Migração preserva dados e preferências, inclusive conversa, pesquisa e início com Windows desligados.
+- Ferramenta de empacotamento atualizada para remover vulnerabilidades altas/críticas de sua cadeia de dependências.
 
 ### Como testar
-- npm test; npm run test:e2e; node scripts/check-conversation.mjs com Ollama/modelo local instalado.
-- Repetir os exemplos das capturas, conferir chat único e histórico, e ler as falas reais antes de aprovar publicação.
-- Validar a configuração final no Windows com 30 turnos no engine e dez na Central usando inferência real; testes lexicais não substituem revisão das falas.
-
-## Não lançado — transferência operacional para o Codex
-
-### Melhorias
-- Diretrizes permanentes em AGENTS.md e continuidade documentada no HANDOFF.
-- CI respeita cancelamentos e limita o tempo das medições; reconhece branches codex/**. Publicação somente por nova tag oficial após os gates Windows, com verificação dos três formatos, hashes e consulta pública sem login.
-
-### Correções
-- Ferramenta de build electron-builder atualizada para 26.18.0, removendo alertas altos/críticos de sua cadeia de dependências.
-- Publicação falha explicitamente sem RELEASES_TOKEN, com tag divergente ou versão pública existente; uploads ocorrem em rascunho antes da exposição ao atualizador.
-- Simulação unitária usa data fixa: feriados reais não interrompem respostas nem alteram a altura inicial das fantasias nos testes.
-
-### Como testar
-- npm test e npm run test:e2e; acompanhar workflow Windows numa branch codex/** sem criar release.
-- Testes do publicador simulam versão histórica, tag divergente, token negado e upload corrompido sem publicar arquivos reais.
+- Na Central, contar uma preferência e perguntar qual foi; corrigir um detalhe, trocar de assunto e conferir que há um único histórico.
+- Repetir perguntas das capturas: namorado, óculos, chefe, piada, café derramado e diabetes seguida de “me dá um exemplo”. Conferir sentido e reação corporal.
+- Dizer “não quero brincar”, “não faz supino” e “não consegui terminar o projeto”: nenhuma ação contrária à mensagem.
+- Abrir um aplicativo em tela cheia ou ativar Modo Trabalho durante uma resposta: nada atrasado deve aparecer por cima.
 
 ## 0.43.1 — 2026-10-30
 

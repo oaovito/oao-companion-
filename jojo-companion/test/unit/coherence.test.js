@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
 import { erroDeCoerencia, historicoRelevante, expressaoCoerente } from '../../src/core/dialogue/coherence.js';
@@ -8,6 +9,19 @@ import { ConversationManager, commandMenu } from '../../src/core/conversations.j
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
 import { detectIntent } from '../../src/core/dialogue/scripted-provider.js';
 import { makeEnv, chatAdv } from './helpers.js';
+
+test('recusa explícita de treino confirma a negativa sem chamar o modelo nem executar ação', async () => {
+  let calls = 0;
+  const engine = new DialogueEngine({ llm: { isAvailable: async () => true, reply: async () => { calls++; throw new Error('não deve chamar'); } } });
+  for (const text of ['JoJo, não faz supino.', 'não faça agachamentos', 'nem faz supino']) {
+    const reply = await engine.reply(text);
+    assert.equal(reply.intent, 'recusa');
+    assert.equal(reply.action, 'nod');
+    assert.match(reply.text, /Sem (supino|agachamento)/);
+    assert.equal(reply.acoes, undefined);
+  }
+  assert.equal(calls, 0);
+});
 
 const model = (reply) => ({ isAvailable: async () => true, timeoutMs: 1000, reply: typeof reply === 'function' ? reply : async () => reply });
 const fonte = { consulta: 'diabetes', confianca: 'alta', trechos: [{ texto: 'Diabetes envolve resistência à insulina.', titulo: 'Diabetes', fonte: 'Fonte' }], fontes: [{ fonte: 'Fonte' }] };
@@ -159,9 +173,10 @@ test('negações não viram celebração, humor animado nem preferência falsa',
   assert.equal(e.companion.progress.st.interesses.includes('musica sertaneja'), false);
   e.companion.dialogue.llm = model({ text: 'Tá. Não faço.', action: 'eat', command: 'esconder' });
   const quiet = e.store.get().quietMode;
-  for (const text of ['não quero brincar agora', 'JoJo, não faz supino', 'não fica quieto']) {
+  for (const text of ['não quero brincar agora', 'JoJo, não faz supino', 'não fica quieto', "Don't play now", 'Please do not bench press', 'I do not want to sleep']) {
+    assert.equal(detectIntent(text), 'unknown', 'recusa não pode acionar o pedido positivo');
     const r = await chatAdv(e, text);
-    assert.equal(r.intent, 'ia', text);
+    assert.equal(r.intent, text === 'JoJo, não faz supino' ? 'recusa' : 'ia', text);
     assert.notEqual(r.action, 'eat');
     if (/brincar/.test(text)) assert.notEqual(r.action, 'happy', 'recusar brincadeira não vira comemoração');
     assert.equal(r.command, undefined);

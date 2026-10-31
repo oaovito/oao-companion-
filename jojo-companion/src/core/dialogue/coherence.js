@@ -4,7 +4,9 @@ import { isEnglish } from './english.js';
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9?!\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
 export function pedidoNegado(text) {
-  return /^(?:(?:ei|jojo|eu)\s+)*(?:nao|nem|nunca)\b/.test(norm(text));
+  const n = norm(text);
+  return /^(?:(?:ei|jojo|eu)\s+)*(?:nao|nem|nunca)\b/.test(n)
+    || /^(?:(?:hey|jojo|i|please)\s+)*(?:don t|dont|do not|never|not)\b/.test(n);
 }
 
 export function conversaPessoal(text) {
@@ -18,6 +20,9 @@ export function respostaAncorada(text, history = []) {
   const n = norm(text);
   const en = isEnglish(text);
   const out = (text, action = 'nod', intent = 'contexto') => ({ text, action, intent, kind: 'speech', tone: 'brincadeira', ...(en ? { lang: 'en' } : {}) });
+  const recusa = n.replace(/^(?:(?:ei|jojo|eu)\s+)*/, '');
+  const treinoNegado = recusa.match(/^(?:nao|nem|nunca) (?:faz|faca|fazer) (?:mais |nenhum )?(supino|agachamentos?)[?!]*$/);
+  if (treinoNegado) return out(`Sem ${treinoNegado[1].replace(/s$/, '')}. Os bíceps esperam.`, 'nod', 'recusa');
   const identidade = n.replace(/^(?:jojo|e voce|e vc)\s+/, '');
   if (/^(qual (e )?(o )?meu nome|como eu me chamo|quem sou eu|what is my name|whats my name|who am i)[?!]*$/.test(identidade)) return { ...out(en ? 'Your name is {nome}.' : '{nome}. Não vou trocar teu nome pelo meu.', 'nod', 'identidade'), tone: 'serio' };
   if (/^(qual (e )?(o )?(seu|teu) nome|como (voce |vc )?se chama|quem (e|eh) (voce|vc)|what is your name|whats your name|who are you)[?!]*$/.test(identidade)) return out(en ? '{companion}. The shark with biceps. Keep up.' : '{companion}. O tubarão de bíceps. Presta atenção.', 'wave', 'identidade');
@@ -100,7 +105,7 @@ export function expressaoCoerente(input, reply, seriedade = 'casual') {
   if (['tecnico', 'cientifico'].includes(seriedade) || reply.fontes) return 'lecture';
   if (/\b(nao (?:consegui|terminei|finalizei|entreguei|passei|conclui|bati a meta)|falhei|reprovei|deu errado|passei vergonha|nao (?:estou|sou|to|tou|me sinto) (?:muito )?feliz)\b/.test(q)) return 'comfort';
   if (/\b(didn t|didnt|did not|couldn t|couldnt|could not|can t|cant|cannot) (finish|complete|pass|submit)\b|\bi failed\b/.test(q)) return 'comfort';
-  if (pedidoNegado(input) && /\b(brinc\w*|piada|jog\w*|supino|agach\w*)\b/.test(q) && !/\bnao acredito\b/.test(q)) return 'nod';
+  if (pedidoNegado(input) && /\b(brinc\w*|piada|jog\w*|supino|agach\w*|play|joke|bench|squat|sleep|eat)\b/.test(q) && !/\bnao acredito\b/.test(q)) return 'nod';
   if (/\bnao (e|foi|achei) (nada )?engrac\w*\b/.test(q)) return 'nod';
   if (/\bsem (piadas?|brincadeiras?)\b/.test(q)) return 'nod';
   if (/\b(piada|brinca|engracad|consegui|terminei|finalizei|entreguei|conclui|feliz|conquista|finished)\w*\b/.test(q)) return 'happy';

@@ -83,7 +83,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup
     resumir: 'Summarize the previous explanation in two sentences.',
   }[followup?.kind] || 'Answer the actual question in your own words.';
   const linhas = tecnico ? [
-    `Reply in ${lingua}, at most ${followup?.kind === 'exemplo' ? '2 sentences (45 words)' : '3 sentences (70 words)'}, no preamble or jokes. ${tarefa} ${fontes ? 'Explain the source facts in plain language.' : 'Do not invent references; state uncertainty.'} No diagnosis or prescriptions.`,
+    `Reply in ${lingua}, at most 2 sentences (${followup?.kind === 'exemplo' ? '35' : '45'} words), no preamble or jokes. ${tarefa} ${fontes ? 'Explain the source facts in plain language.' : 'Do not invent references; state uncertainty.'} No diagnosis or prescriptions.`,
     'Examples are hypothetical. Do not invent numbers or attribute invented details to sources.',
   ] : [
     identidade,

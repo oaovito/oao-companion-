@@ -5,11 +5,11 @@
 - Desenvolvimento privado: `oaovito/oao-companion-`, aplicativo em `jojo-companion/`.
 - Distribuição pública e atualizador: `oaovito/jojo-companion-releases`.
 - Branch efetiva: `codex/conversation-coherence`, derivada de `codex/operational-handoff`.
-  Ensaios isolados atuais em `qa/conversation-models`, base `e4dee80`; integrar somente
-  depois da revisão real, e executar novamente o CI completo na branch Codex.
+  Ensaios isolados atuais em `qa/conversation-models`, base `e4dee80`; ensaios revisados foram integrados por fast-forward
+  na branch Codex. CI completo da configuração final obrigatório antes da tag.
   Base original preservada: `claude/jeff-companion-v0.1` em `018bd492a46d70f688187394f0ce60759c20d737`.
   `main` contém apenas README; consultar o remoto antes de qualquer trabalho.
-- Versão instalada/publicada: **0.43.1**. Não houve nova tag/release durante a transferência.
+- Versão pública: **0.43.1**. Código candidato: **0.44.0**; nenhuma nova tag/release criada.
 - Exclusivo para **Windows 11 x64**. Não desenvolver versões de outros sistemas, usar Wine,
   compilação cruzada ou preparar runtimes gráficos/modelos no host de edição.
 - Usuário confirmou **16 GB de RAM ou mais** no PC Windows de destino.
@@ -45,7 +45,7 @@
 
 ## Modelo local — avaliação real obrigatória
 
-- Configuração candidata consolidada: **Gemma 3 4B**, `gemma3:4b-it-q4_K_M`;
+- Configuração consolidada para validação final: **Gemma 3 4B**, `gemma3:4b-it-q4_K_M`;
   alias `gemma3:4b`. Manifestos comparados e equivalentes:
   `sha256:68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7`.
   Download total de aproximadamente 3,35 GB. Usuária confirmou 16 GB de RAM ou mais.
@@ -60,7 +60,11 @@
 - O teste pela Central encontrou reação neutra em exemplo técnico sem pesquisa.
   Causa: seriedade calculada só pela nova mensagem; agora herda o assunto em andamento.
   Regressão unitária aprovada. Nova execução [41214891976](https://github.com/oaovito/oao-companion-/actions/runs/41214891976)
-  em andamento; exige 30 turnos no engine e dez pela interface/IPC/modelo reais.
+  concluída com sucesso: 30 turnos no engine e dez pela interface/IPC/modelo reais.
+  Todas as falas foram lidas. Preload 10,985 s; mediana de resposta do modelo no engine
+  10,770 s, maior 24,945 s no runner de 8 GB/2 CPUs. Não são medições do PC da usuária.
+  A proximidade do teto de 25 s motivou encurtar explicações mantendo o mecanismo;
+  a recusa explícita de treino agora tem confirmação direta. Exige novo CI completo.
 - Seleção aceita somente variante avaliada/alias; nomes antigos migram ao novo padrão
   sem religar conversa, pesquisa, autostart ou atualização desligados. Modelos/dados
   antigos não são apagados. UI usa o nome do contrato compartilhado.
@@ -72,7 +76,7 @@
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **300/300**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **301/301**, sem pulos; host executa apenas lógica pura em Node.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;

@@ -70,7 +70,7 @@ const cases = [
   { text: 'Não consegui terminar meu projeto hoje.', model: true, action: 'comfort' },
   { text: 'O prazo ficou menor, mas eu consigo me organizar.', model: true },
   { text: 'Não quero brincar agora.', model: true, forbiddenActions: ['happy', 'play', 'eat', 'bench', 'squat'] },
-  { text: 'JoJo, não faz supino.', model: true },
+  { text: 'JoJo, não faz supino.', pattern: /sem supino/i, action: 'nod' },
   { text: 'Minha fruta preferida é manga.', model: true, pattern: /manga|fruta/i },
   { text: 'Qual a minha fruta preferida?', model: true, pattern: /manga/i },
   { text: 'Eu disse manga, não maçã.', model: true, pattern: /manga/i },
