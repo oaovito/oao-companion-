@@ -8,7 +8,7 @@
 //   4. contexto: "mais um pouco", "volta ao normal", "não era isso", "faz de novo",
 //      respostas a uma pergunta curta pendente ("os dois", "diminui", "o primeiro");
 //   5. pedidos indiretos ("tá gigante", "tô entediada", "não aguento essas animações");
-//   6. o Qwen (conversa online) devolve "acoes" no mesmo formato, validadas aqui.
+//   6. o modelo local (conversa online) devolve "acoes" no mesmo formato, validadas aqui.
 // O motor só INTERPRETA; o companion executa (Companion.runActions). Puro e testável.
 import { interpretCommand, COMANDOS } from './intencoes.js';
 
@@ -62,7 +62,7 @@ export const ACOES = {
 
 export const ACOES_IDS = Object.keys(ACOES);
 
-/** Valida uma ação vinda de fora (Qwen): id do registro e parâmetros do tipo certo. */
+/** Valida uma ação vinda de fora (modelo local): id do registro e parâmetros do tipo certo. */
 export function validarAcao(a) {
   if (!a || typeof a !== 'object') return null;
   const id = String(a.acao || a.intent || '').trim();

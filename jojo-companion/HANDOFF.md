@@ -34,6 +34,9 @@
   perguntar como o músculo cresce não muda o tamanho do JoJo.
 - Reações/boca acompanham falas; óculos técnicos saem ao mudar de assunto; ações não
   interrompem fuga, arraste, tela cheia ou Modo Trabalho.
+- Retomada após inatividade aguarda até 20 s por pesos já preparados, preservando a
+  primeira pergunta. Download inicial continua em segundo plano; emergência segue
+  imediata e cancela o turno antigo também durante recarga (regressão verificada).
 - Duração da boca acompanha o texto (máximo 6 s); respostas durante trabalho/tela cheia
   não guardam movimento para depois. Recolher balão cancela também medição pendente.
 - Build Windows em Node, sem Bash. Testes reais do vigia movidos para integração Windows;
@@ -76,7 +79,7 @@
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **301/301**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **303/303**, sem pulos; host executa apenas lógica pura em Node.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;

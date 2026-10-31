@@ -41,7 +41,7 @@ const PEDIDO = {
   resumir: 'Ela pediu um resumo. Resuma o mesmo assunto em 2 frases.',
 };
 
-/** Instrução extra para o Qwen conforme a seriedade e a continuidade. */
+/** Instrução extra para o modelo local conforme a seriedade e a continuidade. */
 export function instrucaoProfessor({ seriedade = 'casual', seg = null, tema = null } = {}) {
   const linhas = [];
   if (seriedade === 'emergencia') linhas.push('EMERGÊNCIA: sem piada, sem fantasia. Mande ligar para o SAMU 192 agora.');

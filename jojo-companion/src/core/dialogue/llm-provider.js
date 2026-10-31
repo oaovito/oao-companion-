@@ -190,9 +190,26 @@ export class LlmProvider extends DialogueProvider {
       if (this.baseOverride) return true;
       if (!this.brain) return false;
       if (this.brain.pronto()) return true;
-      // Primeira vez (ou desligado por ociosidade): prepara em segundo plano; enquanto isso, falas programadas.
-      this.brain.preparar().catch(() => {});
-      return false;
+      // Download/instalação inicial não prendem uma pergunta por minutos.
+      // Depois de já ter carregado, aguardar a retomada evita perder a primeira
+      // mensagem a cada expiração do keep-alive. Emergências continuam fora da IA.
+      const known = !!this.brain.estado?.modelo;
+      const preparing = this.brain.preparar();
+      if (!known) {
+        preparing.catch(() => {});
+        return false;
+      }
+      let timer;
+      try {
+        return await Promise.race([
+          preparing.then(() => this.brain.pronto()),
+          new Promise((resolve) => { timer = setTimeout(() => resolve(false), 20000); }),
+        ]);
+      } catch {
+        return false;
+      } finally {
+        clearTimeout(timer);
+      }
     }
     if (this.preset.key && !cfg.chave) return false;
     return true;

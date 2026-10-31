@@ -14,6 +14,7 @@
 - Negações não viram comemoração, preferência falsa, treino ou brincadeira; referências ao tamanho de outros objetos não redimensionam o personagem.
 - Óculos técnicos saem ao mudar de assunto; respostas e indicadores atrasados não atropelam acolhimento, tela cheia, fuga ou Modo Trabalho.
 - Resposta malformada não exibe JSON nem desliga a conversa por 90 segundos. Geração vencida é cancelada de fato; trecho bruto de pesquisa é identificado como trecho da fonte.
+- A primeira pergunta após inatividade aguarda brevemente o recarregamento do modelo, em vez de ser perdida para um aviso de preparação.
 - Instalação do motor Windows verifica SHA-256; download do novo modelo confere espaço. Migração preserva dados e preferências, inclusive conversa, pesquisa e início com Windows desligados.
 - Ferramenta de empacotamento atualizada para remover vulnerabilidades altas/críticas de sua cadeia de dependências.
 

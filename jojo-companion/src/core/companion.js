@@ -1437,7 +1437,7 @@ export class Companion {
     else this._beginTalking(reply.text, now);
     // A conversa online entendeu um pedido de comando que as frases programadas não pegaram.
     if (reply.command) this.runInterpreted({ cmd: reply.command, arg: reply.commandArg || '' }, conv.id, { silent: true });
-    // Ações entendidas pelo Qwen (já validadas pelo registro): o app executa e confirma o resultado real.
+    // Ações entendidas pelo modelo local (já validadas pelo registro): o app executa e confirma o resultado real.
     if (reply.acoes && reply.acoes.length) {
       const fb = this.runActions(reply.acoes, conv.id);
       if (fb && fb !== 'Feito.') this.conversations.addMessage(conv.id, 'jojo', fb);

@@ -20,7 +20,7 @@ export class DialogueEngine {
    *   programada; `searchEnabled()` diz se a usuária permitiu.
    */
   constructor({ providers = [], timeoutMs = 8000, log = () => {}, search = null, searchEnabled = () => true, llm = null, pesquisa = null, now = () => new Date() } = {}) {
-    // Motor de pesquisa (fontes públicas sem login): alimenta o Qwen local quando precisa.
+    // Motor de pesquisa (fontes públicas sem login): alimenta o modelo local local quando precisa.
     this.pesquisa = pesquisa;
     // Conversa com IA (API gratuita): entende e responde no jeito do JoJo.
     this.llm = llm;

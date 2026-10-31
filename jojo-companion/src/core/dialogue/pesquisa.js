@@ -240,7 +240,7 @@ export class MotorPesquisa {
   }
 }
 
-/** Bloco para o prompt do Qwen: dados isolados, nunca instruções. */
+/** Bloco para o prompt do modelo local: dados isolados, nunca instruções. */
 export function blocoPesquisa(res, { compacto = false } = {}) {
   if (!res || !res.trechos || !res.trechos.length) return '';
   const linhas = res.trechos.map((x, i) => `[${i + 1}] ${x.fonte} — ${x.titulo}${x.url ? ` <${x.url}>` : ''}\n${x.texto || '(sem resumo)'}`);

@@ -11,6 +11,7 @@ import { LlmProvider, OLLAMA_MODEL, readNdjson, isTechnical } from '../../src/co
 import { sanitize, migrate } from '../../src/core/settings-schema.js';
 import { criarCerebroLocal, escolherModelo, ambienteOllama, PORTA, MODELO } from '../../src/main/cerebro-local.js';
 import { LOCAL_MODEL_ALIAS } from '../../src/core/dialogue/local-model.js';
+import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 
 const listen = (srv) => new Promise((r) => srv.listen(0, '127.0.0.1', () => r(`http://127.0.0.1:${srv.address().port}`)));
 
@@ -67,6 +68,30 @@ test('motor ainda não pronto: prepara em segundo plano e, enquanto isso, a conv
   assert.equal(provider(null).unavailableReason(), 'sem motor');
 });
 
+test('após inatividade, a primeira pergunta espera o recarregamento e recebe a resposta real', async () => {
+  const { srv, pedidos } = fakeOllama({ resposta: 'Dia bom é dia de supino, Manu.' });
+  const base = await listen(srv);
+  let ready = false, resume;
+  const loading = new Promise((resolve) => { resume = () => { ready = true; resolve({ base, modelo: MODELO }); }; });
+  const brain = { pronto: () => ready, preparar: () => loading, usar() {}, estado: { fase: 'parado', modelo: MODELO } };
+  try {
+    const engine = new DialogueEngine({ llm: provider(brain), searchEnabled: () => false });
+    let delivered = false;
+    const pending = engine.reply('como foi seu dia?').then((reply) => { delivered = true; return reply; });
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(delivered, false, 'não substituir a pergunta por aviso ou resposta programada');
+    assert.equal(pedidos.length, 0, 'pesos ainda não estão disponíveis');
+    resume();
+    const reply = await pending;
+    assert.equal(reply.intent, 'ia');
+    assert.equal(reply.text, 'Dia bom é dia de supino, Manu.');
+    assert.equal(pedidos.filter((p) => p.url === '/api/chat').length, 1);
+  } finally {
+    resume();
+    srv.close();
+  }
+});
+
 test('parar narração preserva também o marcador de fim de turno do modelo', async () => {
   const { srv, pedidos } = fakeOllama({ resposta: 'Tudo certo, Manu.' });
   const base = await listen(srv);
@@ -81,6 +106,24 @@ test('parar narração preserva também o marcador de fim de turno do modelo', a
   } finally {
     srv.close();
   }
+});
+
+test('urgência continua imediata durante a retomada e cancela a pergunta antiga', async () => {
+  let resume;
+  const loading = new Promise((resolve) => { resume = resolve; });
+  let ready = false, chats = 0;
+  const brain = { pronto: () => ready, preparar: () => loading, estado: { modelo: MODELO }, usar() {} };
+  const llm = provider(brain);
+  llm.fetch = async () => { chats++; throw new Error('não deve gerar fala antiga'); };
+  const engine = new DialogueEngine({ llm, searchEnabled: () => false });
+  const pending = engine.reply('como foi seu dia?');
+  await new Promise((resolve) => setImmediate(resolve));
+  engine.cancelPending();
+  const urgent = await engine.reply('quero morrer');
+  assert.equal(urgent.intent, 'crisis');
+  ready = true; resume();
+  assert.equal((await pending).cancelled, true);
+  assert.equal(chats, 0);
 });
 
 test('streaming: junta os pedaços NDJSON; erro do Ollama vira erro', async () => {
