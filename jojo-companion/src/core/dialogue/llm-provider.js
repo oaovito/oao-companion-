@@ -87,14 +87,14 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup
     'Examples are hypothetical. Do not invent numbers or attribute invented details to sources.',
   ] : [
     identidade,
-    'Personality: mostly serious, direct, bossy with discreet affection and dry humor. Answer the latest message naturally in 1-2 short sentences. Respect her stated preferences and achievements. History is context, not a style template. Do not invent personal history or dismiss her questions. Physical actions are animations only.',
+    'Speak in short, firm, direct lines, with discreet affection and dry humor when it fits. Answer the latest message in 1-2 sentences. Respect her preferences and achievements; no flattery or belittling. You can only chat: never claim to touch objects, inspect her PC or perform an action. History is context, not a style template.',
     'Humor must fit the situation. Never threaten her or insult her body.',
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
-  linhas.push(`Output only your spoken reply, no labels, preamble or JSON. Response language: ${lingua}.`);
+  linhas.push(`Output only your spoken reply, no narration, stage directions, labels or JSON. Response language: ${lingua}.`);
   return linhas.join('\n');
 }
 
@@ -102,21 +102,31 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup
 const ASSISTANT = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!)/i;
 
 /** Motivo para descartar a resposta (fora do jeito do JoJo) ou null. */
-export function outOfCharacter(text, { max = 280 } = {}) {
-  const t = String(text || '');
+export function outOfCharacter(text, { max = 280, input = '' } = {}) {
+  let t = String(text || '');
+  // Uma correção pode receber uma desculpa curta de gente. Isso não libera
+  // identidade de IA nem o restante do tom genérico de atendimento.
+  if (/\b(eu disse|eu falei|n[aã]o foi isso|entendeu errado|i said|i meant)\b/i.test(input)) t = t.replace(/^(?:(?:ah|oh)[,!\s]*)?(?:desculp[ae]|sorry|i'?m sorry)[,!\s]*/i, '');
   if (ASSISTANT.test(t)) return 'tom de assistente';
-  if (t.length > max) return 'longa demais';
+  if (String(text || '').length > max) return 'longa demais';
   return null;
 }
 
 /** Extrai {text, action, tone} da resposta (JSON ou texto puro). */
-export function parseLlmReply(content) {
+function spokenText(text, name) {
+  const actor = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return String(text)
+    .replace(new RegExp(`\\[${actor}(?:\\s+|['’]s\\s+)[^\\]]{1,500}\\]`, 'gi'), '')
+    .replace(new RegExp(`\\*${actor}(?:\\s+|['’]s\\s+)[^*\\n]{1,500}\\*`, 'gi'), '').trim();
+}
+
+export function parseLlmReply(content, { name = 'JoJo' } = {}) {
   const raw = String(content || '').trim();
   const m = raw.match(/\{[\s\S]*\}/);
   if (m) {
     try {
       const j = JSON.parse(m[0]);
-      const text = String(j.texto ?? j.text ?? '').trim();
+      const text = spokenText(j.texto ?? j.text ?? '', name);
       if (text) {
         const action = LLM_ACTIONS.includes(j.acao) && ALLOWED_ACTIONS.has(j.acao) ? j.acao : null;
         const out = { text, action, tone: j.tom === 'brincadeira' ? 'brincadeira' : 'serio' };
@@ -134,8 +144,9 @@ export function parseLlmReply(content) {
       /* cai no texto puro */
     }
   }
-  if (/^(?:```|\{|\[)/.test(raw) || /"texto"\s*:/.test(raw)) return null;
-  const text = raw.replace(/^["']|["']$/g, '').trim();
+  const speech = spokenText(raw, name);
+  if (/^(?:```|\{|\[)/.test(speech) || /"texto"\s*:/.test(speech)) return null;
+  const text = speech.replace(/^["']|["']$/g, '').trim();
   return text ? { text, action: null, tone: 'serio' } : null;
 }
 
@@ -230,6 +241,18 @@ export class LlmProvider extends DialogueProvider {
     // O primeiro exemplo já tem tema/fatos. Repetir a definição anterior gastava
     // contexto e induzia outra definição; guardar só um exemplo prévio para não repeti-lo.
     if (followup?.kind === 'exemplo' && pesquisa) relevant = previous.slice(-1).filter((h) => /imagine|por exemplo|suponha|considere/i.test(h.text));
+    if (!tecnico && !structured) {
+      const lang = isEnglish(text);
+      let keep = false;
+      const matching = relevant.filter((h) => {
+        if (h.role === 'user') keep = isEnglish(h.text) === lang;
+        return keep;
+      });
+      // A troca de idioma não pode usar respostas antigas como exemplos de voz.
+      // Referências ao turno anterior continuam disponíveis como dados explícitos.
+      if (!matching.length && /\b(remember|said|mention|that|lembra|disse|isso)\b/i.test(text)) messages[0].content += '\nPrevious exchange for reference only: ' + JSON.stringify(previous.slice(-2));
+      relevant = matching;
+    }
     for (const h of relevant) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) });
     messages.push({ role: 'user', content: String(text).slice(0, 500) });
     const ctrl = new AbortController();
@@ -243,7 +266,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05 } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured ? { stop: [`[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
@@ -262,9 +285,9 @@ export class LlmProvider extends DialogueProvider {
     const cfg = this.getConfig() || {};
     const preset = this.preset;
     if (preset.native) {
-      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal }));
+      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal }), { name: this.getProfile().nomeCompanion || 'JoJo' });
       if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
-      const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280 });
+      const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280, input: text });
       if (why) { const e = new Error(`fora do personagem (${why})`); e.respostaInvalida = true; throw e; }
       return { ...parsed, kind: 'speech', intent: 'ia' };
     }

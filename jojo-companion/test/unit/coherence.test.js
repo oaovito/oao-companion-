@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
-import { LlmProvider, parseLlmReply, buildSystemPrompt } from '../../src/core/dialogue/llm-provider.js';
+import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
 import { erroDeCoerencia, historicoRelevante, expressaoCoerente } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
@@ -113,6 +113,7 @@ test('resposta semanticamente inválida é descartada sem pausar o modelo para a
   assert.equal(erroDeCoerencia('você está bem?', 'Tudo bem. E você, JoJo?'), 'identidades trocadas');
   assert.equal(erroDeCoerencia('quem é você?', 'Meu nome é JoJo. E você, Manu?'), null);
   assert.equal(erroDeCoerencia('fala uma piada', 'Eu vou ter que inventar um motivo para te mandar para o hospital.'), 'ameaça ou promessa física inventada');
+  assert.equal(erroDeCoerencia('Derrubei café no teclado.', 'Já estou limpando.'), 'ação física inventada');
 });
 
 test('expressão acompanha o conteúdo e modelo não executa comandos numa conversa casual', async () => {
@@ -130,6 +131,11 @@ test('JSON incompleto não aparece como fala; o contexto não contém mais o pro
   assert.equal(parseLlmReply('{"texto":"oi"'), null);
   assert.equal(parseLlmReply('```json\n{"texto":"oi"'), null);
   assert.equal(parseLlmReply('{"texto":"oi","acao":"nod"}').text, 'oi');
+  assert.equal(parseLlmReply('Parabéns. [JoJo gives a subtle nod]').text, 'Parabéns.');
+  assert.equal(parseLlmReply('[JoJo tilts his head] Pode falar.').text, 'Pode falar.');
+  assert.equal(parseLlmReply('A glicose aumenta [1].').text, 'A glicose aumenta [1].');
+  assert.equal(outOfCharacter('Desculpa, manga. Anotado.', { input: 'Eu disse manga, não maçã.' }), null);
+  assert.equal(outOfCharacter('Desculpa, como uma IA não sei.', { input: 'Eu disse manga, não maçã.' }), 'tom de assistente');
   const p = buildSystemPrompt(PERSONALITY_DEFAULTS);
   assert.ok(p.length < 4000, `prompt voltou a crescer: ${p.length}`);
 });

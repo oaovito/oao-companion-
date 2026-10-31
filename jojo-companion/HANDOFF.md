@@ -75,6 +75,11 @@
   fazer companhia antes do humor; histórico menor para assuntos novos. Nomes conhecidos
   têm resposta protegida imediata, como os fatos sobre o criador. Não trocar o modelo
   oficial antes de ler cada fala real.
+- `306e2c6`: Gemma **28/30**, Qwen 3 4B **27/30**, ainda reprovados na leitura das
+  falas. Problemas: narração de gestos impressa, promessa falsa de limpar teclado,
+  idioma anterior contaminando a resposta e correção de preferência tratada com hostilidade.
+  Próxima correção separa fala/narração, impede alegação física, filtra exemplos de voz
+  do idioma anterior e aceita desculpa breve somente em feedback de correção.
 - Acrescentado `test/e2e/conversation-real.windows.mjs`: dez turnos pela Central/IPC,
   controlador e modelo reais, além do ensaio do engine. Só é executado quando os
   30 casos de backend passam; falha bloqueia o job. Ainda aguarda execução.
