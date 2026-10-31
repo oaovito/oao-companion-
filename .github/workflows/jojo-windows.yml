@@ -42,6 +42,11 @@ jobs:
       - name: Testes unitários
         run: npm test
 
+      - name: Auditar acesso ao canal público (sem publicar)
+        run: node scripts/publish-release.mjs --access
+        env:
+          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+
       - name: Gerar executável portátil, instalador e ZIP
         if: success() || failure()
         run: npx electron-builder --win --x64

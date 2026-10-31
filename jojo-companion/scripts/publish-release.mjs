@@ -80,8 +80,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       console.log(conferirArtefatos(dir, version).map((f) => `${f.name}: ${f.size} bytes, ${f.digest}`).join('\n'));
     } else {
       if (!process.env.RELEASES_TOKEN) throw new Error('RELEASES_TOKEN ausente: publicação bloqueada');
-      if (process.env.GITHUB_REF_TYPE !== 'tag') throw new Error('Publicação exige tag oficial');
       const request = client(process.env.RELEASES_TOKEN);
+      if (process.argv.includes('--access')) {
+        const repo = await request('GET', `/repos/${REPO}`);
+        if (repo.private !== false || repo.permissions?.push !== true) throw new Error('Token não anuncia escrita no canal público');
+        console.log('RELEASES_TOKEN autenticado: canal público acessível e permissão push anunciada; nenhuma escrita executada.');
+        process.exit(0);
+      }
+      if (process.env.GITHUB_REF_TYPE !== 'tag') throw new Error('Publicação exige tag oficial');
       const tag = process.env.GITHUB_REF_NAME;
       const notes = notasDaRelease(fs.readFileSync(path.join(ROOT, 'CHANGELOG.md'), 'utf8'), version);
       if (process.argv.includes('--check')) await preflight({ request, version, tag });

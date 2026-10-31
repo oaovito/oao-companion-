@@ -1,4 +1,43 @@
-# HANDOFF — estado atual (v0.43.1, 2026-10-30)
+# HANDOFF — operação Codex (v0.43.1, 2026-10-30)
+
+## Transferência operacional
+
+- Ler `../AGENTS.md` primeiro; `../CLAUDE.md` permanece como referência histórica/técnica.
+- Fonte privada: `oaovito/oao-companion-`, diretório `jojo-companion/`. Base confirmada no GitHub:
+  `claude/jeff-companion-v0.1` em `018bd492a46d70f688187394f0ce60759c20d737`.
+- Branch efetiva desta transferência: `codex/operational-handoff`; `main` segue apenas com README.
+- Última release pública confirmada: [v0.43.1](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.43.1).
+  Os três arquivos foram baixados sem autenticação e conferidos por tamanho, assinatura MZ/PK e SHA-256.
+- `package.json.jojoUpdate` permanece `oaovito/jojo-companion-releases`. UpdateChecker detectou
+  0.43.1 a partir de 0.43.0 nos modos portable/installer usando os metadados públicos reais;
+  a versão já instalada não propõe atualização para si mesma. Nenhuma alteração no runtime do atualizador.
+- CI agora reconhece `codex/**`. Push comum e dispatch só validam; tags oficiais novas
+  publicam após todos os gates obrigatórios. Removido o gatilho por mensagem `[publicar]`.
+- Novo `scripts/publish-release.mjs`: bloqueio de tag divergente, token ausente, canal privado
+  e release/tag pública preexistente; upload dos três formatos em rascunho, tamanho/SHA-256,
+  publicação e consulta anônima de `/releases/latest`. Não edita releases históricas.
+- API Secrets recusou listagem (403 Resource not accessible by integration). Não significa token
+  ausente: CI anterior [41120231023](https://github.com/oaovito/oao-companion-/actions/runs/41120231023)
+  publicou com sucesso usando RELEASES_TOKEN. Novo CI audita o token via GET autenticado do
+  repositório público e verifica permissão push anunciada, sem escrever/publicar uma versão artificial.
+- Falhas de três testes dependentes do Halloween/horário real corrigidas fixando Date no helper
+  da simulação, sem desligar testes nem modificar comportamento de produção. Unitários: **280/280**.
+- Validação desta transferência em andamento no Actions; consultar a execução do HEAD antes de
+  declarar o pipeline novo aprovado. Nenhuma versão/tag/release nova solicitada ou publicada.
+- Linux: npm ci; Electron instalado com `NODE_USE_ENV_PROXY=1 node node_modules/electron/install.js`.
+  Xvfb extraído de pacote Debian verificado pelo APT em `/tmp/jojo-xvfb/root`; usar seu `usr/bin`
+  no PATH para E2E nesta sessão. Este caminho temporário não é requisito do app nem setup publicado.
+- Pendências físicas permanecem: Windows 11 doméstico, DPI misto, suspensão e atualização real
+  portátil/NSIS com vigia. CI Windows Server não substitui esses testes.
+- Não foi acessado/modificado nenhum projeto externo. O canal público foi somente consultado.
+
+## Registro histórico anterior à transferência
+
+Os relatos abaixo pertencem às respectivas versões. Números antigos, menções a APIs de IA,
+sons, autostart e restrições de rede não descrevem necessariamente o código atual.
+Prevalecem o usuário, AGENTS.md, código recente e evidências da execução atual.
+
+## Estado recebido (v0.43.1) 
 
 Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
 (organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
@@ -92,9 +131,8 @@ Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
   se falhar, cai nas respostas programadas. Com chave grátis (Groq/Gemini/OpenRouter)
   em `settings.json` (`iaProvedor`, `iaChave`) fica mais estável.
 
-- Atualização automática: busca em `oaovito/jojo-companion-releases` (público). Falta
-  criar esse repositório e o segredo `RELEASES_TOKEN` (token com escrita nele) no
-  repositório do código — a integração do Claude não tem permissão para isso.
+- Atualização automática: busca em `oaovito/jojo-companion-releases` (público). Repositório
+  e publicação já existem, confirmados na transferência operacional acima.
   A troca do executável no Windows real ainda não foi exercitada (testado: consulta,
   download e conferência do arquivo).
 
