@@ -1,14 +1,6 @@
 name: JoJo — conversa real no Windows (avaliação)
 
 on:
-  push:
-    branches: ['qa/conversation-models']
-    paths:
-      - '.github/workflows/jojo-conversation-windows.yml'
-      - 'jojo-companion/scripts/check-conversation*'
-      - 'jojo-companion/test/e2e/conversation-real.windows.mjs'
-      - 'jojo-companion/src/core/dialogue/**'
-      - 'jojo-companion/src/main/cerebro-local.js'
   workflow_dispatch:
 
 permissions:
@@ -20,6 +12,8 @@ concurrency:
 
 jobs:
   conversa-real:
+    # COST_GATE: execucao opcional somente apos confirmar consumo pago bloqueado em zero.
+    if: ${{ github.repository == 'oaovito/oao-companion-' && false }}
     runs-on: windows-latest
     timeout-minutes: 30
     strategy:
@@ -33,9 +27,12 @@ jobs:
         working-directory: jojo-companion
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.ref == 'refs/heads/main' && 'codex/conversation-coherence' || github.sha }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22.23.4'
       - name: Instalar dependências da interface Windows
         run: npm ci
       - name: Avaliar candidato com o mesmo ensaio obrigatório do pipeline oficial

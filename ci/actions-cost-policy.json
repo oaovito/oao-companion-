@@ -1,0 +1,7 @@
+{
+  "paidUsageBlockedConfirmed": false,
+  "confirmation": null,
+  "pendingVersion": "0.44.0",
+  "sourceBranch": "codex/conversation-coherence",
+  "note": "Faturamento e variaveis negados por HTTP 403. Nao alocar runners antes de confirmar bloqueio de TODO consumo pago do Actions em zero."
+}

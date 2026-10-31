@@ -76,7 +76,7 @@ npm run build:win
 node scripts/publish-release.mjs --artifacts
 ```
 
-CI usa Node **22.23.4** (bootstrap Windows com SHA-256) para build, E2E, integração, medição e modelo real.
+CI usa Node **22.23.4** fixado em `actions/setup-node` para build, E2E, integração, medição e modelo real.
 `npm run test:windows` executa entrada nativa e processos do vigia; `npm run test:e2e`
 executa a aplicação Windows. `npm run build:win` usa Node, sem Bash.
 Não instalar runtimes gráficos/modelos de outro sistema no host do editor.
@@ -84,17 +84,28 @@ Respeitar proxy/CA e verificações de assinatura/checksum.
 `test/unit/helpers.js` fixa Date numa data não festiva para isolar a simulação do
 calendário real; testes de feriados devem fornecer datas explícitas.
 
-O executor oficial é `ci/windows.cmd` / `ci/windows.mjs`, independente de GitHub Actions.
-O modo padrão valida; `release` exige tag oficial e relatório do MESMO commit/artefatos.
-Definições antigas do Actions foram preservadas em `ci/legacy/github-actions/`, sem gatilhos.
-Templates Azure/CircleCI ficam em `ci/providers/`, fora da descoberta automática, desativados.
-Só ativar UM provedor após autenticação e confirmação efetiva de plano/franquia permanentes
-com custo adicional R$ 0; não anexar assinatura, pagamento, trial ou habilitar plano pago.
-Missão atual: **CI/CD exclusivamente em nuvem, custo adicional R$ 0**. Não usar nem
-depender do computador do usuário. Os scripts de agente foram preservados do trabalho
-anterior; só podem ser considerados para Windows EM NUVEM já autorizado, sem custo
-incremental, em sessão interativa dedicada e sem instalação JoJo anterior. Nenhuma
-máquina foi conectada/registrada. Sem executor real, release bloqueada.
+**GitHub Actions original é a ÚNICA infraestrutura oficial.** Somente runners
+`windows-latest` hospedados pelo GitHub para o aplicativo; Ubuntu oficial apenas para
+controle leve por API. Proibidos Azure, CircleCI, runners externos/locais ou self-hosted.
+Workflows restaurados em `.github/workflows/`; alternativas e agentes removidos, histórico
+preservado no Git. Helpers `ci/policy.mjs`, `ci/process.mjs`, `ci/validation.mjs` são
+bibliotecas dos gates do Actions e testes, não outra infraestrutura de execução.
+
+`jojo-windows.yml` usa `scripts/actions-windows.mjs` para reunir as suítes originais no
+mesmo job e preservar hashes/relatórios/instalador. Só aceita `github-hosted` Windows x64.
+`jojo-conversation-windows.yml` fica somente manual para evitar repetir o ensaio por push.
+`jojo-recovery.yml` agenda `17 * * * *` na branch padrão, com concorrência e idempotência.
+main guarda somente controle (não usar como fonte do aplicativo); o worker faz checkout
+da branch correta. Mudanças do controle devem ser sincronizadas na main, preservando
+README/histórico e sem force-push. Não criar commits artificiais nem loops de polling.
+
+Orçamento adicional **R$ 0**. APIs de faturamento/variáveis estão negadas (403), então
+não é possível confirmar o bloqueio efetivo de consumo pago. `ci/actions-cost-policy.json`
+e os três `COST_GATE` permanecem fechados até confirmação confiável de limite pago ZERO
+para TODO Actions. Não alterar limites/cartões/planos. Confirmação única foi solicitada
+ao titular; não presumir resposta nem habilitar por timeout. Sem isso, jobs pulados não
+comprovam disponibilidade de runner. Mesmo habilitado, cron pode ser impedido pelo
+próprio faturamento; só declarar monitor ativo após observar verificação executada.
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
@@ -115,14 +126,15 @@ Não incrementar para demonstrar transferência. Registrar mudanças não lança
 2. Manter versão, tag `vX.Y.Z`, nomes e metadados consistentes. Preservar
    `scripts/release-notes.mjs`; seções aplicáveis: Novidades, Melhorias, Correções,
    Remoções e Como testar. Sem seção válida, publicação deve falhar.
-3. Commit/push no privado; acompanhar validação pelo executor Windows autorizado e gratuito.
-   Criar/push da **nova tag oficial** somente após os testes e revisão das falas. Agente
-   independente consulta tags e publica após conferir o relatório/hashes; pode reutilizar
-   validação íntegra do MESMO commit. Templates externos devem usar o mesmo executor.
-   Mensagem `[publicar]` e push comum não publicam; não depender do Actions para isso.
+3. Commit/push no privado; acompanhar Windows no GitHub Actions. A versão pendente
+   **0.44.0** está autorizada para recuperação/publicação automática após TODOS os gates.
+   Só então o helper cria a NOVA tag privada com GITHUB_TOKEN, sem disparar build duplicado.
+   Tag existente divergente jamais é movida. Outra versão exige nova autorização/política.
+   O controle horário não repete build ativo, cancelamento ou falha técnica do mesmo SHA;
+   falha anterior ao runner pode ser tentada na próxima hora. Não há IA rodando continuamente.
 4. `scripts/publish-release.mjs --tag vX.Y.Z --validation <relatório>` exige Windows real,
-   checkout limpo, tag/commit, todos os gates/hashes correspondentes e RELEASES_TOKEN
-   no executor (ou autorização segura equivalente), tag igual à versão,
+   checkout limpo, tag/commit, todos os gates/hashes do MESMO run oficial GitHub
+   e RELEASES_TOKEN somente no passo final, tag igual à versão,
    destino público e ausência de release **e tag** públicas existentes. Faz upload em
    rascunho e confere nomes/tamanhos/hashes antes de torná-lo visível ao atualizador.
 5. Artefatos exatos: `JoJoCompanion.exe`, `JoJoCompanion-Setup-X.Y.Z.exe`,
@@ -168,27 +180,14 @@ podem fazer; pedir apenas autorização/credenciais externas realmente indispon�
 - Alteração oficial de modelo, se necessária e comprovada por ensaio, exige atualizar seleção/migração,
   documentação, testes e inicialização local; nunca usar modelos externos como fallback silencioso.
 
-## Estado após migração de CI em 2026-10-31
+## Estado após restauração do Actions — 2026-10-31
 
-Código candidato **0.44.0**, branch `codex/conversation-coherence`; público **0.43.1**.
-Actions bloqueou o código `bbfd3ea` por faturamento em [41216548528](https://github.com/oaovito/oao-companion-/actions/runs/41216548528).
-Esse registro é histórico: a missão atual NÃO depende de regularizar o Actions.
-Executor independente e templates gratuitos implementados, mas nenhum Windows foi
-conectado. Ambiente: sem identidade/organização Azure acessível, sem credencial CircleCI,
-VPN ou Windows autorizado. Falta conexão autenticada com executor Windows R$ 0, não código
-nem comandos manuais do usuário. Não pedir senhas/tokens no chat. Depois da conexão,
-confirmar plano Free/franquia já disponível, ativar a integração e executar a validação real.
-**312/312 testes de lógica passaram no Node 22.23.4**, além de lint, análise PowerShell e YAML.
-Isso NÃO comprova Windows: ensaio anterior de 30+dez turnos é de código anterior.
-Nenhuma nova tag/release; `main` ainda não recebeu a integração. Estado completo em
-`jojo-companion/docs/CI_GRATUITO.md` e HANDOFF. Nunca reduzir gates para publicar.
-
-Retomada a partir de `3f637fe`: acessos foram rechecados sem repetir testes/desenvolvimento.
-Azure/CircleCI continuam sem identidade autenticada; CircleCI e GitLab responderam 401
-sem credenciais. Há arquivos padrão de configuração AWS/GCP, mas nenhum vínculo de
-identidade pronto/autorizado no manifesto; isso não permite escolher uma conta ou
-enumerar VMs. Não usar essas variáveis como autorização implícita. GitLab tem Windows
-Free documentado, mas integração externa direta é Premium/Ultimate e sua conta/franquia
-não é acessível. CircleCI Free continua sendo a integração em nuvem mais viável já
-preparada, sem ativação. Exigir autorização de conta para consultar plano/saldo e
-configurar/executar o projeto Windows privado. Não pedir tokens ou cartão no chat.
+Base encontrada: `dd8b558` (pedido citava `3f637fe`). Código candidato **0.44.0**,
+branch `codex/conversation-coherence`; público **0.43.1**. As 17 releases históricas
+permanecem imutáveis. Nenhum código do MNE_Lab deve ser acessado/modificado.
+**323/323** testes locais passaram (312 anteriores + 11 de recuperação); `actionlint`
+validou os workflows. Isso NÃO comprova Windows nem conclusão da release.
+A última anotação financeira é ambígua (pagamento falhou OU limite de gasto); a API
+não permite distinguir causa/saldo. Nunca alegar que regularização ocorrerá sozinha.
+Estado do primeiro disparo/default branch e próximos passos: HANDOFF e
+`jojo-companion/docs/GITHUB_ACTIONS.md`. Nenhum outro provedor é necessário/autorizado.

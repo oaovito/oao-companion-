@@ -106,7 +106,7 @@ app.whenReady().then(async () => {
   // Pequena evidência visual recuperável mesmo quando a cota de artefatos está cheia.
   if (process.env.GITHUB_ACTIONS) {
     for (const part of png.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_PREVIEW:${part}`);
-    const report = gzipSync(Buffer.from(JSON.stringify({ markdown: linhas.join('\n'), summary: { erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, commit: process.env.GITHUB_SHA }))).toString('base64');
+    const report = gzipSync(Buffer.from(JSON.stringify({ markdown: linhas.join('\n'), summary: { erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, commit: process.env.JOJO_VALIDATED_COMMIT || process.env.GITHUB_SHA }))).toString('base64');
     for (const part of report.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_REPORT:${part}`);
   }
   console.log(`Auditadas ${nomes.length}: ${erros.length} com erro, ${fora.length} fora do espaço, ${paradas.length} paradas, ${semGatilho.length} só por /anim, média ${f(media)} ms`);

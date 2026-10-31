@@ -122,12 +122,12 @@ Código e CI vivem somente em `oaovito/oao-companion-` (privado). Nova tag ofici
 após testes, build, auditoria visual e conversa real no Windows, pode publicar os três
 binários em `oaovito/jojo-companion-releases` (público). API Releases e assets com SHA-256
 são os metadados do atualizador próprio. Push comum não publica; versões históricas,
-seus arquivos e tags são imutáveis. `scripts/check-conversation-windows.ps1` é compartilhado
-pelo executor independente `ci/windows.mjs`. Ele preserva as suítes, controla cache,
-locks/timeouts e gera logs privados/TAP/JUnit/JSON; não depende de Actions. O publicador
-exige relatório Windows, tag/commit/artefatos correspondentes. Integrações Azure/CircleCI
-são templates desativados até comprovação de plano gratuito e autorização. Agente próprio
-pode consultar Git/tags com o Agendador do Windows, em sessão de testes isolada.
+seus arquivos e tags são imutáveis. `scripts/check-conversation-windows.ps1` é compartilhado pelo ensaio real e pelo
+workflow oficial. GitHub Actions é a única infraestrutura. `scripts/actions-windows.mjs`
+reúne os gates originais, instalador e relatórios no mesmo job oficial Windows; o
+publicador exige tag/commit/hashes e o MESMO run `github-hosted`. Recuperação horária
+em `.github/workflows/jojo-recovery.yml`, executada na branch padrão, sem IA contínua,
+loops ou provedores externos. Azure/CircleCI e agentes locais foram removidos.
 
 ## Animações: variações e emoção
 

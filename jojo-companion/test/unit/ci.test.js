@@ -11,7 +11,7 @@ import { verifyPublication } from '../../../ci/validation.mjs';
 import { verificarAtualizadorPublicado } from '../../scripts/publish-release.mjs';
 
 const files = ['JoJoCompanion.exe', 'JoJoCompanion-Setup-0.44.0.exe', 'JoJoCompanion-0.44.0-win-x64.zip'].map((name) => ({ name, size: 1024, digest: `sha256:${'a'.repeat(64)}` }));
-const fixture = () => ({ schema: 1, source: SOURCE_REPO, version: '0.44.0', tag: 'v0.44.0', commit: 'a'.repeat(40), platform: 'win32', arch: 'x64', status: 'passed', steps: REQUIRED_STEPS.map((id) => ({ id, status: 'passed', exitCode: 0, timedOut: false })), files: structuredClone(files) });
+const fixture = () => ({ schema: 1, source: SOURCE_REPO, version: '0.44.0', tag: 'v0.44.0', commit: 'a'.repeat(40), platform: 'win32', arch: 'x64', executor: 'github-hosted', runId: '123', status: 'passed', steps: REQUIRED_STEPS.map((id) => ({ id, status: 'passed', exitCode: 0, timedOut: false })), files: structuredClone(files) });
 const expected = { version: '0.44.0', commit: 'a'.repeat(40), files };
 
 test('CI: cada gate obrigatorio precisa passar; skip, timeout e saida nao zero bloqueiam', () => {
@@ -27,7 +27,7 @@ test('CI: cada gate obrigatorio precisa passar; skip, timeout e saida nao zero b
 });
 
 test('CI: nao reutiliza evidencias de outro commit, versao, origem ou plataforma', () => {
-  for (const patch of [{ commit: 'b'.repeat(40) }, { version: '0.43.1' }, { source: 'outro/repo' }, { platform: 'linux' }, { arch: 'arm64' }, { tag: 'v0.43.1' }, { status: 'running' }]) assert.throws(() => assertValidation({ ...fixture(), ...patch }, expected));
+  for (const patch of [{ commit: 'b'.repeat(40) }, { version: '0.43.1' }, { source: 'outro/repo' }, { platform: 'linux' }, { arch: 'arm64' }, { tag: 'v0.43.1' }, { status: 'running' }, { executor: 'self-hosted' }, { runId: '' }]) assert.throws(() => assertValidation({ ...fixture(), ...patch }, expected));
   assert.throws(() => assertSourceRemote('https://github.com/oaovito/jojo-companion-releases.git'));
   assert.throws(() => assertSourceRemote('https://credential@example.org/oaovito/oao-companion-'));
   assert.doesNotThrow(() => assertSourceRemote('git@github.com:oaovito/oao-companion-.git'));
@@ -96,8 +96,10 @@ test('publicador: relatorio completo nao substitui a tag nem checkout limpo', ()
     const saved = path.join(os.tmpdir(), `jojo-report-${process.pid}-${Date.now()}.json`);
     fs.writeFileSync(saved, JSON.stringify(report));
     try {
-      const args = { version: '0.44.0', tag: 'v0.44.0', reportPath: saved, files, platform: 'win32' };
+      const args = { version: '0.44.0', tag: 'v0.44.0', reportPath: saved, files, platform: 'win32', execution: { githubActions: 'true', runner: 'github-hosted', runId: '123' } };
       assert.doesNotThrow(() => verifyPublication(dir, args));
+      assert.throws(() => verifyPublication(dir, { ...args, execution: { ...args.execution, runner: 'self-hosted' } }));
+      assert.throws(() => verifyPublication(dir, { ...args, execution: { ...args.execution, runId: '456' } }));
       assert.throws(() => verifyPublication(dir, { ...args, platform: 'linux' }));
       fs.writeFileSync(path.join(dir, 'source.txt'), 'changed');
       assert.throws(() => verifyPublication(dir, args));

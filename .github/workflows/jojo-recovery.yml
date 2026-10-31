@@ -1,0 +1,44 @@
+name: JoJo — recuperação horária
+run-name: JoJo — verificação horária de recuperação
+
+on:
+  push:
+    branches: ['main']
+    paths: ['.github/workflows/jojo-recovery.yml', 'ci/actions-recovery.mjs', 'ci/actions-cost-policy.json']
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+  checks: read
+
+concurrency:
+  group: jojo-recovery-hourly
+  cancel-in-progress: false
+
+jobs:
+  recovery:
+    # COST_GATE: falta confirmar bloqueio de TODO consumo pago do Actions em zero.
+    if: ${{ github.repository == 'oaovito/oao-companion-' && false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Consultar estado e retomar somente quando necessario
+        uses: actions/github-script@v7
+        env:
+          RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const { pathToFileURL } = require('node:url');
+            const { recover } = await import(pathToFileURL(path.join(process.env.GITHUB_WORKSPACE, 'ci/actions-recovery.mjs')).href);
+            const policy = JSON.parse(fs.readFileSync('ci/actions-cost-policy.json', 'utf8'));
+            const result = await recover({ github, policy, releasesToken: process.env.RELEASES_TOKEN });
+            console.log(JSON.stringify(result));
+            await core.summary.addHeading('Recuperação JoJo').addCodeBlock(JSON.stringify(result, null, 2), 'json').write();

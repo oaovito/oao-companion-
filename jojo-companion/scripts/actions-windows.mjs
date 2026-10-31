@@ -1,26 +1,23 @@
-// Executor unico: Windows proprio, Azure gratuito ou CircleCI Free. Nao usa Actions.
+// Gates oficiais, executados exclusivamente em runner Windows hospedado pelo GitHub.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execute } from './process.mjs';
-import { REQUIRED_STEPS, SOURCE_REPO, tapTotals, pipelineArgs } from './policy.mjs';
-import { sourceCommit, git } from './validation.mjs';
-import { conferirArtefatos } from '../jojo-companion/scripts/publish-release.mjs';
+import { execute } from '../../ci/process.mjs';
+import { REQUIRED_STEPS, SOURCE_REPO, tapTotals, pipelineArgs } from '../../ci/policy.mjs';
+import { sourceCommit } from '../../ci/validation.mjs';
+import { conferirArtefatos } from './publish-release.mjs';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const app = path.join(root, 'jojo-companion');
-const { publishing, tag } = pipelineArgs(process.argv.slice(2));
+const { publishing } = pipelineArgs(process.argv.slice(2));
+if (publishing) throw new Error('Publicacao e tag sao controladas pelo workflow oficial depois dos gates');
+if (process.env.GITHUB_ACTIONS !== 'true' || process.env.RUNNER_ENVIRONMENT !== 'github-hosted') throw new Error('Exige runner oficial hospedado pelo GitHub');
 if (process.platform !== 'win32' || process.arch !== 'x64') throw new Error('Exige Windows x64 nativo; nenhuma validacao foi executada');
 const tools = JSON.parse(fs.readFileSync(path.join(root, 'ci/windows-toolchain.json')));
-if (process.versions.node !== tools.node.version) throw new Error('Use o bootstrap com a versao Node fixada');
+if (process.versions.node !== tools.node.version) throw new Error('Node deve corresponder a versao fixada no actions/setup-node');
 const version = JSON.parse(fs.readFileSync(path.join(app, 'package.json'))).version;
-if (publishing && tag !== `v${version}`) throw new Error('Publicacao exige a tag oficial desta versao');
 const commit = sourceCommit(root);
-if (publishing) {
-  if (!process.env.RELEASES_TOKEN || /^\$\(/.test(process.env.RELEASES_TOKEN)) throw new Error('Falta autorizacao de escrita no canal publico neste executor');
-  if (git(root, ['rev-parse', `${tag}^{commit}`]) !== commit) throw new Error('Tag oficial nao corresponde ao checkout');
-}
 const cache = path.resolve(process.env.JOJO_CI_CACHE || path.join(process.env.LOCALAPPDATA, 'JoJoCompanionCI/cache'));
 fs.mkdirSync(cache, { recursive: true });
 const lock = path.join(os.tmpdir(), 'jojo-companion-windows-ci.lock');
@@ -43,6 +40,7 @@ fs.mkdirSync(summary, { recursive: true });
 const reportPath = path.join(run, 'validation.json');
 const report = { schema: 1, source: SOURCE_REPO, version, tag: `v${version}`, commit,
   platform: process.platform, arch: process.arch, node: process.versions.node, windows: os.release(),
+  executor: process.env.RUNNER_ENVIRONMENT, runId: process.env.GITHUB_RUN_ID,
   startedAt: new Date().toISOString(), status: 'running', steps: [], files: [] };
 const save = () => {
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
@@ -52,7 +50,8 @@ const controller = new AbortController();
 process.on('SIGINT', () => controller.abort());
 process.on('SIGTERM', () => controller.abort());
 const env = { ...process.env, CI: 'true', CSC_IDENTITY_AUTO_DISCOVERY: 'false',
-  npm_config_cache: path.join(cache, 'npm'), ELECTRON_CACHE: path.join(cache, 'electron'),
+  JOJO_VALIDATED_COMMIT: commit,
+  ELECTRON_CACHE: path.join(cache, 'electron'),
   ELECTRON_BUILDER_CACHE: path.join(cache, 'builder'), JOJO_CI_CACHE: cache,
   JOJO_TEST_REPORT_DIR: path.join(run, 'junit'), JOJO_ANIMATION_REPORT_DIR: path.join(run, 'animations') };
 // Credencial de publicacao nao e necessaria nos processos de testes/build.
@@ -87,7 +86,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 312));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 323));
   await step('build', node, ['scripts/build-win.mjs'], 15);
   await step('installer', node, ['scripts/smoke-installer.mjs'], 5);
   await step('portable', node, ['scripts/smoke-portable.mjs', 'dist/JoJoCompanion.exe'], 3);
@@ -118,16 +117,11 @@ try {
   report.files = conferirArtefatos(path.join(app, 'dist'), version).map(({ name, size, digest }) => ({ name, size, digest }));
   if (REQUIRED_STEPS.some((id) => !report.steps.some((s) => s.id === id && s.status === 'passed'))) throw new Error('Gates incompletos');
   report.status = 'passed'; report.finishedAt = new Date().toISOString(); save();
+  if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `report_path=${reportPath}\nvalidated_sha=${commit}\nversion=${version}\n`);
   for (const name of ['animations', 'junit', 'conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png', 'RELEASE_NOTES.md']) {
     if (fs.existsSync(path.join(run, name))) fs.cpSync(path.join(run, name), path.join(summary, name), { recursive: true });
   }
-  if (publishing) {
-    if (!process.env.RELEASES_TOKEN) throw new Error('Validado, mas falta autorizacao de escrita no canal publico neste executor');
-    const publish = await execute(node, ['scripts/publish-release.mjs', '--tag', tag, '--validation', reportPath], { cwd: app, env: process.env, log: path.join(run, 'publication.log'), timeoutMs: 900000, signal: controller.signal });
-    fs.copyFileSync(path.join(run, 'publication.log'), path.join(summary, 'publication.log'));
-    if (publish.exitCode || publish.timedOut) throw new Error('Publicacao/verificacao nao concluiu; inspecionar sem republicar');
-    report.publication = 'verified'; save();
-  }
+
 } catch (error) {
   if (report.status !== 'passed') report.status = 'failed';
   report.error = error.message; save();

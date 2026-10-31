@@ -9,11 +9,11 @@ Diretrizes atuais em [AGENTS.md](AGENTS.md) e [HANDOFF](jojo-companion/HANDOFF.m
 Este arquivo preserva a referência técnica/histórica. O produto é exclusivamente
 Windows 11 x64; a configuração local candidata atual é Gemma 3 4B, definida em
 `src/core/dialogue/local-model.js`. Menções abaixo ao Qwen descrevem a versão antiga.
-Executor atual em `ci/windows.cmd`, independente do Actions. Workflows antigos abaixo
-são referência histórica; foram arquivados em `ci/legacy/github-actions/` para não gerar
-custos. Azure/CircleCI só podem ser ativados após autenticação e plano gratuito efetivo.
-Publicação exige tag e relatório Windows íntegro do mesmo commit, incluindo inferência
-real; mensagens de commit e push comum não publicam. Ver `jojo-companion/docs/CI_GRATUITO.md`.
+GitHub Actions original voltou a ser o único CI/CD oficial. Workflows restaurados em
+`.github/workflows/`; agentes/provedores externos foram removidos. Gates Windows no
+mesmo job, recuperação horária preparada e publicação somente com tag/relatório do
+mesmo run `github-hosted`. Custo R$ 0: não habilitar runners sem confirmar bloqueio de
+consumo pago em zero. Referência atual: `jojo-companion/docs/GITHUB_ACTIONS.md`.
 
 ## O que é
 

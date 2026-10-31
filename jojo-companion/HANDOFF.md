@@ -1,196 +1,104 @@
 # HANDOFF — JoJo Companion
 
-## Estado atual
+## Estado atual e decisão definitiva
 
-- Desenvolvimento privado: `oaovito/oao-companion-`, aplicativo em `jojo-companion/`.
-- Distribuição pública e atualizador: `oaovito/jojo-companion-releases`.
-- Branch efetiva: `codex/conversation-coherence`, derivada de `codex/operational-handoff`.
-  Ensaios isolados atuais em `qa/conversation-models`, base `e4dee80`; ensaios revisados foram integrados por fast-forward
-  na branch Codex. CI completo da configuração final obrigatório antes da tag.
-  Base original preservada: `claude/jeff-companion-v0.1` em `018bd492a46d70f688187394f0ce60759c20d737`.
-  `main` contém apenas README; consultar o remoto antes de qualquer trabalho.
-- Versão pública: **0.43.1**. Código candidato: **0.44.0**; nenhuma nova tag/release criada.
-- Exclusivo para **Windows 11 x64**. Não desenvolver versões de outros sistemas, usar Wine,
-  compilação cruzada ou preparar runtimes gráficos/modelos no host de edição.
-- Usuário confirmou **16 GB de RAM ou mais** no PC Windows de destino.
+- Desenvolvimento privado: **oaovito/oao-companion-**, fonte em `jojo-companion/`.
+  O nome sem hífen final informado em pedidos retorna 404; não criar outro app/repositório.
+- Branch de fonte: **codex/conversation-coherence**. Base desta tarefa: `dd8b558`,
+  sucessora de `3f637fe`. Histórico Claude preservado (`018bd492a46d70f688187394f0ce60759c20d737`).
+- Versão pública: **0.43.1**, canal **oaovito/jojo-companion-releases**.
+  Candidata **0.44.0**, sem nova tag/release até validação real completa.
+- **GitHub Actions original é o único CI/CD.** Só runners oficiais hospedados pelo GitHub.
+  Azure, CircleCI, runners externos/locais, bootstrap independente e agente de polling
+  removidos depois de verificar ausência de dependência no aplicativo. Histórico Git preservado.
+- `main` era somente README. Receberá apenas o controle necessário ao cron, que só roda
+  na branch padrão. Não iniciar desenvolvimento nela nem trocar a fonte por main vazia.
+- Não acessar/modificar MNE_Lab. Nenhum projeto externo é parte deste trabalho.
 - Ler `../AGENTS.md`, `../CLAUDE.md`, `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `CHANGELOG.md`,
-  package.json e workflows. O [histórico técnico](docs/HANDOFF_HISTORICO.md) é referência
-  opcional para decisões antigas; não é o roteiro operacional atual.
+  package.json e [GITHUB_ACTIONS.md](docs/GITHUB_ACTIONS.md).
 
-## Mudanças implementadas, ainda não publicadas
+## Produto preservado, candidato ainda não publicado
 
-- Central tem uma única conversa; avisos/lembretes aparecem nela. IPC e `/nova` antigos
-  continuam compatíveis sem apagar o histórico. O histórico real entregue inclui atalhos.
-- Mensagens diferentes são serializadas; reenvios pendentes são deduplicados. Emergências
-  cancelam a geração antiga e impedem que resposta/indicador atrasados substituam acolhimento.
-- Fatos de identidade/João, limites e provocações protegidos; conversa pessoal não faz busca
-  genérica. Bloqueios de ameaças, identidade inventada, nomes trocados e João fora do assunto.
-- Prompt local menor, fala em texto puro, comandos só em pedido explícito. Respostas inválidas
-  não pausam o modelo por 90 s; timeout cancela inferência em vez de só abandonar a Promise.
-- Runtime Windows fixado em Ollama 0.40.13 com SHA-256 antes de extrair; espaço livre
-  verificado também ao migrar o modelo. Só anuncia pronto após carregar os pesos; cache
-  vencido é reconhecido. Contexto de 2.048 tokens e lote de 128 reduzem memória temporária.
-- Perguntas de conhecimento/sintomas não acionam sono/comida/exercício por palavra-chave;
-  perguntar como o músculo cresce não muda o tamanho do JoJo.
-- Reações/boca acompanham falas; óculos técnicos saem ao mudar de assunto; ações não
-  interrompem fuga, arraste, tela cheia ou Modo Trabalho.
-- Retomada após inatividade aguarda até 20 s por pesos já preparados, preservando a
-  primeira pergunta. Download inicial continua em segundo plano; emergência segue
-  imediata e cancela o turno antigo também durante recarga (regressão verificada).
-- Duração da boca acompanha o texto (máximo 6 s); respostas durante trabalho/tela cheia
-  não guardam movimento para depois. Recolher balão cancela também medição pendente.
-- Build Windows em Node, sem Bash. Testes reais do vigia movidos para integração Windows;
-  unitários são lógica pura. Removidos caminhos de interface/runtime específicos de outros sistemas.
-- Auditoria das 1.043 animações adicionada ao CI Windows como gate obrigatório: erros,
-  recortes, quadros parados e ausência de gatilho natural devem falhar.
-- electron-builder atualizado para 26.18.0: auditoria de produção sem vulnerabilidades;
-  15 moderadas restantes na cadeia de desenvolvimento. Não usar audit fix --force.
+Somente Windows 11 x64, Electron 44/ESM, koffi isolado, personagem tubarão fisiculturista
+em recorte de papel. Preservar click-through, fuga, tela cheia, múltiplos monitores,
+Modo Trabalho, personalidade, privacidade/offline, autostart, recuperação e atualização.
 
-## Modelo local — avaliação real obrigatória
+A candidata contém conversa única com avisos/lembretes no mesmo histórico; fila/deduplicação;
+segurança cancela fala atrasada; identidade/João protegidos; perguntas/negações não viram
+comandos; reações/boca/óculos acompanham o assunto sem interromper fuga/tela cheia/trabalho.
+Primeira pergunta depois da inatividade aguarda recarga breve do modelo sem bloquear urgência.
+Modelo local **Gemma 3 4B** (`gemma3:4b-it-q4_K_M`, alias equivalente `gemma3:4b`), contexto
+2.048, lote 128. Manifesto `68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7`.
+Seleção/migração preservam preferências/dados e não usam nuvem silenciosa.
+Runtime Windows Ollama 0.40.13 com SHA-256 antes da extração. Builder 26.18.0.
 
-- Configuração consolidada para validação final: **Gemma 3 4B**, `gemma3:4b-it-q4_K_M`;
-  alias `gemma3:4b`. Manifestos comparados e equivalentes:
-  `sha256:68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7`.
-  Download total de aproximadamente 3,35 GB. Usuária confirmou 16 GB de RAM ou mais.
-- Escolha fundamentada em inferência real no Windows. Qwen 3.5 2B/4B, Qwen 3 4B,
-  Ministral 3B, Llama 3.2 3B e Phi-4-mini falharam na leitura semântica; modelos
-  de 8/9B excederam o limite de tempo no runner de 8 GB/2 CPUs. Não afirmar que
-  resultados lexicais verdes de candidatos anteriores comprovaram coerência.
-- [Ensaio 41214482175](https://github.com/oaovito/oao-companion-/actions/runs/41214482175):
-  Gemma passou 30/30 no engine. Falas lidas: contexto, preferências, correção,
-  inglês, diabetes e exemplo coerentes, sem narração corporal ou ameaça. Ainda
-  há limitações de humor e naturalidade; não declarar perfeição geral.
-- O teste pela Central encontrou reação neutra em exemplo técnico sem pesquisa.
-  Causa: seriedade calculada só pela nova mensagem; agora herda o assunto em andamento.
-  Regressão unitária aprovada. Nova execução [41214891976](https://github.com/oaovito/oao-companion-/actions/runs/41214891976)
-  concluída com sucesso: 30 turnos no engine e dez pela interface/IPC/modelo reais.
-  Todas as falas foram lidas. Preload 10,985 s; mediana de resposta do modelo no engine
-  10,770 s, maior 24,945 s no runner de 8 GB/2 CPUs. Não são medições do PC da usuária.
-  A proximidade do teto de 25 s motivou encurtar explicações mantendo o mecanismo;
-  a recusa explícita de treino agora tem confirmação direta. Exige novo CI completo.
-- Seleção aceita somente variante avaliada/alias; nomes antigos migram ao novo padrão
-  sem religar conversa, pesquisa, autostart ou atualização desligados. Modelos/dados
-  antigos não são apagados. UI usa o nome do contrato compartilhado.
-- `scripts/check-conversation-windows.ps1` baixa runtime Windows com SHA-256,
-  executa modelo em loopback e publica relatório no resumo/log. Mesmo ensaio exigido
-  no CI oficial antes da publicação; workflow separado fica só na branch de avaliação.
-- Não há nova release: **0.43.1 pública ainda usa o Qwen antigo**. Aprovar distribuição
-  somente depois de ler as saídas do novo ensaio e do CI completo da configuração final.
+## Infraestrutura restaurada
 
-## Evidências verificadas
+- `.github/workflows/jojo-windows.yml`: todos os gates originais + melhorias reunidos
+  em `scripts/actions-windows.mjs`, no mesmo job `windows-latest`. Node 22.23.4,
+  cache npm, hashes, log privado, TAP/JUnit/JSON, NSIS real, artefatos com retenção de um dia.
+- `.github/workflows/jojo-conversation-windows.yml`: avaliação preservada, somente manual;
+  não duplica ensaio real em cada push do pipeline completo.
+- `.github/workflows/jojo-recovery.yml`: `17 * * * *`, 60 min, minuto 17 UTC. Controle
+  leve de API no Ubuntu oficial, timeout 3 min, sem aplicativo Linux ou serviço externo.
+  Também verifica alterações REAIS nos arquivos de controle na main, sem commits artificiais.
+- Concorrência global protege validação/publicação. Controle não dispara se há build ativo,
+  não repete falha técnica do mesmo commit/cancelamento/sucesso sem publicação verificada.
+  Startup/billing pode ser tentado na hora seguinte; cooldown de 55 min contra jitter/duplicação.
+- Release existente com os três metadados corretos: não recriar. Rascunho/incompleta:
+  inspecionar, não substituir. Nenhum loop de build, alteração financeira ou provedor paralelo.
+- Após gates aprovados da candidata 0.44.0 autorizada, confere commit/arquivos e branch
+  atual; cria NOVA tag privada com GITHUB_TOKEN sem acionar novo build; publica com
+  RELEASES_TOKEN no passo final. Tag existente divergente nunca é movida.
+- Publicador exige `github-hosted` Windows, checkout limpo, tag e relatório do MESMO run,
+  SHA-256 ainda iguais; valida uploads, downloads anônimos e UpdateChecker nos dois modos.
+  Não depende de sucesso do upload opcional de artefatos CI para publicar no mesmo job.
 
-- Unitários locais atuais: **312/312**, sem pulos; host executa apenas lógica pura em Node.
-- No CI `49dfbe1`, os **301 unitários Windows** passaram antes do cancelamento
-  por substituição do código. O código anterior tinha **303** locais; novo executor tem **312** de lógica aprovados; Windows final pendente.
-- [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
-  código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
-  sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;
-  portátil abriu, crash reabriu, bandeja encerrou, atalho criado, medições concluídas.
-- [CI Windows 41206258451](https://github.com/oaovito/oao-companion-/actions/runs/41206258451),
-  `e4dee80`: **296 unitários e 16 integração** passaram. E2E: **28/29**; único erro foi
-  asserção sensível a maiúscula em "Humor seco". Corrigido para ignorar caixa, sem remover
-  a verificação de personalidade. Exige nova execução no código final.
-- Nesse CI as **1.043 animações** passaram no renderer Windows: zero erros, recortes,
-  quadros parados ou falta de gatilho; média medida **0,31 ms/quadro**. Amostra visual de
-  nove animações em três fases recuperada do log e revisada. Relatório final deve refletir
-  execução Windows; não comparar este custo de desenho com tempo de conversa do modelo.
-- Runner Windows Server de um monitor não comprova Windows 11 físico, DPI misto,
-  suspensão real ou troca de instalação NSIS/portátil com dados reais. Não alegar esses testes.
+## Custo e bloqueios efetivamente observados
 
-## Publicação e recuperação
+Orçamento adicional autorizado **R$ 0**. Nenhum cartão/plano/limite foi alterado.
+APIs de faturamento/uso e variáveis do repositório retornaram **403**. A anotação de
+[41217012984](https://github.com/oaovito/oao-companion-/actions/runs/41217012984), sem runner
+ou passos iniciados, diz que pagamentos recentes falharam **OU** limite precisa aumentar.
+Não é possível distinguir saldo/franquia, orçamento ou pagamento recusado com esses dados.
+Não presumir que alguma pendência financeira se resolverá automaticamente.
 
-- Executor oficial gratuito/independente em `../ci/windows.cmd` e `../ci/windows.mjs`.
-  Actions arquivado sem gatilhos. Templates externos desativados até autorização de
-  executor/plano Free; detalhes em [CI_GRATUITO.md](docs/CI_GRATUITO.md).
-- Publicador exige `--tag` + `--validation`, Windows nativo, checkout/tag/commit e hashes
-  correspondentes a todos os gates. Só tag oficial publica; push comum não publica.
-- `scripts/publish-release.mjs` impede tag/versão divergente e alteração de release/tag pública
-  existente; exige RELEASES_TOKEN, envia os três formatos em rascunho, verifica hashes/tamanhos,
-  publica e consulta anonimamente `/releases/latest` e downloads.
-- Token auditado no CI com autenticação e permissão push anunciada. API Secrets não permite
-  listar (403), o que não significa token ausente. Nunca exibir/alterar token.
-- Atualizador preservado: `package.json.jojoUpdate` público; 0.43.1 detectada a partir de
-  0.43.0 nos modos portable/installer com metadados reais; três arquivos públicos baixados e
-  hashes conferidos. Nenhum arquivo privado foi enviado ao canal público.
-- Cota de artefatos Actions cheia em 41167799466. Upload opcional falhou; geração dos arquivos
-  está comprovada nos logs. Releases recebem upload direto e não dependem dessa cota.
-  Não apagar arquivos/artefatos históricos para contornar o limite.
-- Nunca reescrever notas, assets ou tags já publicados, incluindo v0.32.0.
-- Nenhum projeto externo foi acessado/modificado. MNE_Lab não pertence a esta missão.
+`ci/actions-cost-policy.json` registra custo não confirmado. Os três `COST_GATE` estão
+fechados ANTES de alocar runners. Foi solicitada ao titular confirmação ÚNICA de que
+TODO gasto pago do Actions está efetivamente bloqueado em zero. Sem resposta confiável,
+não habilitar por decurso de tempo. Isso preserva R$ 0; não é teste Windows aprovado.
 
-## Comandos e conclusão
+Cron depende do próprio Actions e pode não iniciar sob bloqueio financeiro. Mesmo
+registrado, gate fechado não consulta APIs por hora. Não declarar monitor operacional
+antes de observar execução real da verificação. Não existe check de API sem runner.
+Após confirmação confiável, habilitar gates + política, sincronizar main e deixar
+GitHub tentar automaticamente. Sem intervenção manual recorrente; sem mudar faturamento.
 
-No Windows, em `jojo-companion/`: `npm ci`, `npm test`, `npm run test:windows`,
-`npm run test:e2e`, `npm run audit:animations`, `npm run build:win`.
-No host de edição, somente testes de lógica pura (`npm test`).
+## Verificação
 
-## CI gratuito — transferência desta sessão
+- **323/323** testes de lógica locais: 312 anteriores preservados + 11 novos testes de
+  recuperação/idempotência/custo/tags/releases. Sem falhas ou pulos. Não são Windows.
+- `actionlint` 1.7.12 validou os três workflows, binário conferido por SHA-256.
+- [41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466), código
+  `034133d`: 292 unitários, 16 integração e 29 E2E Windows passaram; três formatos gerados,
+  portátil abriu/vigia/atalho funcionaram. É evidência anterior, não valida o HEAD atual.
+- [41206258451](https://github.com/oaovito/oao-companion-/actions/runs/41206258451), `e4dee80`:
+  1.043 animações Windows sem erros/recortes/quadros parados/falta de gatilho, média
+  0,31 ms/quadro; E2E teve uma asserção de maiúscula corrigida depois.
+- [41214891976](https://github.com/oaovito/oao-companion-/actions/runs/41214891976), `6d8d45d`:
+  30 cenários engine + dez Central com modelo REAL passaram. Falas lidas; ainda houve
+  ajustes posteriores de recusa/tempo/retomada, que exigem nova execução Windows.
+- Detalhes de conversa: `docs/CONVERSA_WINDOWS.md`. Não afirmar perfeição semântica
+  universal ou teste Windows 11 físico/DPI/suspensão a partir de runner de um monitor.
 
-- Mantido o código candidato 0.44.0 de `c0e07f8`, sem refazer funcionalidades.
-- Executor independente com bootstrap Node 22.23.4/MinGit de contingência e SHA-256,
-  cache npm/Electron/builder/Ollama, exclusão mútua, timeout de processos, logs filtrados,
-  relatórios TAP/JUnit/JSON e retenção de três execuções/14 dias.
-- Mantidas todas as suítes e diagnósticos. Acrescentados preflight de conta isolada e
-  smoke de instalação/abertura/desinstalação NSIS; limpeza de processos limitada aos PIDs
-  do teste. Não encerrar todos os aplicativos JoJo pelo nome.
-- Publicação bloqueia relatório ausente/incompleto, origem/commit/tag divergentes e binários
-  alterados. Consulta também o UpdateChecker após publicar, nos dois modos, sem login.
-- Agente Windows preservado consulta Git/tags a cada 120 s e guarda estado; reutiliza relatório
-  só quando commit/artefatos ainda conferem. Publicação parcial não é repetida automaticamente.
-  A missão nova proíbe depender do PC do usuário: considerar esse agente apenas em
-  ambiente Windows EM NUVEM já autorizado e sem custo incremental. Não foi instalado.
-- Azure e CircleCI têm templates com autorização padrão falsa, FORA dos caminhos de
-  ativação automática. Actions preservado em `ci/legacy/github-actions/`, sem disparos.
-- Verificações realizadas: **312/312 lógica no Node 22.23.4**, sem falhas/pulos; lint JS/JSON;
-  cinco arquivos PowerShell sem erros de parser; YAML sintaticamente válido. A validação
-  de sintaxe não é execução Windows. O host não compilou aplicativo Linux/Wine.
+## Continuidade
 
-## Dependência restante e retomada
+1. Finalizar instalação do controle na branch padrão preservando README/histórico.
+2. Registrar tentativa de dispatch, sem alocar runner com custo não confirmado.
+3. Após confirmação do limite pago zero e quando GitHub aceitar jobs, deixar o controle
+   disparar a validação real, corrigir falhas técnicas com evidências quando houver sessão
+   Codex e publicar só depois de TODOS os gates. Não há agente IA contínuo no Actions.
+4. Confirmar três arquivos públicos 0.44.0, hashes/notas incrementais/atualizador e as
+   17 releases históricas intactas. Até lá a release permanece bloqueada.
 
-Não existe conexão autenticada com Azure DevOps/CircleCI nem acesso a Windows nesta
-sessão. A inspeção mostrou manifesto de identidades vazio, nenhum perfil Azure, credencial
-CircleCI, VPN, configuração SSH ou agente SSH. Webhooks GitHub retornaram 403; isso não
-prova que não exista conta externa, apenas que não pode ser consultada por este acesso.
-
-Azure oferece franquia privada permanente quando já habilitada; não vincular assinatura
-nem configurar billing. CircleCI documenta Windows/projetos privados no plano Free com
-30.000 créditos/mês e interrupção ao esgotar, sem cobrança automática no Free. Nenhum
-plano real desta conta foi autenticado/verificado. AppVeyor gratuito só permite projetos
-públicos; trials/serviços pagos foram descartados. Fontes em CI_GRATUITO.md.
-
-Após haver conexão autorizada com um executor Windows gratuito EM NUVEM, o Codex deve
-conferir a franquia real e integrar UM provedor, ou aproveitar Windows em nuvem já
-existente/autorizado sem custo incremental. O PC do usuário está excluído. Executar o
-pipeline completo e ler as saídas do modelo, incluindo os últimos
-ajustes de contexto/retomada. Só então integrar por fast-forward se a ancestralidade permitir,
-criar a tag 0.44.0 e verificar os três arquivos públicos/atualizador. Nenhuma operação do
-Actions, runner auto-hospedado vinculado a ele ou comando manual do usuário é necessária.
-
-Nenhuma nova tag/release. Público continua **v0.43.1**. Sem Windows real, a 0.44.0
-permanece bloqueada. As 17 releases históricas devem continuar sem qualquer modificação.
-Nenhum serviço contratado, pagamento/plano ativado ou projeto externo alterado.
-
-## Retomada exclusivamente em nuvem — base 3f637fe
-
-- HEAD local/remoto confirmado em `3f637fec72210ea552887c93966030cabf3a15d2` antes desta
-  atualização documental. Checkout limpo; nenhum desenvolvimento/teste repetido sem motivo.
-- Status atual do ambiente: observações atuais, rede permitida, sem capacidades Windows,
-  identidades externas, segredos CI ou conexões no manifesto. Nomes/arquivos padrão
-  AWS/GCP existem, mas não comprovam identidade pronta ou permissão de acesso a VMs;
-  nenhum segredo foi lido nem conta desconhecida utilizada.
-- Commit 3f637fe sem checks/statuses externos: não há evidência de pipeline gratuito
-  operacional. CircleCI `/api/v2/me` e GitLab `/api/v4/user`: HTTP 401, sem credenciais
-  enviadas. Não repetir a consulta de webhooks anteriormente negada (403) sem mudança
-  de autorização. Não tentar executar o Actions bloqueado.
-- Pesquisa adicional: GitLab documenta Windows 2022 Free/Beta (2 CPUs/7,5 GB), 400 minutos
-  de compute/mês e verificação de identidade que pode exigir cartão conforme o risco.
-  Integração direta de repositório externo é Premium/Ultimate; nenhuma conta autenticada.
-  CodeBuild tem franquia Small/Lambda, sem os tipos Windows Medium/Large; não selecionado.
-  Travis não tem franquia privada permanente confirmada; trial não é elegível.
-- CircleCI continua a opção mais viável preparada, depois de Azure inacessível nesta sessão.
-  Templates existentes preservados e desativados; falta autorização de conta para consultar
-  plano/saldo reais e configurar/executar o projeto privado Windows. Detalhes/fontes em
-  `docs/CI_GRATUITO.md`, seção de retomada em nuvem.
-- Os 312 testes de lógica são resultado anterior preservado. Não foram repetidos numa
-  atualização somente documental, nem apresentados como testes Windows. Nenhum binário
-  novo foi gerado, tag criada ou release publicada. Versão pública segue v0.43.1.
+Resultado da instalação/primeira tentativa deve ser acrescentado ao fim deste documento.

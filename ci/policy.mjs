@@ -19,6 +19,7 @@ export function assertSourceRemote(remote) {
 
 export function assertValidation(report, { version, commit, files }) {
   if (report?.schema !== 1 || report.platform !== 'win32' || report.arch !== 'x64' || report.status !== 'passed') throw new Error('Validacao Windows integral ausente');
+  if (report.executor !== 'github-hosted' || !/^\d+$/.test(String(report.runId || ''))) throw new Error('Validacao exige runner oficial GitHub e identificacao de execucao');
   if (report.source !== SOURCE_REPO || report.version !== version || report.commit !== commit) throw new Error('Validacao de outra origem/versao/commit');
   if (report.tag !== `v${version}`) throw new Error('Tag da validacao nao corresponde');
   for (const id of REQUIRED_STEPS) {
