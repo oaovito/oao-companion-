@@ -78,6 +78,8 @@ test('resposta semanticamente inválida é descartada sem pausar o modelo para a
   assert.equal(calls, 2);
   assert.equal(erroDeCoerencia('Meu chefe mudou o prazo', 'O João resolve.'), 'João fora do assunto');
   assert.equal(erroDeCoerencia('quero morrer', 'Fale com João e CVV 188.'), null);
+  assert.equal(erroDeCoerencia('você está bem?', 'Tudo bem. E você, JoJo?'), 'identidades trocadas');
+  assert.equal(erroDeCoerencia('quem é você?', 'Meu nome é JoJo. E você, Manu?'), null);
 });
 
 test('expressão acompanha o conteúdo e modelo não executa comandos numa conversa casual', async () => {

@@ -50,6 +50,7 @@ export function erroDeCoerencia(input, output, history = []) {
   if (/\b(voce vai morrer|vou (te |lhe )?(matar|machucar|agredir)|te (mato|machuco)|se mate|se mata|mate o|matar alguem|kill yourself|i (will|ll|am going to) kill|you will die)\b/.test(r)) return 'ameaça ou incentivo à violência';
   if (/\bjoao\b.{0,45}\b(inimigo|burro|idiota|otario|enemy|stupid|idiot|dumb)\b/.test(r)) return 'contradição sobre o João';
   if (/\b(nao tenho (chefe|criador|nome)|nao (sei|tenho) quem me criou)\b/.test(r)) return 'identidade inventada';
+  if (/\b(e (voce|vc|tu)|and you|what about you) jojo\b/.test(r) || /\b(seu nome e|voce se chama|your name is) jojo\b/.test(r)) return 'identidades trocadas';
   const referencia = /\b(ele|dele|nele|he|him|his)\b/.test(q) && history.slice(-4).some((h) => /\bjoao\b/.test(norm(h.text)));
   if (/\bjoao\b/.test(r) && !referencia && !/\b(joao|namorado|criador|criou|triste|chorando|machucar|suicid\w*|morrer|me matar|crise|panico|boyfriend|creator|created|sad|crying|panic|die)\b|\b(seu|teu) chefe\b|your boss/.test(q)) return 'João fora do assunto';
   return null;

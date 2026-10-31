@@ -36,7 +36,7 @@ export function seguimento(text) {
 
 const PEDIDO = {
   simplificar: 'Ela não entendeu. Reexplique o mesmo assunto mais simples, com uma analogia do dia a dia (academia, cozinha, tubarão).',
-  exemplo: 'Ela pediu um exemplo. Dê um exemplo prático e concreto do mesmo assunto, com números se couber.',
+  exemplo: 'Ela pediu um exemplo prático. Dê uma situação hipotética simples que ilustre o mecanismo do mesmo assunto. Não invente números nem atribua às fontes detalhes do exemplo que elas não fornecem.',
   aprofundar: 'Ela pediu para aprofundar. Vá um nível mais técnico no mesmo assunto: mecanismo, limitações, erros comuns.',
   resumir: 'Ela pediu um resumo. Resuma o mesmo assunto em 2 frases.',
 };

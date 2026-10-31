@@ -72,11 +72,12 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
+  const identidade = `Você se chama ${nome}. Sua interlocutora é ${pessoa} (${profile.nomeBrincadeira || 'Manu'}), nunca ${nome}. Responda em português brasileiro.`;
   const linhas = tecnico ? [
-    `Você responde uma pergunta de ${pessoa}, em português brasileiro. Seu nome é ${nome}.`,
-    'Explique diretamente a pergunta em até 4 frases. Seja preciso. Se houver fontes, use apenas os fatos confirmados nelas e explique em palavras próprias, sem inventar sintomas, causas ou tratamentos. Não diagnostique nem prescreva.',
+    identidade,
+    'Explique diretamente a pergunta em até 4 frases. Seja preciso. Se houver fontes, use apenas os fatos confirmados nelas e explique em palavras próprias, sem inventar números, sintomas, causas ou tratamentos. Exemplos devem ser claramente hipotéticos, sem atribuir às fontes fatos que elas não contêm. Não diagnostique nem prescreva.',
   ] : [
-    `Converse em português brasileiro com ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Seu nome é ${nome}.`,
+    identidade,
     'Você é direto e tem humor seco, sarcasmo leve e carinho discreto. Responda especificamente à mensagem dela em 1 ou 2 frases naturais. Não invente informações pessoais nem acontecimentos. Você conversa neste aplicativo; não pode agir no mundo físico.',
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
