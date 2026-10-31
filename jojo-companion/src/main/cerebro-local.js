@@ -9,14 +9,19 @@
 // Se ela já tiver um Ollama com o Qwen 3.5 2B rodando, usa ele.
 // Dependências injetáveis (testável sem Electron).
 import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { LOCAL_MODEL, LOCAL_MODEL_ALIAS, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_READY_MS } from '../core/dialogue/local-model.js';
 
-export const MODELO = 'qwen3.5:2b-q4_K_M';
-export const MODELO_ALT = 'qwen3.5:2b';
+export const MODELO = LOCAL_MODEL;
+export const MODELO_ALT = LOCAL_MODEL_ALIAS;
 export const PORTA = 11439; // própria do JoJo (não briga com um Ollama já instalado)
-export const OLLAMA_ZIP = 'https://github.com/ollama/ollama/releases/latest/download/ollama-windows-amd64.zip';
+export const OLLAMA_VERSION = '0.40.13';
+export const OLLAMA_ZIP = `https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-windows-amd64.zip`;
+export const OLLAMA_SHA256 = '7afa38624fa62ee5d8293422d0ab084c1bb4603134c7f4dafce11a033b57cc19';
 export const OCIOSO_MS = 10 * 60e3;
 // Espaço livre mínimo para baixar Ollama + modelo com folga.
-export const ESPACO_MIN = 6 * 2 ** 30;
+export const ESPACO_MIN = 10 * 2 ** 30;
+export const ESPACO_MODELO_MIN = 4 * 2 ** 30;
 
 /** Ambiente enxuto do Ollama do JoJo. */
 export function ambienteOllama(dir) {
@@ -26,8 +31,8 @@ export function ambienteOllama(dir) {
     OLLAMA_MAX_LOADED_MODELS: '1',
     OLLAMA_NUM_PARALLEL: '1',
     OLLAMA_MAX_QUEUE: '4',
-    OLLAMA_CONTEXT_LENGTH: '4096',
-    OLLAMA_KEEP_ALIVE: '5m',
+    OLLAMA_CONTEXT_LENGTH: String(LOCAL_CONTEXT),
+    OLLAMA_KEEP_ALIVE: LOCAL_KEEP_ALIVE,
     OLLAMA_NO_CLOUD: '1',
     OLLAMA_NOPRUNE: '1',
   };
@@ -38,6 +43,18 @@ export function escolherModelo(nomes) {
   return nomes.find((n) => n === MODELO) || nomes.find((n) => /^qwen3\.5:2b(\b|-)/.test(n)) || null;
 }
 
+/** Baixado não significa carregado: só anunciar pronto depois de carregar os pesos. */
+export async function carregarModelo(fetch, base, modelo) {
+  const r = await fetch(`${base}/api/generate`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(90000),
+    body: JSON.stringify({ model: modelo, stream: false, keep_alive: LOCAL_KEEP_ALIVE, options: { num_ctx: LOCAL_CONTEXT, num_batch: 128 } }),
+  });
+  if (!r.ok) throw new Error(`carregamento da conversa HTTP ${r.status}`);
+  const result = await r.json();
+  if (result.error || !result.done) throw new Error(result.error || 'carregamento da conversa incompleto');
+}
+
 /**
  * @param deps {
  *   dir: pasta do cérebro (userData/cerebro),
@@ -46,13 +63,14 @@ export function escolherModelo(nomes) {
  * }
  */
 export function criarCerebroLocal(deps) {
-  const { dir, platform = process.platform, fetch, fs, spawn, extract, freeBytes = async () => Infinity, setLowPriority = () => {}, log = () => {}, now = () => Date.now(), onStatus = () => {} } = deps;
+  const { dir, platform = process.platform, fetch, fs, spawn, extract, freeBytes = async () => Infinity, setLowPriority = () => {}, log = () => {}, now = () => Date.now(), onStatus = () => {}, ollamaSha256 = OLLAMA_SHA256 } = deps;
   const exe = path.join(dir, 'ollama', 'ollama.exe');
   let estado = { fase: 'parado', progresso: 0, erro: null, base: null, modelo: null };
   let preparando = null;
   let filho = null;
   let ultimoUso = 0;
   let timerOcioso = null;
+  const quente = () => estado.fase === 'pronto' && now() - ultimoUso < LOCAL_READY_MS;
 
   const muda = (patch) => {
     estado = { ...estado, ...patch };
@@ -70,12 +88,13 @@ export function criarCerebroLocal(deps) {
     }
   }
 
-  async function baixar(url, destino, fase) {
+  async function baixar(url, destino, fase, hashEsperado) {
     const r = await fetch(url, { headers: { 'User-Agent': 'JoJoCompanion' } });
     if (!r.ok) throw new Error(`download HTTP ${r.status}`);
     const total = Number(r.headers.get('content-length')) || 0;
     const tmp = `${destino}.parcial`;
     const out = await fs.open(tmp, 'w');
+    const hash = createHash('sha256');
     let feito = 0;
     try {
       const reader = r.body.getReader();
@@ -83,11 +102,16 @@ export function criarCerebroLocal(deps) {
         const { value, done } = await reader.read();
         if (done) break;
         await out.write(value);
+        hash.update(value);
         feito += value.length;
         if (total) muda({ fase, progresso: Math.floor((feito / total) * 100) });
       }
     } finally {
       await out.close();
+    }
+    if (hash.digest('hex') !== hashEsperado) {
+      await fs.rm(tmp, { force: true });
+      throw new Error('SHA-256 do Ollama Windows não confere; download descartado');
     }
     await fs.rename(tmp, destino);
   }
@@ -95,11 +119,11 @@ export function criarCerebroLocal(deps) {
   async function instalarOllama() {
     if (fs.existsSync(exe)) return;
     if (platform !== 'win32') throw new Error('instalação automática só no Windows');
-    if ((await freeBytes(dir)) < ESPACO_MIN) throw new Error('pouco espaço em disco (precisa de uns 6 GB livres)');
+    if ((await freeBytes(dir)) < ESPACO_MIN) throw new Error('pouco espaço em disco (precisa de uns 10 GB livres na primeira instalação)');
     await fs.mkdir(dir, { recursive: true });
     const zip = path.join(dir, 'ollama.zip');
     muda({ fase: 'baixando', progresso: 0 });
-    await baixar(OLLAMA_ZIP, zip, 'baixando');
+    await baixar(OLLAMA_ZIP, zip, 'baixando', ollamaSha256);
     muda({ fase: 'instalando', progresso: 0 });
     await extract(zip, path.join(dir, 'ollama'));
     await fs.rm(zip, { force: true });
@@ -126,6 +150,7 @@ export function criarCerebroLocal(deps) {
     const nomes = (await vivo(base)) || [];
     const ja = escolherModelo(nomes);
     if (ja) return ja;
+    if ((await freeBytes(dir)) < ESPACO_MODELO_MIN) throw new Error('pouco espaço em disco (precisa de uns 4 GB livres para o modelo da conversa)');
     muda({ fase: 'baixandoModelo', progresso: 0 });
     for (const nome of [MODELO, MODELO_ALT]) {
       const r = await fetch(`${base}/api/pull`, { method: 'POST', body: JSON.stringify({ model: nome, stream: true }) });
@@ -181,14 +206,18 @@ export function criarCerebroLocal(deps) {
 
   /** Garante tudo pronto (instala/baixa na primeira vez). Devolve {base, modelo}. */
   async function preparar() {
-    if (estado.fase === 'pronto' && estado.base && (await vivo(estado.base))) return { base: estado.base, modelo: estado.modelo };
+    if (quente() && estado.base && (await vivo(estado.base))) return { base: estado.base, modelo: estado.modelo };
     if (preparando) return preparando;
+    muda({ fase: 'preparando', erro: null });
     preparando = (async () => {
       try {
         // Ollama que ela já tenha, com o Qwen 3.5 2B: usa ele (nada a instalar).
         const proprio = await vivo('http://127.0.0.1:11434');
         const doProprio = proprio && escolherModelo(proprio);
         if (doProprio) {
+          muda({ fase: 'carregando', erro: null });
+          await carregarModelo(fetch, 'http://127.0.0.1:11434', doProprio);
+          ultimoUso = now(); agendarDesligar();
           muda({ fase: 'pronto', base: 'http://127.0.0.1:11434', modelo: doProprio, erro: null, progresso: 100 });
           return { base: estado.base, modelo: doProprio };
         }
@@ -196,6 +225,9 @@ export function criarCerebroLocal(deps) {
         muda({ fase: 'ligando', progresso: 0 });
         const base = await subir();
         const modelo = await baixarModelo(base);
+        muda({ fase: 'carregando', progresso: 0 });
+        await carregarModelo(fetch, base, modelo);
+        ultimoUso = now(); agendarDesligar();
         muda({ fase: 'pronto', base, modelo, erro: null, progresso: 100 });
         return { base, modelo };
       } catch (e) {
@@ -232,7 +264,7 @@ export function criarCerebroLocal(deps) {
       ultimoUso = now();
       agendarDesligar();
     },
-    pronto: () => estado.fase === 'pronto',
+    pronto: quente,
     parar,
     exe,
   };

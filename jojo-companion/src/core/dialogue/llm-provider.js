@@ -8,13 +8,14 @@ import { blocoPesquisa } from './pesquisa.js';
 import { PERSONALITY_DEFAULTS } from '../personality.js';
 import { historicoRelevante, pedidoAoApp } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
+import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
 
 // Modelo oficial (quantização leve) e parâmetros enxutos para o 2B.
-export const OLLAMA_MODEL = 'qwen3.5:2b-q4_K_M';
+export const OLLAMA_MODEL = LOCAL_MODEL;
 export const OLLAMA_OPTS = Object.freeze({
-  curto: { num_ctx: 4096, num_predict: 256 },
-  tecnico: { num_ctx: 4096, num_predict: 512 },
-  keepAlive: '5m', // modelo carregado entre mensagens (resposta rápida); depois sai da RAM
+  curto: { num_ctx: LOCAL_CONTEXT, num_predict: 256, num_batch: 128 },
+  tecnico: { num_ctx: LOCAL_CONTEXT, num_predict: 512, num_batch: 128 },
+  keepAlive: LOCAL_KEEP_ALIVE, // modelo carregado entre mensagens; depois sai da RAM
 });
 
 /** Pergunta técnica (ciência, medicina, MNE_Lab…) pede contexto e resposta maiores. */
@@ -23,7 +24,7 @@ export function isTechnical(text) {
 }
 
 export const LLM_PRESETS = Object.freeze({
-  ollama: { label: 'Qwen 3.5 2B (neste PC)', url: null, model: OLLAMA_MODEL, key: false, native: true },
+  ollama: { label: `${LOCAL_MODEL_LABEL} (neste PC)`, url: null, model: OLLAMA_MODEL, key: false, native: true },
   pollinations: { label: 'Pollinations (grátis, sem chave)', url: 'https://text.pollinations.ai/openai', model: 'openai', key: false },
   groq: { label: 'Groq (chave grátis)', url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile', key: true },
   gemini: { label: 'Google Gemini (chave grátis)', url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.0-flash', key: true },
@@ -215,7 +216,7 @@ export class LlmProvider extends DialogueProvider {
     if (professor) messages[0].content += '\n' + professor;
     // Contexto curto: as últimas trocas bastam (a memória fica fora do modelo).
     const previous = history.at(-1)?.role === 'user' && history.at(-1)?.text === text ? history.slice(0, -1) : history;
-    const relevant = tecnico ? (/Assunto em andamento/.test(professor) ? previous.slice(-2) : []) : historicoRelevante(text, previous);
+    const relevant = structured ? previous.slice(-2) : tecnico ? (/Assunto em andamento/.test(professor) ? previous.slice(-2) : []) : historicoRelevante(text, previous);
     for (const h of relevant) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) });
     messages.push({ role: 'user', content: String(text).slice(0, 500) });
     const ctrl = new AbortController();

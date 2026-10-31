@@ -437,11 +437,11 @@ function main() {
     // Primeira vez: progresso do download como atividade (sem fingir resposta enquanto isso).
     avisoConversa = (e = cerebro.estado) => {
       if (!companion || TEST) return;
-      const FASE = { baixando: 'Baixando o motor da conversa', instalando: 'Instalando o motor da conversa', ligando: 'Ligando o motor da conversa', baixandoModelo: 'Baixando o cérebro do JoJo (Qwen 3.5 2B)' };
+      const FASE = { preparando: 'Preparando a conversa local', baixando: 'Baixando o motor da conversa', instalando: 'Instalando o motor da conversa', ligando: 'Ligando o motor da conversa', carregando: 'Preparando a conversa na memória', baixandoModelo: 'Baixando o cérebro do JoJo (Qwen 3.5 2B)' };
       if (e.fase === 'erro') companion.reportSystem('conversa', 'Sistema: conversa online', `Não consegui preparar a conversa online (${e.erro}). Eu tento de novo na próxima mensagem; enquanto isso respondo do meu jeito.`);
       else if (FASE[e.fase]) {
         const c = companion.conversations.create({ id: 'sistema-conversa', title: 'Sistema: conversa online', kind: 'system' });
-        companion.conversations.setStatus(c.id, 'running', `${FASE[e.fase]}${e.progresso ? ` (${e.progresso}%)` : '…'} Só na primeira vez.`);
+        companion.conversations.setStatus(c.id, 'running', `${FASE[e.fase]}${e.progresso ? ` (${e.progresso}%)` : '…'}${['baixando', 'instalando', 'baixandoModelo'].includes(e.fase) ? ' Só na primeira instalação.' : ''}`);
       } else companion.reportSystem('conversa', 'Sistema: conversa online', null);
     };
     // Conversa ligada: prepara em segundo plano (download na primeira vez, sem esperar a primeira mensagem).

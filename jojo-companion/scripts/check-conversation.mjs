@@ -9,6 +9,8 @@ import { DialogueEngine } from '../src/core/dialogue/engine.js';
 import { LlmProvider, OLLAMA_MODEL } from '../src/core/dialogue/llm-provider.js';
 import { erroDeCoerencia } from '../src/core/dialogue/coherence.js';
 import { PERSONALITY_DEFAULTS, profileVars } from '../src/core/personality.js';
+import { carregarModelo } from '../src/main/cerebro-local.js';
+import { LOCAL_CONTEXT, LOCAL_KEEP_ALIVE } from '../src/core/dialogue/local-model.js';
 
 const base = process.env.JOJO_LLM_BASE || 'http://127.0.0.1:11439';
 if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(base)) throw new Error('Use apenas o Ollama local deste ambiente');
@@ -18,10 +20,27 @@ if (!/^qwen3\.5:(2b|4b|9b)(-q4_K_M|-q8_0)?$/.test(selectedModel) && !['qwen3:4b-
 const tags = await (await fetch(`${base}/api/tags`)).json();
 const model = tags.models?.find((m) => m.name === selectedModel);
 if (!model) throw new Error(`Modelo não instalado: ${selectedModel}`);
+const preloadStart = performance.now();
+await carregarModelo(fetch, base, selectedModel);
+const preloadMs = Math.round(performance.now() - preloadStart);
+console.log(JSON.stringify({ preloadMs, model: selectedModel }));
+// Diagnóstico sem personagem: distingue limitação do modelo de interferência do prompt.
+const baselines = [];
+for (const text of ['Derrubei café no teclado agora.', 'O que é diabetes tipo 2?']) {
+  const start = performance.now();
+  const response = await fetch(`${base}/api/chat`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(60000),
+    body: JSON.stringify({ model: selectedModel, messages: [{ role: 'system', content: 'Responda corretamente em português brasileiro, em até duas frases.' }, { role: 'user', content: text }], stream: false, ...(/^qwen3\.5:/.test(selectedModel) ? { think: false } : {}), keep_alive: LOCAL_KEEP_ALIVE, options: { num_ctx: LOCAL_CONTEXT, num_predict: 256, num_batch: 128, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05 } }),
+  });
+  if (!response.ok) throw new Error(`Diagnóstico do modelo HTTP ${response.status}`);
+  const result = await response.json();
+  const row = { input: text, text: result.message?.content, ms: Math.round(performance.now() - start), tokens: result.eval_count, evalMs: Math.round((result.eval_duration || 0) / 1e6) };
+  baselines.push(row); console.log('BASELINE ' + JSON.stringify(row));
+}
 const llm = new LlmProvider({ fetch, getConfig: () => ({ ativo: true, provedor: 'ollama', modelo: selectedModel }), getProfile: () => PERSONALITY_DEFAULTS, getContext: () => ({ hora: '15:00' }), baseOverride: base, timeoutMs: 25000 });
 // Fonte fixa para medir INTERPRETAÇÃO pelo modelo sem depender da rede externa.
 const pesquisa = { pesquisar: async () => ({ consulta: 'diabetes tipo 2', confianca: 'alta', fontes: [{ fonte: 'Fonte de teste' }], trechos: [{ fonte: 'Fonte de teste', titulo: 'Diabetes tipo 2', texto: 'No diabetes mellitus tipo 2 há resistência à ação da insulina e deficiência relativa de sua secreção. A insulina ajuda a glicose a entrar nas células. Sem ação suficiente desse hormônio, a glicemia aumenta. Alimentação, atividade física, acompanhamento clínico e medicamentos quando indicados integram o tratamento.' }] }) };
-const engine = new DialogueEngine({ llm, pesquisa, searchEnabled: () => true, now: () => new Date(2026, 9, 30, 15) });
+const engine = new DialogueEngine({ llm, pesquisa, searchEnabled: () => true, log: (level, message) => console.warn(`[${level}] ${message}`), now: () => new Date(2026, 9, 30, 15) });
 const cases = [
   { text: 'joão vitor é o meu namorado, sabia?', pattern: /namorado/i },
   { text: 'você está bem?', model: true, pattern: /bem|to|tô|estou|firme|inteir|ótim/i },
@@ -42,6 +61,8 @@ const cases = [
 ];
 const rows = [];
 for (const c of cases) {
+  // A usuária lê a resposta antes de enviar outra: respeitar também o backoff real.
+  if (engine.llmPauseUntil > Date.now()) await new Promise((resolve) => setTimeout(resolve, engine.llmPauseUntil - Date.now() + 10));
   const start = performance.now();
   const reply = await engine.reply(c.text);
   const vars = profileVars(PERSONALITY_DEFAULTS, reply.tone);
@@ -58,7 +79,7 @@ for (const c of cases) {
 }
 const output = path.resolve(process.argv[2] || 'out/conversa-real.json');
 fs.mkdirSync(path.dirname(output), { recursive: true });
-fs.writeFileSync(output, JSON.stringify({ model: selectedModel, digest: model.digest, machine: process.platform, fixture: 'conversa sintética; fonte científica fixa; inferência real', semantic_review_required: true, note: 'Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real.', rows }, null, 2));
+fs.writeFileSync(output, JSON.stringify({ model: selectedModel, digest: model.digest, machine: process.platform, preloadMs, baselines, fixture: 'conversa sintética; fonte científica fixa; inferência real', semantic_review_required: true, note: 'Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real. Preload medido separadamente como no cérebro do app.', rows }, null, 2));
 const failures = rows.filter((r) => r.errors.length).length;
 console.log(`${rows.length - failures}/${rows.length} casos; relatório: ${output}`);
 if (failures) process.exitCode = 1;

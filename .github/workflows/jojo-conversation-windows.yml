@@ -53,12 +53,14 @@ jobs:
         run: |
           $zip = Join-Path $env:RUNNER_TEMP 'ollama-windows-amd64.zip'
           $root = Join-Path $env:RUNNER_TEMP 'jojo-ollama'
+          $runtime = node --input-type=module -e "import {OLLAMA_ZIP,OLLAMA_SHA256} from './src/main/cerebro-local.js'; console.log(JSON.stringify({url:OLLAMA_ZIP,sha256:OLLAMA_SHA256}))" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw 'Não foi possível ler a configuração do runtime' }
           $env:OLLAMA_MODELS = Join-Path $env:RUNNER_TEMP 'jojo-models'
           Add-Content -Path $env:GITHUB_ENV -Value "OLLAMA_MODELS=$env:OLLAMA_MODELS"
-          curl.exe --fail --location --retry 3 --output $zip 'https://github.com/ollama/ollama/releases/download/v0.40.13/ollama-windows-amd64.zip'
+          curl.exe --fail --location --retry 3 --output $zip $runtime.url
           if ($LASTEXITCODE -ne 0) { throw 'Falha no download do Ollama Windows' }
           $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
-          if ($hash -ne '7afa38624fa62ee5d8293422d0ab084c1bb4603134c7f4dafce11a033b57cc19') { throw 'SHA-256 do Ollama Windows não confere' }
+          if ($hash -ne $runtime.sha256) { throw 'SHA-256 do Ollama Windows não confere' }
           Expand-Archive -LiteralPath $zip -DestinationPath $root
 
       - name: Servir e avaliar o candidato na mesma sessão Windows
@@ -85,6 +87,7 @@ jobs:
             $qaExit = $LASTEXITCODE
           } finally {
             if (-not $server.HasExited) { taskkill.exe /PID $server.Id /T /F | Out-Null }
+            Get-Content -Tail 60 (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log')
           }
           exit $qaExit
 

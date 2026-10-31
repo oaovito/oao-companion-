@@ -6,6 +6,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { LlmProvider, OLLAMA_MODEL, readNdjson, isTechnical } from '../../src/core/dialogue/llm-provider.js';
 import { sanitize, migrate } from '../../src/core/settings-schema.js';
 import { criarCerebroLocal, escolherModelo, ambienteOllama, PORTA, MODELO } from '../../src/main/cerebro-local.js';
@@ -45,11 +46,11 @@ test('Qwen 3.5 2B local: /api/chat com streaming, contexto curto, e mantém o mo
     const chat = pedidos.find((x) => x.url === '/api/chat');
     assert.equal(chat.body.model, OLLAMA_MODEL);
     assert.equal(chat.body.stream, true);
-    assert.deepEqual([chat.body.options.num_ctx, chat.body.options.num_predict], [4096, 256]);
+    assert.deepEqual([chat.body.options.num_ctx, chat.body.options.num_predict], [2048, 256]);
     assert.equal(usos, 1);
     await p.reply({ text: 'explica o potencial zeta das nanopartículas', history: [] });
     const tec = pedidos.filter((x) => x.url === '/api/chat').pop();
-    assert.deepEqual([tec.body.options.num_ctx, tec.body.options.num_predict], [4096, 512]);
+    assert.deepEqual([tec.body.options.num_ctx, tec.body.options.num_predict], [2048, 512]);
   } finally {
     srv.close();
   }
@@ -115,6 +116,7 @@ test('cérebro local: primeira vez baixa e instala o Ollama, liga com prioridade
       modeloBaixado = true;
       return linhas([{ status: 'pulling', total: 100, completed: 50 }, { status: 'success' }]);
     }
+    if (url.endsWith('/api/generate')) return { ok: true, json: async () => ({ done: true }) };
     throw new Error(`url inesperada ${url}`);
   };
   let prioridadeBaixa = null;
@@ -122,6 +124,7 @@ test('cérebro local: primeira vez baixa e instala o Ollama, liga com prioridade
   const fases = [];
   const brain = criarCerebroLocal({
     dir,
+    ollamaSha256: createHash('sha256').update(new Uint8Array([1, 2, 3, 4])).digest('hex'),
     platform: 'win32',
     fetch: fakeFetch,
     fs: { ...fs.promises, existsSync: fs.existsSync },
@@ -142,7 +145,7 @@ test('cérebro local: primeira vez baixa e instala o Ollama, liga com prioridade
   assert.equal(r.modelo, MODELO);
   assert.equal(r.base, `http://127.0.0.1:${PORTA}`);
   assert.equal(prioridadeBaixa, 4321);
-  for (const f of ['baixando', 'instalando', 'ligando', 'baixandoModelo', 'pronto']) assert.ok(fases.includes(f), f);
+  for (const f of ['baixando', 'instalando', 'ligando', 'baixandoModelo', 'carregando', 'pronto']) assert.ok(fases.includes(f), f);
   assert.ok(!fs.existsSync(path.join(dir, 'ollama.zip')), 'zip apagado depois de instalar');
   // Segunda vez: nada a baixar.
   const n = chamadas.filter((u) => u.endsWith('.zip')).length;
@@ -158,4 +161,66 @@ test('cérebro local: sem espaço em disco não baixa nada e avisa', async () =>
   const brain = criarCerebroLocal({ dir, platform: 'win32', fetch: async () => { throw new Error('offline'); }, fs: { ...fs.promises, existsSync: fs.existsSync }, freeBytes: async () => 1e9, spawn() {}, extract() {} });
   await assert.rejects(brain.preparar(), /pouco espaço/);
   assert.equal(brain.estado.fase, 'erro');
+});
+
+test('cérebro local: só anuncia pronto após carregar pesos; cache vencido carrega novamente', async () => {
+  let tick = 0, loads = 0, finish;
+  const brain = criarCerebroLocal({
+    dir: 'C:/teste', platform: 'win32', now: () => tick,
+    fs: { existsSync: () => true },
+    fetch: async (url) => {
+      if (url.endsWith('/api/tags')) return { ok: true, json: async () => ({ models: url.includes('11434') ? [] : [{ name: MODELO }] }) };
+      assert.ok(url.endsWith('/api/generate'));
+      loads++;
+      if (loads === 1) await new Promise((resolve) => { finish = resolve; });
+      return { ok: true, json: async () => ({ done: true }) };
+    },
+    spawn: () => assert.fail('servidor existente não deve ser duplicado'), extract() {},
+  });
+  const first = brain.preparar(), parallel = brain.preparar();
+  for (let i = 0; i < 20; i++) await Promise.resolve();
+  assert.equal(brain.estado.fase, 'carregando');
+  assert.equal(brain.pronto(), false);
+  assert.equal(loads, 1);
+  finish(); await Promise.all([first, parallel]);
+  assert.equal(brain.pronto(), true);
+  await brain.preparar();
+  assert.equal(loads, 1);
+  tick += 4 * 60e3 + 1;
+  assert.equal(brain.pronto(), false);
+  await brain.preparar();
+  assert.equal(loads, 2);
+  assert.equal(brain.pronto(), true);
+  brain.parar();
+});
+
+test('cérebro local: migração com runtime existente também confere espaço antes de baixar modelo', async () => {
+  const brain = criarCerebroLocal({
+    dir: 'C:/teste', platform: 'win32', fs: { existsSync: () => true },
+    freeBytes: async () => 3 * 2 ** 30,
+    fetch: async (url) => {
+      assert.ok(url.endsWith('/api/tags'), 'não iniciar download sem espaço');
+      return { ok: true, json: async () => ({ models: [] }) };
+    },
+    spawn: () => assert.fail('servidor existente'), extract() {},
+  });
+  await assert.rejects(brain.preparar(), /4 GB/);
+});
+
+test('cérebro local: download Windows corrompido é descartado antes de extrair ou executar', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-cerebro-hash-'));
+  try {
+    const brain = criarCerebroLocal({
+      dir, platform: 'win32', fs: { ...fs.promises, existsSync: fs.existsSync },
+      fetch: async (url) => {
+        if (url.endsWith('.zip')) return new Response(new Uint8Array([1, 2, 3]));
+        throw new Error('nenhum servidor instalado');
+      },
+      spawn: () => assert.fail('não executar download corrompido'),
+      extract: () => assert.fail('não extrair download corrompido'),
+    });
+    await assert.rejects(brain.preparar(), /SHA-256/);
+    assert.equal(fs.existsSync(path.join(dir, 'ollama.zip.parcial')), false);
+    assert.equal(fs.existsSync(brain.exe), false);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });

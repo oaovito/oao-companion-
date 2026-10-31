@@ -25,6 +25,11 @@
   genérica. Bloqueios de ameaças, identidade inventada, nomes trocados e João fora do assunto.
 - Prompt local menor, fala em texto puro, comandos só em pedido explícito. Respostas inválidas
   não pausam o modelo por 90 s; timeout cancela inferência em vez de só abandonar a Promise.
+- Runtime Windows fixado em Ollama 0.40.13 com SHA-256 antes de extrair; espaço livre
+  verificado também ao migrar o modelo. Só anuncia pronto após carregar os pesos; cache
+  vencido é reconhecido. Contexto de 2.048 tokens e lote de 128 reduzem memória temporária.
+- Perguntas de conhecimento/sintomas não acionam sono/comida/exercício por palavra-chave;
+  perguntar como o músculo cresce não muda o tamanho do JoJo.
 - Reações/boca acompanham falas; óculos técnicos saem ao mudar de assunto; ações não
   interrompem fuga, arraste, tela cheia ou Modo Trabalho.
 - Build Windows em Node, sem Bash. Testes reais do vigia movidos para integração Windows;
@@ -47,8 +52,13 @@
   [41204166232](https://github.com/oaovito/oao-companion-/actions/runs/41204166232) falhou:
   o runner Windows de 8 GB demorou 118 s na primeira chamada e acionou fallback.
   Isso não comprova a qualidade do 9B no PC de 16 GB; não foi aprovado para distribuição.
-- Próximo candidato: Qwen 3 4B Instruct 2507 q4_K_M, modelo textual de 2,5 GB (sem
-  projetor visual). Avaliação real no Windows pendente; o modelo do aplicativo não mudou.
+- Qwen 3 4B Instruct 2507 foi testado: falas ainda fantasiosas e explicação excedendo
+  limite de tempo. Não aprovado. Comparação seguinte: Gemma 3 4B, Ministral 3 3B e
+  Qwen 3.5 4B. Primeira rodada atingiu timeout no primeiro carregamento e limitou os
+  turnos seguintes por backoff; não confundir isso com prova de qualidade de cada modelo.
+- Próximo ensaio usa o carregamento explícito do app, mede preload e respostas-base
+  sem personagem, respeita backoff entre casos e registra diagnóstico do servidor.
+  Modelo oficial do aplicativo permanece 2B até haver qualidade realmente verificada.
 - `.github/workflows/jojo-conversation-windows.yml` baixa Ollama Windows com SHA-256
   verificado e roda `scripts/check-conversation.mjs` contra inferência real, somente loopback,
   sem nuvem/login/custo. Resultados no resumo/logs do Actions, sem depender da cota de artefatos.
@@ -57,7 +67,7 @@
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **293/293**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **296/296**, sem pulos; host executa apenas lógica pura em Node.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;
