@@ -78,6 +78,18 @@ jobs:
         if: success() || failure()
         run: npm run test:e2e
 
+      - name: Auditar todas as animações no renderer Windows
+        if: success() || failure()
+        timeout-minutes: 10
+        run: npm run audit:animations
+
+      - name: Registrar auditoria de animações no resumo
+        if: ${{ !cancelled() }}
+        run: |
+          if (Test-Path 'docs/auditoria-animacoes.json') {
+            Get-Content -Raw 'docs/auditoria-animacoes.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+          }
+
       - name: Medir CPU e memória
         if: ${{ !cancelled() }}
         timeout-minutes: 3
@@ -106,6 +118,8 @@ jobs:
             jojo-companion/dist/*.zip
             jojo-companion/measure-windows.json
             jojo-companion/measure-windows-gpu.json
+            jojo-companion/docs/AUDITORIA_ANIMACOES.md
+            jojo-companion/docs/auditoria-animacoes.json
           if-no-files-found: warn
           retention-days: 2
 

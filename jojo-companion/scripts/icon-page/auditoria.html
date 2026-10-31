@@ -40,13 +40,14 @@ window.auditar = (rigJson, animJson, room, nomes) => {
       a.play(name, 0, { variant: name });
       const fx = new Effects({ rng: () => 0.5 });
       const ctx = canvas();
+      const c2 = canvas();
       const marcas = new Set();
       const dur = anim.duration || 1000;
       let soma = 0;
       for (let t = 0; t <= dur; t += 1000 / 24) {
         const s = a.sample(t);
         for (const [k, v] of Object.entries(s.pose)) if (typeof v === 'number' && !Number.isFinite(v)) throw new Error(`canal ${k} inválido`);
-        const c2 = canvas();
+        c2.clearRect(0, 0, SIZE, SIZE);
         const t0 = performance.now();
         rig.draw(c2, s.pose, { origin: { x: O, y: O }, scale: 1, facing: 1 });
         fx.update(t, s.flags, head);

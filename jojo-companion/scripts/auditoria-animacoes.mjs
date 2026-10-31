@@ -65,7 +65,7 @@ app.whenReady().then(async () => {
   const linhas = [
     '# Auditoria das animações e reações',
     '',
-    `Gerado por \`scripts/auditoria-animacoes.mjs\` em ${new Date().toISOString().slice(0, 10)} (Electron ${process.versions.electron}, renderer real, 24 qps, desenho em CPU).`,
+    `Gerado por \`scripts/auditoria-animacoes.mjs\` em ${new Date().toISOString().slice(0, 10)} (Windows ${process.getSystemVersion()}, Electron ${process.versions.electron}, renderer real, amostragem a 24 qps).`,
     'Todos os números abaixo foram medidos nesta execução; nada é estimado.',
     '',
     '## Resumo',
@@ -99,5 +99,8 @@ app.whenReady().then(async () => {
   fs.writeFileSync(path.join(ROOT, 'docs', 'AUDITORIA_ANIMACOES.md'), linhas.join('\n'));
   fs.writeFileSync(path.join(ROOT, 'docs', 'auditoria-animacoes.json'), JSON.stringify({ erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, null, 1) + '\n');
   console.log(`Auditadas ${nomes.length}: ${erros.length} com erro, ${fora.length} fora do espaço, ${paradas.length} paradas, ${semGatilho.length} só por /anim, média ${f(media)} ms`);
-  app.quit();
+  app.exit(erros.length || fora.length || paradas.length || semGatilho.length ? 1 : 0);
+}).catch((error) => {
+  console.error(error);
+  app.exit(1);
 });

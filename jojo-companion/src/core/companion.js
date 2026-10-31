@@ -1361,6 +1361,7 @@ export class Companion {
     // Resposta demorando (internet): mostra que está pensando em vez de ficar parado.
     let thinking = false;
     const thinkTimer = this.clock.setTimeout(() => {
+      if (epoch !== (this.chatEpoch || 0)) return;
       thinking = this.say('…', 'thought');
       // Pensando (ou pesquisando, se for pergunta de conhecimento).
       this.fireEvent(isFactualQuestion(text) ? 'pesquisando' : 'pensando', { speak: false });
@@ -1373,6 +1374,7 @@ export class Companion {
         // Indicação temporária enquanto pesquisa (some quando a resposta chega).
         onStatus: (t) => {
           this.clock.clearTimeout(thinkTimer);
+          if (epoch !== (this.chatEpoch || 0)) return;
           thinking = this.say(t, 'thought');
           this.fireEvent('pesquisando', { speak: false });
         },

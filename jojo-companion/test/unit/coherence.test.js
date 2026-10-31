@@ -133,6 +133,8 @@ test('crise ultrapassa geração pendente; resposta antiga não atropela acolhim
   const urgent = e.companion.chat('quero morrer');
   await pump(e);
   assert.match((await urgent).text, /188/);
+  await pump(e, 20);
+  assert.notEqual(e.companion.bubble?.text, '…', 'indicador antigo não atropela o acolhimento');
   finish({ text: 'RESPOSTA ANTIGA', action: 'happy' });
   await pump(e);
   assert.equal((await old).cancelled, true);
