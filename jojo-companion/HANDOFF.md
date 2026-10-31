@@ -135,8 +135,10 @@ No host de edição, somente testes de lógica pura (`npm test`).
   do teste. Não encerrar todos os aplicativos JoJo pelo nome.
 - Publicação bloqueia relatório ausente/incompleto, origem/commit/tag divergentes e binários
   alterados. Consulta também o UpdateChecker após publicar, nos dois modos, sem login.
-- Agente Windows opcional consulta Git/tags a cada 120 s e guarda estado; reutiliza relatório
+- Agente Windows preservado consulta Git/tags a cada 120 s e guarda estado; reutiliza relatório
   só quando commit/artefatos ainda conferem. Publicação parcial não é repetida automaticamente.
+  A missão nova proíbe depender do PC do usuário: considerar esse agente apenas em
+  ambiente Windows EM NUVEM já autorizado e sem custo incremental. Não foi instalado.
 - Azure e CircleCI têm templates com autorização padrão falsa, FORA dos caminhos de
   ativação automática. Actions preservado em `ci/legacy/github-actions/`, sem disparos.
 - Verificações realizadas: **312/312 lógica no Node 22.23.4**, sem falhas/pulos; lint JS/JSON;
@@ -156,9 +158,10 @@ nem configurar billing. CircleCI documenta Windows/projetos privados no plano Fr
 plano real desta conta foi autenticado/verificado. AppVeyor gratuito só permite projetos
 públicos; trials/serviços pagos foram descartados. Fontes em CI_GRATUITO.md.
 
-Após haver conexão autorizada com um executor Windows gratuito, o Codex deve conferir a
-franquia real e integrar UM provedor, ou instalar o agente na máquina própria isolada já
-autorizada. Executar o pipeline completo e ler as saídas do modelo, incluindo os últimos
+Após haver conexão autorizada com um executor Windows gratuito EM NUVEM, o Codex deve
+conferir a franquia real e integrar UM provedor, ou aproveitar Windows em nuvem já
+existente/autorizado sem custo incremental. O PC do usuário está excluído. Executar o
+pipeline completo e ler as saídas do modelo, incluindo os últimos
 ajustes de contexto/retomada. Só então integrar por fast-forward se a ancestralidade permitir,
 criar a tag 0.44.0 e verificar os três arquivos públicos/atualizador. Nenhuma operação do
 Actions, runner auto-hospedado vinculado a ele ou comando manual do usuário é necessária.
@@ -166,3 +169,28 @@ Actions, runner auto-hospedado vinculado a ele ou comando manual do usuário é 
 Nenhuma nova tag/release. Público continua **v0.43.1**. Sem Windows real, a 0.44.0
 permanece bloqueada. As 17 releases históricas devem continuar sem qualquer modificação.
 Nenhum serviço contratado, pagamento/plano ativado ou projeto externo alterado.
+
+## Retomada exclusivamente em nuvem — base 3f637fe
+
+- HEAD local/remoto confirmado em `3f637fec72210ea552887c93966030cabf3a15d2` antes desta
+  atualização documental. Checkout limpo; nenhum desenvolvimento/teste repetido sem motivo.
+- Status atual do ambiente: observações atuais, rede permitida, sem capacidades Windows,
+  identidades externas, segredos CI ou conexões no manifesto. Nomes/arquivos padrão
+  AWS/GCP existem, mas não comprovam identidade pronta ou permissão de acesso a VMs;
+  nenhum segredo foi lido nem conta desconhecida utilizada.
+- Commit 3f637fe sem checks/statuses externos: não há evidência de pipeline gratuito
+  operacional. CircleCI `/api/v2/me` e GitLab `/api/v4/user`: HTTP 401, sem credenciais
+  enviadas. Não repetir a consulta de webhooks anteriormente negada (403) sem mudança
+  de autorização. Não tentar executar o Actions bloqueado.
+- Pesquisa adicional: GitLab documenta Windows 2022 Free/Beta (2 CPUs/7,5 GB), 400 minutos
+  de compute/mês e verificação de identidade que pode exigir cartão conforme o risco.
+  Integração direta de repositório externo é Premium/Ultimate; nenhuma conta autenticada.
+  CodeBuild tem franquia Small/Lambda, sem os tipos Windows Medium/Large; não selecionado.
+  Travis não tem franquia privada permanente confirmada; trial não é elegível.
+- CircleCI continua a opção mais viável preparada, depois de Azure inacessível nesta sessão.
+  Templates existentes preservados e desativados; falta autorização de conta para consultar
+  plano/saldo reais e configurar/executar o projeto privado Windows. Detalhes/fontes em
+  `docs/CI_GRATUITO.md`, seção de retomada em nuvem.
+- Os 312 testes de lógica são resultado anterior preservado. Não foram repetidos numa
+  atualização somente documental, nem apresentados como testes Windows. Nenhum binário
+  novo foi gerado, tag criada ou release publicada. Versão pública segue v0.43.1.

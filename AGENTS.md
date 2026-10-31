@@ -90,9 +90,11 @@ Definições antigas do Actions foram preservadas em `ci/legacy/github-actions/`
 Templates Azure/CircleCI ficam em `ci/providers/`, fora da descoberta automática, desativados.
 Só ativar UM provedor após autenticação e confirmação efetiva de plano/franquia permanentes
 com custo adicional R$ 0; não anexar assinatura, pagamento, trial ou habilitar plano pago.
-Windows próprio requer acesso autorizado e sessão interativa dedicada sem instalação JoJo
-anterior. `ci/register-windows-agent.ps1` prepara consulta periódica ao Git privado sem Actions;
-nenhuma máquina foi conectada/registrada nesta sessão. Sem executor real, release bloqueada.
+Missão atual: **CI/CD exclusivamente em nuvem, custo adicional R$ 0**. Não usar nem
+depender do computador do usuário. Os scripts de agente foram preservados do trabalho
+anterior; só podem ser considerados para Windows EM NUVEM já autorizado, sem custo
+incremental, em sessão interativa dedicada e sem instalação JoJo anterior. Nenhuma
+máquina foi conectada/registrada. Sem executor real, release bloqueada.
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
@@ -180,3 +182,13 @@ confirmar plano Free/franquia já disponível, ativar a integração e executar 
 Isso NÃO comprova Windows: ensaio anterior de 30+dez turnos é de código anterior.
 Nenhuma nova tag/release; `main` ainda não recebeu a integração. Estado completo em
 `jojo-companion/docs/CI_GRATUITO.md` e HANDOFF. Nunca reduzir gates para publicar.
+
+Retomada a partir de `3f637fe`: acessos foram rechecados sem repetir testes/desenvolvimento.
+Azure/CircleCI continuam sem identidade autenticada; CircleCI e GitLab responderam 401
+sem credenciais. Há arquivos padrão de configuração AWS/GCP, mas nenhum vínculo de
+identidade pronto/autorizado no manifesto; isso não permite escolher uma conta ou
+enumerar VMs. Não usar essas variáveis como autorização implícita. GitLab tem Windows
+Free documentado, mas integração externa direta é Premium/Ultimate e sua conta/franquia
+não é acessível. CircleCI Free continua sendo a integração em nuvem mais viável já
+preparada, sem ativação. Exigir autorização de conta para consultar plano/saldo e
+configurar/executar o projeto Windows privado. Não pedir tokens ou cartão no chat.
