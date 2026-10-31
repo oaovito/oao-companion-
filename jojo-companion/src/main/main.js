@@ -30,6 +30,9 @@ import { commandMenu } from '../core/conversations.js';
 import { createTray } from './tray.js';
 import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
 import { criarPresenca, garantirAtalho } from './presenca.js';
+import { requireWindows } from './windows-only.js';
+
+requireWindows();
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TEST = process.env.JOJO_TEST === '1';
@@ -552,7 +555,7 @@ function main() {
           size: `${d.size.width}×${d.size.height}`,
         })),
         hotkey: hotkeyStatus,
-        autostart: { supported: IS_WIN || process.platform === 'darwin', packaged: app.isPackaged },
+        autostart: { supported: IS_WIN, packaged: app.isPackaged },
         fullscreen: { available: !!fullscreen?.available, reason: fullscreen?.reason || null },
         foreground: { available: !!fullscreen?.available, platform: process.platform },
         dialogue: dialogue.describe(),
@@ -598,7 +601,7 @@ function main() {
     }
 
     function applyAutostart() {
-      if (!(IS_WIN || process.platform === 'darwin')) return;
+      if (!IS_WIN) return;
       const enabled = store.get().startWithWindows;
       try {
         app.setLoginItemSettings({ openAtLogin: enabled, ...loginOptions() });

@@ -47,7 +47,7 @@ export function escolherModelo(nomes) {
  */
 export function criarCerebroLocal(deps) {
   const { dir, platform = process.platform, fetch, fs, spawn, extract, freeBytes = async () => Infinity, setLowPriority = () => {}, log = () => {}, now = () => Date.now(), onStatus = () => {} } = deps;
-  const exe = path.join(dir, 'ollama', platform === 'win32' ? 'ollama.exe' : 'ollama');
+  const exe = path.join(dir, 'ollama', 'ollama.exe');
   let estado = { fase: 'parado', progresso: 0, erro: null, base: null, modelo: null };
   let preparando = null;
   let filho = null;

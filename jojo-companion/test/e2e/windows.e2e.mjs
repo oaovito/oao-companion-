@@ -1,7 +1,6 @@
 // Integração no Windows real, com entrada de mouse/teclado do SISTEMA
 // (SetCursorPos/mouse_event/keybd_event via koffi no processo de teste).
-// Só roda em win32 (ex.: GitHub Actions windows-latest). Em outros sistemas
-// os testes são ignorados.
+// Executa exclusivamente em Windows, inclusive no CI windows-latest.
 //
 // Observação: o app em si nunca simula cliques. A entrada sintética aqui
 // existe apenas para o teste provar que o sistema entrega o clique à janela
@@ -14,10 +13,11 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
+import { requireWindows } from '../../src/main/windows-only.js';
+requireWindows();
+
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const IS_WIN = process.platform === 'win32';
-const skip = IS_WIN ? false : 'somente Windows';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let input = null;
@@ -102,7 +102,7 @@ async function quit(app) {
 
 const dbg = (app) => app.evaluate(() => globalThis.__jojo.companion.debugState());
 
-test('Windows: clique real sobre o JoJo parado chega à janela de trás', { skip }, async () => {
+test('Windows: clique real sobre o JoJo parado chega à janela de trás', async () => {
   const app = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 })); // JoJo ignora o cursor real
@@ -123,7 +123,7 @@ test('Windows: clique real sobre o JoJo parado chega à janela de trás', { skip
   }
 });
 
-test('Windows: cliques reais durante a fuga também atravessam', { skip }, async () => {
+test('Windows: cliques reais durante a fuga também atravessam', async () => {
   const app = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
@@ -159,7 +159,7 @@ test('Windows: cliques reais durante a fuga também atravessam', { skip }, async
   }
 });
 
-test('Windows: JoJo não rouba o foco durante o uso normal', { skip }, async () => {
+test('Windows: JoJo não rouba o foco durante o uso normal', async () => {
   const app = await launch();
   try {
     const wa = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().workArea);
@@ -183,7 +183,7 @@ test('Windows: JoJo não rouba o foco durante o uso normal', { skip }, async () 
   }
 });
 
-test('Windows: atalho global real Ctrl+Alt+J e Esc', { skip }, async () => {
+test('Windows: atalho global real Ctrl+Alt+J e Esc', async () => {
   const app = await launch();
   try {
     const hk = await app.evaluate(() => globalThis.__jojo.hotkeyStatus());
@@ -203,7 +203,7 @@ test('Windows: atalho global real Ctrl+Alt+J e Esc', { skip }, async () => {
   }
 });
 
-test('Windows: no modo de interação só as regiões interativas capturam o mouse', { skip }, async () => {
+test('Windows: no modo de interação só as regiões interativas capturam o mouse', async () => {
   const app = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
@@ -246,7 +246,7 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
   }
 });
 
-test('Windows: detecção de tela cheia oculta e reexibe o JoJo', { skip }, async () => {
+test('Windows: detecção de tela cheia oculta e reexibe o JoJo', async () => {
   const app = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
@@ -264,7 +264,7 @@ test('Windows: detecção de tela cheia oculta e reexibe o JoJo', { skip }, asyn
   }
 });
 
-test('Windows: tela cheia some na hora mesmo no modo de interação com balão; janela sem borda do tamanho do monitor também', { skip }, async () => {
+test('Windows: tela cheia some na hora mesmo no modo de interação com balão; janela sem borda do tamanho do monitor também', async () => {
   const app = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
@@ -300,7 +300,7 @@ test('Windows: tela cheia some na hora mesmo no modo de interação com balão; 
   }
 });
 
-test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)', { skip }, async () => {
+test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)', async () => {
   const app = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 1, y: 1 }));
@@ -328,7 +328,7 @@ test('Windows: Instagram em primeiro plano → bronca (detecção pelo título)'
   }
 });
 
-test('Windows: iniciar com o Windows liga e desliga', { skip }, async () => {
+test('Windows: iniciar com o Windows liga e desliga', async () => {
   const app = await launch();
   try {
     assert.equal(await app.evaluate(() => globalThis.__jojo.store.get().startWithWindows), true, 'ligado por padrão');
@@ -347,7 +347,7 @@ test('Windows: iniciar com o Windows liga e desliga', { skip }, async () => {
 });
 
 const PACKAGED = path.join(ROOT, 'dist', 'win-unpacked', 'JoJo Companion.exe');
-test('Windows: executável empacotado inicia, carrega assets e o detector nativo', { skip: skip || (!fs.existsSync(PACKAGED) && 'pacote não gerado') }, async () => {
+test('Windows: executável empacotado inicia, carrega assets e o detector nativo', { skip: !fs.existsSync(PACKAGED) && 'pacote não gerado' }, async () => {
   const app = await launch({ executablePath: PACKAGED });
   try {
     const st = await dbg(app);
@@ -363,7 +363,7 @@ test('Windows: executável empacotado inicia, carrega assets e o detector nativo
   }
 });
 
-test('Windows: atualização do portátil troca o executável de verdade (cmd.exe)', { skip }, async () => {
+test('Windows: atualização do portátil troca o executável de verdade (cmd.exe)', async () => {
   const { portableSwapScript } = await import('../../src/core/updater.js');
   const { spawnSync } = await import('node:child_process');
   const crypto = await import('node:crypto');
@@ -386,7 +386,7 @@ test('Windows: atualização do portátil troca o executável de verdade (cmd.ex
   assert.equal(fs.existsSync(fresh), false, 'arquivo baixado movido');
 });
 
-test('Windows: calendários islâmico, hebraico e chinês funcionam no Electron (datas festivas)', { skip }, async () => {
+test('Windows: calendários islâmico, hebraico e chinês funcionam no Electron (datas festivas)', async () => {
   const app = await launch();
   try {
     const r = await app.evaluate(async () => {
@@ -400,7 +400,7 @@ test('Windows: calendários islâmico, hebraico e chinês funcionam no Electron 
   }
 });
 
-test('Windows: Spotify (título "Artista - Música") e League of Legends detectados pela janela', { skip }, async () => {
+test('Windows: Spotify (título "Artista - Música") e League of Legends detectados pela janela', async () => {
   // Nos testes, o "Spotify" é uma janela do próprio Electron (mesmo caminho Win32: classe, título e executável).
   const app = await launch({ env: { JOJO_SPOTIFY_EXE: path.basename(require('electron')) } });
   try {

@@ -1,7 +1,8 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Mede, para cada animação, quanto o desenho (com efeitos) passa da caixa do
 // JoJo e grava em assets/animations/jojo.room.json. A janela do overlay cresce
 // por esse espaço durante a animação — nada é cortado por "parede invisível".
-// Uso: xvfb-run -a npx electron --no-sandbox scripts/anim-room.mjs
 import { app, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';

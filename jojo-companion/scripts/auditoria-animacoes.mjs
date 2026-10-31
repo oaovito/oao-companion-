@@ -1,7 +1,8 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Auditoria de 100% das animações e reações: inventário, gatilho (como cada uma é
 // alcançada), execução real no renderer (erros, tempo de desenho, se cabe no espaço
 // reservado, se se mexe). Gera docs/AUDITORIA_ANIMACOES.md só com resultados medidos.
-// Uso: xvfb-run -a npx electron --no-sandbox scripts/auditoria-animacoes.mjs
 import { app, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';

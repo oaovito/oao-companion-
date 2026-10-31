@@ -1,0 +1,86 @@
+name: JoJo — conversa real no Windows (avaliação)
+
+on:
+  push:
+    branches: ['codex/conversation-coherence']
+    paths:
+      - '.github/workflows/jojo-conversation-windows.yml'
+      - 'jojo-companion/scripts/check-conversation.mjs'
+      - 'jojo-companion/src/core/dialogue/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jojo-conversation-windows-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  conversa-real:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    env:
+      OLLAMA_HOST: '127.0.0.1:11439'
+      OLLAMA_MODELS: '${{ runner.temp }}/jojo-models'
+      OLLAMA_NO_CLOUD: '1'
+      OLLAMA_NUM_PARALLEL: '1'
+      OLLAMA_MAX_LOADED_MODELS: '1'
+      # Candidato experimental; este workflow não muda o modelo do aplicativo.
+      JOJO_QA_MODEL: 'qwen3.5:4b-q4_K_M'
+      JOJO_LLM_BASE: 'http://127.0.0.1:11439'
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: jojo-companion
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Registrar recursos reais do runner Windows
+        run: node -e "const os=require('node:os'); console.log(JSON.stringify({platform:process.platform,release:os.release(),ramBytes:os.totalmem(),cpus:os.cpus().length}))"
+
+      - name: Instalar Ollama Windows com SHA-256 verificado
+        timeout-minutes: 12
+        run: |
+          $zip = Join-Path $env:RUNNER_TEMP 'ollama-windows-amd64.zip'
+          $root = Join-Path $env:RUNNER_TEMP 'jojo-ollama'
+          curl.exe --fail --location --retry 3 --output $zip 'https://github.com/ollama/ollama/releases/download/v0.40.13/ollama-windows-amd64.zip'
+          if ($LASTEXITCODE -ne 0) { throw 'Falha no download do Ollama Windows' }
+          $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
+          if ($hash -ne '7afa38624fa62ee5d8293422d0ab084c1bb4603134c7f4dafce11a033b57cc19') { throw 'SHA-256 do Ollama Windows não confere' }
+          Expand-Archive -LiteralPath $zip -DestinationPath $root
+          Start-Process -FilePath (Join-Path $root 'ollama.exe') -ArgumentList 'serve' -RedirectStandardOutput (Join-Path $env:RUNNER_TEMP 'jojo-ollama.out.log') -RedirectStandardError (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log')
+          $ready = $false
+          for ($i = 0; $i -lt 60; $i++) {
+            try {
+              $version = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/version" -TimeoutSec 1
+              Write-Output "Ollama Windows $($version.version)"
+              $ready = $true
+              break
+            } catch { Start-Sleep -Milliseconds 500 }
+          }
+          if (-not $ready) { throw 'Ollama Windows não iniciou' }
+
+      - name: Baixar candidato local e conferir conclusão do download
+        timeout-minutes: 12
+        run: |
+          $body = @{ model = $env:JOJO_QA_MODEL; stream = $false } | ConvertTo-Json -Compress
+          $result = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/pull" -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 660
+          if ($result.error -or $result.status -ne 'success') { throw "Download do modelo não concluiu: $($result.error)" }
+
+      - name: Exercitar respostas reais e registrar latência
+        run: node scripts/check-conversation.mjs out/conversa-real-windows.json
+
+      - name: Guardar respostas no resumo, sem depender da cota de artefatos
+        if: ${{ !cancelled() }}
+        run: |
+          if (Test-Path 'out/conversa-real-windows.json') {
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '## Conversa real no Windows — revisão semântica obrigatória'
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value 'Checagens lexicais aprovadas não substituem a leitura das falas. Execução experimental, sem publicação.'
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```json'
+            Get-Content -Raw -Encoding utf8 'out/conversa-real-windows.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```'
+          }

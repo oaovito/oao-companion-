@@ -49,7 +49,7 @@ jobs:
 
       - name: Gerar executável portátil, instalador e ZIP
         if: success() || failure()
-        run: npx electron-builder --win --x64
+        run: npm run build:win
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
@@ -72,11 +72,11 @@ jobs:
 
       - name: Integração no Windows (entrada real de mouse/teclado)
         if: success() || failure()
-        run: node --test --test-concurrency=1 test/e2e/windows.e2e.mjs
+        run: npm run test:windows
 
-      - name: E2E multiplataforma
+      - name: E2E do aplicativo Windows
         if: success() || failure()
-        run: node --test --test-concurrency=1 test/e2e/app.e2e.mjs
+        run: npm run test:e2e
 
       - name: Medir CPU e memória
         if: ${{ !cancelled() }}

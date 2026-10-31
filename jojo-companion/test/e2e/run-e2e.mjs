@@ -1,16 +1,15 @@
-// Executa os testes E2E. No Linux sem DISPLAY, usa xvfb-run automaticamente.
+// Executa os testes oficiais de aplicação/integração somente no Windows.
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { requireWindows } from '../../src/main/windows-only.js';
+
+requireWindows();
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const files = [path.join('test', 'e2e', 'app.e2e.mjs')];
+const files = process.argv.includes('--integration')
+  ? [path.join('test', 'e2e', 'windows.e2e.mjs'), path.join('test', 'e2e', 'presenca.windows.mjs')]
+  : [path.join('test', 'e2e', 'app.e2e.mjs')];
 const nodeArgs = ['--test', '--test-concurrency=1', ...files];
-let cmd = process.execPath;
-let args = nodeArgs;
-if (process.platform === 'linux' && !process.env.DISPLAY) {
-  cmd = 'xvfb-run';
-  args = ['-a', '-s', '-screen 0 1920x1080x24', process.execPath, ...nodeArgs];
-}
-const r = spawnSync(cmd, args, { cwd: ROOT, stdio: 'inherit' });
+const r = spawnSync(process.execPath, nodeArgs, { cwd: ROOT, stdio: 'inherit' });
 process.exit(r.status ?? 1);

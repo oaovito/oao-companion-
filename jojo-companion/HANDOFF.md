@@ -1,4 +1,19 @@
-# HANDOFF — operação Codex (v0.43.1, 2026-10-30)
+# HANDOFF — JoJo Companion (versão publicada 0.43.1)
+
+## Diretriz atual: somente Windows
+
+- Branch ativa: `codex/conversation-coherence`. Modelo real e correções de conversa ainda em validação.
+- Usuário confirmou 16 GB de RAM ou mais no PC de destino.
+- Removidos caminhos de interface não-Windows, execução gráfica com Xvfb e build por Bash/Wine.
+- Build nativo: `npm run build:win`; integração: `npm run test:windows`; E2E: `npm run test:e2e`.
+- Três testes de processos do vigia foram movidos de unitários para a integração Windows,
+  preservando asserções; o teste gráfico exclusivo do outro sistema foi removido, pois a cobertura
+  Windows obrigatória usa o executável portátil em `scripts/presenca-windows.mjs`.
+- `.github/workflows/jojo-conversation-windows.yml` avalia o candidato Qwen 4B real em Windows,
+  sem alterar o modelo do aplicativo nem publicar. Ler as falas e latências do resumo; checagem
+  lexical verde não prova qualidade semântica. Não voltar a instalar runtimes de outro sistema.
+- As referências a outros sistemas abaixo pertencem a verificações históricas, não a alvos suportados.
+
 
 ## Transferência operacional
 

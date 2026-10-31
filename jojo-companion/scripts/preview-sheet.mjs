@@ -1,5 +1,6 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Gera uma folha com quadros de cada animação (revisão visual / documentação).
-// Uso: xvfb-run -a npx electron scripts/preview-sheet.mjs [saida.png] [anim1,anim2,...]
 import { app, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';

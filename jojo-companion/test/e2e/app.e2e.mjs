@@ -1,16 +1,17 @@
 // Testes de integração com o Electron real (Playwright).
-// No Linux roda sob Xvfb (ver run-e2e.mjs). NÃO substitui testes no Windows:
-// click-through com WS_EX_TRANSPARENT, encaminhamento de mouse, DPI misto e
-// detecção de tela cheia só podem ser verificados no Windows.
+// Executado exclusivamente no Windows; testes com entrada nativa em windows.e2e.mjs.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import { spawn, execFileSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+
+import { requireWindows } from '../../src/main/windows-only.js';
+requireWindows();
 
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -28,7 +29,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function launch({ userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-e2e-')), env = {} } = {}) {
   const app = await _electron.launch({
     executablePath: ELECTRON,
-    args: ['--no-sandbox', ROOT],
+    args: [ROOT],
     cwd: ROOT,
     env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData, ...env },
   });
@@ -346,7 +347,7 @@ test('instância única: segunda execução encerra e a primeira avisa', async (
   const { app } = await launch({ userData });
   try {
     await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
-    const second = spawn(ELECTRON, ['--no-sandbox', ROOT], { env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData }, stdio: 'ignore' });
+    const second = spawn(ELECTRON, [ROOT], { env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData }, stdio: 'ignore' });
     const code = await new Promise((r) => {
       const t = setTimeout(() => {
         second.kill();
@@ -910,48 +911,5 @@ test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" re
     assert.equal(p.intent, 'pacote:pk_traicao');
   } finally {
     await quit(app);
-  }
-});
-
-// No Windows a reabertura passa por cmd/start (coberto pelos unitários do vigia); aqui o
-// processo reaberto ficaria preso ao console do CI.
-test('presença: JoJo morto sem motivo reabre sozinho; encerrado de propósito não reabre', { skip: process.platform === 'win32' && 'coberto por test/unit/presenca.test.js' }, async () => {
-  const { app, userData } = await launch({ env: { JOJO_VIGIA: '1' } });
-  const logs = () => fs.readdirSync(path.join(userData, 'logs')).map((f) => fs.readFileSync(path.join(userData, 'logs', f), 'utf8')).join('\n');
-  const inicios = () => [...logs().matchAll(/Iniciando JoJo Companion .*pid (\d+)\)/g)].map((m) => Number(m[1]));
-  let novo = null;
-  try {
-    assert.match(logs(), /Vigia armado/);
-    const pid = app.process().pid;
-    process.kill(pid, 'SIGKILL');
-    for (let i = 0; i < 150 && inicios().length < 2; i++) await sleep(100);
-    const lista = inicios();
-    assert.equal(lista.length, 2, `reabriu depois de morrer\n${logs().split('\n').filter((l) => /vigia|Vigia|Inician/.test(l)).join('\n')}`);
-    novo = lista[1];
-    assert.notEqual(novo, pid);
-    for (let i = 0; i < 100 && !/Vigia armado[\s\S]*Vigia armado/.test(logs()); i++) await sleep(100);
-    // Agora "encerrado pela bandeja": não volta.
-    fs.writeFileSync(path.join(userData, 'saida.json'), JSON.stringify({ pid: novo, motivo: 'manual' }));
-    process.kill(novo, 'SIGKILL');
-    await sleep(3000);
-    assert.equal(inicios().length, 2, 'não reabriu após encerrar de propósito');
-  } finally {
-    try {
-      if (novo) process.kill(novo, 'SIGKILL');
-    } catch {
-      /* já fechado */
-    }
-    // SIGKILL do main não encerra os processos Chromium no Linux. Eles podem
-    // reter os pipes do Playwright, impedindo o runner de finalizar mesmo com
-    // todas as asserções aprovadas. Limpar só processos deste userData de teste.
-    if (process.platform === 'linux') {
-      const rows = execFileSync('ps', ['-eo', 'pid=,args='], { encoding: 'utf8' }).split('\n');
-      for (const row of rows) {
-        const m = row.trim().match(/^(\d+)\s+(.+)$/);
-        if (!m || !m[2].startsWith(`${ELECTRON} `) || !m[2].includes(userData)) continue;
-        try { process.kill(Number(m[1]), 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; }
-      }
-    }
-    await Promise.race([app.close().catch(() => {}), sleep(5000)]);
   }
 });

@@ -9,15 +9,15 @@
   `forward: true` permite detectar hover nas regiões interativas sem capturar o resto.
 - Bandeja, atalho global, instância única, iniciar com o sistema, eventos de
   energia e de monitores, DPI por monitor: tudo nativo da API.
-- Gera instalador NSIS e ZIP a partir do Windows ou do Linux (com Wine).
+- Gera portátil, instalador NSIS e ZIP x64 nativamente no Windows; `scripts/build-win.mjs`.
+- Aplicativo, ferramentas gráficas, medições e E2E são exclusivos para Windows.
 - Custo: memória maior que Tauri/nativo. Mitigado com polling adaptativo,
   FPS limitado por estado e parada total quando oculto.
 - `koffi` (FFI com binários prontos) apenas para a detecção de tela cheia, rodando
   em `utilityProcess` isolado.
 
-Alternativas descartadas: Tauri (cross-build para Windows a partir do Linux
-experimental, transparência do WebView2 menos previsível), WPF/.NET (sem SDK no
-ambiente e impossível validar aqui), Win32 nativo (custo de UI muito alto).
+Alternativas descartadas: Tauri (transparência do WebView2 menos previsível),
+WPF/.NET (sem SDK no ambiente inicial), Win32 nativo (custo de UI muito alto).
 
 ## Organização
 
@@ -82,7 +82,7 @@ jojo-companion/
   modo de interação são recusados.
 - Interação: `setFocusable(true)`, `focus()`, `setIgnoreMouseEvents(true, {forward:true})`.
   O renderer recebe `mousemove` encaminhado e pede captura só sobre JoJo/barra/painel.
-  No Linux (sem forward) a janela inteira captura — só afeta desenvolvimento.
+  O encaminhamento é o comportamento do Windows; não existe captura alternativa para outro sistema.
 - Saída (Esc, ✕, blur, timeout, erro, ocultar, suspender): volta ao modo normal antes de qualquer outra coisa.
 - `uncaughtException` também força o modo normal.
 
@@ -129,5 +129,6 @@ por lista branca, texto da conversa limitado a 500 caracteres.
   balão), simulação completa com `FakeClock` (clique durante fuga, interação,
   monitores, suspensão, tela cheia, 30 min de comportamento, falas), estados,
   configurações, diálogo, frases, layout, consistência dos assets.
-- `test/e2e/app.e2e.mjs`: Electron real (Xvfb no Linux).
+- `test/e2e/app.e2e.mjs`: Electron real no Windows.
+- `test/e2e/presenca.windows.mjs`: processos reais do vigia no Windows.
 - `test/e2e/windows.e2e.mjs`: Windows real com SetCursorPos/mouse_event/keybd_event.

@@ -3,6 +3,7 @@
 ## Não lançado — conversa única e coerência
 
 ### Melhorias
+- Desenvolvimento e validação oficiais exclusivos para Windows; build nativo por Node sem Bash/Wine, sem infraestrutura gráfica para outros sistemas.
 - Uma conversa contínua na Central, incluindo lembretes e avisos; comandos legados não apagam nem dividem o histórico.
 - O histórico entregue ao modelo inclui as respostas de atalhos e eventos realmente vistas na conversa.
 - Mensagens diferentes são processadas em ordem; emergências passam à frente e cancelam a geração antiga.

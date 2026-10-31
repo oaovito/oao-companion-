@@ -1,3 +1,5 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Exercita o engine com o Qwen REAL, local. Não faz parte dos testes com servidor falso.
 // Uso: node scripts/check-conversation.mjs [out/conversa-real.json]
 import fs from 'node:fs';

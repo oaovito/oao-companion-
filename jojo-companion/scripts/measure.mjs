@@ -1,9 +1,9 @@
 // Mede CPU e memória do app real (todos os processos Electron) em três cenários:
 // ocioso (cursor longe), cursor rondando/perseguindo e oculto.
-// Uso: node scripts/measure.mjs   (no Linux sem tela usa xvfb-run automaticamente)
+// Uso (Windows): node scripts/measure.mjs
 // Requer Playwright disponível globalmente ou no projeto.
 import { createRequire } from 'node:module';
-import { spawnSync } from 'node:child_process';
+import { requireWindows } from '../src/main/windows-only.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -12,10 +12,7 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-if (process.platform === 'linux' && !process.env.DISPLAY) {
-  const r = spawnSync('xvfb-run', ['-a', '-s', '-screen 0 1920x1080x24', process.execPath, fileURLToPath(import.meta.url), ...process.argv.slice(2)], { stdio: 'inherit' });
-  process.exit(r.status ?? 1);
-}
+requireWindows();
 
 const { _electron } = (() => {
   try {
@@ -51,7 +48,7 @@ async function sample(app, seconds, during) {
 const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-measure-'));
 const app = await _electron.launch({
   executablePath: require('electron'),
-  args: ['--no-sandbox', ROOT],
+  args: [ROOT],
   env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData },
 });
 await app.firstWindow();
@@ -86,8 +83,8 @@ const stats = await app.evaluate(() => globalThis.__jojo.companion.debugState().
 
 const info = {
   data: new Date().toISOString(),
-  ambiente: `${os.type()} ${os.release()}, ${os.cpus()[0].model} x${os.cpus().length}, Electron ${await app.evaluate(() => process.versions.electron)}, DISPLAY=${process.env.DISPLAY}`,
-  observacao: `${process.platform === 'linux' ? 'Linux/Xvfb (renderização por software); não representa o Windows 11.' : `Plataforma ${process.platform}.`} CPU em % de um núcleo somada entre processos; memória = working set somado.`,
+  ambiente: `${os.type()} ${os.release()}, ${os.cpus()[0].model} x${os.cpus().length}, Electron ${await app.evaluate(() => process.versions.electron)}`,
+  observacao: `Windows (runner de CI; não equivale a um PC Windows 11 físico). CPU em % de um núcleo somada entre processos; memória = working set somado.`,
   segundosPorCenario: SECONDS,
   resultados: results,
   contadores: stats,

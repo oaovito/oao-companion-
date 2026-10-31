@@ -53,18 +53,11 @@ function decidir({ marcador, pid, historico = [], agora = Date.now(), limite = 3
 function abrirDepois(esperaMs, extra = []) {
   const args = [...(cfg.args || []), ...extra];
   try {
-    if (process.platform === 'win32') {
-      const q = (x) => `"${String(x).replace(/"/g, '')}"`;
-      const seg = Math.max(1, Math.round(esperaMs / 1000));
-      const linha = `ping -n ${seg + 1} 127.0.0.1 >nul & start "" ${q(cfg.alvo)} ${args.map(q).join(' ')}`;
-      spawn('cmd.exe', ['/d', '/s', '/c', `"${linha}"`], { detached: true, stdio: 'ignore', windowsHide: true, windowsVerbatimArguments: true }).unref();
-      process.exit(0);
-    }
-    setTimeout(() => {
-      registrar(`reabrindo: ${cfg.alvo} ${args.join(' ')}`);
-      spawn(cfg.alvo, args, { detached: true, stdio: 'ignore' }).unref();
-      process.exit(0);
-    }, esperaMs);
+    const q = (x) => `"${String(x).replace(/"/g, '')}"`;
+    const seg = Math.max(1, Math.round(esperaMs / 1000));
+    const linha = `ping -n ${seg + 1} 127.0.0.1 >nul & start "" ${q(cfg.alvo)} ${args.map(q).join(' ')}`;
+    spawn('cmd.exe', ['/d', '/s', '/c', `"${linha}"`], { detached: true, stdio: 'ignore', windowsHide: true, windowsVerbatimArguments: true }).unref();
+    process.exit(0);
   } catch (e) {
     registrar(`falha ao reabrir: ${e.message}`);
     process.exit(1);
@@ -91,6 +84,7 @@ function aoSumir() {
 }
 
 if (require.main === module) {
+  if (process.platform !== 'win32') throw new Error('Vigia do JoJo exige Windows.');
   const t = setInterval(() => {
     if (!vivo(cfg.pid)) {
       clearInterval(t);

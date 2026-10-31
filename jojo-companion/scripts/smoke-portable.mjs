@@ -1,3 +1,5 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Teste de fumaça do executável portátil (Windows): abre dist/JoJoCompanion.exe
 // sem instalar nada, espera o app registrar "Pronto (executável portátil)" no log
 // e encerra. Falha se não iniciar ou se registrar erro.
@@ -22,8 +24,7 @@ const timeoutMs = Number(process.env.SMOKE_TIMEOUT_MS || 120000);
 
 function stop() {
   try {
-    if (process.platform === 'win32') execFileSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { stdio: 'ignore' });
-    else child.kill('SIGKILL');
+    execFileSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { stdio: 'ignore' });
   } catch {
     /* já encerrado */
   }

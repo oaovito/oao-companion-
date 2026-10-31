@@ -25,7 +25,11 @@ Preservar alterações locais e histórico; nunca fazer force-push ou reset dest
 
 ## Produto e arquitetura
 
-Desktop Windows 11, Electron 44, JavaScript ESM, sem framework de UI; `koffi` para
+**Somente Windows 11 x64.** Não desenvolver nem manter versão de Linux/macOS,
+compilação cruzada, Wine, Xvfb ou E2E gráficos fora do Windows. O host do editor
+pode executar testes de lógica pura em Node, sem preparar um aplicativo para outro sistema.
+
+Electron 44, JavaScript ESM, sem framework de UI; `koffi` para
 integração nativa isolada em `utilityProcess`; Playwright para E2E; electron-builder
 para portátil, NSIS e ZIP x64. `src/core/` contém lógica pura; `src/main/` integra
 Windows/Electron; `src/preload/` expõe IPC mínimo; `src/renderer/` desenha overlay,
@@ -72,8 +76,11 @@ npm run build:win
 node scripts/publish-release.mjs --artifacts
 ```
 
-CI usa Node 22. Linux E2E precisa de Xvfb e bibliotecas do Electron; sem DISPLAY o
-runner usa `xvfb-run`. Respeitar proxy/CA e verificações de assinatura/checksum.
+CI usa Node 22 e runners Windows para build, E2E, integração, medição e modelo real.
+`npm run test:windows` executa entrada nativa e processos do vigia; `npm run test:e2e`
+executa a aplicação Windows. `npm run build:win` usa Node, sem Bash.
+Não instalar runtimes gráficos/modelos de outro sistema no host do editor.
+Respeitar proxy/CA e verificações de assinatura/checksum.
 `test/unit/helpers.js` fixa Date numa data não festiva para isolar a simulação do
 calendário real; testes de feriados devem fornecer datas explícitas.
 

@@ -154,14 +154,15 @@ Histórico: `jojo-companion/CHANGELOG.md` (atualizar a cada mudança).
 npm ci
 npm start                 # rodar em desenvolvimento
 npm test                  # unitários + simulação
-npm run test:e2e          # Electron real (Linux usa Xvfb automaticamente)
+npm run test:e2e          # Electron real no Windows
+npm run test:windows      # entrada nativa e processos reais do vigia
 node scripts/measure.mjs  # CPU/memória
-npm run build:win         # instalador NSIS + ZIP (Linux precisa de wine + wine32)
+npm run build:win         # portátil + NSIS + ZIP, nativo no Windows
 ```
 
 ## Verificação no Windows
 
-Este ambiente de desenvolvimento é Linux. O workflow
+O produto e sua validação gráfica são exclusivos para Windows. O workflow
 `.github/workflows/jojo-windows.yml` roda em `windows-latest`: testes unitários,
 build do instalador, integração com entrada real de mouse/teclado
 (`test/e2e/windows.e2e.mjs`), E2E e medição; os instaladores ficam como artefato

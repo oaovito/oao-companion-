@@ -1,3 +1,5 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Presença permanente no Windows de verdade, com o executável portátil:
 // 1) abre o JoJoCompanion.exe; o vigia arma e o atalho na área de trabalho aparece;
 // 2) mata o processo do JoJo (como um crash) → o vigia reabre sozinho;

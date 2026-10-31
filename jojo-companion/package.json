@@ -14,8 +14,9 @@
     "test:e2e": "node test/e2e/run-e2e.mjs",
     "icons": "electron scripts/make-icons.mjs",
     "measure": "node scripts/measure.mjs",
-    "build:win": "bash scripts/build-win.sh",
-    "build:dir": "bash scripts/build-win.sh --dir",
+    "build:win": "node scripts/build-win.mjs",
+    "build:dir": "node scripts/build-win.mjs --dir",
+    "test:windows": "node test/e2e/run-e2e.mjs --integration",
     "sheet": "electron scripts/preview-sheet.mjs"
   },
   "dependencies": {

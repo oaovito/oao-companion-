@@ -1,5 +1,6 @@
+import { requireWindows } from '../src/main/windows-only.js';
+requireWindows();
 // Gera assets/icons/{app,tray}.{png,ico} desenhando o rig do JoJo.
-// Uso: npx electron scripts/make-icons.mjs   (no Linux sem tela: xvfb-run -a ...)
 import { app, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';

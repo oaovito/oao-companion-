@@ -4,9 +4,6 @@
 import { BrowserWindow } from 'electron';
 import path from 'node:path';
 
-const IS_WIN = process.platform === 'win32';
-const IS_LINUX = process.platform === 'linux';
-
 export class OverlayWindow {
   constructor({ preloadPath, htmlPath, log, onBlur, onCrash }) {
     this.log = log;
@@ -43,7 +40,7 @@ export class OverlayWindow {
       alwaysOnTop: true,
       thickFrame: false,
       roundedCorners: false,
-      ...(IS_WIN ? { type: 'toolbar' } : {}),
+      type: 'toolbar',
       title: 'JoJo',
       webPreferences: {
         preload: this.preloadPath,
@@ -109,13 +106,7 @@ export class OverlayWindow {
     this.captureOn = false;
     if (mode === 'interactive') {
       this.win.setFocusable(true);
-      if (IS_LINUX) {
-        // No Linux não há encaminhamento de eventos com click-through; captura a janela toda.
-        this.win.setIgnoreMouseEvents(false);
-        this.captureOn = true;
-      } else {
-        this.win.setIgnoreMouseEvents(true, { forward: true });
-      }
+      this.win.setIgnoreMouseEvents(true, { forward: true });
     } else {
       this.win.setIgnoreMouseEvents(true);
       this.win.setFocusable(false);
@@ -125,7 +116,7 @@ export class OverlayWindow {
   }
 
   setCapture(on) {
-    if (!this.alive || this.mouseMode !== 'interactive' || IS_LINUX) return;
+    if (!this.alive || this.mouseMode !== 'interactive') return;
     if (on === this.captureOn) return;
     this.captureOn = on;
     if (on) this.win.setIgnoreMouseEvents(false);

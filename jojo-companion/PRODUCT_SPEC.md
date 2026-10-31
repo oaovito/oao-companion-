@@ -3,6 +3,13 @@
 Referência dos requisitos atuais (v0.1). Mudanças futuras chegam por prompts
 elaborados pelo usuário; preserve o que está aqui salvo substituição explícita.
 
+## Plataforma suportada (diretriz atual)
+
+JoJo Companion é exclusivo para **Windows 11 x64**. Não há versão de Linux ou macOS.
+Build, testes gráficos, integração nativa, medição e avaliação de conversa real rodam
+em Windows. Testes puros de lógica em Node não constituem suporte a outro sistema.
+Portátil, instalador e ZIP e a fonte pública de atualizações permanecem obrigatórios.
+
 ## 1. Visão
 
 Companion animado para Windows 11: o JoJo, um tubarão fisiculturista em estilo
