@@ -3,6 +3,7 @@
 import { isEnglish, detectIntentEn, EN_RESPONSES, isEnglishFactualQuestion } from './english.js';
 import { DialogueProvider } from './provider.js';
 import { isFactualQuestion, isBlockedQuestion } from './web-search.js';
+import { modoCiencia } from '../ciencia.js';
 
 export function normalizeText(s) {
   return String(s || '')
@@ -144,7 +145,7 @@ const TONES = {
 
 // Intenções que, numa pergunta de conhecimento ("quantas horas devo dormir?"),
 // dão lugar à pesquisa: a resposta programada não responderia a pergunta.
-const SEARCHABLE = new Set(['unknown', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
+const SEARCHABLE = new Set(['unknown', 'sleep', 'wake', 'eat', 'play', 'gym', 'achievement', 'scare', 'pet', 'bench', 'squat']);
 
 /** Depois das 21h (até as 6h) dormir é permitido — e o JoJo reafirma isso. */
 export function sleepAllowed(date = new Date()) {
@@ -153,11 +154,21 @@ export function sleepAllowed(date = new Date()) {
 }
 
 export function detectIntent(text) {
-  if (isEnglish(text)) return detectIntentEn(text);
+  if (isEnglish(text)) {
+    const intent = detectIntentEn(text);
+    return SEARCHABLE.has(intent) && isEnglishFactualQuestion(text) ? 'unknown' : intent;
+  }
   const n = normalizeText(text);
   if (!n) return 'unknown';
   for (const intent of INTENTS) {
-    if (intent.patterns.some((p) => p.test(n))) return intent.id;
+    if (!intent.patterns.some((p) => p.test(n))) continue;
+    // Uma palavra sobre corpo/sono/comida não é um pedido para o personagem
+    // executar essa ação. Conhecimento e saúde seguem para explicação/pesquisa.
+    const pergunta = /^(?:jojo )?(?:o que|qual|quais|como|por que|me explica|explica|explique)\b/.test(n);
+    const sugestao = /^(?:jojo )?(?:que tal|vamos|bora|por que nao)\b/.test(n);
+    if (SEARCHABLE.has(intent.id) && ((!sugestao && (pergunta || isFactualQuestion(text))) || modoCiencia(text) === 'pessoal')) return 'unknown';
+    if (['sad', 'distress'].includes(intent.id) && /^(?:jojo )?(?:o que (?:e|sao)|qual a diferenca|como funciona|explique|explica)\b/.test(n) && !/\b(eu|estou|to|meu|minha|me sinto)\b/.test(n)) return 'unknown';
+    return intent.id;
   }
   return 'unknown';
 }
@@ -197,7 +208,7 @@ export class ScriptedProvider extends DialogueProvider {
   }
 
   _replyEn(text) {
-    let intent = detectIntentEn(text);
+    let intent = detectIntent(text);
     if (intent === 'sleep' && sleepAllowed(this.now())) intent = 'sleepOk';
     const search = intent === 'unknown' && isEnglishFactualQuestion(text);
     const options = EN_RESPONSES[intent] || EN_RESPONSES.unknown;

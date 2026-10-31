@@ -9,10 +9,12 @@
 - Mensagens diferentes são processadas em ordem; emergências passam à frente e cancelam a geração antiga.
 - Conversa local usa instruções menores e separa redação da fala da escolha de expressão corporal.
 - Ensaio reproduzível com inferência local real e relatório que exige revisão semântica, além dos testes com servidores falsos.
+- Auditoria completa de animações executada como gate obrigatório no renderer Windows.
 
 ### Correções
 - Bloqueadas ameaças, identidade inventada e menções ao João fora do assunto; fatos do personagem e provocações têm respostas protegidas.
 - Perguntas sobre o próprio JoJo não disparam pesquisa genérica na internet; menção ao namorado não engole a mensagem inteira.
+- Perguntas de conhecimento e sintomas pessoais não viram ações de sono, comida ou exercício por conter palavras parecidas; perguntar como o músculo cresce não aumenta o tamanho do personagem.
 - JSON incompleto não aparece como fala; uma resposta inválida não desliga o motor por 90 segundos.
 - O limite da geração com pesquisa é de até 25 segundos e cancela a requisição, evitando trabalho em segundo plano após timeout.
 - Óculos técnicos saem ao mudar de assunto; expressão e movimento da boca acompanham a resposta, respeitando fuga, tela cheia e Modo Trabalho.
@@ -31,7 +33,6 @@
 
 ### Correções
 - Ferramenta de build electron-builder atualizada para 26.18.0, removendo alertas altos/críticos de sua cadeia de dependências.
-- Teste E2E de crash limpa os processos Chromium do perfil temporário, evitando runner Linux preso após concluir as asserções.
 - Publicação falha explicitamente sem RELEASES_TOKEN, com tag divergente ou versão pública existente; uploads ocorrem em rascunho antes da exposição ao atualizador.
 - Simulação unitária usa data fixa: feriados reais não interrompem respostas nem alteram a altura inicial das fantasias nos testes.
 

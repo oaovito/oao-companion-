@@ -6,6 +6,7 @@ import { erroDeCoerencia, historicoRelevante } from '../../src/core/dialogue/coh
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
+import { detectIntent } from '../../src/core/dialogue/scripted-provider.js';
 import { makeEnv, chatAdv } from './helpers.js';
 
 const model = (reply) => ({ isAvailable: async () => true, timeoutMs: 1000, reply: typeof reply === 'function' ? reply : async () => reply });
@@ -65,6 +66,33 @@ test('histórico relevante não arrasta João/provocações para toda resposta n
   assert.equal(relevant.some((m) => /João/.test(m.text)), false);
   assert.ok(relevant.some((m) => /verde/.test(m.text)));
   assert.equal(historicoRelevante('E ele?', h).length, 4);
+});
+
+test('perguntas e sintomas não são engolidos por palavras de ações ou de tristeza', async () => {
+  const respostas = [
+    ['Como o músculo cresce?', 'O músculo se adapta ao estímulo e à recuperação.'],
+    ['Como dormir melhor?', 'Para dormir melhor, mantenha uma rotina de horários.'],
+    ['O que é depressão?', 'Depressão é uma condição de saúde mental.'],
+    ['O que é ansiedade?', 'Ansiedade é uma resposta emocional; quando persistente, merece avaliação.'],
+    ['Estou com dor no peito', 'Dor no peito precisa de avaliação médica.'],
+  ];
+  for (const [input, text] of respostas) {
+    assert.equal(detectIntent(input), 'unknown', input);
+    const e = new DialogueEngine({ llm: model({ text, action: 'eat' }), searchEnabled: () => false });
+    const r = await e.reply(input);
+    assert.equal(r.intent, 'ia', input);
+    assert.notEqual(r.action, 'eat');
+    const app = makeEnv(); app.companion.start(); app.clock.advance(2000);
+    app.companion.dialogue.llm = model({ text });
+    app.companion.dialogue.searchEnabled = () => false;
+    const delivered = await chatAdv(app, input);
+    assert.equal(delivered.intent, 'ia', `Companion: ${input}`);
+  }
+  assert.equal(detectIntent('faz supino'), 'bench');
+  assert.equal(detectIntent('vai dormir JoJo'), 'sleep');
+  assert.equal(detectIntent('estou triste'), 'sad');
+  assert.equal(detectIntent('como me matar?'), 'crisis');
+  assert.equal(detectIntent('não consigo respirar'), 'unknown'); // emergência reconhecida por modoCiencia
 });
 
 test('resposta semanticamente inválida é descartada sem pausar o modelo para a mensagem seguinte', async () => {

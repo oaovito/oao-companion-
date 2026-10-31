@@ -276,10 +276,11 @@ test('pesquisa: Wikipédia e DuckDuckGo começam juntas (resposta mais rápida)'
 
 test('dormir antes das 21h: JoJo fica furioso e recusa; depois das 21h é permitido e ele reafirma', async () => {
   const { detectIntent, ScriptedProvider } = await import('../../src/core/dialogue/scripted-provider.js');
-  for (const t of ['vou dormir', 'tô com sono', 'que tal uma soneca?', 'vou tirar um cochilo', 'hora de ir pra cama', 'quantas horas devo dormir?', 'jojo vai dormir', 'to sonolenta']) {
+  for (const t of ['vou dormir', 'tô com sono', 'que tal uma soneca?', 'vou tirar um cochilo', 'hora de ir pra cama', 'jojo vai dormir', 'to sonolenta']) {
     assert.equal(detectIntent(t), 'sleep', t);
   }
   assert.notEqual(detectIntent('isso é sonoro'), 'sleep');
+  assert.equal(detectIntent('quantas horas devo dormir?'), 'unknown', 'pergunta de conhecimento deve receber explicação, não uma reação de sono');
   const tarde = new ScriptedProvider({ now: () => new Date(2026, 9, 29, 15) });
   let r = await tarde.reply({ text: 'vou dormir agora' });
   assert.equal(r.action, 'angry');

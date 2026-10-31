@@ -1,268 +1,96 @@
-# HANDOFF — JoJo Companion (versão publicada 0.43.1)
+# HANDOFF — JoJo Companion
 
-## Diretriz atual: somente Windows
+## Estado atual
 
-- Branch ativa: `codex/conversation-coherence`. Modelo real e correções de conversa ainda em validação.
-- Usuário confirmou 16 GB de RAM ou mais no PC de destino.
-- Removidos caminhos de interface não-Windows, execução gráfica com Xvfb e build por Bash/Wine.
-- Build nativo: `npm run build:win`; integração: `npm run test:windows`; E2E: `npm run test:e2e`.
-- Três testes de processos do vigia foram movidos de unitários para a integração Windows,
-  preservando asserções; o teste gráfico exclusivo do outro sistema foi removido, pois a cobertura
-  Windows obrigatória usa o executável portátil em `scripts/presenca-windows.mjs`.
-- `.github/workflows/jojo-conversation-windows.yml` avalia o candidato Qwen 4B real em Windows,
-  sem alterar o modelo do aplicativo nem publicar. Ler as falas e latências do resumo; checagem
-  lexical verde não prova qualidade semântica. Não voltar a instalar runtimes de outro sistema.
-- As referências a outros sistemas abaixo pertencem a verificações históricas, não a alvos suportados.
+- Desenvolvimento privado: `oaovito/oao-companion-`, aplicativo em `jojo-companion/`.
+- Distribuição pública e atualizador: `oaovito/jojo-companion-releases`.
+- Branch efetiva: `codex/conversation-coherence`, derivada de `codex/operational-handoff`.
+  Base original preservada: `claude/jeff-companion-v0.1` em `018bd492a46d70f688187394f0ce60759c20d737`.
+  `main` contém apenas README; consultar o remoto antes de qualquer trabalho.
+- Versão instalada/publicada: **0.43.1**. Não houve nova tag/release durante a transferência.
+- Exclusivo para **Windows 11 x64**. Não desenvolver versões de outros sistemas, usar Wine,
+  compilação cruzada ou preparar runtimes gráficos/modelos no host de edição.
+- Usuário confirmou **16 GB de RAM ou mais** no PC Windows de destino.
+- Ler `../AGENTS.md`, `../CLAUDE.md`, `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `CHANGELOG.md`,
+  package.json e workflows. O [histórico técnico](docs/HANDOFF_HISTORICO.md) é referência
+  opcional para decisões antigas; não é o roteiro operacional atual.
 
+## Mudanças implementadas, ainda não publicadas
 
-## Transferência operacional
+- Central tem uma única conversa; avisos/lembretes aparecem nela. IPC e `/nova` antigos
+  continuam compatíveis sem apagar o histórico. O histórico real entregue inclui atalhos.
+- Mensagens diferentes são serializadas; reenvios pendentes são deduplicados. Emergências
+  cancelam a geração antiga e impedem que resposta/indicador atrasados substituam acolhimento.
+- Fatos de identidade/João, limites e provocações protegidos; conversa pessoal não faz busca
+  genérica. Bloqueios de ameaças, identidade inventada, nomes trocados e João fora do assunto.
+- Prompt local menor, fala em texto puro, comandos só em pedido explícito. Respostas inválidas
+  não pausam o modelo por 90 s; timeout cancela inferência em vez de só abandonar a Promise.
+- Reações/boca acompanham falas; óculos técnicos saem ao mudar de assunto; ações não
+  interrompem fuga, arraste, tela cheia ou Modo Trabalho.
+- Build Windows em Node, sem Bash. Testes reais do vigia movidos para integração Windows;
+  unitários são lógica pura. Removidos caminhos de interface/runtime específicos de outros sistemas.
+- Auditoria das 1.043 animações adicionada ao CI Windows como gate obrigatório: erros,
+  recortes, quadros parados e ausência de gatilho natural devem falhar.
+- electron-builder atualizado para 26.18.0: auditoria de produção sem vulnerabilidades;
+  15 moderadas restantes na cadeia de desenvolvimento. Não usar audit fix --force.
 
-- Ler `../AGENTS.md` primeiro; `../CLAUDE.md` permanece como referência histórica/técnica.
-- Fonte privada: `oaovito/oao-companion-`, diretório `jojo-companion/`. Base confirmada no GitHub:
-  `claude/jeff-companion-v0.1` em `018bd492a46d70f688187394f0ce60759c20d737`.
-- Branch efetiva desta transferência: `codex/operational-handoff`; `main` segue apenas com README.
-- Última release pública confirmada: [v0.43.1](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.43.1).
-  Os três arquivos foram baixados sem autenticação e conferidos por tamanho, assinatura MZ/PK e SHA-256.
-  Inspeção do ZIP e do ASAR não encontrou HANDOFF/CLAUDE/PRODUCT_SPEC/testes/workflows.
-- `package.json.jojoUpdate` permanece `oaovito/jojo-companion-releases`. UpdateChecker detectou
-  0.43.1 a partir de 0.43.0 nos modos portable/installer usando os metadados públicos reais;
-  a versão já instalada não propõe atualização para si mesma. O manifesto dentro do ASAR público
-  confirma o canal; os dois módulos do atualizador são idênticos ao checkout após normalizar CRLF.
-  Nenhuma alteração no runtime do atualizador.
-- CI respeita cancelamentos nas etapas de diagnóstico/artefatos e limita medições a 3 min.
-- CI agora reconhece `codex/**`. Push comum e dispatch só validam; tags oficiais novas
-  publicam após todos os gates obrigatórios. Removido o gatilho por mensagem `[publicar]`.
-- Novo `scripts/publish-release.mjs`: bloqueio de tag divergente, token ausente, canal privado
-  e release/tag pública preexistente; upload dos três formatos em rascunho, tamanho/SHA-256,
-  publicação e consulta anônima de `/releases/latest`. Não edita releases históricas.
-- API Secrets recusou listagem (403 Resource not accessible by integration). Não significa token
-  ausente: CI anterior [41120231023](https://github.com/oaovito/oao-companion-/actions/runs/41120231023)
-  publicou com sucesso usando RELEASES_TOKEN. Novo CI audita o token via GET autenticado do
-  repositório público e verifica permissão push anunciada, sem escrever/publicar uma versão artificial.
-- Falhas de três testes dependentes do Halloween/horário real corrigidas fixando Date no helper
-  da simulação, sem desligar testes nem modificar comportamento de produção. Unitários: **282/282**; E2E Linux: **29/29**, sem falhas, cancelamentos ou pulos,
-  com encerramento normal do runner após o cleanup.
-- **CI Windows aprovado** no código `1d83feb103b99151bf0cb944d3f65e8175de7b6a`:
-  [execução 41161280741](https://github.com/oaovito/oao-companion-/actions/runs/41161280741).
-  Unitários **282/282**, integração Windows com entrada real **13/13**, E2E **28 aprovados e 1 pulado**
-  (teste de crash Linux; o Windows é coberto pelo smoke/vigia do portátil). Build dos três formatos,
-  portátil, vigia/atalho, pesquisa real e medições com/sem GPU concluídos com sucesso.
-  A auditoria de RELEASES_TOKEN confirmou autenticação e permissão push anunciada sem publicar.
-  O publicador novo foi exercitado por testes simulados, não por uma release artificial.
-  Nenhuma versão/tag/release nova solicitada ou publicada.
-- **Limitação externa de armazenamento**: upload do artefato de CI falhou com
-  `Artifact storage quota has been hit`; o job segue verde porque essa etapa já era opcional.
-  Nenhum artefato novo ficou armazenado nessa execução. A geração/conferência dos três binários
-  está comprovada nos logs (nomes, tamanhos e SHA-256) e pelos testes executados sobre o portátil.
-  A publicação oficial envia diretamente para Releases e não depende do armazenamento de Actions.
-  Não foram apagados artefatos de execuções anteriores nem alteradas releases para contornar a cota.
-  O GitHub informa recálculo de uso a cada 6–12 h; não alegar que a cota foi liberada.
-- Evidência dos binários gerados no Windows, **não publicados**, disponível no log do CI:
+## Modelo local — avaliação real obrigatória
 
-  | Arquivo | Bytes | SHA-256 |
-  |---|---:|---|
-  | JoJoCompanion.exe | 102170901 | a6a3070e8a8b8b228c5de0d822b10339d3ad6ea60b16edfce2dd5b4aef9a3252 |
-  | JoJoCompanion-Setup-0.43.1.exe | 111688665 | 944155837caeb8c48c0a93470951320fec972c084f5240ef0999959a6d0e1883 |
-  | JoJoCompanion-0.43.1-win-x64.zip | 142499459 | b11ddc44654d5a58fc3248c6bb5efa48ab3f8511138679867c95087fe3e5f30a |
+- Aplicativo ainda usa Qwen 3.5 **2B**. Não afirmar que a qualidade foi resolvida.
+- Ensaios reais do 2B, inclusive outra quantização, falharam na revisão semântica.
+- Qwen 3.5 4B q4_K_M executou 16 casos em Windows Server com 8 GB e 2 CPUs.
+  Mesmo com checagens lexicais verdes, as falas falharam: papéis trocados, número sem
+  fonte, assunto antigo contaminando resposta e sarcasmo sem sentido. Não aprovado.
+- `d050dd9` corrigiu papéis/exemplos. Ensaio [41203843825](https://github.com/oaovito/oao-companion-/actions/runs/41203843825)
+  passou 16/16 automaticamente, mas leitura das falas ainda reprovou qualidade livre.
+- `6ab2600` reduz humor forçado e esclarece personagem/interlocutora. O ensaio 9B
+  [41204166232](https://github.com/oaovito/oao-companion-/actions/runs/41204166232) falhou:
+  o runner Windows de 8 GB demorou 118 s na primeira chamada e acionou fallback.
+  Isso não comprova a qualidade do 9B no PC de 16 GB; não foi aprovado para distribuição.
+- Próximo candidato: Qwen 3 4B Instruct 2507 q4_K_M, modelo textual de 2,5 GB (sem
+  projetor visual). Avaliação real no Windows pendente; o modelo do aplicativo não mudou.
+- `.github/workflows/jojo-conversation-windows.yml` baixa Ollama Windows com SHA-256
+  verificado e roda `scripts/check-conversation.mjs` contra inferência real, somente loopback,
+  sem nuvem/login/custo. Resultados no resumo/logs do Actions, sem depender da cota de artefatos.
+- Troca oficial exige atualizar seleção/migração, configuração, UI, documentação e testes;
+  preservar dados/modelos antigos e o funcionamento offline. Não trocar silenciosamente por API externa.
 
-  A documentação final não altera o código, testes, dependências ou workflow do commit validado.
-- Linux: npm ci; Electron instalado com `NODE_USE_ENV_PROXY=1 node node_modules/electron/install.js`.
-  Xvfb extraído de pacote Debian verificado pelo APT em `/tmp/jojo-xvfb/root`; usar seu `usr/bin`
-  no PATH para E2E nesta sessão. Este caminho temporário não é requisito do app nem setup publicado.
-- Ferramenta de build atualizada: electron-builder 26.0.12 → 26.18.0; auditoria npm de produção
-  sem vulnerabilidades. Auditoria completa: eliminados 11 alertas altos e 1 crítico; restam
-  15 moderados na cadeia de desenvolvimento. Não executar npm audit fix --force (sugere downgrade
-  incompatível); reavaliar quando houver atualização compatível dos transitivos.
-- E2E Linux: corrigido cleanup do teste de crash para encerrar somente processos Electron do
-  userData temporário; SIGKILL do main deixava filhos Chromium segurando pipes do runner.
-- Pendências físicas permanecem: Windows 11 doméstico, DPI misto, suspensão e atualização real
-  portátil/NSIS com vigia. CI Windows Server não substitui esses testes.
-- Não foi acessado/modificado nenhum projeto externo. O canal público foi somente consultado.
+## Evidências verificadas
 
-## Registro histórico anterior à transferência
+- Unitários locais atuais: **293/293**, sem pulos; host executa apenas lógica pura em Node.
+- [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
+  código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
+  sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;
+  portátil abriu, crash reabriu, bandeja encerrou, atalho criado, medições concluídas.
+- Auditoria completa de animações e commits posteriores ainda precisam de CI final.
+- Runner Windows Server de um monitor não comprova Windows 11 físico, DPI misto,
+  suspensão real ou troca de instalação NSIS/portátil com dados reais. Não alegar esses testes.
 
-Os relatos abaixo pertencem às respectivas versões. Números antigos, menções a APIs de IA,
-sons, autostart e restrições de rede não descrevem necessariamente o código atual.
-Prevalecem o usuário, AGENTS.md, código recente e evidências da execução atual.
+## Publicação e recuperação
 
-## Estado recebido (v0.43.1)
+- Push comum/dispatch só validam; CI reconhece `codex/**`. Só nova tag oficial publica
+  após gates Windows. Não criar release artificial para demonstrar transferência.
+- `scripts/publish-release.mjs` impede tag/versão divergente e alteração de release/tag pública
+  existente; exige RELEASES_TOKEN, envia os três formatos em rascunho, verifica hashes/tamanhos,
+  publica e consulta anonimamente `/releases/latest` e downloads.
+- Token auditado no CI com autenticação e permissão push anunciada. API Secrets não permite
+  listar (403), o que não significa token ausente. Nunca exibir/alterar token.
+- Atualizador preservado: `package.json.jojoUpdate` público; 0.43.1 detectada a partir de
+  0.43.0 nos modos portable/installer com metadados reais; três arquivos públicos baixados e
+  hashes conferidos. Nenhum arquivo privado foi enviado ao canal público.
+- Cota de artefatos Actions cheia em 41167799466. Upload opcional falhou; geração dos arquivos
+  está comprovada nos logs. Releases recebem upload direto e não dependem dessa cota.
+  Não apagar arquivos/artefatos históricos para contornar o limite.
+- Nunca reescrever notas, assets ou tags já publicados, incluindo v0.32.0.
+- Nenhum projeto externo foi acessado/modificado. MNE_Lab não pertence a esta missão.
 
-Leia também: `PRODUCT_SPEC.md` (requisitos e uso), `ARCHITECTURE.md`
-(organização), `assets/README.md` (formatos), `CLAUDE.md` na raiz (regras de trabalho).
+## Comandos e conclusão
 
-## v0.42–0.43 (presença permanente; a 0.42.0 não foi publicada e entrou na 0.43.0)
-- Vigia (`src/main/presenca.js`, `src/main/vigia.cjs`): processo Node do próprio app (ELECTRON_RUN_AS_NODE),
-  marcador `saida.json` (manual/atualizacao/desligamento), `reaberturas.json` (máx. 3 em 10 min). No Windows a
-  espera da reabertura fica num `cmd` para não prender arquivos do portátil. Testado de verdade no Linux
-  (unitário com processo real + E2E matando o Electron) e no **Windows do CI com o `JoJoCompanion.exe` portátil**
-  (`scripts/presenca-windows.mjs`: crash → reabre; bandeja → não reabre; atalho criado na área de trabalho).
-  Não verificado: desligar/reiniciar o Windows de verdade e atualização real do instalador com o vigia ativo.
-- CI: cota de artefatos do GitHub cheia não bloqueia mais a publicação (upload com `continue-on-error`, 2 dias).
-- Atalho na área de trabalho (`garantirAtalho`, NSIS `createDesktopShortcut: "always"`).
-- Barra de status do pet e menu "🎭 Reações" removidos; reações por contexto (`reacaoDeContexto`).
-- Configurações v5 (`COMPORTAMENTO_V5`); `interactionTimeoutSec` eliminado.
+No Windows, em `jojo-companion/`: `npm ci`, `npm test`, `npm run test:windows`,
+`npm run test:e2e`, `npm run audit:animations`, `npm run build:win`.
+No host de edição, somente testes de lógica pura (`npm test`).
 
-## v0.43.0 (pesquisa e modo professor)
-- `src/core/dialogue/pesquisa.js` (MotorPesquisa: Wikipédia/DDG via WebSearch, Europe PMC, Crossref, README do
-  MNE_Lab; SSRF + DNS; cache; bloco isolado para o Qwen) e `professor.js` (seriedade, continuidade). Doc
-  `docs/PESQUISA.md`. Testado com fetch falso; as APIs reais não foram chamadas daqui.
-- Balão longo (`LONGO_CHARS`, classe `.bubble.longo`, rolagem automática).
-- Auditoria de animações: `scripts/auditoria-animacoes.mjs` (Electron real) → `docs/AUDITORIA_ANIMACOES.md`; teste estático `test/unit/auditoria.test.js`. Ferramenta de teste: `/anim <nome>`. Ver no Windows real: a matriz foi medida no Linux (Xvfb, desenho em CPU).
-
-## v0.43.1 (uso real)
-- Agenda: erro de rede tenta de novo calado (`falhaAgenda`/`mensagemAgenda` em `calendar.js`), aviso só após 1 h.
-- Conversa: `respostaFalaDoAssunto` (professor.js) descarta resposta do Qwen fora do assunto → vale a pesquisa;
-  `Companion.chat` deduplica mensagem reenviada (`chatPendente`).
-
-## Onde verificar
-
-| Ambiente | O que roda | Comando |
-|---|---|---|
-| Linux (sessão de desenvolvimento) | 107 testes unitários/simulação, 13 E2E com Electron real sob Xvfb, medição | `npm test`, `npm run test:e2e`, `node scripts/measure.mjs` |
-| Windows real (GitHub Actions `windows-latest`) | unitários, build do instalador, 8 testes de integração com mouse/teclado reais do sistema, E2E, medição | workflow `.github/workflows/jojo-windows.yml` |
-
-## Verificado
-
-### Windows real (CI `windows-latest`, Windows Server, 1 monitor, escala 100%)
-- 62/62 unitários e 10/10 E2E passando.
-- Instalador NSIS e ZIP gerados no próprio Windows (artefato `JoJoCompanion-windows-x64`).
-- Clique real (mouse_event) sobre o JoJo parado chega à janela de trás.
-- Cliques reais **durante a fuga** chegam à janela de trás.
-- O JoJo falando, fugindo e se movendo não tira o foco da janela do usuário (GetForegroundWindow).
-- Atalho global real Ctrl+Alt+J entra no modo de interação; Esc real sai e restaura click-through/foco.
-- Detecção de tela cheia (utilityProcess + koffi) oculta o JoJo com janela em tela cheia e o reexibe.
-- O executável empacotado inicia, carrega assets e o detector nativo.
-- No modo de interação, hover real sobre a barra captura o mouse e o clique aciona o botão;
-  clique real numa área transparente do overlay passa para a janela de trás.
-- "Iniciar com o Windows" desligado por padrão, liga e desliga (registro de login do usuário).
-
-### Linux/Xvfb (indicativo, não substitui Windows)
-- Overlay sem foco, sempre por cima, canto transparente, sem erros no renderer.
-- Desvio real com janela se movendo; interação, conversa, Esc; arrastar; todas as animações;
-  configurações persistidas; arquivo inválido recuperado; instância única; ocultar/pausar;
-  suspensão simulada; nenhuma requisição de rede.
-- Medição (Linux/Xvfb, renderização por software, CPU = % de um núcleo somando processos):
-  ocioso ≈ 2,9% (máx 6,5%), cursor perseguindo ≈ 3,4%, oculto ≈ 0,2%; memória (working set
-  somado) ≈ 525–550 MB; renderer estabiliza em ~194 MB após ~2 min (sem crescimento contínuo
-  em 4 min de teste com falas e fugas).
-
-## Catálogo e motor de variedade (v0.26)
-
-- Catálogo: `assets/catalog/animacoes.json` (264 itens; receitas em `src/core/catalog/recipes.js`;
-  `expandCatalog` gera 3 intensidades). Doc: `docs/ANIMACOES.md` (`node scripts/catalog-doc.mjs`).
-- Ao mudar desenho/animação: `xvfb-run -a npx electron --no-sandbox scripts/anim-room.mjs`.
-- Motor: `src/core/catalog/variety.js`; estados dinâmicos `act`/`ambient` em `behavior.js`.
-- Spotify e LoL (v0.27): `fullscreen-worker.cjs` (`spotifyTitle`, `isLol`), `companion.onSpotify`/`_onLol`.
-- Google Agenda (v0.28): `src/core/calendar.js` (iCal), `companion.checkAgenda/_agendaChat`, busca no main.
-  OAuth do Google não foi usado (exige app registrado no Google Cloud); o iCal secreto dá só leitura.
-- Antitédio (v0.29): `src/core/catalog/antitedio.js` + `assets/catalog/{rotinas,minijogos,progressao}.json`; doc `docs/ANTITEDIO.md`.
-- Dormir (v0.29.2): `sleepAllowed()` em `scripted-provider.js` (21h–6h) troca `sleep` por `sleepOk` → ação `boaNoite`; prompt da conversa online segue a mesma regra.
-- Guarda-roupa (v0.30): `src/core/wardrobe.js` (peças → canais do rig), painel `#guardaRoupa` em `src/renderer/app/app.js`, comando `/vestir`, configuração `guardaRoupa`.
-- Agenda iCloud (v0.31): `isIcloudIcalUrl`/`normalizeCalendarUrl`/`calendarProvider` em `src/core/calendar.js`; guia por provedor em `_agendaChat`.
-- Pendentes pedidos depois: nenhum dos pedidos de catálogo/antitédio. antitédio completo
-  (rotinas, mini-jogos, coleções, body doubling, painel sensorial).
-
-## Implementado, mas ainda não verificado no Windows
-
-- Vários monitores com DPI diferente e coordenadas negativas (lógica testada em simulação;
-  o runner tem um monitor só).
-- Desconexão física de monitor e mudança de resolução (simulação + eventos do Electron).
-- Suspensão e retomada reais, bloqueio de tela (eventos `powerMonitor`; testado chamando os handlers).
-- Ícone e menu da bandeja (criados sem erro; menu não inspecionado visualmente).
-- Arrastar com o mouse real e carinho por "esfregar" com hover real.
-- Aparência no Windows 11 (transparência sem halo, nitidez em 125–200%) — precisa de olho humano.
-- Barra de tarefas cobrindo o JoJo (mitigado reafirmando topmost a cada 8 s).
-
-## Pendente / limitado
-
-- Conversa online: Pollinations sem chave tem limite de uso e pode mudar sem aviso;
-  se falhar, cai nas respostas programadas. Com chave grátis (Groq/Gemini/OpenRouter)
-  em `settings.json` (`iaProvedor`, `iaChave`) fica mais estável.
-
-- Atualização automática: busca em `oaovito/jojo-companion-releases` (público). Repositório
-  e publicação já existem, confirmados na transferência operacional acima.
-  A troca do executável no Windows real ainda não foi exercitada (testado: consulta,
-  download e conferência do arquivo).
-
-- v0.10.0: supino desenhado com o rig de frente girado (leitura de desenho
-  animado, não anatômica). O efeito "ligadão" é piada de desenho; desligar o
-  humor com drogas troca por pré-treino.
-
-- Pesquisa (v0.9.0): resposta montada a partir do resumo da fonte (não é IA; não
-  "entende" a pergunta). Perguntas muito específicas podem cair num artigo
-  genérico. Neste ambiente de desenvolvimento a internet externa é bloqueada; a
-  pesquisa real é conferida no CI do Windows (`scripts/check-web-search.mjs`).
-- Portátil: descompacta a cada início (alguns segundos a mais); SmartScreen avisa
-  por não ser assinado.
-
-- Pet/atividades (v0.8.0): conversas só em memória (somem ao encerrar). Movimento
-  reduzido do Windows lido via `prefers-reduced-motion`; não conferido numa máquina
-  com "Efeitos de animação" desligado.
-
-- Fiscal do Instagram: só Windows e só pelo título da janela/nome do executável
-  (se o navegador mostrar outro título na aba, não detecta). iPhone exigiria
-  integração separada (não implementada).
-
-- **Arte provisória**: rig vetorial de frente no estilo recorte de papel (South Park), versão adulta fisiculturista com presas e cotovelos articulados, feito à mão
-  a partir da referência do usuário (`"provisional": true`). Falta arte final; o visual ainda não
-  passou por revisão do usuário no Windows.
-- Instalador **não assinado** (SmartScreen avisa).
-- Jogos em tela cheia exclusiva e telas protegidas ficam por cima — limitação aceita.
-- Sons: apenas bipes sintetizados (WebAudio), desligados por padrão.
-- No Linux o modo de interação captura a janela inteira (sem `forward`) — só desenvolvimento.
-- Sob Wine o executável Windows inicia mas trava na criação da janela (limitação do Wine;
-  não usar Wine como verificação).
-- Leveza (v0.24): aceleração de vídeo desligada (`app.disableHardwareAcceleration()`; o
-  JoJo é um canvas de 180×170). No Linux o processo de vídeo caiu de ~123 MB para ~52 MB
-  sem custo de CPU. O CI do Windows mede com e sem (`measure-windows.json` e
-  `measure-windows-gpu.json`); `JOJO_GPU=1` religa para diagnóstico.
-
-## Checklist manual sugerido (máquina Windows 11)
-
-1. Instalar pelo `JoJoCompanion-Setup-*.exe`; confirmar ícone na bandeja e nenhuma janela na barra de tarefas.
-2. Aproximar o mouse pelos quatro lados e pelos cantos; clicar rápido onde o JoJo estava.
-3. Perseguir o JoJo; confirmar modo discreto e retorno.
-4. Ctrl+Alt+J: carinho (esfregar), comer, brincar, arrastar, conversa, Esc, clique fora, timeout.
-4b. Clique no pet abre a Central; clique numa atividade abre a conversa; `/pet` guarda/acorda;
-    "Efeitos de animação" desligado deixa o pet estático.
-5. Dois monitores com escalas diferentes (ex.: 100% e 150%), um à esquerda do principal.
-6. Desconectar o monitor onde o JoJo está; mudar resolução.
-7. Suspender e retomar; bloquear e desbloquear.
-8. Vídeo em tela cheia (YouTube/VLC) e apresentação.
-9. Ativar "Iniciar com o Windows", reiniciar, desativar.
-
-## Próximos passos sugeridos
-
-- Arte final (sprites ou rig refinado) mantendo `assets/README.md`.
-- Assinatura de código e auto-update (decisão do usuário).
-- Provedor de diálogo opcional (modelo local/API) implementando `DialogueProvider`.
-
-## Resultado da última execução do CI
-
-Run #14 (v0.9.0, https://github.com/oaovito/oao-companion-/actions/runs/40812808265): **sucesso**.
-Portátil abriu sem instalação em 21,9 s; pesquisa real na Wikipédia respondeu às 3
-perguntas; integração Windows 9/9; E2E 12/12. Ocioso 2,3% CPU, 371 MB.
-
-Run #13 (v0.8.0, https://github.com/oaovito/oao-companion-/actions/runs/40810888984): **sucesso**.
-
-Runs #11 (v0.6.0) e #12 (v0.7.0, https://github.com/oaovito/oao-companion-/actions/runs/40809682449):
-**sucesso**. O resultado da v0.8.0 sai no próximo run do workflow.
-
-Histórico:
-
-Run #4 (`c4e7d4c`, https://github.com/oaovito/oao-companion-/actions/runs/40802636763): **sucesso**.
-Unitários 62/62, integração Windows 8/8, E2E 10/10, instalador + ZIP gerados.
-O run #2 havia falhado em 2 testes; corrigidos no run #3: o teste usava SetCursorPos
-(que não gera eventos de hook de mouse) e a consulta de "iniciar com o Windows" não
-passava o mesmo caminho/argumentos do registro.
-
-Medição no Windows (Windows Server 10.0.26100, 2 vCPUs AMD EPYC, sem GPU dedicada, 20 s por cenário):
-
-| Cenário | CPU média | CPU máx | Memória (working set somado) |
-|---|---|---|---|
-| Ocioso | 3,4% | 4,9% | 351 MB |
-| Cursor perseguindo | 6,2% | 11,0% | 349 MB |
-| Oculto | 0,3% | 1,6% | 309 MB |
-
-Processos: principal ~98 MB, GPU ~45–52 MB, utilitários ~86–107 MB (inclui o detector de
-tela cheia), renderer ~83–109 MB. Runner de CI, não um PC Windows 11 doméstico.
+Continuar corrigindo qualidade livre e validando modelo/reação/latência reais. Depois validar
+CI no commit exato, consolidar changelog incremental desde 0.43.1 e preparar versão apenas
+se houver alteração justificável. Release só concluída com os três arquivos públicos íntegros,
+notas incrementais reais e atualização detectável. Não declarar perfeição geral por testes lexicais.

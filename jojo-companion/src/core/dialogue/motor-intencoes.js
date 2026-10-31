@@ -240,12 +240,12 @@ export function interpretar(texto, ctx = {}) {
     }
     if (NAO_AGORA.test(t) && !/\bnao me atrapalha\b|\bnao quero distrac/.test(t)) continue;
     const achados = [];
+    const cmd = interpretCommand(t, ctx);
     // Pedido de ajuda/explicação junto ("…e me ajuda a entender essa ANOVA"): vai para a resposta.
-    if (/^(me )?(ajuda|ajude|explica|explique|me explica)\b|\bentender\b|\?$/.test(t)) {
+    if (cmd?.cmd !== 'resumo' && /^(me )?(ajuda|ajude|explica|explique|me explica)\b|^(jojo )?(como|o que|qual|quais|quem|quando|onde|por que|quantas?|quantos?)\b|\bentender\b|\?$/.test(t)) {
       out.resto = out.resto ? `${out.resto}. ${t}` : t;
       continue;
     }
-    const cmd = interpretCommand(t, ctx);
     if (cmd) achados.push({ acao: cmd.cmd, params: cmd.arg ? argParaParams(cmd.cmd, cmd.arg) : {} });
     for (const d of [detTamanho, detPosicao, detFrequencia, detJogos, detSilencio, detReacoes]) {
       const a = d(t, ctx);

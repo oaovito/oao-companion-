@@ -229,7 +229,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, think: false, ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.5, presence_penalty: 0, repeat_penalty: 1.05 } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/instruct/.test(modelo) ? {} : { think: false }), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.5, presence_penalty: 0, repeat_penalty: 1.05 } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));

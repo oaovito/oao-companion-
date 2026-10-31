@@ -63,8 +63,9 @@ export function interpretCommand(text, ctx = {}) {
   const n = norm(text);
   if (!n || n.length > 140) return null;
   const toks = tokens(n);
+  if (/\b(resumo do (meu )?dia|como foi (o )?meu dia|o que (eu )?fiz hoje)\b/.test(n)) return { cmd: 'resumo' };
   // Perguntas de conhecimento ("o que é foco?") não são comandos.
-  if (/^(o que|oque|que|qual|quais|quem|quando|onde|por que|porque|pq)\b/.test(n) && !/\b(foco|jogo|pausa)\b.*\b(parar|encerrar|acabar|terminar)\b/.test(n)) return null;
+  if (/^(o que|oque|que|qual|quais|quem|quando|onde|como|por que|porque|pq)\b/.test(n) && !/\b(foco|jogo|pausa)\b.*\b(parar|encerrar|acabar|terminar)\b/.test(n)) return null;
 
   // Modo Trabalho: entrar e sair (vem antes de tudo: "pode voltar" com o modo ligado é sair dele).
   if (ctx.trabalho && /^(jojo )?(pode voltar|volta|voltar|terminei|acabei|sai do modo trabalho|desliga o modo trabalho|fim do trabalho|terminei de trabalhar|acabei de trabalhar|chega de trabalhar|pode sair)\b/.test(n)) return { cmd: 'trabalho_parar' };
@@ -114,7 +115,6 @@ export function interpretCommand(text, ctx = {}) {
   if (/\b(abr\w*|abre|mostra\w*|ve|ver|quero ver)\b.*\b(configurac\w*|ajustes|opcoes|preferencias)\b/.test(n)) return { cmd: 'configuracoes' };
   if (/\b(abr\w*|mostra\w*|ve|ver|quero ver|cade)\b.*\b(colecao|conquistas|meu nivel|progresso|medalhas)\b/.test(n)) return { cmd: 'colecao' };
   if (/\b(nova conversa|conversa nova|comeca(r)? (de novo|outra conversa)|limpa(r)? (a )?conversa)\b/.test(n)) return { cmd: 'nova_conversa' };
-  if (/\b(resumo do (meu )?dia|como foi (o )?meu dia|o que (eu )?fiz hoje)\b/.test(n)) return { cmd: 'resumo' };
 
   // Começar atividades.
   const st = startAt(toks);
