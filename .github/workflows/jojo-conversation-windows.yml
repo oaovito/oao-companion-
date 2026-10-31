@@ -2,7 +2,7 @@ name: JoJo — conversa real no Windows (avaliação)
 
 on:
   push:
-    branches: ['codex/conversation-coherence']
+    branches: ['codex/conversation-coherence', 'qa/conversation-models']
     paths:
       - '.github/workflows/jojo-conversation-windows.yml'
       - 'jojo-companion/scripts/check-conversation.mjs'
@@ -25,8 +25,8 @@ jobs:
       matrix:
         model:
           - 'gemma3:4b-it-q4_K_M'
-          - 'ministral-3:3b-instruct-2512-q4_K_M'
-          - 'qwen3.5:4b-q4_K_M'
+          - 'llama3.1:8b-instruct-q4_K_M'
+          - 'qwen3:8b-q4_K_M'
     env:
       OLLAMA_HOST: '127.0.0.1:11439'
       OLLAMA_NO_CLOUD: '1'

@@ -50,7 +50,7 @@ test('Qwen 3.5 2B local: /api/chat com streaming, contexto curto, e mantém o mo
     assert.equal(usos, 1);
     await p.reply({ text: 'explica o potencial zeta das nanopartículas', history: [] });
     const tec = pedidos.filter((x) => x.url === '/api/chat').pop();
-    assert.deepEqual([tec.body.options.num_ctx, tec.body.options.num_predict], [2048, 512]);
+    assert.deepEqual([tec.body.options.num_ctx, tec.body.options.num_predict], [2048, 256]);
   } finally {
     srv.close();
   }

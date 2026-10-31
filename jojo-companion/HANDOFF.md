@@ -5,6 +5,8 @@
 - Desenvolvimento privado: `oaovito/oao-companion-`, aplicativo em `jojo-companion/`.
 - Distribuição pública e atualizador: `oaovito/jojo-companion-releases`.
 - Branch efetiva: `codex/conversation-coherence`, derivada de `codex/operational-handoff`.
+  Ensaios isolados atuais em `qa/conversation-models`, base `e4dee80`; integrar somente
+  depois da revisão real, e executar novamente o CI completo na branch Codex.
   Base original preservada: `claude/jeff-companion-v0.1` em `018bd492a46d70f688187394f0ce60759c20d737`.
   `main` contém apenas README; consultar o remoto antes de qualquer trabalho.
 - Versão instalada/publicada: **0.43.1**. Não houve nova tag/release durante a transferência.

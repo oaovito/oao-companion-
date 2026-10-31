@@ -14,7 +14,7 @@ import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from 
 export const OLLAMA_MODEL = LOCAL_MODEL;
 export const OLLAMA_OPTS = Object.freeze({
   curto: { num_ctx: LOCAL_CONTEXT, num_predict: 256, num_batch: 128 },
-  tecnico: { num_ctx: LOCAL_CONTEXT, num_predict: 512, num_batch: 128 },
+  tecnico: { num_ctx: LOCAL_CONTEXT, num_predict: 256, num_batch: 128 },
   keepAlive: LOCAL_KEEP_ALIVE, // modelo carregado entre mensagens; depois sai da RAM
 });
 
@@ -75,8 +75,8 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const pessoa = profile.nomeSerio || 'Emanuele';
   const identidade = `Responda em primeira pessoa como ${nome}, personagem de um aplicativo de desktop. Sua interlocutora humana se chama ${pessoa}, apelido ${profile.nomeBrincadeira || 'Manu'}. Responda em português brasileiro.`;
   const linhas = tecnico ? [
-    identidade,
-    'Explique diretamente a pergunta em até 4 frases. Seja preciso. Se houver fontes, use apenas os fatos confirmados nelas e explique em palavras próprias, sem inventar números, sintomas, causas ou tratamentos. Exemplos devem ser claramente hipotéticos, sem atribuir às fontes fatos que elas não contêm. Não diagnostique nem prescreva.',
+    'Responda diretamente em português brasileiro, em até 3 frases (70 palavras), sem saudações ou piada. Explique a pergunta com suas palavras, usando somente fatos das fontes. Não diagnostique nem prescreva.',
+    'Exemplos são hipotéticos. Não invente números nem atribua detalhes do exemplo às fontes.',
   ] : [
     identidade,
     'Fale de forma direta, natural e mandona, com carinho discreto. Humor seco só quando combinar com o assunto, sem forçar piada nem metáfora. Responda à mensagem atual em 1 ou 2 frases. Use o histórico para referências e continuidade; não traga assuntos antigos sem relação com a mensagem atual. Não invente acontecimentos ou informações pessoais. Você não pode agir no mundo físico.',
@@ -211,9 +211,10 @@ export class LlmProvider extends DialogueProvider {
       ? buildSystemPrompt(this.getProfile(), this.getContext(), [], { tecnico })
       : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico }) }];
     // Resultados da pesquisa entram isolados (dados, nunca instruções).
-    if (pesquisa) messages[0].content += '\n' + blocoPesquisa({ ...pesquisa, trechos: pesquisa.trechos.slice(0, 3).map((t) => ({ ...t, texto: String(t.texto || '').slice(0, 650) })) });
+    if (pesquisa) messages[0].content += '\n' + blocoPesquisa({ ...pesquisa, trechos: pesquisa.trechos.slice(0, 3).map((t) => ({ ...t, texto: String(t.texto || '').slice(0, 650) })) }, { compacto: true });
     // Seriedade e continuidade ("me dá um exemplo", "aprofunda") decididas antes.
-    if (professor) messages[0].content += '\n' + professor;
+    const instrucao = !structured && /MODO PROFESSOR/.test(professor) ? professor.split('\n').slice(1).join('\n') : professor;
+    if (instrucao) messages[0].content += '\n' + instrucao;
     // Contexto curto: as últimas trocas bastam (a memória fica fora do modelo).
     const previous = history.at(-1)?.role === 'user' && history.at(-1)?.text === text ? history.slice(0, -1) : history;
     const relevant = structured ? previous.slice(-2) : tecnico ? (/Assunto em andamento/.test(professor) ? previous.slice(-2) : []) : historicoRelevante(text, previous);
@@ -230,7 +231,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3\.5:/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05 } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05 } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
