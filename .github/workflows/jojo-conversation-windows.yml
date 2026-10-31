@@ -53,27 +53,33 @@ jobs:
           $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
           if ($hash -ne '7afa38624fa62ee5d8293422d0ab084c1bb4603134c7f4dafce11a033b57cc19') { throw 'SHA-256 do Ollama Windows não confere' }
           Expand-Archive -LiteralPath $zip -DestinationPath $root
-          Start-Process -FilePath (Join-Path $root 'ollama.exe') -ArgumentList 'serve' -RedirectStandardOutput (Join-Path $env:RUNNER_TEMP 'jojo-ollama.out.log') -RedirectStandardError (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log')
-          $ready = $false
-          for ($i = 0; $i -lt 60; $i++) {
-            try {
-              $version = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/version" -TimeoutSec 1
-              Write-Output "Ollama Windows $($version.version)"
-              $ready = $true
-              break
-            } catch { Start-Sleep -Milliseconds 500 }
-          }
-          if (-not $ready) { throw 'Ollama Windows não iniciou' }
 
-      - name: Baixar candidato local e conferir conclusão do download
-        timeout-minutes: 12
+      - name: Servir e avaliar o candidato na mesma sessão Windows
+        timeout-minutes: 25
         run: |
-          $body = @{ model = $env:JOJO_QA_MODEL; stream = $false } | ConvertTo-Json -Compress
-          $result = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/pull" -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 660
-          if ($result.error -or $result.status -ne 'success') { throw "Download do modelo não concluiu: $($result.error)" }
-
-      - name: Exercitar respostas reais e registrar latência
-        run: node scripts/check-conversation.mjs out/conversa-real-windows.json
+          $root = Join-Path $env:RUNNER_TEMP 'jojo-ollama'
+          $server = Start-Process -FilePath (Join-Path $root 'ollama.exe') -ArgumentList 'serve' -RedirectStandardOutput (Join-Path $env:RUNNER_TEMP 'jojo-ollama.out.log') -RedirectStandardError (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log') -PassThru
+          $qaExit = 1
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 60; $i++) {
+              try {
+                $version = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/version" -TimeoutSec 1
+                Write-Output "Ollama Windows $($version.version)"
+                $ready = $true
+                break
+              } catch { Start-Sleep -Milliseconds 500 }
+            }
+            if (-not $ready) { throw 'Ollama Windows não iniciou' }
+            $body = @{ model = $env:JOJO_QA_MODEL; stream = $false } | ConvertTo-Json -Compress
+            $result = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/pull" -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 660
+            if ($result.error -or $result.status -ne 'success') { throw "Download do modelo não concluiu: $($result.error)" }
+            node scripts/check-conversation.mjs out/conversa-real-windows.json
+            $qaExit = $LASTEXITCODE
+          } finally {
+            if (-not $server.HasExited) { taskkill.exe /PID $server.Id /T /F | Out-Null }
+          }
+          exit $qaExit
 
       - name: Guardar respostas no resumo, sem depender da cota de artefatos
         if: ${{ !cancelled() }}

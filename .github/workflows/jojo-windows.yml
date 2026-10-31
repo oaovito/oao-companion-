@@ -4,7 +4,7 @@ on:
   push:
     branches: ['main', 'claude/**', 'codex/**']
     tags: ['v*']
-    paths: ['jojo-companion/**', '.github/**', 'AGENTS.md', 'CLAUDE.md']
+    paths: ['jojo-companion/**', '.github/workflows/jojo-windows.yml', 'AGENTS.md', 'CLAUDE.md']
   workflow_dispatch:
 
 permissions:
