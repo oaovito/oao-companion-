@@ -185,11 +185,12 @@ test('pet: sem barra de status, clique abre a Central, /pet guarda e acorda, mov
     const central = await appWinP;
     await central.waitForSelector('#convTitle');
     await sleep(400);
-    assert.equal(await central.textContent('#convTitle'), 'Teste');
+    assert.equal(await central.textContent('#convTitle'), 'Conversa com o JoJo');
+    assert.ok((await central.textContent('#log')).includes('Falha simulada.'));
+    assert.equal(await central.locator('#newChat').count(), 0, 'só uma conversa');
     assert.equal(await app.evaluate(() => globalThis.__jojo.appWin.isShowing), true);
 
     // Conversa pela Central: status vai a "Em andamento" e depois volta.
-    await central.click('#newChat');
     await sleep(200);
     await central.fill('#input', 'oi');
     await central.press('#input', 'Enter');
@@ -641,10 +642,61 @@ test('conversa online: Qwen 3.5 2B no servidor (Ollama /api/chat, streaming) res
     assert.equal(bodies[0].model, 'qwen3.5:2b-q4_K_M');
     assert.equal(bodies[0].stream, true);
     assert.ok(bodies[0].options.num_ctx <= 4096 && bodies[0].options.num_predict <= 512);
-    assert.match(bodies[0].messages[0].content, /REGRA IRREDUTÍVEL/);
-    assert.match(bodies[0].messages[0].content, /Exemplos de como o JoJo fala/);
+    assert.match(bodies[0].messages[0].content, /humor seco/);
+    assert.equal(bodies[0].format, undefined, 'fala livre não precisa inventar JSON de metadados');
+    assert.ok(bodies[0].messages[0].content.length < 1800, 'instrução local cabe no contexto sem exemplos fora do assunto');
     const text = await win.evaluate(() => document.body.innerText);
     assert.ok(!/\bIA\b|intelig[eê]ncia artificial|programadas/i.test(text), 'nada de IA na tela');
+  } finally {
+    await quit(app);
+    server.close();
+  }
+});
+
+test('Central: conversa única, histórico preservado e fala/expressão protegidas contra geração incoerente', async () => {
+  let calls = 0;
+  const server = http.createServer((req, res) => {
+    req.resume();
+    req.on('end', () => {
+      calls++;
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      res.end(JSON.stringify({ message: { content: '{"texto":"Você vai morrer. O João é meu inimigo.","acao":"eat"}' }, done: true }) + '\n');
+    });
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const { app, win } = await launch({ env: { JOJO_LLM_BASE: `http://127.0.0.1:${server.address().port}` } });
+  try {
+    const opening = app.waitForEvent('window');
+    await app.evaluate(() => globalThis.__jojo.companion.openApp());
+    const central = await opening;
+    await central.waitForSelector('#input');
+    await app.evaluate(() => globalThis.__jojo.setCursor({ x: 5, y: 5 }));
+    assert.equal(await central.locator('#newChat').count(), 0);
+    const identity = await central.evaluate(() => window.appApi.send(null, 'quem é o seu chefe?'));
+    assert.match(identity.text, /João/);
+    assert.equal(calls, 0, 'fato do personagem não é delegado à imaginação');
+    const rejected = await central.evaluate(() => window.appApi.send(null, 'hoje aconteceu uma coisa'));
+    assert.doesNotMatch(rejected.text, /vai morrer|inimigo/);
+    assert.equal(calls, 1);
+    const feedback = await central.evaluate(() => window.appApi.send(null, 'esses óculos são feios'));
+    assert.match(feedback.text, /óculos/);
+    await sleep(100);
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.state.anim), 'judge');
+    assert.equal(await win.evaluate(() => window.__jojoRenderer.state.talking), true);
+    const before = await central.evaluate(() => window.appApi.state());
+    const after = await central.evaluate(() => window.appApi.newChat());
+    assert.equal(after.currentId, before.currentId);
+    assert.deepEqual(after.current.messages, before.current.messages);
+    await app.evaluate(() => {
+      const c = globalThis.__jojo.companion.conversations;
+      const task = c.create({ id: 'reuniao-teste', title: 'Agenda', kind: 'reminder' });
+      c.addMessage(task.id, 'jojo', 'Sua reunião é às 15h.');
+    });
+    await sleep(300);
+    const state = await central.evaluate(() => window.appApi.state());
+    assert.equal(state.conversations.length, 1);
+    assert.ok(state.current.messages.some((m) => m.text === 'Sua reunião é às 15h.'));
+    assert.equal(await central.locator('#list .item').count(), 1);
   } finally {
     await quit(app);
     server.close();

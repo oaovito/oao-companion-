@@ -48,7 +48,7 @@ export function instrucaoProfessor({ seriedade = 'casual', seg = null, tema = nu
   else if (seriedade === 'emocional') linhas.push('Assunto emocional delicado: sério e acolhedor, sem piada nem palavrão; se ela estiver chorando ou muito mal, diga para falar com o João.');
   else if (seriedade === 'medico') linhas.push('Saúde dela: sério, sem sarcasmo, sem diagnóstico nem receita; explique o que for útil e indique avaliação médica.');
   else if (seriedade === 'cientifico' || seriedade === 'tecnico' || seg) {
-    linhas.push('MODO PROFESSOR: explique de verdade, com conteúdo (não só uma piada): o que é, como funciona, um exemplo concreto e o erro mais comum. Pode ser longo (até 8 frases). Mantenha o jeito do JoJo só no tempero (abertura/fecho), nunca no lugar da explicação.');
+    linhas.push('MODO PROFESSOR: responda exatamente o que foi perguntado, com conteúdo. Definição pede uma explicação curta; exemplo pede um exemplo. Não transforme toda pergunta em uma aula completa. Use até 4 frases. Humor só quando ajudar, nunca no lugar da explicação.');
   }
   if (seg && tema) linhas.push(`Assunto em andamento: "${tema}". ${PEDIDO[seg]}`);
   return linhas.join('\n');

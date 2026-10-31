@@ -16,10 +16,10 @@ function started(opts) {
 test('conversas: status, prioridade das atividades e "pronto" vira visto ao abrir', () => {
   let t = 0;
   const m = new ConversationManager({ now: () => ++t });
-  const a = m.create({ title: 'A' });
-  const b = m.create({ title: 'B' });
-  const c = m.create({ title: 'C' });
-  const d = m.create({ title: 'D' });
+  const a = m.create({ title: 'A', kind: 'system' });
+  const b = m.create({ title: 'B', kind: 'system' });
+  const c = m.create({ title: 'C', kind: 'system' });
+  const d = m.create({ title: 'D', kind: 'system' });
   m.setStatus(a.id, 'running');
   m.setStatus(b.id, 'ready');
   m.setStatus(c.id, 'blocked', 'erro');

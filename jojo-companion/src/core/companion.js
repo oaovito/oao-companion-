@@ -19,6 +19,7 @@ import { VarietyEngine, periodOf, seasonOf, SLEEP_ANIMS } from './catalog/variet
 import { Progress, Games, pickRoutine, routineSteps } from './catalog/antitedio.js';
 import { detectIntent, normalizeText, sleepAllowed } from './dialogue/scripted-provider.js';
 import { isFactualQuestion } from './dialogue/web-search.js';
+import { seguimento } from './dialogue/professor.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
@@ -1187,28 +1188,49 @@ export class Companion {
    * running → ready/needsInput/blocked.
    */
   async chat(text, conversationId = null) {
-    const conv = (conversationId && this.conversations.get(conversationId)) || this.conversations.current();
+    const conv = this.conversations.current();
     const cmd = parseCommand(text);
     if (cmd) return this.runCommand(cmd, conv.id, text);
     if (!this.dialogue) return null;
+    // Segurança não entra na fila atrás de uma geração lenta.
+    const urgent = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text)) || modoCiencia(text) === 'emergencia';
+    if (urgent && this.chatQueue) {
+      this.chatEpoch = (this.chatEpoch || 0) + 1;
+      this.dialogue.cancelPending?.();
+      const p = this._chat(text, conv, this.chatEpoch);
+      this.urgentChat = p;
+      try { return await p; }
+      finally { if (this.urgentChat === p) this.urgentChat = null; }
+    }
     // A mesma mensagem enviada de novo enquanto ele ainda responde (demorou, ela reenviou):
     // não duplica nem começa outra resposta; espera a que já está vindo.
     const chave = `${conv.id}:${normalizeText(text)}`;
-    if (this.chatPendente && this.chatPendente.chave === chave) return this.chatPendente.p;
-    const p = this._chat(text, conv);
-    this.chatPendente = { chave, p };
+    this.chatsPendentes ||= new Map();
+    if (this.chatsPendentes.has(chave)) return this.chatsPendentes.get(chave);
+    // Um turno por vez: duas mensagens diferentes não podem disputar histórico,
+    // assunto, resposta e animação. Comandos continuam imediatos.
+    const anterior = this.chatQueue;
+    const start = async () => {
+      if (this.urgentChat) await this.urgentChat;
+      return this._chat(text, conv, this.chatEpoch || 0);
+    };
+    const p = anterior ? anterior.catch(() => {}).then(start) : this._chat(text, conv, this.chatEpoch || 0);
+    this.chatQueue = p;
+    this.chatsPendentes.set(chave, p);
     try {
       return await p;
     } finally {
-      if (this.chatPendente && this.chatPendente.p === p) this.chatPendente = null;
+      this.chatsPendentes.delete(chave);
+      if (this.chatQueue === p) this.chatQueue = null;
     }
   }
 
-  async _chat(text, conv) {
+  async _chat(text, conv, epoch = this.chatEpoch || 0) {
     this.noteActivity();
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
     await new Promise((r) => this.clock.setTimeout(r, THINK_MS));
+    if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
     // Mini-jogo em andamento: a mensagem é a jogada (segurança sempre vem antes).
     const intent0 = detectIntent(text);
     const safety = ['crisis', 'distress', 'sad', 'avcReal'].includes(intent0);
@@ -1236,7 +1258,10 @@ export class Companion {
         this.nerdAbertura = ABERTURAS[Math.floor(this.rng() * ABERTURAS.length) % ABERTURAS.length];
         this.playCatalog('pensando', { source: 'chat', speak: false });
       }
-    } else if (ciencia === 'pessoal') this.nerdUntil = 0; // saúde dela: sério, sem fantasia
+    } else if (ciencia === 'pessoal' || (!ciencia && !seguimento(text))) {
+      this.nerdUntil = 0; // não carregar os óculos/abertura técnica para outro assunto
+      this.nerdAbertura = null;
+    }
     // Revanche: "de novo", "mais uma", "outra" logo depois de um jogo.
     if (!safety && !this.game && this.lastGame && this.clock.now() - this.lastGame.at < 5 * 60e3 && /^(de novo|denovo|mais uma|outra|outra vez|revanche|joga de novo|jogar de novo|bora de novo|again|quero revanche)\b/.test(normalizeText(text))) {
       return this._quickReply(conv, this.startGame(this.lastGame.id), 'jogo');
@@ -1294,6 +1319,7 @@ export class Companion {
     }
     // Google Agenda: conectar (guia/link colado), "o que tenho hoje?", desconectar.
     const ag = await this._agendaChat(text);
+    if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
     if (ag) {
       this.conversations.addMessage(conv.id, 'jojo', ag);
       this.conversations.setStatus(conv.id, 'ready');
@@ -1341,6 +1367,7 @@ export class Companion {
     }, THINK_BUBBLE_MS);
     try {
       reply = await this.dialogue.reply(text, {
+        history: conv.messages.slice(0, -1).filter((m) => m.who === 'user' || m.who === 'jojo').slice(-18).map((m) => ({ role: m.who === 'user' ? 'user' : 'assistant', text: m.text })),
         state: this.behavior.state,
         persona: this.personality.get().instrucoes,
         // Indicação temporária enquanto pesquisa (some quando a resposta chega).
@@ -1352,11 +1379,13 @@ export class Companion {
       });
     } catch (e) {
       this.clock.clearTimeout(thinkTimer);
+      if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
       this.fireEvent('erro', { speak: false });
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
     this.clock.clearTimeout(thinkTimer);
+    if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
     if (thinking && this.bubble && (this.bubble.text === '…' || this.bubble.text === 'Consultando fontes...')) this.hideBubble();
     // Modo cientista: abre com "Erm, na verdade..." na primeira resposta do assunto.
     if (this.nerdAbertura && reply && reply.text) {
@@ -1370,6 +1399,7 @@ export class Companion {
       this.noteActivity();
       this._doChatAction(reply.action, this.clock.now());
       await new Promise((r) => this.clock.setTimeout(r, delayed));
+      if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
     }
     const profile = this.personality.get();
     const vars = profileVars(profile, reply.tone);
@@ -1385,6 +1415,7 @@ export class Companion {
     else this.conversations.setStatus(conv.id, 'ready');
     const now = this.clock.now();
     this.noteActivity();
+    this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
     if (delayed) this.say(reply.text, 'speech');
     else if (reply.web) this.fireEvent('respostaPronta', { speak: false });
     // A expressão do que ela sente já está tocando: a resposta só fala junto.
@@ -1717,16 +1748,16 @@ export class Companion {
       const p = this.phrases.pick('webNotFound', vars);
       return { text: p ? p.text : 'Não achei nada sobre isso.', action: p && p.reaction === 'curious' ? 'curious' : null, tone: p ? p.tone : 'serio' };
     }
-    const intro = this.phrases.pick('webIntro', vars);
-    const outro = this.rng() < 0.6 ? this.phrases.pick('webOutro', vars) : null;
     const src = ` (Fonte: ${reply.web.source})`;
-    const head = intro ? `${intro.text} ` : '';
-    const tail = outro ? ` ${outro.text}` : '';
+    // Caminho degradado (modelo indisponível/rejeitado): não fingir que um
+    // recorte da fonte é uma explicação elaborada, nem emendar uma bronca.
+    const head = 'Trecho que consegui conferir na fonte: ';
+    const tail = '';
     // Resposta longa vai inteira (o balão rola); só corta acima de 1200 caracteres.
     let body = reply.web.extract;
     const room = 1200 - head.length - src.length - tail.length;
     if (body.length > room) body = `${body.slice(0, Math.max(40, room - 1)).replace(/\s+\S*$/, '')}…`;
-    return { text: `${head}${body}${src}${tail}`, action: null, tone: intro ? intro.tone : 'serio' };
+    return { text: `${head}${body}${src}${tail}`, action: 'lecture', tone: 'serio' };
   }
 
   /** Comandos do menu "/" (chat da Central ou do pet). */
@@ -1827,7 +1858,7 @@ export class Companion {
       text = q ? 'Modo silencioso ligado.' : 'Modo silencioso desligado.';
     } else if (cmd === 'new') {
       const c = this.conversations.newChat();
-      return { text: 'Conversa nova.', command: cmd, conversationId: c.id };
+      return { text: 'A conversa continua aqui. Não apaguei nosso histórico.', command: cmd, conversationId: c.id };
     } else if (cmd === 'settings') {
       if (this.onOpenSettings) this.onOpenSettings();
       text = 'Abrindo as configurações.';
@@ -1867,7 +1898,7 @@ export class Companion {
   }
 
   _doChatAction(action, now) {
-    if (this.work) return; // Modo Trabalho: responde no chat, sem animação
+    if (this.work || this.fullscreenHidden || this.dragging || this.avoid.state === 'fleeing' || this.avoid.state === 'hidden') return;
     if (action === 'boaNoite') {
       // Depois das 21h: dormir liberado, ele dá boa noite.
       this.playCatalog('boaNoite', { source: 'chat', speak: false });

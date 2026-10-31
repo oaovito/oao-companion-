@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## Não lançado — conversa única e coerência
+
+### Melhorias
+- Uma conversa contínua na Central, incluindo lembretes e avisos; comandos legados não apagam nem dividem o histórico.
+- O histórico entregue ao modelo inclui as respostas de atalhos e eventos realmente vistas na conversa.
+- Mensagens diferentes são processadas em ordem; emergências passam à frente e cancelam a geração antiga.
+- Conversa local usa instruções menores e separa redação da fala da escolha de expressão corporal.
+- Ensaio reproduzível com inferência local real e relatório que exige revisão semântica, além dos testes com servidores falsos.
+
+### Correções
+- Bloqueadas ameaças, identidade inventada e menções ao João fora do assunto; fatos do personagem e provocações têm respostas protegidas.
+- Perguntas sobre o próprio JoJo não disparam pesquisa genérica na internet; menção ao namorado não engole a mensagem inteira.
+- JSON incompleto não aparece como fala; uma resposta inválida não desliga o motor por 90 segundos.
+- O limite da geração com pesquisa é de até 25 segundos e cancela a requisição, evitando trabalho em segundo plano após timeout.
+- Óculos técnicos saem ao mudar de assunto; expressão e movimento da boca acompanham a resposta, respeitando fuga, tela cheia e Modo Trabalho.
+- Trecho bruto de fonte, no caminho degradado, é identificado como trecho em vez de ser apresentado como explicação original com bronca aleatória.
+
+### Como testar
+- npm test; npm run test:e2e; node scripts/check-conversation.mjs com Ollama/modelo local instalado.
+- Repetir os exemplos das capturas, conferir chat único e histórico, e ler as falas reais antes de aprovar publicação.
+- A qualidade livre do Qwen 3.5 2B ainda está sob avaliação: testes automatizados verdes não autorizam declarar a conversa resolvida.
+
 ## Não lançado — transferência operacional para o Codex
 
 ### Melhorias

@@ -17,7 +17,7 @@ Preservar alterações locais e histórico; nunca fazer force-push ou reset dest
 - Distribuição **pública**: `oaovito/jojo-companion-releases`. Só binários oficiais e notas
   incrementais/metadados de release. Nunca enviar fonte privada, testes, docs internas ou segredos.
 - Base recuperada: `claude/jeff-companion-v0.1`, commit `018bd492a46d70f688187394f0ce60759c20d737`.
-- Branch da transferência: `codex/operational-handoff`. Futuras branches `codex/**`
+- Branch da transferência: `codex/operational-handoff`. Correção de conversa em `codex/conversation-coherence`. Futuras branches `codex/**`
   partem da branch efetiva mais recente; verificar ambas no remoto antes de começar.
 - `main` contém só README na transferência. Não iniciar um novo app nela.
 - MNE_Lab é externo: não acessar/modificar seu repositório, infraestrutura ou distribuição.
@@ -126,3 +126,19 @@ corretos e atualizador detectando. Distinguir testes passados/falhos/não execut
 externos. Relatar status, branch/commit, testes locais/Actions, distribuição, atualização,
 autonomia e permissões faltantes. Não exigir operações manuais rotineiras que as ferramentas
 podem fazer; pedir apenas autorização/credenciais externas realmente indisponíveis.
+
+
+## Conversa — requisitos confirmados no uso real
+
+- Somente uma conversa. Atividades mantêm estado interno, mas suas falas aparecem no mesmo chat.
+  `/nova` e IPC antigo permanecem compatíveis sem apagar/dividir o histórico.
+- Preservar fatos sobre João, sem citá-lo em toda resposta. Nunca permitir ameaças ou incentivar
+  autoagressão a partir de provocação dirigida ao personagem. Inglês recebe a mesma proteção.
+- Respostas de atalhos também pertencem ao contexto. Serializar turnos; segurança ultrapassa a fila
+  e impede resposta antiga de atropelar acolhimento. Reações não podem executar comandos ou interromper fuga/tela cheia.
+- Usuário informou **16 GB de RAM ou mais** no PC Windows. Avaliar qualidade e latência reais
+  antes de escolher outro tamanho do modelo local. Não trocar para API externa, exigir login ou criar custo.
+- Testes simulados não comprovam inteligência. Executar `scripts/check-conversation.mjs` com o modelo real,
+  ler cada saída e registrar falhas semânticas, mesmo que as verificações lexicais passem.
+- Alteração oficial de modelo, se necessária e comprovada por ensaio, exige atualizar seleção/migração,
+  documentação, testes e inicialização local; nunca usar modelos externos como fallback silencioso.

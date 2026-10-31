@@ -126,7 +126,8 @@ export function detectNamorado(text, { joao = 'João', jaMencionou = false } = {
   if (/\bvoltei da (casa|cidade|viagem)\b/.test(n) || (nam && /\bvoltei\b/.test(n))) return { id: 'pk_relatorio' };
   if (/\b(vou|vou viajar|indo|vou pra|vou para) (visitar|ver|encontrar)?\s?(o )?(joao|meu namorado)\b|\b(pra|para) (a )?(cidade|casa) (dele|do joao|do meu namorado)\b/.test(n)) return { id: ehJoao ? 'pk_jPeregrinacao' : 'pk_operacao' };
   if (nam && /\bsaudade\b/.test(n)) return { id: 'pk_jSaudade' };
-  if (ehJoao && !jaMencionou) return { id: 'pk_jMencao' };
+  // Uma menção dentro de uma pergunta não pode engolir a pergunta inteira.
+  if (ehJoao && !jaMencionou && /^(o )?joao( vitor)?$/.test(n)) return { id: 'pk_jMencao' };
   return null;
 }
 

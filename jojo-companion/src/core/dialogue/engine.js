@@ -4,6 +4,7 @@ import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 import { precisaPesquisar, linhaFontes } from './pesquisa.js';
 import { classificarSeriedade, seguimento, instrucaoProfessor, respostaFalaDoAssunto } from './professor.js';
+import { conversaPessoal, respostaAncorada, erroDeCoerencia, expressaoCoerente, pedidoAoApp } from './coherence.js';
 
 // Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
 const TEMA_MS = 15 * 60e3;
@@ -39,6 +40,11 @@ export class DialogueEngine {
     this.providers.push(provider);
   }
 
+  cancelPending() {
+    this.generationEpoch = (this.generationEpoch || 0) + 1;
+    this.pendingGeneration?.abort('conversation-superseded');
+  }
+
   get active() {
     return this.providers.find((p) => p.id === this.activeId) || this.fallback;
   }
@@ -50,16 +56,27 @@ export class DialogueEngine {
   }
 
   async reply(text, context = {}) {
+    const epoch = this.generationEpoch || 0;
     const input = String(text || '').slice(0, 500);
+    // A Central inclui também respostas de comandos e reações entregues fora
+    // deste engine. É esse histórico REAL que deve alimentar a próxima fala.
+    if (Array.isArray(context.history)) this.history = context.history.slice(-19).map((h) => ({ ...h }));
+    if (this.history.at(-1)?.role === 'user' && this.history.at(-1)?.text === input) this.history.pop();
     this.history.push({ role: 'user', text: input });
     let raw;
     let error = null;
     // Segurança e gatilhos com animação própria ficam com as respostas programadas;
     // o resto vai pra IA (se ativa e disponível), com volta às programadas se falhar.
     const intent = detectIntent(input);
+    const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1));
+    if (anchored) {
+      this.history.push({ role: 'jojo', text: anchored.text });
+      this.history = this.history.slice(-20);
+      return anchored;
+    }
     // Depois de uma falha (rede lenta/fora), pausa a IA um pouco para não fazer esperar de novo.
     // Modo professor: seriedade decidida antes de responder; continuidade usa o assunto anterior.
-    const seriedade = classificarSeriedade(input);
+    const seriedade = conversaPessoal(input) && !SCRIPTED_ONLY.has(intent) ? 'casual' : classificarSeriedade(input);
     const temaVivo = this.tema && Date.now() - this.tema.t < TEMA_MS ? this.tema : null;
     const seg = temaVivo ? seguimento(input) : null;
     // Pesquisa só quando precisa (pergunta de conhecimento, ciência, MNE_Lab, "pesquisa…").
@@ -75,16 +92,32 @@ export class DialogueEngine {
         erroPesquisa = e.message;
       }
     }
+    if (epoch !== (this.generationEpoch || 0)) return { text: '', cancelled: true, intent: 'cancelled' };
     if (!seg && (achado || seriedade === 'cientifico' || seriedade === 'tecnico')) this.tema = { texto: input, pesquisa: achado, t: Date.now(), parte: 0 };
     else if (seg) temaVivo.t = Date.now();
     const professor = instrucaoProfessor({ seriedade, seg, tema: temaVivo && temaVivo.texto });
     if (this.llm && !SCRIPTED_ONLY.has(intent) && Date.now() >= this.llmPauseUntil && (await this.llm.isAvailable().catch(() => false))) {
       try {
+        if (epoch !== (this.generationEpoch || 0)) return { text: '', cancelled: true, intent: 'cancelled' };
         const base = this.llm.timeoutFor ? this.llm.timeoutFor(input) : this.llm.timeoutMs || this.timeoutMs;
         const longo = achado || professor;
         // Com a pesquisa em mãos, não faz esperar demais: se o modelo demorar, responde com a fonte.
-        const r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor }), achado ? Math.max(base, 25e3) : longo ? Math.max(base, 45e3) : base);
+        const budget = achado ? Math.min(base, 25e3) : longo ? Math.min(Math.max(base, this.timeoutMs), 45e3) : base;
+        const controller = new AbortController();
+        this.pendingGeneration = controller;
+        let r;
+        try {
+          r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, signal: controller.signal }), budget, () => controller.abort());
+        } finally {
+          if (this.pendingGeneration === controller) this.pendingGeneration = null;
+        }
         const out = normalizeReply(r);
+        const incoerente = erroDeCoerencia(input, out.text, this.history.slice(0, -1));
+        if (incoerente) {
+          const e = new Error(incoerente);
+          e.foraDoAssunto = true;
+          throw e;
+        }
         // Pergunta de conhecimento: a resposta tem de falar do assunto (senão vale a pesquisa).
         if ((achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) {
           const fora = new Error('resposta fora do assunto');
@@ -97,14 +130,21 @@ export class DialogueEngine {
           out.linhaFontes = linhaFontes(achado);
         }
         this.llmOk = true;
-        this.history.push({ role: 'jeff', text: out.text });
+        out.action = expressaoCoerente(input, out, seriedade);
+        if (!pedidoAoApp(input)) {
+          delete out.command;
+          delete out.commandArg;
+          delete out.acoes;
+        }
+        this.history.push({ role: 'jojo', text: out.text });
         if (this.history.length > 20) this.history.splice(0, this.history.length - 20);
         return out;
       } catch (e) {
+        if (e.cancelled) return { text: '', action: null, intent: 'cancelled', cancelled: true };
         // Resposta fora do assunto não é falha do motor: só desta vez vale a pesquisa.
-        if (!e.foraDoAssunto) {
+        if (!e.foraDoAssunto && !e.respostaInvalida) {
           this.llmOk = false;
-          this.llmPauseUntil = Date.now() + LLM_PAUSE_MS;
+          this.llmPauseUntil = Date.now() + (this.llm.preset?.native ? 5000 : LLM_PAUSE_MS);
         }
         this.log('warn', `IA: ${e.message}; usando ${achado ? 'a pesquisa' : 'respostas programadas'}.`);
       }
@@ -119,6 +159,13 @@ export class DialogueEngine {
       raw = await this.fallback.reply({ text: input });
     }
     const out = normalizeReply(raw);
+    const unavailable = this.llm?.unavailableReason?.();
+    if (out.intent === 'unknown' && !raw.search && unavailable && !['desligada', 'sem motor'].includes(unavailable)) {
+      out.text = unavailable.startsWith('erro:')
+        ? 'A conversa local não conseguiu iniciar. Por enquanto só consigo responder às falas que já conheço. Vou tentar ligar de novo.'
+        : 'Ainda estou preparando a conversa aqui no PC. Já consigo reagir e atender pedidos; a conversa livre volta quando terminar.';
+      out.action = 'curious';
+    }
     if (error) out.error = error;
     // Sem a conversa local: continuidade responde com o próximo trecho do que foi pesquisado.
     if (seg && achado && achado.trechos.length) {
@@ -142,7 +189,7 @@ export class DialogueEngine {
       // Já pesquisou (sem resultado ou sem rede): não repete a busca.
       if (erroPesquisa) out.webError = erroPesquisa;
       else out.webNotFound = true;
-    } else if (raw && raw.search && this.search && this.searchEnabled()) {
+    } else if (raw && raw.search && !conversaPessoal(input) && !SCRIPTED_ONLY.has(intent) && this.search && this.searchEnabled()) {
       try {
         const found = await this.search.search(input);
         if (found) {
@@ -161,12 +208,12 @@ export class DialogueEngine {
   }
 }
 
-function withTimeout(p, ms) {
+function withTimeout(p, ms, cancel = () => {}) {
   let t;
   return Promise.race([
     p.finally(() => clearTimeout(t)),
     new Promise((_, rej) => {
-      t = setTimeout(() => rej(new Error('tempo esgotado')), ms);
+      t = setTimeout(() => { cancel(); rej(new Error('tempo esgotado')); }, ms);
     }),
   ]);
 }

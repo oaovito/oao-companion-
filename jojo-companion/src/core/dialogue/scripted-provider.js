@@ -46,6 +46,7 @@ export const INTENTS = [
   { id: 'pet', patterns: [/\b(carinho|cafune|fofo|fofinho|abraco|lindo|amo|gosto de voce)\b/] },
   { id: 'thanks', patterns: [/\b(obrigad\w*|valeu|brigad\w*)\b/] },
   { id: 'howAreYou', patterns: [/\b(tudo bem|como (voce )?(esta|vai)|beleza|td bem|como vc ta)\b/] },
+  { id: 'joke', patterns: [/\b(conta|conte|fala|fale|manda|me conta) (uma )?piada\b/] },
   { id: 'criador', patterns: [/\b(quem (te |o )?(criou|fez|programou|desenvolveu|inventou)|seu criador|quem (e|eh) seu (criador|dono|pai)|quem (criou|fez|desenvolveu) (o )?(mne ?lab|jojo|esse app|o app))\b/] },
   { id: 'name', patterns: [/\b(seu nome|quem e voce|quem (e|eh) vc|como (voce )?se chama)\b/] },
   { id: 'help', patterns: [/\b(ajuda|o que voce faz|comandos|como (voce|vc|isso aqui|o jojo) funciona)\b/] },
@@ -54,6 +55,7 @@ export const INTENTS = [
 
 // Textos com variáveis: {nome} (Emanuele em tom sério, Manu em brincadeira), {apoio}, {companion}.
 export const RESPONSES = {
+  joke: ['Fui fazer prancha. Esqueceram de avisar que tubarão não tem cotovelo. Humilhação biomecânica.', 'O peixe entrou na academia e pediu treino de costas. O instrutor respondeu: "Mas você só nada de peito." Péssima. Gostei.'],
   criador: [
     '{apoio}, evidentemente. O Supremo resolveu criar um tubarão musculoso com intelecto superior e tolerância limitada à estupidez.',
     '{apoio}. O homem transforma ideia em software por esporte. Eu sou uma das criações dele. A mais impressionante, claro.',
@@ -118,14 +120,15 @@ export const RESPONSES = {
     'Isso eu não pesquiso. Próxima pergunta, Emanuele.',
   ],
   unknown: [
-    'Não entendi, Emanuele. Respostas aqui são programadas, então reformula.',
-    'Hã? Fala direito: comer, treino, dormir, silêncio.',
-    'Isso aí não tá na minha lista. Tenta de novo.',
+    'Não peguei o que você quis dizer, {nome}. Me conta de outro jeito.',
+    'Pera. Você quer me contar uma coisa ou pedir que eu faça algo?',
+    'Perdi o fio dessa, {nome}. Me dá um pouco mais de contexto.',
   ],
 };
 
 // Ação/expressão corporal coerente com cada resposta.
 const ACTIONS = {
+  joke: 'happy',
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'angry', sleepOk: 'boaNoite', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
   name: 'wave', criador: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',

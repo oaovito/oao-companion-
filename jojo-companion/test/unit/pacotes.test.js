@@ -71,7 +71,8 @@ test('namorado e João: contexto certo, sem confundir outro João, acolhe quando
   assert.equal(detectNamorado('o joão do trabalho mandou mensagem'), null);
   assert.deepEqual(detectNamorado('João me magoou'), { cuidado: true, violencia: false });
   assert.equal(detectNamorado('o joão me bateu').violencia, true);
-  assert.equal(detectNamorado('falei do joão hoje', { jaMencionou: false }).id, 'pk_jMencao');
+  assert.equal(detectNamorado('falei do joão hoje', { jaMencionou: false }), null, 'menção não pode substituir a conversa');
+  assert.equal(detectNamorado('João', { jaMencionou: false }).id, 'pk_jMencao');
   assert.equal(detectNamorado('falei do joão hoje', { jaMencionou: true }), null);
 });
 

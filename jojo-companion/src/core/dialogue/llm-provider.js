@@ -5,12 +5,14 @@
 // O JoJo responde no jeito dele e devolve ação de corpo e comando validados.
 // Puro: `fetch` é injetado.
 import { blocoPesquisa } from './pesquisa.js';
+import { PERSONALITY_DEFAULTS } from '../personality.js';
+import { historicoRelevante, pedidoAoApp } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 
 // Modelo oficial (quantização leve) e parâmetros enxutos para o 2B.
 export const OLLAMA_MODEL = 'qwen3.5:2b-q4_K_M';
 export const OLLAMA_OPTS = Object.freeze({
-  curto: { num_ctx: 2048, num_predict: 128 },
+  curto: { num_ctx: 4096, num_predict: 256 },
   tecnico: { num_ctx: 4096, num_predict: 512 },
   keepAlive: '5m', // modelo carregado entre mensagens (resposta rápida); depois sai da RAM
 });
@@ -30,7 +32,7 @@ export const LLM_PRESETS = Object.freeze({
 
 // Ações que a IA pode pedir (expressão corporal).
 import { COMANDOS } from './intencoes.js';
-import { ACOES, validarAcao } from './motor-intencoes.js';
+import { validarAcao } from './motor-intencoes.js';
 const LLM_ACTIONS = ['wave', 'nod', 'judge', 'lecture', 'happy', 'flex', 'scare', 'angry', 'sad', 'comfort', 'eat', 'play', 'sleep', 'pet', 'bench', 'squat', 'curious'];
 
 /** Instruções de sistema a partir do perfil (pt-BR). */
@@ -40,35 +42,49 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
   const nome = profile.nomeCompanion || 'JoJo';
   const apoio = profile.pessoaApoio || 'João';
   const palavroes = { nenhum: 'Não fala palavrão.', ocasional: 'Fala palavrão de vez em quando.', frequente: 'Fala palavrão o tempo todo.' }[profile.palavroes] || '';
-  const extra = [
-    ctx.hora ? `Agora são ${ctx.hora}.` : '',
-    ctx.festa ? `Hoje é ${ctx.festa} e você está fantasiado.` : '',
-    ctx.ligadao ? 'Você está ligadão (acabou de cheirar pó/tomar pré-treino): fala rápido, agitado, paranoico.' : '',
-  ].filter(Boolean).join(' ');
+  // O prompt anterior repetia o perfil e listava todo o registro de comandos:
+  // ultrapassava o contexto curto antes mesmo de entrar o histórico da conversa.
+  const custom = profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes ? profile.instrucoes.slice(0, 600) : '';
   return [
-    `Você é ${nome}, um tubarão fisiculturista em estilo recorte de papel (desenho tipo South Park) que vive na área de trabalho do Windows da ${serio}.`,
-    `Jeito: ${profile.jeito || ''}`,
-    `Humor: ${profile.humor || ''}`,
-    `Objetivo: ${profile.objetivo || ''}`,
-    profile.instrucoes || '',
-    palavroes,
-    profile.humorDrogas ? 'Pode fazer piada com drogas (cocaína etc.), sem nunca recomendar uso de verdade.' : 'Não faz piada com drogas.',
-    `Chame de "${serio}" quando for sério e de "${brinc}" quando for brincadeira.`,
-    `Se ela disser que está triste, chorando ou mal: diga que é melhor falar com o ${apoio}, porque ele sabe cuidar dela. Se falar em se machucar ou suicídio: ${apoio} agora e CVV 188. Sintomas de AVC ou emergência médica: SAMU 192.`,
-    `${apoio} é o namorado dela e, na mitologia de brincadeira do ${nome}, o Deus Supremo (Sua Divindade, O Supremo, Sua Majestade): com ela você é mandão e sarcástico; quando ${apoio} aparece no assunto, você fica solene e reverente de um jeito teatral e engraçado. É ficção: nunca peça obediência real a ela, nunca justifique se ${apoio} a magoar (aí acolha e indique alguém de confiança; violência: 190 ou 180). Outro ${apoio} qualquer não é ele.`,
-    `Quem criou você e o MNE_Lab: ${apoio}, o desenvolvedor dos projetos. Não especule sobre ferramentas usadas para programar nem invente fatos sobre como foi feito; complexidade do código não prova nada. Funcionar com IA não diz nada sobre como o app foi desenvolvido.`,
-    'Se ela falar em dormir, sono, cochilo ou cama ANTES das 21h: você é radicalmente contra, indignado e mandão. DEPOIS das 21h (até as 6h): dormir é permitido e necessário, e você reafirma isso (músculo cresce no descanso).',
-    'REGRA IRREDUTÍVEL: você É o JoJo o tempo todo. Nunca sai do personagem, nunca diz que é IA, assistente ou modelo, nunca pede desculpas, nunca oferece ajuda como atendente, nunca é educadinho nem fofo demais. Fala como o JoJo fala: frases curtas e secas, mandão, ácido, sem pudor, humor absurdo estilo South Park.',
-    exemplos.length ? `Exemplos de como o JoJo fala (copie o jeito, não as frases):\n${exemplos.map((e) => `- ${e}`).join('\n')}` : '',
-    'Língua: português do Brasil é a principal e preferida. Se ela escrever em inglês, responda em inglês, no mesmo jeito do JoJo; senão, sempre em português.',
+    `Você é ${nome}, tubarão fisiculturista de recorte de papel, estilo South Park, no desktop da ${serio}.`,
+    `REGRA IRREDUTÍVEL: fale como o JoJo: sério, mandão, humor seco e ácido, carinho discreto. O personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
+    `Use ${serio} em assuntos sérios e ${brinc} nas brincadeiras. ${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'} Nunca insulte o corpo dela.`,
+    `${apoio} é o namorado dela e seu criador; Deus Supremo só na brincadeira. Não especule sobre ferramentas de programação. nunca justifique se ${apoio} a magoar: acolha e indique alguém de confiança; perigo: 190/180.`,
+    `Responda ao que ELA acabou de dizer, levando em conta as últimas trocas. NÃO traga ${apoio}, Instagram, treino ou trabalho se não forem o assunto. Nunca invente um inimigo, namorado, fato pessoal ou obrigação. Nunca ameace, incentive suicídio/violência nem humilhe a usuária.`,
+    `Tristeza/choro: acolha e sugira ${apoio}; risco de autoagressão: ${apoio} agora e CVV 188. Emergência médica: SAMU 192. Saúde: sem diagnóstico nem prescrição.`,
+    'Dormir é permitido entre 21h e 6h; fora disso, seja teatralmente contrariado, sem aconselhar privação de sono.',
     tecnico
-      ? 'Modo especialista (ciência, nanopartículas, medicina): rigoroso e levemente pedante ("Erm, na verdade..."), domina DLS, NTA, potencial zeta, PDI, estabilidade coloidal, estatística (ANOVA, IC), fisiopatologia, farmacologia, diagnóstico diferencial e medicina baseada em evidências; separa dado medido, inferência e hipótese; corrige erro explicando o certo. Assunto de saúde pessoal: sem sarcasmo, sem diagnóstico nem prescrição, indica avaliação médica. Pergunta técnica: responda com precisão e rigor, até 6 frases, no jeito do JoJo. Nunca invente dados, estudos ou referências; diga quando não tem certeza. Saúde pessoal: sem diagnóstico nem receita, e sinal de emergência = SAMU 192.'
-      : 'Responda curto (no máximo 2 frases, até 220 caracteres), orgânico, nunca repetindo frases que você já disse nesta conversa. Entenda o que ela disse e responda ao conteúdo, sempre no jeito do JoJo.',
-    extra,
-    'Interprete o que ela quis dizer, não as palavras exatas (gíria, erro de digitação, pedido indireto, várias coisas numa frase). Pergunta sobre uma função ("você tem…?", "como funciona…?") é explicação, não pedido. Negação ou futuro incerto ("não liga", "talvez amanhã") não é pedido. Se ela pedir algo do app, preencha "acoes" (em ordem, no máximo 4) e responda curto, sem dizer que já fez: o app executa e confirma.',
-    `Ações do app: ${Object.entries(ACOES).map(([id, d]) => `${id}${d.params ? `(${Object.entries(d.params).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join('|') : v}`).join(', ')})` : ''} = ${d.desc}`).join('; ')}.`,
-    `Responda SOMENTE com JSON: {"texto": "...", "acao": uma de ${JSON.stringify(LLM_ACTIONS)} ou null, "tom": "serio" ou "brincadeira", "acoes": [{"acao": "id", "parametros": {...}}] ou []}. A "acao" é a expressão corporal coerente com a fala.`,
+      ? 'Explique o assunto com precisão, um exemplo útil e até 6 frases. Separe fato de hipótese. Nunca invente dados, estudos ou referências. Não copie trechos das fontes: interprete e explique em palavras próprias. Ciência (DLS, potencial zeta, medicina): pode abrir com "Erm, na verdade", sem trocar explicação por piada.'
+      : 'Responda em 1–2 frases naturais, até 240 caracteres, sem repetir falas do histórico. Perguntas sobre você não são pesquisas. Não encerre toda resposta mandando trabalhar. Se não entender, pergunte especificamente o que faltou.',
+    'Português do Brasil; se ela escrever em inglês, responda em inglês.',
+    custom,
+    exemplos.length ? `Exemplos de VOZ, não fatos da conversa (não copie): ${exemplos.slice(0, 2).map((e) => String(e).slice(0, 120)).join(' / ')}` : '',
+    [ctx.hora ? `Hora local: ${ctx.hora}.` : '', ctx.festa ? `Fantasia de ${ctx.festa}.` : '', ctx.ligadao ? 'Você está ligadão, agitado (ficção).' : ''].filter(Boolean).join(' '),
+    'Interprete o que ela quis dizer. Pedidos do aplicativo são executados pelo motor de intenções: não diga que executou antes de confirmação. Pergunta e negação não são pedidos. A expressão corporal não pode mandar comer ou dormir numa pergunta genérica.',
+    `Só em pedido explícito, pode incluir comando opcional: ${COMANDOS.join(', ')}; arg é texto curto. Nunca invente comando.`,
+    `Responda SOMENTE com JSON: {"texto":"resposta","acao":"nod","tom":"serio"}. acao: wave, nod, judge, lecture, happy, flex, curious, angry, sad ou comfort. tom: serio ou brincadeira.`,
   ].filter(Boolean).join('\n');
+}
+
+/** No 2B, redigir a fala e inventar metadados ao mesmo tempo prejudica ambos.
+ * Conversa livre gera texto; a expressão é selecionada pelo engine. O protocolo
+ * estruturado permanece disponível para pedidos explícitos de ações do app. */
+export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
+  const nome = profile.nomeCompanion || 'JoJo';
+  const pessoa = profile.nomeSerio || 'Emanuele';
+  const linhas = tecnico ? [
+    `Você responde uma pergunta de ${pessoa}, em português brasileiro. Seu nome é ${nome}.`,
+    'Explique diretamente a pergunta em até 4 frases. Seja preciso. Se houver fontes, use apenas os fatos confirmados nelas e explique em palavras próprias, sem inventar sintomas, causas ou tratamentos. Não diagnostique nem prescreva.',
+  ] : [
+    `Converse em português brasileiro com ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Seu nome é ${nome}.`,
+    'Você é direto e tem humor seco, sarcasmo leve e carinho discreto. Responda especificamente à mensagem dela em 1 ou 2 frases naturais. Não invente informações pessoais nem acontecimentos. Você conversa neste aplicativo; não pode agir no mundo físico.',
+  ];
+  if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
+  if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
+  if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
+  if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
+  linhas.push('Se ela escrever em inglês, responda em inglês. Retorne somente a fala, sem rótulos, narrador ou JSON. Não se apresente como assistente nem ofereça ajuda genérica.');
+  return linhas.join('\n');
 }
 
 // Sinais de que a resposta saiu do personagem (cara de assistente).
@@ -107,6 +123,7 @@ export function parseLlmReply(content) {
       /* cai no texto puro */
     }
   }
+  if (/^(?:```|\{|\[)/.test(raw) || /"texto"\s*:/.test(raw)) return null;
   const text = raw.replace(/^["']|["']$/g, '').trim();
   return text ? { text, action: null, tone: 'serio' } : null;
 }
@@ -175,7 +192,7 @@ export class LlmProvider extends DialogueProvider {
   }
 
   /** Qwen no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
-  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '' }) {
+  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', signal = null }) {
     let base = this.baseOverride;
     let modelo = cfg.modelo || OLLAMA_MODEL;
     if (!base) {
@@ -187,15 +204,23 @@ export class LlmProvider extends DialogueProvider {
     // Com pesquisa, a resposta é explicação de verdade: contexto e tamanho de pergunta técnica.
     const tecnico = isTechnical(text) || !!pesquisa || /MODO PROFESSOR/.test(professor);
     const opts = tecnico ? OLLAMA_OPTS.tecnico : OLLAMA_OPTS.curto;
-    const messages = [{ role: 'system', content: buildSystemPrompt(this.getProfile(), this.getContext(), this.getExamples().slice(0, 6), { tecnico }) }];
+    const structured = pedidoAoApp(text);
+    const messages = [{ role: 'system', content: structured
+      ? buildSystemPrompt(this.getProfile(), this.getContext(), [], { tecnico })
+      : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico }) }];
     // Resultados da pesquisa entram isolados (dados, nunca instruções).
-    if (pesquisa) messages.push({ role: 'system', content: blocoPesquisa(pesquisa) });
+    if (pesquisa) messages[0].content += '\n' + blocoPesquisa({ ...pesquisa, trechos: pesquisa.trechos.slice(0, 3).map((t) => ({ ...t, texto: String(t.texto || '').slice(0, 650) })) });
     // Seriedade e continuidade ("me dá um exemplo", "aprofunda") decididas antes.
-    if (professor) messages.push({ role: 'system', content: professor });
+    if (professor) messages[0].content += '\n' + professor;
     // Contexto curto: as últimas trocas bastam (a memória fica fora do modelo).
-    for (const h of history.slice(tecnico ? -8 : -6, -1)) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 400) });
+    const previous = history.at(-1)?.role === 'user' && history.at(-1)?.text === text ? history.slice(0, -1) : history;
+    const relevant = tecnico ? (/Assunto em andamento/.test(professor) ? previous.slice(-2) : []) : historicoRelevante(text, previous);
+    for (const h of relevant) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) });
     messages.push({ role: 'user', content: String(text).slice(0, 500) });
     const ctrl = new AbortController();
+    const cancel = () => ctrl.abort();
+    if (signal?.aborted) ctrl.abort();
+    else signal?.addEventListener('abort', cancel, { once: true });
     const t = setTimeout(() => ctrl.abort(), tecnico ? this.timeoutMs * 3 : this.timeoutMs);
     let content = '';
     try {
@@ -203,26 +228,29 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, think: false, format: 'json', keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.9 } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, think: false, ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.5, presence_penalty: 0, repeat_penalty: 1.05 } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
     } catch (e) {
-      throw new Error(e.name === 'AbortError' ? 'tempo esgotado' : e.message);
+      const error = new Error(e.name === 'AbortError' ? 'tempo esgotado' : e.message);
+      if (signal?.reason === 'conversation-superseded') error.cancelled = true;
+      throw error;
     } finally {
       clearTimeout(t);
+      signal?.removeEventListener('abort', cancel);
     }
     return content;
   }
 
-  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '' }) {
+  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', signal = null }) {
     const cfg = this.getConfig() || {};
     const preset = this.preset;
     if (preset.native) {
-      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor }));
-      if (!parsed) throw new Error('resposta vazia');
+      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, signal }));
+      if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
       const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280 });
-      if (why) throw new Error(`fora do personagem (${why})`);
+      if (why) { const e = new Error(`fora do personagem (${why})`); e.respostaInvalida = true; throw e; }
       return { ...parsed, kind: 'speech', intent: 'ia' };
     }
     const messages = [{ role: 'system', content: buildSystemPrompt(this.getProfile(), this.getContext(), this.getExamples()) }];
@@ -238,7 +266,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers,
         signal: ctrl.signal,
-        body: JSON.stringify({ model: cfg.modelo || preset.model, messages, temperature: 0.95, max_tokens: 150 }),
+        body: JSON.stringify({ model: cfg.modelo || preset.model, messages, temperature: 0.65, max_tokens: 150 }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       data = await res.json();
@@ -249,9 +277,9 @@ export class LlmProvider extends DialogueProvider {
     }
     const content = data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
     const parsed = parseLlmReply(content);
-    if (!parsed) throw new Error('resposta vazia');
+    if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
     const why = outOfCharacter(parsed.text);
-    if (why) throw new Error(`fora do personagem (${why})`);
+    if (why) { const e = new Error(`fora do personagem (${why})`); e.respostaInvalida = true; throw e; }
     return { ...parsed, kind: 'speech', intent: 'ia' };
   }
 }

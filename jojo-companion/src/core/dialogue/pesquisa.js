@@ -10,6 +10,7 @@
 // ChatGPT/Gemini não entram: exigem conta/chave e os termos proíbem acesso automatizado.
 import { normalizeText } from './scripted-provider.js';
 import { isFactualQuestion, extractQuery, isBlockedQuestion, tidyExtract } from './web-search.js';
+import { conversaPessoal } from './coherence.js';
 
 const CIENCIA = /\b(estudo|estudos|artigo|artigos|paper|evidencia\w*|literatura|revisao sistematica|metanalise|meta-analise|ensaio clinico|pubmed|doi|segundo a ciencia|o que a ciencia diz|pesquisas mostram|nanopart\w*|potencial zeta|dls|nta|polidispers\w*|farmacocinet\w*|mecanismo de acao|biodistribui\w*|citotoxic\w*)\b/;
 const MNELAB = /\bmne ?_?lab\b|\bprograma do joao\b/;
@@ -26,6 +27,7 @@ const CASUAL = /^(oi|ola|eai|e ai|bom dia|boa tarde|boa noite|tudo bem|como (voc
 export function precisaPesquisar(text) {
   const n = normalizeText(text);
   if (!n || n.length < 6 || CASUAL.test(n) || isBlockedQuestion(text)) return null;
+  if (conversaPessoal(text)) return null;
   if (MNELAB.test(n) && /\?|\b(como|onde|qual|o que|funciona|erro|usar|abrir|grafico|exporta\w*)\b/.test(n)) return 'mnelab';
   const pergunta = isFactualQuestion(text) || /\?\s*$/.test(String(text).trim());
   if (CIENCIA.test(n) && (pergunta || PEDIDO.test(n))) return 'cientifica';

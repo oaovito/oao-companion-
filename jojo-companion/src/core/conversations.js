@@ -41,6 +41,11 @@ export class ConversationManager {
   }
 
   create({ title = 'Conversa', kind = 'chat', id = null } = {}) {
+    if (kind === 'chat') {
+      const existing = [...this.conversations.values()].find((c) => c.kind === 'chat');
+      if (existing) return existing;
+      title = 'Conversa com o JoJo';
+    }
     const cid = id || `c${++this.seq}`;
     if (this.conversations.has(cid)) return this.conversations.get(cid);
     const c = { id: cid, title, kind, messages: [], status: 'idle', detail: null, updatedAt: this.now() };
@@ -57,22 +62,18 @@ export class ConversationManager {
   /** Conversa de chat atual (cria uma se não houver). */
   current() {
     const c = this.currentId && this.get(this.currentId);
-    return c || this.create({ title: 'Conversa 1' });
+    return c?.kind === 'chat' ? c : this.create();
   }
 
   setCurrent(id) {
     if (this.get(id)) {
-      this.currentId = id;
+      this.currentId = this.current().id;
       this._emit();
     }
   }
 
   newChat() {
-    const n = [...this.conversations.values()].filter((c) => c.kind === 'chat').length + 1;
-    const c = this.create({ title: `Conversa ${n}` });
-    this.currentId = c.id;
-    this._emit();
-    return c;
+    return this.current(); // compatibilidade de IPC/comando: nunca apaga ou divide a conversa
   }
 
   addMessage(id, who, text) {
@@ -80,9 +81,9 @@ export class ConversationManager {
     if (!c) return null;
     c.messages.push({ who, text: String(text).slice(0, 2000), at: this.now() });
     if (c.messages.length > this.maxMessages) c.messages.splice(0, c.messages.length - this.maxMessages);
-    if (who === 'user' && c.kind === 'chat' && c.messages.filter((m) => m.who === 'user').length === 1) {
-      c.title = summarize(text) || c.title;
-    }
+    // Atividades continuam com seu estado interno, mas suas falas aparecem na
+    // única conversa visível. Não criam uma sala de chat por lembrete/erro.
+    if (c.kind !== 'chat') this.addMessage(this.current().id, who, text);
     c.updatedAt = this.now();
     this._emit();
     return c;
@@ -92,7 +93,7 @@ export class ConversationManager {
     const c = this.get(id);
     if (!c) return;
     // "Pronto" para uma conversa que já está aberta na tela = visto.
-    c.status = status === 'ready' && this.viewing.has(id) ? 'idle' : status;
+    c.status = status === 'ready' && (this.viewing.has(id) || this.viewing.has(this.currentId)) ? 'idle' : status;
     c.detail = detail;
     c.updatedAt = this.now();
     this._emit();
@@ -136,11 +137,6 @@ export class ConversationManager {
   }
 }
 
-function summarize(text) {
-  const t = String(text || '').replace(/\s+/g, ' ').trim();
-  return t.length > 28 ? `${t.slice(0, 27)}…` : t;
-}
-
 // ---------------------------------------------------------------- comandos
 
 /** Comandos digitados no chat (começam com "/"). */
@@ -148,7 +144,6 @@ export function commandMenu({ petVisible }) {
   return [
     { cmd: '/pet', label: petVisible ? 'Tuck Away Pet' : 'Wake Pet', hint: petVisible ? 'Esconde o pet' : 'Mostra o pet' },
     { cmd: '/silencio', label: 'Modo silencioso', hint: 'Liga/desliga as falas espontâneas e broncas' },
-    { cmd: '/nova', label: 'Nova conversa', hint: 'Começa uma conversa nova' },
     { cmd: '/config', label: 'Configurações', hint: 'Abre as configurações' },
     { cmd: '/anim', label: 'Animação', hint: 'Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)' },
     { cmd: '/jogo', label: 'Mini-jogo', hint: 'Joga com o JoJo: /jogo, /jogo quiz, /jogo bolhas…' },

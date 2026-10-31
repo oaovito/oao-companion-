@@ -307,12 +307,6 @@ $('form').addEventListener('submit', (e) => {
   e.preventDefault();
   run(input.value);
 });
-$('newChat').addEventListener('click', async () => {
-  const s = await api.newChat();
-  selected = s.currentId;
-  render(s);
-  input.focus();
-});
 $('petToggle').addEventListener('click', async () => render(await api.togglePet()));
 $('trabalhoBtn').addEventListener('click', async () => {
   await api.send(selected, st && st.trabalho ? '/trabalho sair' : '/trabalho');

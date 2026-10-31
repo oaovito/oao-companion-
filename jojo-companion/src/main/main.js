@@ -357,7 +357,7 @@ function main() {
       return {
         companionName: companion.companionName,
         petVisible: !companion.userHidden,
-        conversations: companion.conversations.list(),
+        conversations: companion.conversations.list().filter((c) => c.kind === 'chat'),
         currentId: conv.id,
         current: companion.conversations.snapshot(conv.id),
         commands: commandMenu({ petVisible: !companion.userHidden }),
@@ -452,7 +452,7 @@ function main() {
       const prev = companion.conversations.current().id;
       companion.conversations.setViewing(prev, false);
       companion.conversations.setCurrent(id);
-      companion.conversations.setViewing(id, appWin.isShowing);
+      companion.conversations.setViewing(companion.conversations.current().id, appWin.isShowing);
       return appState();
     });
     ipcMain.handle('app:send', async (e, id, text) => (fromApp(e) ? companion.chat(text, id) : null));

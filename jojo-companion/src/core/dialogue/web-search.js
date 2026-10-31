@@ -6,11 +6,13 @@
 // a "Instant Answer" do DuckDuckGo.
 import { isEnglish, extractQueryEn } from './english.js';
 import { normalizeText } from './scripted-provider.js';
+import { conversaPessoal } from './coherence.js';
 
 const QUESTION_START = /^(o que|oque|o q|que|quem|qual|quais|quando|onde|aonde|quanto|quantos|quantas|quanta|por que|porque|pq|por q|como|cade|sera que|voce sabe|vc sabe|me (diz|fala|explica|conta)|explica|pesquisa|procura|significado)\b/;
 
 /** É uma pergunta de conhecimento (algo a pesquisar), e não um pedido ao JoJo? */
 export function isFactualQuestion(text) {
+  if (conversaPessoal(text)) return false;
   const n = normalizeText(text).replace(/^(jojo|ei|oi|o|ow|eai|e ai)\s+/, '');
   if (!n || n.length < 6) return false;
   return QUESTION_START.test(n);

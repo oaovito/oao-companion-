@@ -54,6 +54,6 @@ test('mensagem reenviada enquanto ele responde não duplica', async () => {
   const [r1, r2] = await Promise.all([p1, p2]);
   assert.equal(r1, r2);
   assert.equal(chamadas, 1);
-  const msgs = e.companion.conversations.current().messages.filter((m) => m.from === 'user' || m.role === 'user' || m.author === 'user');
-  assert.ok(msgs.length <= 1, `mensagens dela: ${msgs.length}`);
+  const msgs = e.companion.conversations.current().messages.filter((m) => m.who === 'user');
+  assert.equal(msgs.length, 1, `mensagens dela: ${msgs.length}`);
 });
