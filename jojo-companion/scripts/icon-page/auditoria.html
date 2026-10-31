@@ -79,5 +79,26 @@ window.auditar = (rigJson, animJson, room, nomes) => {
   }
   return out;
 };
+// Amostra visual para revisão humana: três momentos de cada expressão de conversa.
+window.contato = (rigJson, animJson) => {
+  const nomes = ['idle', 'wave', 'judge', 'lecture', 'happy', 'comfort', 'talk', 'benchPress', 'squat'];
+  const w = 250, h = 235;
+  const c = document.createElement('canvas'); c.width = w * 3; c.height = h * nomes.length;
+  const ctx = c.getContext('2d');
+  const rig = new RigRenderer(rigJson);
+  ctx.fillStyle = '#f4f7fb'; ctx.fillRect(0, 0, c.width, c.height);
+  for (let i = 0; i < nomes.length; i++) {
+    const nome = nomes[i], anim = animJson.animations[nome];
+    const a = new Animator(animJson, { rng: () => 0.5 }); a.play(nome, 0, { variant: nome });
+    for (let j = 0; j < 3; j++) {
+      const t = (anim.duration || 1000) * [0.1, 0.5, 0.9][j];
+      ctx.save(); ctx.translate(j * w, i * h);
+      ctx.fillStyle = '#263548'; ctx.font = '14px sans-serif'; ctx.fillText(`${nome} — ${Math.round(t)} ms`, 12, 20);
+      rig.draw(ctx, a.sample(t).pose, { origin: { x: 35, y: 45 }, scale: 1, facing: 1 });
+      ctx.restore();
+    }
+  }
+  return c.toDataURL('image/png');
+};
 window.ready = true;
 </script></body></html>

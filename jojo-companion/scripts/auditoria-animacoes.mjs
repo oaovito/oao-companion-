@@ -98,6 +98,12 @@ app.whenReady().then(async () => {
   ];
   fs.writeFileSync(path.join(ROOT, 'docs', 'AUDITORIA_ANIMACOES.md'), linhas.join('\n'));
   fs.writeFileSync(path.join(ROOT, 'docs', 'auditoria-animacoes.json'), JSON.stringify({ erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, null, 1) + '\n');
+  const png = (await win.webContents.executeJavaScript(`window.contato(${JSON.stringify(rig)}, ${JSON.stringify(anims)})`)).split(',')[1];
+  fs.writeFileSync(path.join(ROOT, 'docs', 'auditoria-animacoes.png'), Buffer.from(png, 'base64'));
+  // Pequena evidência visual recuperável mesmo quando a cota de artefatos está cheia.
+  if (process.env.GITHUB_ACTIONS) {
+    for (const part of png.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_PREVIEW:${part}`);
+  }
   console.log(`Auditadas ${nomes.length}: ${erros.length} com erro, ${fora.length} fora do espaço, ${paradas.length} paradas, ${semGatilho.length} só por /anim, média ${f(media)} ms`);
   app.exit(erros.length || fora.length || paradas.length || semGatilho.length ? 1 : 0);
 }).catch((error) => {
