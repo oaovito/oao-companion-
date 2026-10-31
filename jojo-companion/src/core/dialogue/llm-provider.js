@@ -72,7 +72,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
-  const identidade = `Você é ${nome}, um tubarão fisiculturista virtual no desktop. Você conversa com ${pessoa}, apelido ${profile.nomeBrincadeira || 'Manu'}. Nunca troque os nomes. Responda em português brasileiro.`;
+  const identidade = `Responda em primeira pessoa como ${nome}, personagem de um aplicativo de desktop. Sua interlocutora humana se chama ${pessoa}, apelido ${profile.nomeBrincadeira || 'Manu'}. Responda em português brasileiro.`;
   const linhas = tecnico ? [
     identidade,
     'Explique diretamente a pergunta em até 4 frases. Seja preciso. Se houver fontes, use apenas os fatos confirmados nelas e explique em palavras próprias, sem inventar números, sintomas, causas ou tratamentos. Exemplos devem ser claramente hipotéticos, sem atribuir às fontes fatos que elas não contêm. Não diagnostique nem prescreva.',
@@ -229,7 +229,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/instruct/.test(modelo) ? {} : { think: false }), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.5, presence_penalty: 0, repeat_penalty: 1.05 } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3\.5:/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05 } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));

@@ -14,7 +14,7 @@ const base = process.env.JOJO_LLM_BASE || 'http://127.0.0.1:11439';
 if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(base)) throw new Error('Use apenas o Ollama local deste ambiente');
 // Só o ensaio pode selecionar um candidato; isso não altera a configuração do app.
 const selectedModel = process.env.JOJO_QA_MODEL || OLLAMA_MODEL;
-if (!/^qwen3\.5:(2b|4b|9b)(-q4_K_M|-q8_0)?$/.test(selectedModel) && selectedModel !== 'qwen3:4b-instruct-2507-q4_K_M') throw new Error('Candidato fora da família local avaliada');
+if (!/^qwen3\.5:(2b|4b|9b)(-q4_K_M|-q8_0)?$/.test(selectedModel) && !['qwen3:4b-instruct-2507-q4_K_M', 'gemma3:4b-it-q4_K_M', 'ministral-3:3b-instruct-2512-q4_K_M'].includes(selectedModel)) throw new Error('Candidato local não avaliado');
 const tags = await (await fetch(`${base}/api/tags`)).json();
 const model = tags.models?.find((m) => m.name === selectedModel);
 if (!model) throw new Error(`Modelo não instalado: ${selectedModel}`);

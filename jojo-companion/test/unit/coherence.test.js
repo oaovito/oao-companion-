@@ -179,6 +179,14 @@ test('óculos técnicos saem ao mudar de assunto; fuga/tela cheia não são inte
   e.companion.avoid.state = 'fleeing';
   e.companion._doChatAction('angry', e.clock.now());
   assert.equal(e.companion.behavior.state, st);
+  e.companion.fullscreenHidden = true;
+  assert.equal(e.companion.react('comfort'), false);
+  e.companion.fullscreenHidden = false;
+  e.companion.avoid.state = 'calm';
+  await chatAdv(e, 'o que é diabetes?');
+  const emergency = await chatAdv(e, 'não consigo respirar');
+  assert.match(emergency.text, /192/);
+  assert.equal(e.companion.nerdUntil, 0, 'emergência retira o visual de brincadeira imediatamente');
 });
 
 test('timeout com fonte cancela geração pendente em vez de apenas largar a Promise', { timeout: 1500 }, async () => {

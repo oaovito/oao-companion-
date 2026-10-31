@@ -1238,6 +1238,8 @@ export class Companion {
     // Ela conta que o namorado a magoou: acolher (nada de piada nem de "fala com ele").
     const nam = intent0 === 'avcReal' ? null : detectNamorado(text, { joao: this.personality.get().pessoaApoio || 'João', jaMencionou: !!this.joaoMencionado });
     if (nam && nam.cuidado) {
+      this.nerdUntil = 0;
+      this.nerdAbertura = null;
       const nome = profileVars(this.personality.get(), 'serio').nome;
       let t = respostaCuidado({ violencia: nam.violencia, nome });
       if (intent0 === 'crisis') t = `${t} Se pensar em se machucar, liga agora pro CVV 188 ou pro SAMU 192.`;
@@ -1247,6 +1249,8 @@ export class Companion {
     // Emergência médica: segurança antes de tudo (192), sem óculos nem piada.
     const ciencia = intent0 === 'avcReal' ? null : modoCiencia(text);
     if (ciencia === 'emergencia') {
+      this.nerdUntil = 0;
+      this.nerdAbertura = null;
       this.react('comfort');
       return this._quickReply(conv, RESPOSTA_EMERGENCIA, 'emergencia');
     }
@@ -2004,7 +2008,7 @@ export class Companion {
    * fuga, arraste, sono profundo de outro estado prioritário ou despedida.
    */
   react(name) {
-    if (!STATES[name] || this.quitting || this.work) return false;
+    if (!STATES[name] || this.quitting || this.work || this.fullscreenHidden) return false;
     const st = this.behavior.state;
     if (st === name || st === 'flee' || st === 'hidden' || st === 'dragged' || st === 'goodbye' || st === 'gone' || st === 'avc' || this.dragging) return false;
     const now = this.clock.now();
