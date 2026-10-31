@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## Não lançado — transferência operacional para o Codex
+
+### Melhorias
+- Diretrizes permanentes em AGENTS.md e continuidade documentada no HANDOFF.
+- CI reconhece branches codex/**. Publicação somente por nova tag oficial após os gates Windows, com verificação dos três formatos, hashes e consulta pública sem login.
+
+### Correções
+- Publicação falha explicitamente sem RELEASES_TOKEN, com tag divergente ou versão pública existente; uploads ocorrem em rascunho antes da exposição ao atualizador.
+- Simulação unitária usa data fixa: feriados reais não interrompem respostas nem alteram a altura inicial das fantasias nos testes.
+
+### Como testar
+- npm test e npm run test:e2e; acompanhar workflow Windows numa branch codex/** sem criar release.
+- Testes do publicador simulam versão histórica, tag divergente, token negado e upload corrompido sem publicar arquivos reais.
+
 ## 0.43.1 — 2026-10-30
 
 ### Correções

@@ -3,11 +3,18 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { mock } from 'node:test';
 import { Companion } from '../../src/core/companion.js';
 import { SettingsStore } from '../../src/core/settings-store.js';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { sanitizePersonality, PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
 import { fullCatalog } from '../../src/core/catalog/load.js';
+
+// A simulação não pode depender do calendário/horário da máquina do CI.
+// Halloween real disparava a saudação aos 20 s, interrompendo testes de conversa
+// e alterando a altura inicial no teste da fantasia de Natal. Timers continuam
+// sob FakeClock; testes de datas escolhem seus próprios argumentos explícitos.
+mock.timers.enable({ apis: ['Date'], now: new Date(2026, 9, 30, 15).getTime() });
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
