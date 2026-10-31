@@ -20,6 +20,7 @@ import { Progress, Games, pickRoutine, routineSteps } from './catalog/antitedio.
 import { detectIntent, normalizeText, sleepAllowed } from './dialogue/scripted-provider.js';
 import { isFactualQuestion } from './dialogue/web-search.js';
 import { seguimento } from './dialogue/professor.js';
+import { pedidoNegado } from './dialogue/coherence.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
@@ -2189,6 +2190,7 @@ export class Companion {
 
   /** Reação de pacote pedida pela conversa. {id, fala} ou null. */
   _packFromChat(text, nam, intent) {
+    if (pedidoNegado(text)) return null;
     const s = this.store.get();
     const tenta = (id) => {
       const fala = this.playPack(id, { source: 'chat', falar: false });
@@ -2483,6 +2485,7 @@ export class Companion {
 
   /** Item do catálogo pedido por frase no chat ("faz uma dancinha", "selfie"…). */
   catalogFromChat(text) {
+    if (pedidoNegado(text)) return null;
     if (!CATALOG_CHAT_INTENTS.has(detectIntent(text))) return null;
     const n = normalizeText(text);
     let best = null;
@@ -3059,16 +3062,17 @@ export class Companion {
       return 'Fico por perto. Quieto. Se precisar, tô aqui.';
     }
     // Humor do dia dela muda o ritmo do dia.
-    if (/\b(to|tou|estou|t[oô]) (cansad[ao]|exaust[ao]|esgotad[ao]|sem energia)\b/.test(n)) {
+    const afirmaHumor = !/\b(nao|nem|nunca) (to|tou|estou)\b/.test(n);
+    if (afirmaHumor && /\b(to|tou|estou|t[oô]) (cansad[ao]|exaust[ao]|esgotad[ao]|sem energia)\b/.test(n)) {
       p.st.humorDia = { dia: dayKey(date), modo: 'calmo' };
       p.save(p.st);
-    } else if (/\b(to|tou|estou) (animad[ao]|feliz|empolgad[ao]|com energia|pilhad[ao])\b/.test(n)) {
+    } else if (afirmaHumor && /\b(to|tou|estou) (animad[ao]|feliz|empolgad[ao]|com energia|pilhad[ao])\b/.test(n)) {
       p.st.humorDia = { dia: dayKey(date), modo: 'pilhado' };
       p.save(p.st);
     }
     // Interesses que ela conta.
     const m = n.match(/\b(eu gosto de|adoro|amo|meu interesse e|curto muito) (.{3,40})$/);
-    if (m && !/\bvoce\b|\bvc\b|\bjojo\b/.test(m[2])) {
+    if (m && !/\b(nao|nem|nunca) (gosto|adoro|amo|curto)\b/.test(n) && !/\bvoce\b|\bvc\b|\bjojo\b/.test(m[2])) {
       const it = m[2].trim();
       p.st.interesses = [...new Set([it, ...(p.st.interesses || [])])].slice(0, 10);
       p.save(p.st);

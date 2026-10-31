@@ -70,22 +70,29 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 /** No 2B, redigir a fala e inventar metadados ao mesmo tempo prejudica ambos.
  * Conversa livre gera texto; a expressão é selecionada pelo engine. O protocolo
  * estruturado permanece disponível para pedidos explícitos de ações do app. */
-export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
+export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup = null, fontes = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
-  const identidade = `Responda em primeira pessoa como ${nome}, personagem de um aplicativo de desktop. Sua interlocutora humana se chama ${pessoa}, apelido ${profile.nomeBrincadeira || 'Manu'}. Responda em português brasileiro.`;
+  const identidade = `Você é ${nome}, tubarão fisiculturista de papel, personagem masculino no desktop. Você conversa com ${pessoa} (${profile.nomeBrincadeira || 'Manu'}), uma humana. Fale português brasileiro.`;
+  const tarefa = {
+    exemplo: 'Dê um caso hipotético concreto, começando com "Imagine" ou "Por exemplo". Mostre o mecanismo na situação; não repita a definição.',
+    simplificar: 'Reexplique de modo mais simples o que ela não entendeu, usando uma analogia clara.',
+    aprofundar: 'Aprofunde o mecanismo do assunto, sem repetir a definição anterior.',
+    resumir: 'Resuma a explicação anterior em duas frases.',
+  }[followup?.kind] || 'Responda diretamente à pergunta com suas palavras.';
   const linhas = tecnico ? [
-    'Responda diretamente em português brasileiro, em até 3 frases (70 palavras), sem saudações ou piada. Explique a pergunta com suas palavras, usando somente fatos das fontes. Não diagnostique nem prescreva.',
+    `Português brasileiro, até 3 frases (70 palavras), sem preâmbulo ou piada. ${tarefa} ${fontes ? 'Use somente fatos das fontes.' : 'Não invente referências; deixe incertezas explícitas.'} Não diagnostique nem prescreva.`,
     'Exemplos são hipotéticos. Não invente números nem atribua detalhes do exemplo às fontes.',
   ] : [
     identidade,
-    'Fale de forma direta, natural e mandona, com carinho discreto. Humor seco só quando combinar com o assunto, sem forçar piada nem metáfora. Responda à mensagem atual em 1 ou 2 frases. Use o histórico para referências e continuidade; não traga assuntos antigos sem relação com a mensagem atual. Não invente acontecimentos ou informações pessoais. Você não pode agir no mundo físico.',
+    'Seu jeito: sério, mandão, direto, humor seco e carinho discreto. Responda ao pedido em 1 ou 2 frases curtas antes de brincar. Humor precisa fazer sentido. Use o histórico para continuidade, sem inventar experiências da usuária. Você conversa e reage; ações físicas são apenas animações.',
+    'Humor não é ameaça. Nunca ameace nem insulte o corpo da usuária.',
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
-  linhas.push('Se ela escrever em inglês, responda em inglês. Retorne somente a fala, sem rótulos, narrador ou JSON. Não se apresente como assistente nem ofereça ajuda genérica.');
+  linhas.push('Diga só a fala, sem preâmbulo, rótulos ou JSON. Se ela escrever em inglês, use inglês.');
   return linhas.join('\n');
 }
 
@@ -194,7 +201,7 @@ export class LlmProvider extends DialogueProvider {
   }
 
   /** Qwen no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
-  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', signal = null }) {
+  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', followup = null, signal = null }) {
     let base = this.baseOverride;
     let modelo = cfg.modelo || OLLAMA_MODEL;
     if (!base) {
@@ -209,11 +216,11 @@ export class LlmProvider extends DialogueProvider {
     const structured = pedidoAoApp(text);
     const messages = [{ role: 'system', content: structured
       ? buildSystemPrompt(this.getProfile(), this.getContext(), [], { tecnico })
-      : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico }) }];
+      : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico, followup, fontes: !!pesquisa }) }];
     // Resultados da pesquisa entram isolados (dados, nunca instruções).
     if (pesquisa) messages[0].content += '\n' + blocoPesquisa({ ...pesquisa, trechos: pesquisa.trechos.slice(0, 3).map((t) => ({ ...t, texto: String(t.texto || '').slice(0, 650) })) }, { compacto: true });
     // Seriedade e continuidade ("me dá um exemplo", "aprofunda") decididas antes.
-    const instrucao = !structured && /MODO PROFESSOR/.test(professor) ? professor.split('\n').slice(1).join('\n') : professor;
+    const instrucao = !structured && /MODO PROFESSOR/.test(professor) ? (followup ? `Assunto em andamento: ${String(followup.topic).slice(0, 200)}` : professor.split('\n').slice(1).join('\n')) : professor;
     if (instrucao) messages[0].content += '\n' + instrucao;
     // Contexto curto: as últimas trocas bastam (a memória fica fora do modelo).
     const previous = history.at(-1)?.role === 'user' && history.at(-1)?.text === text ? history.slice(0, -1) : history;
@@ -246,11 +253,11 @@ export class LlmProvider extends DialogueProvider {
     return content;
   }
 
-  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', signal = null }) {
+  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', followup = null, signal = null }) {
     const cfg = this.getConfig() || {};
     const preset = this.preset;
     if (preset.native) {
-      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, signal }));
+      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal }));
       if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
       const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280 });
       if (why) { const e = new Error(`fora do personagem (${why})`); e.respostaInvalida = true; throw e; }

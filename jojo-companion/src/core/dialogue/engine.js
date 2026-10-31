@@ -107,7 +107,7 @@ export class DialogueEngine {
         this.pendingGeneration = controller;
         let r;
         try {
-          r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, signal: controller.signal }), budget, () => controller.abort());
+          r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal }), budget, () => controller.abort());
         } finally {
           if (this.pendingGeneration === controller) this.pendingGeneration = null;
         }

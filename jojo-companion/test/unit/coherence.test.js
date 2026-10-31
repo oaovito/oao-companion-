@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -58,6 +58,7 @@ test('roteamento distingue conversa sobre o JoJo de uma pergunta de conhecimento
   for (const q of ['Por que você só fala do João?', 'me explica por que você ficou assim', 'quem é o seu chefe?', 'qual seu nome?', 'como foi seu dia?']) assert.equal(precisaPesquisar(q), null, q);
   assert.equal(precisaPesquisar('o que é diabetes mellitus 2?'), 'geral');
   assert.equal(precisaPesquisar('Você sabe o que é DLS?'), 'cientifica');
+  assert.equal(precisaPesquisar('Ei JoJo, você pode me explicar DLS?'), 'cientifica');
 });
 
 test('histórico relevante não arrasta João/provocações para toda resposta nem perde a preferência recente', () => {
@@ -108,6 +109,7 @@ test('resposta semanticamente inválida é descartada sem pausar o modelo para a
   assert.equal(erroDeCoerencia('quero morrer', 'Fale com João e CVV 188.'), null);
   assert.equal(erroDeCoerencia('você está bem?', 'Tudo bem. E você, JoJo?'), 'identidades trocadas');
   assert.equal(erroDeCoerencia('quem é você?', 'Meu nome é JoJo. E você, Manu?'), null);
+  assert.equal(erroDeCoerencia('fala uma piada', 'Eu vou ter que inventar um motivo para te mandar para o hospital.'), 'ameaça ou promessa física inventada');
 });
 
 test('expressão acompanha o conteúdo e modelo não executa comandos numa conversa casual', async () => {
@@ -127,6 +129,33 @@ test('JSON incompleto não aparece como fala; o contexto não contém mais o pro
   assert.equal(parseLlmReply('{"texto":"oi","acao":"nod"}').text, 'oi');
   const p = buildSystemPrompt(PERSONALITY_DEFAULTS);
   assert.ok(p.length < 4000, `prompt voltou a crescer: ${p.length}`);
+});
+
+test('negações não viram celebração, humor animado nem preferência falsa', async () => {
+  assert.equal(detectIntent('não consegui terminar meu projeto'), 'setback');
+  assert.notEqual(detectIntent('acabei de derrubar café'), 'achievement');
+  assert.notEqual(detectIntent('passei o dia inteiro no ônibus'), 'achievement');
+  assert.equal(detectIntent('passei na prova'), 'achievement');
+  assert.equal(detectIntent('você está bem?'), 'howAreYou');
+  assert.equal(expressaoCoerente('não consegui terminar', { text: 'O que travou?', action: 'happy' }), 'comfort');
+  const offline = await new DialogueEngine().reply('não consegui terminar meu projeto');
+  assert.equal(offline.action, 'comfort');
+  assert.equal((await new DialogueEngine().reply("I couldn't finish my project today")).action, 'comfort');
+  const e = makeEnv(); e.companion.start(); e.clock.advance(2000);
+  const before = structuredClone(e.companion.progress.st.humorDia);
+  await chatAdv(e, 'não estou feliz');
+  assert.deepEqual(e.companion.progress.st.humorDia, before);
+  await chatAdv(e, 'não adoro música sertaneja');
+  assert.equal(e.companion.progress.st.interesses.includes('musica sertaneja'), false);
+  e.companion.dialogue.llm = model({ text: 'Tá. Não faço.', action: 'eat', command: 'esconder' });
+  const quiet = e.store.get().quietMode;
+  for (const text of ['não quero brincar agora', 'JoJo, não faz supino', 'não fica quieto']) {
+    const r = await chatAdv(e, text);
+    assert.equal(r.intent, 'ia', text);
+    assert.notEqual(r.action, 'eat');
+    assert.equal(r.command, undefined);
+  }
+  assert.equal(e.store.get().quietMode, quiet);
 });
 
 test('turnos diferentes são serializados e incluem respostas de atalhos no histórico real', async () => {

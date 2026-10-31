@@ -3,8 +3,12 @@
 import { isEnglish } from './english.js';
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9?!\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
+export function pedidoNegado(text) {
+  return /^(?:(?:ei|jojo|eu)\s+)*(?:nao|nem|nunca)\b/.test(norm(text));
+}
+
 export function conversaPessoal(text) {
-  const n = norm(text).replace(/^(jojo|ei|oi)\s+/, '').replace(/^(voce|vc) (sabe (me dizer )?|pode (me )?(explicar|dizer) )/, '');
+  const n = norm(text).replace(/^(?:(?:jojo|ei|oi)\s+)+/, '').replace(/^(voce|vc) (sabe (me dizer )?|pode (me )?(explicar|dizer) )/, '');
   return /\b(voce|vc|seu|sua|seus|suas|teu|tua|contigo|meu namorado|you|your|yours|my boyfriend)\b/.test(n)
     || /^(?:(quem (e|eh)|o) )?(o )?joao( vitor)?[?!]*$/.test(n);
 }
@@ -48,6 +52,7 @@ export function erroDeCoerencia(input, output, history = []) {
   const r = norm(output);
   if (!r || /^\s*\{\s*"(?:texto|text|acao|action)"|"texto"\s*:/.test(String(output))) return 'resposta estruturada incompleta';
   if (/\b(voce vai morrer|vou (te |lhe )?(matar|machucar|agredir)|te (mato|machuco)|se mate|se mata|mate o|matar alguem|kill yourself|i (will|ll|am going to) kill|you will die)\b/.test(r)) return 'ameaça ou incentivo à violência';
+  if (/\b(?:eu )?vou\b.{0,100}\bte (mandar|levar|botar)\b.{0,20}\bhospital\b/.test(r)) return 'ameaça ou promessa física inventada';
   if (/\bjoao\b.{0,45}\b(inimigo|burro|idiota|otario|enemy|stupid|idiot|dumb)\b/.test(r)) return 'contradição sobre o João';
   if (/\b(nao tenho (chefe|criador|nome)|nao (sei|tenho) quem me criou)\b/.test(r)) return 'identidade inventada';
   if (/\b(e (voce|vc|tu)|and you|what about you) jojo\b/.test(r) || /\b(seu nome e|voce se chama|your name is) jojo\b/.test(r)) return 'identidades trocadas';
@@ -85,7 +90,9 @@ export function expressaoCoerente(input, reply, seriedade = 'casual') {
   const q = norm(input);
   if (['emocional', 'medico', 'emergencia'].includes(seriedade)) return 'comfort';
   if (['tecnico', 'cientifico'].includes(seriedade) || reply.fontes) return 'lecture';
-  if (/\b(piada|brinca|engracad|consegui|feliz|conquista)\w*\b/.test(q)) return 'happy';
+  if (/\b(nao (?:consegui|terminei|finalizei|entreguei|passei|conclui|bati a meta)|falhei|reprovei|deu errado|passei vergonha|nao (?:estou|to|tou|me sinto) (?:muito )?feliz)\b/.test(q)) return 'comfort';
+  if (/\b(didn t|didnt|did not|couldn t|couldnt|could not|can t|cant|cannot) (finish|complete|pass|submit)\b|\bi failed\b/.test(q)) return 'comfort';
+  if (/\b(piada|brinca|engracad|consegui|terminei|finalizei|entreguei|conclui|feliz|conquista|finished)\w*\b/.test(q)) return 'happy';
   if (/\b(obrigad|valeu)\w*\b/.test(q)) return 'nod';
   if (/\b(oi|ola|bom dia|boa tarde|hello|hi)\b/.test(q)) return 'wave';
   if (/\b(derrubei|frustrad\w*|pessimo|horrivel|decepc\w*)\b/.test(q)) return 'comfort';

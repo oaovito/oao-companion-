@@ -25,8 +25,8 @@ jobs:
       matrix:
         model:
           - 'gemma3:4b-it-q4_K_M'
-          - 'llama3.1:8b-instruct-q4_K_M'
-          - 'qwen3:8b-q4_K_M'
+          - 'phi4-mini:3.8b-q4_K_M'
+          - 'llama3.2:3b-instruct-q4_K_M'
     env:
       OLLAMA_HOST: '127.0.0.1:11439'
       OLLAMA_NO_CLOUD: '1'

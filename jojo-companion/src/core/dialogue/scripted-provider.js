@@ -4,6 +4,7 @@ import { isEnglish, detectIntentEn, EN_RESPONSES, isEnglishFactualQuestion } fro
 import { DialogueProvider } from './provider.js';
 import { isFactualQuestion, isBlockedQuestion } from './web-search.js';
 import { modoCiencia } from '../ciencia.js';
+import { pedidoNegado } from './coherence.js';
 
 export function normalizeText(s) {
   return String(s || '')
@@ -37,7 +38,8 @@ export const INTENTS = [
   { id: 'quiet', patterns: [/\b(silencio|cala a boca|fica quieto|quieto|para de falar|shh+|me deixa em paz)\b/] },
   { id: 'goodbye', patterns: [/\b(tchau|adeus|ate logo|ate mais|falou|fui)\b/] },
   { id: 'scare', patterns: [/\b(me assusta|susto|assusta|me da medo)\b/] },
-  { id: 'achievement', patterns: [/\b(consegui|terminei|acabei|finalizei|entreguei|passei|bati a meta|conclui)\b/] },
+  { id: 'setback', patterns: [/\b(nao (?:consegui|terminei|finalizei|entreguei|passei|conclui|bati a meta)|falhei|reprovei|deu errado|passei vergonha|nao (?:estou|to|tou|me sinto) (?:muito )?feliz)\b/] },
+  { id: 'achievement', patterns: [/\b(consegui|terminei|finalizei|entreguei|bati a meta|conclui)\b/, /\bpassei (?:na prova|no exame|no vestibular|de ano|de fase)\b|^passei[!?]*$/, /\bacabei (?:o|a|meu|minha) (?:projeto|trabalho|tarefa|relatorio|pesquisa|missao)\b|^acabei[!?]*$/] },
   { id: 'wake', patterns: [/\b(acord\w*|levanta)\b/] },
   { id: 'eat', patterns: [/\b(com(e|er|ida|endo)|fome|lanche|petisco|peix\w*|almoc\w*|janta\w*|nham)\b/] },
   { id: 'play', patterns: [/\b(brinc\w*|jog(ar|o|a)|bola|bolinha|divert\w*|flexiona|biceps|shape|muscul\w*)\b/] },
@@ -46,7 +48,7 @@ export const INTENTS = [
   { id: 'gym', patterns: [/\b(academia|treino|treinar|malhar|malhei|supino|agachamento)\b/] },
   { id: 'pet', patterns: [/\b(carinho|cafune|fofo|fofinho|abraco|lindo|amo|gosto de voce)\b/] },
   { id: 'thanks', patterns: [/\b(obrigad\w*|valeu|brigad\w*)\b/] },
-  { id: 'howAreYou', patterns: [/\b(tudo bem|como (voce )?(esta|vai)|beleza|td bem|como vc ta)\b/] },
+  { id: 'howAreYou', patterns: [/\b(tudo bem|como (voce )?(esta|vai)|beleza|td bem|como vc ta|(voce|vc) (esta|ta|se sente) bem)\b/] },
   { id: 'joke', patterns: [/\b(conta|conte|fala|fale|manda|me conta) (uma )?piada\b/] },
   { id: 'criador', patterns: [/\b(quem (te |o )?(criou|fez|programou|desenvolveu|inventou)|seu criador|quem (e|eh) seu (criador|dono|pai)|quem (criou|fez|desenvolveu) (o )?(mne ?lab|jojo|esse app|o app))\b/] },
   { id: 'name', patterns: [/\b(seu nome|quem e voce|quem (e|eh) vc|como (voce )?se chama)\b/] },
@@ -85,6 +87,7 @@ export const RESPONSES = {
   quiet: ['Fechou.', 'Silêncio. Entendido, Emanuele.'],
   scare: ['Tem certeza, {nome}?', 'Pediu, levou.'],
   achievement: ['Aí sim, {nome}. Eu sabia.', 'Finalmente. Já tava criando craca aqui.', 'Isso. Agora a próxima.'],
+  setback: ['Não saiu dessa vez. O que te travou, {nome}?', 'Tá. Me conta onde deu errado e a gente pensa no próximo passo.'],
   docinho: ['Quer se tornar uma aberração?'],
   sleepOk: [
     'Passou das 21h. Agora dormir é permitido, {nome}. Vai.',
@@ -130,14 +133,14 @@ export const RESPONSES = {
 // Ação/expressão corporal coerente com cada resposta.
 const ACTIONS = {
   joke: 'happy',
-  crisis: 'comfort', distress: 'comfort', sad: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
+  crisis: 'comfort', distress: 'comfort', sad: 'comfort', setback: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'angry', sleepOk: 'boaNoite', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
   name: 'wave', criador: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
-  sleepOk: 'serio',
+  sleepOk: 'serio', setback: 'serio',
   crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', pretty: 'brincadeira', avc: 'brincadeira', avcReal: 'serio', dressDown: 'serio', dressUp: 'brincadeira', lol: 'brincadeira', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',
@@ -162,6 +165,7 @@ export function detectIntent(text) {
   if (!n) return 'unknown';
   for (const intent of INTENTS) {
     if (!intent.patterns.some((p) => p.test(n))) continue;
+    if (['sleep', 'wake', 'eat', 'play', 'pet', 'quiet', 'bench', 'squat', 'scare', 'dressDown', 'dressUp'].includes(intent.id) && pedidoNegado(text)) return 'unknown';
     // Uma palavra sobre corpo/sono/comida não é um pedido para o personagem
     // executar essa ação. Conhecimento e saúde seguem para explicação/pesquisa.
     const pergunta = /^(?:jojo )?(?:o que|qual|quais|como|por que|me explica|explica|explique)\b/.test(n);

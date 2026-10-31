@@ -58,9 +58,15 @@
   limite de tempo. Não aprovado. Comparação seguinte: Gemma 3 4B, Ministral 3 3B e
   Qwen 3.5 4B. Primeira rodada atingiu timeout no primeiro carregamento e limitou os
   turnos seguintes por backoff; não confundir isso com prova de qualidade de cada modelo.
-- Próximo ensaio usa o carregamento explícito do app, mede preload e respostas-base
-  sem personagem, respeita backoff entre casos e registra diagnóstico do servidor.
+- Ensaios seguintes usam carregamento explícito do app, medem preload e respostas-base
+  sem personagem, respeitam backoff entre casos e registram diagnóstico do servidor.
   Modelo oficial do aplicativo permanece 2B até haver qualidade realmente verificada.
+- Qwen 3.5 4B e Ministral 3B também falharam com preload na leitura semântica.
+  Llama 3.1 8B e Qwen 3 8B excederam limites de tempo no runner de 8 GB/2 CPUs.
+  Gemma 3 4B com prompt técnico compacto respondeu ciência em 23 s e foi mais coerente,
+  porém repetiu a definição ao pedir exemplo; não aprovado como solução final.
+- Ensaio atual em QA compara Gemma 3 4B, Phi-4-mini 3.8B e Llama 3.2 3B com instrução
+  explícita de seguimento, personagem masculino e 30 casos, incluindo negações e inglês.
 - `.github/workflows/jojo-conversation-windows.yml` baixa Ollama Windows com SHA-256
   verificado e roda `scripts/check-conversation.mjs` contra inferência real, somente loopback,
   sem nuvem/login/custo. Resultados no resumo/logs do Actions, sem depender da cota de artefatos.
@@ -69,12 +75,19 @@
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **296/296**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **297/297**, sem pulos; host executa apenas lógica pura em Node.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;
   portátil abriu, crash reabriu, bandeja encerrou, atalho criado, medições concluídas.
-- Auditoria completa de animações e commits posteriores ainda precisam de CI final.
+- [CI Windows 41206258451](https://github.com/oaovito/oao-companion-/actions/runs/41206258451),
+  `e4dee80`: **296 unitários e 16 integração** passaram. E2E: **28/29**; único erro foi
+  asserção sensível a maiúscula em "Humor seco". Corrigido para ignorar caixa, sem remover
+  a verificação de personalidade. Exige nova execução no código final.
+- Nesse CI as **1.043 animações** passaram no renderer Windows: zero erros, recortes,
+  quadros parados ou falta de gatilho; média medida **0,31 ms/quadro**. Amostra visual de
+  nove animações em três fases recuperada do log e revisada. Relatório final deve refletir
+  execução Windows; não comparar este custo de desenho com tempo de conversa do modelo.
 - Runner Windows Server de um monitor não comprova Windows 11 físico, DPI misto,
   suspensão real ou troca de instalação NSIS/portátil com dados reais. Não alegar esses testes.
 

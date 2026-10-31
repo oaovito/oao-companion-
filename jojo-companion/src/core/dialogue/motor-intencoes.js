@@ -114,6 +114,10 @@ function pergunta(n) {
 const NAO_AGORA = /\b(talvez|quem sabe|amanha|depois eu|mais tarde|semana que vem|nao (vou|quero|precisa|ativa|liga|faz|muda)|nem pensar)\b/;
 
 function detTamanho(n, ctx) {
+  const p = n.replace(/^(?:(?:ei|jojo|por favor|pfv|voce|vc|pode|poderia|consegue|agora|acho que|queria que|quero que)\s+)+/, '');
+  if (!/^(fica|ficar|fique|deixa|diminui\w*|reduz\w*|encolhe\w*|aumenta\w*|cresce\w*|ta|esta|tamanho|seu tamanho|pequenininho|minusculo|bem pequeno|pequenino|o menor possivel|menor|maior)\b/.test(p)) return null;
+  const verbo = p.match(/^(diminui\w*|reduz\w*|encolhe\w*|aumenta\w*|cresce\w*)\b(.*)$/);
+  if (verbo && verbo[2].trim().split(' ').filter(Boolean).some((word) => !['um', 'pouco', 'pouquinho', 'mais', 'menor', 'maior', 'pequeno', 'grande', 'por', 'favor', 'pfv', 'ai', 'agora', 'seu', 'sua', 'o', 'a', 'so', 'de', 'tamanho', 'escala'].includes(word))) return null;
   if (/\b(pequenininho|minusculo|bem pequeno|pequenino|o menor possivel)\b/.test(n)) return { acao: 'tamanho', params: { valor: 'minimo' } };
   if (/\b(fica|ficar|fique|deixa|diminui\w*|reduz\w*|encolhe\w*)\b.*\b(menor|pequeno|pequena)\b|\b(diminui|reduz|encolhe)\w*\b|\b(ta|esta|tá) (muito )?(grande|gigante|enorme)\b|\bmenor\b$/.test(n) && !/\b(nao diminui|nao fica menor)\b/.test(n)) return { acao: 'tamanho', params: { valor: 'menor' } };
   if (/\b(fica|ficar|fique|deixa|aumenta\w*|cresce\w*)\b.*\b(maior|grande)\b|\b(aumenta|cresce)\w*\b|\b(ta|esta) (muito )?(pequeno|minusculo)\b|\bmaior\b$/.test(n)) return { acao: 'tamanho', params: { valor: 'maior' } };

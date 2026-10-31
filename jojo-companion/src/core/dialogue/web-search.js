@@ -13,7 +13,7 @@ const QUESTION_START = /^(o que|oque|o q|que|quem|qual|quais|quando|onde|aonde|q
 /** É uma pergunta de conhecimento (algo a pesquisar), e não um pedido ao JoJo? */
 export function isFactualQuestion(text) {
   if (conversaPessoal(text)) return false;
-  const n = normalizeText(text).replace(/^(jojo|ei|oi|o|ow|eai|e ai)\s+/, '');
+  const n = normalizeText(text).replace(/^(?:(?:jojo|ei|oi|o|ow|eai|e ai)\s+)+/, '');
   if (!n || n.length < 6) return false;
   return QUESTION_START.test(n);
 }

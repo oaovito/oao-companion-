@@ -7,6 +7,7 @@ import { app, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gzipSync } from 'node:zlib';
 import { expandCatalog } from '../src/core/catalog/recipes.js';
 import { fullCatalog } from '../src/core/catalog/load.js';
 
@@ -103,8 +104,11 @@ app.whenReady().then(async () => {
   // Pequena evidência visual recuperável mesmo quando a cota de artefatos está cheia.
   if (process.env.GITHUB_ACTIONS) {
     for (const part of png.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_PREVIEW:${part}`);
+    const report = gzipSync(Buffer.from(JSON.stringify({ markdown: linhas.join('\n'), summary: { erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, commit: process.env.GITHUB_SHA }))).toString('base64');
+    for (const part of report.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_REPORT:${part}`);
   }
   console.log(`Auditadas ${nomes.length}: ${erros.length} com erro, ${fora.length} fora do espaço, ${paradas.length} paradas, ${semGatilho.length} só por /anim, média ${f(media)} ms`);
+  await new Promise((resolve) => process.stdout.write('', resolve));
   app.exit(erros.length || fora.length || paradas.length || semGatilho.length ? 1 : 0);
 }).catch((error) => {
   console.error(error);

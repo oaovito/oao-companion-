@@ -20,6 +20,7 @@
 - Instalação do runtime Windows usa versão fixa com SHA-256 verificado antes da extração; migração do modelo também confere espaço livre.
 - O limite da geração com pesquisa é de até 25 segundos e cancela a requisição, evitando trabalho em segundo plano após timeout.
 - Óculos técnicos saem ao mudar de assunto; expressão e movimento da boca acompanham a resposta, respeitando fuga, tela cheia e Modo Trabalho.
+- Negações não viram comemoração, preferência falsa ou ação de brincar/exercitar-se; referências ao tamanho de outras coisas não redimensionam o personagem.
 - Trecho bruto de fonte, no caminho degradado, é identificado como trecho em vez de ser apresentado como explicação original com bronca aleatória.
 
 ### Como testar

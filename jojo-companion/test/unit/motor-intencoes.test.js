@@ -51,6 +51,7 @@ test('falsos positivos: conversa comum, perguntas, negação e futuro incerto N�
     'não ativa o modo trabalho', 'talvez eu trabalhe amanhã', 'não quero trabalhar agora', 'não fica menor', 'amanhã eu jogo',
     'o joão chegou', 'eu sou bonita?', 'quero comer', 'qual a capital da França?', 'que horas são?', 'tá frio hoje',
     'meu namorado mora longe', 'li um artigo sobre DLS', 'fiz exercício hoje', 'a música tá boa', 'por que você ficou menor?',
+    'como o músculo cresce?', 'o prazo ficou menor', 'meu chefe aumenta o número de tarefas', 'minha filha é pequenininha', 'aumenta o volume da música',
   ];
   const disparou = neutras.filter((f) => interpretar(f).acoes.length).map((f) => `${f} → ${JSON.stringify(ids(interpretar(f)))}`);
   assert.deepEqual(disparou, []);
