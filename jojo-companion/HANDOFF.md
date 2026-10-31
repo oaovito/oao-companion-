@@ -11,8 +11,8 @@
 - **GitHub Actions original é o único CI/CD.** Só runners oficiais hospedados pelo GitHub.
   Azure, CircleCI, runners externos/locais, bootstrap independente e agente de polling
   removidos depois de verificar ausência de dependência no aplicativo. Histórico Git preservado.
-- `main` era somente README. Receberá apenas o controle necessário ao cron, que só roda
-  na branch padrão. Não iniciar desenvolvimento nela nem trocar a fonte por main vazia.
+- `main` era somente README. O commit `cdea8bb` instalou apenas o controle necessário
+  ao cron na branch padrão, preservando README/histórico. O aplicativo continua na Codex.
 - Não acessar/modificar MNE_Lab. Nenhum projeto externo é parte deste trabalho.
 - Ler `../AGENTS.md`, `../CLAUDE.md`, `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `CHANGELOG.md`,
   package.json e [GITHUB_ACTIONS.md](docs/GITHUB_ACTIONS.md).
@@ -93,12 +93,37 @@ GitHub tentar automaticamente. Sem intervenção manual recorrente; sem mudar fa
 
 ## Continuidade
 
-1. Finalizar instalação do controle na branch padrão preservando README/histórico.
-2. Registrar tentativa de dispatch, sem alocar runner com custo não confirmado.
+1. Controle instalado na branch padrão; seis arquivos conferidos iguais aos da branch
+   de fonte. Não repetir instalação nem criar commits de polling.
+2. Primeiras tentativas registradas abaixo; não abrir os gates sem a confirmação pendente.
 3. Após confirmação do limite pago zero e quando GitHub aceitar jobs, deixar o controle
    disparar a validação real, corrigir falhas técnicas com evidências quando houver sessão
    Codex e publicar só depois de TODOS os gates. Não há agente IA contínuo no Actions.
 4. Confirmar três arquivos públicos 0.44.0, hashes/notas incrementais/atualizador e as
    17 releases históricas intactas. Até lá a release permanece bloqueada.
 
-Resultado da instalação/primeira tentativa deve ser acrescentado ao fim deste documento.
+## Resultado da instalação — 31/10/2026
+
+- Fonte: `3728e8c62262693f9b52a49ae590af4171251b76`, restauração dos workflows,
+  remoção das alternativas e recuperação idempotente. Enviado à branch Codex.
+- Controle: `cdea8bb347e6bbe085f2d83c3fe89c16101860e3`, enviado à `main` sem
+  force-push. README original preservado; nenhum código do aplicativo foi movido.
+- Workflow horário registrado pelo GitHub como ativo, ID `402983614`. Isso comprova
+  registro, não execução do monitor. Nenhum evento `schedule` aparecia na consulta
+  das 18h22 de Brasília (21h22 UTC); não afirmar que a rotina já está funcionando.
+- Primeiro push da fonte: [41232280595](https://github.com/oaovito/oao-companion-/actions/runs/41232280595),
+  Windows pulado pelo gate, nenhum runner/passos, **0 ms Windows faturáveis** na API.
+- Primeiro push do controle: [41232316669](https://github.com/oaovito/oao-companion-/actions/runs/41232316669),
+  recuperação pulada pelo gate, nenhum runner/passos, **0 ms Ubuntu faturáveis** na API.
+  Ambos são tentativas aceitas com jobs pulados; não comprovam liberação financeira.
+- Agenda: minuto 17 de cada hora, também em Brasília; GitHub pode atrasar/omitir cron.
+  Gate fechado ou bloqueio financeiro impede a verificação efetiva. Não manter sessão
+  Codex aberta à espera do horário; continuidade está versionada.
+- Node 22.23.4: **323/323** unitários, sem falhas/pulos; lint de 138 arquivos e
+  `actionlint` dos três workflows passaram. Windows/build/instalador atuais não executados.
+- API pública reconferida: **17 releases inalteradas**, comparando IDs, notas e
+  IDs/nomes/tamanhos/digests dos assets ao início da tarefa. Última segue **v0.43.1**;
+  nenhuma v0.44.0 publicada. Atualizador permanece em `oaovito/jojo-companion-releases`.
+- Pendência externa única para habilitar os gates: confirmação confiável do bloqueio
+  de TODO consumo pago do Actions em zero. Não há novas credenciais de faturamento
+  disponíveis no ambiente; não mudar plano, orçamento, cartão ou provedor.

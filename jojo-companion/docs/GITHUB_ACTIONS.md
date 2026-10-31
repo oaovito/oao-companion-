@@ -109,3 +109,25 @@ do workflow, não a disponibilidade de Windows nem a qualidade do aplicativo.
 - Ainda pendentes: primeira execução efetiva dos gates Windows, build 0.44.0 e publicação.
 - Consultar HANDOFF para commits, resultado do primeiro dispatch e estado da instalação
   do controle na branch padrão. Não declarar a transferência/release concluída sem isso.
+
+## Instalação e primeira tentativa verificadas — 31/10/2026
+
+Restauração enviada à fonte em `3728e8c`; controle instalado na branch padrão em
+`cdea8bb`, preservando o README e o histórico. Os seis arquivos de controle foram
+conferidos iguais nas duas branches. O GitHub registrou o workflow horário
+`402983614` como ativo; o gate continua fechado e o monitor **não está operacional**.
+
+O push da fonte gerou o run [41232280595](https://github.com/oaovito/oao-companion-/actions/runs/41232280595)
+e o push do controle gerou [41232316669](https://github.com/oaovito/oao-companion-/actions/runs/41232316669).
+Ambos tiveram o job pulado, sem runner/passos; `/timing` retornou respectivamente
+**0 ms Windows** e **0 ms Ubuntu** faturáveis. Isso não comprova que o bloqueio financeiro
+acabou. Nenhuma configuração financeira foi alterada e nenhum build foi simulado.
+
+Cron: minuto 17 de cada hora (também no horário de Brasília), sujeito aos atrasos do
+GitHub. Sem confirmação financeira não haverá consulta efetiva; mesmo depois de
+habilitada ela depende de o Actions aceitar o agendamento e alocar o runner oficial.
+Até a consulta das 18h22 de Brasília não havia evento `schedule` observado.
+
+As 17 releases públicas foram comparadas ao snapshot inicial, incluindo notas e
+IDs/nomes/tamanhos/digests dos assets: nenhuma alteração. A versão pública permanece
+v0.43.1; v0.44.0 aguarda todos os gates Windows. Não criar outra infraestrutura.
