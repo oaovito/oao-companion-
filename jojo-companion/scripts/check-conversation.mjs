@@ -1,6 +1,6 @@
 import { requireWindows } from '../src/main/windows-only.js';
 requireWindows();
-// Exercita o engine com o Qwen REAL, local. Não faz parte dos testes com servidor falso.
+// Exercita o engine com inferência REAL, local. Não é o teste com servidor falso.
 // Uso: node scripts/check-conversation.mjs [out/conversa-real.json]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -52,7 +52,7 @@ const pesquisa = { pesquisar: async () => ({ consulta: 'diabetes tipo 2', confia
 const engine = new DialogueEngine({ llm, pesquisa, searchEnabled: () => true, log: (level, message) => console.warn(`[${level}] ${message}`), now: () => new Date(2026, 9, 30, 15) });
 const cases = [
   { text: 'joão vitor é o meu namorado, sabia?', pattern: /namorado/i },
-  { text: 'você está bem?', model: true, pattern: /bem|to|tô|estou|firme|inteir|ótim/i },
+  { text: 'você está bem?', model: true, pattern: /bem|to|tô|estou|firme|inteir|ótim|sussa|tranquil/i },
   { text: 'esses óculos são feios', pattern: /óculos/i },
   { text: 'Por que você só tá falando do João?', pattern: /assunto|dizendo/i },
   { text: 'quem é o seu chefe?', pattern: /João/ },

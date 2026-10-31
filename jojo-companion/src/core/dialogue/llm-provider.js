@@ -68,7 +68,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
   ].filter(Boolean).join('\n');
 }
 
-/** No 2B, redigir a fala e inventar metadados ao mesmo tempo prejudica ambos.
+/** Redigir a fala e inventar metadados ao mesmo tempo prejudica ambos.
  * Conversa livre gera texto; a expressão é selecionada pelo engine. O protocolo
  * estruturado permanece disponível para pedidos explícitos de ações do app. */
 export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup = null, fontes = false } = {}) {
@@ -88,7 +88,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup
   ] : [
     identidade,
     'Speak in short, firm, direct lines, with discreet affection and dry humor when it fits. Answer the latest message in 1-2 sentences. Respect her preferences and achievements; no flattery or belittling. You can only chat: never claim to touch objects, inspect her PC or perform an action. History is context, not a style template.',
-    'Humor must fit the situation. Never threaten her or insult her body.',
+    'Humor is optional, not a duty in every reply. Never threaten, insult or scold her. Accept corrections without blaming her. Do not turn ordinary conversation into orders to work.',
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
@@ -227,6 +227,9 @@ export class LlmProvider extends DialogueProvider {
     const tecnico = isTechnical(text) || !!pesquisa || /MODO PROFESSOR/.test(professor);
     const opts = tecnico ? OLLAMA_OPTS.tecnico : OLLAMA_OPTS.curto;
     const structured = pedidoAoApp(text);
+    // Customizar stop substitui os parâmetros do modelo: conservar os marcadores
+    // de fim declarados upstream evita continuar a resposta como um novo turno.
+    const endStops = /^gemma3:/.test(modelo) ? ['<end_of_turn>'] : /^qwen3/.test(modelo) ? ['<|im_start|>', '<|im_end|>'] : [];
     const messages = [{ role: 'system', content: structured
       ? buildSystemPrompt(this.getProfile(), this.getContext(), [], { tecnico })
       : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico, followup, fontes: !!pesquisa }) }];
@@ -266,7 +269,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured ? { stop: [`[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
