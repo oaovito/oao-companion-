@@ -9,6 +9,7 @@ import { PERSONALITY_DEFAULTS } from '../personality.js';
 import { historicoRelevante, pedidoAoApp } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
+import { isEnglish } from './english.js';
 
 // Modelo oficial (quantização leve) e parâmetros enxutos para o 2B.
 export const OLLAMA_MODEL = LOCAL_MODEL;
@@ -73,26 +74,27 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup = null, fontes = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
-  const identidade = `Você é ${nome}, tubarão fisiculturista de papel, personagem masculino no desktop. Você conversa com ${pessoa} (${profile.nomeBrincadeira || 'Manu'}), uma humana. Fale português brasileiro.`;
+  const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
+  const identidade = `You are ${nome}, a male virtual companion speaking directly to ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Your goal is to make her smile and keep her company. Reply in ${lingua}.`;
   const tarefa = {
-    exemplo: 'Dê um caso hipotético concreto, começando com "Imagine" ou "Por exemplo". Mostre o mecanismo na situação; não repita a definição.',
-    simplificar: 'Reexplique de modo mais simples o que ela não entendeu, usando uma analogia clara.',
-    aprofundar: 'Aprofunde o mecanismo do assunto, sem repetir a definição anterior.',
-    resumir: 'Resuma a explicação anterior em duas frases.',
-  }[followup?.kind] || 'Responda diretamente à pergunta com suas palavras.';
+    exemplo: `Give one concrete hypothetical example of the mechanism. Start with "Imagine" or "${isEnglish(text) ? 'For example' : 'Por exemplo'}". Do not repeat the definition.`,
+    simplificar: 'Explain the same point in simpler words with a clear everyday analogy.',
+    aprofundar: 'Explain the mechanism in more depth, without repeating the previous definition.',
+    resumir: 'Summarize the previous explanation in two sentences.',
+  }[followup?.kind] || 'Answer the actual question in your own words.';
   const linhas = tecnico ? [
-    `Português brasileiro, até 3 frases (70 palavras), sem preâmbulo ou piada. ${tarefa} ${fontes ? 'Use somente fatos das fontes.' : 'Não invente referências; deixe incertezas explícitas.'} Não diagnostique nem prescreva.`,
-    'Exemplos são hipotéticos. Não invente números nem atribua detalhes do exemplo às fontes.',
+    `Reply in ${lingua}, at most ${followup?.kind === 'exemplo' ? '2 sentences (45 words)' : '3 sentences (70 words)'}, no preamble or jokes. ${tarefa} ${fontes ? 'Explain the source facts in plain language.' : 'Do not invent references; state uncertainty.'} No diagnosis or prescriptions.`,
+    'Examples are hypothetical. Do not invent numbers or attribute invented details to sources.',
   ] : [
     identidade,
-    'Seu jeito: sério, mandão, direto, humor seco e carinho discreto. Responda ao pedido em 1 ou 2 frases curtas antes de brincar. Humor precisa fazer sentido. Use o histórico para continuidade, sem inventar experiências da usuária. Você conversa e reage; ações físicas são apenas animações.',
-    'Humor não é ameaça. Nunca ameace nem insulte o corpo da usuária.',
+    'Personality: mostly serious, direct, bossy with discreet affection and dry humor. Answer the latest message naturally in 1-2 short sentences. Respect her stated preferences and achievements. History is context, not a style template. Do not invent personal history or dismiss her questions. Physical actions are animations only.',
+    'Humor must fit the situation. Never threaten her or insult her body.',
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
-  linhas.push('Diga só a fala, sem preâmbulo, rótulos ou JSON. Se ela escrever em inglês, use inglês.');
+  linhas.push(`Output only your spoken reply, no labels, preamble or JSON. Response language: ${lingua}.`);
   return linhas.join('\n');
 }
 
@@ -224,7 +226,10 @@ export class LlmProvider extends DialogueProvider {
     if (instrucao) messages[0].content += '\n' + instrucao;
     // Contexto curto: as últimas trocas bastam (a memória fica fora do modelo).
     const previous = history.at(-1)?.role === 'user' && history.at(-1)?.text === text ? history.slice(0, -1) : history;
-    const relevant = structured ? previous.slice(-2) : tecnico ? (/Assunto em andamento/.test(professor) ? previous.slice(-2) : []) : historicoRelevante(text, previous);
+    let relevant = structured ? previous.slice(-2) : tecnico ? (/Assunto em andamento/.test(professor) ? previous.slice(-2) : []) : historicoRelevante(text, previous);
+    // O primeiro exemplo já tem tema/fatos. Repetir a definição anterior gastava
+    // contexto e induzia outra definição; guardar só um exemplo prévio para não repeti-lo.
+    if (followup?.kind === 'exemplo' && pesquisa) relevant = previous.slice(-1).filter((h) => /imagine|por exemplo|suponha|considere/i.test(h.text));
     for (const h of relevant) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) });
     messages.push({ role: 'user', content: String(text).slice(0, 500) });
     const ctrl = new AbortController();

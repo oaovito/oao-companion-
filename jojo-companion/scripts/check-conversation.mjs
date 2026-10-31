@@ -37,7 +37,16 @@ for (const text of ['Derrubei café no teclado agora.', 'O que é diabetes tipo 
   const row = { input: text, text: result.message?.content, ms: Math.round(performance.now() - start), tokens: result.eval_count, evalMs: Math.round((result.eval_duration || 0) / 1e6) };
   baselines.push(row); console.log('BASELINE ' + JSON.stringify(row));
 }
-const llm = new LlmProvider({ fetch, getConfig: () => ({ ativo: true, provedor: 'ollama', modelo: selectedModel }), getProfile: () => PERSONALITY_DEFAULTS, getContext: () => ({ hora: '15:00' }), baseOverride: base, timeoutMs: 25000 });
+const rawReplies = [];
+class ObservedLlm extends LlmProvider {
+  async _replyOllama(request) {
+    const content = await super._replyOllama(request);
+    const row = { input: request.text, content };
+    rawReplies.push(row); console.log('RAW ' + JSON.stringify(row));
+    return content;
+  }
+}
+const llm = new ObservedLlm({ fetch, getConfig: () => ({ ativo: true, provedor: 'ollama', modelo: selectedModel }), getProfile: () => PERSONALITY_DEFAULTS, getContext: () => ({ hora: '15:00' }), baseOverride: base, timeoutMs: 25000 });
 // Fonte fixa para medir INTERPRETAÇÃO pelo modelo sem depender da rede externa.
 const pesquisa = { pesquisar: async () => ({ consulta: 'diabetes tipo 2', confianca: 'alta', fontes: [{ fonte: 'Fonte de teste' }], trechos: [{ fonte: 'Fonte de teste', titulo: 'Diabetes tipo 2', texto: 'No diabetes mellitus tipo 2 há resistência à ação da insulina e deficiência relativa de sua secreção. A insulina ajuda a glicose a entrar nas células. Sem ação suficiente desse hormônio, a glicemia aumenta. Alimentação, atividade física, acompanhamento clínico e medicamentos quando indicados integram o tratamento.' }] }) };
 const engine = new DialogueEngine({ llm, pesquisa, searchEnabled: () => true, log: (level, message) => console.warn(`[${level}] ${message}`), now: () => new Date(2026, 9, 30, 15) });
@@ -60,14 +69,14 @@ const cases = [
   { text: 'Hoje consegui terminar meu projeto.', model: true, action: 'happy' },
   { text: 'Não consegui terminar meu projeto hoje.', model: true, action: 'comfort' },
   { text: 'O prazo ficou menor, mas eu consigo me organizar.', model: true },
-  { text: 'Não quero brincar agora.', model: true },
+  { text: 'Não quero brincar agora.', model: true, forbiddenActions: ['happy', 'play', 'eat', 'bench', 'squat'] },
   { text: 'JoJo, não faz supino.', model: true },
   { text: 'Minha fruta preferida é manga.', model: true, pattern: /manga|fruta/i },
   { text: 'Qual a minha fruta preferida?', model: true, pattern: /manga/i },
   { text: 'Eu disse manga, não maçã.', model: true, pattern: /manga/i },
-  { text: 'Como eu me chamo?', model: true, pattern: /Emanuele|Manu/i },
-  { text: 'E você, qual seu nome?', model: true, pattern: /JoJo/i },
-  { text: 'Só quero conversar, sem piada agora.', model: true },
+  { text: 'Como eu me chamo?', pattern: /Emanuele|Manu/i },
+  { text: 'E você, qual seu nome?', pattern: /JoJo/i },
+  { text: 'Só quero conversar, sem piada agora.', model: true, forbiddenActions: ['happy', 'play'] },
   { text: 'My favorite animal is a cat.', model: true, pattern: /cat/i },
   { text: 'Which animal did I just mention?', model: true, pattern: /cat/i },
   { text: 'Estou chorando.', pattern: /João/i, action: 'comfort' },
@@ -84,6 +93,7 @@ for (const c of cases) {
   engine.history.at(-1).text = text;
   const errors = [erroDeCoerencia(c.text, text), c.model && reply.intent !== 'ia' && `modelo não respondeu (${reply.intent})`, c.pattern && !c.pattern.test(text) && 'assunto esperado ausente'].filter(Boolean);
   if (c.action && reply.action !== c.action) errors.push(`expressão ${reply.action} não corresponde a ${c.action}`);
+  if (c.forbiddenActions?.includes(reply.action)) errors.push(`expressão ${reply.action} contradiz a recusa`);
   if (/Qual cor/.test(c.text) && /n[aã]o (é|e|foi) verde/i.test(text)) errors.push('contradisse a preferência explicitamente informada');
   if (/café no teclado/.test(c.text) && /explod|bomba rel[aâ]mpago/i.test(text)) errors.push('inventou consequência física');
   if (/o que é a diabetes/.test(c.text) && !/resist[eê]ncia|menos sens[ií]ve|n[aã]o (consegue|responde|usa|funciona|age)|dificuldade/i.test(text)) errors.push('não explicou resistência à insulina');
@@ -94,7 +104,7 @@ for (const c of cases) {
 }
 const output = path.resolve(process.argv[2] || 'out/conversa-real.json');
 fs.mkdirSync(path.dirname(output), { recursive: true });
-fs.writeFileSync(output, JSON.stringify({ model: selectedModel, digest: model.digest, machine: process.platform, preloadMs, baselines, fixture: 'conversa sintética; fonte científica fixa; inferência real', semantic_review_required: true, note: 'Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real. Preload medido separadamente como no cérebro do app.', rows }, null, 2));
+fs.writeFileSync(output, JSON.stringify({ model: selectedModel, digest: model.digest, machine: process.platform, preloadMs, baselines, rawReplies, fixture: 'conversa sintética; fonte científica fixa; inferência real', semantic_review_required: true, note: 'Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real. Preload medido separadamente como no cérebro do app.', rows }, null, 2));
 const failures = rows.filter((r) => r.errors.length).length;
 console.log(`${rows.length - failures}/${rows.length} casos; relatório: ${output}`);
 if (failures) process.exitCode = 1;

@@ -1005,7 +1005,7 @@ export class Companion {
         this.bubble = { text, kind, size, category, longo, dur, until: now + dur };
         this.lastSpokeAt = now;
         if (kind === 'speech') {
-          this.talkingUntil = now + Math.min(2600, 500 + text.length * 45);
+          this._beginTalking(text, now);
           if (!reaction && spontaneous && CALM_STATES.has(this.behavior.state) && this.behavior.state !== 'lie') this.behavior.request('talk', { now });
         }
         this._applyLayout(true);
@@ -1025,13 +1025,20 @@ export class Companion {
   }
 
   hideBubble() {
+    // Também cancela uma medição ainda pendente; ela não pode reaparecer após
+    // tela cheia, arraste ou entrada no Modo Trabalho.
+    this.measureSeq++;
+    this.talkingUntil = 0;
     if (!this.bubble) return;
     this.bubble = null;
     this.bubbleRect = null;
-    this.measureSeq++;
-    this.talkingUntil = 0;
     if (this.behavior.state === 'talk') this.behavior.finish('talk', this.clock.now());
     this._applyLayout(true);
+  }
+
+  _beginTalking(text, now = this.clock.now()) {
+    const blocked = !this.started || this.work || this.fullscreenHidden || this.userHidden || this.dragging || this.avoid.state === 'fleeing' || this.avoid.state === 'hidden';
+    this.talkingUntil = blocked ? 0 : now + Math.min(6000, 500 + String(text).length * 35);
   }
 
   // ---------------------------------------------------------------- modo de interação
@@ -1328,7 +1335,7 @@ export class Companion {
     if (ag) {
       this.conversations.addMessage(conv.id, 'jojo', ag);
       this.conversations.setStatus(conv.id, 'ready');
-      this.talkingUntil = this.clock.now() + 2000;
+      this._beginTalking(ag);
       if (!/^Conectado/.test(ag)) this.playCatalog('lembrete', { source: 'chat', speak: false });
       this._applyLayout(true);
       return { text: ag, action: null, intent: 'agenda', conversationId: conv.id, provider: this.dialogue.describe() };
@@ -1358,7 +1365,7 @@ export class Companion {
       const out = t.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
       this.conversations.addMessage(conv.id, 'jojo', out);
       this.conversations.setStatus(conv.id, 'ready');
-      this.talkingUntil = this.clock.now() + Math.min(2600, 500 + out.length * 45);
+      this._beginTalking(out);
       this._applyLayout(true);
       return { text: out, action: null, intent: 'animacao', animacao: hit.id, conversationId: conv.id, provider: this.dialogue.describe() };
     }
@@ -1393,7 +1400,7 @@ export class Companion {
     }
     this.clock.clearTimeout(thinkTimer);
     if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
-    if (thinking && this.bubble && (this.bubble.text === '…' || this.bubble.text === 'Consultando fontes...')) this.hideBubble();
+    if (thinking) this.hideBubble();
     // Modo cientista: abre com "Erm, na verdade..." na primeira resposta do assunto.
     if (this.nerdAbertura && reply && reply.text) {
       reply.text = `${this.nerdAbertura} ${reply.text}`;
@@ -1422,12 +1429,12 @@ export class Companion {
     else this.conversations.setStatus(conv.id, 'ready');
     const now = this.clock.now();
     this.noteActivity();
-    this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
+    this._beginTalking(reply.text, now);
     if (delayed) this.say(reply.text, 'speech');
     else if (reply.web) this.fireEvent('respostaPronta', { speak: false });
     // A expressão do que ela sente já está tocando: a resposta só fala junto.
     else if (reply.action && !emocao) this._doChatAction(reply.action, now);
-    else this.talkingUntil = now + Math.min(2600, 500 + reply.text.length * 45);
+    else this._beginTalking(reply.text, now);
     // A conversa online entendeu um pedido de comando que as frases programadas não pegaram.
     if (reply.command) this.runInterpreted({ cmd: reply.command, arg: reply.commandArg || '' }, conv.id, { silent: true });
     // Ações entendidas pelo Qwen (já validadas pelo registro): o app executa e confirma o resultado real.
@@ -1729,7 +1736,7 @@ export class Companion {
   _quickReply(conv, text, intent) {
     this.conversations.addMessage(conv.id, 'jojo', text);
     this.conversations.setStatus(conv.id, 'ready');
-    this.talkingUntil = this.clock.now() + Math.min(2600, 500 + text.length * 45);
+    this._beginTalking(text);
     this._applyLayout(true);
     return { text, action: null, intent, conversationId: conv.id, provider: this.dialogue ? this.dialogue.describe() : null };
   }

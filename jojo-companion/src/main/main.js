@@ -275,7 +275,7 @@ function main() {
       fetch: (url, opts) => net.fetch(url, opts),
       getConfig: () => {
         const s = store.get();
-        // Testes automáticos só usam a IA com o servidor falso (nunca a API de verdade).
+        // Testes só usam um endpoint explícito: servidor falso ou Ollama local do CI.
         const ativo = s.iaAtivo && (!TEST || !!process.env.JOJO_LLM_BASE);
         return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo };
       },

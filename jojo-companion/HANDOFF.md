@@ -34,6 +34,8 @@
   perguntar como o músculo cresce não muda o tamanho do JoJo.
 - Reações/boca acompanham falas; óculos técnicos saem ao mudar de assunto; ações não
   interrompem fuga, arraste, tela cheia ou Modo Trabalho.
+- Duração da boca acompanha o texto (máximo 6 s); respostas durante trabalho/tela cheia
+  não guardam movimento para depois. Recolher balão cancela também medição pendente.
 - Build Windows em Node, sem Bash. Testes reais do vigia movidos para integração Windows;
   unitários são lógica pura. Removidos caminhos de interface/runtime específicos de outros sistemas.
 - Auditoria das 1.043 animações adicionada ao CI Windows como gate obrigatório: erros,
@@ -65,8 +67,17 @@
   Llama 3.1 8B e Qwen 3 8B excederam limites de tempo no runner de 8 GB/2 CPUs.
   Gemma 3 4B com prompt técnico compacto respondeu ciência em 23 s e foi mais coerente,
   porém repetiu a definição ao pedir exemplo; não aprovado como solução final.
-- Ensaio atual em QA compara Gemma 3 4B, Phi-4-mini 3.8B e Llama 3.2 3B com instrução
-  explícita de seguimento, personagem masculino e 30 casos, incluindo negações e inglês.
+- Ensaio de 30 casos em `f1716f3`: Gemma **26/30**, Llama 3.2 **23/30**, Phi-4-mini
+  **18/30**; todos reprovados. Problemas reais: exemplo incompleto/lento, desprezo à
+  usuária, inglês respondido em português e invenções sobre a conversa.
+- Nova rodada: Gemma 3 4B e Qwen 3 4B Instruct. Instruções internas em inglês com
+  idioma de resposta explícito; identidade física só quando pertinente; objetivo de
+  fazer companhia antes do humor; histórico menor para assuntos novos. Nomes conhecidos
+  têm resposta protegida imediata, como os fatos sobre o criador. Não trocar o modelo
+  oficial antes de ler cada fala real.
+- Acrescentado `test/e2e/conversation-real.windows.mjs`: dez turnos pela Central/IPC,
+  controlador e modelo reais, além do ensaio do engine. Só é executado quando os
+  30 casos de backend passam; falha bloqueia o job. Ainda aguarda execução.
 - `.github/workflows/jojo-conversation-windows.yml` baixa Ollama Windows com SHA-256
   verificado e roda `scripts/check-conversation.mjs` contra inferência real, somente loopback,
   sem nuvem/login/custo. Resultados no resumo/logs do Actions, sem depender da cota de artefatos.
@@ -75,7 +86,7 @@
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **297/297**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **298/298**, sem pulos; host executa apenas lógica pura em Node.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;

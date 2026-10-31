@@ -643,7 +643,7 @@ test('conversa online: Qwen 3.5 2B no servidor (Ollama /api/chat, streaming) res
     assert.equal(bodies[0].model, 'qwen3.5:2b-q4_K_M');
     assert.equal(bodies[0].stream, true);
     assert.ok(bodies[0].options.num_ctx <= 4096 && bodies[0].options.num_predict <= 512);
-    assert.match(bodies[0].messages[0].content, /humor seco/i);
+    assert.match(bodies[0].messages[0].content, /humor seco|dry humo[u]?r/i);
     assert.equal(bodies[0].format, undefined, 'fala livre não precisa inventar JSON de metadados');
     assert.ok(bodies[0].messages[0].content.length < 1800, 'instrução local cabe no contexto sem exemplos fora do assunto');
     const text = await win.evaluate(() => document.body.innerText);

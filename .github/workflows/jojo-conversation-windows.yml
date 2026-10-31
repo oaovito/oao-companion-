@@ -25,8 +25,7 @@ jobs:
       matrix:
         model:
           - 'gemma3:4b-it-q4_K_M'
-          - 'phi4-mini:3.8b-q4_K_M'
-          - 'llama3.2:3b-instruct-q4_K_M'
+          - 'qwen3:4b-instruct-2507-q4_K_M'
     env:
       OLLAMA_HOST: '127.0.0.1:11439'
       OLLAMA_NO_CLOUD: '1'
@@ -85,6 +84,12 @@ jobs:
             if ($result.error -or $result.status -ne 'success') { throw "Download do modelo não concluiu: $($result.error)" }
             node scripts/check-conversation.mjs out/conversa-real-windows.json
             $qaExit = $LASTEXITCODE
+            if ($qaExit -eq 0) {
+              npm ci
+              if ($LASTEXITCODE -ne 0) { throw 'Dependências da interface Windows não instalaram' }
+              node --test test/e2e/conversation-real.windows.mjs
+              $qaExit = $LASTEXITCODE
+            }
           } finally {
             if (-not $server.HasExited) { taskkill.exe /PID $server.Id /T /F | Out-Null }
             Get-Content -Tail 60 (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log')
@@ -99,5 +104,11 @@ jobs:
             Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value 'Checagens lexicais aprovadas não substituem a leitura das falas. Execução experimental, sem publicação.'
             Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```json'
             Get-Content -Raw -Encoding utf8 'out/conversa-real-windows.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```'
+          }
+          if (Test-Path 'out/conversa-interface-windows.json') {
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '## Interface e modelo reais no Windows'
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```json'
+            Get-Content -Raw -Encoding utf8 'out/conversa-interface-windows.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
             Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```'
           }

@@ -18,6 +18,9 @@ export function respostaAncorada(text, history = []) {
   const n = norm(text);
   const en = isEnglish(text);
   const out = (text, action = 'nod', intent = 'contexto') => ({ text, action, intent, kind: 'speech', tone: 'brincadeira', ...(en ? { lang: 'en' } : {}) });
+  const identidade = n.replace(/^(?:jojo|e voce|e vc)\s+/, '');
+  if (/^(qual (e )?(o )?meu nome|como eu me chamo|quem sou eu|what is my name|whats my name|who am i)[?!]*$/.test(identidade)) return { ...out(en ? 'Your name is {nome}.' : '{nome}. Não vou trocar teu nome pelo meu.', 'nod', 'identidade'), tone: 'serio' };
+  if (/^(qual (e )?(o )?(seu|teu) nome|como (voce |vc )?se chama|quem (e|eh) (voce|vc)|what is your name|whats your name|who are you)[?!]*$/.test(identidade)) return out(en ? '{companion}. The shark with biceps. Keep up.' : '{companion}. O tubarão de bíceps. Presta atenção.', 'wave', 'identidade');
   if (/^quem (e|eh) (o )?joao( vitor)?[?!]*$/.test(n)) return out('É teu namorado, Manu, e meu criador. No meu teatro eu chamo de Supremo. Fora dele, é o João mesmo.');
   if (/\b(se mata|mate se|morre( jojo)?|morra|kill yourself|die jojo)\b/.test(n) && !/\b(eu|quero morrer|me matar)\b/.test(n)) {
     return out(en ? 'Nice try. I am a shark made of pixels, not your punching bag. Want to talk? Talk.' : 'Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.', 'judge', 'limite');
@@ -78,20 +81,27 @@ export function historicoRelevante(input, history) {
     if (h.role === 'user') turns.push([h]);
     else if (turns.length) turns.at(-1).push(h);
   }
-  return turns.filter((turn) => {
+  const relevant = turns.filter((turn) => {
     const texts = turn.map((h) => norm(h.text)).join(' ');
     if (!pessoal && /\bjoao\b/.test(texts)) return false;
     if (!/\b(morre|mata|die|kill)\b/.test(q) && /\b(se mata|morre jojo|kill yourself)\b/.test(texts)) return false;
     return true;
-  }).slice(-4).flat();
+  });
+  // Referências/lembranças mantêm quatro trocas. Assunto novo usa duas, evitando
+  // que aulas e respostas antigas contaminem a fala e aumentem o tempo de prefill.
+  const retoma = /\b(ele|ela|isso|aquilo|dele|dela|antes|disse|falei|lembra\w*|prefer\w*|prefiro|favorit\w*|cor|fruta|animal|he|she|it|that|said|mention\w*|remember)\b/.test(q);
+  return relevant.slice(retoma ? -4 : -2).flat();
 }
 /** Expressão não pode executar alimentação/sono nem substituir uma ação do app. */
 export function expressaoCoerente(input, reply, seriedade = 'casual') {
   const q = norm(input);
   if (['emocional', 'medico', 'emergencia'].includes(seriedade)) return 'comfort';
   if (['tecnico', 'cientifico'].includes(seriedade) || reply.fontes) return 'lecture';
-  if (/\b(nao (?:consegui|terminei|finalizei|entreguei|passei|conclui|bati a meta)|falhei|reprovei|deu errado|passei vergonha|nao (?:estou|to|tou|me sinto) (?:muito )?feliz)\b/.test(q)) return 'comfort';
+  if (/\b(nao (?:consegui|terminei|finalizei|entreguei|passei|conclui|bati a meta)|falhei|reprovei|deu errado|passei vergonha|nao (?:estou|sou|to|tou|me sinto) (?:muito )?feliz)\b/.test(q)) return 'comfort';
   if (/\b(didn t|didnt|did not|couldn t|couldnt|could not|can t|cant|cannot) (finish|complete|pass|submit)\b|\bi failed\b/.test(q)) return 'comfort';
+  if (pedidoNegado(input) && /\b(brinc\w*|piada|jog\w*|supino|agach\w*)\b/.test(q) && !/\bnao acredito\b/.test(q)) return 'nod';
+  if (/\bnao (e|foi|achei) (nada )?engrac\w*\b/.test(q)) return 'nod';
+  if (/\bsem (piadas?|brincadeiras?)\b/.test(q)) return 'nod';
   if (/\b(piada|brinca|engracad|consegui|terminei|finalizei|entreguei|conclui|feliz|conquista|finished)\w*\b/.test(q)) return 'happy';
   if (/\b(obrigad|valeu)\w*\b/.test(q)) return 'nod';
   if (/\b(oi|ola|bom dia|boa tarde|hello|hi)\b/.test(q)) return 'wave';

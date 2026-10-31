@@ -51,6 +51,9 @@ test('limites e fatos do personagem também funcionam em inglês sem pesquisar',
   assert.match((await e.reply('kill yourself')).text, /pixels/);
   assert.match((await e.reply('Why are you only talking about João?')).text, /sidetracked/);
   assert.match((await e.reply("I'm marrying João Vitor")).text, /husband/);
+  assert.match((await e.reply('Como eu me chamo?')).text, /\{nome\}/);
+  assert.match((await e.reply('E você, qual seu nome?')).text, /\{companion\}/);
+  assert.match((await e.reply('what is my name?')).text, /\{nome\}/);
   assert.equal(erroDeCoerencia('E ele?', 'O João.', [{ role: 'user', text: 'O João vem amanhã' }]), null);
 });
 
@@ -138,6 +141,7 @@ test('negações não viram celebração, humor animado nem preferência falsa',
   assert.equal(detectIntent('passei na prova'), 'achievement');
   assert.equal(detectIntent('você está bem?'), 'howAreYou');
   assert.equal(expressaoCoerente('não consegui terminar', { text: 'O que travou?', action: 'happy' }), 'comfort');
+  assert.notEqual(expressaoCoerente('Só quero conversar, sem piada agora.', { text: 'Pode falar.', action: 'happy' }), 'happy');
   const offline = await new DialogueEngine().reply('não consegui terminar meu projeto');
   assert.equal(offline.action, 'comfort');
   assert.equal((await new DialogueEngine().reply("I couldn't finish my project today")).action, 'comfort');
@@ -153,6 +157,7 @@ test('negações não viram celebração, humor animado nem preferência falsa',
     const r = await chatAdv(e, text);
     assert.equal(r.intent, 'ia', text);
     assert.notEqual(r.action, 'eat');
+    if (/brincar/.test(text)) assert.notEqual(r.action, 'happy', 'recusar brincadeira não vira comemoração');
     assert.equal(r.command, undefined);
   }
   assert.equal(e.store.get().quietMode, quiet);
@@ -216,6 +221,27 @@ test('óculos técnicos saem ao mudar de assunto; fuga/tela cheia não são inte
   const emergency = await chatAdv(e, 'não consigo respirar');
   assert.match(emergency.text, /192/);
   assert.equal(e.companion.nerdUntil, 0, 'emergência retira o visual de brincadeira imediatamente');
+});
+
+test('fala acompanha duração do texto e medições pendentes não invadem Modo Trabalho', async () => {
+  const e = makeEnv(); e.companion.start(); e.env.cursor = { x: 5, y: 5 }; e.clock.advance(2000);
+  e.companion._beginTalking('Oi.');
+  const short = e.companion.talkingUntil - e.clock.now();
+  e.companion._beginTalking('Uma explicação longa. '.repeat(25));
+  const long = e.companion.talkingUntil - e.clock.now();
+  assert.ok(long > short && long <= 10000, 'fala longa tem movimento maior, com limite');
+  e.companion.hideBubble();
+  let measure;
+  e.overlay.measureBubble = () => new Promise((resolve) => { measure = resolve; });
+  e.companion.say('Ainda pensando…', 'thought');
+  e.companion.startWork();
+  measure({ width: 150, height: 50 });
+  await pump(e);
+  assert.equal(e.companion.bubble, null);
+  e.companion._beginTalking('Resposta recebida durante o trabalho.');
+  e.companion._applyLayout(true);
+  assert.equal(e.overlay.state.talking, false);
+  assert.equal(e.companion.talkingUntil, 0);
 });
 
 test('timeout com fonte cancela geração pendente em vez de apenas largar a Promise', { timeout: 1500 }, async () => {
