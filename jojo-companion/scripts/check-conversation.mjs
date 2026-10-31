@@ -23,7 +23,7 @@ if (!model) throw new Error(`Modelo não instalado: ${selectedModel}`);
 const preloadStart = performance.now();
 await carregarModelo(fetch, base, selectedModel);
 const preloadMs = Math.round(performance.now() - preloadStart);
-console.log(JSON.stringify({ preloadMs, model: selectedModel }));
+console.log(JSON.stringify({ preloadMs, model: selectedModel, digest: model.digest }));
 // Diagnóstico sem personagem: distingue limitação do modelo de interferência do prompt.
 const baselines = [];
 for (const text of ['Derrubei café no teclado agora.', 'O que é diabetes tipo 2?']) {

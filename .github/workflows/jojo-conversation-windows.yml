@@ -5,8 +5,10 @@ on:
     branches: ['codex/conversation-coherence', 'qa/conversation-models']
     paths:
       - '.github/workflows/jojo-conversation-windows.yml'
-      - 'jojo-companion/scripts/check-conversation.mjs'
+      - 'jojo-companion/scripts/check-conversation*'
+      - 'jojo-companion/test/e2e/conversation-real.windows.mjs'
       - 'jojo-companion/src/core/dialogue/**'
+      - 'jojo-companion/src/main/cerebro-local.js'
   workflow_dispatch:
 
 permissions:
@@ -19,20 +21,12 @@ concurrency:
 jobs:
   conversa-real:
     runs-on: windows-latest
-    timeout-minutes: 35
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         model:
           - 'gemma3:4b-it-q4_K_M'
-    env:
-      OLLAMA_HOST: '127.0.0.1:11439'
-      OLLAMA_NO_CLOUD: '1'
-      OLLAMA_NUM_PARALLEL: '1'
-      OLLAMA_MAX_LOADED_MODELS: '1'
-      # Candidato experimental; este workflow não muda o modelo do aplicativo.
-      JOJO_QA_MODEL: ${{ matrix.model }}
-      JOJO_LLM_BASE: 'http://127.0.0.1:11439'
     defaults:
       run:
         shell: pwsh
@@ -42,72 +36,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Registrar recursos reais do runner Windows
-        run: node -e "const os=require('node:os'); console.log(JSON.stringify({platform:process.platform,release:os.release(),ramBytes:os.totalmem(),cpus:os.cpus().length}))"
-
-      - name: Instalar Ollama Windows com SHA-256 verificado
-        timeout-minutes: 12
-        run: |
-          $zip = Join-Path $env:RUNNER_TEMP 'ollama-windows-amd64.zip'
-          $root = Join-Path $env:RUNNER_TEMP 'jojo-ollama'
-          $runtime = node --input-type=module -e "import {OLLAMA_ZIP,OLLAMA_SHA256} from './src/main/cerebro-local.js'; console.log(JSON.stringify({url:OLLAMA_ZIP,sha256:OLLAMA_SHA256}))" | ConvertFrom-Json
-          if ($LASTEXITCODE -ne 0) { throw 'Não foi possível ler a configuração do runtime' }
-          $env:OLLAMA_MODELS = Join-Path $env:RUNNER_TEMP 'jojo-models'
-          Add-Content -Path $env:GITHUB_ENV -Value "OLLAMA_MODELS=$env:OLLAMA_MODELS"
-          curl.exe --fail --location --retry 3 --output $zip $runtime.url
-          if ($LASTEXITCODE -ne 0) { throw 'Falha no download do Ollama Windows' }
-          $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
-          if ($hash -ne $runtime.sha256) { throw 'SHA-256 do Ollama Windows não confere' }
-          Expand-Archive -LiteralPath $zip -DestinationPath $root
-
-      - name: Servir e avaliar o candidato na mesma sessão Windows
+      - name: Instalar dependências da interface Windows
+        run: npm ci
+      - name: Avaliar candidato com o mesmo ensaio obrigatório do pipeline oficial
         timeout-minutes: 25
-        run: |
-          $root = Join-Path $env:RUNNER_TEMP 'jojo-ollama'
-          $server = Start-Process -FilePath (Join-Path $root 'ollama.exe') -ArgumentList 'serve' -RedirectStandardOutput (Join-Path $env:RUNNER_TEMP 'jojo-ollama.out.log') -RedirectStandardError (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log') -PassThru
-          $qaExit = 1
-          try {
-            $ready = $false
-            for ($i = 0; $i -lt 60; $i++) {
-              try {
-                $version = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/version" -TimeoutSec 1
-                Write-Output "Ollama Windows $($version.version)"
-                $ready = $true
-                break
-              } catch { Start-Sleep -Milliseconds 500 }
-            }
-            if (-not $ready) { throw 'Ollama Windows não iniciou' }
-            $body = @{ model = $env:JOJO_QA_MODEL; stream = $false } | ConvertTo-Json -Compress
-            $result = Invoke-RestMethod -Uri "$env:JOJO_LLM_BASE/api/pull" -Method Post -ContentType 'application/json' -Body $body -TimeoutSec 660
-            if ($result.error -or $result.status -ne 'success') { throw "Download do modelo não concluiu: $($result.error)" }
-            node scripts/check-conversation.mjs out/conversa-real-windows.json
-            $qaExit = $LASTEXITCODE
-            if ($qaExit -eq 0) {
-              npm ci
-              if ($LASTEXITCODE -ne 0) { throw 'Dependências da interface Windows não instalaram' }
-              node --test test/e2e/conversation-real.windows.mjs
-              $qaExit = $LASTEXITCODE
-            }
-          } finally {
-            if (-not $server.HasExited) { taskkill.exe /PID $server.Id /T /F | Out-Null }
-            Get-Content -Tail 60 (Join-Path $env:RUNNER_TEMP 'jojo-ollama.err.log')
-          }
-          exit $qaExit
-
-      - name: Guardar respostas no resumo, sem depender da cota de artefatos
-        if: ${{ !cancelled() }}
-        run: |
-          if (Test-Path 'out/conversa-real-windows.json') {
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '## Conversa real no Windows — revisão semântica obrigatória'
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value 'Checagens lexicais aprovadas não substituem a leitura das falas. Execução experimental, sem publicação.'
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```json'
-            Get-Content -Raw -Encoding utf8 'out/conversa-real-windows.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```'
-          }
-          if (Test-Path 'out/conversa-interface-windows.json') {
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '## Interface e modelo reais no Windows'
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```json'
-            Get-Content -Raw -Encoding utf8 'out/conversa-interface-windows.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '```'
-          }
+        run: ./scripts/check-conversation-windows.ps1
+        env:
+          # Só o ensaio seleciona um candidato; não muda o modelo do aplicativo.
+          JOJO_QA_MODEL: ${{ matrix.model }}

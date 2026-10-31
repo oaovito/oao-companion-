@@ -33,9 +33,11 @@ test('Qwen recebe a instrução de professor e o assunto anterior no "me dá um 
   const e = new DialogueEngine({ llm, searchEnabled: () => false });
   await e.reply('o que é DLS e como funciona?');
   assert.match(recebidos[0].professor, /MODO PROFESSOR/);
-  await e.reply('me dá um exemplo');
+  const exemplo = await e.reply('me dá um exemplo');
+  assert.equal(exemplo.action, 'lecture', 'a expressão técnica acompanha o exemplo sem pesquisa externa');
   assert.match(recebidos[1].professor, /Assunto em andamento: "o que é DLS e como funciona\?"/);
-  await e.reply('oi');
+  const casual = await e.reply('oi');
+  assert.notEqual(casual.action, 'lecture', 'uma saudação encerra a expressão técnica');
   assert.equal(recebidos[2].professor, '');
 });
 

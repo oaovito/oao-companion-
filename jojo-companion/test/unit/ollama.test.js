@@ -66,6 +66,22 @@ test('motor ainda não pronto: prepara em segundo plano e, enquanto isso, a conv
   assert.equal(provider(null).unavailableReason(), 'sem motor');
 });
 
+test('parar narração preserva também o marcador de fim de turno do modelo', async () => {
+  const { srv, pedidos } = fakeOllama({ resposta: 'Tudo certo, Manu.' });
+  const base = await listen(srv);
+  try {
+    for (const [modelo, stop] of [['gemma3:4b-it-q4_K_M', '<end_of_turn>'], ['qwen3:4b-instruct-2507-q4_K_M', '<|im_end|>']]) {
+      const brain = { pronto: () => true, preparar: async () => ({ base, modelo }), usar() {} };
+      await provider(brain).reply({ text: 'você está bem?', history: [] });
+      const request = pedidos.at(-1).body;
+      assert.ok(request.options.stop.includes(stop), 'não pode apagar o stop nativo e gerar outro turno');
+      assert.ok(request.options.stop.includes('[JoJo'), 'narração não deve ocupar a geração');
+    }
+  } finally {
+    srv.close();
+  }
+});
+
 test('streaming: junta os pedaços NDJSON; erro do Ollama vira erro', async () => {
   const res = { text: async () => '{"message":{"content":"Ma"}}\n{"message":{"content":"nu"}}\n{"done":true}\n' };
   const pedacos = [];

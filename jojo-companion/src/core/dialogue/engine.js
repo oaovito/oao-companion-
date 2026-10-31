@@ -76,9 +76,12 @@ export class DialogueEngine {
     }
     // Depois de uma falha (rede lenta/fora), pausa a IA um pouco para não fazer esperar de novo.
     // Modo professor: seriedade decidida antes de responder; continuidade usa o assunto anterior.
-    const seriedade = conversaPessoal(input) && !SCRIPTED_ONLY.has(intent) ? 'casual' : classificarSeriedade(input);
     const temaVivo = this.tema && Date.now() - this.tema.t < TEMA_MS ? this.tema : null;
     const seg = temaVivo ? seguimento(input) : null;
+    // Um exemplo continua sendo técnico mesmo sem pesquisa externa. Não depender
+    // de out.fontes para manter a expressão/seriedade do assunto em andamento.
+    const seriedade = seg ? classificarSeriedade(temaVivo.texto)
+      : conversaPessoal(input) && !SCRIPTED_ONLY.has(intent) ? 'casual' : classificarSeriedade(input);
     // Pesquisa só quando precisa (pergunta de conhecimento, ciência, MNE_Lab, "pesquisa…").
     let achado = seg ? temaVivo.pesquisa : null;
     let erroPesquisa = null;

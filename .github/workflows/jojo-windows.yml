@@ -17,7 +17,7 @@ concurrency:
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: jojo-companion
@@ -105,6 +105,10 @@ jobs:
         env:
           MEASURE_SECONDS: '20'
           JOJO_GPU: '1'
+
+      - name: Validar conversa e Central com o modelo local real no Windows
+        timeout-minutes: 25
+        run: ./scripts/check-conversation-windows.ps1
 
       # Cópia de conferência do CI (a versão de verdade vai na Release). Cota cheia não bloqueia a publicação.
       - name: Publicar artefatos
