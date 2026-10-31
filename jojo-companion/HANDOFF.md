@@ -8,9 +8,12 @@
 - Branch efetiva desta transferência: `codex/operational-handoff`; `main` segue apenas com README.
 - Última release pública confirmada: [v0.43.1](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.43.1).
   Os três arquivos foram baixados sem autenticação e conferidos por tamanho, assinatura MZ/PK e SHA-256.
+  Inspeção do ZIP e do ASAR não encontrou HANDOFF/CLAUDE/PRODUCT_SPEC/testes/workflows.
 - `package.json.jojoUpdate` permanece `oaovito/jojo-companion-releases`. UpdateChecker detectou
   0.43.1 a partir de 0.43.0 nos modos portable/installer usando os metadados públicos reais;
-  a versão já instalada não propõe atualização para si mesma. Nenhuma alteração no runtime do atualizador.
+  a versão já instalada não propõe atualização para si mesma. O manifesto dentro do ASAR público
+  confirma o canal; os dois módulos do atualizador são idênticos ao checkout após normalizar CRLF.
+  Nenhuma alteração no runtime do atualizador.
 - CI respeita cancelamentos nas etapas de diagnóstico/artefatos e limita medições a 3 min.
 - CI agora reconhece `codex/**`. Push comum e dispatch só validam; tags oficiais novas
   publicam após todos os gates obrigatórios. Removido o gatilho por mensagem `[publicar]`.
@@ -22,9 +25,32 @@
   publicou com sucesso usando RELEASES_TOKEN. Novo CI audita o token via GET autenticado do
   repositório público e verifica permissão push anunciada, sem escrever/publicar uma versão artificial.
 - Falhas de três testes dependentes do Halloween/horário real corrigidas fixando Date no helper
-  da simulação, sem desligar testes nem modificar comportamento de produção. Unitários: **280/280**.
-- Validação desta transferência em andamento no Actions; consultar a execução do HEAD antes de
-  declarar o pipeline novo aprovado. Nenhuma versão/tag/release nova solicitada ou publicada.
+  da simulação, sem desligar testes nem modificar comportamento de produção. Unitários: **282/282**; E2E Linux: **29/29**, sem falhas, cancelamentos ou pulos,
+  com encerramento normal do runner após o cleanup.
+- **CI Windows aprovado** no código `1d83feb103b99151bf0cb944d3f65e8175de7b6a`:
+  [execução 41161280741](https://github.com/oaovito/oao-companion-/actions/runs/41161280741).
+  Unitários **282/282**, integração Windows com entrada real **13/13**, E2E **28 aprovados e 1 pulado**
+  (teste de crash Linux; o Windows é coberto pelo smoke/vigia do portátil). Build dos três formatos,
+  portátil, vigia/atalho, pesquisa real e medições com/sem GPU concluídos com sucesso.
+  A auditoria de RELEASES_TOKEN confirmou autenticação e permissão push anunciada sem publicar.
+  O publicador novo foi exercitado por testes simulados, não por uma release artificial.
+  Nenhuma versão/tag/release nova solicitada ou publicada.
+- **Limitação externa de armazenamento**: upload do artefato de CI falhou com
+  `Artifact storage quota has been hit`; o job segue verde porque essa etapa já era opcional.
+  Nenhum artefato novo ficou armazenado nessa execução. A geração/conferência dos três binários
+  está comprovada nos logs (nomes, tamanhos e SHA-256) e pelos testes executados sobre o portátil.
+  A publicação oficial envia diretamente para Releases e não depende do armazenamento de Actions.
+  Não foram apagados artefatos de execuções anteriores nem alteradas releases para contornar a cota.
+  O GitHub informa recálculo de uso a cada 6–12 h; não alegar que a cota foi liberada.
+- Evidência dos binários gerados no Windows, **não publicados**, disponível no log do CI:
+
+  | Arquivo | Bytes | SHA-256 |
+  |---|---:|---|
+  | JoJoCompanion.exe | 102170901 | a6a3070e8a8b8b228c5de0d822b10339d3ad6ea60b16edfce2dd5b4aef9a3252 |
+  | JoJoCompanion-Setup-0.43.1.exe | 111688665 | 944155837caeb8c48c0a93470951320fec972c084f5240ef0999959a6d0e1883 |
+  | JoJoCompanion-0.43.1-win-x64.zip | 142499459 | b11ddc44654d5a58fc3248c6bb5efa48ab3f8511138679867c95087fe3e5f30a |
+
+  A documentação final não altera o código, testes, dependências ou workflow do commit validado.
 - Linux: npm ci; Electron instalado com `NODE_USE_ENV_PROXY=1 node node_modules/electron/install.js`.
   Xvfb extraído de pacote Debian verificado pelo APT em `/tmp/jojo-xvfb/root`; usar seu `usr/bin`
   no PATH para E2E nesta sessão. Este caminho temporário não é requisito do app nem setup publicado.
