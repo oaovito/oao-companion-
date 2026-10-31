@@ -79,6 +79,7 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
       const state = await central.evaluate(() => window.appApi.state());
       assert.equal(state.conversations.length, 1);
       assert.ok(state.current.messages.some((m) => m.who === 'jojo' && m.text === reply.text));
+      await central.waitForFunction((text) => document.querySelector('#log .msg.jojo:last-child')?.textContent === text, reply.text);
     }
     const before = await central.evaluate(() => window.appApi.state());
     const after = await central.evaluate(() => window.appApi.newChat());

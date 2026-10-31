@@ -1,16 +1,16 @@
-// Cérebro local do JoJo: Ollama + Qwen 3.5 2B no próprio PC dela, baixados e
+// Cérebro local do JoJo: Ollama + modelo oficial no próprio PC dela, baixados e
 // instalados sozinhos pela internet (nunca precisa baixar nada à mão).
-// Pensado para notebook fraco:
+// Uso de recursos controlado:
 //   - só baixa se a conversa online estiver ligada, em segundo plano;
 //   - o Ollama só roda quando ela conversa (sobe na primeira mensagem) e é
 //     encerrado depois de alguns minutos sem conversa (RAM volta toda);
 //   - prioridade baixa no Windows, um modelo, uma conversa por vez, contexto curto;
 //   - escuta só em 127.0.0.1 (nada exposto na rede).
-// Se ela já tiver um Ollama com o Qwen 3.5 2B rodando, usa ele.
+// Se ela já tiver um Ollama com o modelo oficial rodando, usa ele.
 // Dependências injetáveis (testável sem Electron).
 import path from 'node:path';
 import { createHash } from 'node:crypto';
-import { LOCAL_MODEL, LOCAL_MODEL_ALIAS, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_READY_MS } from '../core/dialogue/local-model.js';
+import { LOCAL_MODEL, LOCAL_MODEL_ALIAS, LOCAL_MODEL_LABEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_READY_MS } from '../core/dialogue/local-model.js';
 
 export const MODELO = LOCAL_MODEL;
 export const MODELO_ALT = LOCAL_MODEL_ALIAS;
@@ -38,9 +38,9 @@ export function ambienteOllama(dir) {
   };
 }
 
-/** Nome do modelo instalado que serve (a variante pedida ou outra quantização do MESMO 2B). */
+/** Só a variante avaliada e seu alias equivalente; nunca outro modelo/quantização. */
 export function escolherModelo(nomes) {
-  return nomes.find((n) => n === MODELO) || nomes.find((n) => /^qwen3\.5:2b(\b|-)/.test(n)) || null;
+  return nomes.find((n) => n === MODELO) || nomes.find((n) => n === MODELO_ALT) || null;
 }
 
 /** Baixado não significa carregado: só anunciar pronto depois de carregar os pesos. */
@@ -192,7 +192,7 @@ export function criarCerebroLocal(deps) {
       if (ok) return nome;
       log('warn', `Modelo ${nome}: ${erro || 'falhou'}`);
     }
-    throw new Error('não consegui baixar o Qwen 3.5 2B');
+    throw new Error(`não consegui baixar o ${LOCAL_MODEL_LABEL}`);
   }
 
   function agendarDesligar() {
@@ -211,7 +211,7 @@ export function criarCerebroLocal(deps) {
     muda({ fase: 'preparando', erro: null });
     preparando = (async () => {
       try {
-        // Ollama que ela já tenha, com o Qwen 3.5 2B: usa ele (nada a instalar).
+        // Ollama que ela já tenha, com o modelo oficial: usa ele (nada a instalar).
         const proprio = await vivo('http://127.0.0.1:11434');
         const doProprio = proprio && escolherModelo(proprio);
         if (doProprio) {

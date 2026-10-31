@@ -97,12 +97,33 @@ curvas laterais.
 
 ## Pesquisa na internet
 
-`ScriptedProvider` marca `search: true` quando a mensagem é uma pergunta de
-conhecimento sem resposta programada. O `DialogueEngine` chama `WebSearch.search`
-(no app, `net.fetch` do processo principal; os renderers continuam com
-`connect-src 'none'`). O `Companion` emoldura o resumo com as falas `webIntro`/
-`webOutro` (filtradas pelo perfil) e cita a fonte; falhas viram `webOffline` e
-status *Bloqueado*.
+`MotorPesquisa` escolhe fontes públicas para perguntas de conhecimento, sem enviar
+histórico, perfil ou arquivos. Resultados entram como dados não confiáveis no modelo
+local; perguntas pessoais e provocações ao JoJo não disparam pesquisa genérica.
+`net.fetch` fica no processo principal; renderers mantêm `connect-src 'none'`.
+O modelo explica os fatos e as fontes são citadas. Se a geração falhar, o trecho bruto
+é identificado como trecho da fonte. A geração com pesquisa tem limite de 25 s e é
+cancelada de fato. Conversa local preparada independe da internet.
+
+## Conversa local e distribuição
+
+`src/core/dialogue/local-model.js` define modelo/alias, contexto de 2.048 tokens e
+keep-alive de 5 min. `cerebro-local.js` instala o Ollama Windows com SHA-256, verifica
+espaço, baixa o modelo e carrega os pesos antes de anunciar pronto. Reutiliza Ollama
+local compatível ou serve somente em 127.0.0.1:11439. Encerra o processo gerenciado
+após 10 min sem uso. Não troca silenciosamente para nuvem ou outro modelo.
+
+`ConversationManager` tem uma conversa visível; atividades preservam estado interno.
+`Companion` serializa mensagens diferentes e deduplica reenvios pendentes. Segurança
+interrompe geração antiga; o engine preserva fatos/limites e seleciona expressões sem
+executar ações que não foram pedidas. Texto livre não exige JSON nem narração corporal.
+
+Código e CI vivem somente em `oaovito/oao-companion-` (privado). Nova tag oficial,
+após testes, build, auditoria visual e conversa real no Windows, pode publicar os três
+binários em `oaovito/jojo-companion-releases` (público). API Releases e assets com SHA-256
+são os metadados do atualizador próprio. Push comum não publica; versões históricas,
+seus arquivos e tags são imutáveis. `scripts/check-conversation-windows.ps1` é compartilhado
+pela avaliação de candidatos e pelo gate obrigatório da publicação.
 
 ## Animações: variações e emoção
 

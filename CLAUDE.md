@@ -3,6 +3,15 @@
 Este arquivo é lido automaticamente pelas sessões do Claude Code. Ele resume o
 projeto para que qualquer sessão continue o trabalho sem depender do histórico.
 
+## Continuidade após a transferência
+
+Diretrizes atuais em [AGENTS.md](AGENTS.md) e [HANDOFF](jojo-companion/HANDOFF.md).
+Este arquivo preserva a referência técnica/histórica. O produto é exclusivamente
+Windows 11 x64; a configuração local candidata atual é Gemma 3 4B, definida em
+`src/core/dialogue/local-model.js`. Menções abaixo ao Qwen descrevem a versão antiga.
+Publicação atual ocorre somente por nova tag oficial após todos os gates Windows,
+incluindo inferência real; mensagens de commit e push comum não publicam.
+
 ## O que é
 
 Companion de desktop para **Windows 11**: o JoJo, um tubarão fisiculturista em

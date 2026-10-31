@@ -1,4 +1,4 @@
-// Conversa do JoJo. Motor oficial: Qwen 3.5 2B no Ollama do PRÓPRIO PC dela,
+// Conversa do JoJo. Motor oficial: Gemma 3 4B no Ollama do PRÓPRIO PC dela,
 // instalado sozinho (src/main/cerebro-local.js), ligado só enquanto ela conversa.
 // Os provedores antigos (Pollinations, Groq, Gemini, OpenRouter)
 // continuam no código só para reversão manual: nunca são usados sozinhos.
@@ -11,7 +11,7 @@ import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
 import { isEnglish } from './english.js';
 
-// Modelo oficial (quantização leve) e parâmetros enxutos para o 2B.
+// Modelo oficial (quantização leve) e parâmetros de memória controlados.
 export const OLLAMA_MODEL = LOCAL_MODEL;
 export const OLLAMA_OPTS = Object.freeze({
   curto: { num_ctx: LOCAL_CONTEXT, num_predict: 256, num_batch: 128 },
@@ -213,7 +213,7 @@ export class LlmProvider extends DialogueProvider {
     return e.fase === 'pronto' ? null : e.fase === 'erro' ? `erro: ${e.erro}` : e.fase;
   }
 
-  /** Qwen no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
+  /** Modelo no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
   async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', followup = null, signal = null }) {
     let base = this.baseOverride;
     let modelo = cfg.modelo || OLLAMA_MODEL;

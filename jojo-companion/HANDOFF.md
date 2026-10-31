@@ -45,53 +45,34 @@
 
 ## Modelo local — avaliação real obrigatória
 
-- Aplicativo ainda usa Qwen 3.5 **2B**. Não afirmar que a qualidade foi resolvida.
-- Ensaios reais do 2B, inclusive outra quantização, falharam na revisão semântica.
-- Qwen 3.5 4B q4_K_M executou 16 casos em Windows Server com 8 GB e 2 CPUs.
-  Mesmo com checagens lexicais verdes, as falas falharam: papéis trocados, número sem
-  fonte, assunto antigo contaminando resposta e sarcasmo sem sentido. Não aprovado.
-- `d050dd9` corrigiu papéis/exemplos. Ensaio [41203843825](https://github.com/oaovito/oao-companion-/actions/runs/41203843825)
-  passou 16/16 automaticamente, mas leitura das falas ainda reprovou qualidade livre.
-- `6ab2600` reduz humor forçado e esclarece personagem/interlocutora. O ensaio 9B
-  [41204166232](https://github.com/oaovito/oao-companion-/actions/runs/41204166232) falhou:
-  o runner Windows de 8 GB demorou 118 s na primeira chamada e acionou fallback.
-  Isso não comprova a qualidade do 9B no PC de 16 GB; não foi aprovado para distribuição.
-- Qwen 3 4B Instruct 2507 foi testado: falas ainda fantasiosas e explicação excedendo
-  limite de tempo. Não aprovado. Comparação seguinte: Gemma 3 4B, Ministral 3 3B e
-  Qwen 3.5 4B. Primeira rodada atingiu timeout no primeiro carregamento e limitou os
-  turnos seguintes por backoff; não confundir isso com prova de qualidade de cada modelo.
-- Ensaios seguintes usam carregamento explícito do app, medem preload e respostas-base
-  sem personagem, respeitam backoff entre casos e registram diagnóstico do servidor.
-  Modelo oficial do aplicativo permanece 2B até haver qualidade realmente verificada.
-- Qwen 3.5 4B e Ministral 3B também falharam com preload na leitura semântica.
-  Llama 3.1 8B e Qwen 3 8B excederam limites de tempo no runner de 8 GB/2 CPUs.
-  Gemma 3 4B com prompt técnico compacto respondeu ciência em 23 s e foi mais coerente,
-  porém repetiu a definição ao pedir exemplo; não aprovado como solução final.
-- Ensaio de 30 casos em `f1716f3`: Gemma **26/30**, Llama 3.2 **23/30**, Phi-4-mini
-  **18/30**; todos reprovados. Problemas reais: exemplo incompleto/lento, desprezo à
-  usuária, inglês respondido em português e invenções sobre a conversa.
-- Nova rodada: Gemma 3 4B e Qwen 3 4B Instruct. Instruções internas em inglês com
-  idioma de resposta explícito; identidade física só quando pertinente; objetivo de
-  fazer companhia antes do humor; histórico menor para assuntos novos. Nomes conhecidos
-  têm resposta protegida imediata, como os fatos sobre o criador. Não trocar o modelo
-  oficial antes de ler cada fala real.
-- `306e2c6`: Gemma **28/30**, Qwen 3 4B **27/30**, ainda reprovados na leitura das
-  falas. Problemas: narração de gestos impressa, promessa falsa de limpar teclado,
-  idioma anterior contaminando a resposta e correção de preferência tratada com hostilidade.
-  Próxima correção separa fala/narração, impede alegação física, filtra exemplos de voz
-  do idioma anterior e aceita desculpa breve somente em feedback de correção.
-- Acrescentado `test/e2e/conversation-real.windows.mjs`: dez turnos pela Central/IPC,
-  controlador e modelo reais, além do ensaio do engine. Só é executado quando os
-  30 casos de backend passam; falha bloqueia o job. Ainda aguarda execução.
-- `.github/workflows/jojo-conversation-windows.yml` baixa Ollama Windows com SHA-256
-  verificado e roda `scripts/check-conversation.mjs` contra inferência real, somente loopback,
-  sem nuvem/login/custo. Resultados no resumo/logs do Actions, sem depender da cota de artefatos.
-- Troca oficial exige atualizar seleção/migração, configuração, UI, documentação e testes;
-  preservar dados/modelos antigos e o funcionamento offline. Não trocar silenciosamente por API externa.
+- Configuração candidata consolidada: **Gemma 3 4B**, `gemma3:4b-it-q4_K_M`;
+  alias `gemma3:4b`. Manifestos comparados e equivalentes:
+  `sha256:68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7`.
+  Download total de aproximadamente 3,35 GB. Usuária confirmou 16 GB de RAM ou mais.
+- Escolha fundamentada em inferência real no Windows. Qwen 3.5 2B/4B, Qwen 3 4B,
+  Ministral 3B, Llama 3.2 3B e Phi-4-mini falharam na leitura semântica; modelos
+  de 8/9B excederam o limite de tempo no runner de 8 GB/2 CPUs. Não afirmar que
+  resultados lexicais verdes de candidatos anteriores comprovaram coerência.
+- [Ensaio 41214482175](https://github.com/oaovito/oao-companion-/actions/runs/41214482175):
+  Gemma passou 30/30 no engine. Falas lidas: contexto, preferências, correção,
+  inglês, diabetes e exemplo coerentes, sem narração corporal ou ameaça. Ainda
+  há limitações de humor e naturalidade; não declarar perfeição geral.
+- O teste pela Central encontrou reação neutra em exemplo técnico sem pesquisa.
+  Causa: seriedade calculada só pela nova mensagem; agora herda o assunto em andamento.
+  Regressão unitária aprovada. Nova execução [41214891976](https://github.com/oaovito/oao-companion-/actions/runs/41214891976)
+  em andamento; exige 30 turnos no engine e dez pela interface/IPC/modelo reais.
+- Seleção aceita somente variante avaliada/alias; nomes antigos migram ao novo padrão
+  sem religar conversa, pesquisa, autostart ou atualização desligados. Modelos/dados
+  antigos não são apagados. UI usa o nome do contrato compartilhado.
+- `scripts/check-conversation-windows.ps1` baixa runtime Windows com SHA-256,
+  executa modelo em loopback e publica relatório no resumo/log. Mesmo ensaio exigido
+  no CI oficial antes da publicação; workflow separado fica só na branch de avaliação.
+- Não há nova release: **0.43.1 pública ainda usa o Qwen antigo**. Aprovar distribuição
+  somente depois de ler as saídas do novo ensaio e do CI completo da configuração final.
 
 ## Evidências verificadas
 
-- Unitários locais atuais: **298/298**, sem pulos; host executa apenas lógica pura em Node.
+- Unitários locais atuais: **300/300**, sem pulos; host executa apenas lógica pura em Node.
 - [CI Windows 41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466),
   código `034133d`: **292 unitários, 16 integração nativa/processos, 29 E2E**, todos passaram,
   sem pulos. Portátil/instalador/ZIP gerados e conferidos por nome/tamanho/SHA-256;

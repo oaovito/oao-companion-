@@ -1,6 +1,6 @@
 # PRODUCT_SPEC — JoJo Companion
 
-Referência dos requisitos atuais (v0.1). Mudanças futuras chegam por prompts
+Referência dos requisitos atuais. Mudanças futuras chegam por prompts
 elaborados pelo usuário; preserve o que está aqui salvo substituição explícita.
 
 ## Plataforma suportada (diretriz atual)
@@ -87,10 +87,16 @@ leitura proporcional (2,4–9,5 s), no máximo um por vez, intervalo configuráv
 
 ## 8. Conversa
 
-Offline, respostas programadas por intenção (cumprimentar, dormir, acordar,
-comer, brincar, carinho, agradecer, como vai, nome, ajuda). Interface marca
-"Respostas programadas · offline · não é IA". `DialogueProvider` permite
-integrar modelo local ou API no futuro, sempre opcional e com fallback.
+Uma única conversa contínua na Central, incluindo avisos e lembretes. Comandos
+legados para nova conversa preservam o histórico. Conversa livre usa Ollama e o
+modelo oficial definido em `src/core/dialogue/local-model.js`, no próprio PC, sem
+login nem API externa como alternativa automática. Preparação inicial baixa runtime
+e pesos; depois a inferência funciona offline. Respostas programadas por intenção
+continuam disponíveis quando o modelo está desligado, preparando ou indisponível.
+Fatos de identidade e respostas de segurança ficam protegidos. Perguntas e negações
+não executam ações. Toda fala entregue entra no contexto; correções e referências
+recentes devem ser entendidas. A expressão acompanha o assunto, inclusive exemplos
+técnicos, sem interromper fuga, tela cheia ou Modo Trabalho.
 
 ## 8b. Pet, atividades e Central
 
@@ -98,7 +104,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 |---|---|---|
 | A1 | Pet flutuante | Sempre por cima, arrastável no modo de interação, posição salva |
 | A2 | Status das conversas | Só na Central: *Em andamento*, *Precisa de você*, *Pronto* (não vista) ou *Bloqueado*; nada de barra ao lado do pet (removida na 0.42) |
-| A3 | Abrir o app | Clique no pet traz a Central do JoJo para frente; clique numa atividade abre aquela conversa |
+| A3 | Abrir o app | Clique no pet traz a Central para frente; atividades compartilham a única conversa |
 | A4 | `/pet` | Alterna mostrar/ocultar; menu "/" e Configurações mostram *Wake Pet* / *Tuck Away Pet* |
 | A5 | Movimento reduzido | Respeita `prefers-reduced-motion` do sistema (ou a configuração): quadros estáticos, sem partículas, sem passeio |
 | A6 | Crise | Se a Emanuele disser que está em crise/emocionalmente mal, mandar falar com o João para cuidar dela |
@@ -110,7 +116,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 |---|---|---|
 | Q1 | Pergunta sem resposta | Pergunta de conhecimento sem resposta programada → pesquisa (Wikipédia, depois DuckDuckGo) e resposta no jeito do JoJo, coerente com o perfil (palavrões/humor filtrados), com a fonte |
 | Q2 | Rede mínima | Só o texto da pergunta sai; conversa comum, crise e pedidos contra as diretrizes não acessam a rede; desligável (`webSearch`) |
-| Q3 | Falha | Sem internet: aviso e conversa *Bloqueado* |
+| Q3 | Falha | Sem internet, conversa local continua após preparação; falha de pesquisa é informada sem inventar fontes |
 | N1 | Animações | ≥ 2× a v0.8 (33 → 85); comuns com 3–4 variações coerentes com o motivo |
 | N2 | Emoção e cor | Raiva avermelha, tristeza acinzenta (também medo, alegria, sono, vergonha) |
 | M1 | Meme | "Vai tomar no cu" → vira de costas, susto com o prolapso saltando, rebola mostrando por ~5 s, desvira |
@@ -121,7 +127,7 @@ integrar modelo local ou API no futuro, sempre opcional e com fallback.
 | M4 | Fantasia ousada | Padrão ousado; "se veste direito" → dedo do meio + versão comportada |
 | M5 | Comida | Comida de tubarão sorteada (às vezes gente), gore e arroto no fim |
 | M6 | AVC | "AVC" → força de frente, segura o peito, morto 1 min, "Essa foi por pouco."; sintomas reais → SAMU 192 |
-| C1 | Conversa natural | Entende e responde de forma orgânica no jeito do JoJo (API gratuita); personalidade irredutível; sem menção a IA na tela; volta às programadas sem internet |
+| C1 | Conversa natural | Inferência no próprio PC, no jeito do JoJo; personalidade preservada; modo programado continua disponível sem modelo |
 | X1 | Distribuição | `JoJoCompanion.exe` portátil abre sem instalar nada (verificado no CI do Windows) |
 
 ## 9. Privacidade e desempenho
@@ -150,7 +156,7 @@ braços cruzados, sobrancelha levantada, dentes à mostra, ataque teatral só so
 | P3 | Silêncio | Modo silencioso/pausa suprimem broncas e lembretes; "silêncio" na conversa liga o modo silencioso |
 | P4 | Palavrões | nenhum / ocasional / frequente filtra e pondera as falas marcadas |
 | P5 | Privacidade | Só título da janela em primeiro plano/nome do executável, comparados localmente; nada é guardado ou enviado; sem bloquear apps, fechar páginas ou impedir cliques |
-| P6 | IA futura | `instrucoes` do perfil é passado como `context.persona` aos provedores de diálogo |
+| P6 | Personalização da conversa | `instrucoes` do perfil integra o prompt local, respeitando limites e identidade |
 | P7 | Nome | O companion se chama **JoJo** (`nomeCompanion`); o app continua "JoJo Companion" |
 | P8 | Tratamento | A usuária é chamada de **Emanuele** em falas sérias e **Manu** em brincadeiras (tom por categoria/frase/resposta) |
 | P9 | Tristeza | Se ela disser na conversa que está chorando ou muito triste: dizer que é melhor falar com o **João**, porque ele sabe cuidar dela (postura de acolhimento, boca fechada). Menção a se machucar/suicídio: falar com o João agora e CVV 188 |
@@ -158,5 +164,5 @@ braços cruzados, sobrancelha levantada, dentes à mostra, ataque teatral só so
 
 ## 10. Fora do escopo atual
 
-Arte final, sons gravados, assinatura de código, auto-update, idiomas além de pt-BR,
-IA real.
+Arte final, sons gravados e assinatura de código. Atualização automática, conversa
+local e respostas em inglês já fazem parte do produto. Não criar versões para outros sistemas.

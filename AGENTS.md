@@ -45,7 +45,7 @@ Requisitos irredutíveis:
 - Tela cheia é intocável: ocultar tudo, inclusive interação; não ir para monitor ocupado;
   suportar monitores/DPI, suspensão e recuperação de posição.
 - Central, motor de intenções, conversa programada offline e conversa local via
-  Ollama/Qwen 3.5 2B no próprio PC; personalidade preservada e fallback programado.
+  Ollama/Gemma 3 4B no próprio PC; personalidade preservada e fallback programado.
 - Modo Trabalho silencioso com prioridade; silêncio de áudio absoluto; persistência,
   autostart habilitado por padrão, vigia de crash e saída explícita pela bandeja respeitada.
 - Sem captura de tela, microfone, telemetria ou registro de teclas/cliques. Detecção local
@@ -86,7 +86,9 @@ calendário real; testes de feriados devem fornecer datas explícitas.
 
 `.github/workflows/jojo-windows.yml` valida pushes em `main`, `claude/**`, `codex/**`
 e tags `v*`; `workflow_dispatch` só valida. Conferir unitários, build dos três formatos,
-smoke do portátil, vigia, integração Windows, E2E e medição. Pesquisa real e comparação
+smoke do portátil, vigia, integração Windows, E2E, 1.043 animações, medição e conversa
+com inferência/interface reais. `scripts/check-conversation-windows.ps1` é o gate
+compartilhado; falha nele impede publicação. Pesquisa real e comparação
 GPU são diagnósticos opcionais; falha de upload de artefatos não equivale a falha do build.
 Não alegar teste em Windows físico: runner Windows Server de um monitor não comprova
 Windows 11 doméstico, DPI misto, suspensão física ou troca real do instalador.

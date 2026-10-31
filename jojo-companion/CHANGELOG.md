@@ -3,6 +3,7 @@
 ## Não lançado — conversa única e coerência
 
 ### Melhorias
+- Conversa local migra do Qwen 3.5 2B para Gemma 3 4B; seleção aceita só a variante avaliada/alias, com preparação automática no PC e preservação das preferências e dados.
 - Desenvolvimento e validação oficiais exclusivos para Windows; build nativo por Node sem Bash/Wine, sem infraestrutura gráfica para outros sistemas.
 - Uma conversa contínua na Central, incluindo lembretes e avisos; comandos legados não apagam nem dividem o histórico.
 - O histórico entregue ao modelo inclui as respostas de atalhos e eventos realmente vistas na conversa.
@@ -26,7 +27,7 @@
 ### Como testar
 - npm test; npm run test:e2e; node scripts/check-conversation.mjs com Ollama/modelo local instalado.
 - Repetir os exemplos das capturas, conferir chat único e histórico, e ler as falas reais antes de aprovar publicação.
-- A qualidade livre do Qwen 3.5 2B ainda está sob avaliação: testes automatizados verdes não autorizam declarar a conversa resolvida.
+- Validar a configuração final no Windows com 30 turnos no engine e dez na Central usando inferência real; testes lexicais não substituem revisão das falas.
 
 ## Não lançado — transferência operacional para o Codex
 

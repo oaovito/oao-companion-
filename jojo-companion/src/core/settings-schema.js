@@ -4,7 +4,7 @@
 import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
 
-export const SETTINGS_VERSION = 5;
+export const SETTINGS_VERSION = 6;
 
 export const DEFAULTS = Object.freeze({
   version: SETTINGS_VERSION,
@@ -24,8 +24,8 @@ export const DEFAULTS = Object.freeze({
   reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
   webSearch: true,              // pesquisar na internet perguntas sem resposta programada
   autoUpdate: true,             // baixar e instalar versões novas automaticamente
-  iaAtivo: true,                // conversa com IA por API gratuita
-  iaProvedor: 'ollama',         // ollama (Qwen 3.5 2B neste PC) | pollinations | groq | gemini | openrouter (só reversão manual)
+  iaAtivo: true,                // conversa local, sem serviço pago
+  iaProvedor: 'ollama',         // ollama (modelo oficial neste PC) | pollinations | groq | gemini | openrouter (só reversão manual)
   iaChave: '',                  // chave de provedor antigo (só reversão manual; fica só neste PC)
   iaModelo: '',                 // modelo (vazio = padrão do provedor)
   // Animações e falas ambientes (motor de variedade / antitédio).
@@ -236,6 +236,11 @@ export function migrate(obj, issues = []) {
   if (v < 2) {
     // v2: "iniciar com o Windows" passou a vir ligado; quem tinha o padrão antigo ganha o novo.
     if (o.startWithWindows === false) o.startWithWindows = true;
+  }
+  if (v < 6 && (!o.iaProvedor || o.iaProvedor === 'ollama') && /^qwen3\.5:2b(?:$|-)/.test(o.iaModelo || '')) {
+    // v6: o nome legado passa ao modelo oficial. Não religar conversa/rede,
+    // autostart ou integrações; não apagar pesos antigos nem dados pessoais.
+    o.iaModelo = '';
   }
   return o;
 }

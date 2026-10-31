@@ -1,4 +1,4 @@
-// Motor da conversa: Qwen 3.5 2B no Ollama do próprio PC, instalado sozinho e
+// Motor da conversa: modelo oficial no Ollama do próprio PC, instalado sozinho e
 // ligado só enquanto ela conversa.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,6 +10,7 @@ import { createHash } from 'node:crypto';
 import { LlmProvider, OLLAMA_MODEL, readNdjson, isTechnical } from '../../src/core/dialogue/llm-provider.js';
 import { sanitize, migrate } from '../../src/core/settings-schema.js';
 import { criarCerebroLocal, escolherModelo, ambienteOllama, PORTA, MODELO } from '../../src/main/cerebro-local.js';
+import { LOCAL_MODEL_ALIAS } from '../../src/core/dialogue/local-model.js';
 
 const listen = (srv) => new Promise((r) => srv.listen(0, '127.0.0.1', () => r(`http://127.0.0.1:${srv.address().port}`)));
 
@@ -33,7 +34,7 @@ function provider(brain, cfg = {}) {
   return new LlmProvider({ fetch: (u, o) => fetch(u, o), getConfig: () => ({ ativo: true, provedor: 'ollama', ...cfg }), getProfile: () => ({ nomeSerio: 'Emanuele' }), getExamples: () => ['Mais uma série.'], timeoutMs: 3000, brain });
 }
 
-test('Qwen 3.5 2B local: /api/chat com streaming, contexto curto, e mantém o motor ligado enquanto conversa', async () => {
+test('modelo local: /api/chat com streaming, contexto curto, e mantém o motor ligado enquanto conversa', async () => {
   const { srv, pedidos } = fakeOllama();
   const base = await listen(srv);
   let usos = 0;
@@ -92,17 +93,27 @@ test('streaming: junta os pedaços NDJSON; erro do Ollama vira erro', async () =
   assert.equal(isTechnical('oi tudo bem'), false);
 });
 
-test('configurações: todo mundo migra para o Qwen deste PC', () => {
+test('configurações antigas migram para a conversa deste PC', () => {
   const { settings } = sanitize(migrate({ version: 2, iaProvedor: 'pollinations', iaModelo: 'openai' }));
   assert.equal(settings.iaProvedor, 'ollama');
   assert.equal(settings.iaModelo, '');
   assert.equal('iaServidor' in settings, false);
 });
 
+test('migração do modelo preserva conversa desligada, privacidade, posição e autostart', () => {
+  const previous = { version: 5, iaProvedor: 'ollama', iaModelo: 'qwen3.5:2b-q4_K_M',
+    iaAtivo: false, webSearch: false, startWithWindows: false, autoUpdate: false,
+    position: { x: -120, y: 80, displayId: 'externo' }, quietMode: true };
+  const migrated = sanitize(previous).settings;
+  assert.equal(migrated.iaModelo, '', 'deixa o cérebro escolher somente o novo modelo oficial');
+  for (const key of ['iaAtivo', 'webSearch', 'startWithWindows', 'autoUpdate', 'position', 'quietMode']) assert.deepEqual(migrated[key], previous[key], key);
+  assert.equal(sanitize({ ...previous, iaProvedor: 'groq', iaModelo: 'modelo-manual' }).settings.iaModelo, 'modelo-manual', 'não altera integração opcional escolhida manualmente');
+});
+
 test('cérebro local: modelo certo (nunca outro tamanho) e Ollama enxuto, só em 127.0.0.1', () => {
-  assert.equal(escolherModelo(['llama3:8b', 'qwen3.5:2b-q4_K_M']), 'qwen3.5:2b-q4_K_M');
-  assert.equal(escolherModelo(['qwen3.5:2b']), 'qwen3.5:2b');
-  assert.equal(escolherModelo(['qwen3.5:9b', 'qwen3.5:0.8b']), null);
+  assert.equal(escolherModelo([LOCAL_MODEL_ALIAS, MODELO]), MODELO);
+  assert.equal(escolherModelo([LOCAL_MODEL_ALIAS]), LOCAL_MODEL_ALIAS);
+  assert.equal(escolherModelo(['qwen3.5:2b-q4_K_M', 'qwen3.5:2b', 'gemma3:4b-it-q8_0', 'gemma3:27b']), null);
   const env = ambienteOllama('C:/x');
   assert.equal(env.OLLAMA_HOST, `127.0.0.1:${PORTA}`);
   assert.equal(env.OLLAMA_MAX_LOADED_MODELS, '1');
@@ -110,7 +121,7 @@ test('cérebro local: modelo certo (nunca outro tamanho) e Ollama enxuto, só em
   assert.equal(env.OLLAMA_NO_CLOUD, '1');
 });
 
-test('cérebro local: primeira vez baixa e instala o Ollama, liga com prioridade baixa e baixa o Qwen; depois desliga ocioso', async () => {
+test('cérebro local: primeira vez instala o Ollama e baixa o modelo; depois desliga ocioso', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-cerebro-'));
   const chamadas = [];
   let modeloBaixado = false;

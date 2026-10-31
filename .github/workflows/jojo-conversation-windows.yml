@@ -2,7 +2,7 @@ name: JoJo — conversa real no Windows (avaliação)
 
 on:
   push:
-    branches: ['codex/conversation-coherence', 'qa/conversation-models']
+    branches: ['qa/conversation-models']
     paths:
       - '.github/workflows/jojo-conversation-windows.yml'
       - 'jojo-companion/scripts/check-conversation*'

@@ -11,6 +11,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 import { requireWindows } from '../../src/main/windows-only.js';
+import { LOCAL_MODEL } from '../../src/core/dialogue/local-model.js';
 requireWindows();
 
 const require = createRequire(import.meta.url);
@@ -608,7 +609,7 @@ test('comida de tubarão com arroto e fantasia ousada/comportada no renderer', a
   }
 });
 
-test('conversa online: Qwen 3.5 2B no servidor (Ollama /api/chat, streaming) responde no jeito do JoJo, sem mencionar IA na tela', async () => {
+test('conversa local: transporte Ollama com streaming preserva personalidade e modelo oficial', async () => {
   const bodies = [];
   const urls = [];
   // Servidor falso no formato do Ollama: uma linha JSON por pedaço (streaming).
@@ -640,7 +641,7 @@ test('conversa online: Qwen 3.5 2B no servidor (Ollama /api/chat, streaming) res
     assert.equal(last, 'Dia bom é dia de supino, Manu. O seu foi no Instagram.');
     assert.equal(bodies.length, 1);
     assert.equal(urls[0], '/api/chat');
-    assert.equal(bodies[0].model, 'qwen3.5:2b-q4_K_M');
+    assert.equal(bodies[0].model, LOCAL_MODEL);
     assert.equal(bodies[0].stream, true);
     assert.ok(bodies[0].options.num_ctx <= 4096 && bodies[0].options.num_predict <= 512);
     assert.match(bodies[0].messages[0].content, /humor seco|dry humo[u]?r/i);
