@@ -159,6 +159,7 @@ export function sleepAllowed(date = new Date()) {
 export function detectIntent(text) {
   if (isEnglish(text)) {
     const intent = detectIntentEn(text);
+    if (['sleep', 'wake', 'eat', 'play', 'pet', 'quiet', 'bench', 'squat', 'scare', 'dressDown', 'dressUp'].includes(intent) && pedidoNegado(text)) return 'unknown';
     return SEARCHABLE.has(intent) && isEnglishFactualQuestion(text) ? 'unknown' : intent;
   }
   const n = normalizeText(text);
