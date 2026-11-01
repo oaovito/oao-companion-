@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -24,6 +24,50 @@ test('recusa explícita de treino confirma a negativa sem chamar o modelo nem ex
 });
 
 const model = (reply) => ({ isAvailable: async () => true, timeoutMs: 1000, reply: typeof reply === 'function' ? reply : async () => reply });
+
+test('correcao das proprias palavras distingue esclarecimento de pergunta e relato de terceiros', () => {
+  for (const text of ['Eu disse lilás, não rosa.', 'JoJo, falei de manhã, não à noite.', 'Eu quis dizer quinta-feira.', 'I said Thursday, not Tuesday.', 'I meant blue.']) assert.equal(correcaoPessoal(text), true, text);
+  for (const text of ['O João disse quinta, não terça.', 'Eu disse isso ontem?', 'Qual é a diferença entre azul e verde?']) assert.equal(correcaoPessoal(text), false, text);
+});
+
+test('correcao pessoal nao aceita resposta que duvida da memoria ou certeza da usuaria', () => {
+  const input = 'Eu disse lilás, não rosa.';
+  assert.equal(erroDeCoerencia(input, 'Você tem certeza? A memória às vezes falha.'), 'contestação da correção pessoal');
+  assert.equal(erroDeCoerencia('I meant Thursday, not Tuesday.', 'Are you sure?'), 'contestação da correção pessoal');
+  assert.equal(erroDeCoerencia(input, 'Lilás, entendido. Eu que troquei as coisas.'), null);
+  assert.equal(erroDeCoerencia('Não sei se desliguei o forno.', 'Tem certeza de que ficou ligado?'), null);
+});
+
+test('correcao vai ao modelo como esclarecimento explicito, preservando a mensagem e o contexto', async () => {
+  const calls = [];
+  const provider = new LlmProvider({
+    fetch: async (_, options) => {
+      calls.push(JSON.parse(options.body));
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'Lilás, entendido.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => PERSONALITY_DEFAULTS,
+    baseOverride: 'http://127.0.0.1:1',
+  });
+  const history = [{ role: 'user', text: 'Minha cor é lilás.' }, { role: 'jojo', text: 'Rosa, então.' }];
+  const input = 'Eu disse lilás, não rosa.';
+  assert.equal((await provider.reply({ text: input, history })).text, 'Lilás, entendido.');
+  assert.match(calls[0].messages[0].content, /correcting her own wording/);
+  assert.match(calls[0].messages[0].content, /does not confirm the truth of medical claims/);
+  assert.equal(calls[0].messages.at(-1).content, input);
+  assert.ok(calls[0].messages.some((m) => m.content === history[0].text));
+});
+
+test('correcao pessoal permanece no historico entregue ao modelo no turno seguinte', async () => {
+  const calls = [];
+  const engine = new DialogueEngine({ llm: model(async (request) => {
+    calls.push(structuredClone(request.history));
+    return { text: 'Lilás, entendido.', action: 'nod' };
+  }) });
+  const correction = 'Eu disse lilás, não rosa.';
+  assert.equal((await engine.reply(correction)).intent, 'ia');
+  assert.equal((await engine.reply('Qual cor você deve lembrar?')).intent, 'ia');
+  assert.ok(calls[1].some((h) => h.role === 'user' && h.text === correction));
+});
 const fonte = { consulta: 'diabetes', confianca: 'alta', trechos: [{ texto: 'Diabetes envolve resistência à insulina.', titulo: 'Diabetes', fonte: 'Fonte' }], fontes: [{ fonte: 'Fonte' }] };
 async function pump(e, n = 12) {
   for (let i = 0; i < n; i++) { e.clock.advance(100); for (let j = 0; j < 8; j++) await Promise.resolve(); }

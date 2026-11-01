@@ -160,3 +160,19 @@ os gates Windows, conferência dos três binários e detecção pelo atualizador
   Ensaio de conversa movido para depois dos unitários, antes do build, sem duplicar
   nem remover suítes. Falhas agora mostram o fim do log já filtrado, além do artefato.
   Executar novamente todos os gates no novo commit e registrar o resultado.
+
+## Correcao encontrada pelo modelo real
+
+[41270720172](https://github.com/oaovito/oao-companion-/actions/runs/41270720172),
+`db4c657`: PowerShell 7 e verificacao de SHA-256 passaram; motor real respondeu
+29/30 casos. Falha preservada: "Eu disse manga, nao maca" recebeu "Voce tem certeza?
+A memoria as vezes falha". A Central e os builds nao foram repetidos apos essa falha.
+
+Correcao do aplicativo: esclarecimentos das proprias palavras recebem instrucao
+explicita de reconhecimento, sem questionar a memoria e sem converter afirmacoes
+medicas em fatos. Contestacoes da certeza/memoria nesse contexto sao descartadas.
+Nao foi criada resposta fixa nem simulado intent de IA para fazer o teste passar.
+Quatro regressoes unitarias cobrem portugues/ingles, relato de terceiros, prompt,
+rejeicao da fala incorreta e continuidade do contexto. Ensaio real ampliado para
+**31 cenarios engine + 12 Central**, mantendo os 30 + dez anteriores.
+Todos os gates precisam passar novamente antes de criar/publicar v0.44.0.

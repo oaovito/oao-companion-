@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.44.0 — 2026-10-31
+## 0.44.0 — 2026-11-01
 
 ### Melhorias
 - Conversa local passa do Qwen 3.5 2B para Gemma 3 4B, com instruções menores, texto sem narração corporal e separação entre fala e expressão. Preparação automática carrega os pesos antes de anunciar pronto.
@@ -9,6 +9,7 @@
 - A boca acompanha a duração do texto, e exemplos técnicos mantêm a expressão do assunto mesmo sem pesquisa externa.
 
 ### Correções
+- Correções explícitas sobre o que a usuária disse são reconhecidas sem questionar sua memória; a mensagem corrigida permanece no contexto seguinte.
 - Fatos sobre identidade e João são protegidos; provocações não geram ameaças, nomes trocados ou João como resposta para qualquer assunto.
 - Perguntas pessoais não disparam pesquisa genérica; perguntas de conhecimento não viram ações de comer, dormir ou exercitar-se por palavra-chave.
 - Negações não viram comemoração, preferência falsa, treino ou brincadeira; referências ao tamanho de outros objetos não redimensionam o personagem.

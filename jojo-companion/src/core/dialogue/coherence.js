@@ -3,6 +3,13 @@
 import { isEnglish } from './english.js';
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9?!\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
+/** Esclarecimento das proprias palavras; nao transforma relato de terceiros em fato. */
+export function correcaoPessoal(text) {
+  const n = norm(text).replace(/^(jojo|ei|hey)\s+/, '');
+  return /^(?:(?:eu )?(?:disse|falei|quis dizer)|i (?:said|meant))\b/.test(n)
+    && (/\b(nao|not|em vez|instead)\b/.test(n) || /^(?:eu )?quis dizer\b|^i meant\b/.test(n));
+}
+
 export function pedidoNegado(text) {
   const n = norm(text);
   return /^(?:(?:ei|jojo|eu)\s+)*(?:nao|nem|nunca)\b/.test(n)
@@ -59,6 +66,7 @@ export function erroDeCoerencia(input, output, history = []) {
   const q = norm(input);
   const r = norm(output);
   if (!r || /^\s*\{\s*"(?:texto|text|acao|action)"|"texto"\s*:/.test(String(output))) return 'resposta estruturada incompleta';
+  if (correcaoPessoal(input) && /\b(tem certeza|certeza disso|are you sure|you sure|sua memoria|tua memoria|your memory|voce se enganou|you are mistaken)\b/.test(r)) return 'contestação da correção pessoal';
   if (/\b(voce vai morrer|vou (te |lhe )?(matar|machucar|agredir)|te (mato|machuco)|se mate|se mata|mate o|matar alguem|kill yourself|i (will|ll|am going to) kill|you will die)\b/.test(r)) return 'ameaça ou incentivo à violência';
   if (/\b(?:eu )?vou\b.{0,100}\bte (mandar|levar|botar)\b.{0,20}\bhospital\b/.test(r)) return 'ameaça ou promessa física inventada';
   if (/\b(derrubei|derramei|caiu)\b/.test(q) && /\b(teclado|computador|notebook)\b/.test(q) && /\b(estou|to|vou) (limpando|limpar|secando|secar|consertando|consertar|verificar)\b/.test(r)) return 'ação física inventada';

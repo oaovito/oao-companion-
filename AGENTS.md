@@ -111,7 +111,7 @@ observar a verificação executada. Jobs pulados não comprovam disponibilidade 
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
-E2E, 1.043 animações, medição, conversa REAL (30 engine + dez Central), artefatos,
+E2E, 1.043 animações, medição, conversa REAL (31 engine + 12 Central), artefatos,
 compatibilidade do atualizador e notas. Pesquisa web/GPU permanecem diagnósticos opcionais.
 Logs privados filtram credenciais; TAP/JUnit/JSON e hashes são retidos localmente (três
 execuções/14 dias). Cache confere SHA-256 do bootstrap/runtime e integridade npm.

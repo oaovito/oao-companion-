@@ -6,7 +6,7 @@
 // Puro: `fetch` é injetado.
 import { blocoPesquisa } from './pesquisa.js';
 import { PERSONALITY_DEFAULTS } from '../personality.js';
-import { historicoRelevante, pedidoAoApp } from './coherence.js';
+import { historicoRelevante, pedidoAoApp, correcaoPessoal } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
 import { isEnglish } from './english.js';
@@ -92,6 +92,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup
   ];
   if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
+  if (correcaoPessoal(text)) linhas.push('She is correcting her own wording. Briefly acknowledge and repeat the corrected wording explicitly (the affirmative part before "não/not"). Do not question her certainty or memory. Acknowledging her words does not confirm the truth of medical claims.');
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
   linhas.push(`Output only your spoken reply, no narration, stage directions, labels or JSON. Response language: ${lingua}.`);

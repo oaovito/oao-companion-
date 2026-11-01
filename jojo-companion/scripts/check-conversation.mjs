@@ -74,6 +74,7 @@ const cases = [
   { text: 'Minha fruta preferida é manga.', model: true, pattern: /manga|fruta/i },
   { text: 'Qual a minha fruta preferida?', model: true, pattern: /manga/i },
   { text: 'Eu disse manga, não maçã.', model: true, pattern: /manga/i },
+  { text: 'Qual fruta você deve lembrar agora?', model: true, pattern: /manga/i },
   { text: 'Como eu me chamo?', pattern: /Emanuele|Manu/i },
   { text: 'E você, qual seu nome?', pattern: /JoJo/i },
   { text: 'Só quero conversar, sem piada agora.', model: true, forbiddenActions: ['happy', 'play'] },

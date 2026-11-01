@@ -31,9 +31,9 @@ código privado para o repositório público. Nenhum commit de polling é criado
 ## Gates que continuam obrigatórios
 
 Preflight de sessão isolada; lint JS/JSON; instalação com lockfile; todos os unitários
-(mínimo **325**, incluindo os 312 anteriores); build portátil/NSIS/ZIP; instalação,
+(mínimo **329**, incluindo os 312 anteriores); build portátil/NSIS/ZIP; instalação,
 inicialização e desinstalação NSIS; smoke portátil; vigia/crash/atalho; 16 integrações
-nativas; 29 E2E; 1.043 animações no renderer; desempenho; 30 cenários do engine e dez
+nativas; 29 E2E; 1.043 animações no renderer; desempenho; 31 cenários do engine e 12
 da Central com Ollama/modelo reais; nomes/MZ/PK/tamanhos/SHA-256; compatibilidade do
 atualizador; changelog incremental. Nenhuma suíte foi removida ou substituída por Linux.
 Pesquisa real e comparação GPU permanecem diagnósticos opcionais como no workflow original.

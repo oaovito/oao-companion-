@@ -60,6 +60,8 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
       { text: 'você está bem?', model: true },
       { text: 'Minha cor preferida é verde.', model: true },
       { text: 'Qual cor eu acabei de dizer que prefiro?', model: true, pattern: /verde/i },
+      { text: 'Eu disse verde, não azul.', model: true, pattern: /verde/i },
+      { text: 'Qual cor você deve lembrar agora?', model: true, pattern: /verde/i },
       { text: 'Derrubei café no teclado agora.', model: true, action: 'comfort' },
       { text: 'Não consegui terminar meu projeto.', model: true, action: 'comfort' },
       { text: 'o que é diabetes tipo 2?', model: true, pattern: /insulina/i, action: 'lecture' },
