@@ -3,6 +3,12 @@ export const PRIVATE = { owner: 'oaovito', repo: 'oao-companion-' };
 export const PUBLIC = { owner: 'oaovito', repo: 'jojo-companion-releases' };
 export const WORKFLOW = 'jojo-windows.yml';
 
+// Autorizacao para tentar o fluxo normal nao comprova a configuracao financeira da conta.
+function executionAllowed(policy) {
+  return (policy.normalExecutionAuthorized === true && typeof policy.executionAuthorization === 'string' && policy.executionAuthorization.trim().length > 0)
+    || (policy.paidUsageBlockedConfirmed === true && Boolean(policy.confirmation));
+}
+
 export function releaseState(release, version) {
   if (!release) return 'absent';
   if (release.tag_name !== `v${version}` || release.draft || release.prerelease) return 'blocked';
@@ -20,7 +26,7 @@ export function classifyFailure(message) {
 }
 
 export function recoveryDecision({ policy, release, sha, runs = [], jobs = [], annotation = '', now = Date.now() }) {
-  if (policy.paidUsageBlockedConfirmed !== true || !policy.confirmation) return { action: 'stop', reason: 'zero_paid_usage_unverified' };
+  if (!executionAllowed(policy)) return { action: 'stop', reason: 'execution_not_authorized' };
   const published = releaseState(release, policy.pendingVersion);
   if (published !== 'absent') return { action: 'stop', reason: published === 'published' ? 'already_published_metadata_valid' : 'existing_release_needs_inspection' };
   if (runs.some((r) => ['queued', 'in_progress', 'waiting', 'pending', 'requested'].includes(r.status))) return { action: 'stop', reason: 'pipeline_already_active' };
@@ -47,7 +53,7 @@ export async function readPublicRelease(version, token, fetchFn = fetch) {
 }
 
 export async function recover({ github, policy, releasesToken, now = Date.now(), fetchFn = fetch }) {
-  if (policy.paidUsageBlockedConfirmed !== true || !policy.confirmation) return recoveryDecision({ policy });
+  if (!executionAllowed(policy)) return recoveryDecision({ policy });
   const release = await readPublicRelease(policy.pendingVersion, releasesToken, fetchFn);
   if (release) return recoveryDecision({ policy, release });
   const ref = await github.rest.git.getRef({ ...PRIVATE, ref: `heads/${policy.sourceBranch}` });
@@ -77,7 +83,7 @@ export async function recover({ github, policy, releasesToken, now = Date.now(),
 // Executada no MESMO job Windows depois de todos os gates. Tag gerada com GITHUB_TOKEN
 // nao dispara outro build; a publicacao usa apenas RELEASES_TOKEN no passo seguinte.
 export async function prepareRelease({ github, policy, report, version, commit, files, releasesToken, fetchFn = fetch }) {
-  if (!policy.paidUsageBlockedConfirmed || !policy.confirmation || version !== policy.pendingVersion) throw new Error('Recuperacao desta versao nao esta autorizada');
+  if (!executionAllowed(policy) || version !== policy.pendingVersion) throw new Error('Recuperacao desta versao nao esta autorizada');
   const { assertValidation } = await import('./policy.mjs');
   assertValidation(report, { version, commit, files });
   const current = await readPublicRelease(version, releasesToken, fetchFn);

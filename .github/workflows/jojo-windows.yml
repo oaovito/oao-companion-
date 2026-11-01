@@ -22,9 +22,9 @@ concurrency:
 
 jobs:
   windows:
-    # COST_GATE: falta confirmar bloqueio de TODO consumo pago do Actions em zero.
+    # Tentativa normal autorizada pelo usuario; controles financeiros do GitHub intactos.
     # main guarda somente o controle horario; o aplicativo continua na branch Codex.
-    if: ${{ github.repository == 'oaovito/oao-companion-' && false && !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    if: ${{ github.repository == 'oaovito/oao-companion-' && !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: windows-latest
     timeout-minutes: 60
     steps:

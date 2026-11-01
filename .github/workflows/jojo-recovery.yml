@@ -20,8 +20,8 @@ concurrency:
 
 jobs:
   recovery:
-    # COST_GATE: falta confirmar bloqueio de TODO consumo pago do Actions em zero.
-    if: ${{ github.repository == 'oaovito/oao-companion-' && false }}
+    # Tentativa normal autorizada; nao altera planos, limites ou controles do GitHub.
+    if: ${{ github.repository == 'oaovito/oao-companion-' }}
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
