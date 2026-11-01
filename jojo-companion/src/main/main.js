@@ -31,6 +31,7 @@ import { commandMenu } from '../core/conversations.js';
 import { createTray } from './tray.js';
 import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
 import { criarPresenca, garantirAtalho } from './presenca.js';
+import { WeatherService } from '../core/weather.js';
 import { requireWindows } from './windows-only.js';
 
 requireWindows();
@@ -393,6 +394,7 @@ function main() {
     };
 
     // Agenda (só leitura, Google ou iCloud): busca o .ics a cada 10 min.
+    companion.weather = new WeatherService({ fetch: (url, options) => net.fetch(url, options) });
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;
     const fetchCalendar = async (url) => {
       const res = await net.fetch(calBase ? `${calBase}/basic.ics` : url, { headers: { 'User-Agent': `JoJoCompanion/${app.getVersion()}` } });
@@ -408,6 +410,7 @@ function main() {
       clearTimeout(agendaRetry);
       const s = store.get();
       if (!s.agendaUrl || !s.agendaAtiva) return;
+      companion.setCalendar({ state: 'syncing' });
       try {
         companion.setCalendar({ events: await fetchCalendar(s.agendaUrl) });
         agendaFalha.falhas = 0;
@@ -421,6 +424,7 @@ function main() {
         agendaRetry = setTimeout(syncCalendar, f.proximaMs);
       }
     };
+    companion.onCalendarSync = syncCalendar;
     // Voltou da suspensão: a rede demora uns segundos; lê a agenda de novo depois.
     powerMonitor.on('resume', () => setTimeout(syncCalendar, 20e3));
     companion.onCalendarConnect = async (url) => {

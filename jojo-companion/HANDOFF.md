@@ -1,5 +1,15 @@
 # HANDOFF — JoJo Companion
 
+## Missão ativa: 0.45.0 em implementação
+
+Branch `codex/living-companion`, baseada em `4193c2b`. A 0.44.0 continua publicada;
+nenhuma publicação 0.45.0 foi autorizada pelo pipeline ou realizada. Requisitos
+cumulativos, estado e pendências em [MISSAO_ATIVA](docs/MISSAO_ATIVA.md), incluindo
+o prompt mestre, Darkest Dungeon e a lista de tarefas. Não encerrar após apenas P0.
+336/336 testes puros passaram após clima/estados da agenda/relevância. Open-Meteo
+consultado de verdade para Guarapuava em 01/11/2026; validação Windows desta candidata
+ainda pendente. Não confundir os resultados Windows abaixo com a candidata nova.
+
 ## Estado atual e decisão definitiva
 
 - Desenvolvimento privado: **oaovito/oao-companion-**, fonte em `jojo-companion/`.

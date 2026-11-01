@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.45.0 — Em desenvolvimento
+
+### Correções
+- Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.
+- Estado e falhas da agenda são consultados antes de afirmar conexão ou ausência de compromissos.
+- Resultados de pesquisa sem correspondência com o assunto são descartados.
+
 ## 0.44.0 — 2026-11-01
 
 ### Melhorias

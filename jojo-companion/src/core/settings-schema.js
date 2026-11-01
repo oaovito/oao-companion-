@@ -42,6 +42,8 @@ export const DEFAULTS = Object.freeze({
   agendaAtiva: true,
   agendaAvisoMin: 10,           // aviso antes de cada compromisso (5 – 60 min)
   agendaSugerida: false,        // o JoJo já sugeriu conectar a agenda
+  climaAtivo: true,
+  climaCidade: '',              // cidade/estado escolhidos; sem geolocalizacao
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   percepcaoTela: false,         // percepção de tela: só o tipo do app em primeiro plano (local, sem captura); desligada por padrão
@@ -130,7 +132,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
+const BOOLS = ['climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -187,6 +189,7 @@ export function sanitize(input) {
       else issues.push(k);
     }
   }
+  if ('climaCidade' in src && typeof src.climaCidade === 'string') out.climaCidade = src.climaCidade.trim().slice(0, 120);
   if ('agendaUrl' in src) {
     if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');

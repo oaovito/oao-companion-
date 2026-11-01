@@ -9,7 +9,7 @@
 // (quantas fontes independentes concordam) e cache.
 // ChatGPT/Gemini não entram: exigem conta/chave e os termos proíbem acesso automatizado.
 import { normalizeText } from './scripted-provider.js';
-import { isFactualQuestion, extractQuery, isBlockedQuestion, tidyExtract } from './web-search.js';
+import { isFactualQuestion, extractQuery, isBlockedQuestion, tidyExtract, relevantResult } from './web-search.js';
 import { conversaPessoal } from './coherence.js';
 
 const CIENCIA = /\b(estudo|estudos|artigo|artigos|paper|evidencia\w*|literatura|revisao sistematica|metanalise|meta-analise|ensaio clinico|pubmed|doi|segundo a ciencia|o que a ciencia diz|pesquisas mostram|nanopart\w*|potencial zeta|dls|nta|polidispers\w*|farmacocinet\w*|mecanismo de acao|biodistribui\w*|citotoxic\w*)\b/;
@@ -220,7 +220,7 @@ export class MotorPesquisa {
       this.log('warn', `Pesquisa (${tipo}) falhou: ${e.message}`);
       return [];
     })));
-    const trechos = listas.flat().filter((x) => x && x.titulo).slice(0, 5);
+    const trechos = listas.flat().filter((x) => x && x.titulo && relevantResult(consulta, x)).slice(0, 5);
     if (!trechos.length) {
       if (erros.length === tarefas.length) throw new Error(erros.join('; '));
       return null;

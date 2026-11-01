@@ -7,6 +7,16 @@
 import { isEnglish, extractQueryEn } from './english.js';
 import { normalizeText } from './scripted-provider.js';
 import { conversaPessoal } from './coherence.js';
+import { weatherRequest } from '../weather.js';
+
+const EMPTY_TERMS = new Set(['como', 'funciona', 'sobre', 'quais', 'qual', 'quem', 'onde', 'quando', 'porque', 'para', 'hoje', 'agora', 'mais', 'pode', 'sabe', 'explica', 'explique', 'pesquisa', 'procura', 'significa', 'segundo', 'estudo', 'estudos', 'artigo', 'artigos', 'dizem', 'papers', 'literatura']);
+export function relevantResult(query, result) {
+  const words = [...new Set(normalizeText(query).split(' ').filter((w) => w.length >= 4 && !EMPTY_TERMS.has(w)))];
+  if (!words.length) return false;
+  const content = normalizeText(`${result.title || result.titulo || ''} ${result.extract || result.texto || ''}`);
+  const score = words.filter((w) => content.includes(w.length > 5 ? w.slice(0, 5) : w)).length;
+  return score >= Math.max(1, Math.ceil(words.length * 0.5));
+}
 
 const QUESTION_START = /^(o que|oque|o q|que|quem|qual|quais|quando|onde|aonde|quanto|quantos|quantas|quanta|por que|porque|pq|por q|como|cade|sera que|voce sabe|vc sabe|me (diz|fala|explica|conta)|explica|pesquisa|procura|significado)\b/;
 
@@ -113,7 +123,7 @@ export class WebSearch {
       return words.filter((w) => text.includes(w)).length;
     };
     const page = pages
-      .filter((p) => p.extract && !/desambigua/i.test(p.extract.slice(0, 200)))
+      .filter((p) => p.extract && !/desambigua/i.test(p.extract.slice(0, 200)) && relevantResult(query, p))
       .sort((a, b) => score(b) - score(a) || (a.index ?? 0) - (b.index ?? 0))[0];
     if (!page) return null;
     return { title: page.title, extract: page.extract, source: en ? 'Wikipedia' : 'Wikipédia', url: page.fullurl || null };
@@ -132,6 +142,7 @@ export class WebSearch {
    * quando nada foi encontrado. Lança erro quando a rede falha em todas as fontes.
    */
   async search(question) {
+    if (weatherRequest(question)) return null; // meteorologia exige ferramenta propria
     // Pergunta em inglês: busca e resume em inglês.
     const en = isEnglish(question);
     const query = en ? extractQueryEn(question) : extractQuery(question);
@@ -147,7 +158,7 @@ export class WebSearch {
     const ddg = run('DuckDuckGo', () => this._duckduckgo(query, en));
     for (const p of [wiki, ddg]) {
       const r = await p;
-      if (r) return { query, ...r, extract: tidyExtract(r.extract), lang: en ? 'en' : 'pt' };
+      if (r && relevantResult(query, r)) return { query, ...r, extract: tidyExtract(r.extract), lang: en ? 'en' : 'pt' };
     }
     if (errors.length === 2) throw new Error(errors.join('; '));
     return null;

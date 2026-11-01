@@ -1,7 +1,7 @@
 {
   "name": "jojo-companion",
   "productName": "JoJo Companion",
-  "version": "0.44.0",
+  "version": "0.45.0",
   "description": "JoJo Companion: companion de desktop com o JoJo, um tubarão fisiculturista.",
   "author": "JoJo Companion contributors",
   "license": "MIT",
@@ -22,7 +22,9 @@
     "lint": "node scripts/lint.mjs"
   },
   "dependencies": {
-    "koffi": "3.3.3"
+    "ical.js": "2.2.1",
+    "koffi": "3.3.3",
+    "saxes": "6.0.0"
   },
   "devDependencies": {
     "electron": "44.9.3",

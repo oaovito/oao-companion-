@@ -179,6 +179,34 @@ export function hhmm(d) {
   return `${String(d.getHours()).padStart(2, '0')}h${d.getMinutes() ? String(d.getMinutes()).padStart(2, '0') : ''}`;
 }
 
+/** Datas e estado de uma consulta de agenda. Nunca confundir lista de tarefas com calendario. */
+export function calendarRequest(text, now = new Date()) {
+  const n = String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  if (/agenda 2030|o que e (?:uma |a )?agenda|como funciona (?:uma |a )?agenda/.test(n)) return null;
+  if (!/\b(agenda|calendario|compromissos?)\b|\b(?:o que|oque|que) (?:eu )?tenho (?:hoje|amanha)\b|\bon my calendar\b/.test(n)) return null;
+  if (/\b(linkad|conectad|vinculad|sincronizad)\w*\b|\b(status|estado|conexao)\b/.test(n)) return { kind: 'status' };
+  if (/proximo compromisso/.test(n)) return { kind: 'next', from: now, to: new Date(now.getTime() + 90 * 86400e3), label: 'Próximo compromisso' };
+  let date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (/amanha/.test(n)) date.setDate(date.getDate() + (/depois de amanha/.test(n) ? 2 : 1));
+  const iso = n.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
+  const br = n.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?\b/);
+  if (iso || br) {
+    const y = Number(iso ? iso[1] : br[3] || now.getFullYear());
+    const m = Number(iso ? iso[2] : br[2]); const d = Number(iso ? iso[3] : br[1]);
+    date = new Date(y, m - 1, d);
+    if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) return { kind: 'invalid' };
+  }
+  if (/semana/.test(n)) {
+    date.setDate(date.getDate() - (date.getDay() + 6) % 7 + (/proxima semana|semana que vem/.test(n) ? 7 : 0));
+    const to = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
+    return { kind: 'week', from: date, to, label: `Semana de ${date.toLocaleDateString('pt-BR')}` };
+  }
+  const days = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+  const weekday = days.findIndex((day) => new RegExp(`\\b${day}(?:-feira)?\\b`).test(n));
+  if (weekday >= 0 && !iso && !br) date.setDate(date.getDate() + ((weekday - date.getDay() + 7) % 7 || (/proxim/.test(n) ? 7 : 0)));
+  return { kind: 'day', from: date, to: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1), label: date.toDateString() === now.toDateString() ? 'Hoje' : date.toLocaleDateString('pt-BR') };
+}
+
 // Tipo do compromisso pelo título → animação e tom do JoJo.
 const KINDS = [
   ['treino', /\b(academia|treino|gym|muscula[cç][aã]o|crossfit|corrida|pilates|nata[cç][aã]o|futebol)\b/i],

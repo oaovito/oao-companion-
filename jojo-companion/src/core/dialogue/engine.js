@@ -5,6 +5,7 @@ import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 import { precisaPesquisar, linhaFontes } from './pesquisa.js';
 import { classificarSeriedade, seguimento, instrucaoProfessor, respostaFalaDoAssunto } from './professor.js';
 import { conversaPessoal, respostaAncorada, erroDeCoerencia, expressaoCoerente, pedidoAoApp } from './coherence.js';
+import { weatherRequest } from '../weather.js';
 
 // Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
 const TEMA_MS = 15 * 60e3;
@@ -68,6 +69,12 @@ export class DialogueEngine {
     // Segurança e gatilhos com animação própria ficam com as respostas programadas;
     // o resto vai pra IA (se ativa e disponível), com volta às programadas se falhar.
     const intent = detectIntent(input);
+    if (!SCRIPTED_ONLY.has(intent) && weatherRequest(input)) {
+      const out = { text: 'A previsão precisa de uma consulta meteorológica atual. A ferramenta de clima não está disponível neste caminho; não vou usar uma pesquisa genérica como previsão.', action: 'curious', kind: 'speech', intent: 'weather', error: 'tool_unavailable' };
+      this.history.push({ role: 'jojo', text: out.text });
+      this.history = this.history.slice(-20);
+      return out;
+    }
     const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1));
     if (anchored) {
       this.history.push({ role: 'jojo', text: anchored.text });

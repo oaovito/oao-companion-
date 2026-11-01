@@ -208,3 +208,25 @@ por `schedule` e passou. Controle na main, fonte na Codex; sem outros provedores
 Relato/hashes/limites em HANDOFF e `jojo-companion/docs/VALIDACAO_0.44.0.md`.
 Não confundir sucesso dos cenários com perfeição de toda conversa ou teste físico
 de Windows 11. Não repetir builds/publicação para demonstrar trabalho já concluído.
+
+## Missao ativa — 0.45.0 em desenvolvimento
+
+Branch: `codex/living-companion`, baseada em `4193c2b` (0.44.0 publicada).
+Requisitos completos: `jojo-companion/docs/REQUISITOS_0.45.0.md` e
+`jojo-companion/docs/REQUISITOS_TAREFAS_0.45.0.md`; inclui tambem Darkest Dungeon
+(diario 06–21 local, 15 falas, 5 animacoes, Steam app 262060, so tempo ativo,
+XP 15 inicio +50 primeira sessao/dia +25/40/80 aos 15/30/60 min, limites,
+7 dias distintos = O Herdeiro da Ruina). Todos os pedidos sao cumulativos.
+Diretriz anatomica posterior substitui a antiga: tubarao musculoso com corpo,
+nadadeiras e cauda; SEM bracos, pernas, maos ou pes. Adaptar animacoes antigas
+sem apagar o catalogo. Silencio/foco/tela cheia/desvio/privacidade continuam prioritarios.
+Novos sistemas: clima real, CalDAV iCloud/credenciais Windows, necessidades e seis
+raridades de coco, XP compartilhado, 50 comidas NOVAS, 25 memes +25 profissoes,
+atalho unico, icone novo, Discord no foco, Darkest Dungeon e To-Do completa.
+Nenhum segredo no chat/repositorio/log. Teste real iCloud exige conta autorizada
+e credencial por canal seguro, nunca presumir autenticacao. Sem conta, preparar
+protocolo/UI reais e registrar somente essa validacao pendente apos fazer o restante.
+Branch nova valida CI mas NAO publica automaticamente: politica continua 0.44.0
+no controle oficial. Nova publicacao somente apos requisitos e gates; nao publicar
+parte do pedido nem modificar as 18 releases existentes.
+Continuidade/checklist em `jojo-companion/docs/MISSAO_ATIVA.md`.

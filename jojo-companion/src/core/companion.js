@@ -26,7 +26,8 @@ import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
-import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS } from './calendar.js';
+import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
+import { weatherRequest } from './weather.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
@@ -182,7 +183,7 @@ export class Companion {
     this.lastAmbientAt = 0;
     this.lastAmbientItemAt = 0;
     // Google Agenda: eventos lidos do endereço iCal (o main busca); avisos já dados.
-    this.calendar = { events: [], error: null, lastSync: 0 };
+    this.calendar = { events: [], error: null, lastSync: 0, state: 'disconnected', synced: false };
     this.calendarWarned = new Set();
     this.onCalendarConnect = null; // async (url) => {ok, count, error}
     this.ambientItem = null; // item do catálogo tocando agora (ambiente ou pedido)
@@ -1274,6 +1275,26 @@ export class Companion {
       this.nerdUntil = 0; // não carregar os óculos/abertura técnica para outro assunto
       this.nerdAbertura = null;
     }
+    // Ferramentas antes de acoes/pesquisa/modelo. Uma falha nunca vira resposta inventada.
+    if (!safety) {
+      const lastCity = this.lastTool?.kind === 'weather' && this.clock.now() - this.lastTool.at < 10 * 60e3 ? this.lastTool.city : null;
+      const request = weatherRequest(text, { lastCity });
+      if (request) {
+        const result = !this.store.get().climaAtivo ? { ok: false, code: 'disabled', text: 'A consulta de clima está desligada nas Configurações.' }
+          : this.weather ? await this.weather.answer(request, this.store.get().climaCidade)
+            : { ok: false, code: 'unavailable', text: 'A ferramenta de clima não está disponível agora. Não tenho uma previsão confirmada.' };
+        if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
+        this.lastTool = { kind: 'weather', city: result.city || request.city || this.store.get().climaCidade, at: this.clock.now() };
+        return { ...this._quickReply(conv, result.text, 'weather'), weather: { ok: result.ok, code: result.code || null } };
+      }
+      const agendaFollowup = this.lastTool?.kind === 'calendar' && /^(e )?(amanha|hoje|essa semana|proxima semana)[?!.,]*$/.test(normalizeText(text));
+      const agenda = await this._agendaChat(agendaFollowup ? `minha agenda ${text}` : text);
+      if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
+      if (agenda) {
+        this.lastTool = { kind: 'calendar', at: this.clock.now() };
+        return this._quickReply(conv, agenda, 'agenda');
+      }
+    }
     // Revanche: "de novo", "mais uma", "outra" logo depois de um jogo.
     if (!safety && !this.game && this.lastGame && this.clock.now() - this.lastGame.at < 5 * 60e3 && /^(de novo|denovo|mais uma|outra|outra vez|revanche|joga de novo|jogar de novo|bora de novo|again|quero revanche)\b/.test(normalizeText(text))) {
       return this._quickReply(conv, this.startGame(this.lastGame.id), 'jogo');
@@ -1328,17 +1349,6 @@ export class Companion {
       }
       const at = this._antitedioChat(text);
       if (at) return this._quickReply(conv, at, 'antitedio');
-    }
-    // Google Agenda: conectar (guia/link colado), "o que tenho hoje?", desconectar.
-    const ag = await this._agendaChat(text);
-    if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
-    if (ag) {
-      this.conversations.addMessage(conv.id, 'jojo', ag);
-      this.conversations.setStatus(conv.id, 'ready');
-      this._beginTalking(ag);
-      if (!/^Conectado/.test(ag)) this.playCatalog('lembrete', { source: 'chat', speak: false });
-      this._applyLayout(true);
-      return { text: ag, action: null, intent: 'agenda', conversationId: conv.id, provider: this.dialogue.describe() };
     }
     // "O que tá tocando?": a música do Spotify, no jeito dele.
     if (this.nowPlaying && /\b(o ?que|qual|que) (musica |som )?(ta|esta|tá|está)? ?tocando\b|\bque musica e essa\b/.test(normalizeText(text))) {
@@ -3091,13 +3101,17 @@ export class Companion {
   // ---------------------------------------------------------------- Agenda (Google ou iCloud)
 
   /** Eventos novos da agenda (vindos do main). */
-  setCalendar({ events = [], error = null } = {}) {
-    this.calendar = { events, error, lastSync: this.clock.now() };
+  setCalendar({ events = this.calendar.events, error = null, state = null, lastSync = null, configured = false } = {}) {
+    const success = !error && !['syncing', 'disconnected', 'error'].includes(state);
+    this.calendar = { ...this.calendar, events, error, configured,
+      state: state || (error ? 'error' : events.length ? 'connected' : 'empty'),
+      synced: success || this.calendar.synced,
+      lastSync: success ? (lastSync ?? this.dateNow().getTime()) : this.calendar.lastSync };
   }
 
   get agendaConectada() {
     const s = this.store.get();
-    return !!(s.agendaUrl && s.agendaAtiva);
+    return !!(s.agendaAtiva && (s.agendaUrl || this.calendar.configured) && this.calendar.synced && !this.calendar.error && ['connected', 'empty'].includes(this.calendar.state));
   }
 
   /**
@@ -3167,6 +3181,7 @@ export class Companion {
   async _agendaChat(text) {
     const n = normalizeText(text);
     const url = findIcalUrl(text);
+    if (/^(?:jojo )?(?:nao|nem|nunca)\b/.test(n) && /\b(conect|desconect|vincul|deslig|remov|apag)\w*\b/.test(n) && /agenda|calendario|icloud/.test(n)) return 'Tá. Não alterei a conexão da agenda.';
     if (url) {
       if (!this.onCalendarConnect) return 'Não consigo conectar agora. Tenta de novo depois.';
       const r = await this.onCalendarConnect(url);
@@ -3178,8 +3193,9 @@ export class Companion {
     }
     if (/\b(desconecta|desliga|remove|tira)\w* (a |minha |o )?(google |icloud )?(agenda|calendario|icloud)\b|\bdisconnect (my )?calendar\b/.test(n)) {
       this.store.update({ agendaUrl: '' });
-      this.setCalendar({ events: [] });
-      return 'Agenda desconectada. Agora se vira sozinha.';
+      await this.onCalendarDisconnect?.();
+      this.calendar = { events: [], error: null, lastSync: 0, synced: false, state: 'disconnected', configured: false };
+      return 'Agenda desconectada. Seus calendários e compromissos foram preservados.';
     }
     const conectar = /\b(conecta|conectar|integra|integrar|liga|ligar|configura|configurar|vincula|vincular)\w* (a |minha |o |meu |com a |com o |com )?(google |icloud |apple )?(agenda|calendario|google calendar|icloud|calendario do iphone)\b|\bconnect (my )?(google |icloud |apple )?calendar\b/.test(n);
     const icloud = /\b(icloud|iphone|apple|ipad|mac)\b/.test(n);
@@ -3210,14 +3226,21 @@ export class Companion {
         '4) Cola aqui no chat. Eu só leio os compromissos, nada sai deste PC além de buscar a agenda.',
       ].join('\n');
     }
-    if (/\b(o que|oque|que) (eu )?(tenho|tem) (hoje|amanha|pra hoje)\b|\b(minha|a) agenda\b|\bcompromissos?\b|\bproximo compromisso\b|\bwhats? on my calendar\b/.test(n)) {
-      if (!this.store.get().agendaUrl) return 'Sua agenda não está conectada. Diz "conectar agenda" que eu te guio.';
-      const amanha = /amanha/.test(n);
-      const base = new Date();
-      const dia = amanha ? new Date(base.getFullYear(), base.getMonth(), base.getDate() + 1, 12) : base;
-      const lista = agendaDoDia(this.calendar.events, dia).filter((e) => amanha || e.fim > base);
-      if (!lista.length) return amanha ? 'Amanhã está livre. Dia de treino, então.' : 'Nada mais hoje. Sem desculpa pra não treinar.';
-      return `${amanha ? 'Amanhã' : 'Hoje'}: ${lista.slice(0, 6).map((e) => `${e.diaInteiro ? 'dia todo' : hhmm(e.inicio)} ${e.titulo}`).join('; ')}.`;
+    const query = calendarRequest(text, this.dateNow());
+    if (query) {
+      if (query.kind === 'invalid') return 'Essa data não existe. Me diga o dia, mês e ano para consultar a agenda certa.';
+      if (!this.store.get().agendaUrl && !this.calendar.configured) return 'Sua agenda não está conectada. Diz "conectar agenda" que eu te guio.';
+      if (!this.store.get().agendaAtiva) return 'A consulta da agenda está desligada. Reative nas Configurações para eu consultar seus compromissos.';
+      const status = query.kind === 'status';
+      if (this.calendar.state === 'syncing') return 'Estou sincronizando sua agenda. Ainda não confirmei os compromissos.';
+      if (!status && this.onCalendarSync && (!this.calendar.synced || this.dateNow().getTime() - this.calendar.lastSync > 2 * 60e3)) await this.onCalendarSync(query);
+      if (this.calendar.error || this.calendar.state === 'error') return `A consulta da agenda falhou. ${this.calendar.error === 'auth' ? 'A autorização precisa ser renovada nas Configurações.' : 'Não consegui obter uma consulta válida agora.'}${this.calendar.lastSync ? ` Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.` : ''} Não vou dizer que está vazia sem confirmar.`;
+      if (!this.calendar.synced) return 'A agenda foi configurada, mas ainda não consegui concluir uma sincronização. Não tenho compromissos confirmados.';
+      if (status) return `Sua agenda está conectada e a consulta foi concluída. Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.`;
+      const found = agendaBetween(this.calendar.events, query.from, query.to);
+      const lista = query.kind === 'next' ? found.filter((e) => e.inicio >= query.from).slice(0, 1) : found;
+      if (!lista.length) return `Consultei sua agenda: nenhum compromisso no período ${query.label.toLowerCase()} nos calendários sincronizados.`;
+      return `${query.label}: ${lista.slice(0, 12).map((e) => `${query.kind === 'week' || query.kind === 'next' ? e.inicio.toLocaleDateString('pt-BR') + ' ' : ''}${e.diaInteiro ? 'dia todo' : hhmm(e.inicio)} ${e.titulo}`).join('; ')}.${lista.length > 12 ? ` Mais ${lista.length - 12} compromissos no período.` : ''}`;
     }
     return null;
   }
