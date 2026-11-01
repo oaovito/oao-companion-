@@ -154,7 +154,7 @@ jobs:
       - name: Lista de tarefas no Electron Windows real
         timeout-minutes: 9
         working-directory: jojo-companion
-        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs
+        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs test/e2e/needs.windows.mjs
         env:
           JOJO_TEST_REPORT_DIR: out/assets-windows
       - name: Evidencias privadas e medidas para revisao

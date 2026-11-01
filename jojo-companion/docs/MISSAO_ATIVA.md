@@ -56,6 +56,20 @@ Adicionados cenarios Windows DPAPI e detector DD1 com processo/manifesto Steam d
 fixture, explicitamente nao equivalentes a uma partida comercial. Total E2E esperado
 35 (29 anteriores, 4 tarefas, 1 DPAPI, 1 detector). Repetir diagnostico antes de build.
 
+Run 41349371481 (e449b57, interfaces sem medir novamente): quatro To-Do PASSARAM,
+detector DD1 nativo com fixture PASSOU. DPAPI falhou no mecanismo de importacao
+dinamica do Playwright antes de executar a cifra; helper nativo de teste corrigido.
+API timing retornou Windows total_ms=0 (107 s de run); nenhum plano/limite alterado.
+Quota de artefatos continua impedindo upload; evidencia critica agora tem fallback
+nos logs. Nao chamar o run inteiro de aprovado. Proximo total E2E 36 com cuidados.
+
+Cuidados, seis sprites de limpeza, 50 alimentos novos/56 totais com SVGs originais,
+20 animacoes de necessidades, HUD e painel de cardapio foram implementados depois
+de e449b57. Testes puros de Needs/XP passaram isoladamente. Ver CUIDADOS.md.
+Faltam 50 conjuntos memes/profissoes, logos locais licenciados/easter eggs,
+Discord no foco e migracao de atalhos. Medir TODA a nova arte no Windows e importar
+room antes de considerar suite completa verde; nunca forjar limites de desenho.
+
 ## Checklist integral
 
 - [ ] Clima real: Open-Meteo, cidades/datas/timezone/cache, GUI/configuracao, teste live.

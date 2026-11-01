@@ -10,7 +10,47 @@
   "Tubarão-tigre",
   "Tubarão-martelo",
   "Tubarão-branco",
-  "Megalodon"
+  "Megalodon",
+  "Megalodon — Patamar 2",
+  "Megalodon — Patamar 3",
+  "Megalodon — Patamar 4",
+  "Megalodon — Patamar 5",
+  "Megalodon — Patamar 6",
+  "Megalodon — Patamar 7",
+  "Megalodon — Patamar 8",
+  "Megalodon — Patamar 9",
+  "Megalodon — Patamar 10",
+  "Megalodon — Patamar 11",
+  "Megalodon — Patamar 12",
+  "Megalodon — Patamar 13",
+  "Megalodon — Patamar 14",
+  "Megalodon — Patamar 15",
+  "Megalodon — Patamar 16",
+  "Megalodon — Patamar 17",
+  "Megalodon — Patamar 18",
+  "Megalodon — Patamar 19",
+  "Megalodon — Patamar 20",
+  "Megalodon — Patamar 21",
+  "Megalodon — Patamar 22",
+  "Megalodon — Patamar 23",
+  "Megalodon — Patamar 24",
+  "Megalodon — Patamar 25",
+  "Megalodon — Patamar 26",
+  "Megalodon — Patamar 27",
+  "Megalodon — Patamar 28",
+  "Megalodon — Patamar 29",
+  "Megalodon — Patamar 30",
+  "Megalodon — Patamar 31",
+  "Megalodon — Patamar 32",
+  "Megalodon — Patamar 33",
+  "Megalodon — Patamar 34",
+  "Megalodon — Patamar 35",
+  "Megalodon — Patamar 36",
+  "Megalodon — Patamar 37",
+  "Megalodon — Patamar 38",
+  "Megalodon — Patamar 39",
+  "Megalodon — Patamar 40",
+  "Megalodon — Patamar 41"
  ],
  "xpPorNivel": 60,
  "xp": {
@@ -189,6 +229,27 @@
    "desc": "Complete sessões válidas em sete dias distintos.",
    "conta": "ddDias",
    "n": 7
+  },
+  {
+   "id": "limpeza1",
+   "nome": "Um mínimo de civilização",
+   "desc": "Limpe um objeto do aquário.",
+   "conta": "limpezas",
+   "n": 1
+  },
+  {
+   "id": "limpeza25",
+   "nome": "Auditoria de higiene",
+   "desc": "Faça 25 limpezas válidas.",
+   "conta": "limpezas",
+   "n": 25
+  },
+  {
+   "id": "comidas10",
+   "nome": "Cardápio inspecionado",
+   "desc": "Experimente 10 alimentos diferentes.",
+   "conta": "comidasDiferentes",
+   "n": 10
   }
  ],
  "missoes": [
@@ -268,5 +329,10 @@
    "id": "comilanca",
    "nome": "Cozinha do fundo do mar"
   }
- ]
+ ],
+ "curve": {
+  "legacyLevels": 10,
+  "increment": 120,
+  "notes": "Os 10 níveis e limiares anteriores são preservados. Os novos patamares exigem XP crescente."
+ }
 }

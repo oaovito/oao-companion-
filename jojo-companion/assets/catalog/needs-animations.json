@@ -1,0 +1,490 @@
+{
+  "itens": [
+    {
+      "id": "needsFome",
+      "nome": "O estômago abriu chamado",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "olhaBaixo",
+        "rosto": "preocupado",
+        "cauda": "devagar",
+        "objeto": [
+          "needsBarriga"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsExtrema",
+      "nome": "Fome em estado de ordem",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "treme",
+        "cabeca": "encara",
+        "rosto": "fera",
+        "cauda": "baixa",
+        "objeto": [
+          "needsFomeRaiva"
+        ],
+        "fx": [
+          "suor"
+        ]
+      }
+    },
+    {
+      "id": "needsRonco",
+      "nome": "Reunião do estômago",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "treme",
+        "cabeca": "olhaBaixo",
+        "rosto": "surpreso",
+        "cauda": "parada",
+        "objeto": [
+          "needsRumble"
+        ],
+        "fx": [
+          "vapor"
+        ]
+      }
+    },
+    {
+      "id": "needsFraco",
+      "nome": "Nado sem combustível",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "inclina",
+        "rosto": "cansado",
+        "cauda": "devagar",
+        "objeto": [
+          "needsFomeRaiva"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsDoente",
+      "nome": "Plantão do próprio mau humor",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "encolhe",
+        "cabeca": "olhaBaixo",
+        "rosto": "triste",
+        "cauda": "baixa",
+        "objeto": [
+          "needsTermometro"
+        ],
+        "fx": [
+          "suor"
+        ]
+      }
+    },
+    {
+      "id": "needsRecuperar",
+      "nome": "Manutenção concluída",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "nada",
+        "cabeca": "assente",
+        "rosto": "contente",
+        "cauda": "abana",
+        "objeto": [
+          "needsCurativo"
+        ],
+        "fx": [
+          "brilho"
+        ]
+      }
+    },
+    {
+      "id": "needsPreCoco",
+      "nome": "Licença fisiológica",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "encolhe",
+        "cabeca": "encara",
+        "rosto": "focado",
+        "cauda": "parada",
+        "objeto": [
+          "needsEsforco"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsCoco",
+      "nome": "Um depósito indevido",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "olhaBaixo",
+        "rosto": "envergonhado",
+        "cauda": "baixa",
+        "objeto": [
+          "needsEsforco"
+        ],
+        "fx": [
+          "poeira"
+        ]
+      }
+    },
+    {
+      "id": "needsFedor",
+      "nome": "Esse ar não passou na inspeção",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "recua",
+        "cabeca": "nega",
+        "rosto": "nojo",
+        "cauda": "baixa",
+        "objeto": [
+          "needsSujo"
+        ],
+        "fx": [
+          "fedor"
+        ]
+      }
+    },
+    {
+      "id": "needsLimpo",
+      "nome": "Dignidade restaurada",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "assente",
+        "rosto": "aliviado",
+        "cauda": "charme",
+        "objeto": [
+          "needsBolhas"
+        ],
+        "fx": [
+          "bolhas"
+        ]
+      }
+    },
+    {
+      "id": "needsComer",
+      "nome": "Inspeção de nutrientes",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "morde",
+        "cabeca": "reto",
+        "rosto": "mastiga",
+        "cauda": "abana",
+        "objeto": [
+          "needsPrato"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsMastigar",
+      "nome": "Não fale com a boca cheia",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "assente",
+        "rosto": "mastiga",
+        "cauda": "devagar",
+        "objeto": [
+          "needsPrato"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsSatisfeito",
+      "nome": "Aprovado pelo estômago",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "espreguica",
+        "cabeca": "assente",
+        "rosto": "orgulhoso",
+        "cauda": "charme",
+        "objeto": [
+          "needsSaciedade"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsFavorita",
+      "nome": "Ele respeita esse prato",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "infla",
+        "cabeca": "olhaUsuario",
+        "rosto": "brilhoOlhos",
+        "cauda": "abana",
+        "objeto": [
+          "needsPrato"
+        ],
+        "fx": [
+          "coracoes"
+        ]
+      }
+    },
+    {
+      "id": "needsDesgosto",
+      "nome": "Engolir com ressalvas",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "encolhe",
+        "cabeca": "nega",
+        "rosto": "nojo",
+        "cauda": "baixa",
+        "objeto": [
+          "needsPrato"
+        ],
+        "fx": []
+      }
+    },
+    {
+      "id": "needsRaro",
+      "nome": "Achado de higiene duvidosa",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "giroLeve",
+        "cabeca": "inclinaOutro",
+        "rosto": "pensando",
+        "cauda": "charme",
+        "objeto": [
+          "needsRaridade"
+        ],
+        "fx": [
+          "brilho"
+        ]
+      }
+    },
+    {
+      "id": "needsLendario",
+      "nome": "Uma anomalia no aquário",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "poder",
+        "cabeca": "olhaCima",
+        "rosto": "chocado",
+        "cauda": "abana",
+        "objeto": [
+          "needsLenda"
+        ],
+        "fx": [
+          "estrelas"
+        ]
+      }
+    },
+    {
+      "id": "needsXp",
+      "nome": "Experiência entra no tanque",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "assente",
+        "rosto": "contente",
+        "cauda": "abana",
+        "objeto": [
+          "needsXp"
+        ],
+        "fx": [
+          "brilho"
+        ]
+      }
+    },
+    {
+      "id": "needsNivel",
+      "nome": "O aquário ficou pequeno",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "evolui",
+        "cabeca": "encara",
+        "rosto": "orgulhoso",
+        "cauda": "charme",
+        "objeto": [
+          "needsNivel"
+        ],
+        "fx": [
+          "confete"
+        ]
+      }
+    },
+    {
+      "id": "needsConquista",
+      "nome": "Distintivo por mérito real",
+      "categoria": "necessidades",
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "necessidades"
+        ],
+        "frases": []
+      },
+      "receita": {
+        "corpo": "infla",
+        "cabeca": "assente",
+        "rosto": "feliz",
+        "cauda": "abana",
+        "objeto": [
+          "needsMedalha"
+        ],
+        "fx": [
+          "brilho"
+        ]
+      }
+    }
+  ]
+}

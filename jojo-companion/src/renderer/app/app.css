@@ -20,6 +20,15 @@ body { display: flex; background: var(--bg); color: var(--ink); font: 14px/1.45 
 .brand strong { font-size: 18px; display: block; }
 .brand small { color: var(--muted); font-size: 11px; }
 #tarefas { flex: 1; min-height: 0; }
+.care-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.care-stats progress { display: block; width: 100%; accent-color: #408a9e; }
+.care-objects { display: flex; gap: 8px; flex-wrap: wrap; }
+.care-objects button { display: flex; flex-direction: column; align-items: center; border: 1px solid #d5e1e9; background: white; border-radius: 12px; padding: 8px; cursor: pointer; font: inherit; }
+.care-foods { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.care-food { display: flex; flex-direction: column; align-items: center; gap: 5px; border: 1px solid #d6e3e9; border-radius: 12px; padding: 10px; background: #fff; color: #274656; cursor: pointer; font: inherit; }
+.care-food:hover { border-color: #69a9ac; background: #f2faf8; }
+.care-food small { font-size: 10px; color: #697f8b; }
+.care-feedback { min-height: 18px; color: #376a67; }
 #list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .item { display: flex; flex-direction: column; gap: 2px; padding: 7px 9px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: var(--ink); text-align: left; font: inherit; cursor: pointer; }
 .item:hover { background: #e2eaf7; }

@@ -20,7 +20,7 @@ export function createDarkestService({ userData, content, companion, store, noti
     try {
       const wasValid = model.st.session?.valid;
       const wasAchievement = model.st.achievement;
-      model.observe({ ...(sample || {}), ...(store.get().darkestAtivo ? {} : { running: false, active: false }), idleSeconds, suspended: companion.suspended });
+      model.observe({ ...(sample || {}), ...(store.get().darkestAtivo ? {} : { running: false, active: false }), idleSeconds, suspended: companion.suspended || !companion.progress.clockHealthy() });
       if (lastValidDays !== model.st.days.length) { lastValidDays = model.st.days.length; companion.progress.count('ddDias', lastValidDays, true); }
       if (lastSessions !== model.st.sessions) { lastSessions = model.st.sessions; companion.progress.count('ddSessoes', lastSessions, true); }
       if (model.st.achievement && !wasAchievement && companion._canNag() && !companion.work && !companion.focus && !companion.fullscreenHidden) companion.playCatalog('ddConquista', { speak: false, source: 'evento' });
@@ -31,7 +31,7 @@ export function createDarkestService({ userData, content, companion, store, noti
   }
   const beforeTick = companion.onRoutineTick;
   companion.onRoutineTick = () => {
-    beforeTick?.(); if (!store.get().darkestAtivo || !store.get().darkestSugestao) return;
+    beforeTick?.(); if (!companion.progress.clockHealthy() || !store.get().darkestAtivo || !store.get().darkestSugestao) return;
     const suggestion = model.suggest({ focus: !!(companion.work || companion.focus), fullscreen: !!companion.fullscreenIds?.length,
       important: !!(companion.game || companion.interaction || companion.bubble || companion.dragging || companion.suspended), canSpeak: companion._canNag() });
     if (suggestion) {

@@ -5,12 +5,19 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>JoJo</title>
   <link rel="stylesheet" href="overlay.css">
+  <link rel="stylesheet" href="../shared/progress.css">
+  <link rel="stylesheet" href="needs.css">
 </head>
 <body>
   <canvas id="stage"></canvas>
   <svg id="tails" aria-hidden="true"></svg>
   <div id="bubble" class="bubble hidden" role="status" aria-live="polite"></div>
   <div id="measure" class="bubble" aria-hidden="true"></div>
+  <section id="needsHud" class="hidden" aria-label="Aquário do JoJo">
+    <button id="openCare" type="button" title="Abrir cuidados e cardápio">Cuidados</button>
+    <span id="needsNumbers"></span><div id="needsXp"></div>
+    <div id="litter" aria-label="Objetos para limpar"></div>
+  </section>
 
   <div id="toolbar" class="hidden" role="toolbar" aria-label="Interagir com o JoJo">
     <button data-action="pet" title="Fazer carinho (ou passe o mouse sobre o JoJo)"><span>🤚</span><small>Carinho</small></button>

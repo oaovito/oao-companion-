@@ -6,7 +6,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { pathToFileURL } from 'node:url';
 import { requireWindows } from '../../src/main/windows-only.js';
 requireWindows();
 const require = createRequire(import.meta.url);
@@ -50,7 +49,10 @@ test('tarefas Windows: interface real cria/edita/reordena/conclui e anima XP sem
     assert.equal(await page.locator('#list .item').count(), 1);
     assert.equal(await page.locator('#form').isVisible(), false);
     const report = process.env.JOJO_TEST_REPORT_DIR;
-    if (report) await page.screenshot({ path: path.join(report, 'tarefas-central-windows.png') });
+    if (report) {
+      const screenshot = await page.screenshot({ path: path.join(report, 'tarefas-central-windows.png') });
+      if (process.env.GITHUB_ACTIONS) for (const part of screenshot.toString('base64').match(/.{1,4000}/g)) console.log(`JOJO_TASKS_PREVIEW:${part}`);
+    }
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });
@@ -131,16 +133,14 @@ test('tarefas Windows: chat usa lista real; HTML não executa e IPC rejeita emis
 test('iCloud Windows: DPAPI real protege credencial e configuração não a expõe', { timeout: 60000 }, async () => {
   const { app, userData } = await launch();
   try {
-    const moduleUrl = pathToFileURL(path.join(ROOT, 'src/main/credential-vault.js')).href;
     const file = path.join(userData, 'native-dpapi-fixture.json');
-    const result = await app.evaluate(async ({ safeStorage }, { moduleUrl, file }) => {
-      const { CredentialVault } = await import(moduleUrl);
-      const vault = new CredentialVault(file, safeStorage);
+    const result = await app.evaluate((_electron, file) => {
+      const vault = globalThis.__jojo.credentialVault(file);
       const available = vault.available(); if (!available) throw new Error('DPAPI não está disponível neste runner.');
       vault.write({ username: 'fixture@example.invalid', password: 'only-a-native-test-fixture' });
       const account = vault.read();
       return { available, same: account.username === 'fixture@example.invalid' && account.password === 'only-a-native-test-fixture', settings: globalThis.__jojo.settingsInfo().settings };
-    }, { moduleUrl, file });
+    }, file);
     assert.equal(result.available, true); assert.equal(result.same, true);
     const raw = fs.readFileSync(file, 'utf8');
     assert.equal(raw.includes('only-a-native-test-fixture'), false); assert.equal(raw.includes('fixture@example.invalid'), false);

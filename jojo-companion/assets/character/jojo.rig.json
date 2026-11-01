@@ -171,7 +171,23 @@
     "dd_d7b879": "#d7b879",
     "dd_815b9f": "#815b9f",
     "dd_b5a165": "#b5a165",
-    "dd_6a3560": "#6a3560"
+    "dd_6a3560": "#6a3560",
+    "needs_c4b593": "#c4b593",
+    "needs_b55853": "#b55853",
+    "needs_ad8d5a": "#ad8d5a",
+    "needs_d4dce0": "#d4dce0",
+    "needs_e8cfa9": "#e8cfa9",
+    "needs_b99c78": "#b99c78",
+    "needs_7babc2": "#7babc2",
+    "needs_8b8268": "#8b8268",
+    "needs_d2e9e8": "#d2e9e8",
+    "needs_d8e0dd": "#d8e0dd",
+    "needs_729a7d": "#729a7d",
+    "needs_e1bb64": "#e1bb64",
+    "needs_c19bd5": "#c19bd5",
+    "needs_8ac8bc": "#8ac8bc",
+    "needs_d4b875": "#d4b875",
+    "needs_dbba6c": "#dbba6c"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
@@ -2295,6 +2311,108 @@
           "showIf": "prop_ddCoroa",
           "path": "M85,5 L90,0 L95,5 L90,11 Z",
           "fill": "dd_6a3560"
+        }
+      ]
+    },
+    {
+      "id": "needsProps",
+      "outline": false,
+      "parts": [
+        {
+          "id": "needsBarriga",
+          "showIf": "prop_needsBarriga",
+          "path": "M76,111Q91,103 106,111L106,128Q91,139 76,128Z",
+          "fill": "needs_c4b593"
+        },
+        {
+          "id": "needsRaiva",
+          "showIf": "prop_needsFomeRaiva",
+          "path": "M14,56L22,49L16,45L23,37L10,46L15,50Z M152,40L161,49L157,56L165,63L163,48Z",
+          "fill": "needs_b55853"
+        },
+        {
+          "id": "needsRumble",
+          "showIf": "prop_needsRumble",
+          "path": "M63,110L54,115L61,119L52,125M118,110L128,115L121,119L130,125",
+          "fill": "needs_ad8d5a"
+        },
+        {
+          "id": "needsTermometro",
+          "showIf": "prop_needsTermometro",
+          "path": "M126,50L138,47L142,52L131,58Z M130,56L134,54L135,58L131,60Z",
+          "fill": "needs_d4dce0"
+        },
+        {
+          "id": "needsCurativo",
+          "showIf": "prop_needsCurativo",
+          "path": "M75,102L96,90L108,111L87,123Z",
+          "fill": "needs_e8cfa9"
+        },
+        {
+          "id": "needsCurativoMiolo",
+          "showIf": "prop_needsCurativo",
+          "path": "M86,103L94,99L99,109L91,113Z",
+          "fill": "needs_b99c78"
+        },
+        {
+          "id": "needsEsforco",
+          "showIf": "prop_needsEsforco",
+          "path": "M148,42L150,34L153,42L151,47Z M27,36L24,44L27,49L30,44Z",
+          "fill": "needs_7babc2"
+        },
+        {
+          "id": "needsSujo",
+          "showIf": "prop_needsSujo",
+          "path": "M43,77Q29,71 32,85Q45,92 49,84Z M104,108Q110,100 117,107L113,117L104,113Z",
+          "fill": "needs_8b8268"
+        },
+        {
+          "id": "needsBolha1",
+          "showIf": "prop_needsBolhas",
+          "path": "M34,102A9,9 0 1 1 33.9,102Z M147,80A7,7 0 1 1 146.9,80Z",
+          "fill": "needs_d2e9e8"
+        },
+        {
+          "id": "needsPrato",
+          "showIf": "prop_needsPrato",
+          "path": "M120,103Q140,96 157,104Q160,113 139,117Q119,115 120,103Z",
+          "fill": "needs_d8e0dd"
+        },
+        {
+          "id": "needsSaciedade",
+          "showIf": "prop_needsSaciedade",
+          "path": "M151,48L156,55L171,35L174,39L156,64L148,53Z",
+          "fill": "needs_729a7d"
+        },
+        {
+          "id": "needsRaridade",
+          "showIf": "prop_needsRaridade",
+          "path": "M32,8L36,17L45,21L36,25L32,34L28,25L19,21L28,17Z",
+          "fill": "needs_e1bb64"
+        },
+        {
+          "id": "needsLenda",
+          "showIf": "prop_needsLenda",
+          "path": "M14,40L21,47L14,54L7,47Z M152,23L163,34L152,45L141,34Z M84,-11L91,-20L99,-11L91,-2Z",
+          "fill": "needs_c19bd5"
+        },
+        {
+          "id": "needsXp",
+          "showIf": "prop_needsXp",
+          "path": "M146,91L158,105L146,119L134,105Z",
+          "fill": "needs_8ac8bc"
+        },
+        {
+          "id": "needsNivel",
+          "showIf": "prop_needsNivel",
+          "path": "M147,20L159,35L151,35L151,57L143,57L143,35L135,35Z",
+          "fill": "needs_d4b875"
+        },
+        {
+          "id": "needsMedalha",
+          "showIf": "prop_needsMedalha",
+          "path": "M77,84L85,102L95,102L103,84L94,86L90,94L86,86Z M103,111A13,13 0 1 1 102.9,111Z",
+          "fill": "needs_dbba6c"
         }
       ]
     }

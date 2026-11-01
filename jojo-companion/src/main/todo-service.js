@@ -8,7 +8,7 @@ import { TodoWindow } from './todo-window.js';
 
 export function createTodoService({ userData, root, icon, companion, fromApp, fromSettings, appWin, settingsWin, log }) {
   const disk = new AtomicState(path.join(userData, 'tasks.json'), { validate: validateTodo, defaults: emptyTodo, log });
-  const model = new TodoModel({ state: disk.load(), save: st => disk.write(st), award: reward => {
+  const model = new TodoModel({ state: disk.load(), save: st => disk.write(st), clockHealthy: () => companion.progress.clockHealthy(), award: reward => {
     const result = companion.progress.award(reward);
     if (result.amount > 0 && !companion.work && !companion.focus && !companion.fullscreenHidden && !companion.suspended) {
       companion.react('happy');

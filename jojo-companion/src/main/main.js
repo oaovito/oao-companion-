@@ -36,6 +36,8 @@ import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
 import { createCalendarService } from './calendar-service.js';
+import { createNeedsService } from './needs-service.js';
+import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
 
 requireWindows();
@@ -182,6 +184,7 @@ function main() {
       rig: readJSON('assets/character/jojo.rig.json'),
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
       animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)),
+      foods: readJSON('assets/catalog/foods.json').foods,
     };
     const catalog = fullCatalog(readJSON);
     const ambientLines = readJSON('assets/dialogue/falas-ambientes.json');
@@ -376,6 +379,8 @@ function main() {
         todo: todoService?.model.snapshot() || null,
         abrirTarefas,
         darkest: darkestService?.model.snapshot() || null,
+        needs: needsService?.snapshot() || null,
+        abrirCuidados,
       };
     }
     let appUpdateTimer = null;
@@ -391,12 +396,15 @@ function main() {
     let abrirTarefas = 0;
     let todoService = null;
     let darkestService = null;
+    let needsService = null;
+    let abrirCuidados = 0;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
-      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'tarefas';
+      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'tarefas' || id === 'cuidados';
       if (id === 'colecao') abrirColecao++;
       if (id === 'guardaRoupa') abrirGuardaRoupa++;
       if (id === 'tarefas') abrirTarefas++;
+      if (id === 'cuidados') abrirCuidados++;
       appWin.open(painel ? null : id);
       if (painel) appWin.send('app:update', appState());
     };
@@ -501,6 +509,9 @@ function main() {
     todoService = createTodoService({ userData, root: ROOT, icon: appIcon, companion, fromApp, fromSettings, appWin, settingsWin, log });
     darkestService = createDarkestService({ userData, content: readJSON('assets/catalog/darkest-dungeon.json'), companion, store, log,
       notify: () => { appWin.send('app:darkest-update', { darkest: darkestService?.model.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
+    needsService = createNeedsService({ userData, companion, store, foods: assets.foods, balance: readJSON('assets/catalog/needs-balance.json'), ipcMain, fromApp, fromOverlay, log,
+      notify: () => { if (needsService) appWin.send('app:needs-update', { needs: needsService.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
+    app.on('will-quit', () => needsService.close());
     // Antes de fechar as janelas: o X do painel apenas oculta, mas nunca pode vetar app.quit.
     app.on('before-quit', () => todoService.close());
     app.on('will-quit', () => darkestService.close());
@@ -706,6 +717,7 @@ function main() {
     });
     powerMonitor.on('resume', () => {
       log('info', 'Retomada');
+      companion.progress.resetRewardClock();
       setTimeout(() => companion.onResume(), 800);
     });
     powerMonitor.on('lock-screen', () => { companion.onSuspend(); todoService.guard(); });
@@ -867,6 +879,8 @@ function main() {
         appWin,
         todoService,
         caldavService,
+        needsService,
+        credentialVault: file => new CredentialVault(file, safeStorage),
         get updater() {
           return updater;
         },

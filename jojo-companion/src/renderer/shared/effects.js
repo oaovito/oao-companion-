@@ -18,6 +18,19 @@ export class Effects {
     this.lastSpawn = {};
     this.effectStart = 0;
     this.effectName = null;
+    this.foodCatalog = new Map(); this.foodImages = new Map();
+  }
+
+  loadFoods(foods = []) {
+    this.foodCatalog = new Map(foods.map(f => [f.id, f]));
+  }
+  foodImage(id) {
+    if (!this.foodCatalog.has(id) || this.foodCatalog.get(id).legacy) return null;
+    if (!this.foodImages.has(id)) {
+      const image = new Image(); image.src = new URL(`../../../assets/foods/${encodeURIComponent(id)}.svg`, import.meta.url).href;
+      this.foodImages.set(id, image);
+    }
+    return this.foodImages.get(id);
   }
 
   get busy() {
@@ -25,6 +38,7 @@ export class Effects {
   }
 
   setEffect(name, now, kind = null) {
+    if (name === 'food') this.foodImage(kind);
     if (name !== this.effectName || kind !== this.effectKind) {
       this.effectName = name;
       this.effectKind = kind;
@@ -51,7 +65,7 @@ export class Effects {
     if (flags.sweat && every('sweat', 850)) this._spawn('sweat', now, 0, head);
     if (flags.stink && every('stink', 260)) this._spawn('stink', now);
     // Comida: sangue espirrando a cada mordida.
-    if (this.effectName === 'food') {
+    if (this.effectName === 'food' && (!this.foodCatalog.has(this.effectKind) || this.foodCatalog.get(this.effectKind).legacy)) {
       const el = now - this.effectStart;
       if (el > 300 && el < 2200 && every('blood', 120)) this._spawn('blood', now, 0, head);
     }
@@ -513,10 +527,14 @@ export class Effects {
       ctx.rotate(-0.25);
       ctx.strokeStyle = OUTLINE;
       ctx.lineWidth = 2;
-      const draw = { peixe: this._fishShape, foca: this._seal, lula: this._squid, tartaruga: this._turtle, pinguim: this._penguin, humano: this._leg }[kind] || this._fishShape;
-      draw.call(this, ctx);
+      const newFood = this.foodCatalog.has(kind) && !this.foodCatalog.get(kind).legacy;
+      if (newFood) { const image = this.foodImage(kind); if (image?.complete && image.naturalWidth) ctx.drawImage(image, -24, -24, 48, 48); }
+      else {
+        const draw = { peixe: this._fishShape, foca: this._seal, lula: this._squid, tartaruga: this._turtle, pinguim: this._penguin, humano: this._leg }[kind] || this._fishShape;
+        draw.call(this, ctx);
+      }
       // Marcas de mordida ensanguentadas.
-      ctx.fillStyle = '#b3121f';
+      ctx.fillStyle = newFood ? '#d4b580' : '#b3121f';
       for (let i = 0; i < bites; i++) {
         ctx.beginPath();
         ctx.arc(-12 + i * 3, -4 + (i % 2) * 6, 3.2, 0, Math.PI * 2);
@@ -525,7 +543,7 @@ export class Effects {
       ctx.restore();
     }
     // Osso (ou tênis) caindo depois de comer.
-    if (el > 2000 && el < 3300) {
+    if (el > 2000 && el < 3300 && (!this.foodCatalog.has(kind) || this.foodCatalog.get(kind).legacy)) {
       const t = (el - 2000) / 1300;
       ctx.save();
       ctx.translate(mouth.x + 10 + t * 10, mouth.y + 10 + t * t * 70);

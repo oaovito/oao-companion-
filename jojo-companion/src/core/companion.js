@@ -886,7 +886,7 @@ export class Companion {
     const r = this._rects();
     const control = choosePathControl(this.pos, target, { width: r.box.width, height: r.box.height }, this.cursor, s.safetyMargin).control;
     const hurry = this.wired ? 1.7 : 1;
-    this.mover.start(this.pos, target, { control, speed: WALK_SPEED * s.moveSpeed * Math.sqrt(s.size) * hurry, easing: 'inOut', now, minMs: 600, maxMs: 9000, kind: 'walk' });
+    this.mover.start(this.pos, target, { control, speed: WALK_SPEED * s.moveSpeed * Math.sqrt(s.size) * hurry * (this.needs?.weak ? 0.7 : 1), easing: 'inOut', now, minMs: 600, maxMs: 9000, kind: 'walk' });
   }
 
   _pickWanderTarget() {
@@ -1148,6 +1148,7 @@ export class Companion {
     this.noteActivity();
     if (action === 'fidget') return this.fidget() > 0;
     if (action === 'estimulo') return this.estimulo();
+    if (action === 'play' && this.needs?.ill) { this.say('Hoje a bolinha espera. Primeiro comida e higiene; depois eu volto a brincar.', 'speech'); return false; }
     if (action === 'pet') this._progress('gesto', { conta: 'gestos', missao: 'carinho' });
     const map = {
       pet: ['petted', 'petted', 'hearts', 2200],
@@ -1174,6 +1175,8 @@ export class Companion {
    */
   _feed(now, { quiet = false } = {}) {
     const kind = weightedPick(FOODS, this.rng);
+    const needs = this.onFeed?.(kind);
+    if (needs && !needs.fed) { if (!quiet) this.say(needs.text, 'speech'); return null; }
     this.effect = { name: 'food', kind, until: now + 3400 };
     if (!quiet) this.sayCategory(`food_${kind}`, { force: true, fallback: 'food' });
     this.clock.setTimeout(() => {
@@ -1275,6 +1278,9 @@ export class Companion {
     if (!safety && this.darkest) {
       const reply = this.darkest.chat(text);
       if (reply) return this._quickReply(conv, reply, 'darkest');
+    }
+    if (!safety && this.careChat) {
+      const reply = this.careChat(text); if (reply) return this._quickReply(conv, reply, 'cuidados');
     }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
@@ -3405,6 +3411,7 @@ export class Companion {
     let toolbar = null;
     let chat = null;
     let bubble = null;
+    let needsPanel = null;
     if (this.interaction) {
       toolbar = placeAround(r.visual, TOOLBAR_SIZE, wa, { order: ['bottom', 'top'], gap: 4 });
       attachments.push(toolbar);
@@ -3423,6 +3430,12 @@ export class Companion {
       attachments.push(bubble);
       this.bubbleRect = bubble.rect;
     } else this.bubbleRect = null;
+
+    if (this.needs && !this.work && !this.focus && !this.fullscreenHidden && !this.lolHidden && !this.suspended) {
+      needsPanel = placeAround(r.visual, { width: 210, height: this.needs.objects.length ? 112 : 58 }, wa,
+        { order: ['bottom', 'left', 'right', 'top'], avoid: [toolbar?.rect, chat?.rect, bubble?.rect].filter(Boolean), gap: 8 });
+      if (!needsPanel.forced) attachments.push(needsPanel); else needsPanel = null;
+    }
 
     // Sem barra de status ao lado do pet: as atividades ficam só na Central.
 
@@ -3493,6 +3506,8 @@ export class Companion {
       sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
       moving: this.mover.active ? this.mover.kind : null,
+      needs: this.needs || null,
+      needsPanel: needsPanel ? { rect: rel(needsPanel.rect), ...this.needs, progress: this.progressHud } : null,
     };
     const key = JSON.stringify(state);
     if (forceRender || key !== this.lastRender) {

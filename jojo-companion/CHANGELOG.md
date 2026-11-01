@@ -12,6 +12,10 @@
   tempo em primeiro plano, XP por marcos, estatísticas e conquista por sete dias.
 - Conexão iCloud autenticada e somente leitura, seleção de calendários e
   credencial protegida pelo Windows. Teste com conta real ainda pendente.
+- Cuidados persistentes com fome, saúde, humor, higiene, seis tipos de objetos
+  clicáveis para limpeza e alimentação por cardápio com 50 opções novas.
+- Vinte animações de necessidades e novos patamares de evolução após Megalodon,
+  preservando XP e limiares dos dez níveis anteriores.
 
 ### Correções
 - Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.

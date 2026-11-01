@@ -18,16 +18,32 @@ export function emptyProgress() {
 // ---------------------------------------------------------------- progressão e coleções
 
 export class Progress {
-  constructor({ data, state, save = () => {}, rng = Math.random, now = () => Date.now() }) {
+  constructor({ data, state, save = () => {}, rng = Math.random, now = () => Date.now(), wallNow = () => Date.now(), monotonicNow = () => performance.now() }) {
     this.data = data;
     this.st = { ...emptyProgress(), ...(state || {}) };
     this.save = save;
     this.rng = rng;
     this.now = now;
+    this.wallNow = wallNow; this.monotonicNow = monotonicNow; this.resetRewardClock();
   }
 
+  resetRewardClock() { this.rewardClock = { wall: this.wallNow(), mono: this.monotonicNow() }; }
+  clockHealthy() { return Math.abs((this.wallNow() - this.rewardClock.wall) - (this.monotonicNow() - this.rewardClock.mono)) < 5 * 60000; }
+
   get nivel() {
+    if (this.data.curve) {
+      let low = 1, high = this.data.niveis.length;
+      while (low < high) { const mid = Math.ceil((low + high) / 2); if (this.threshold(mid) <= this.st.xp) low = mid; else high = mid - 1; }
+      return low;
+    }
     return Math.min(this.data.niveis.length, 1 + Math.floor(this.st.xp / this.data.xpPorNivel));
+  }
+
+  threshold(level) {
+    const curve = this.data.curve;
+    if (!curve || level <= curve.legacyLevels) return (level - 1) * this.data.xpPorNivel;
+    const k = level - curve.legacyLevels;
+    return (curve.legacyLevels - 1) * this.data.xpPorNivel + curve.increment * k * (k + 3) / 2;
   }
 
   get nomeNivel() {
@@ -41,9 +57,23 @@ export class Progress {
 
   /** Soma XP; devolve {subiu, nivel} quando passa de nível. */
   xp(kind) {
+    if (!this.clockHealthy()) return null;
+    const limits = { gesto: [2, 40], chat: [3, 30], estimulo: [10, 20], poseNova: [0, 50], jogoVitoria: [0, 100], jogoParticipacao: [0, 50] };
+    let amount = this.data.xp[kind] || 0;
+    if (limits[kind]) {
+      const day = dayKey(new Date(this.wallNow()));
+      const budget = this.st.legacyXp ||= { day, used: {}, last: {} };
+      if (day < budget.day) return null;
+      if (day > budget.day) { budget.day = day; budget.used = {}; }
+      const [cooldown, cap] = limits[kind];
+      if (budget.last[kind] != null && this.wallNow() - budget.last[kind] < cooldown * 1000) return null;
+      amount = Math.min(amount, cap - (budget.used[kind] || 0)); if (amount <= 0) return null;
+      budget.last[kind] = this.wallNow(); budget.used[kind] = (budget.used[kind] || 0) + amount;
+    }
     const before = this.nivel;
-    this.st.xp += this.data.xp[kind] || 0;
+    this.st.xp += amount;
     this.save(this.st);
+    this.onXp?.();
     return this.nivel > before ? { subiu: true, nivel: this.nivel, nome: this.nomeNivel } : null;
   }
 
@@ -51,6 +81,7 @@ export class Progress {
   award({ id, amount, source, day, label = '' }) {
     if (typeof id !== 'string' || id.length > 500 || !id || !Number.isInteger(amount) || amount < 0 || amount > 500 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new Error('Recompensa inválida.');
     if (this.st.rewards?.ids?.[id]) return { duplicate: true, amount: 0 };
+    if (!this.clockHealthy()) throw new Error('O relógio mudou; não confirmei XP com um intervalo inválido.');
     const before = this.st; const level = this.nivel;
     this.st = structuredClone(before);
     this.st.rewards ||= { ids: {}, history: [], sequence: 0 };
@@ -61,6 +92,7 @@ export class Progress {
     this.st.rewards.history = this.st.rewards.history.slice(-500);
     try { this.save(this.st, { immediate: true }); }
     catch (e) { this.st = before; throw e; }
+    this.onAward?.(event);
     return event;
   }
 
@@ -70,7 +102,7 @@ export class Progress {
     c[kind] = absolute ? n : (c[kind] || 0) + n;
     const novas = [];
     for (const q of this.data.conquistas) {
-      if (q.conta === kind && !this.st.conquistas[q.id] && c[kind] >= q.n) {
+      if (q.conta === kind && !Object.hasOwn(this.st.conquistas, q.id) && c[kind] >= q.n) {
         this.st.conquistas[q.id] = this.now();
         novas.push(q);
       }
@@ -182,8 +214,10 @@ export class Progress {
       nivel: this.nivel,
       nomeNivel: this.nomeNivel,
       xp: this.st.xp,
-      proximo: this.nivel * this.data.xpPorNivel,
-      conquistas: this.data.conquistas.map((q) => ({ ...q, ok: !!this.st.conquistas[q.id] })),
+      proximo: this.threshold(this.nivel + 1),
+      percentXP: this.nivel >= this.data.niveis.length ? 100 : Math.max(0, Math.min(100, (this.st.xp - this.threshold(this.nivel)) / (this.threshold(this.nivel + 1) - this.threshold(this.nivel)) * 100)),
+      maximo: this.nivel >= this.data.niveis.length,
+      conquistas: this.data.conquistas.map((q) => ({ ...q, ok: Object.hasOwn(this.st.conquistas, q.id) })),
       poses: this.st.poses.length,
       acessorios: this.data.acessorios.map((a) => ({ ...a, ok: a.nivel <= this.nivel })),
       album: this.st.album.slice(-12).reverse(),

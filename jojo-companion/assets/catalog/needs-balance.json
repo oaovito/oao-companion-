@@ -1,0 +1,19 @@
+{
+  "hungerPerHour": 10,
+  "hygienePerHour": 4,
+  "healthDecayPerHour": 2,
+  "digestMinutes": 30,
+  "maxObjects": 6,
+  "dailyXp": 350,
+  "feedXpCap": 30,
+  "careXpCap": 15,
+  "careCooldownMinutes": 15,
+  "types": [
+    { "id": "common", "name": "Comum", "rarity": "Comum", "weight": 70, "xp": 5, "color": "#79513a" },
+    { "id": "giant", "name": "Gigante", "rarity": "Comum", "weight": 20, "xp": 12, "color": "#5c382b" },
+    { "id": "radioactive", "name": "Radioativo", "rarity": "Incomum", "weight": 7, "xp": 25, "color": "#8ac735" },
+    { "id": "flaming", "name": "Flamejante", "rarity": "Raro", "weight": 2, "xp": 50, "color": "#d85d32" },
+    { "id": "gold", "name": "Dourado", "rarity": "Épico", "weight": 0.9, "xp": 100, "color": "#dbb443" },
+    { "id": "legendary", "name": "Lendário", "rarity": "Lendário", "weight": 0.1, "xp": 250, "color": "#b288e0" }
+  ]
+}

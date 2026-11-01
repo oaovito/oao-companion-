@@ -2,6 +2,7 @@
 // chat e menu de comandos "/" (inclui Wake Pet / Tuck Away Pet).
 import { TodoView } from '../shared/todo-view.js';
 import { ProgressView } from '../shared/progress-view.js';
+import { CareView } from '../shared/care-view.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
 const listEl = $('list');
@@ -14,8 +15,10 @@ let menuIndex = 0;
 let showingTarefas = false;
 let lastTarefasReq = 0;
 let showingDarkest = false;
+let showingCuidados = false, lastCareRequest = 0;
 const xpView = new ProgressView($('progression'));
 const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho, animations: st?.todo?.settings.animations !== false }) });
+const careView = new CareView($('cuidados'), api, s => xpView.render(s, { quiet: st?.trabalho }));
 
 function chip(el, status, label) {
   el.className = `chip ${status}`;
@@ -25,13 +28,17 @@ function chip(el, status, label) {
 
 function render(s) {
   st = s;
+  if (s.abrirCuidados && s.abrirCuidados !== lastCareRequest) {
+    lastCareRequest = s.abrirCuidados; showingCuidados = true; showingTarefas = false; showingGuarda = false; showingColecao = false; showingDarkest = false;
+  }
   if (s.abrirTarefas && s.abrirTarefas !== lastTarefasReq) {
-    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false; showingDarkest = false;
+    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false; showingDarkest = false; showingCuidados = false;
   }
   // Pedido de abrir a coleção (/colecao): cada pedido novo vale uma vez.
   if (s.abrirColecao && s.abrirColecao !== lastColecaoReq) {
     lastColecaoReq = s.abrirColecao;
     showingColecao = true;
+    showingCuidados = false;
     showingDarkest = false;
     showingTarefas = false;
     showingGuarda = false;
@@ -39,6 +46,7 @@ function render(s) {
   if (s.abrirGuardaRoupa && s.abrirGuardaRoupa !== lastGuardaReq) {
     lastGuardaReq = s.abrirGuardaRoupa;
     showingGuarda = true;
+    showingCuidados = false;
     showingDarkest = false;
     showingTarefas = false;
     showingColecao = false;
@@ -72,6 +80,8 @@ function render(s) {
   $('tarefas').classList.toggle('hidden', !showingTarefas);
   if (showingTarefas) { $('convTitle').textContent = 'Lista de Tarefas'; chip($('convStatus'), 'idle', ''); todoView.refresh(); }
   renderDarkest();
+  $('cuidados').classList.toggle('hidden', !showingCuidados);
+  if (showingCuidados) { $('convTitle').textContent = 'Cuidados e cardápio'; chip($('convStatus'), 'idle', ''); careView.refresh(); }
   xpView.render(s.colecao, { quiet: s.trabalho, animations: s.todo?.settings.animations !== false });
 }
 
@@ -87,7 +97,7 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest;
+  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest || showingCuidados;
   for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
@@ -95,10 +105,10 @@ function renderColecao() {
   chip($('convStatus'), 'idle', '');
   box.innerHTML = '';
   const nivel = el('div', 'card');
-  nivel.append(el('h2', null, `Nível ${c.nivel}: ${c.nomeNivel}`), el('p', 'muted', `${c.xp} XP · próximo nível em ${Math.max(0, c.proximo - c.xp)} XP · ${c.streak} dia(s) seguidos`));
+  nivel.append(el('h2', null, `Nível ${c.nivel}: ${c.nomeNivel}`), el('p', 'muted', `${c.xp} XP · ${c.maximo ? 'patamar máximo atual' : `próximo nível em ${Math.max(0, c.proximo - c.xp)} XP`} · ${c.streak} dia(s) seguidos`));
   const bar = el('div', 'bar');
   const fill = el('span');
-  fill.style.width = `${Math.min(100, Math.round(((c.xp % (c.xpPorNivel || 60)) / (c.xpPorNivel || 60)) * 100))}%`;
+  fill.style.width = `${c.percentXP ?? Math.min(100, Math.round(((c.xp % (c.xpPorNivel || 60)) / (c.xpPorNivel || 60)) * 100))}%`;
   bar.append(fill);
   nivel.append(bar, el('p', null, c.resumo));
   const acoes = el('div', 'card');
@@ -138,6 +148,11 @@ function renderColecao() {
   col.append(el('p', null, `Aquário: ${c.areas.map((a) => (a.ok ? a.nome : '???')).join(' · ')}`));
   if (c.album.length) col.append(el('p', 'muted', `Álbum de momentos raros: ${c.album.map((a) => a.nome).join(', ')}`));
   box.append(nivel, acoes, jogos, miss, conq, col);
+  if (c.rewardHistory?.length) {
+    const history = el('details', 'card'); history.append(el('summary', null, 'Últimas recompensas de XP'));
+    for (const reward of c.rewardHistory) history.append(el('p', 'muted', `+${reward.amount} XP · ${reward.label} · ${reward.day}`));
+    box.append(history);
+  }
 }
 
 // ---------------- guarda-roupa: brincar de boneca com o JoJo (opcional)
@@ -191,6 +206,7 @@ async function vestir(cmd) {
   if (r && r.text && $('guardaFala')) $('guardaFala').textContent = `${st.companionName}: ${r.text}`;
 }
 $('guardaBtn').addEventListener('click', async () => {
+  showingCuidados = false; $('cuidados').classList.add('hidden');
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
@@ -211,6 +227,7 @@ async function playCmd(cmd) {
   await run(cmd);
 }
 $('colecaoBtn').addEventListener('click', async () => {
+  showingCuidados = false; $('cuidados').classList.add('hidden');
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
@@ -225,6 +242,7 @@ $('colecaoBtn').addEventListener('click', async () => {
 });
 
 async function select(id) {
+  showingCuidados = false; $('cuidados').classList.add('hidden');
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
@@ -243,6 +261,7 @@ async function select(id) {
 }
 
 $('tarefasBtn').addEventListener('click', async () => {
+  showingCuidados = false;
   showingDarkest = false;
   showingTarefas = !showingTarefas; showingColecao = false; showingGuarda = false;
   render(await api.state());
@@ -261,12 +280,21 @@ function renderDarkest() {
   $('darkest').replaceChildren(status, numbers, achievement, rules);
 }
 $('darkestBtn').addEventListener('click', async () => {
+  showingCuidados = false;
   showingDarkest = !showingDarkest; showingTarefas = false; showingColecao = false; showingGuarda = false;
   render(await api.state());
 });
 api.onDarkestUpdate(s => {
   if (st) { st.darkest = s.darkest; st.colecao = { ...st.colecao, ...s.colecao }; }
   renderDarkest(); xpView.render(s.colecao, { quiet: s.trabalho });
+});
+$('cuidadosBtn').addEventListener('click', async () => {
+  showingCuidados = !showingCuidados; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false; render(await api.state());
+});
+api.onNeedsUpdate(s => {
+  if (st) { st.needs = s.needs; st.colecao = { ...st.colecao, ...s.colecao }; }
+  if (showingCuidados && s.needs) careView.render(s.needs);
+  xpView.render(s.colecao, { quiet: s.trabalho });
 });
 api.onTodoUpdate(s => {
   if (st) { st.todo = s.todo; if (s.colecao) st.colecao = { ...st.colecao, ...s.colecao }; }

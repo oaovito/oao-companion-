@@ -10,7 +10,7 @@ requireWindows();
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const files = process.argv.includes('--integration')
   ? [path.join('test', 'e2e', 'windows.e2e.mjs'), path.join('test', 'e2e', 'presenca.windows.mjs')]
-  : [path.join('test', 'e2e', 'app.e2e.mjs'), path.join('test', 'e2e', 'todo.windows.mjs'), path.join('test', 'e2e', 'darkest.windows.mjs')];
+  : [path.join('test', 'e2e', 'app.e2e.mjs'), path.join('test', 'e2e', 'todo.windows.mjs'), path.join('test', 'e2e', 'darkest.windows.mjs'), path.join('test', 'e2e', 'needs.windows.mjs')];
 const reports = process.env.JOJO_TEST_REPORT_DIR;
 const reporters = ['--test-reporter=tap'];
 if (reports) {

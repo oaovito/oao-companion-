@@ -4,6 +4,7 @@
 import { Animator } from '../shared/animator.js';
 import { RigRenderer } from '../shared/rig-renderer.js';
 import { Effects } from '../shared/effects.js';
+import { ProgressView } from '../shared/progress-view.js';
 
 const api = window.jojo;
 const canvas = document.getElementById('stage');
@@ -17,6 +18,10 @@ const logEl = document.getElementById('log');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const cmdMenuEl = document.getElementById('cmdMenu');
+const needsHud = document.getElementById('needsHud');
+const needsXp = new ProgressView(document.getElementById('needsXp'));
+const litterEl = document.getElementById('litter');
+document.getElementById('openCare').addEventListener('click', () => api.openApp('cuidados'));
 
 let state = null;
 let animator = null;
@@ -43,6 +48,7 @@ async function init() {
   const assets = await api.getAssets();
   rig = new RigRenderer(assets.rig);
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
+  effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
   resize();
   api.onState(onState);
@@ -105,11 +111,33 @@ function onState(s) {
   renderBubbleGame(s);
   renderToolbar(s);
   renderChat(s, prev);
+  renderNeeds(s);
   if (prev && prev.interaction && !s.interaction) {
     setCaptureLocal(false);
     dragging = false;
   }
   requestFrame();
+}
+
+function renderNeeds(s) {
+  const panel = s.needsPanel;
+  needsHud.classList.toggle('hidden', !panel); if (!panel) return;
+  Object.assign(needsHud.style, { left: `${panel.rect.x}px`, top: `${panel.rect.y}px`, width: `${panel.rect.width}px`, height: `${panel.rect.height}px` });
+  document.getElementById('needsNumbers').textContent = `Saciedade ${panel.hunger} · Saúde ${panel.health} · Higiene ${panel.hygiene}`;
+  needsXp.render(panel.progress, { quiet: !!s.work, animations: !s.reducedMotion });
+  const current = new Set(panel.objects.map(o => o.id));
+  for (const child of [...litterEl.children]) if (!current.has(child.dataset.id)) child.remove();
+  for (const item of panel.objects) {
+    let button = [...litterEl.children].find(el => el.dataset.id === item.id);
+    if (!button) {
+      button = document.createElement('button'); button.type = 'button'; button.className = 'litter-piece fresh'; button.dataset.id = item.id; button.dataset.type = item.type;
+      button.title = 'Ative a interação e clique para limpar'; button.setAttribute('aria-label', `Limpar ${item.type}`);
+      const image = document.createElement('img'); image.src = `../../../assets/litter/${item.type}.svg`; image.alt = ''; button.append(image);
+      button.addEventListener('click', async e => { e.stopPropagation(); const result = await api.needs({ action: 'clean', id: item.id }); if (result?.error) button.title = result.error; });
+      litterEl.append(button); setTimeout(() => button.classList.remove('fresh'), 900);
+    }
+    button.style.left = `${item.slot * 31}px`; button.disabled = !s.interaction;
+  }
 }
 
 function onMeasure(req) {
@@ -395,6 +423,11 @@ function draw(now) {
 
   const sample = reduced ? animator.sampleStatic() : animator.sample(now);
   const pose = { ...sample.pose };
+  if (s.needs && !s.work && ['idle', 'walk', 'interact', 'sit', 'look'].includes(s.bstate)) {
+    if (s.needs.ill) pose.moodTired = Math.max(pose.moodTired || 0, .55);
+    else if (s.needs.hunger < 15) pose.moodAngry = Math.max(pose.moodAngry || 0, .45);
+    if (s.needs.hygiene < 25) pose.prop_needsSujo = 1;
+  }
   pose.squashY *= squashTurn;
   // Falar por cima de outras animações (boca mexendo) quando há fala ativa.
   if (s.talking && reduced && sample.name !== 'sleep' && !pose.happyEyes) {
@@ -532,7 +565,7 @@ function overJoJo(x, y) {
 }
 
 function overUi(target) {
-  return !!(target && (toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target)) || (bubbleEl.classList.contains('interativo') && bubbleEl.contains(target))));
+  return !!(target && (needsHud.contains(target) || toolbarEl.contains(target) || chatEl.contains(target) || (bubbleGame.el && bubbleGame.el.contains(target)) || (bubbleEl.classList.contains('interativo') && bubbleEl.contains(target))));
 }
 
 function activity() {

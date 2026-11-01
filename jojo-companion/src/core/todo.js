@@ -87,9 +87,9 @@ export function validateTodo(raw) {
   return st;
 }
 export class TodoModel {
-  constructor({ state, save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), id = randomUUID, onChange = () => {} } = {}) {
+  constructor({ state, save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), id = randomUUID, onChange = () => {}, clockHealthy = () => true } = {}) {
     this.st = state ? validateTodo(state) : emptyTodo();
-    this.save = save; this.award = award; this.now = now; this.id = id; this.onChange = onChange;
+    this.save = save; this.award = award; this.now = now; this.id = id; this.onChange = onChange; this.clockHealthy = clockHealthy;
     this.sync(); this.drain();
   }
   // Transação local: a interface só recebe confirmação após o fsync/rename.
@@ -101,6 +101,7 @@ export class TodoModel {
     this.onChange(); return result;
   }
   sync() {
+    if (this.st.day && !this.clockHealthy()) return this.st.day;
     const actual = logicalDay(this.now(), this.st.settings);
     if (!this.st.day || (this.st.settings.autoReset && actual > this.st.day)) {
       this.mutate(() => {
@@ -171,7 +172,7 @@ export class TodoModel {
     const a = this.st.awards[day] ||= { keys: [], xp: 0 };
     if (a.keys.includes(key) || day < this.st.highDay) return;
     a.keys.push(key); // mesmo com XP desligado, reativar não premia conclusões antigas
-    if (!this.st.settings.xpEnabled) return;
+    if (!this.st.settings.xpEnabled || !this.clockHealthy()) return;
     amount = Math.min(amount, TODO_LIMITS.dailyXp - a.xp); if (amount <= 0) return;
     a.xp += amount;
     this.st.outbox.push({ id: `todo:${day}:${key}`, amount, source: 'todo', day, label });
@@ -242,7 +243,7 @@ export class TodoModel {
     return this.mutate(() => { const list = TODO_LINES[kind] || TODO_LINES.pending; const i = this.st.lineIndex[kind] || 0; this.st.lineIndex[kind] = i + 1; return list[i % list.length]; });
   }
   reminders({ focus = false, fullscreen = false } = {}) {
-    this.sync(); if (focus || fullscreen || !this.st.settings.notifications || !this.st.settings.reminders) return [];
+    this.sync(); if (!this.clockHealthy() || focus || fullscreen || !this.st.settings.notifications || !this.st.settings.reminders) return [];
     const p = civilParts(this.now(), this.st.settings.zone); const hm = `${p.hour}:${p.minute}`;
     const candidates = this.st.tasks.filter(t => t.reminder && t.time === hm && this.scheduled(t, this.st.day) && !this.done(t, this.st.day));
     const fresh = candidates.filter(t => !this.st.notifications[`${this.st.day}:${t.id}:${t.time}`]);
