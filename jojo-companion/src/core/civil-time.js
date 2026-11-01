@@ -27,3 +27,18 @@ export function logicalDay(now, { zone = 'local', resetTime = '00:00' } = {}) {
   const day = `${p.year}-${p.month}-${p.day}`;
   return `${p.hour}:${p.minute}` < resetTime ? shiftDay(day, -1) : day;
 }
+
+/** Horário civil → instante; gaps DST usam o instante posterior, overlaps o primeiro. */
+export function civilEpoch({ year, month, day, hour = 0, minute = 0, second = 0 }, zone = 'local') {
+  const target = Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
+  let guess = target; const tried = [];
+  for (let i = 0; i < 6; i++) {
+    const p = civilParts(guess, zone);
+    const value = Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day), Number(p.hour), Number(p.minute), Number(p.second));
+    const next = guess + target - value;
+    if (next === guess) return guess;
+    if (tried.includes(next)) return Math.max(guess, next);
+    tried.push(guess); guess = next;
+  }
+  throw new Error('Não consegui resolver o horário no fuso informado.');
+}

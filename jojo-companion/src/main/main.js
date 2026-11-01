@@ -5,7 +5,7 @@ import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
-import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net } from 'electron';
+import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net, safeStorage } from 'electron';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 import os from 'node:os';
@@ -35,6 +35,7 @@ import { WeatherService } from '../core/weather.js';
 import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
+import { createCalendarService } from './calendar-service.js';
 import { requireWindows } from './windows-only.js';
 
 requireWindows();
@@ -401,10 +402,11 @@ function main() {
     };
 
     // Agenda (só leitura, Google ou iCloud): busca o .ics a cada 10 min.
+    let caldavService = null;
     companion.weather = new WeatherService({ fetch: (url, options) => net.fetch(url, options) });
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;
     const fetchCalendar = async (url) => {
-      const res = await net.fetch(calBase ? `${calBase}/basic.ics` : url, { headers: { 'User-Agent': `JoJoCompanion/${app.getVersion()}` } });
+      const res = await net.fetch(calBase ? `${calBase}/basic.ics` : url, { signal: AbortSignal.timeout(12000), redirect: 'error', headers: { 'User-Agent': `JoJoCompanion/${app.getVersion()}` } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       if (!/BEGIN:VCALENDAR/.test(text)) throw new Error('não é uma agenda');
@@ -413,8 +415,9 @@ function main() {
     // Falha de rede (ligou o PC, acordou, Wi-Fi caiu) tenta de novo calada; só avisa depois de 1 h.
     const agendaFalha = { falhas: 0, desde: 0 };
     let agendaRetry = null;
-    const syncCalendar = async () => {
+    const syncCalendar = async (query = null) => {
       clearTimeout(agendaRetry);
+      if (caldavService?.configured) return caldavService.sync(query);
       const s = store.get();
       if (!s.agendaUrl || !s.agendaAtiva) return;
       companion.setCalendar({ state: 'syncing' });
@@ -437,6 +440,7 @@ function main() {
     companion.onCalendarConnect = async (url) => {
       try {
         const events = await fetchCalendar(url);
+        if (caldavService?.configured) await caldavService.disconnect();
         store.update({ agendaUrl: url, agendaAtiva: true });
         companion.setCalendar({ events });
         return { ok: true, count: events.length };
@@ -490,10 +494,15 @@ function main() {
       iconPath: appIcon,
     });
     const fromSettings = (e) => settingsWin.isOpen && e.sender === settingsWin.win.webContents;
+    caldavService = createCalendarService({ userData, safeStorage, fetch: (url, opts) => net.fetch(url, opts), companion, store, fromSettings, ipcMain,
+      notify: snapshot => settingsWin.send('calendar:changed', snapshot) });
+    companion.onCalendarDisconnect = () => caldavService.disconnect();
+    app.on('will-quit', () => caldavService.dispose());
     todoService = createTodoService({ userData, root: ROOT, icon: appIcon, companion, fromApp, fromSettings, appWin, settingsWin, log });
     darkestService = createDarkestService({ userData, content: readJSON('assets/catalog/darkest-dungeon.json'), companion, store, log,
       notify: () => { appWin.send('app:darkest-update', { darkest: darkestService?.model.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
-    app.on('will-quit', () => todoService.close());
+    // Antes de fechar as janelas: o X do painel apenas oculta, mas nunca pode vetar app.quit.
+    app.on('before-quit', () => todoService.close());
     app.on('will-quit', () => darkestService.close());
     ipcMain.handle('settings:get', (e) => (fromSettings(e) ? settingsInfo() : null));
     ipcMain.handle('settings:set', (e, patch) => {
@@ -857,6 +866,7 @@ function main() {
         personality,
         appWin,
         todoService,
+        caldavService,
         get updater() {
           return updater;
         },

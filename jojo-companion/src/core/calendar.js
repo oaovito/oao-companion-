@@ -1,3 +1,5 @@
+import { parseCalendar, expandCalendarEvent } from './ical-calendar.js';
+import { civilEpoch } from './civil-time.js';
 // Agenda (somente leitura) do Google ou do iCloud. Google: "endereço secreto no
 // formato iCal" das configurações da agenda. iCloud: link do "Calendário público"
 // (webcal://pNN-caldav.icloud.com/published/…). Puro: interpreta o .ics e calcula
@@ -47,81 +49,24 @@ export function findIcalUrl(text) {
   return null;
 }
 
-function unfold(text) {
-  return String(text || '').replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
-}
-
-function unescape(v) {
-  return v.replace(/\\n/gi, ' ').replace(/\\([,;\\])/g, '$1').trim();
-}
-
-/**
- * Data do iCal → {date, allDay}. Z = UTC; TZID ou sem fuso = horário local
- * (o PC dela está no mesmo fuso da agenda na prática).
- */
+/** Data iCalendar com TZID real, UTC ou horário flutuante do Windows. */
 export function parseIcsDate(value, params = '') {
-  const v = String(value || '').trim();
-  let m = v.match(/^(\d{4})(\d{2})(\d{2})$/);
-  if (m || /VALUE=DATE(?!-)/i.test(params)) {
-    m = m || v.match(/^(\d{4})(\d{2})(\d{2})/);
-    return { date: new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])), allDay: true };
-  }
-  m = v.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
+  const m = String(value || '').match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z?))?$/);
   if (!m) return null;
-  const [y, mo, d, h, mi, s] = m.slice(1, 7).map(Number);
-  const date = m[7] ? new Date(Date.UTC(y, mo - 1, d, h, mi, s)) : new Date(y, mo - 1, d, h, mi, s);
-  return { date, allDay: false };
+  const [year, month, day, hour = 0, minute = 0, second = 0] = m.slice(1, 7).map(x => Number(x || 0));
+  const allDay = !m[4] || /VALUE=DATE(?!-)/i.test(params);
+  if (allDay) return { date: new Date(year, month - 1, day), allDay: true };
+  const zone = params.match(/TZID="?([^;"\s]+)/i)?.[1];
+  const ms = m[7] ? Date.UTC(year, month - 1, day, hour, minute, second) : zone ? civilEpoch({ year, month, day, hour, minute, second }, zone) : new Date(year, month - 1, day, hour, minute, second).getTime();
+  return { date: new Date(ms), allDay: false };
 }
-
-/** Interpreta o .ics: lista de eventos {uid, titulo, inicio, fim, diaInteiro, local, rrule, exdates}. */
-export function parseIcs(text) {
-  const events = [];
-  let cur = null;
-  for (const line of unfold(text).split('\n')) {
-    if (line === 'BEGIN:VEVENT') {
-      cur = { exdates: [] };
-      continue;
-    }
-    if (line === 'END:VEVENT') {
-      if (cur && cur.inicio && cur.status !== 'CANCELLED') {
-        if (!cur.fim) cur.fim = new Date(cur.inicio.getTime() + (cur.diaInteiro ? 86400e3 : 3600e3));
-        events.push(cur);
-      }
-      cur = null;
-      continue;
-    }
-    if (!cur) continue;
-    const i = line.indexOf(':');
-    if (i < 0) continue;
-    const [name, ...params] = line.slice(0, i).split(';');
-    const value = line.slice(i + 1);
-    const p = params.join(';');
-    if (name === 'UID') cur.uid = value.trim();
-    else if (name === 'SUMMARY') cur.titulo = unescape(value).slice(0, 120);
-    else if (name === 'LOCATION') cur.local = unescape(value).slice(0, 120);
-    else if (name === 'STATUS') cur.status = value.trim().toUpperCase();
-    else if (name === 'RRULE') cur.rrule = value.trim();
-    else if (name === 'DTSTART' || name === 'DTEND') {
-      const d = parseIcsDate(value, p);
-      if (!d) continue;
-      if (name === 'DTSTART') {
-        cur.inicio = d.date;
-        cur.diaInteiro = d.allDay;
-      } else cur.fim = d.date;
-    } else if (name === 'EXDATE') {
-      for (const x of value.split(',')) {
-        const d = parseIcsDate(x, p);
-        if (d) cur.exdates.push(d.date.getTime());
-      }
-    }
-  }
-  return events.map((e) => ({ ...e, titulo: e.titulo || '(sem título)' }));
-}
+export function parseIcs(text) { return parseCalendar(text); }
 
 const DAYS = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
 
 /** Ocorrências de um evento dentro de [de, ate] (repetições diárias, semanais, mensais e anuais). */
 export function occurrences(ev, de, ate) {
+  if (ev.ical) return expandCalendarEvent(ev, de, ate);
   const dur = ev.fim - ev.inicio;
   const out = [];
   const push = (start) => {
@@ -172,7 +117,7 @@ export function agendaBetween(events, de, ate) {
 /** Compromissos de hoje (do início ao fim do dia de `now`). */
 export function agendaDoDia(events, now = new Date()) {
   const ini = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return agendaBetween(events, ini, new Date(ini.getTime() + 86400e3));
+  return agendaBetween(events, ini, new Date(ini.getFullYear(), ini.getMonth(), ini.getDate() + 1));
 }
 
 export function hhmm(d) {

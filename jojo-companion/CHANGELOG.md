@@ -8,11 +8,17 @@
   histórico, importação/exportação e recuperação por cópia de segurança.
 - XP de tarefas integrado à progressão existente, com limite diário, registro de
   recompensas idempotente, barra animada e confirmação durável das conclusões.
+- Atividade Darkest Dungeon original: sugestão diária, detector Steam local,
+  tempo em primeiro plano, XP por marcos, estatísticas e conquista por sete dias.
+- Conexão iCloud autenticada e somente leitura, seleção de calendários e
+  credencial protegida pelo Windows. Teste com conta real ainda pendente.
 
 ### Correções
 - Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.
 - Estado e falhas da agenda são consultados antes de afirmar conexão ou ausência de compromissos.
 - Resultados de pesquisa sem correspondência com o assunto são descartados.
+- Leitura de eventos respeita TZID e recorrências/exceções de iCalendar.
+- Correções literais da usuária preservam a palavra afirmada em vez da negada.
 
 ## 0.44.0 — 2026-11-01
 

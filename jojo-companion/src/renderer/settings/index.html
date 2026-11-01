@@ -19,6 +19,20 @@
   <div id="notice" class="notice hidden" role="alert"></div>
 
   <form id="form">
+    <fieldset id="icloudFields">
+      <legend>Agenda iCloud</legend>
+      <p class="hint">Conexão autenticada e somente leitura. Use uma senha específica de aplicativo criada na conta Apple, nunca a senha principal. A credencial é protegida pelo Windows neste perfil, fora das configurações comuns.</p>
+      <label class="row">ID Apple <input id="icloudUser" type="text" autocomplete="username" maxlength="254" placeholder="seu@email.com"></label>
+      <label class="row">Senha específica de aplicativo <input id="icloudPassword" type="password" autocomplete="off" maxlength="256"></label>
+      <div class="buttons">
+        <button id="icloudConnect" type="button">Conectar iCloud</button>
+        <button id="icloudSync" type="button">Sincronizar agora</button>
+        <button id="icloudDisconnect" type="button">Desconectar iCloud</button>
+      </div>
+      <p id="icloudStatus" class="hint" role="status">Conferindo conexão…</p>
+      <div id="icloudCalendars" aria-label="Calendários iCloud"></div>
+      <label class="check"><input type="checkbox" name="agendaAtiva"> Consultar agenda e avisar compromissos</label>
+    </fieldset>
     <fieldset>
       <legend>Clima</legend>
       <label class="check"><input type="checkbox" name="climaAtivo"> Consultar previsão atual na Open-Meteo quando eu perguntar</label>
@@ -226,5 +240,6 @@
     Arte atual: desenho vetorial articulado provisório.
   </footer>
   <script type="module" src="settings.js"></script>
+  <script type="module" src="calendar.js"></script>
 </body>
 </html>

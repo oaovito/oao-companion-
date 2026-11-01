@@ -169,3 +169,17 @@ test('XP compartilhado: ledger idempotente preserva XP antigo e desfaz falha dur
   fail = true; assert.throws(() => p.award({ ...reward, id: 'todo:2' })); assert.equal(p.st.xp, 70);
   fail = false; assert.equal(p.award({ ...reward, id: 'todo:2' }).amount, 20); assert.equal(p.st.xp, 90);
 });
+
+test('tarefas: importação malformada é recusada inteira sem alterar registros existentes', () => {
+  const e = env(); e.t.add({ title: 'Preservar' }); const good = e.t.export();
+  for (const broken of [
+    { ...good.data, tasks: [{ ...good.data.tasks[0], completed: true }] },
+    { ...good.data, tasks: [{ ...good.data.tasks[0], completed: { outro: 123 } }] },
+    { ...good.data, categories: [{ id: 'x', name: '' }] },
+    { ...good.data, outbox: [{ id: 'outro', day: '2026-11-02', amount: 500000, source: 'todo' }] },
+    { ...good.data, awards: { '2026-11-02': { xp: 500000, keys: [] } } },
+  ]) {
+    assert.throws(() => e.t.import({ ...good, data: broken })); assert.equal(e.t.st.tasks.length, 1);
+    assert.equal(e.t.st.tasks[0].title, 'Preservar');
+  }
+});

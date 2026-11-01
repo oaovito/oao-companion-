@@ -41,6 +41,21 @@ anatomia sem membros humanos e gates finais. Diagnostico manual assets_only no
 workflow original mede room/audita desenho e roda somente os 4 E2E de tarefas;
 NAO substitui pipeline completo nem tem etapa de publicacao.
 
+Run diagnostico 41346571613, a3240e4: medicao Windows passou, auditoria real 1.058
+animacoes passou (0 erros/recortes/paradas/orfas, media 0,21 ms); os primeiros dois
+E2E To-Do passaram. Terceiro travou ao encerrar com painel: handler de close vetava
+app.quit antes do will-quit. Run cancelado para parar consumo; corrigido para fechar
+no before-quit. Testes agora tem timeout e falham se precisar matar processo. Nao
+alegar que os 4 passaram; arquivo room ainda precisa ser recuperado/regenerado.
+
+Depois dessa medicao, anatomia foi adaptada para nadadeiras SEM membros humanos,
+preservando IDs/canais como ancoras de aderecos. Requer NOVA medicao/auditoria Windows.
+CalDAV/GUI/DPAPI e iCalendar (fusos/DST/excecoes) implementados, suites novas passam.
+Ver AGENDA_ICLOUD.md; script de ensaio live existe e BLOQUEIA sem credencial segura.
+Adicionados cenarios Windows DPAPI e detector DD1 com processo/manifesto Steam de
+fixture, explicitamente nao equivalentes a uma partida comercial. Total E2E esperado
+35 (29 anteriores, 4 tarefas, 1 DPAPI, 1 detector). Repetir diagnostico antes de build.
+
 ## Checklist integral
 
 - [ ] Clima real: Open-Meteo, cidades/datas/timezone/cache, GUI/configuracao, teste live.

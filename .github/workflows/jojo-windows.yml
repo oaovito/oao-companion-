@@ -135,9 +135,18 @@ jobs:
         run: npx --no-install electron scripts/auditoria-animacoes.mjs
         env:
           JOJO_ANIMATION_REPORT_DIR: out/assets-windows/animations
+      - name: Preservar medicao antes dos testes de interface
+        uses: actions/upload-artifact@v4
+        with:
+          name: JoJo-windows-measurement-${{ github.run_id }}
+          retention-days: 1
+          path: |
+            jojo-companion/assets/animations/jojo.room.json
+            jojo-companion/out/assets-windows/animations
       - name: Lista de tarefas no Electron Windows real
+        timeout-minutes: 9
         working-directory: jojo-companion
-        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs
+        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs
         env:
           JOJO_TEST_REPORT_DIR: out/assets-windows
       - name: Evidencias privadas e medidas para revisao

@@ -1,4 +1,5 @@
 import { logicalDay, shiftDay, weekday, validDay, timeZone, civilParts } from './civil-time.js';
+import { randomUUID } from 'node:crypto';
 
 const normalize = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const text = (s, max = 200) => String(s || '').trim().slice(0, max);
@@ -61,15 +62,32 @@ export function validateTodo(raw) {
   const st = { ...emptyTodo(), ...clone(raw), settings: settings(raw.settings) };
   const ids = new Set();
   st.tasks = st.tasks.map(t => {
-    if (typeof t.id !== 'string' || !t.id || ids.has(t.id)) throw new Error('Identificador de tarefa inválido ou repetido.');
+    if (!t || typeof t.id !== 'string' || !t.id || t.id.length > 128 || ids.has(t.id)) throw new Error('Identificador de tarefa inválido ou repetido.');
+    if (t.completed != null && (!t.completed || Array.isArray(t.completed) || typeof t.completed !== 'object')) throw new Error('Conclusões de tarefa inválidas.');
+    for (const [period, at] of Object.entries(t.completed || {})) if ((period !== 'once' && !validDay(period.replace(/^week:/, ''))) || !Number.isFinite(at) || at < 0) throw new Error('Período de conclusão inválido.');
     ids.add(t.id); return task(t, t, '2000-01-01');
   });
   for (const k of ['categories', 'outbox', 'routineDays']) if (!Array.isArray(st[k])) throw new Error('Estado de tarefas inválido.');
   for (const k of ['awards', 'notifications', 'lineIndex']) if (!st[k] || Array.isArray(st[k]) || typeof st[k] !== 'object') throw new Error('Estado de tarefas inválido.');
+  for (const day of [st.day, st.highDay]) if (day != null && !validDay(day)) throw new Error('Período de tarefas inválido.');
+  const categoryIds = new Set();
+  st.categories = st.categories.map(c => {
+    if (!c || typeof c.id !== 'string' || !c.id || c.id.length > 128 || categoryIds.has(c.id) || !text(c.name, 80)) throw new Error('Categoria inválida.');
+    categoryIds.add(c.id); return { id: c.id, name: text(c.name, 80), xp: c.xp == null ? null : Math.round(clamp(c.xp, 0, TODO_LIMITS.taskXp)) };
+  });
+  for (const h of st.history) if (!h || typeof h.taskId !== 'string' || typeof h.title !== 'string' || !validDay(h.day) || typeof h.completed !== 'boolean' || !Number.isFinite(h.at)) throw new Error('Histórico de tarefas inválido.');
+  for (const a of st.outbox) if (!a || !validDay(a.day) || typeof a.id !== 'string' || !a.id.startsWith(`todo:${a.day}:`) || a.id.length > 500 || !Number.isInteger(a.amount) || a.amount < 0 || a.amount > TODO_LIMITS.dailyXp || a.source !== 'todo') throw new Error('Recompensa de tarefas inválida.');
+  for (const [day, a] of Object.entries(st.awards)) {
+    if (day === 'seven') { if (typeof a !== 'boolean') throw new Error('Registro de bônus inválido.'); continue; }
+    if (day === 'once') { if (!Array.isArray(a) || a.some(x => typeof x !== 'string')) throw new Error('Registro de tarefa única inválido.'); continue; }
+    if (!validDay(day) || !a || !Array.isArray(a.keys) || a.keys.some(x => typeof x !== 'string') || !Number.isInteger(a.xp) || a.xp < 0 || a.xp > TODO_LIMITS.dailyXp) throw new Error('Registro de XP inválido.');
+  }
+  if (st.routineDays.some(day => !validDay(day))) throw new Error('Dias de rotina inválidos.');
+  st.routineDays = [...new Set(st.routineDays)];
   return st;
 }
 export class TodoModel {
-  constructor({ state, save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), id = () => globalThis.crypto.randomUUID(), onChange = () => {} } = {}) {
+  constructor({ state, save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), id = randomUUID, onChange = () => {} } = {}) {
     this.st = state ? validateTodo(state) : emptyTodo();
     this.save = save; this.award = award; this.now = now; this.id = id; this.onChange = onChange;
     this.sync(); this.drain();
@@ -104,7 +122,7 @@ export class TodoModel {
     if (t.frequency === 'weekdays') return t.weekdays.includes(weekday(day));
     return true;
   }
-  done(t, day) { return !!t.completed?.[this.period(t, day)]; }
+  done(t, day) { return Object.hasOwn(t.completed || {}, this.period(t, day)); }
   configure(patch) {
     this.sync(); this.mutate(() => { this.st.settings = settings({ ...this.st.settings, ...patch }); }); this.sync();
     return this.snapshot();

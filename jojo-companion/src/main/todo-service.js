@@ -80,5 +80,5 @@ export function createTodoService({ userData, root, icon, companion, fromApp, fr
   ipcMain.on('todo:open-settings', e => authorized(e) && settingsWin.open());
   ipcMain.on('todo:open-central', e => authorized(e) && companion.openApp('tarefas'));
   update();
-  return { model, update, dock, guard: () => dock.apply(model.st.settings, blocked()), close: () => { clearTimeout(timer); dock.close(); ipcMain.removeHandler('todo:request'); } };
+  return { model, update, dock, guard: () => dock.apply(model.st.settings, blocked()), close: () => { model.onChange = () => {}; clearTimeout(timer); dock.close(); ipcMain.removeHandler('todo:request'); } };
 }

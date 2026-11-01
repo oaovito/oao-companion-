@@ -177,7 +177,13 @@ export class RigRenderer {
     }
     if (part.pivot && part.rot) {
       ctx.translate(part.pivot[0], part.pivot[1]);
-      ctx.rotate((pose[part.rot] || 0) * (part.rotSign ?? 1) * DEG);
+      let angle = pose[part.rot] || 0;
+      if (this.rig.anatomy === 'shark-fins-v1') {
+        // Retarget dos canais antigos: abas rígidas e triangulares, sem cotovelo desenhado.
+        if (part.id === 'armL' || part.id === 'armR') angle = Math.max(-38, Math.min(52, angle * 0.35 + (pose.finger || 0) * (part.id === 'armR' ? 18 : -5)));
+        if (part.id === 'foreL' || part.id === 'foreR') angle *= 0.25;
+      }
+      ctx.rotate(angle * (part.rotSign ?? 1) * DEG);
       ctx.translate(-part.pivot[0], -part.pivot[1]);
     }
     if (part.lift) ctx.translate(0, -(pose[part.lift] || 0));

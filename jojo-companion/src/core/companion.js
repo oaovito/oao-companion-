@@ -3114,12 +3114,12 @@ export class Companion {
   // ---------------------------------------------------------------- Agenda (Google ou iCloud)
 
   /** Eventos novos da agenda (vindos do main). */
-  setCalendar({ events = this.calendar.events, error = null, state = null, lastSync = null, configured = false } = {}) {
-    const success = !error && !['syncing', 'disconnected', 'error'].includes(state);
+  setCalendar({ events = this.calendar.events, error = null, state = null, lastSync = null, configured = this.calendar.configured || false } = {}) {
+    const success = !error && (state === null || ['connected', 'empty'].includes(state));
     this.calendar = { ...this.calendar, events, error, configured,
       state: state || (error ? 'error' : events.length ? 'connected' : 'empty'),
       synced: success || this.calendar.synced,
-      lastSync: success ? (lastSync ?? this.dateNow().getTime()) : this.calendar.lastSync };
+      lastSync: success ? (lastSync ?? this.dateNow().getTime()) : state === 'configured' ? lastSync ?? this.calendar.lastSync : this.calendar.lastSync };
   }
 
   get agendaConectada() {
@@ -3135,7 +3135,7 @@ export class Companion {
   checkAgenda(date = new Date()) {
     const s = this.store.get();
     if (!this.started) return null;
-    if (!s.agendaUrl) {
+    if (!s.agendaUrl && !this.calendar.configured) {
       // Sugestão (uma vez), depois de 10 min aberto e num momento calmo.
       if (!s.agendaSugerida && this.clock.now() - (this.startedAt || 0) > 10 * 60e3 && this._canNag() && !this.interaction) {
         this.store.update({ agendaSugerida: true });
@@ -3147,14 +3147,18 @@ export class Companion {
       }
       return null;
     }
-    if (!s.agendaAtiva || !this.calendar.events.length) return null;
+    if (!this.agendaConectada || !this.calendar.events.length) return null;
     const now = date.getTime();
-    const soon = agendaBetween(this.calendar.events, new Date(now - 3 * 60e3), new Date(now + s.agendaAvisoMin * 60e3 + 60e3)).filter((e) => !e.diaInteiro);
+    let soon, today;
+    try {
+      soon = agendaBetween(this.calendar.events, new Date(now - 3 * 60e3), new Date(now + s.agendaAvisoMin * 60e3 + 60e3)).filter((e) => !e.diaInteiro);
+      today = agendaDoDia(this.calendar.events, date);
+    } catch { this.setCalendar({ state: 'error', error: 'recurrence' }); return null; }
     // Resumo do dia: primeira checagem depois das 6h.
     const hoje = dayKey(date);
     if (date.getHours() >= 6 && this.agendaResumoDia !== hoje && this._canNag() && !this.interaction) {
       this.agendaResumoDia = hoje;
-      const dia = agendaDoDia(this.calendar.events, date).filter((e) => e.fim > date);
+      const dia = today.filter((e) => e.fim > date);
       if (dia.length) {
         const first = dia[0];
         this.say(`Hoje: ${dia.length} compromisso${dia.length > 1 ? 's' : ''}. ${first.diaInteiro ? first.titulo : `O próximo às ${hhmm(first.inicio)}: ${first.titulo}`}.`, 'speech');
@@ -3213,6 +3217,7 @@ export class Companion {
     const conectar = /\b(conecta|conectar|integra|integrar|liga|ligar|configura|configurar|vincula|vincular)\w* (a |minha |o |meu |com a |com o |com )?(google |icloud |apple )?(agenda|calendario|google calendar|icloud|calendario do iphone)\b|\bconnect (my )?(google |icloud |apple )?calendar\b/.test(n);
     const icloud = /\b(icloud|iphone|apple|ipad|mac)\b/.test(n);
     if (conectar && icloud) {
+      if (this.onCalendarDisconnect) return 'Abra Configurações → Agenda iCloud. Informe seu ID Apple e uma senha específica de aplicativo nos campos seguros; não mande senha no chat. Eu descubro os calendários e só leio os compromissos. O link de Calendário Público continua compatível, mas não é necessário para a conexão autenticada.';
       return [
         'iCloud, beleza. É rápido:',
         '1) No iPhone, abre o app Calendário e toca em "Calendários" lá embaixo.',
@@ -3250,7 +3255,9 @@ export class Companion {
       if (this.calendar.error || this.calendar.state === 'error') return `A consulta da agenda falhou. ${this.calendar.error === 'auth' ? 'A autorização precisa ser renovada nas Configurações.' : 'Não consegui obter uma consulta válida agora.'}${this.calendar.lastSync ? ` Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.` : ''} Não vou dizer que está vazia sem confirmar.`;
       if (!this.calendar.synced) return 'A agenda foi configurada, mas ainda não consegui concluir uma sincronização. Não tenho compromissos confirmados.';
       if (status) return `Sua agenda está conectada e a consulta foi concluída. Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.`;
-      const found = agendaBetween(this.calendar.events, query.from, query.to);
+      let found;
+      try { found = agendaBetween(this.calendar.events, query.from, query.to); }
+      catch { return 'Não consegui concluir a leitura das recorrências desse período. Não vou dizer que a agenda está vazia sem uma consulta válida.'; }
       const lista = query.kind === 'next' ? found.filter((e) => e.inicio >= query.from).slice(0, 1) : found;
       if (!lista.length) return `Consultei sua agenda: nenhum compromisso no período ${query.label.toLowerCase()} nos calendários sincronizados.`;
       return `${query.label}: ${lista.slice(0, 12).map((e) => `${query.kind === 'week' || query.kind === 'next' ? e.inicio.toLocaleDateString('pt-BR') + ' ' : ''}${e.diaInteiro ? 'dia todo' : hhmm(e.inicio)} ${e.titulo}`).join('; ')}.${lista.length > 12 ? ` Mais ${lista.length - 12} compromissos no período.` : ''}`;

@@ -6,6 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { requireWindows } from '../../src/main/windows-only.js';
 requireWindows();
 const require = createRequire(import.meta.url);
@@ -13,45 +14,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const ELECTRON = require('electron');
 const { _electron } = require('playwright-core');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-async function launch({ userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-e2e-')), env = {} } = {}) {
-  const app = await _electron.launch({
-    executablePath: ELECTRON,
-    args: [ROOT],
-    cwd: ROOT,
-    env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData, ...env },
-  });
-  const errors = [];
-  const win = await app.firstWindow();
-  win.on('pageerror', (e) => errors.push(e.message));
-  win.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-  await waitFor(app, () => globalThis.__jojo && globalThis.__jojo.companion.started);
-  await sleep(1500);
-  return { app, win, userData, errors };
-}
-
-async function waitFor(app, fn, timeout = 8000) {
-  const end = Date.now() + timeout;
-  for (;;) {
-    const ok = await app.evaluate(fn).catch(() => false);
-    if (ok) return ok;
-    if (Date.now() > end) throw new Error(`timeout esperando: ${fn}`);
-    await sleep(100);
-  }
-}
-
-
-async function quit(app) {
-  await app.evaluate(() => globalThis.__jojo.quit()).catch(() => {});
-  const proc = app.process();
-  const done = new Promise((r) => proc.once('exit', r));
-  await Promise.race([done, sleep(5000)]);
-  try {
-    await app.close();
-  } catch {
-    /* já fechado */
-  }
-}
-
+import { launch, waitFor, quit } from './feature-helpers.mjs';
 
 async function tasksCentral(app) {
   const opened = app.waitForEvent('window');
@@ -59,7 +22,7 @@ async function tasksCentral(app) {
   const page = await opened; await page.waitForSelector('#tarefas .todo-primary'); return page;
 }
 
-test('tarefas Windows: interface real cria/edita/reordena/conclui e anima XP sem novo chat', async () => {
+test('tarefas Windows: interface real cria/edita/reordena/conclui e anima XP sem novo chat', { timeout: 120000 }, async () => {
   const { app, errors } = await launch();
   try {
     const page = await tasksCentral(app);
@@ -92,7 +55,7 @@ test('tarefas Windows: interface real cria/edita/reordena/conclui e anima XP sem
   } finally { await quit(app); }
 });
 
-test('tarefas Windows: arquivo durável, reinício e recuperação do reset após desligamento', async () => {
+test('tarefas Windows: arquivo durável, reinício e recuperação do reset após desligamento', { timeout: 120000 }, async () => {
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-tasks-restart-'));
   let { app } = await launch({ userData });
   let id, day;
@@ -122,7 +85,7 @@ test('tarefas Windows: arquivo durável, reinício e recuperação do reset apó
   } finally { await quit(app); }
 });
 
-test('tarefas Windows: configurações afetam painel nativo; foco oculta sem impedir acesso manual', async () => {
+test('tarefas Windows: configurações afetam painel nativo; foco oculta sem impedir acesso manual', { timeout: 120000 }, async () => {
   const { app, errors } = await launch();
   try {
     const page = await tasksCentral(app); const opened = app.waitForEvent('window');
@@ -141,7 +104,7 @@ test('tarefas Windows: configurações afetam painel nativo; foco oculta sem imp
   } finally { await quit(app); }
 });
 
-test('tarefas Windows: chat usa lista real; HTML não executa e IPC rejeita emissor indevido', async () => {
+test('tarefas Windows: chat usa lista real; HTML não executa e IPC rejeita emissor indevido', { timeout: 120000 }, async () => {
   const { app, errors } = await launch();
   try {
     const page = await tasksCentral(app);
@@ -162,5 +125,25 @@ test('tarefas Windows: chat usa lista real; HTML não executa e IPC rejeita emis
     });
     assert.ok(untrusted.error);
     assert.deepEqual(errors, []);
+  } finally { await quit(app); }
+});
+
+test('iCloud Windows: DPAPI real protege credencial e configuração não a expõe', { timeout: 60000 }, async () => {
+  const { app, userData } = await launch();
+  try {
+    const moduleUrl = pathToFileURL(path.join(ROOT, 'src/main/credential-vault.js')).href;
+    const file = path.join(userData, 'native-dpapi-fixture.json');
+    const result = await app.evaluate(async ({ safeStorage }, { moduleUrl, file }) => {
+      const { CredentialVault } = await import(moduleUrl);
+      const vault = new CredentialVault(file, safeStorage);
+      const available = vault.available(); if (!available) throw new Error('DPAPI não está disponível neste runner.');
+      vault.write({ username: 'fixture@example.invalid', password: 'only-a-native-test-fixture' });
+      const account = vault.read();
+      return { available, same: account.username === 'fixture@example.invalid' && account.password === 'only-a-native-test-fixture', settings: globalThis.__jojo.settingsInfo().settings };
+    }, { moduleUrl, file });
+    assert.equal(result.available, true); assert.equal(result.same, true);
+    const raw = fs.readFileSync(file, 'utf8');
+    assert.equal(raw.includes('only-a-native-test-fixture'), false); assert.equal(raw.includes('fixture@example.invalid'), false);
+    assert.equal(JSON.stringify(result.settings).includes('only-a-native-test-fixture'), false);
   } finally { await quit(app); }
 });

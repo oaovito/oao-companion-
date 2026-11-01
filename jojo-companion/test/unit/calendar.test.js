@@ -24,7 +24,8 @@ test('agenda: interpreta o .ics (fuso, dia inteiro, repetição semanal com exce
   assert.equal(ev.length, 4, 'cancelado fica de fora');
   const dia = agendaDoDia(ev, new Date(2026, 9, 30, 8));
   assert.deepEqual(dia.map((e) => e.titulo), ['Aniversário da Ju', 'Reunião com o time', 'Academia', 'Consulta médica, levar exames']);
-  assert.equal(dia[1].inicio.getHours(), 9);
+  assert.equal(dia[1].inicio.toISOString(), '2026-10-30T12:00:00.000Z', '09h em São Paulo equivale a 12h UTC');
+  assert.equal(new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Sao_Paulo', hour: '2-digit' }).format(dia[1].inicio), '09');
   // Academia seg/qua/sex; quarta 28 cancelada (EXDATE).
   const semana = agendaBetween(ev, new Date(2026, 9, 26), new Date(2026, 10, 2)).filter((e) => e.titulo === 'Academia');
   assert.deepEqual(semana.map((e) => e.inicio.getDate()), [26, 30]);
@@ -110,12 +111,12 @@ test('agenda: aviso 10 min antes com a animação do tipo e aviso quando começa
   e.store.update({ agendaUrl: URL, agendaAtiva: true, agendaAvisoMin: 10 });
   e.companion.setCalendar({ events: parseIcs(ICS) });
   e.companion.agendaResumoDia = '2026-10-26';
-  assert.equal(e.companion.checkAgenda(new Date(2026, 9, 26, 18, 22)), 'aviso');
+  assert.equal(e.companion.checkAgenda(new Date('2026-10-26T18:22:00-03:00')), 'aviso');
   assert.match(e.companion.behavior.anim, /^cat_duploBiceps/, 'treino → duplo bíceps');
   e.clock.advance(5000);
-  assert.equal(e.companion.checkAgenda(new Date(2026, 9, 26, 18, 25)), null, 'não repete');
+  assert.equal(e.companion.checkAgenda(new Date('2026-10-26T18:25:00-03:00')), null, 'não repete');
   e.clock.advance(5000);
-  assert.equal(e.companion.checkAgenda(new Date(2026, 9, 26, 18, 30, 30)), 'inicio');
+  assert.equal(e.companion.checkAgenda(new Date('2026-10-26T18:30:30-03:00')), 'inicio');
   // Resumo do dia de manhã.
   e.companion.agendaResumoDia = null;
   e.clock.advance(5000);

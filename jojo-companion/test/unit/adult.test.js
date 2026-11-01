@@ -44,20 +44,20 @@ test('fantasia ousada por padrão; "se veste direito" → dedo do meio e versão
   for (const id of ['ramada', 'eidFitr', 'roshHashana', 'hanukkah', 'diwali', 'vesak']) assert.equal(HOLIDAYS[id].ousada, false, id);
 });
 
-test('camada ousada e dedo do meio existem no desenho', () => {
+test('camada ousada preservada e gesto legado usa nadadeira, sem mão humana', () => {
   const parts = RIG.groups.flatMap((g) => g.parts.map((p) => ({ ...p, group: g })));
-  for (const id of ['sexySunga', 'sexyGarter', 'sexyCollar', 'sexyNetL']) assert.ok(parts.some((p) => p.id === id), id);
+  for (const id of ['sexySunga', 'sexyGarter', 'sexyCollar', 'sexyNetFin']) assert.ok(parts.some((p) => p.id === id), id);
   const shorts = RIG.groups.find((g) => g.id === 'shorts');
   assert.ok([].concat(shorts.hideIf).includes('sexy'), 'bermuda some na versão ousada');
-  // Mão de verdade (estilo South Park) só no dedo do meio: punho, polegar e dedo do meio com unha.
-  for (const id of ['handFist', 'handThumb', 'handMiddle', 'handNail', 'handCreases']) assert.ok(parts.some((p) => p.id === id && p.group.showIf === 'finger'), id);
-  assert.equal(parts.find((p) => p.id === 'handClawR').hideIf, 'finger', 'barbatana da mão some nessa animação');
+  // Diretriz anatômica atual: gesto provocador com nadadeira; nenhum dedo/punho desenhado.
+  for (const id of ['handFist', 'handThumb', 'handMiddle', 'handNail', 'handCreases']) assert.equal(parts.some((p) => p.id === id), false, id);
+  assert.ok(parts.some(p => p.id === 'armR' && p.path.includes('163,130')), 'nadadeira triangular real');
   const an = new Animator(ANIMS);
   an.play('finger', 0, { restart: true, variant: 'finger' });
   const pose = an.sample(1300).pose;
   assert.equal(pose.finger, 1);
-  // Antebraço erguido: o dedo (que aponta para longe do cotovelo) fica para cima.
-  assert.ok(pose.legFR >= 60 && pose.elbowR >= 90, 'braço levantado com a mão para cima');
+  // Canais preservados para compatibilidade; renderer os retargeta à nadadeira.
+  assert.ok(pose.legFR >= 60 && pose.elbowR >= 90, 'receita legada continua animada');
 });
 
 test('comida de tubarão: sorteia o que come (às vezes gente), sangra e sempre arrota', () => {

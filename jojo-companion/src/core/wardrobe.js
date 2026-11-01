@@ -7,7 +7,7 @@ export const WARDROBE_SLOTS = [
   { id: 'rosto', nome: 'Rosto' },
   { id: 'pescoco', nome: 'Pescoço' },
   { id: 'corpo', nome: 'Corpo' },
-  { id: 'mao', nome: 'Na mão' },
+  { id: 'mao', nome: 'Na nadadeira' },
   { id: 'bermuda', nome: 'Bermuda' },
 ];
 

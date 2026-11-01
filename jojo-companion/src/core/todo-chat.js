@@ -29,6 +29,12 @@ export class TodoChat {
       this.model.add({ title, ...(daily ? { frequency: 'daily' } : {}) });
       return `${this.model.line('added')} “${title}”${daily ? ', diariamente' : ''}.`;
     }
+    m = s.match(/^(?:renomeia|renomeie|edita|edite|muda|mude)\s+(?:a\s+)?tarefa\s+(.+?)(?:\s+para\s+(.+))?[.!]?$/i);
+    if (m) {
+      const found = this.find(m[1]); if (found.length !== 1) return this.clarify(found);
+      if (!m[2]) return `Qual é o novo título de “${found[0].title}”? Pode dizer “renomeia a tarefa ${found[0].title} para novo título”. Não alterei nada.`;
+      this.model.edit(found[0].id, { title: m[2] }); return `Agora a tarefa se chama “${this.find(m[2])[0]?.title || m[2]}”. O histórico e o registro de XP continuam preservados.`;
+    }
     m = s.match(/^(?:marca|marque|conclua|concluir|desmarca|desmarque)\s+(.+?)(?:\s+como\s+(?:conclu[ií]d[ao]|feit[ao]|pendente))?[.!]?$/i);
     if (m) {
       const title = m[1].replace(/\s+como\s+(conclu[ií]d[ao]|feit[ao]|pendente)$/i, '');
