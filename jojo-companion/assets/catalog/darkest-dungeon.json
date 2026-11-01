@@ -1,0 +1,22 @@
+{
+  "appId": 262060,
+  "balance": { "start": 15, "firstDay": 50, "milestones": [[15, 25], [30, 40], [60, 80]], "dailyCap": 300, "validSeconds": 60, "maxStartsPerDay": 3, "idleSeconds": 120 },
+  "lines": [
+    "Manu, hora de Darkest Dungeon. O estresse dos heróis não vai subir sozinho.",
+    "Abre Darkest Dungeon. Hoje a ruína tem horário, e você está na escala.",
+    "A tocha está apagada e a sua coragem em modo economia. Darkest Dungeon, agora.",
+    "Tem um solar em ruínas esperando. Finalmente um imóvel compatível com o orçamento dos heróis.",
+    "Darkest Dungeon hoje, Emanuele. Leva curativos. Otimismo não estanca sangramento.",
+    "O Ancestral deixou dívida e monstro. Joga um pouco; a herança não vai piorar sozinha.",
+    "Forme o grupo. Dessa vez tenta escolher gente menos traumatizada que uma planilha de segunda.",
+    "Manu, visita a masmorra. A taverna já tem gente suficiente fugindo da responsabilidade.",
+    "Hora de Darkest Dungeon. Confiança excessiva já matou mais grupo que falta de bandagem.",
+    "Os heróis estão descansados. Péssima notícia para eles: eu lembrei da sua partida diária.",
+    "Separa provisões e abre Darkest Dungeon. Fome na masmorra não é estratégia de economia.",
+    "Uma expedição hoje, Manu. Só não chama uma derrota planejada de teste de build.",
+    "O caminho para a ruína está livre. Milagre: uma estrada sem reunião no fim.",
+    "Darkest Dungeon está te esperando. Leva uma tocha; eu já forneço o mau humor.",
+    "Vamos ao solar, Emanuele. A sanidade é temporária, o inventário cheio é garantido.",
+    "Já conferiu seus heróis hoje? O cemitério do solar não pode ser o único departamento organizado."
+  ]
+}

@@ -34,6 +34,7 @@ import { criarPresenca, garantirAtalho } from './presenca.js';
 import { WeatherService } from '../core/weather.js';
 import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
+import { createDarkestService } from './darkest-service.js';
 import { requireWindows } from './windows-only.js';
 
 requireWindows();
@@ -373,6 +374,7 @@ function main() {
         abrirGuardaRoupa,
         todo: todoService?.model.snapshot() || null,
         abrirTarefas,
+        darkest: darkestService?.model.snapshot() || null,
       };
     }
     let appUpdateTimer = null;
@@ -387,6 +389,7 @@ function main() {
     let abrirGuardaRoupa = 0;
     let abrirTarefas = 0;
     let todoService = null;
+    let darkestService = null;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
       const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'tarefas';
@@ -488,7 +491,10 @@ function main() {
     });
     const fromSettings = (e) => settingsWin.isOpen && e.sender === settingsWin.win.webContents;
     todoService = createTodoService({ userData, root: ROOT, icon: appIcon, companion, fromApp, fromSettings, appWin, settingsWin, log });
+    darkestService = createDarkestService({ userData, content: readJSON('assets/catalog/darkest-dungeon.json'), companion, store, log,
+      notify: () => { appWin.send('app:darkest-update', { darkest: darkestService?.model.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
     app.on('will-quit', () => todoService.close());
+    app.on('will-quit', () => darkestService.close());
     ipcMain.handle('settings:get', (e) => (fromSettings(e) ? settingsInfo() : null));
     ipcMain.handle('settings:set', (e, patch) => {
       if (!fromSettings(e) || !patch || typeof patch !== 'object') return settingsInfo();
@@ -653,10 +659,12 @@ function main() {
             lol: wantLol(),
             spotify: wantSpotify(),
             percepcao: store.get().percepcaoTela,
+            darkest: store.get().darkestAtivo,
             spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
           });
           companion.setFullscreenDisplays(wantFullscreen() ? res.fullscreenIds : []);
           todoService.guard();
+          darkestService.observe(res.darkest, powerMonitor.getSystemIdleTime());
           companion.onForeground({ instagram: wantInstagram() && res.instagram, lol: wantLol() && res.lol });
           companion.onSpotify(wantSpotify() ? res.spotify : null);
           companion.onAppCategoria(store.get().percepcaoTela ? res.categoria : null);

@@ -1,7 +1,7 @@
 import { requireWindows } from '../src/main/windows-only.js';
 requireWindows();
-// Gera assets/icons/{app,tray}.{png,ico} desenhando o rig do JoJo.
-import { app, BrowserWindow } from 'electron';
+// Exporta a nova arte original para todos os tamanhos Windows, sem trocar pelo rig antigo.
+import { app, nativeImage } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,19 +33,15 @@ function ico(pngs) {
 }
 
 app.whenReady().then(async () => {
-  const win = new BrowserWindow({ show: false, width: 300, height: 300, transparent: true, webPreferences: { offscreen: false } });
-  await win.loadFile(path.join(ROOT, 'scripts', 'icon-page', 'index.html'));
-  const rig = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/character/jojo.rig.json'), 'utf8'));
-  const anim = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/animations/jojo.animations.json'), 'utf8'));
-  for (let i = 0; i < 50; i++) {
-    if (await win.webContents.executeJavaScript('!!window.iconsReady')) break;
-    await new Promise((r) => setTimeout(r, 100));
-  }
+  const source = nativeImage.createFromPath(path.join(OUT, 'app-source.png'));
+  if (source.isEmpty()) throw new Error('Arte original do ícone não encontrada.');
   const sizes = [16, 20, 24, 32, 40, 48, 64, 128, 256];
-  const urls = await win.webContents.executeJavaScript(`window.renderIcons(${JSON.stringify(rig)}, ${JSON.stringify(anim)}, ${JSON.stringify(sizes)})`);
   fs.mkdirSync(OUT, { recursive: true });
   const pngs = {};
-  for (const s of sizes) pngs[s] = Buffer.from(urls[s].split(',')[1], 'base64');
+  for (const s of sizes) {
+    pngs[s] = source.resize({ width: s, height: s, quality: 'best' }).toPNG();
+    fs.writeFileSync(path.join(OUT, `app-${s}.png`), pngs[s]);
+  }
   fs.writeFileSync(path.join(OUT, 'app.png'), pngs[256]);
   fs.writeFileSync(path.join(OUT, 'tray.png'), pngs[32]);
   fs.writeFileSync(path.join(OUT, 'tray@2x.png'), pngs[64]);

@@ -159,11 +159,41 @@
     "ribbon": "#c2453a",
     "mic": "#2b2d33",
     "clockFace": "#fbfbf7",
-    "clockRed": "#c2453a"
+    "clockRed": "#c2453a",
+    "dd_211f30": "#211f30",
+    "dd_7b4451": "#7b4451",
+    "dd_704b30": "#704b30",
+    "dd_e39a3d": "#e39a3d",
+    "dd_ffe0a0": "#ffe0a0",
+    "dd_bb4250": "#bb4250",
+    "dd_719ccb": "#719ccb",
+    "dd_7ed1cb": "#7ed1cb",
+    "dd_d7b879": "#d7b879",
+    "dd_815b9f": "#815b9f",
+    "dd_b5a165": "#b5a165",
+    "dd_6a3560": "#6a3560"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
   "groups": [
+    {
+      "id": "darkestCloak",
+      "outline": true,
+      "parts": [
+        {
+          "id": "ddManto",
+          "showIf": "prop_ddManto",
+          "path": "M48,85 Q90,74 132,85 L151,154 Q125,145 116,155 Q90,147 64,155 Q48,145 29,154 Z",
+          "fill": "dd_211f30"
+        },
+        {
+          "id": "ddMantoBorda",
+          "showIf": "prop_ddManto",
+          "path": "M48,85 Q90,94 132,85 L126,96 Q90,105 54,96 Z",
+          "fill": "dd_7b4451"
+        }
+      ]
+    },
     {
       "id": "costumeBack",
       "outline": true,
@@ -2466,6 +2496,72 @@
           "fill": "blanketStripe",
           "path": "M10,134 Q90,114 176,134 L177,140 Q90,120 9,140 Z M6,152 Q90,134 179,152 L180,158 Q90,140 5,158 Z",
           "showIf": "prop_coberta"
+        }
+      ]
+    },
+    {
+      "id": "darkestProps",
+      "outline": true,
+      "parts": [
+        {
+          "id": "ddTochaCabo",
+          "showIf": "prop_ddTocha",
+          "path": "M143,98 L150,98 L149,140 L144,140 Z",
+          "fill": "dd_704b30"
+        },
+        {
+          "id": "ddTochaFogo",
+          "showIf": "prop_ddTocha",
+          "path": "M145,101 C132,91 143,84 143,73 Q160,88 150,102 Z",
+          "fill": "dd_e39a3d"
+        },
+        {
+          "id": "ddTochaMiolo",
+          "showIf": "prop_ddTocha",
+          "path": "M145,98 Q140,93 147,86 Q153,95 145,98 Z",
+          "fill": "dd_ffe0a0"
+        },
+        {
+          "id": "ddImpaciente",
+          "showIf": "prop_ddImpaciente",
+          "path": "M152,48 L168,48 L157,62 L167,62 L151,80 L158,65 L149,65 Z",
+          "fill": "dd_bb4250"
+        },
+        {
+          "id": "ddCristal1",
+          "showIf": "prop_ddCristais",
+          "path": "M30,60 L38,47 L46,60 L38,76 Z",
+          "fill": "dd_719ccb"
+        },
+        {
+          "id": "ddCristal2",
+          "showIf": "prop_ddCristais",
+          "path": "M139,36 L146,24 L153,36 L146,52 Z",
+          "fill": "dd_7ed1cb"
+        },
+        {
+          "id": "ddCristal3",
+          "showIf": "prop_ddCristais",
+          "path": "M146,119 L153,109 L160,119 L153,133 Z",
+          "fill": "dd_d7b879"
+        },
+        {
+          "id": "ddEstresse",
+          "showIf": "prop_ddEstresse",
+          "path": "M20,43 Q3,29 17,22 Q35,14 37,29 Q38,42 25,37 Q18,33 24,27 Q29,23 31,29 Q26,25 24,30 Q24,35 29,33 Q34,29 28,24 Q16,19 14,29 Q11,37 20,43 Z",
+          "fill": "dd_815b9f"
+        },
+        {
+          "id": "ddCoroa",
+          "showIf": "prop_ddCoroa",
+          "path": "M60,13 L57,0 L77,9 L90,-8 L103,9 L123,0 L120,13 Z",
+          "fill": "dd_b5a165"
+        },
+        {
+          "id": "ddCoroaGema",
+          "showIf": "prop_ddCoroa",
+          "path": "M85,5 L90,0 L95,5 L90,11 Z",
+          "fill": "dd_6a3560"
         }
       ]
     }

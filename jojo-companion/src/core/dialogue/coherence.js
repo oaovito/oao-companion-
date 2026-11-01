@@ -10,6 +10,19 @@ export function correcaoPessoal(text) {
     && (/\b(nao|not|em vez|instead)\b/.test(n) || /^(?:eu )?quis dizer\b|^i meant\b/.test(n));
 }
 
+/** Correção literal curta: conservar a parte afirmada, sem escolher o termo negado. */
+export function termosDaCorrecao(text) {
+  if (!correcaoPessoal(text)) return null;
+  const raw = String(text).replace(/^(?:jojo|ei|hey)[,\s]+/i, '').trim();
+  const match = raw.match(/^(?:(?:eu\s+)?(?:disse|falei|quis dizer)|i\s+(?:said|meant))\s+(.+)$/i);
+  if (!match) return null;
+  const parts = match[1].split(/,?\s+(?:n[aã]o|not|em vez de|instead of)\s+/i);
+  const corrected = parts[0].replace(/[.!]+$/, '').trim();
+  const denied = (parts[1] || '').replace(/[.!]+$/, '').trim();
+  if (!corrected || corrected.length > 100 || /[?!]/.test(corrected) || /^(nao|não|not)\b/i.test(corrected)) return null;
+  return { corrected, denied };
+}
+
 export function pedidoNegado(text) {
   const n = norm(text);
   return /^(?:(?:ei|jojo|eu)\s+)*(?:nao|nem|nunca)\b/.test(n)
@@ -27,6 +40,8 @@ export function respostaAncorada(text, history = []) {
   const n = norm(text);
   const en = isEnglish(text);
   const out = (text, action = 'nod', intent = 'contexto') => ({ text, action, intent, kind: 'speech', tone: 'brincadeira', ...(en ? { lang: 'en' } : {}) });
+  const correction = termosDaCorrecao(text);
+  if (correction && !/\b(cura|cure|remedio|medicamento|dose|matar|suicid|tratamento|treatment)\b/.test(n)) return out(en ? `Understood: “${correction.corrected}”. I'll use your correction.` : `Entendido: “${correction.corrected}”. Sigo com essa correção.`, 'nod', 'correcao');
   const recusa = n.replace(/^(?:(?:ei|jojo|eu)\s+)*/, '');
   const treinoNegado = recusa.match(/^(?:nao|nem|nunca) (?:faz|faca|fazer) (?:mais |nenhum )?(supino|agachamentos?)[?!]*$/);
   if (treinoNegado) return out(`Sem ${treinoNegado[1].replace(/s$/, '')}. Os bíceps esperam.`, 'nod', 'recusa');
@@ -67,6 +82,8 @@ export function erroDeCoerencia(input, output, history = []) {
   const r = norm(output);
   if (!r || /^\s*\{\s*"(?:texto|text|acao|action)"|"texto"\s*:/.test(String(output))) return 'resposta estruturada incompleta';
   if (correcaoPessoal(input) && /\b(tem certeza|certeza disso|are you sure|you sure|sua memoria|tua memoria|your memory|voce se enganou|you are mistaken)\b/.test(r)) return 'contestação da correção pessoal';
+  const correction = termosDaCorrecao(input);
+  if (correction && correction.denied && r.includes(norm(correction.denied)) && !r.includes(norm(correction.corrected))) return 'termo negado confirmado como correção';
   if (/\b(voce vai morrer|vou (te |lhe )?(matar|machucar|agredir)|te (mato|machuco)|se mate|se mata|mate o|matar alguem|kill yourself|i (will|ll|am going to) kill|you will die)\b/.test(r)) return 'ameaça ou incentivo à violência';
   if (/\b(?:eu )?vou\b.{0,100}\bte (mandar|levar|botar)\b.{0,20}\bhospital\b/.test(r)) return 'ameaça ou promessa física inventada';
   if (/\b(derrubei|derramei|caiu)\b/.test(q) && /\b(teclado|computador|notebook)\b/.test(q) && /\b(estou|to|vou) (limpando|limpar|secando|secar|consertando|consertar|verificar)\b/.test(r)) return 'ação física inventada';

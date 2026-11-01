@@ -64,9 +64,17 @@ test('correcao pessoal permanece no historico entregue ao modelo no turno seguin
     return { text: 'Lilás, entendido.', action: 'nod' };
   }) });
   const correction = 'Eu disse lilás, não rosa.';
-  assert.equal((await engine.reply(correction)).intent, 'ia');
+  assert.equal((await engine.reply(correction)).intent, 'correcao');
   assert.equal((await engine.reply('Qual cor você deve lembrar?')).intent, 'ia');
-  assert.ok(calls[1].some((h) => h.role === 'user' && h.text === correction));
+  assert.ok(calls[0].some((h) => h.role === 'user' && h.text === correction));
+});
+
+test('correção literal não troca a afirmação pela palavra negada, em português ou inglês', async () => {
+  const engine = new DialogueEngine({ llm: model({ text: 'Maçã, certo.', action: 'nod' }) });
+  assert.equal(erroDeCoerencia('Eu disse manga, não maçã.', 'Maçã, certo. Entendi.'), 'termo negado confirmado como correção');
+  for (const [input, yes, no] of [['Eu disse manga, não maçã.', 'manga', 'maçã'], ['I said Thursday, not Tuesday.', 'Thursday', 'Tuesday']]) {
+    const r = await engine.reply(input); assert.ok(r.text.includes(yes)); assert.equal(r.text.includes(no), false);
+  }
 });
 const fonte = { consulta: 'diabetes', confianca: 'alta', trechos: [{ texto: 'Diabetes envolve resistência à insulina.', titulo: 'Diabetes', fonte: 'Fonte' }], fontes: [{ fonte: 'Fonte' }] };
 async function pump(e, n = 12) {

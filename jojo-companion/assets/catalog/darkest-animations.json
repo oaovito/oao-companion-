@@ -1,0 +1,160 @@
+{
+  "itens": [
+    {
+      "id": "ddAventureiro",
+      "nome": "Aventureiro do solar",
+      "categoria": "darkest",
+      "duracao": 4200,
+      "loop": false,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "darkest"
+        ],
+        "frases": [
+          "darkest dungeon"
+        ]
+      },
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "assente",
+        "rosto": "focado",
+        "cauda": "devagar",
+        "objeto": [
+          "ddManto",
+          "ddTocha"
+        ],
+        "fx": [
+          "poeira"
+        ],
+        "humor": {}
+      }
+    },
+    {
+      "id": "ddFurioso",
+      "nome": "A tocha não se acende sozinha",
+      "categoria": "darkest",
+      "duracao": 4200,
+      "loop": false,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "darkest"
+        ],
+        "frases": [
+          "ainda nao joguei darkest"
+        ]
+      },
+      "receita": {
+        "corpo": "treme",
+        "cabeca": "assente",
+        "rosto": "bravo",
+        "cauda": "devagar",
+        "objeto": [
+          "ddTocha",
+          "ddImpaciente"
+        ],
+        "fx": [],
+        "humor": {
+          "raiva": 0.8
+        }
+      }
+    },
+    {
+      "id": "ddXp",
+      "nome": "Cristais de experiência",
+      "categoria": "darkest",
+      "duracao": 4200,
+      "loop": false,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "darkest"
+        ],
+        "frases": [
+          "xp de darkest"
+        ]
+      },
+      "receita": {
+        "corpo": "evolui",
+        "cabeca": "assente",
+        "rosto": "orgulhoso",
+        "cauda": "devagar",
+        "objeto": [
+          "ddCristais"
+        ],
+        "fx": [
+          "brilho"
+        ],
+        "humor": {
+          "alegria": 0.8
+        }
+      }
+    },
+    {
+      "id": "ddDesespero",
+      "nome": "Voltei do solar",
+      "categoria": "darkest",
+      "duracao": 4200,
+      "loop": false,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "darkest"
+        ],
+        "frases": [
+          "voltei de darkest"
+        ]
+      },
+      "receita": {
+        "corpo": "encolhe",
+        "cabeca": "assente",
+        "rosto": "preocupado",
+        "cauda": "devagar",
+        "objeto": [
+          "ddEstresse",
+          "ddManto"
+        ],
+        "fx": [
+          "suor"
+        ],
+        "humor": {
+          "medo": 0.6
+        }
+      }
+    },
+    {
+      "id": "ddConquista",
+      "nome": "O Herdeiro da Ruína",
+      "categoria": "darkest",
+      "duracao": 4200,
+      "loop": false,
+      "frequencia": "rara",
+      "gatilho": {
+        "eventos": [
+          "darkest"
+        ],
+        "frases": [
+          "herdeiro da ruina"
+        ]
+      },
+      "receita": {
+        "corpo": "poder",
+        "cabeca": "assente",
+        "rosto": "fera",
+        "cauda": "devagar",
+        "objeto": [
+          "ddCoroa",
+          "ddManto",
+          "ddCristais"
+        ],
+        "fx": [
+          "brilho"
+        ],
+        "humor": {
+          "alegria": 0.7
+        }
+      }
+    }
+  ]
+}

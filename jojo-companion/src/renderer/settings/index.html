@@ -19,6 +19,18 @@
   <div id="notice" class="notice hidden" role="alert"></div>
 
   <form id="form">
+    <fieldset>
+      <legend>Clima</legend>
+      <label class="check"><input type="checkbox" name="climaAtivo"> Consultar previsão atual na Open-Meteo quando eu perguntar</label>
+      <label class="row">Cidade padrão <input type="text" name="climaCidade" maxlength="120" placeholder="Guarapuava, Paraná"></label>
+      <p class="hint">Uma cidade escrita na pergunta tem prioridade. Não uso GPS nem Wikipédia para inventar previsão. Rede indisponível será informada como falha da consulta.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Darkest Dungeon</legend>
+      <label class="check"><input type="checkbox" name="darkestAtivo"> Detectar Darkest Dungeon original da Steam e registrar tempo ativo/XP</label>
+      <label class="check"><input type="checkbox" name="darkestSugestao"> Sugerir uma partida por dia, entre 06h e 21h, sem interromper foco ou tela cheia</label>
+      <p class="hint">Sem login Steam. Só conta o executável verificado em primeiro plano, sem inatividade prolongada. Darkest Dungeon II não entra. Não é possível distinguir menus ou pausas internas sem monitoramento invasivo.</p>
+    </fieldset>
     <fieldset id="todoSettings">
       <legend>Lista de Tarefas</legend>
       <div id="todoSettingsFields"></div>

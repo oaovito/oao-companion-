@@ -1272,6 +1272,10 @@ export class Companion {
       const reply = this.todoChat.reply(text);
       if (reply) return this._quickReply(conv, reply, 'tarefas');
     }
+    if (!safety && this.darkest) {
+      const reply = this.darkest.chat(text);
+      if (reply) return this._quickReply(conv, reply, 'darkest');
+    }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
       const novo = !(this.nerdUntil > this.clock.now());

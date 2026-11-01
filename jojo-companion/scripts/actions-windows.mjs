@@ -107,7 +107,7 @@ try {
   await step('presence', node, ['scripts/presenca-windows.mjs', 'dist/JoJoCompanion.exe'], 6);
   await cleanupShortcut();
   await step('windows', node, ['test/e2e/run-e2e.mjs', '--integration'], 8, (text) => tapTotals(text, 16));
-  await step('e2e', node, ['test/e2e/run-e2e.mjs'], 8, (text) => tapTotals(text, 29));
+  await step('e2e', node, ['test/e2e/run-e2e.mjs'], 8, (text) => tapTotals(text, 33));
   await step('animations', node, [npm, 'run', 'audit:animations'], 10, () => {
     const audit = JSON.parse(fs.readFileSync(path.join(env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json')));
     if (audit.total < 1043 || audit.erros.length || audit.fora.length || audit.paradas.length || audit.semGatilho) throw new Error('Auditoria de animacoes incompleta/reprovada');

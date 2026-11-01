@@ -19,6 +19,11 @@ const MONITOR_DEFAULTTONEAREST = 2;
 
 let api = null;
 const own = new Set();
+const { verifyDarkestImage } = require('../core/darkest-process.cjs');
+const fs = require('node:fs');
+let darkestKnown = [];
+let darkestScanAt = 0;
+const darkestProofs = new Map();
 
 function init() {
   const koffi = require('koffi');
@@ -27,6 +32,7 @@ function init() {
   const kernel32 = koffi.load('kernel32.dll');
   const RECT = koffi.struct('JOJO_RECT', { left: 'int32', top: 'int32', right: 'int32', bottom: 'int32' });
   const MONITORINFO = koffi.struct('JOJO_MONITORINFO', { cbSize: 'uint32', rcMonitor: RECT, rcWork: RECT, dwFlags: 'uint32' });
+  koffi.struct('JOJO_FILETIME', { low: 'uint32', high: 'uint32' });
   api = {
     koffi,
     MONITORINFO,
@@ -43,8 +49,57 @@ function init() {
     OpenProcess: kernel32.func('uintptr_t __stdcall OpenProcess(uint32 dwDesiredAccess, int bInheritHandle, uint32 dwProcessId)'),
     QueryFullProcessImageNameW: kernel32.func('int __stdcall QueryFullProcessImageNameW(uintptr_t hProcess, uint32 dwFlags, _Out_ uint16_t *lpExeName, _Inout_ uint32 *lpdwSize)'),
     CloseHandle: kernel32.func('int __stdcall CloseHandle(uintptr_t hObject)'),
+    GetProcessTimes: kernel32.func('int __stdcall GetProcessTimes(uintptr_t hProcess, _Out_ JOJO_FILETIME *creation, _Out_ JOJO_FILETIME *exit, _Out_ JOJO_FILETIME *kernel, _Out_ JOJO_FILETIME *user)'),
+    GetExitCodeProcess: kernel32.func('int __stdcall GetExitCodeProcess(uintptr_t hProcess, _Out_ uint32 *code)'),
     FindWindowExW: user32.func('uintptr_t __stdcall FindWindowExW(uintptr_t hWndParent, uintptr_t hWndChildAfter, str16 lpszClass, str16 lpszWindow)'),
   };
+}
+
+function darkestProcess(hwnd) {
+  if (!hwnd || own.has(String(hwnd))) return null;
+  const pid = [0]; api.GetWindowThreadProcessId(hwnd, pid); if (!pid[0]) return null;
+  const h = api.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid[0]); if (!h) return null;
+  try {
+    const name = new Uint16Array(2048); const size = [2048];
+    if (!api.QueryFullProcessImageNameW(h, 0, name, size)) return null;
+    const full = String.fromCharCode(...name.slice(0, size[0]));
+    if (!/\\Darkest\.exe$/i.test(full)) return null;
+    let proof = darkestProofs.get(full);
+    if (!proof || Date.now() > proof.until) {
+      proof = { valid: verifyDarkestImage(full, f => fs.readFileSync(f, 'utf8')), until: Date.now() + 60000 };
+      if (darkestProofs.size >= 64) darkestProofs.delete(darkestProofs.keys().next().value);
+      darkestProofs.set(full, proof);
+    }
+    if (!proof.valid) return null;
+    const creation = {}; const exit = {}; const kernel = {}; const user = {}; const code = [0];
+    if (!api.GetProcessTimes(h, creation, exit, kernel, user) || !api.GetExitCodeProcess(h, code) || code[0] !== 259) return null;
+    return { hwnd: String(hwnd), pid: pid[0], key: `${pid[0]}:${creation.high.toString(16)}:${creation.low.toString(16)}` };
+  } catch { return null; }
+  finally { api.CloseHandle(h); }
+}
+
+function detectDarkest() {
+  const foreground = api.GetForegroundWindow();
+  const active = darkestProcess(foreground);
+  if (active) darkestKnown = [active, ...darkestKnown.filter(x => x.key !== active.key)].slice(0, 8);
+  // Enumera apenas janelas de nível superior a cada 15 s, não todos os processos a cada quadro.
+  if (Date.now() >= darkestScanAt) {
+    darkestScanAt = Date.now() + 15000; const found = active ? [active] : []; let hwnd = 0;
+    for (let i = 0; i < 400; i++) {
+      hwnd = api.FindWindowExW(0, hwnd, null, null); if (!hwnd) break;
+      const candidate = darkestProcess(hwnd);
+      if (candidate && !found.some(x => x.key === candidate.key)) found.push(candidate);
+    }
+    darkestKnown = found.slice(0, 8);
+  }
+  const valid = [];
+  for (const candidate of darkestKnown) {
+    const current = candidate.key === active?.key ? active : darkestProcess(BigInt(candidate.hwnd));
+    if (current?.key === candidate.key) valid.push(current);
+  }
+  darkestKnown = valid;
+  const game = active || valid[0];
+  return { running: !!game, active: !!active, processKey: game?.key || null };
 }
 
 function className(hwnd) {
@@ -161,6 +216,7 @@ function detect(opts = {}) {
     if (opts.percepcao) result.categoria = categoriaApp(exeName(hwnd));
   }
   result.spotify = opts.spotify ? spotifyTitle(opts.spotifyExe || 'Spotify.exe') : null;
+  result.darkest = opts.darkest ? detectDarkest() : null;
   return result;
 }
 

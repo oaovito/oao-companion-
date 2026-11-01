@@ -13,6 +13,7 @@ let selected = null;
 let menuIndex = 0;
 let showingTarefas = false;
 let lastTarefasReq = 0;
+let showingDarkest = false;
 const xpView = new ProgressView($('progression'));
 const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho, animations: st?.todo?.settings.animations !== false }) });
 
@@ -25,18 +26,20 @@ function chip(el, status, label) {
 function render(s) {
   st = s;
   if (s.abrirTarefas && s.abrirTarefas !== lastTarefasReq) {
-    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false;
+    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false; showingDarkest = false;
   }
   // Pedido de abrir a coleção (/colecao): cada pedido novo vale uma vez.
   if (s.abrirColecao && s.abrirColecao !== lastColecaoReq) {
     lastColecaoReq = s.abrirColecao;
     showingColecao = true;
+    showingDarkest = false;
     showingTarefas = false;
     showingGuarda = false;
   }
   if (s.abrirGuardaRoupa && s.abrirGuardaRoupa !== lastGuardaReq) {
     lastGuardaReq = s.abrirGuardaRoupa;
     showingGuarda = true;
+    showingDarkest = false;
     showingTarefas = false;
     showingColecao = false;
   }
@@ -68,6 +71,7 @@ function render(s) {
   renderGuarda();
   $('tarefas').classList.toggle('hidden', !showingTarefas);
   if (showingTarefas) { $('convTitle').textContent = 'Lista de Tarefas'; chip($('convStatus'), 'idle', ''); todoView.refresh(); }
+  renderDarkest();
   xpView.render(s.colecao, { quiet: s.trabalho, animations: s.todo?.settings.animations !== false });
 }
 
@@ -83,7 +87,7 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  const painel = showingColecao || showingGuarda || showingTarefas;
+  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest;
   for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
@@ -187,6 +191,7 @@ async function vestir(cmd) {
   if (r && r.text && $('guardaFala')) $('guardaFala').textContent = `${st.companionName}: ${r.text}`;
 }
 $('guardaBtn').addEventListener('click', async () => {
+  showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
   showingGuarda = !showingGuarda;
@@ -206,6 +211,7 @@ async function playCmd(cmd) {
   await run(cmd);
 }
 $('colecaoBtn').addEventListener('click', async () => {
+  showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
   showingColecao = !showingColecao;
@@ -219,6 +225,7 @@ $('colecaoBtn').addEventListener('click', async () => {
 });
 
 async function select(id) {
+  showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
   if (id === 'colecao' || id === 'guardaRoupa') {
@@ -236,8 +243,30 @@ async function select(id) {
 }
 
 $('tarefasBtn').addEventListener('click', async () => {
+  showingDarkest = false;
   showingTarefas = !showingTarefas; showingColecao = false; showingGuarda = false;
   render(await api.state());
+});
+function renderDarkest() {
+  $('darkest').classList.toggle('hidden', !showingDarkest);
+  if (!showingDarkest || !st?.darkest) return;
+  const d = st.darkest; $('convTitle').textContent = 'Darkest Dungeon'; chip($('convStatus'), 'idle', '');
+  const status = el('div', 'card'); status.append(el('h2', null, d.active ? 'Expedição em andamento' : d.running ? 'Jogo em segundo plano — tempo pausado' : 'Sem atividade verificada'));
+  status.append(el('p', null, d.playedToday ? 'Sessão válida registrada hoje.' : 'Ainda não há sessão válida registrada hoje.'));
+  const numbers = el('div', 'card'); numbers.append(el('h3', null, 'Seu registro real'));
+  for (const line of [`${d.sessions} sessões válidas · ${d.days} dias distintos · sequência de ${d.streak} dias`, `${Math.floor(d.todayMs / 60000)} min ativos hoje · ${Math.floor(d.activeMs / 60000)} min no total`, `+${d.xpToday}/${d.cap} XP hoje · ${d.xpTotal} XP no total`]) numbers.append(el('p', null, line));
+  if (d.pendingXp) numbers.append(el('p', 'muted', `${d.pendingXp} XP aguardam confirmação no disco.`));
+  const achievement = el('div', 'card'); achievement.append(el('h3', null, d.achievement ? '◆ O Herdeiro da Ruína' : '◇ O Herdeiro da Ruína'), el('p', null, `${Math.min(7, d.days)}/7 dias distintos com sessão válida.`));
+  const rules = el('div', 'card'); rules.append(el('h3', null, 'Tocha acesa, registro honesto.'), el('p', 'muted', 'Darkest Dungeon original da Steam. Sessão válida após 1 minuto ativo; +15 XP, primeira do dia +50, marcos de 15/30/60 min +25/+40/+80. Só primeiro plano, sem inatividade prolongada. Menus e pausas internas não podem ser distinguidos sem ler o jogo. Não conto tempo com o JoJo fechado.'));
+  $('darkest').replaceChildren(status, numbers, achievement, rules);
+}
+$('darkestBtn').addEventListener('click', async () => {
+  showingDarkest = !showingDarkest; showingTarefas = false; showingColecao = false; showingGuarda = false;
+  render(await api.state());
+});
+api.onDarkestUpdate(s => {
+  if (st) { st.darkest = s.darkest; st.colecao = { ...st.colecao, ...s.colecao }; }
+  renderDarkest(); xpView.render(s.colecao, { quiet: s.trabalho });
 });
 api.onTodoUpdate(s => {
   if (st) { st.todo = s.todo; if (s.colecao) st.colecao = { ...st.colecao, ...s.colecao }; }

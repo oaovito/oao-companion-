@@ -175,6 +175,20 @@
    "desc": "100 bombadas no bíceps",
    "conta": "fidget",
    "n": 100
+  },
+  {
+   "id": "ddPrimeira",
+   "nome": "A primeira tocha",
+   "desc": "Complete uma sessão válida de Darkest Dungeon.",
+   "conta": "ddSessoes",
+   "n": 1
+  },
+  {
+   "id": "ddHerdeiro",
+   "nome": "O Herdeiro da Ruína",
+   "desc": "Complete sessões válidas em sete dias distintos.",
+   "conta": "ddDias",
+   "n": 7
   }
  ],
  "missoes": [

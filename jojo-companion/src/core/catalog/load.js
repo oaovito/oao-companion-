@@ -5,5 +5,6 @@ import { packItems } from '../pacotes.js';
 export function fullCatalog(read) {
   const base = read('assets/catalog/animacoes.json');
   const pacotes = read('assets/catalog/pacotes.json');
-  return { ...base, itens: [...base.itens, ...packItems(pacotes)], pacotes };
+  const darkest = read('assets/catalog/darkest-animations.json');
+  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens], pacotes };
 }

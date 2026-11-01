@@ -29,6 +29,18 @@ Quatro cenarios Electron Windows adicionados, ainda nao executados. Fazer CI e
 corrigir causas reais antes de marcar entrega validada. Demais sistemas abaixo
 continuam pendentes: nao publicar uma entrega parcial.
 
+Actions 41345465266 (17ea015): preflight/lint/install/351 unitarios Windows passaram;
+conversa real falhou 30/31 por confirmar maca em vez de manga na correcao pessoal.
+Build e E2E nao iniciaram. Correcao literal geral implementada com regressao pt/en,
+preservando o historico. Nao remover nem enfraquecer a verificacao.
+Darkest: modelo/Windows worker/Steam manifest/UI/XP/16 falas/5 receitas com desenho
+vetorial implementados; 9 testes puros passaram. Icone original gerado pela ferramenta
+image_gen e exportado PNG/ICO. Faltam medidas Windows das 5 novas animacoes (o teste
+de cobertura falha corretamente ate importar a medicao), prova nativa do detector,
+anatomia sem membros humanos e gates finais. Diagnostico manual assets_only no
+workflow original mede room/audita desenho e roda somente os 4 E2E de tarefas;
+NAO substitui pipeline completo nem tem etapa de publicacao.
+
 ## Checklist integral
 
 - [ ] Clima real: Open-Meteo, cidades/datas/timezone/cache, GUI/configuracao, teste live.

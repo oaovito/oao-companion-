@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('appApi', {
   openTodoSettings: () => ipcRenderer.send('todo:open-settings'),
   openTodoCentral: () => ipcRenderer.send('todo:open-central'),
   onTodoUpdate: (fn) => ipcRenderer.on('app:todo-update', (_e, s) => fn(s)),
+  onDarkestUpdate: (fn) => ipcRenderer.on('app:darkest-update', (_e, s) => fn(s)),
   onUpdate: (fn) => ipcRenderer.on('app:update', (_e, s) => fn(s)),
   onSelect: (fn) => ipcRenderer.on('app:select', (_e, id) => fn(id)),
 });
