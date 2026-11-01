@@ -176,3 +176,13 @@ Quatro regressoes unitarias cobrem portugues/ingles, relato de terceiros, prompt
 rejeicao da fala incorreta e continuidade do contexto. Ensaio real ampliado para
 **31 cenarios engine + 12 Central**, mantendo os 30 + dez anteriores.
 Todos os gates precisam passar novamente antes de criar/publicar v0.44.0.
+
+[41271319506](https://github.com/oaovito/oao-companion-/actions/runs/41271319506),
+`a5c3871`: o modelo aceitou a correcao ("Manga, entao") e reteve a informacao
+("Manga. Sem duvidas"). Houve 29/31 aprovados: definicao de diabetes e exemplo
+excederam 25 s no runner de 2 CPUs/8 GB. O prazo e a exigencia de inferencia real
+foram mantidos. Otimizacao: instrucoes tecnicas compactas; tarefa variavel depois
+das fontes para compartilhar o prefixo ja processado; definicao/exemplo concisos,
+aprofundamento ainda pode ampliar. Fonte e barreira contra instrucao externa intactas.
+Nova regressao confere reutilizacao do contexto e preservacao de fontes/assunto;
+minimo obrigatorio passa a 330 unitarios. Validar novamente no Windows.

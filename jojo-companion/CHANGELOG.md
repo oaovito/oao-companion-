@@ -7,6 +7,7 @@
 - Uma conversa contínua na Central, incluindo avisos e lembretes. Comandos antigos de nova conversa preservam o histórico.
 - Mensagens diferentes seguem em ordem e reenvios pendentes não duplicam o turno; emergências cancelam a geração antiga.
 - A boca acompanha a duração do texto, e exemplos técnicos mantêm a expressão do assunto mesmo sem pesquisa externa.
+- Perguntas técnicas e exemplos reutilizam o contexto das fontes, com instruções compactas para reduzir a espera pela conversa local.
 
 ### Correções
 - Correções explícitas sobre o que a usuária disse são reconhecidas sem questionar sua memória; a mensagem corrigida permanece no contexto seguinte.

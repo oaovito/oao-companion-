@@ -6,7 +6,7 @@
 // Puro: `fetch` é injetado.
 import { blocoPesquisa } from './pesquisa.js';
 import { PERSONALITY_DEFAULTS } from '../personality.js';
-import { historicoRelevante, pedidoAoApp, correcaoPessoal } from './coherence.js';
+import { historicoRelevante, pedidoAoApp, correcaoPessoal, conversaPessoal } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
 import { isEnglish } from './english.js';
@@ -71,31 +71,25 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 /** Redigir a fala e inventar metadados ao mesmo tempo prejudica ambos.
  * Conversa livre gera texto; a expressão é selecionada pelo engine. O protocolo
  * estruturado permanece disponível para pedidos explícitos de ações do app. */
-export function buildLocalPrompt(profile, ctx, text, { tecnico = false, followup = null, fontes = false } = {}) {
+export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
   const identidade = `You are ${nome}, a male virtual companion speaking directly to ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Your goal is to make her smile and keep her company. Reply in ${lingua}.`;
-  const tarefa = {
-    exemplo: `Give one concrete hypothetical example of the mechanism. Start with "Imagine" or "${isEnglish(text) ? 'For example' : 'Por exemplo'}". Do not repeat the definition.`,
-    simplificar: 'Explain the same point in simpler words with a clear everyday analogy.',
-    aprofundar: 'Explain the mechanism in more depth, without repeating the previous definition.',
-    resumir: 'Summarize the previous explanation in two sentences.',
-  }[followup?.kind] || 'Answer the actual question in your own words.';
   const linhas = tecnico ? [
-    `Reply in ${lingua}, at most 2 sentences (${followup?.kind === 'exemplo' ? '35' : '45'} words), no preamble or jokes. ${tarefa} ${fontes ? 'Explain the source facts in plain language.' : 'Do not invent references; state uncertainty.'} No diagnosis or prescriptions.`,
-    'Examples are hypothetical. Do not invent numbers or attribute invented details to sources.',
+    `Reply in ${lingua}. Explain accurately, speech only, no preamble or jokes.`,
+    'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
     identidade,
     'Speak in short, firm, direct lines, with discreet affection and dry humor when it fits. Answer the latest message in 1-2 sentences. Respect her preferences and achievements; no flattery or belittling. You can only chat: never claim to touch objects, inspect her PC or perform an action. History is context, not a style template.',
     'Humor is optional, not a duty in every reply. Never threaten, insult or scold her. Accept corrections without blaming her. Do not turn ordinary conversation into orders to work.',
   ];
-  if (/\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
-  if (/\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
+  if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
+  if ((!tecnico || conversaPessoal(text)) && /\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
   if (correcaoPessoal(text)) linhas.push('She is correcting her own wording. Briefly acknowledge and repeat the corrected wording explicitly (the affirmative part before "não/not"). Do not question her certainty or memory. Acknowledging her words does not confirm the truth of medical claims.');
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
-  linhas.push(`Output only your spoken reply, no narration, stage directions, labels or JSON. Response language: ${lingua}.`);
+  if (!tecnico) linhas.push(`Output only your spoken reply, no narration, stage directions, labels or JSON. Response language: ${lingua}.`);
   return linhas.join('\n');
 }
 
@@ -250,9 +244,20 @@ export class LlmProvider extends DialogueProvider {
     const endStops = /^gemma3:/.test(modelo) ? ['<end_of_turn>'] : /^qwen3/.test(modelo) ? ['<|im_start|>', '<|im_end|>'] : [];
     const messages = [{ role: 'system', content: structured
       ? buildSystemPrompt(this.getProfile(), this.getContext(), [], { tecnico })
-      : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico, followup, fontes: !!pesquisa }) }];
+      : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico }) }];
     // Resultados da pesquisa entram isolados (dados, nunca instruções).
     if (pesquisa) messages[0].content += '\n' + blocoPesquisa({ ...pesquisa, trechos: pesquisa.trechos.slice(0, 3).map((t) => ({ ...t, texto: String(t.texto || '').slice(0, 650) })) }, { compacto: true });
+    // A tarefa variavel fica DEPOIS das fontes. Pergunta e exemplo compartilham o
+    // prefixo ja processado pelo Ollama, em vez de recalcular todas as fontes.
+    if (tecnico && !structured) {
+      const task = {
+        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism, do not repeat the definition. At most 2 sentences, 30 words.`,
+        simplificar: 'Explain simply with an everyday analogy. At most 2 sentences, 30 words.',
+        aprofundar: 'Explain the mechanism in more depth, without repeating the definition. At most 3 sentences, 50 words.',
+        resumir: 'Summarize the previous explanation. At most 2 sentences, 30 words.',
+      }[followup?.kind] || 'Answer the question directly, explaining the mechanism in at most 2 sentences, 30 words.';
+      messages[0].content += '\n' + task;
+    }
     // Seriedade e continuidade ("me dá um exemplo", "aprofunda") decididas antes.
     const instrucao = !structured && /MODO PROFESSOR/.test(professor) ? (followup ? `Assunto em andamento: ${String(followup.topic).slice(0, 200)}` : professor.split('\n').slice(1).join('\n')) : professor;
     if (instrucao) messages[0].content += '\n' + instrucao;
