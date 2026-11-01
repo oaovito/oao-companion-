@@ -12,6 +12,10 @@ on:
         description: Medir desenho e testar painel no Windows, sem build ou publicacao
         type: boolean
         default: false
+      measure_assets:
+        description: Medir e auditar desenho no diagnostico (desligar para testar somente interfaces)
+        type: boolean
+        default: true
       recovery:
         description: Retomar a versao pendente autorizada depois de todos os gates
         type: boolean
@@ -128,14 +132,18 @@ jobs:
         working-directory: jojo-companion
         run: npm ci --prefer-offline --no-audit --no-fund
       - name: Medir limites de todas as animacoes no Windows real
+        if: ${{ inputs.measure_assets }}
         working-directory: jojo-companion
         run: npx --no-install electron scripts/anim-room.mjs
       - name: Auditar desenho real
+        if: ${{ inputs.measure_assets }}
         working-directory: jojo-companion
         run: npx --no-install electron scripts/auditoria-animacoes.mjs
         env:
           JOJO_ANIMATION_REPORT_DIR: out/assets-windows/animations
       - name: Preservar medicao antes dos testes de interface
+        if: ${{ inputs.measure_assets }}
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: JoJo-windows-measurement-${{ github.run_id }}
@@ -151,6 +159,7 @@ jobs:
           JOJO_TEST_REPORT_DIR: out/assets-windows
       - name: Evidencias privadas e medidas para revisao
         if: ${{ !cancelled() }}
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: JoJo-windows-assets-${{ github.run_id }}

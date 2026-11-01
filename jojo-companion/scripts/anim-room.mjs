@@ -7,6 +7,8 @@ import { app, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { gzipSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 import { expandCatalog } from '../src/core/catalog/recipes.js';
 import { fullCatalog } from '../src/core/catalog/load.js';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -19,6 +21,11 @@ app.whenReady().then(async () => {
   const res = await win.webContents.executeJavaScript(`window.measure(${rig}, ${anim})`);
   const out = { notes: 'Gerado por scripts/anim-room.mjs: px além da caixa do JoJo (olhando para a direita, escala 1).', ...res };
   fs.writeFileSync(path.join(ROOT, 'assets/animations/jojo.room.json'), JSON.stringify(out, null, 1) + '\n');
+  if (process.env.GITHUB_ACTIONS) {
+    const payload = JSON.stringify(out);
+    const evidence = gzipSync(Buffer.from(JSON.stringify({ commit: process.env.GITHUB_SHA, digest: createHash('sha256').update(payload).digest('hex'), room: out }))).toString('base64');
+    for (const part of evidence.match(/.{1,4000}/g)) console.log(`JOJO_ROOM_MEASUREMENT:${part}`);
+  }
   console.log('Espaço por animação salvo:', Object.keys(res.anims).length, 'animações');
   app.quit();
 });
