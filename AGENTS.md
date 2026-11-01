@@ -120,7 +120,7 @@ Windows 11 doméstico, DPI misto, suspensão física ou troca real do instalador
 
 ## Versionamento e distribuição
 
-Versão recuperada/publicada: **0.43.1**; consultar novamente em cada sessão.
+Versão recuperada na transferência: **0.43.1**. Publicada atual: **0.44.0**; consultar novamente em cada sessão.
 Não incrementar para demonstrar transferência. Registrar mudanças não lançadas em
 `CHANGELOG.md` sem reescrever entradas históricas. Para release autorizada e justificada:
 1. Comparar commits desde a versão anterior, atualizar package.json/package-lock.json e
@@ -128,9 +128,11 @@ Não incrementar para demonstrar transferência. Registrar mudanças não lança
 2. Manter versão, tag `vX.Y.Z`, nomes e metadados consistentes. Preservar
    `scripts/release-notes.mjs`; seções aplicáveis: Novidades, Melhorias, Correções,
    Remoções e Como testar. Sem seção válida, publicação deve falhar.
-3. Commit/push no privado; acompanhar Windows no GitHub Actions. A versão pendente
-   **0.44.0** está autorizada para recuperação/publicação automática após TODOS os gates.
-   Só então o helper cria a NOVA tag privada com GITHUB_TOKEN, sem disparar build duplicado.
+3. Commit/push no privado; acompanhar Windows no GitHub Actions. A versão **0.44.0**
+   já foi publicada após TODOS os gates; não recriar. A política ainda aponta para
+   0.44.0 para o controle horário reconhecer a publicação e evitar outro build.
+   Para uma nova versão autorizada, só após os gates o helper cria a NOVA tag privada
+   com GITHUB_TOKEN, sem disparar build duplicado.
    Tag existente divergente jamais é movida. Outra versão exige nova autorização/política.
    O controle horário não repete build ativo, cancelamento ou falha técnica do mesmo SHA;
    falha anterior ao runner pode ser tentada na próxima hora. Não há IA rodando continuamente.
@@ -193,3 +195,16 @@ A última anotação financeira é ambígua (pagamento falhou OU limite de gasto
 não permite distinguir causa/saldo. Nunca alegar que regularização ocorrerá sozinha.
 Estado do primeiro disparo/default branch e próximos passos: HANDOFF e
 `jojo-companion/docs/GITHUB_ACTIONS.md`. Nenhum outro provedor é necessário/autorizado.
+
+## Estado atual — 0.44.0 publicada em 01/11/2026
+
+Entrega publicada e downloads/atualizador verificados em `oaovito/jojo-companion-releases`.
+Tag privada `v0.44.0`: **98307814426c79ac7e187c3564d94f9a57a2ecf6**.
+Windows Actions **41272098380** passou: 330 unitários, 16 integração, 29 E2E,
+31 cenários engine + 12 Central com Gemma real, NSIS/portátil/ZIP, vigia,
+1.043 animações, desempenho, hashes e publicação. Cron **41292825226** executou
+por `schedule` e passou. Controle na main, fonte na Codex; sem outros provedores.
+17 releases anteriores preservadas; a 0.44.0 também é histórica e imutável agora.
+Relato/hashes/limites em HANDOFF e `jojo-companion/docs/VALIDACAO_0.44.0.md`.
+Não confundir sucesso dos cenários com perfeição de toda conversa ou teste físico
+de Windows 11. Não repetir builds/publicação para demonstrar trabalho já concluído.

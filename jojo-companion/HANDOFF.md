@@ -6,8 +6,9 @@
   O nome sem hífen final informado em pedidos retorna 404; não criar outro app/repositório.
 - Branch de fonte: **codex/conversation-coherence**. Base desta tarefa: `dd8b558`,
   sucessora de `3f637fe`. Histórico Claude preservado (`018bd492a46d70f688187394f0ce60759c20d737`).
-- Versão pública: **0.43.1**, canal **oaovito/jojo-companion-releases**.
-  Candidata **0.44.0**, sem nova tag/release até validação real completa.
+- Versão pública: **0.44.0**, canal **oaovito/jojo-companion-releases**.
+  Publicada e verificada; tag privada `v0.44.0` no commit `98307814426c79ac7e187c3564d94f9a57a2ecf6`.
+  Nenhuma release pendente. Não recriar nem mover essa tag/release.
 - **GitHub Actions original é o único CI/CD.** Só runners oficiais hospedados pelo GitHub.
   Azure, CircleCI, runners externos/locais, bootstrap independente e agente de polling
   removidos depois de verificar ausência de dependência no aplicativo. Histórico Git preservado.
@@ -17,13 +18,13 @@
 - Ler `../AGENTS.md`, `../CLAUDE.md`, `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `CHANGELOG.md`,
   package.json e [GITHUB_ACTIONS.md](docs/GITHUB_ACTIONS.md).
 
-## Produto preservado, candidato ainda não publicado
+## Produto preservado — versão 0.44.0 publicada
 
 Somente Windows 11 x64, Electron 44/ESM, koffi isolado, personagem tubarão fisiculturista
 em recorte de papel. Preservar click-through, fuga, tela cheia, múltiplos monitores,
 Modo Trabalho, personalidade, privacidade/offline, autostart, recuperação e atualização.
 
-A candidata contém conversa única com avisos/lembretes no mesmo histórico; fila/deduplicação;
+A versão publicada contém conversa única com avisos/lembretes no mesmo histórico; fila/deduplicação;
 segurança cancela fala atrasada; identidade/João protegidos; perguntas/negações não viram
 comandos; reações/boca/óculos acompanham o assunto sem interromper fuga/tela cheia/trabalho.
 Primeira pergunta depois da inatividade aguarda recarga breve do modelo sem bloquear urgência.
@@ -78,8 +79,9 @@ obrigatórios; não publicar com validação Windows ausente ou falha.
 
 ## Verificação
 
-- **323/323** testes de lógica locais: 312 anteriores preservados + 11 novos testes de
-  recuperação/idempotência/custo/tags/releases. Sem falhas ou pulos. Não são Windows.
+- **330/330** testes de lógica locais e Windows aprovados no commit publicado, sem
+  falhas/pulos. Mais 16 integrações, 29 E2E e 43 cenários reais no Windows; ver resultado
+  final abaixo. Os 312 testes anteriores foram preservados e a suíte ampliada.
 - `actionlint` 1.7.12 validou os três workflows, binário conferido por SHA-256.
 - [41167799466](https://github.com/oaovito/oao-companion-/actions/runs/41167799466), código
   `034133d`: 292 unitários, 16 integração e 29 E2E Windows passaram; três formatos gerados,
@@ -99,11 +101,13 @@ obrigatórios; não publicar com validação Windows ausente ou falha.
    de fonte. Não repetir instalação nem criar commits de polling.
 2. A instrução posterior autoriza tentativa normal; os gates financeiros adicionais do
    agente foram removidos. Preservar limites reais do GitHub e registrar o resultado.
-3. Quando GitHub aceitar jobs, deixar o controle
-   disparar a validação real, corrigir falhas técnicas com evidências quando houver sessão
+3. O GitHub já aceitou os jobs. Manter o controle e os gates; corrigir falhas técnicas
+   com evidências quando houver sessão
    Codex e publicar só depois de TODOS os gates. Não há agente IA contínuo no Actions.
-4. Confirmar três arquivos públicos 0.44.0, hashes/notas incrementais/atualizador e as
-   17 releases históricas intactas. Até lá a release permanece bloqueada.
+4. A entrega 0.44.0 foi concluída e verificada abaixo. Não repetir publicação nem
+   mover tags. As 17 versões anteriores e a própria 0.44.0 agora são imutáveis.
+5. Em tarefa futura, recuperar o estado real, desenvolver no privado e só publicar
+   nova versão autorizada após todos os gates; não reaplicar correções já entregues.
 
 ## Resultado da instalação — 31/10/2026
 
@@ -186,3 +190,35 @@ das fontes para compartilhar o prefixo ja processado; definicao/exemplo concisos
 aprofundamento ainda pode ampliar. Fonte e barreira contra instrucao externa intactas.
 Nova regressao confere reutilizacao do contexto e preservacao de fontes/assunto;
 minimo obrigatorio passa a 330 unitarios. Validar novamente no Windows.
+
+## Publicação e verificação final — 01/11/2026
+
+- [v0.44.0 pública](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.44.0),
+  publicada às **01h41 de Brasília**; release ID `430365808`.
+- [Windows 41272098380](https://github.com/oaovito/oao-companion-/actions/runs/41272098380):
+  **sucesso**, fonte/tag privada em `98307814426c79ac7e187c3564d94f9a57a2ecf6`,
+  Node 22.23.4, Windows x64 real em runner oficial GitHub, 2 CPUs/8 GB.
+  **330/330 unitários, 16 integrações, 29 E2E, 31 cenários engine + 12 Central**;
+  todas as etapas obrigatórias, build dos três formatos, NSIS, vigia e medições passaram.
+- Auditoria de **1.043 animações**: zero erros, recortes, paradas ou gatilhos ausentes;
+  média 0,3253 ms/quadro. Capturas de Central/animações inspecionadas.
+- Downloads públicos dos três arquivos reconferidos sem credencial, com tamanho,
+  MZ/PK e SHA-256 iguais à API e aos binários validados. Notas iguais à seção incremental.
+- UpdateChecker real consultou a API pública: 0.43.1 recebe 0.44.0 nos modos portable
+  e installer; quem já está em 0.44.0 não recebe novamente. Não foi teste de troca
+  física num PC doméstico. Os IDs/notas/assets das **17 releases anteriores** conferem
+  com o snapshot inicial. Agora existem 18 releases; nenhuma histórica foi alterada.
+- [Cron 41292825226](https://github.com/oaovito/oao-companion-/actions/runs/41292825226),
+  evento `schedule`, executou e passou às 06h21 de Brasília. Não gerou outro build
+  ou release depois da publicação. Frequência configurada: `17 * * * *`, best effort.
+- `/timing` dos runs Windows final e controle agendado informou **0 ms faturáveis**.
+  Nenhum serviço contratado ou plano/limite/cartão alterado. APIs financeiras seguem
+  sem acesso, portanto essa evidência de uso não representa auditoria da fatura da conta.
+- Leitura manual das 43 falas verificou preferências/correções, identidade, contexto,
+  negativas, expressões e proteção de crise. Os ensaios não provam perfeição semântica
+  universal nem precisão clínica; respostas científicas do modelo permanecem resumidas.
+  No runner de duas CPUs, definição/exemplo com fonte levaram 21,684 s/17,262 s;
+  exemplo na Central sem fonte, 24,276 s. Não prometer resposta instantânea em todo PC.
+- Evidência persistente e hashes: [VALIDACAO_0.44.0.md](docs/VALIDACAO_0.44.0.md).
+  Não há bloqueio de publicação remanescente; Windows 11 físico, DPI misto,
+  suspensão/troca de monitores físicos não foram testados nesta nuvem.

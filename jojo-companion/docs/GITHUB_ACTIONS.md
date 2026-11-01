@@ -9,7 +9,8 @@ O histórico Git preserva o trabalho anterior.
 
 Desenvolvimento privado: `oaovito/oao-companion-`, branch `codex/conversation-coherence`.
 Público: `oaovito/jojo-companion-releases`, exclusivamente os três binários e notas.
-Candidata **0.44.0**; publicada **0.43.1**, com 17 releases históricas imutáveis.
+Publicada **0.44.0**, além das 17 releases anteriores preservadas. Todas são imutáveis.
+Nenhuma candidata pendente; a política 0.44.0 permite ao controle reconhecer a entrega.
 
 ## Workflows restaurados
 
@@ -99,12 +100,14 @@ obrigatórios e publicação permanece condicionada à aprovação integral.
 
 ## Validação e continuidade
 
-- Testes locais de lógica: **325/325**, sem falhas/pulos; 13 casos de recuperação,
-  idempotência, autorização e proteção de tags/releases. Não equivalem a Windows.
+- Testes locais e Windows: **330/330**, sem falhas/pulos, incluindo recuperação,
+  idempotência, autorização, contexto e cache de prefixo. Windows também passou
+  integração, E2E, inferência real, três builds e NSIS (evidência no relatório abaixo).
 - Workflows validados com `actionlint` 1.7.12, download com SHA-256 conferido.
-- Ainda pendentes: primeira execução efetiva dos gates Windows, build 0.44.0 e publicação.
+- Execução Windows final **41272098380 aprovada**; 0.44.0 publicada e verificada.
+- [Relatório, hashes e limites](VALIDACAO_0.44.0.md). Cron agendado **41292825226** passou.
 - Consultar HANDOFF para commits, resultado do primeiro dispatch e estado da instalação
-  do controle na branch padrão. Não declarar a transferência/release concluída sem isso.
+  do controle na branch padrão. Não repetir a publicação concluída nem mover suas tags.
 
 ## Instalação e primeira tentativa verificadas — 31/10/2026
 
@@ -125,5 +128,6 @@ depende de o Actions aceitar o agendamento e alocar o runner oficial.
 Até a consulta das 18h22 de Brasília não havia evento `schedule` observado.
 
 As 17 releases públicas foram comparadas ao snapshot inicial, incluindo notas e
-IDs/nomes/tamanhos/digests dos assets: nenhuma alteração. A versão pública permanece
-v0.43.1; v0.44.0 aguarda todos os gates Windows. Não criar outra infraestrutura.
+IDs/nomes/tamanhos/digests dos assets: nenhuma alteração. Naquela primeira tentativa
+a pública ainda era v0.43.1. A execução final publicou v0.44.0 e repetiu a verificação.
+Não criar outra infraestrutura.
