@@ -141,6 +141,22 @@ como requisito para tentar o pipeline normal; manter todos os controles do GitHu
 Node 22.23.4: **325/325** testes passaram, sem falhas/pulos (323 preservados + dois
 de autorização normal sem inventar confirmação de faturamento). Lint: 138 arquivos;
 `actionlint` 1.7.12: três workflows aprovados. Mínimo obrigatório Windows subiu para 325.
-Fonte e controle serão enviados; registrar abaixo o run real e sua anotação, sem
-confundir falha de alocação com teste Windows executado. Publicação só após todos
+Fonte enviada em `a26ef38`, controle na main em `7e7b5ac`. Publicação só após todos
 os gates Windows, conferência dos três binários e detecção pelo atualizador.
+
+- [41269001215](https://github.com/oaovito/oao-companion-/actions/runs/41269001215):
+  controle executou em runner oficial, passou e evitou build duplicado porque havia
+  pipeline ativo. A rotina já executou uma verificação real; cron futuro depende do GitHub.
+- [41268993281](https://github.com/oaovito/oao-companion-/actions/runs/41268993281):
+  runner Windows oficial iniciou normalmente; RELEASES_TOKEN autenticou e anunciou
+  escrita no canal público, sem expor valor. Passaram 325 unitários, três builds,
+  instalação/início/desinstalação NSIS, portátil, vigia, 16 integrações, 29 E2E,
+  auditoria de animações, desempenho e pesquisa. Não é teste de Windows 11 físico.
+- Falha real no gate de conversa: o driver chamou `powershell.exe` antigo, herdando
+  ambiente do pwsh; `Get-FileHash` não foi encontrado após o download do runtime.
+  Nenhuma inferência desse run foi aprovada e nenhuma tag/release foi criada.
+- Correção: usar `pwsh.exe` 7, o host do workflow original, com verificação antecipada
+  de Get-FileHash/Expand-Archive/Invoke-RestMethod. Hashes continuam obrigatórios.
+  Ensaio de conversa movido para depois dos unitários, antes do build, sem duplicar
+  nem remover suítes. Falhas agora mostram o fim do log já filtrado, além do artefato.
+  Executar novamente todos os gates no novo commit e registrar o resultado.

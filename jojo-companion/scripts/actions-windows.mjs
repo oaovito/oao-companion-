@@ -57,9 +57,11 @@ const env = { ...process.env, CI: 'true', CSC_IDENTITY_AUTO_DISCOVERY: 'false',
 // Credencial de publicacao nao e necessaria nos processos de testes/build.
 for (const key of ['RELEASES_TOKEN', 'GH_TOKEN', 'GITHUB_TOKEN', 'SYSTEM_ACCESSTOKEN', 'CIRCLE_TOKEN', 'AZURE_DEVOPS_EXT_PAT', 'JOJO_QA_MODEL']) delete env[key];
 const node = process.execPath;
+// O workflow original usa PowerShell 7. Nao herdar PSModulePath do pwsh em powershell.exe 5.
+const powershell = 'pwsh.exe';
 const npm = path.join(path.dirname(node), 'node_modules/npm/bin/npm-cli.js');
 async function cleanupShortcut() {
-  const result = await execute('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/cleanup-windows-shortcut.ps1', '-ExpectedTarget', path.join(app, 'dist/JoJoCompanion.exe')], { cwd: app, env, log: path.join(run, 'shortcut-cleanup.log'), timeoutMs: 30000 });
+  const result = await execute(powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/cleanup-windows-shortcut.ps1', '-ExpectedTarget', path.join(app, 'dist/JoJoCompanion.exe')], { cwd: app, env, log: path.join(run, 'shortcut-cleanup.log'), timeoutMs: 30000 });
   if (result.exitCode || result.timedOut) throw new Error('Limpeza do atalho de teste nao concluiu');
 }
 async function step(id, command, commandArgs, minutes = 10, check = null, stepEnv = env, optional = false) {
@@ -71,6 +73,8 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   fs.copyFileSync(log, path.join(summary, `${id}.log`));
   if (entry.status !== 'passed') {
     if (optional) { console.log(`${id}: diagnostico opcional falhou; log preservado`); return; }
+    // O arquivo ja foi filtrado por execute; manter a causa visivel mesmo sem artefato CI.
+    console.error(fs.readFileSync(log, 'utf8').split('\n').slice(-80).join('\n'));
     throw new Error(`Falha em ${id}; consultar log privado`);
   }
   try { if (check) check(fs.readFileSync(log, 'utf8')); }
@@ -81,12 +85,21 @@ try {
   for (const name of fs.readdirSync(summary)) if (name !== 'validation.json') fs.rmSync(path.join(summary, name), { recursive: true, force: true });
   save();
   for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) fs.rmSync(path.join(app, 'out', name), { force: true });
-  await step('preflight', 'powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/preflight-windows.ps1'], 1);
+  await step('preflight', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/preflight-windows.ps1'], 1);
   await step('lint', node, ['scripts/lint.mjs']);
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
   await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 325));
+  // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
+  await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
+    const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
+    const ui = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-interface-windows.json')));
+    if (qa.digest !== tools.modelDigest || qa.rows.length !== 30 || qa.rows.some((r) => r.errors.length) || ui.rows.length !== 10 || ui.rendererErrors.length) throw new Error('Conversa real incompleta/reprovada');
+    for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) {
+      if (fs.existsSync(path.join(app, 'out', name))) fs.copyFileSync(path.join(app, 'out', name), path.join(run, name));
+    }
+  });
   await step('build', node, ['scripts/build-win.mjs'], 15);
   await step('installer', node, ['scripts/smoke-installer.mjs'], 5);
   await step('portable', node, ['scripts/smoke-portable.mjs', 'dist/JoJoCompanion.exe'], 3);
@@ -102,14 +115,6 @@ try {
   await step('performance', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20' });
   await step('performance-gpu', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20', JOJO_GPU: '1' }, true);
   await step('web-search', node, ['scripts/check-web-search.mjs'], 2, null, env, true);
-  await step('conversation', 'powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
-    const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
-    const ui = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-interface-windows.json')));
-    if (qa.digest !== tools.modelDigest || qa.rows.length !== 30 || qa.rows.some((r) => r.errors.length) || ui.rows.length !== 10 || ui.rendererErrors.length) throw new Error('Conversa real incompleta/reprovada');
-    for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) {
-      if (fs.existsSync(path.join(app, 'out', name))) fs.copyFileSync(path.join(app, 'out', name), path.join(run, name));
-    }
-  });
   await step('artifacts', node, ['scripts/publish-release.mjs', '--artifacts'], 3);
   await step('updater', node, ['scripts/check-updater.mjs'], 2);
   await step('notes', node, ['scripts/release-notes.mjs', path.join(run, 'RELEASE_NOTES.md')], 2);

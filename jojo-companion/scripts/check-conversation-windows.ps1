@@ -1,6 +1,8 @@
-# Inferencia e interface reais no Windows, com cache verificado e sem dependencia de Actions.
+# Inferencia e interface reais no Windows, chamadas pelo Actions oficial com PowerShell 7.
 param([string]$WorkDirectory = '', [string]$CacheDirectory = '')
 $ErrorActionPreference = 'Stop'
+if ($PSVersionTable.PSVersion.Major -lt 7 -or $PSEdition -ne 'Core') { throw 'Exige PowerShell 7, como o workflow oficial' }
+Get-Command Get-FileHash, Expand-Archive, Invoke-RestMethod -ErrorAction Stop | Out-Null
 if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) { throw 'Exige Windows nativo' }
 [Console]::OutputEncoding = New-Object Text.UTF8Encoding($false)
 if (-not $WorkDirectory) { $WorkDirectory = Join-Path ([IO.Path]::GetTempPath()) ('jojo-qa-' + [Guid]::NewGuid().ToString('N')) }

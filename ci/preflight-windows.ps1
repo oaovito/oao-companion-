@@ -1,5 +1,7 @@
 # Testes movem mouse/teclado e instalam o app: exigir sessao isolada sem JoJo do usuario.
 $ErrorActionPreference = 'Stop'
+if ($PSVersionTable.PSVersion.Major -lt 7 -or $PSEdition -ne 'Core') { throw 'Exige PowerShell 7, como o workflow oficial' }
+Get-Command Get-FileHash, Expand-Archive, Invoke-RestMethod -ErrorAction Stop | Out-Null
 if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT -or -not [Environment]::UserInteractive) { throw 'Exige sessao Windows interativa desbloqueada e dedicada aos testes' }
 Add-Type -TypeDefinition @'
 using System;
