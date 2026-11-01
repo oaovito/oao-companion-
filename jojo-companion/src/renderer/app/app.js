@@ -1,5 +1,7 @@
 // Central do JoJo: conversas com status (Running / Needs input / Ready / Blocked),
 // chat e menu de comandos "/" (inclui Wake Pet / Tuck Away Pet).
+import { TodoView } from '../shared/todo-view.js';
+import { ProgressView } from '../shared/progress-view.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
 const listEl = $('list');
@@ -9,6 +11,10 @@ const menuEl = $('cmdMenu');
 let st = null;
 let selected = null;
 let menuIndex = 0;
+let showingTarefas = false;
+let lastTarefasReq = 0;
+const xpView = new ProgressView($('progression'));
+const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho, animations: st?.todo?.settings.animations !== false }) });
 
 function chip(el, status, label) {
   el.className = `chip ${status}`;
@@ -18,15 +24,20 @@ function chip(el, status, label) {
 
 function render(s) {
   st = s;
+  if (s.abrirTarefas && s.abrirTarefas !== lastTarefasReq) {
+    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false;
+  }
   // Pedido de abrir a coleção (/colecao): cada pedido novo vale uma vez.
   if (s.abrirColecao && s.abrirColecao !== lastColecaoReq) {
     lastColecaoReq = s.abrirColecao;
     showingColecao = true;
+    showingTarefas = false;
     showingGuarda = false;
   }
   if (s.abrirGuardaRoupa && s.abrirGuardaRoupa !== lastGuardaReq) {
     lastGuardaReq = s.abrirGuardaRoupa;
     showingGuarda = true;
+    showingTarefas = false;
     showingColecao = false;
   }
   if (!selected || !s.conversations.some((c) => c.id === selected)) selected = s.currentId;
@@ -55,6 +66,9 @@ function render(s) {
   renderConversation();
   renderColecao();
   renderGuarda();
+  $('tarefas').classList.toggle('hidden', !showingTarefas);
+  if (showingTarefas) { $('convTitle').textContent = 'Lista de Tarefas'; chip($('convStatus'), 'idle', ''); todoView.refresh(); }
+  xpView.render(s.colecao, { quiet: s.trabalho, animations: s.todo?.settings.animations !== false });
 }
 
 // ---------------- coleção, progressão, mini-jogos e estímulos
@@ -69,7 +83,7 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  const painel = showingColecao || showingGuarda;
+  const painel = showingColecao || showingGuarda || showingTarefas;
   for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
@@ -80,7 +94,7 @@ function renderColecao() {
   nivel.append(el('h2', null, `Nível ${c.nivel}: ${c.nomeNivel}`), el('p', 'muted', `${c.xp} XP · próximo nível em ${Math.max(0, c.proximo - c.xp)} XP · ${c.streak} dia(s) seguidos`));
   const bar = el('div', 'bar');
   const fill = el('span');
-  fill.style.width = `${Math.min(100, Math.round(((c.xp % 60) / 60) * 100))}%`;
+  fill.style.width = `${Math.min(100, Math.round(((c.xp % (c.xpPorNivel || 60)) / (c.xpPorNivel || 60)) * 100))}%`;
   bar.append(fill);
   nivel.append(bar, el('p', null, c.resumo));
   const acoes = el('div', 'card');
@@ -173,6 +187,8 @@ async function vestir(cmd) {
   if (r && r.text && $('guardaFala')) $('guardaFala').textContent = `${st.companionName}: ${r.text}`;
 }
 $('guardaBtn').addEventListener('click', async () => {
+  showingTarefas = false;
+  $('tarefas').classList.add('hidden');
   showingGuarda = !showingGuarda;
   showingColecao = false;
   if (showingGuarda) render(await api.state());
@@ -190,6 +206,8 @@ async function playCmd(cmd) {
   await run(cmd);
 }
 $('colecaoBtn').addEventListener('click', async () => {
+  showingTarefas = false;
+  $('tarefas').classList.add('hidden');
   showingColecao = !showingColecao;
   showingGuarda = false;
   renderGuarda();
@@ -201,6 +219,8 @@ $('colecaoBtn').addEventListener('click', async () => {
 });
 
 async function select(id) {
+  showingTarefas = false;
+  $('tarefas').classList.add('hidden');
   if (id === 'colecao' || id === 'guardaRoupa') {
     showingColecao = id === 'colecao';
     showingGuarda = id === 'guardaRoupa';
@@ -214,6 +234,16 @@ async function select(id) {
   render(s);
   input.focus();
 }
+
+$('tarefasBtn').addEventListener('click', async () => {
+  showingTarefas = !showingTarefas; showingColecao = false; showingGuarda = false;
+  render(await api.state());
+});
+api.onTodoUpdate(s => {
+  if (st) { st.todo = s.todo; if (s.colecao) st.colecao = { ...st.colecao, ...s.colecao }; }
+  if (showingTarefas) todoView.refresh();
+  xpView.render(s.colecao, { quiet: s.trabalho, animations: s.todo?.settings.animations !== false });
+});
 
 function renderConversation() {
   const conv = st.current;

@@ -2,6 +2,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('settingsApi', {
   load: () => ipcRenderer.invoke('settings:get'),
+  todo: (request) => ipcRenderer.invoke('todo:request', request),
+  onTodoChanged: (fn) => ipcRenderer.on('todo:changed', (_e, s) => fn(s)),
   set: (patch) => ipcRenderer.invoke('settings:set', patch),
   reset: () => ipcRenderer.invoke('settings:reset'),
   openFolder: () => ipcRenderer.send('settings:open-folder'),

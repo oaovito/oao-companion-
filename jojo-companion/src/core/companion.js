@@ -170,9 +170,14 @@ export class Companion {
     this.progress = new Progress({
       data: at.progressao || { niveis: ['Sardinha'], xpPorNivel: 60, xp: {}, acessorios: [], conquistas: [], missoes: [], areas: [] },
       state: this.variety.state.prog,
-      save: (st) => {
+      save: (st, { immediate = false } = {}) => {
+        const previous = this.variety.state.prog;
         this.variety.state.prog = st;
         this.variety.save(this.variety.state);
+        if (immediate && variety?.flush?.() === false) {
+          this.variety.state.prog = previous;
+          throw new Error('Não foi possível confirmar a recompensa no disco.');
+        }
       },
       rng,
       now: () => this.clock.now(),
@@ -1262,6 +1267,10 @@ export class Companion {
       this.nerdAbertura = null;
       this.react('comfort');
       return this._quickReply(conv, RESPOSTA_EMERGENCIA, 'emergencia');
+    }
+    if (!safety && this.todoChat) {
+      const reply = this.todoChat.reply(text);
+      if (reply) return this._quickReply(conv, reply, 'tarefas');
     }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
@@ -3282,6 +3291,7 @@ export class Companion {
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
+      this.onRoutineTick?.();
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);
   }

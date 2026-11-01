@@ -1,0 +1,10 @@
+.jojo-progress { padding: 9px 16px; border-bottom: 1px solid #d6e3e9; background: #edf4f9; color: #24415b; font: 11px "Segoe UI", sans-serif; }
+.jojo-xp-track { height: 5px; overflow: hidden; background: #d2dfea; border-radius: 4px; margin-top: 5px; }
+.jojo-xp-fill { display: block; height: 100%; background: #318aa0; transition: width .65s cubic-bezier(.2,.8,.2,1); }
+.jojo-xp-feedback { display: block; min-height: 0; font-weight: 600; margin-top: 3px; }
+.xp-received { animation: xp-glow .8s ease-out; }
+.xp-level-up { animation: xp-level 1.8s ease-out; }
+.jojo-progress.no-animation, .jojo-progress.no-animation * { animation: none; transition: none; }
+@keyframes xp-glow { from { background: #b9e6d7; } to { background: #edf4f9; } }
+@keyframes xp-level { 0%, 45% { box-shadow: inset 0 0 0 3px #b89b55; background: #fff3c8; } 100% { box-shadow: inset 0 0 0 0 transparent; background: #edf4f9; } }
+@media (prefers-reduced-motion: reduce) { .jojo-progress, .jojo-progress * { animation: none; transition: none; } }

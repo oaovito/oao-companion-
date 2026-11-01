@@ -5,6 +5,8 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>JoJo</title>
   <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="../shared/todo.css">
+  <link rel="stylesheet" href="../shared/progress.css">
 </head>
 <body>
   <aside id="side">
@@ -18,6 +20,7 @@
     <nav id="list" aria-label="Conversas"></nav>
     <button id="colecaoBtn" class="wide ghost">🏆 Coleção e jogos</button>
     <button id="guardaBtn" class="wide ghost">👗 Guarda-roupa</button>
+    <button id="tarefasBtn" class="wide ghost">✓ Lista de Tarefas</button>
     <button id="trabalhoBtn" class="wide ghost">🧘 Modo Trabalho</button>
     <footer class="side-foot">
       <button id="petToggle" class="wide"></button>
@@ -30,8 +33,10 @@
       <span id="convStatus" class="chip hidden"></span>
     </header>
     <p id="convDetail" class="detail hidden"></p>
+    <div id="progression" aria-live="polite"></div>
     <section id="colecao" class="colecao hidden" aria-label="Coleção e jogos"></section>
     <section id="guardaRoupa" class="colecao hidden" aria-label="Guarda-roupa"></section>
+    <section id="tarefas" class="hidden" aria-label="Lista de Tarefas"></section>
     <div id="log" role="log" aria-live="polite"></div>
     <div id="cmdMenu" class="cmd-menu hidden" role="listbox" aria-label="Comandos"></div>
     <form id="form" autocomplete="off">

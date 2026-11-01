@@ -22,6 +22,13 @@ excluido; esperado corrigido para manter apenas fontes pertinentes.
 Nova suite live-tools.test.js tem 6 testes. Total confirmado 336/336, zero pulos;
 log /workspace/jojo-living-p0-tests.tap. Nao comprova teste Windows da candidata.
 
+To-Do implementada e integrada: modelos, persistencia/backup, XP compartilhado,
+chat, Central, configuracoes e painel Windows opcional. Detalhes em TAREFAS.md.
+15 testes novos passaram isoladamente; total 351/351 antes do ultimo ajuste.
+Quatro cenarios Electron Windows adicionados, ainda nao executados. Fazer CI e
+corrigir causas reais antes de marcar entrega validada. Demais sistemas abaixo
+continuam pendentes: nao publicar uma entrega parcial.
+
 ## Checklist integral
 
 - [ ] Clima real: Open-Meteo, cidades/datas/timezone/cache, GUI/configuracao, teste live.

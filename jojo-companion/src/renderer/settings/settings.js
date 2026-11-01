@@ -1,8 +1,12 @@
 // Janela de configurações: aplica cada alteração imediatamente (validada no main).
+import { TodoSettings } from '../shared/todo-view.js';
 const api = window.settingsApi;
 const form = document.getElementById('form');
 let info = null;
 let recording = false;
+const todoSettings = new TodoSettings(document.getElementById('todoSettingsFields'), api);
+api.onTodoChanged(s => todoSettings.render(s));
+todoSettings.load();
 
 const FMT = {
   pct: (v) => `${Math.round(v * 100)}%`,

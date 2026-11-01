@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <title>JoJo Companion — Configurações</title>
   <link rel="stylesheet" href="settings.css">
+  <link rel="stylesheet" href="../shared/todo.css">
 </head>
 <body>
   <header class="top">
@@ -18,6 +19,10 @@
   <div id="notice" class="notice hidden" role="alert"></div>
 
   <form id="form">
+    <fieldset id="todoSettings">
+      <legend>Lista de Tarefas</legend>
+      <div id="todoSettingsFields"></div>
+    </fieldset>
     <fieldset>
       <legend>Aparência</legend>
       <label class="row">Tamanho do JoJo

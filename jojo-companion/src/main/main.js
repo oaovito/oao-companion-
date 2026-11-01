@@ -32,6 +32,8 @@ import { createTray } from './tray.js';
 import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
 import { criarPresenca, garantirAtalho } from './presenca.js';
 import { WeatherService } from '../core/weather.js';
+import { AtomicState } from '../core/atomic-state.js';
+import { createTodoService } from './todo-service.js';
 import { requireWindows } from './windows-only.js';
 
 requireWindows();
@@ -78,20 +80,17 @@ function readJSON(rel) {
 
 /** Estado pequeno em JSON (motor de variedade): leitura tolerante e gravação adiada. */
 function jsonState(file, log) {
-  let data = null;
-  try {
-    data = JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch {
-    data = null;
-  }
+  const disk = new AtomicState(file, { defaults: () => null, log });
+  let data = disk.load();
   let timer = null;
   const flush = () => {
     timer = null;
     try {
-      fs.mkdirSync(path.dirname(file), { recursive: true });
-      fs.writeFileSync(file, JSON.stringify(data));
+      disk.write(data);
+      return true;
     } catch (e) {
       log('warn', `Falha ao salvar ${path.basename(file)}: ${e.message}`);
+      return false;
     }
   };
   return {
@@ -100,7 +99,7 @@ function jsonState(file, log) {
       data = v;
       if (!timer) timer = setTimeout(flush, 2000);
     },
-    flush: () => timer && (clearTimeout(timer), flush()),
+    flush: () => { if (timer) clearTimeout(timer); return flush(); },
   };
 }
 
@@ -372,6 +371,8 @@ function main() {
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
         trabalho: !!companion.work,
         abrirGuardaRoupa,
+        todo: todoService?.model.snapshot() || null,
+        abrirTarefas,
       };
     }
     let appUpdateTimer = null;
@@ -384,11 +385,14 @@ function main() {
     };
     let abrirColecao = 0;
     let abrirGuardaRoupa = 0;
+    let abrirTarefas = 0;
+    let todoService = null;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
-      const painel = id === 'colecao' || id === 'guardaRoupa';
+      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'tarefas';
       if (id === 'colecao') abrirColecao++;
       if (id === 'guardaRoupa') abrirGuardaRoupa++;
+      if (id === 'tarefas') abrirTarefas++;
       appWin.open(painel ? null : id);
       if (painel) appWin.send('app:update', appState());
     };
@@ -483,6 +487,8 @@ function main() {
       iconPath: appIcon,
     });
     const fromSettings = (e) => settingsWin.isOpen && e.sender === settingsWin.win.webContents;
+    todoService = createTodoService({ userData, root: ROOT, icon: appIcon, companion, fromApp, fromSettings, appWin, settingsWin, log });
+    app.on('will-quit', () => todoService.close());
     ipcMain.handle('settings:get', (e) => (fromSettings(e) ? settingsInfo() : null));
     ipcMain.handle('settings:set', (e, patch) => {
       if (!fromSettings(e) || !patch || typeof patch !== 'object') return settingsInfo();
@@ -541,6 +547,7 @@ function main() {
         companion.setFullscreenDisplays(companion.fullscreenIds || []);
       }
       companion.applySettings(s, changed);
+      todoService.update();
       trayCtl && trayCtl.refresh();
       settingsWin.send('settings:changed', settingsInfo());
     });
@@ -649,6 +656,7 @@ function main() {
             spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
           });
           companion.setFullscreenDisplays(wantFullscreen() ? res.fullscreenIds : []);
+          todoService.guard();
           companion.onForeground({ instagram: wantInstagram() && res.instagram, lol: wantLol() && res.lol });
           companion.onSpotify(wantSpotify() ? res.spotify : null);
           companion.onAppCategoria(store.get().percepcaoTela ? res.categoria : null);
@@ -676,13 +684,14 @@ function main() {
     powerMonitor.on('suspend', () => {
       log('info', 'Suspensão');
       companion.onSuspend();
+      todoService.guard();
       store.flush();
     });
     powerMonitor.on('resume', () => {
       log('info', 'Retomada');
       setTimeout(() => companion.onResume(), 800);
     });
-    powerMonitor.on('lock-screen', () => companion.onSuspend());
+    powerMonitor.on('lock-screen', () => { companion.onSuspend(); todoService.guard(); });
     powerMonitor.on('unlock-screen', () => companion.onResume());
 
     // ---------------- Bandeja
@@ -839,6 +848,7 @@ function main() {
         primaryScale: () => screen.getPrimaryDisplay().scaleFactor,
         personality,
         appWin,
+        todoService,
         get updater() {
           return updater;
         },

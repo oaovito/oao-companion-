@@ -1,0 +1,42 @@
+.todo-panel { --todo-accent: #287d94; --todo-bg: #f3f8fb; --todo-ink: #172d3d; --todo-card: #fff; --todo-line: #d6e3e9; color: var(--todo-ink); background: var(--todo-bg); padding: 20px; overflow: auto; font: 14px/1.5 "Segoe UI", sans-serif; }
+.todo-panel[data-theme=night] { --todo-accent: #88bcdf; --todo-bg: #172332; --todo-ink: #e6edf5; --todo-card: #223346; --todo-line: #42546c; }
+.todo-panel[data-theme=plum] { --todo-accent: #9562ad; --todo-bg: #faf5fc; --todo-ink: #3b2648; --todo-line: #e2d4e9; }
+.todo-panel[data-theme=forest] { --todo-accent: #36826a; --todo-bg: #f2f8f3; --todo-ink: #223c30; --todo-line: #d1e3d7; }
+.todo-top { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.todo-top h2 { font-size: 21px; line-height: 1.2; margin: 5px 0; letter-spacing: -.4px; }
+.todo-kicker { font-size: 10px; letter-spacing: 1.3px; color: var(--todo-accent); font-weight: 700; }
+.todo-panel button, .todo-dialog button { font: inherit; border: 1px solid var(--todo-line, #cddae1); background: var(--todo-card, #fff); color: inherit; padding: 7px 10px; border-radius: 8px; cursor: pointer; }
+.todo-panel button:disabled { opacity: .45; cursor: default; }
+.todo-panel .todo-primary, .todo-dialog .todo-primary { background: var(--todo-accent, #287d94); border-color: transparent; color: white; }
+.todo-panel progress { display: block; accent-color: var(--todo-accent); width: 100%; height: 8px; margin: 12px 0 18px; }
+.todo-summary { margin: 10px 0 0; font-variant-numeric: tabular-nums; }
+.todo-controls, .todo-actions, .todo-pager { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+.todo-controls > * { max-width: 100%; min-width: 0; flex: 1 1 120px; }
+.todo-panel input, .todo-panel select, .todo-dialog input, .todo-dialog select, .todo-dialog textarea { font: inherit; padding: 7px; color: inherit; border: 1px solid var(--todo-line, #bfcdd8); background: var(--todo-card, #fff); border-radius: 7px; min-width: 0; }
+.todo-panel input[type=checkbox], .todo-dialog input[type=checkbox] { accent-color: var(--todo-accent, #287d94); width: 18px; height: 18px; flex: 0 0 auto; }
+.todo-task { display: flex; gap: 12px; align-items: start; padding: 14px 12px; margin: 8px 0; border: 1px solid var(--todo-line); background: var(--todo-card); border-radius: 12px; animation: todo-in .2s ease-out; }
+.todo-task input { margin-top: 4px; }
+.todo-task-content { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.todo-task .todo-task-title { border: 0; background: transparent; padding: 0; text-align: left; font-weight: 600; }
+.todo-task.is-done .todo-task-title { text-decoration: line-through; opacity: .7; }
+.todo-task.is-done { border-color: var(--todo-accent); }
+.todo-meta { display: block; opacity: .7; font-size: 11px; }
+.todo-description { font-size: 12px; margin: 5px 0 0; white-space: pre-wrap; }
+.todo-task .todo-more { border: 0; padding: 0 4px; }
+.todo-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0; font-size: 13px; }
+.todo-field > input:not([type=checkbox]), .todo-field > select, .todo-field > textarea { width: 55%; min-width: 90px; }
+.todo-field textarea { min-height: 65px; }
+.todo-error, .todo-danger { color: #a63838; font-size: 13px; }
+.todo-empty { padding: 22px 6px; opacity: .7; }
+.todo-dialog { border: 1px solid #cbdbe5; padding: 22px; border-radius: 18px; background: #f6f9fc; color: #172d3d; width: min(540px, calc(100vw - 30px)); max-height: calc(100vh - 40px); overflow: auto; font: 14px/1.5 "Segoe UI", sans-serif; }
+.todo-dialog::backdrop { background: #0b1a2b88; backdrop-filter: blur(3px); }
+.todo-dialog h2 { margin: 0 0 16px; font-size: 20px; }
+.todo-weekdays { display: flex; flex-wrap: wrap; gap: 10px; }
+.todo-weekdays[hidden] { display: none; }
+.todo-weekdays label { flex-direction: column; gap: 4px; margin: 0; }
+.todo-transfer { margin-top: 24px; opacity: .75; }
+.todo-panel .no-animation *, .todo-panel.no-animation .todo-task { animation: none; transition: none; }
+.todo-pager { justify-content: center; }
+.todo-completed summary { cursor: pointer; }
+@keyframes todo-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .todo-task { animation: none; } }

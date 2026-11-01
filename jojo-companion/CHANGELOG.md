@@ -2,6 +2,13 @@
 
 ## 0.45.0 — Em desenvolvimento
 
+### Novidades
+- Lista de Tarefas local com edição, categorias, prioridades, recorrência e reinício
+  por calendário/fuso; painel na Central e painel separado opcional, configurações,
+  histórico, importação/exportação e recuperação por cópia de segurança.
+- XP de tarefas integrado à progressão existente, com limite diário, registro de
+  recompensas idempotente, barra animada e confirmação durável das conclusões.
+
 ### Correções
 - Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.
 - Estado e falhas da agenda são consultados antes de afirmar conexão ou ausência de compromissos.

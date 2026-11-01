@@ -47,6 +47,23 @@ export class Progress {
     return this.nivel > before ? { subiu: true, nivel: this.nivel, nome: this.nomeNivel } : null;
   }
 
+  /** Recompensa externa identificada: confirmação durável antes de notificar a UI. */
+  award({ id, amount, source, day, label = '' }) {
+    if (typeof id !== 'string' || id.length > 500 || !id || !Number.isInteger(amount) || amount < 0 || amount > 500 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new Error('Recompensa inválida.');
+    if (this.st.rewards?.ids?.[id]) return { duplicate: true, amount: 0 };
+    const before = this.st; const level = this.nivel;
+    this.st = structuredClone(before);
+    this.st.rewards ||= { ids: {}, history: [], sequence: 0 };
+    this.st.xp += amount;
+    const event = { id, amount, source, day, label: String(label).slice(0, 200), at: this.now(), sequence: ++this.st.rewards.sequence, level: this.nivel, levelUp: this.nivel > level };
+    this.st.rewards.ids[id] = true;
+    this.st.rewards.history.push(event);
+    this.st.rewards.history = this.st.rewards.history.slice(-500);
+    try { this.save(this.st, { immediate: true }); }
+    catch (e) { this.st = before; throw e; }
+    return event;
+  }
+
   /** Conta um evento e devolve as conquistas novas. */
   count(kind, n = 1, absolute = false) {
     const c = this.st.contas;
@@ -175,6 +192,9 @@ export class Progress {
       missoes: this.missoes(date),
       resumo: this.resumoDia(date),
       streak: (this.st.contas.streak || 0),
+      reward: this.st.rewards?.history?.at(-1) || null,
+      rewardHistory: this.st.rewards?.history?.slice(-30).reverse() || [],
+      xpPorNivel: this.data.xpPorNivel,
     };
   }
 }
