@@ -36,10 +36,30 @@ function client({ runs = [], jobs = [], tag = null, branch = sha } = {}) {
 }
 const absent = async () => ({ status: 404 });
 
-test('recuperacao: custo desconhecido bloqueia antes de chamar API ou alocar build', async () => {
+test('recuperacao: sem autorizacao explicita bloqueia antes de chamar API ou alocar build', async () => {
   const blocked = { ...policy, paidUsageBlockedConfirmed: false };
   const result = await recover({ policy: blocked, github: null, fetchFn: () => { throw new Error('nao consultar'); } });
-  assert.equal(result.reason, 'zero_paid_usage_unverified');
+  assert.equal(result.reason, 'execution_not_authorized');
+});
+
+test('recuperacao: tentativa normal autorizada nao inventa confirmacao de faturamento', async () => {
+  const authorized = { ...policy, paidUsageBlockedConfirmed: false, confirmation: null, normalExecutionAuthorized: true, executionAuthorization: 'Tentar o fluxo normal, sem alterar faturamento' };
+  const github = client();
+  const result = await recover({ policy: authorized, github, fetchFn: absent, now });
+  assert.equal(result.action, 'dispatch');
+  assert.equal(github.writes.length, 1);
+  assert.equal(authorized.paidUsageBlockedConfirmed, false);
+  assert.equal(authorized.confirmation, null);
+  const tagged = client();
+  assert.equal((await prepareRelease({ github: tagged, policy: authorized, report: report(), version: '0.44.0', commit: sha, files, fetchFn: absent })).publish, true);
+  assert.equal(tagged.writes.length, 1);
+});
+
+test('recuperacao: flag normal sem registro da autorizacao nao libera execucao', async () => {
+  const unauthorized = { ...policy, paidUsageBlockedConfirmed: false, normalExecutionAuthorized: true, executionAuthorization: '' };
+  const result = await recover({ policy: unauthorized, github: null, fetchFn: () => { throw new Error('nao consultar'); } });
+  assert.equal(result.reason, 'execution_not_authorized');
+  await assert.rejects(prepareRelease({ github: null, policy: unauthorized, version: '0.44.0' }), /nao esta autorizada/);
 });
 
 test('recuperacao: release existente com tres assets evita recriacao; rascunho/incompleta exige inspecao', () => {

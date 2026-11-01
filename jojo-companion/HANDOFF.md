@@ -63,16 +63,18 @@ ou passos iniciados, diz que pagamentos recentes falharam **OU** limite precisa 
 Não é possível distinguir saldo/franquia, orçamento ou pagamento recusado com esses dados.
 Não presumir que alguma pendência financeira se resolverá automaticamente.
 
-`ci/actions-cost-policy.json` registra custo não confirmado. Os três `COST_GATE` estão
-fechados ANTES de alocar runners. Foi solicitada ao titular confirmação ÚNICA de que
-TODO gasto pago do Actions está efetivamente bloqueado em zero. Sem resposta confiável,
-não habilitar por decurso de tempo. Isso preserva R$ 0; não é teste Windows aprovado.
+O usuário instruiu posteriormente: **"Só tenta fazer como faria normalmente"**.
+Essa autorização substitui a trava adicional de confirmação manual criada pelo agente:
+os três `if: false` foram removidos para tentar o Actions normal, sem mudar controles
+financeiros. `ci/actions-cost-policy.json` registra `normalExecutionAuthorized=true`
+e a instrução, mantendo `paidUsageBlockedConfirmed=false`/`confirmation=null`.
+Autorização para tentar não comprova configuração financeira; não inventar esse dado.
 
-Cron depende do próprio Actions e pode não iniciar sob bloqueio financeiro. Mesmo
-registrado, gate fechado não consulta APIs por hora. Não declarar monitor operacional
-antes de observar execução real da verificação. Não existe check de API sem runner.
-Após confirmação confiável, habilitar gates + política, sincronizar main e deixar
-GitHub tentar automaticamente. Sem intervenção manual recorrente; sem mudar faturamento.
+Cron depende do próprio Actions e pode não iniciar sob bloqueio financeiro. Não declarar
+monitor operacional antes de observar execução real da verificação. Não existe consulta
+de API sem runner. Sincronizar controle na main e deixar GitHub tentar normalmente,
+sem intervenção manual recorrente ou mudança de faturamento. Gates técnicos continuam
+obrigatórios; não publicar com validação Windows ausente ou falha.
 
 ## Verificação
 
@@ -95,8 +97,9 @@ GitHub tentar automaticamente. Sem intervenção manual recorrente; sem mudar fa
 
 1. Controle instalado na branch padrão; seis arquivos conferidos iguais aos da branch
    de fonte. Não repetir instalação nem criar commits de polling.
-2. Primeiras tentativas registradas abaixo; não abrir os gates sem a confirmação pendente.
-3. Após confirmação do limite pago zero e quando GitHub aceitar jobs, deixar o controle
+2. A instrução posterior autoriza tentativa normal; os gates financeiros adicionais do
+   agente foram removidos. Preservar limites reais do GitHub e registrar o resultado.
+3. Quando GitHub aceitar jobs, deixar o controle
    disparar a validação real, corrigir falhas técnicas com evidências quando houver sessão
    Codex e publicar só depois de TODOS os gates. Não há agente IA contínuo no Actions.
 4. Confirmar três arquivos públicos 0.44.0, hashes/notas incrementais/atualizador e as
@@ -124,6 +127,20 @@ GitHub tentar automaticamente. Sem intervenção manual recorrente; sem mudar fa
 - API pública reconferida: **17 releases inalteradas**, comparando IDs, notas e
   IDs/nomes/tamanhos/digests dos assets ao início da tarefa. Última segue **v0.43.1**;
   nenhuma v0.44.0 publicada. Atualizador permanece em `oaovito/jojo-companion-releases`.
-- Pendência externa única para habilitar os gates: confirmação confiável do bloqueio
-  de TODO consumo pago do Actions em zero. Não há novas credenciais de faturamento
-  disponíveis no ambiente; não mudar plano, orçamento, cartão ou provedor.
+- Naquela instalação os gates estavam fechados. A instrução posterior autoriza uma
+  tentativa normal (ver seção de custo atual), sem afirmar confirmação financeira.
+  Não mudar plano, orçamento, cartão ou provedor. Registrar o novo run após o push.
+
+## Retomada normal autorizada — 01/11/2026
+
+Instrução: **"Só tenta fazer como faria normalmente"**. Removida a trava adicional
+do agente nos três workflows e registrada autorização de execução normal separada
+da configuração financeira não verificável. Não repetir a pergunta de confirmação
+como requisito para tentar o pipeline normal; manter todos os controles do GitHub.
+
+Node 22.23.4: **325/325** testes passaram, sem falhas/pulos (323 preservados + dois
+de autorização normal sem inventar confirmação de faturamento). Lint: 138 arquivos;
+`actionlint` 1.7.12: três workflows aprovados. Mínimo obrigatório Windows subiu para 325.
+Fonte e controle serão enviados; registrar abaixo o run real e sua anotação, sem
+confundir falha de alocação com teste Windows executado. Publicação só após todos
+os gates Windows, conferência dos três binários e detecção pelo atualizador.

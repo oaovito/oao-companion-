@@ -12,8 +12,8 @@ concurrency:
 
 jobs:
   conversa-real:
-    # COST_GATE: execucao opcional somente apos confirmar consumo pago bloqueado em zero.
-    if: ${{ github.repository == 'oaovito/oao-companion-' && false }}
+    # Avaliacao opcional somente por dispatch; o pipeline completo ja executa o ensaio.
+    if: ${{ github.repository == 'oaovito/oao-companion-' }}
     runs-on: windows-latest
     timeout-minutes: 30
     strategy:

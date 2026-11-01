@@ -99,13 +99,15 @@ main guarda somente controle (não usar como fonte do aplicativo); o worker faz 
 da branch correta. Mudanças do controle devem ser sincronizadas na main, preservando
 README/histórico e sem force-push. Não criar commits artificiais nem loops de polling.
 
-Orçamento adicional **R$ 0**. APIs de faturamento/variáveis estão negadas (403), então
-não é possível confirmar o bloqueio efetivo de consumo pago. `ci/actions-cost-policy.json`
-e os três `COST_GATE` permanecem fechados até confirmação confiável de limite pago ZERO
-para TODO Actions. Não alterar limites/cartões/planos. Confirmação única foi solicitada
-ao titular; não presumir resposta nem habilitar por timeout. Sem isso, jobs pulados não
-comprovam disponibilidade de runner. Mesmo habilitado, cron pode ser impedido pelo
-próprio faturamento; só declarar monitor ativo após observar verificação executada.
+Orçamento adicional **R$ 0**. Não alterar limites/cartões/planos nem contornar bloqueios.
+A instrução posterior do usuário, **"Só tenta fazer como faria normalmente"**, autoriza
+retomar o fluxo normal sob os controles já existentes no GitHub, sem a trava adicional
+de confirmação manual criada anteriormente pelo agente. Os `if: false` foram removidos.
+`ci/actions-cost-policy.json` registra essa autorização separadamente da configuração
+financeira: APIs de faturamento/variáveis seguem negadas (403), logo o limite pago zero
+NÃO está confirmado. Nunca inventar essa confirmação nem afirmar custo real sem evidência.
+Cron ainda pode ser impedido pelo faturamento; só declarar monitor operacional após
+observar a verificação executada. Jobs pulados não comprovam disponibilidade de runner.
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,

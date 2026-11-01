@@ -12,8 +12,9 @@ Windows 11 x64; a configuração local candidata atual é Gemma 3 4B, definida e
 GitHub Actions original voltou a ser o único CI/CD oficial. Workflows restaurados em
 `.github/workflows/`; agentes/provedores externos foram removidos. Gates Windows no
 mesmo job, recuperação horária preparada e publicação somente com tag/relatório do
-mesmo run `github-hosted`. Custo R$ 0: não habilitar runners sem confirmar bloqueio de
-consumo pago em zero. Referência atual: `jojo-companion/docs/GITHUB_ACTIONS.md`.
+mesmo run `github-hosted`. O usuário autorizou tentativa normal do Actions, sem a trava
+adicional de confirmação manual. Não alterar faturamento nem presumir limite pago zero
+confirmado. Referência atual: `jojo-companion/docs/GITHUB_ACTIONS.md`.
 
 ## O que é
 

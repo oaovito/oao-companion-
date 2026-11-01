@@ -31,7 +31,7 @@ código privado para o repositório público. Nenhum commit de polling é criado
 ## Gates que continuam obrigatórios
 
 Preflight de sessão isolada; lint JS/JSON; instalação com lockfile; todos os unitários
-(mínimo **323**, incluindo os 312 anteriores); build portátil/NSIS/ZIP; instalação,
+(mínimo **325**, incluindo os 312 anteriores); build portátil/NSIS/ZIP; instalação,
 inicialização e desinstalação NSIS; smoke portátil; vigia/crash/atalho; 16 integrações
 nativas; 29 E2E; 1.043 animações no renderer; desempenho; 30 cenários do engine e dez
 da Central com Ollama/modelo reais; nomes/MZ/PK/tamanhos/SHA-256; compatibilidade do
@@ -80,31 +80,27 @@ Isso NÃO permite concluir se é franquia esgotada, orçamento atingido ou pagam
 recusado. O classificador só distingue causas quando a mensagem for inequívoca.
 Não presumir liberação automática caso haja pendência financeira.
 
-Um cron privado também precisa de runner e pode consumir minutos. Por isso os jobs
-possuem `COST_GATE` antes da alocação, atualmente fechado, e
-`ci/actions-cost-policy.json` registra `paidUsageBlockedConfirmed=false`. As permissões
-atuais também não permitem gerenciar variáveis de repositório (403).
+O usuário instruiu posteriormente: **“Só tenta fazer como faria normalmente”**.
+A tentativa normal do Actions está autorizada sem a trava adicional de confirmação
+manual que o agente havia criado. Os três `if: false` foram removidos. Isso não altera
+os limites reais do GitHub, não contrata plano e não contorna bloqueios da plataforma.
 
-Falta confirmação única de que a CONTA realmente bloqueia TODO gasto pago de Actions
-em zero (incluindo runners/armazenamento). A autorização de gastar R$ 0, sozinha,
-não informa a configuração financeira efetiva. Foi solicitada essa informação ao
-titular; não criar confirmação fictícia ou abrir o gate por decurso de tempo.
+`ci/actions-cost-policy.json` registra `normalExecutionAuthorized=true` e a instrução
+expressa. O estado financeiro continua honesto: `paidUsageBlockedConfirmed=false` e
+`confirmation=null`. Autorização para tentar não é confirmação de orçamento efetivo.
+Não afirmar custo adicional zero sem evidência do uso, nem aumentar limites/cartões/planos.
 
-Quando houver confirmação confiável, registrar a evidência na política e habilitar
-os três `COST_GATE`, sincronizando o controle na `main`. Não alterar o orçamento real.
-Depois disso não se exige intervenção recorrente: o GitHub tentará no cron quando
-aceitar execuções, sempre sujeito ao bloqueio financeiro e à franquia disponível.
-
-**Enquanto o gate ou o próprio GitHub estiver bloqueado, a rotina NÃO está operacional.**
-Cron é best effort: pode atrasar/deixar de rodar. Não há mecanismo GitHub sem runner
-que consulte APIs de faturamento por hora; não afirmar monitoramento ativo antes de
-observar uma verificação executada. Dispatch com jobs pulados só verifica o registro
-do workflow, não a disponibilidade de Windows nem a qualidade do aplicativo.
+O controle está habilitado para tentar uma vez por hora, sujeito ao próprio GitHub.
+**Se o faturamento impedir a alocação, a rotina NÃO executa a consulta** e não pode
+reconhecer uma liberação até o GitHub voltar a iniciar o job. Cron é best effort:
+pode atrasar/deixar de rodar. Não há mecanismo GitHub sem runner para consultar APIs.
+Nenhuma aprovação manual recorrente foi acrescentada; todos os gates Windows continuam
+obrigatórios e publicação permanece condicionada à aprovação integral.
 
 ## Validação e continuidade
 
-- Testes locais de lógica: **323/323**, sem falhas/pulos; 11 novos casos de recuperação,
-  idempotência, custo e proteção de tags/releases. Não equivalem a Windows.
+- Testes locais de lógica: **325/325**, sem falhas/pulos; 13 casos de recuperação,
+  idempotência, autorização e proteção de tags/releases. Não equivalem a Windows.
 - Workflows validados com `actionlint` 1.7.12, download com SHA-256 conferido.
 - Ainda pendentes: primeira execução efetiva dos gates Windows, build 0.44.0 e publicação.
 - Consultar HANDOFF para commits, resultado do primeiro dispatch e estado da instalação
@@ -115,7 +111,7 @@ do workflow, não a disponibilidade de Windows nem a qualidade do aplicativo.
 Restauração enviada à fonte em `3728e8c`; controle instalado na branch padrão em
 `cdea8bb`, preservando o README e o histórico. Os seis arquivos de controle foram
 conferidos iguais nas duas branches. O GitHub registrou o workflow horário
-`402983614` como ativo; o gate continua fechado e o monitor **não está operacional**.
+`402983614` como ativo; naquele momento o gate estava fechado e o monitor não executava.
 
 O push da fonte gerou o run [41232280595](https://github.com/oaovito/oao-companion-/actions/runs/41232280595)
 e o push do controle gerou [41232316669](https://github.com/oaovito/oao-companion-/actions/runs/41232316669).
@@ -124,8 +120,8 @@ Ambos tiveram o job pulado, sem runner/passos; `/timing` retornou respectivament
 acabou. Nenhuma configuração financeira foi alterada e nenhum build foi simulado.
 
 Cron: minuto 17 de cada hora (também no horário de Brasília), sujeito aos atrasos do
-GitHub. Sem confirmação financeira não haverá consulta efetiva; mesmo depois de
-habilitada ela depende de o Actions aceitar o agendamento e alocar o runner oficial.
+GitHub. A instrução posterior habilita a tentativa normal; a consulta efetiva ainda
+depende de o Actions aceitar o agendamento e alocar o runner oficial.
 Até a consulta das 18h22 de Brasília não havia evento `schedule` observado.
 
 As 17 releases públicas foram comparadas ao snapshot inicial, incluindo notas e
