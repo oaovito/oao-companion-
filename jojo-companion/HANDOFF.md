@@ -1,19 +1,26 @@
 # HANDOFF — JoJo Companion
 
-## Diretriz corrente — agenda somente por link
+## Estado atual — 0.45.0 publicada e atualização verificada
 
-Correção explícita do usuário em 02/11/2026: “A agenda só deve precisar do link da
-agenda não log senha de nada”. Substitui a exigência anterior de conta autorizada,
-ID Apple/senha e gate icloud-live. Não solicitar mais essas credenciais.
+Versão pública: **0.45.0**, publicada em 02/11/2026 no canal oficial
+**oaovito/jojo-companion-releases**. Fonte/tag privada **9c213f494602329f4ebc7bbf9f8fa719a1368f1a**,
+branch efetiva **codex/living-companion**; commits posteriores só documentam a entrega.
+Actions **41383430244** passou e publicou: 411 unitários, 31+12 conversa com modelo
+real, 16 integração, 40 E2E, 1.268 animações, NSIS e três atualizações, portátil/ZIP,
+vigia/desempenho/hashes/notas. Atualizador detectou 0.44 →0.45 sem login nos dois
+modos; downloads públicos e hashes conferidos. 18 releases anteriores preservadas.
 
-Implementado: campo único de link nas Configurações; conexão webcal/HTTPS Google
-ou iCloud por GET sem autenticação/cookies; sincronização a cada 10 min/retomada,
-leitura de recorrências/fusos, último sucesso persistente, estados honestos,
-coalescência e cancelamento de respostas antigas. Links válidos existentes são
-preservados. Novos testes de lógica e cenário nativo Windows preparados.
-Pipeline preserva TODOS os gates da aplicação e dispensa o antigo passo de senha.
-Validação Windows e publicação desta correção ainda pendentes; não confundir com
-502ba0f validado antes. Demais funcionalidades da candidata permanecem implementadas.
+**Agenda exige SOMENTE o link iCal**, sem login/senha, conforme correção do usuário.
+Campo e botões nas Configurações, conexão pelo chat, sincronização, último sucesso,
+falha/vazia e reinício validados. A exigência antiga de conta/gate iCloud foi
+substituída, não é bloqueio nem próxima tarefa. Não pedir secrets iCloud.
+
+To-Do/DD/cuidados/XP/50 alimentos novos/50 cenas/anatomia/ícone/Discord/atalhos/clima
+entregues nesta versão. Relatório, hashes e limites: [VALIDACAO_0.45.0](docs/VALIDACAO_0.45.0.md).
+Controle na main **82519f8**, política 0.45.0/fonte living; cron horário preservado.
+Quota CI segue cheia, mas não impede a release pública já conferida; não comprar
+armazenamento nem remover histórico. Sem pendência externa bloqueando esta entrega.
+MNE_Lab intocado. Não repetir desenvolvimento/build/publicação para demonstrar conclusão.
 
 ## Histórico anterior à correção do usuário
 

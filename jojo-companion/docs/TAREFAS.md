@@ -1,7 +1,6 @@
 # Lista de Tarefas — candidata 0.45.0
 
-Implementação em `codex/living-companion`. Ainda não distribuída. A 0.44.0 continua
-sendo a versão pública. Os resultados Windows estão registrados abaixo.
+Implementação em `codex/living-companion`, distribuída na **0.45.0**. Os resultados Windows estão registrados abaixo.
 
 ## Uso
 
@@ -68,3 +67,7 @@ passaram (quatro de tarefas + DPAPI real), junto aos demais 39 E2E/16 integraç�
 conversa real e build/instalador. A Central não cria outro chat. Testes usam perfis
 isolados; não foram executados no PC físico da usuária. A publicação 0.45.0 está
 bloqueada pelo ensaio iCloud com conta autorizada, conforme MISSAO_ATIVA.md.
+
+Entrega final: Actions 41383430244 aprovou 411 unitários, 40 E2E e os demais gates,
+publicou 0.45.0 e verificou downloads/atualizador. A antiga dependência iCloud foi
+substituída por agenda somente por link, conforme correção explícita do usuário.

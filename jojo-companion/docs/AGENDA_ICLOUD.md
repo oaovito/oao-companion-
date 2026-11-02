@@ -26,3 +26,9 @@ limites, configuração/persistência, falha e concorrência/desconexão. Cenár
 exercita Configurações, HTTP local real, reinício, erro, vazia e desconexão. Fixtures
 são agendas sintéticas, não representam acesso à agenda pessoal de alguém.
 Não há gate de conta externa; todos os gates Windows da aplicação permanecem.
+
+## Entrega verificada
+
+Publicada na 0.45.0. Diagnóstico 41383073847 aprovou os 11 cenários novos e o
+pipeline integral 41383430244 aprovou 411 unitários/40 E2E, incluindo este fluxo.
+Sem conta Apple ou credenciais de usuário. Detalhes em VALIDACAO_0.45.0.md.

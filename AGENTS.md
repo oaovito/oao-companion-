@@ -132,7 +132,7 @@ Windows 11 doméstico, DPI misto, suspensão física ou troca real do instalador
 
 ## Versionamento e distribuição
 
-Versão recuperada na transferência: **0.43.1**. Publicada atual: **0.44.0**; consultar novamente em cada sessão.
+Versão recuperada na transferência: **0.43.1**. Publicada atual: **0.45.0**; consultar novamente em cada sessão.
 Não incrementar para demonstrar transferência. Registrar mudanças não lançadas em
 `CHANGELOG.md` sem reescrever entradas históricas. Para release autorizada e justificada:
 1. Comparar commits desde a versão anterior, atualizar package.json/package-lock.json e
@@ -275,3 +275,17 @@ publicado. Não apagar evidências antigas/comprar cota. Conta autorizada por ca
 seguro é dependência externa; depois retomar fluxo oficial no mesmo run de publicação.
 Não repetir implementação ou testes pesados enquanto a dependência não mudar.
 Evidências/limites/continuidade em HANDOFF e docs/MISSAO_ATIVA.md. 18 releases intactas.
+
+## Entrega atual — 0.45.0 publicada em 02/11/2026
+
+Tag/fonte **9c213f494602329f4ebc7bbf9f8fa719a1368f1a**, branch efetiva
+**codex/living-companion**. Actions **41383430244** aprovou TODOS os gates e publicou:
+411 unitários, 31+12 conversa real, 16 integração, 40 E2E, 1.268 animações,
+NSIS/três atualizações, portátil/ZIP/vigia/desempenho/hashes/notas. Downloads públicos
+verificados; UpdateChecker detecta 0.44→0.45 nos dois modos sem login. 18 releases
+anteriores intactas. Política/controle main: 0.45.0/living (**82519f8**).
+Agenda SOMENTE por link, sem ID Apple/senha ou gate de conta: instrução posterior
+do usuário superou o bloqueio antigo descrito no histórico acima. Sem pendência
+externa bloqueando esta entrega. NÃO repetir pedido de secrets ou build/publicação.
+CI sem quota para upload, mas release pública está íntegra. Não comprar cota/apagar
+histórico. Detalhes/evidência/limites em HANDOFF, docs/VALIDACAO_0.45.0.md e MISSAO_ATIVA.
