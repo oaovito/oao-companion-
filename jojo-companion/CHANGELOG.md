@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.45.0 — Em desenvolvimento
+## 0.45.0 — 2026-11-02
 
 ### Novidades
 - Lista de Tarefas local com edição, categorias, prioridades, recorrência e reinício
@@ -10,8 +10,8 @@
   recompensas idempotente, barra animada e confirmação durável das conclusões.
 - Atividade Darkest Dungeon original: sugestão diária, detector Steam local,
   tempo em primeiro plano, XP por marcos, estatísticas e conquista por sete dias.
-- Configuração da agenda por link iCal Google/iCloud, sem login ou senha,
-  com sincronização manual, status e último sucesso registrados.
+- Campo de link iCal Google/iCloud nas Configurações, sem login ou senha,
+  com botões de sincronizar/desconectar, status e último sucesso registrados.
 - Cuidados persistentes com fome, saúde, humor, higiene, seis tipos de objetos
   clicáveis para limpeza e alimentação por cardápio com 50 opções novas.
 - Vinte animações de necessidades e novos patamares de evolução após Megalodon,

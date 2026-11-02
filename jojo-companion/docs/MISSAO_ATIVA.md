@@ -8,7 +8,10 @@ credencial externa é necessária agora. Campo de link/GET sem autenticação,
 persistência, sincronização, erros e desconexão implementados; sete testes novos
 de lógica e cenário Windows completo pela interface preparados. Suíte esperada:
 411 unitários, 40 E2E. As evidências abaixo anteriores a essa correção são históricas.
-Não solicitar os secrets iCloud; continuar pela validação do novo fluxo e publicação.
+Não solicitar os secrets iCloud; continuar pela validação do novo fluxo e publicação. Política da candidata 0.45.0
+aponta à branch codex/living-companion; só cria tag e publica se TODOS os gates
+Windows do MESMO run passarem. O cron na main será sincronizado após publicação,
+sem iniciar validações pesadas duplicadas.
 
  Branch codex/living-companion.
 Base: 4193c2b; publicada 0.44.0, histórica e imutável. Os três pedidos são cumulativos.

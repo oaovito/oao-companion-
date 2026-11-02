@@ -142,3 +142,14 @@ Uploads CI continuam recusados pela quota. Resumo sanitizado agora também é es
 no log privado; não contém conta, credencial ou evento pessoal. Nenhuma compra,
 remoção de artefato histórico ou novo provedor foi usada. Política/cron continua
 na versão já publicada 0.44.0, sem loops de repetição pesada da candidata bloqueada.
+
+## Correção posterior: agenda somente por link
+
+Em 02/11/2026 o usuário substituiu explicitamente autenticação por link iCal,
+sem login ou senha. O gate icloud-live e seus scripts/secrets foram removidos,
+sem retirar os testes funcionais da agenda ou os demais gates Windows. Agora são
+411 unitários e 40 E2E, incluindo configuração por link/HTTP/reinício/erro/vazia.
+A versão pendente da política passa a 0.45.0, fonte codex/living-companion,
+com publicação automática somente depois de TODOS os gates no mesmo run oficial.
+A quota de uploads CI não impede publicação direta no canal público depois dos
+testes; não comprar armazenamento nem remover evidências históricas.
