@@ -6,6 +6,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { AtomicState } from '../core/atomic-state.js';
+import { SHORTCUT_NAMES, JOJO_APP_ID, migrateShortcuts } from '../core/shortcuts.js';
 
 const VIGIA_SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), 'vigia.cjs');
 
@@ -63,28 +65,30 @@ export function criarPresenca({ app, log, env = process.env, platform = process.
 }
 
 /** Atalho "JoJo Companion" na área de trabalho (cria ou corrige; só no Windows empacotado). */
-export function garantirAtalho({ app, shell, log, env = process.env, platform = process.platform }) {
+export function garantirAtalho({ app, shell, log, env = process.env, platform = process.platform, preference = 'auto' }) {
   if (platform !== 'win32' || !app.isPackaged || env.JOJO_TEST === '1') return false;
   try {
     const alvo = alvoDoApp({ env });
-    const lnk = path.join(app.getPath('desktop'), 'JoJo Companion.lnk');
-    let atual = null;
-    try {
-      atual = shell.readShortcutLink(lnk);
-    } catch {
-      atual = null;
+    const desktop = app.getPath('desktop');
+    const disk = new AtomicState(path.join(app.getPath('userData'), 'desktop-shortcut.json'), { defaults: () => ({}), log });
+    const dirs = [...new Set([desktop, ...(env.PUBLIC ? [path.join(env.PUBLIC, 'Desktop')] : [])])];
+    const entries = [];
+    for (const dir of dirs) {
+      let names = []; try { names = fs.readdirSync(dir).filter(n => SHORTCUT_NAMES.some(s => s.toLowerCase() === n.toLowerCase())); } catch { /* público pode não ser acessível */ }
+      if (!names.includes(SHORTCUT_NAMES[0])) names.push(SHORTCUT_NAMES[0]);
+      for (const name of names) {
+        const file = path.join(dir, name);
+        try { entries.push({ path: file, name, link: shell.readShortcutLink(file) }); }
+        catch { if (fs.existsSync(file)) entries.push({ path: file, name, link: null }); }
+      }
     }
-    if (atual && atual.target && atual.target.toLowerCase() === alvo.toLowerCase()) return true;
-    const ok = shell.writeShortcutLink(lnk, atual ? 'replace' : 'create', {
-      target: alvo,
-      cwd: path.dirname(alvo),
-      description: 'Abrir o JoJo',
-      icon: alvo,
-      iconIndex: 0,
-      appUserModelId: 'com.jojocompanion.app',
-    });
-    log('info', `Atalho na área de trabalho ${ok ? 'pronto' : 'não criado'}: ${lnk}`);
-    return ok;
+    const report = migrateShortcuts({ entries, canonical: path.join(desktop, SHORTCUT_NAMES[0]), target: alvo,
+      mode: env.PORTABLE_EXECUTABLE_FILE ? 'portable' : 'installer', preference, version: app.getVersion?.() || '', previous: disk.load(),
+      remove: file => fs.unlinkSync(file),
+      write: (file, operation) => shell.writeShortcutLink(file, operation, { target: alvo, cwd: path.dirname(alvo), description: 'Abrir o JoJo', icon: alvo, iconIndex: 0, appUserModelId: JOJO_APP_ID }) });
+    disk.write(report.state);
+    log(report.ready ? 'info' : 'warn', report.present ? `Atalho na área de trabalho ${report.ready ? 'pronto' : 'com duplicata protegida por permissão'}; ${report.removed.length} obsoleto(s) removido(s).` : report.blocked.length ? 'Atalho preservado: arquivo existente protegido ou de propriedade não comprovada.' : 'Atalho na área de trabalho: respeitada a preferência de instalação/remoção.');
+    return report.ready;
   } catch (e) {
     log('warn', `Atalho na área de trabalho: ${e.message}`);
     return false;

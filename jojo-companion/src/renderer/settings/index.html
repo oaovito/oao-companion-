@@ -51,6 +51,9 @@
     </fieldset>
     <fieldset>
       <legend>Aparência</legend>
+      <label class="row">Atalho na área de trabalho
+        <select name="desktopShortcut"><option value="auto">Respeitar instalação / remoção</option><option value="show">Mostrar atalho principal</option><option value="hide">Ocultar atalhos padrão do JoJo</option></select>
+      </label>
       <label class="row">Tamanho do JoJo
         <input type="range" name="size" min="0.6" max="1.8" step="0.05"><output data-for="size" data-fmt="pct"></output>
       </label>
@@ -93,6 +96,9 @@
         </select>
       </label>
       <p class="hint" id="fullscreenStatus"></p>
+      <label class="check"><input type="checkbox" name="discordCloseOnFocus"> Solicitar o fechamento do Discord ao iniciar Trabalho ou Foco</label>
+      <label class="check"><input type="checkbox" name="discordForceClose"> Permitir encerrar o processo se o fechamento normal falhar (pode interromper chamadas e perder conteúdo não enviado)</label>
+      <p class="hint" id="discordFocusStatus"></p>
     </fieldset>
 
     <!-- Personalidade: definida pelo desenvolvedor; não aparece para a usuária. -->

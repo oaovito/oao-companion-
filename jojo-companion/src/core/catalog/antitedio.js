@@ -60,21 +60,27 @@ export class Progress {
     if (!this.clockHealthy()) return null;
     const limits = { gesto: [2, 40], chat: [3, 30], estimulo: [10, 20], poseNova: [0, 50], jogoVitoria: [0, 100], jogoParticipacao: [0, 50] };
     let amount = this.data.xp[kind] || 0;
+    if (amount <= 0) return null;
+    const day = dayKey(new Date(this.wallNow()));
     if (limits[kind]) {
-      const day = dayKey(new Date(this.wallNow()));
-      const budget = this.st.legacyXp ||= { day, used: {}, last: {} };
+      const budget = this.st.legacyXp || { day, used: {}, last: {} };
       if (day < budget.day) return null;
-      if (day > budget.day) { budget.day = day; budget.used = {}; }
       const [cooldown, cap] = limits[kind];
       if (budget.last[kind] != null && this.wallNow() - budget.last[kind] < cooldown * 1000) return null;
-      amount = Math.min(amount, cap - (budget.used[kind] || 0)); if (amount <= 0) return null;
+      amount = Math.min(amount, cap - (day === budget.day ? budget.used[kind] || 0 : 0)); if (amount <= 0) return null;
+    }
+    const previous = this.st, beforeLevel = this.nivel;
+    this.st = structuredClone(previous);
+    if (limits[kind]) {
+      const budget = this.st.legacyXp ||= { day, used: {}, last: {} };
+      if (day > budget.day) { budget.day = day; budget.used = {}; }
       budget.last[kind] = this.wallNow(); budget.used[kind] = (budget.used[kind] || 0) + amount;
     }
-    const before = this.nivel;
-    this.st.xp += amount;
-    this.save(this.st);
-    this.onXp?.();
-    return this.nivel > before ? { subiu: true, nivel: this.nivel, nome: this.nomeNivel } : null;
+    const sequence = this.st.legacyRewardSeq = (this.st.legacyRewardSeq || 0) + 1;
+    const labels = { gesto: 'Carinho e interação', chat: 'Conversa', estimulo: 'Interação', poseNova: 'Nova animação descoberta', jogoVitoria: 'Mini-jogo concluído', jogoParticipacao: 'Participação no mini-jogo', foco: 'Bloco de foco', missao: 'Missão cumprida', diaNovo: 'Novo dia de atividade' };
+    try { this.award({ id: `legacy:${day}:${sequence}`, amount, source: 'interaction', day, label: labels[kind] || 'Atividade do JoJo' }); }
+    catch (e) { this.st = previous; throw e; }
+    return this.nivel > beforeLevel ? { subiu: true, nivel: this.nivel, nome: this.nomeNivel } : null;
   }
 
   /** Recompensa externa identificada: confirmação durável antes de notificar a UI. */

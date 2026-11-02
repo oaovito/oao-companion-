@@ -118,3 +118,15 @@ test('publicador: atualizador precisa detectar a versao correta e os hashes sem 
   release.assets[0].digest = `sha256:${'b'.repeat(64)}`;
   await assert.rejects(verificarAtualizadorPublicado({ fetch, version: '0.44.0', previous: '0.43.1', files }));
 });
+
+test('CI 0.45: autenticação iCloud real é gate adicional obrigatório; históricos 0.44 continuam verificáveis', () => {
+  const report = fixture(); report.version = '0.45.0'; report.tag = 'v0.45.0';
+  const next = { ...expected, version: report.version };
+  assert.throws(() => assertValidation(report, next), /icloud-live/);
+  report.steps.push({ id: 'icloud-live', status: 'passed', exitCode: 0, timedOut: false });
+  assert.throws(() => assertValidation(report, next), /iCloud/);
+  report.icloud = { status: 'passed', readOnly: true, calendars: 1, events: 0, checkedAt: '2026-11-02T00:00:00Z' };
+  assert.doesNotThrow(() => assertValidation(report, next));
+  report.icloud.readOnly = false; assert.throws(() => assertValidation(report, next), /iCloud/);
+  assert.doesNotThrow(() => assertValidation(fixture(), expected));
+});

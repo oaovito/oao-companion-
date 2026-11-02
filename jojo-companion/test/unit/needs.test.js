@@ -106,3 +106,9 @@ test('progressão: spam de gesto e salto de relógio não geram XP ilimitado', (
   wall -= 86400000; assert.equal(p.clockHealthy(), true);
   p.award({ id: 'good-clock', amount: 50, source: 'test', day: '2026-11-01' }); assert.equal(p.st.xp, 54);
 });
+
+test('easter eggs: sem logo embutido; badge raro só existe com ícone obtido localmente', () => {
+  const e = env(); e.n.feed('salmao'); e.hours(0.5); assert.equal(e.n.st.objects[0].egg, null);
+  e.n.balance.localBadges = ['discord', 'lol']; e.n.st.hunger = 50; e.n.feed('atum'); e.hours(0.5);
+  assert.equal(e.n.st.objects.at(-1).egg, 'discord'); assert.equal(e.n.st.objects.at(-1).type, 'common');
+});

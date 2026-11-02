@@ -4,33 +4,39 @@ import { Needs, emptyNeeds, validateNeeds } from '../core/needs.js';
 
 export function createNeedsService({ userData, companion, store, foods, balance, ipcMain, fromApp, fromOverlay, notify, log }) {
   const disk = new AtomicState(path.join(userData, 'needs.json'), { validate: validateNeeds, defaults: emptyNeeds, log });
-  const canExpress = () => companion._canNag() && !companion.focus && !companion.game && !companion.bubble && !companion.dragging && !['fleeing', 'hidden'].includes(companion.avoid.state);
+  const canExpress = (related = false) => companion._canNag() && !companion.focus && !companion.game && !companion.fullscreenIds?.length && !(companion.bubble && !related) && !companion.chatQueue && !companion.dragging && !['fleeing', 'hidden'].includes(companion.avoid.state);
   const model = new Needs({ state: disk.load(), foods, balance, save: s => disk.write(s), clockHealthy: () => companion.progress.clockHealthy(), award: reward => {
     const result = companion.progress.award(reward);
     if (result.amount && canExpress()) companion.playCatalog(result.levelUp ? 'needsNivel' : 'needsXp', { source: 'evento', speak: false });
     return result;
   } });
+  let badges = {};
+  const withBadges = snapshot => ({ ...snapshot, objects: snapshot.objects.map(o => ({ ...o, badge: badges[o.egg] || null })) });
   function update() {
-    const snapshot = model.snapshot();
+    const snapshot = withBadges(model.snapshot());
     // HUD pequeno em cache: nada de clonar catálogo/histórico em cada tick do overlay.
-    companion.needs = { hunger: snapshot.hunger, health: snapshot.health, hygiene: snapshot.hygiene, mood: snapshot.mood, ill: snapshot.ill, weak: snapshot.weak, objects: snapshot.objects };
+    companion.needs = { hunger: snapshot.hunger, health: snapshot.health, hygiene: snapshot.hygiene, mood: snapshot.mood, ill: snapshot.ill, weak: snapshot.weak, objects: snapshot.objects.map(({ badge, ...object }) => object) };
     const progress = companion.progress.snapshot(new Date());
     companion.progressHud = Object.fromEntries(['xp', 'nivel', 'xpPorNivel', 'percentXP', 'proximo', 'reward'].map(key => [key, progress[key]]));
+    companion.progressHud.rewardHistory = progress.rewardHistory.slice(0, 5);
     companion._applyLayout(true); notify();
   }
   model.changed = update;
   companion.progress.onAward = update;
   companion.progress.onXp = update;
+  let feedEpoch = 0;
   function feed(id, { legacy = false } = {}) {
     const result = model.feed(id);
     if (result.fed) {
-      companion.progress.count('comidasDiferentes', Object.keys(model.st.foods).length, true);
+      const achievements = companion.progress.count('comidasDiferentes', Object.keys(model.st.foods).length, true);
+      const epoch = ++feedEpoch;
       if (!legacy) {
         companion.effect = { name: 'food', kind: id, until: companion.clock.now() + 3400 };
         if (!companion.work && !companion.focus) {
           companion.playCatalog(result.animation, { source: 'pedido', speak: false }); companion.say(result.text, 'speech');
         }
-        companion.clock.setTimeout(() => { if (canExpress()) companion.playCatalog('needsSatisfeito', { source: 'evento', speak: false }); }, 3500);
+        companion.clock.setTimeout(() => { if (epoch === feedEpoch && canExpress(true)) companion.playCatalog('needsMastigar', { source: 'evento', speak: false }); }, 1200);
+        companion.clock.setTimeout(() => { if (epoch === feedEpoch && canExpress(true)) companion.playCatalog(achievements.length ? 'needsConquista' : 'needsSatisfeito', { source: 'evento', speak: false }); }, 3500);
       }
     }
     update(); return result;
@@ -38,8 +44,8 @@ export function createNeedsService({ userData, companion, store, foods, balance,
   function clean(id) {
     const result = model.clean(id);
     if (result.cleaned) {
-      companion.progress.count('limpezas', model.st.cleanCount, true);
-      if (canExpress()) { companion.playCatalog('needsLimpo', { source: 'evento', speak: false }); companion.say(result.text, 'speech'); }
+      const achievements = companion.progress.count('limpezas', model.st.cleanCount, true);
+      if (canExpress()) { companion.playCatalog(achievements.length ? 'needsConquista' : 'needsLimpo', { source: 'evento', speak: false }); companion.say(result.text, 'speech'); }
     }
     update(); return result;
   }
@@ -52,12 +58,16 @@ export function createNeedsService({ userData, companion, store, foods, balance,
     if (/^(?:abre|abrir|mostra|mostrar) (?:o |meu |seu )?(?:aquario|cardapio|painel de cuidados)/.test(n)) { companion.openApp('cuidados'); return 'Cuidados e cardápio abertos na Central. Escolha o alimento; eu cuido da avaliação severa.'; }
     return null;
   };
-  const beforeTick = companion.onRoutineTick; let complaintAt = 0, lastState = model.hungerState();
+  const beforeTick = companion.onRoutineTick; let complaintAt = 0, lastState = model.hungerState(), preDigestion = null;
   companion.onRoutineTick = () => {
     beforeTick?.();
     const hour = new Date().getHours();
     const active = companion.progress.clockHealthy() && !companion.work && !companion.focus && !companion.suspended && !companion.paused && !companion.fullscreenHidden && !companion.fullscreenIds?.length && hour >= 6 && hour < 21;
     try {
+      const nextDigestion = model.st.digestion.find(d => d.remaining > 0 && d.remaining <= 120000);
+      if (active && nextDigestion && preDigestion !== nextDigestion.id && canExpress()) {
+        companion.playCatalog('needsPreCoco', { source: 'evento', speak: false }); preDigestion = nextDigestion.id;
+      }
       const result = model.tick({ active }); model.drain();
       if (result.spawned.length && canExpress()) {
         const type = result.spawned[0].type;
@@ -66,7 +76,7 @@ export function createNeedsService({ userData, companion, store, foods, balance,
       const state = model.hungerState();
       if (active && canExpress() && Date.now() - complaintAt > 30 * 60000) {
         if (model.st.hunger < 30) {
-          const id = model.st.hunger < 5 ? 'needsDoente' : model.st.hunger < 15 ? 'needsFraco' : lastState !== state ? 'needsFome' : 'needsRonco';
+          const id = model.st.hunger < 5 ? 'needsDoente' : model.st.hunger < 10 ? 'needsExtrema' : model.st.hunger < 15 ? 'needsFraco' : lastState !== state ? 'needsFome' : 'needsRonco';
           companion.playCatalog(id, { source: 'evento', speak: false });
           companion.say(model.st.hunger < 15 ? 'Manu, meu estômago já fez a ata da reunião. Está escrito: comida, agora.' : 'Meu estômago está protocolando uma reclamação. O cardápio fica na Central.', 'speech', { spontaneous: true, category: 'necessidades' }); complaintAt = Date.now();
         } else if (model.st.hygiene < 25) {
@@ -86,9 +96,12 @@ export function createNeedsService({ userData, companion, store, foods, balance,
         result = clean(request.id);
       } else if (request.action === 'care') { result = model.care(); if (result.cared && canExpress()) companion.playCatalog('needsRecuperar', { source: 'evento', speak: false }); }
       else if (request.action !== 'snapshot') return { error: 'Operação desconhecida.' };
-      update(); return { result, needs: model.snapshot(), foods, types: balance.types, progress: companion.progress.snapshot(new Date()) };
+      update(); return { result, needs: withBadges(model.snapshot()), foods, types: balance.types, progress: companion.progress.snapshot(new Date()) };
     } catch { return { error: 'Não consegui confirmar o cuidado no disco. Nenhuma recompensa foi confirmada.' }; }
   });
   update();
-  return { model, feed, clean, update, snapshot: () => ({ ...model.snapshot(), foods, types: balance.types }), close: () => ipcMain.removeHandler('needs:request') };
+  return { model, feed, clean, update, setBadges: icons => {
+    badges = Object.fromEntries(Object.entries(icons).filter(([id, value]) => ['discord', 'lol'].includes(id) && typeof value === 'string' && /^data:image\/png;base64,[a-z0-9+/]+=*$/i.test(value) && value.length <= 131072));
+    model.balance = { ...model.balance, localBadges: Object.keys(badges) }; update();
+  }, snapshot: () => ({ ...withBadges(model.snapshot()), foods, types: balance.types }), close: () => ipcMain.removeHandler('needs:request') };
 }

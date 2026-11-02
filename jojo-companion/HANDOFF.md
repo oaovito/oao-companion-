@@ -6,9 +6,23 @@ Branch `codex/living-companion`, baseada em `4193c2b`. A 0.44.0 continua publica
 nenhuma publicação 0.45.0 foi autorizada pelo pipeline ou realizada. Requisitos
 cumulativos, estado e pendências em [MISSAO_ATIVA](docs/MISSAO_ATIVA.md), incluindo
 o prompt mestre, Darkest Dungeon e a lista de tarefas. Não encerrar após apenas P0.
-336/336 testes puros passaram após clima/estados da agenda/relevância. Open-Meteo
-consultado de verdade para Guarapuava em 01/11/2026; validação Windows desta candidata
-ainda pendente. Não confundir os resultados Windows abaixo com a candidata nova.
+Clima/CalDAV/To-Do/Darkest/cuidados/50 alimentos novos/50 cenas/Discord/atalho foram
+implementados. Evidências Windows anteriores: run 41363120886 passou 6/7 casos;
+falha restante era comparação de XP total (descoberta legítima +1), agora verifica
+somente a fonte de tarefas. DPAPI real, detector DD1 de fixture, cuidados e três
+casos de tarefas passaram nesse run. Não extrapolar esse resultado ao código novo.
+
+Novos testes nativos de Discord, atalhos e cenas preparados: total E2E esperado 39.
+Catálogo agora tem 1.268 animações. Medição Windows nova é OBRIGATÓRIA: o teste de
+cobertura continua falhando até importar os limites realmente medidos; não inventar
+geometria nem remover a verificação. `assets_only` no workflow original mede arte e
+roda os cenários novos; `measure_assets=false` testa apenas interfaces primeiro.
+
+Publicação 0.45 exige também autenticação/leitura real iCloud. Novo passo isolado,
+depois dos demais gates, recebe apenas os secrets JOJO_ICLOUD_USER e
+JOJO_ICLOUD_APP_PASSWORD por canal seguro. Sem conta, relatório permanece reprovado,
+sem alterar a evidência histórica 0.44. Não passar essas credenciais ao npm/build/testes.
+Detalhes: CUIDADOS.md, CENAS_E_FOCO.md, AGENDA_ICLOUD.md e MISSAO_ATIVA.md.
 
 ## Estado atual e decisão definitiva
 

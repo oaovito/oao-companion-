@@ -7,6 +7,7 @@ const GESTURES = new Set(['clique', 'duploClique', 'segurar', 'cocegas', 'jogar'
 contextBridge.exposeInMainWorld('jojo', {
   getAssets: () => ipcRenderer.invoke('jojo:get-assets'),
   needs: (request) => ipcRenderer.invoke('needs:request', request),
+  onBadges: fn => ipcRenderer.on('jojo:badges', (_e, icons) => fn(icons)),
   onState: (fn) => ipcRenderer.on('jojo:state', (_e, s) => fn(s)),
   onVisible: (fn) => ipcRenderer.on('jojo:visible', (_e, v) => fn(!!v)),
   onMouseMode: (fn) => ipcRenderer.on('jojo:mouse-mode', (_e, s) => fn(s)),

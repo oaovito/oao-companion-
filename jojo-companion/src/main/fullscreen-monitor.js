@@ -12,7 +12,7 @@ export function createFullscreenDetector(log = () => {}) {
   if (process.platform !== 'win32') {
     return { available: false, reason: 'Disponível apenas no Windows', detect: async () => ({ fullscreenIds: [], instagram: false, lol: false, spotify: null }), setOwnHandles() {}, dispose() {} };
   }
-  const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [] };
+  const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [], readyWaiters: [] };
 
   function spawn() {
     state.ready = false;
@@ -23,7 +23,7 @@ export function createFullscreenDetector(log = () => {}) {
       return;
     }
     state.child.on('message', (m) => {
-      if (m.type === 'ready') state.ready = true;
+      if (m.type === 'ready') { state.ready = true; for (const fn of state.readyWaiters.splice(0)) fn(); }
       else if (m.type === 'result' || m.type === 'error') {
         const p = state.pending.get(m.id);
         if (!p) return;
@@ -55,6 +55,25 @@ export function createFullscreenDetector(log = () => {}) {
 
   spawn();
 
+  async function request(type, opts, timeoutMs = 6000, signal = null) {
+    if (!state.available) throw new Error('detector_unavailable');
+    if (!state.ready) await new Promise((resolve, reject) => {
+      const ready = () => { clearTimeout(timer); resolve(); };
+      const timer = setTimeout(() => { state.readyWaiters = state.readyWaiters.filter(fn => fn !== ready); reject(new Error('detector_not_ready')); }, 2500);
+      state.readyWaiters.push(ready);
+    });
+    if (signal?.aborted) throw new Error('cancelled');
+    const id = ++state.seq;
+    return new Promise((resolve, reject) => {
+      const done = (fn, value) => { clearTimeout(timer); signal?.removeEventListener('abort', abort); fn(value); };
+      const abort = () => { state.pending.delete(id); state.child?.postMessage({ type: 'cancelDiscord', id }); done(reject, new Error('cancelled')); };
+      const timer = setTimeout(() => { state.pending.delete(id); state.child?.postMessage({ type: 'cancelDiscord', id }); done(reject, new Error('native_timeout')); }, timeoutMs);
+      state.pending.set(id, { resolve: value => done(resolve, value), reject: e => done(reject, e) });
+      signal?.addEventListener('abort', abort, { once: true });
+      state.child.postMessage({ type, id, opts });
+    });
+  }
+
   return {
     get available() {
       return state.available;
@@ -62,6 +81,8 @@ export function createFullscreenDetector(log = () => {}) {
     get reason() {
       return state.reason;
     },
+    closeDiscord: ({ force = false, signal = null } = {}) => request('closeDiscord', { force: force === true }, 6000, signal),
+    brandIcons: () => request('brandIcons', {}, 6000),
     setOwnHandles(handles) {
       state.own = handles.map(String);
       if (state.child) state.child.postMessage({ type: 'init', own: state.own });

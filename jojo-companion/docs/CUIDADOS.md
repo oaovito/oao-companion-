@@ -16,8 +16,8 @@ dele os cliques continuam atravessando a janela. A Central também permite limpa
 manualmente. Os seis sprites SVG originais têm animação leve de queda e brilho;
 movimento reduzido é respeitado. Os valores e raridades ficam em
 `assets/catalog/needs-balance.json` (5/12/25/50/100/250 XP). Não há acúmulo infinito
-nem geração de raridade por abandono. **Easter eggs de marcas ainda pendentes**;
-não foram incluídos logos sem origem/uso definidos.
+nem geração de raridade por abandono. Easter eggs usam somente ícones obtidos
+da instalação local pelo Windows, sem redistribuição; ver CENAS_E_FOCO.md.
 
 `assets/catalog/foods.json` tem 56 opções: seis anteriores preservadas e exatamente
 50 novas. A lista pedida já continha lula, existente; mantida uma única vez. Assim,
@@ -43,4 +43,5 @@ pretendem ser um serviço de antifraude contra edição arbitrária dos próprio
 
 Testes puros cobrem catálogo/imagens, efeitos, fome, tempo ativo, foco, persistência,
 capacidade, higiene, caps, outbox, relógio e níveis. Cenário Electron Windows de
-cardápio/limpeza/HUD/XP foi preparado e ainda precisa passar no Actions.
+cardápio/limpeza/HUD/XP passou no run 41363120886 (6ea26c7). Mudanças posteriores
+exigem nova execução antes da publicação.

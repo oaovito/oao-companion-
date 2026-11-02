@@ -55,6 +55,7 @@ function render(s) {
   $('name').textContent = s.companionName;
   document.title = s.companionName;
   $('petToggle').textContent = s.petVisible ? 'Tuck Away Pet' : 'Wake Pet';
+  $('discordFocusStatus').textContent = s.focusApps?.message || '';
   $('trabalhoBtn').textContent = s.trabalho ? '🧘 Sair do Modo Trabalho' : '🧘 Modo Trabalho';
   $('petToggle').title = s.petVisible ? `Esconder o ${s.companionName}` : `Mostrar o ${s.companionName}`;
   listEl.innerHTML = '';
@@ -148,6 +149,15 @@ function renderColecao() {
   col.append(el('p', null, `Aquário: ${c.areas.map((a) => (a.ok ? a.nome : '???')).join(' · ')}`));
   if (c.album.length) col.append(el('p', 'muted', `Álbum de momentos raros: ${c.album.map((a) => a.nome).join(', ')}`));
   box.append(nivel, acoes, jogos, miss, conq, col);
+  for (const [category, title] of [['meme', 'Cenas e memes'], ['profissao', 'Encenações de profissões']]) {
+    const scenes = el('details', 'card living-scenes'); scenes.append(el('summary', null, title));
+    const buttons = el('div', 'buttons');
+    for (const scene of st.livingScenes || []) if (scene.category === category) {
+      const button = el('button', 'chipbtn', scene.name); button.dataset.scene = scene.id;
+      button.addEventListener('click', () => playCmd(scene.command)); buttons.append(button);
+    }
+    scenes.append(buttons); box.append(scenes);
+  }
   if (c.rewardHistory?.length) {
     const history = el('details', 'card'); history.append(el('summary', null, 'Últimas recompensas de XP'));
     for (const reward of c.rewardHistory) history.append(el('p', 'muted', `+${reward.amount} XP · ${reward.label} · ${reward.day}`));

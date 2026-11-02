@@ -28,6 +28,7 @@ export class CareView {
     for (const item of s.objects) {
       const type = s.types.find(t => t.id === item.type); const button = node('button', 'care-object'); button.type = 'button'; button.dataset.id = item.id;
       const image = node('img'); image.src = `../../../assets/litter/${item.type}.svg`; image.alt = ''; image.width = 50; image.height = 50;
+      if (item.badge && /^data:image\/png;base64,[a-z0-9+/]+=*$/i.test(item.badge)) { const badge = node('img', 'local-app-badge'); badge.src = item.badge; badge.alt = ''; badge.width = 16; badge.height = 16; button.append(badge); }
       button.append(image, node('span', '', `${type?.name || item.type} · ${type?.rarity || ''}`), node('small', '', `Limpar · até +${type?.xp || 0} XP`));
       button.addEventListener('click', () => this.request('clean', item.id)); this.objects.append(button);
     }

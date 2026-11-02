@@ -230,3 +230,15 @@ Branch nova valida CI mas NAO publica automaticamente: politica continua 0.44.0
 no controle oficial. Nova publicacao somente apos requisitos e gates; nao publicar
 parte do pedido nem modificar as 18 releases existentes.
 Continuidade/checklist em `jojo-companion/docs/MISSAO_ATIVA.md`.
+
+## Continuidade da candidata — 02/11/2026
+
+Implementados em código os 50 conjuntos de memes/profissões, integração de Discord
+no Trabalho/Foco (força opt-in), migração conservadora de atalhos e ícones locais
+sem redistribuição de marcas. Ver `docs/CENAS_E_FOCO.md`. Catálogo: 1.268 animações.
+Ainda medir TODA a arte no Windows e importar `jojo.room.json` real; o teste de
+cobertura não pode ser desligado. Esperados 39 E2E no pipeline integral.
+O workflow tem passo iCloud isolado DEPOIS dos demais gates; secrets só nesse
+passo, nunca no npm/build/testes. Candidatas >=0.45 exigem `icloud-live` e evidência
+somente de contagens/horário. Sem conta autorizada, NÃO finalizar/publicar.
+Não confundir os diagnósticos `assets_only` com aprovação integral do pipeline.

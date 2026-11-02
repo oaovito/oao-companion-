@@ -91,7 +91,107 @@
     "sexy": 0,
     "finger": 0,
     "squatPose": 0,
-    "squatLegDy": 0
+    "squatLegDy": 0,
+    "angle_living_medico": 0,
+    "lift_living_medico": 0,
+    "angle_living_cientista": 0,
+    "lift_living_cientista": 0,
+    "angle_living_fisico": 0,
+    "lift_living_fisico": 0,
+    "angle_living_quimico": 0,
+    "lift_living_quimico": 0,
+    "angle_living_biologo": 0,
+    "lift_living_biologo": 0,
+    "angle_living_programador": 0,
+    "lift_living_programador": 0,
+    "angle_living_engenheiro": 0,
+    "lift_living_engenheiro": 0,
+    "angle_living_professor": 0,
+    "lift_living_professor": 0,
+    "angle_living_advogado": 0,
+    "lift_living_advogado": 0,
+    "angle_living_juiz": 0,
+    "lift_living_juiz": 0,
+    "angle_living_policial": 0,
+    "lift_living_policial": 0,
+    "angle_living_bombeiro": 0,
+    "lift_living_bombeiro": 0,
+    "angle_living_piloto": 0,
+    "lift_living_piloto": 0,
+    "angle_living_astronauta": 0,
+    "lift_living_astronauta": 0,
+    "angle_living_chef": 0,
+    "lift_living_chef": 0,
+    "angle_living_psicologo": 0,
+    "lift_living_psicologo": 0,
+    "angle_living_veterinario": 0,
+    "lift_living_veterinario": 0,
+    "angle_living_detetive": 0,
+    "lift_living_detetive": 0,
+    "angle_living_jornalista": 0,
+    "lift_living_jornalista": 0,
+    "angle_living_mecanico": 0,
+    "lift_living_mecanico": 0,
+    "angle_living_arquiteto": 0,
+    "lift_living_arquiteto": 0,
+    "angle_living_economista": 0,
+    "lift_living_economista": 0,
+    "angle_living_treinador": 0,
+    "lift_living_treinador": 0,
+    "angle_living_marinheiro": 0,
+    "lift_living_marinheiro": 0,
+    "angle_living_pesquisador": 0,
+    "lift_living_pesquisador": 0,
+    "angle_living_auraPlanilha": 0,
+    "lift_living_auraPlanilha": 0,
+    "angle_living_fritou": 0,
+    "lift_living_fritou": 0,
+    "angle_living_deluluContrato": 0,
+    "lift_living_deluluContrato": 0,
+    "angle_living_npcFila": 0,
+    "lift_living_npcFila": 0,
+    "angle_living_brainrotFaxina": 0,
+    "lift_living_brainrotFaxina": 0,
+    "angle_living_rizzCurriculo": 0,
+    "lift_living_rizzCurriculo": 0,
+    "angle_living_sigmaSilencio": 0,
+    "lift_living_sigmaSilencio": 0,
+    "angle_living_sideQuest": 0,
+    "lift_living_sideQuest": 0,
+    "angle_living_mainCharacter": 0,
+    "lift_living_mainCharacter": 0,
+    "angle_living_grama": 0,
+    "lift_living_grama": 0,
+    "angle_living_eventoCanonico": 0,
+    "lift_living_eventoCanonico": 0,
+    "angle_living_skillIssue": 0,
+    "lift_living_skillIssue": 0,
+    "angle_living_pressF": 0,
+    "lift_living_pressF": 0,
+    "angle_living_stonks": 0,
+    "lift_living_stonks": 0,
+    "angle_living_taTudoBem": 0,
+    "lift_living_taTudoBem": 0,
+    "angle_living_loading": 0,
+    "lift_living_loading": 0,
+    "angle_living_lagMental": 0,
+    "lift_living_lagMental": 0,
+    "angle_living_plotTwist": 0,
+    "lift_living_plotTwist": 0,
+    "angle_living_buffCafe": 0,
+    "lift_living_buffCafe": 0,
+    "angle_living_nerfNotificacao": 0,
+    "lift_living_nerfNotificacao": 0,
+    "angle_living_sextou": 0,
+    "lift_living_sextou": 0,
+    "angle_living_pov": 0,
+    "lift_living_pov": 0,
+    "angle_living_fakeProdutivo": 0,
+    "lift_living_fakeProdutivo": 0,
+    "angle_living_cinema": 0,
+    "lift_living_cinema": 0,
+    "angle_living_baixoPerfil": 0,
+    "lift_living_baixoPerfil": 0
   },
   "poses": {
     "neutral": {},
@@ -1707,13 +1807,108 @@
       "loop": true,
       "base": "sit",
       "tracks": {
-        "eyeOpen": [[0, 0.06], [1, 0.06]],
-        "squashY": [[0, 0.97], [0.5, 1.0], [1, 0.97]],
-        "rootY": [[0, -4], [0.5, -8], [1, -4]],
-        "elbowL": [[0, 34], [0.5, 31], [1, 34]],
-        "elbowR": [[0, 34], [0.5, 31], [1, 34]],
-        "headRot": [[0, 0], [0.5, -1], [1, 0]],
-        "tailRot": [[0, 0], [0.25, 3], [0.5, 0], [0.75, -3], [1, 0]]
+        "eyeOpen": [
+          [
+            0,
+            0.06
+          ],
+          [
+            1,
+            0.06
+          ]
+        ],
+        "squashY": [
+          [
+            0,
+            0.97
+          ],
+          [
+            0.5,
+            1.0
+          ],
+          [
+            1,
+            0.97
+          ]
+        ],
+        "rootY": [
+          [
+            0,
+            -4
+          ],
+          [
+            0.5,
+            -8
+          ],
+          [
+            1,
+            -4
+          ]
+        ],
+        "elbowL": [
+          [
+            0,
+            34
+          ],
+          [
+            0.5,
+            31
+          ],
+          [
+            1,
+            34
+          ]
+        ],
+        "elbowR": [
+          [
+            0,
+            34
+          ],
+          [
+            0.5,
+            31
+          ],
+          [
+            1,
+            34
+          ]
+        ],
+        "headRot": [
+          [
+            0,
+            0
+          ],
+          [
+            0.5,
+            -1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "tailRot": [
+          [
+            0,
+            0
+          ],
+          [
+            0.25,
+            3
+          ],
+          [
+            0.5,
+            0
+          ],
+          [
+            0.75,
+            -3
+          ],
+          [
+            1,
+            0
+          ]
+        ]
       },
       "rotate": 0
     },

@@ -1,0 +1,1705 @@
+{
+  "notes": "50 conjuntos inéditos de arte vetorial e falas originais; profissões são encenação explicitamente solicitada, nunca substituem informação técnica ou cuidado profissional. Sem reprodução de imagens comerciais de memes.",
+  "itens": [
+    {
+      "id": "living_medico",
+      "nome": "Médico",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "medico",
+      "falas": [
+        "Ausculta concluída: esse suspiro é de quem abriu a tarefa e foi buscar café. Diagnóstico só no consultório, Manu."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "encara",
+        "rosto": "pensando",
+        "cauda": "devagar",
+        "objeto": [
+          "living_medico"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_cientista",
+      "nome": "Cientista",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "cientista",
+      "falas": [
+        "Hipótese: você rende mais fechando a aba de distração. Falta o experimento. Jaleco cenográfico não transforma palpite em evidência."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "olhaBaixo",
+        "rosto": "sobrancelha",
+        "cauda": "abana",
+        "objeto": [
+          "living_cientista"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_fisico",
+      "nome": "Físico",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "fisico",
+      "falas": [
+        "Minha paciência tem massa. Sua vontade de começar ainda precisa sair do repouso. A física real eu explico sem essa fantasia."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "inclina",
+        "rosto": "feliz",
+        "cauda": "baixa",
+        "objeto": [
+          "living_fisico"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_quimico",
+      "nome": "Químico",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "quimico",
+      "falas": [
+        "Misturei disciplina com um prazo curto. Reagiu. Não tente reproduzir minha cara de laboratório sem óculos de proteção."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "encara",
+        "rosto": "preocupado",
+        "cauda": "devagar",
+        "objeto": [
+          "living_quimico"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_biologo",
+      "nome": "Biólogo",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "biologo",
+      "falas": [
+        "Observe o espécime: abriu vinte abas e declarou o ambiente hostil. Eu sou o tubarão; o comportamento curioso é o seu."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "olhaBaixo",
+        "rosto": "fera",
+        "cauda": "abana",
+        "objeto": [
+          "living_biologo"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_programador",
+      "nome": "Programador",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "programador",
+      "falas": [
+        "Compila primeiro. Comemora depois. O ponto e vírgula que sumiu está rindo da sua arquitetura."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "inclina",
+        "rosto": "pensando",
+        "cauda": "baixa",
+        "objeto": [
+          "living_programador"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_engenheiro",
+      "nome": "Engenheiro",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "engenheiro",
+      "falas": [
+        "A estrutura aguenta. Sua estimativa de cinco minutinhos é que viola o projeto inteiro."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "encara",
+        "rosto": "sobrancelha",
+        "cauda": "devagar",
+        "objeto": [
+          "living_engenheiro"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_professor",
+      "nome": "Professor",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "professor",
+      "falas": [
+        "Vale ponto explicar com suas palavras. Copiar a primeira frase da busca vale meu olhar de reprovação."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "olhaBaixo",
+        "rosto": "feliz",
+        "cauda": "abana",
+        "objeto": [
+          "living_professor"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_advogado",
+      "nome": "Advogado",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "advogado",
+      "falas": [
+        "Excelência, a ré alega que precisava ver só mais um vídeo. Peço indeferimento dessa desculpa em três instâncias."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "inclina",
+        "rosto": "preocupado",
+        "cauda": "baixa",
+        "objeto": [
+          "living_advogado"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_juiz",
+      "nome": "Juiz",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "juiz",
+      "falas": [
+        "Sentença: concluir uma tarefa antes de recorrer ao sofá. Cabe recurso depois do café, com prova documental."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "encara",
+        "rosto": "fera",
+        "cauda": "devagar",
+        "objeto": [
+          "living_juiz"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_policial",
+      "nome": "Policial",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "policial",
+      "falas": [
+        "Parada de rotina. Documento, prazo e justificativa para essas quarenta abas. A última vai ser difícil."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "olhaBaixo",
+        "rosto": "pensando",
+        "cauda": "abana",
+        "objeto": [
+          "living_policial"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_bombeiro",
+      "nome": "Bombeiro",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "bombeiro",
+      "falas": [
+        "Esse prazo pegou fogo porque você chamou o bombeiro depois de alimentar a fogueira com notificações."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "inclina",
+        "rosto": "sobrancelha",
+        "cauda": "baixa",
+        "objeto": [
+          "living_bombeiro"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_piloto",
+      "nome": "Piloto",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "piloto",
+      "falas": [
+        "Torre para Manu: sua concentração pediu pouso e você autorizou outra conexão. Vamos fechar esse aeroporto de abas."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "encara",
+        "rosto": "feliz",
+        "cauda": "devagar",
+        "objeto": [
+          "living_piloto"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_astronauta",
+      "nome": "Astronauta",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "astronauta",
+      "falas": [
+        "Controle da missão: encontrei água, poeira e uma tarefa orbitando há três semanas. Vou resgatar a tarefa."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "olhaBaixo",
+        "rosto": "preocupado",
+        "cauda": "abana",
+        "objeto": [
+          "living_astronauta"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_chef",
+      "nome": "Chef",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "chef",
+      "falas": [
+        "Mise en place: tarefa na mesa, distração fora da panela. Eu provo o resultado, não a promessa."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "inclina",
+        "rosto": "fera",
+        "cauda": "baixa",
+        "objeto": [
+          "living_chef"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_psicologo",
+      "nome": "Psicólogo",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "psicologo",
+      "falas": [
+        "Vou ouvir sem julgar por três segundos. Recorde pessoal. Se o assunto for sério, a piada sai e a escuta fica."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "encara",
+        "rosto": "pensando",
+        "cauda": "devagar",
+        "objeto": [
+          "living_psicologo"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_veterinario",
+      "nome": "Veterinário",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "veterinario",
+      "falas": [
+        "O paciente é um tubarão musculoso com excelente autoestima. Quem precisa de descanso é a cuidadora com dez abas abertas."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "olhaBaixo",
+        "rosto": "sobrancelha",
+        "cauda": "abana",
+        "objeto": [
+          "living_veterinario"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_detetive",
+      "nome": "Detetive",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "detetive",
+      "falas": [
+        "Examinei a cena. O prazo não desapareceu; foi soterrado por notificações. A principal suspeita está digitando agora."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "inclina",
+        "rosto": "feliz",
+        "cauda": "baixa",
+        "objeto": [
+          "living_detetive"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_jornalista",
+      "nome": "Jornalista",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "jornalista",
+      "falas": [
+        "Plantão: usuária promete começar em cinco minutos. Nossa equipe acompanha essa mesma notícia desde ontem."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "encara",
+        "rosto": "preocupado",
+        "cauda": "devagar",
+        "objeto": [
+          "living_jornalista"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_mecanico",
+      "nome": "Mecânico",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "mecanico",
+      "falas": [
+        "Fiz o diagnóstico: não é falta de potência. É você deixando o freio de mão puxado na primeira tarefa."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "olhaBaixo",
+        "rosto": "fera",
+        "cauda": "abana",
+        "objeto": [
+          "living_mecanico"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_arquiteto",
+      "nome": "Arquiteto",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "arquiteto",
+      "falas": [
+        "Essa tarefa precisa de uma porta de entrada. Você projetou um shopping de pré-requisitos. Vou derrubar uma parede."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "inclina",
+        "rosto": "pensando",
+        "cauda": "baixa",
+        "objeto": [
+          "living_arquiteto"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_economista",
+      "nome": "Economista",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "economista",
+      "falas": [
+        "O mercado de desculpas está saturado. Minha recomendação é diversificar em tarefas concluídas, sem promessa de retorno mágico."
+      ],
+      "cooldownMin": 20,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "encara",
+        "rosto": "sobrancelha",
+        "cauda": "devagar",
+        "objeto": [
+          "living_economista"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_treinador",
+      "nome": "Treinador",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "treinador",
+      "falas": [
+        "Primeira série: abrir a tarefa. Segunda: fazer cinco minutos. Descanso de duas horas entre elas está fora da ficha."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "olhaBaixo",
+        "rosto": "feliz",
+        "cauda": "abana",
+        "objeto": [
+          "living_treinador"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_marinheiro",
+      "nome": "Marinheiro",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "marinheiro",
+      "falas": [
+        "Capitã, o navio vai bem. É a sua atenção que abandona o convés em cada notificação. Recolhe a âncora."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "inclina",
+        "rosto": "preocupado",
+        "cauda": "baixa",
+        "objeto": [
+          "living_marinheiro"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_pesquisador",
+      "nome": "Pesquisador",
+      "categoria": "living:profissao",
+      "tipo": "profissao",
+      "alias": "pesquisador",
+      "falas": [
+        "A amostra tem tamanho um e se chama sua desculpa. A conclusão ainda não passou por revisão de tubarão."
+      ],
+      "cooldownMin": 20,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "pedido"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "encara",
+        "rosto": "fera",
+        "cauda": "devagar",
+        "objeto": [
+          "living_pesquisador"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_auraPlanilha",
+      "nome": "Aura de planilha",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "aura",
+      "falas": [
+        "Sua aura subiu quando você concluiu a tarefa. Falar que vai começar rende zero carisma contábil."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "encara",
+        "rosto": "pensando",
+        "cauda": "devagar",
+        "objeto": [
+          "living_auraPlanilha"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_fritou",
+      "nome": "Circuito cozido",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "cooked",
+      "falas": [
+        "Você foi de cérebro estratégico para torradeira em quinze notificações. Desliga uma aba antes de virar carvão."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "olhaBaixo",
+        "rosto": "sobrancelha",
+        "cauda": "abana",
+        "objeto": [
+          "living_fritou"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_deluluContrato",
+      "nome": "Contrato delulu",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "delulu",
+      "falas": [
+        "Assinei seu contrato de fantasia. A cláusula dois exige cinco minutos de trabalho real. Que surpresa desagradável."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "inclina",
+        "rosto": "feliz",
+        "cauda": "baixa",
+        "objeto": [
+          "living_deluluContrato"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_npcFila",
+      "nome": "NPC da fila de abas",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "npc",
+      "falas": [
+        "Missão disponível: fechar a décima aba. Recompensa: lembrar por que você abriu a primeira."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "encara",
+        "rosto": "preocupado",
+        "cauda": "devagar",
+        "objeto": [
+          "living_npcFila"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_brainrotFaxina",
+      "nome": "Faxina no brainrot",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "brainrot",
+      "falas": [
+        "Passei a vassoura nos seus pensamentos. Encontrei três memes, um áudio e nenhum plano. Vamos melhorar esse acervo."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "olhaBaixo",
+        "rosto": "fera",
+        "cauda": "abana",
+        "objeto": [
+          "living_brainrotFaxina"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_rizzCurriculo",
+      "nome": "Currículo de rizz",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "rizz",
+      "falas": [
+        "Meu charme é musculoso, minha disponibilidade é péssima e meu currículo exige que você termine essa tarefa."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "inclina",
+        "rosto": "pensando",
+        "cauda": "baixa",
+        "objeto": [
+          "living_rizzCurriculo"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_sigmaSilencio",
+      "nome": "Sigma em horário comercial",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "sigma",
+      "falas": [
+        "Olhar para o horizonte não conclui relatório. Mas eu faço com uma presença absurda. Você pode concluir o relatório."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "encara",
+        "rosto": "sobrancelha",
+        "cauda": "devagar",
+        "objeto": [
+          "living_sigmaSilencio"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_sideQuest",
+      "nome": "Mapa de side quest",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "side quest",
+      "falas": [
+        "Você foi buscar água e voltou reorganizando a biblioteca. A missão principal continua marcada, exploradora."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "olhaBaixo",
+        "rosto": "feliz",
+        "cauda": "abana",
+        "objeto": [
+          "living_sideQuest"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_mainCharacter",
+      "nome": "Protagonista do prazo",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "main character",
+      "falas": [
+        "Você é a protagonista. O antagonista é o documento em branco. O figurante musculoso está cobrando o primeiro parágrafo."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "inclina",
+        "rosto": "preocupado",
+        "cauda": "baixa",
+        "objeto": [
+          "living_mainCharacter"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_grama",
+      "nome": "Expedição touch grass",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "touch grass",
+      "falas": [
+        "Encoste na grama. Ou levante da cadeira. O mapa da vida real tem resolução excelente e nenhuma barra de rolagem."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "encara",
+        "rosto": "fera",
+        "cauda": "devagar",
+        "objeto": [
+          "living_grama"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_eventoCanonico",
+      "nome": "Evento canônico: salvar",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "evento canonico",
+      "falas": [
+        "Seu evento canônico de hoje é salvar o arquivo antes de confiar no universo. O universo não faz backup."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "olhaBaixo",
+        "rosto": "pensando",
+        "cauda": "abana",
+        "objeto": [
+          "living_eventoCanonico"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_skillIssue",
+      "nome": "Skill issue documentado",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "skill issue",
+      "falas": [
+        "Falta de habilidade é um começo, não um endereço. Faz uma tentativa pequena e me traz um erro novo."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "inclina",
+        "rosto": "sobrancelha",
+        "cauda": "baixa",
+        "objeto": [
+          "living_skillIssue"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_pressF",
+      "nome": "F pelo prazo perdido",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "press f",
+      "falas": [
+        "Um F respeitoso pelo planejamento. Agora vamos escrever um novo, com menos ficção científica."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "encara",
+        "rosto": "feliz",
+        "cauda": "devagar",
+        "objeto": [
+          "living_pressF"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_stonks",
+      "nome": "Bolsa de tarefas",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "stonks",
+      "falas": [
+        "O índice de tarefas subiu um ponto. Finalmente um ativo que não depende de fingir produtividade."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "olhaBaixo",
+        "rosto": "preocupado",
+        "cauda": "abana",
+        "objeto": [
+          "living_stonks"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_taTudoBem",
+      "nome": "Incêndio administrativo",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "this is fine",
+      "falas": [
+        "Está tudo sob controle, disse você, com o prazo saindo fumaça. Eu trouxe a caneca e um plano de emergência: começar."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "inclina",
+        "rosto": "fera",
+        "cauda": "baixa",
+        "objeto": [
+          "living_taTudoBem"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_loading",
+      "nome": "Carregando coragem",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "loading",
+      "falas": [
+        "A barra carregou. A coragem não vem no download; você vai ter que abrir a tarefa por conta própria."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "encara",
+        "rosto": "pensando",
+        "cauda": "devagar",
+        "objeto": [
+          "living_loading"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_lagMental",
+      "nome": "Ping da concentração",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "lag",
+      "falas": [
+        "Seu ping para a concentração está alto. Fecha o feed; eu já vi roteadores com mais compromisso."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "olhaBaixo",
+        "rosto": "sobrancelha",
+        "cauda": "abana",
+        "objeto": [
+          "living_lagMental"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_plotTwist",
+      "nome": "Plot twist: feito",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "plot twist",
+      "falas": [
+        "Plot twist: você começou antes de se sentir pronta. O roteiro ficou muito melhor."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "inclina",
+        "rosto": "feliz",
+        "cauda": "baixa",
+        "objeto": [
+          "living_plotTwist"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_buffCafe",
+      "nome": "Buff de café",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "buff",
+      "falas": [
+        "Café dá buff. Não dá licença para empilhar seis missões e chamar tremedeira de estratégia."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "encara",
+        "rosto": "preocupado",
+        "cauda": "devagar",
+        "objeto": [
+          "living_buffCafe"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_nerfNotificacao",
+      "nome": "Nerf nas notificações",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "nerf",
+      "falas": [
+        "Nerfei as notificações no meu tribunal imaginário. No computador, quem escolhe o silêncio é você. Começa pelo aplicativo mais barulhento."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "olhaBaixo",
+        "rosto": "fera",
+        "cauda": "abana",
+        "objeto": [
+          "living_nerfNotificacao"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_sextou",
+      "nome": "Sextou com pendência",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "sextou",
+      "falas": [
+        "Sextou é uma instituição. Deixar a tarefa de cinco minutos virar patrimônio de segunda é outra. Escolhe a primeira."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "inclina",
+        "cabeca": "inclina",
+        "rosto": "pensando",
+        "cauda": "baixa",
+        "objeto": [
+          "living_sextou"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_pov",
+      "nome": "POV: fiscal aquático",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "pov",
+      "falas": [
+        "POV: você instalou um tubarão e ganhou uma auditoria emocional das suas abas. Belo investimento."
+      ],
+      "cooldownMin": 30,
+      "duracao": 3850,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "balanca",
+        "cabeca": "encara",
+        "rosto": "sobrancelha",
+        "cauda": "devagar",
+        "objeto": [
+          "living_pov"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_fakeProdutivo",
+      "nome": "Sai do fake, produtividade",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "sai do fake",
+      "falas": [
+        "Sai do fake, produtividade. Trocar a cor da pasta pela quarta vez não conta como terminar o conteúdo."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4100,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "flutua",
+        "cabeca": "olhaBaixo",
+        "rosto": "feliz",
+        "cauda": "abana",
+        "objeto": [
+          "living_fakeProdutivo"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_cinema",
+      "nome": "Cinema do primeiro passo",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "absolute cinema",
+      "falas": [
+        "Cinema absoluto: o documento recebeu uma frase. Fotografia impecável, orçamento zero e desenvolvimento de personagem."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4350,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "pulinho",
+        "cabeca": "inclina",
+        "rosto": "preocupado",
+        "cauda": "baixa",
+        "objeto": [
+          "living_cinema"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    },
+    {
+      "id": "living_baixoPerfil",
+      "nome": "Baixo perfil, alto foco",
+      "categoria": "living:meme",
+      "tipo": "meme",
+      "alias": "low profile",
+      "falas": [
+        "Low profile de verdade: produzir sem anunciar uma nova era a cada segunda-feira. Vou ficar discretamente musculoso aqui."
+      ],
+      "cooldownMin": 30,
+      "duracao": 4600,
+      "frequencia": "rara",
+      "gatilho": {
+        "ambiente": false,
+        "frases": [],
+        "eventos": [
+          "living"
+        ]
+      },
+      "contextos": [
+        "idle"
+      ],
+      "receita": {
+        "corpo": "respira",
+        "cabeca": "encara",
+        "rosto": "fera",
+        "cauda": "devagar",
+        "objeto": [
+          "living_baixoPerfil"
+        ],
+        "aderecosAnimados": true,
+        "fx": []
+      }
+    }
+  ]
+}

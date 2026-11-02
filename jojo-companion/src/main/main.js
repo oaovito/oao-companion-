@@ -36,6 +36,8 @@ import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
 import { createCalendarService } from './calendar-service.js';
+import { createLivingService } from './living-service.js';
+import { createFocusApps } from './focus-apps.js';
 import { createNeedsService } from './needs-service.js';
 import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
@@ -380,6 +382,8 @@ function main() {
         abrirTarefas,
         darkest: darkestService?.model.snapshot() || null,
         needs: needsService?.snapshot() || null,
+        focusApps: focusApps?.snapshot() || null,
+        livingScenes: livingService?.list() || [],
         abrirCuidados,
       };
     }
@@ -397,6 +401,8 @@ function main() {
     let todoService = null;
     let darkestService = null;
     let needsService = null;
+    let focusApps = null;
+    let livingService = null;
     let abrirCuidados = 0;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
@@ -512,6 +518,16 @@ function main() {
     needsService = createNeedsService({ userData, companion, store, foods: assets.foods, balance: readJSON('assets/catalog/needs-balance.json'), ipcMain, fromApp, fromOverlay, log,
       notify: () => { if (needsService) appWin.send('app:needs-update', { needs: needsService.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
     app.on('will-quit', () => needsService.close());
+    focusApps = createFocusApps({ userData, companion, store,
+      getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
+      getFileIcon: file => app.getFileIcon(file, { size: 'small' }),
+      onBadges: icons => {
+        assets.localBadges = icons; needsService.setBadges(icons);
+        if (overlay.alive) overlay.win.webContents.send('jojo:badges', icons);
+      },
+      notify: () => { appWin.send('app:update', appState()); settingsWin.send('settings:changed', settingsInfo()); } });
+    app.on('before-quit', () => focusApps.close());
+    livingService = createLivingService({ userData, companion, store, items: readJSON('assets/catalog/living-interactions.json').itens, log });
     // Antes de fechar as janelas: o X do painel apenas oculta, mas nunca pode vetar app.quit.
     app.on('before-quit', () => todoService.close());
     app.on('will-quit', () => darkestService.close());
@@ -561,6 +577,7 @@ function main() {
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();
       if (changed.includes('startWithWindows')) applyAutostart();
+      if (changed.includes('desktopShortcut')) garantirAtalho({ app, shell, log, preference: s.desktopShortcut });
       if (changed.includes('reduceMotion')) applyReducedMotion();
       if (changed.includes('webSearch')) {
         appWin.send('app:update', appState());
@@ -571,6 +588,9 @@ function main() {
       if (['fullscreenBehavior', 'lolBronca', 'spotifyReacoes'].some((k) => changed.includes(k))) {
         startFullscreenWatch();
         companion.setFullscreenDisplays(companion.fullscreenIds || []);
+      }
+      if (['discordCloseOnFocus', 'discordForceClose'].some(k => changed.includes(k))) {
+        focusApps.stop(); if (companion.work || companion.focus) focusApps.start();
       }
       companion.applySettings(s, changed);
       todoService.update();
@@ -595,6 +615,7 @@ function main() {
         hotkey: hotkeyStatus,
         autostart: { supported: IS_WIN, packaged: app.isPackaged },
         fullscreen: { available: !!fullscreen?.available, reason: fullscreen?.reason || null },
+        focusApps: focusApps?.snapshot() || null,
         foreground: { available: !!fullscreen?.available, platform: process.platform },
         dialogue: dialogue.describe(),
         version: app.getVersion(),
@@ -797,7 +818,7 @@ function main() {
       args: app.isPackaged ? [] : process.argv.slice(1).filter((a) => !/^--(inspect|remote-debugging)/.test(a)),
       esperas: TEST ? { esperaReabrirMs: 300, esperaAtualizacaoMs: 500, intervaloMs: 200 } : {},
     });
-    garantirAtalho({ app, shell, log });
+    garantirAtalho({ app, shell, log, preference: store.get().desktopShortcut });
 
     registerHotkey();
     // Testes automáticos não registram o app no Windows sozinhos (só quando o teste pede).
@@ -880,6 +901,11 @@ function main() {
         todoService,
         caldavService,
         needsService,
+        focusApps,
+        livingService,
+        nativeDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
+        migrateDesktop: options => garantirAtalho(options),
+        nativeShell: shell,
         credentialVault: file => new CredentialVault(file, safeStorage),
         get updater() {
           return updater;

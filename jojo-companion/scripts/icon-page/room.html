@@ -30,7 +30,7 @@ function drawFrame(ctx, rig, s, fx, now, head, mouth) {
   fx.draw(ctx, now, { mark: s.flags.mark, head, mouth, facingSign: 1 });
   ctx.restore();
 }
-window.measure = (rigJson, animJson) => {
+window.measure = async (rigJson, animJson, foodJson = { foods: [] }) => {
   const rig = new RigRenderer(rigJson);
   const box = rigJson.metrics.box, head = rigJson.metrics.head, mouth = rigJson.metrics.mouth;
   const out = { anims: {}, effects: {} };
@@ -54,10 +54,12 @@ window.measure = (rigJson, animJson) => {
   }
   // Efeitos ligados pelo companion (comida, bola, corações) sobre a pose parada.
   const idle = { pose: { ...animJson.channels }, flags: {} };
-  for (const [eff, kinds] of [['food', ['peixe', 'foca', 'lula', 'tartaruga', 'pinguim', 'humano']], ['ball', [null]], ['hearts', [null]]]) {
+  for (const [eff, kinds] of [['food', foodJson.foods.length ? foodJson.foods.map(f => f.id) : ['peixe', 'foca', 'lula', 'tartaruga', 'pinguim', 'humano']], ['ball', [null]], ['hearts', [null]]]) {
     const ctx = canvas();
     for (const kind of kinds) {
       const fx = new Effects({ rng: () => 0.5 });
+      fx.loadFoods(foodJson.foods);
+      if (eff === 'food') { const image = fx.foodImage(kind); if (image) await image.decode(); }
       fx.setEffect(eff, 0, kind);
       for (let t = 0; t <= 4000; t += 1000 / 24) { fx.update(t, {}, head); ctx.save(); ctx.translate(O, O); fx.draw(ctx, t, { head, mouth, facingSign: 1 }); ctx.restore(); }
     }

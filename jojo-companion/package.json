@@ -87,7 +87,7 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": "always",
+      "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "JoJo Companion",
       "artifactName": "JoJoCompanion-Setup-${version}.exe",

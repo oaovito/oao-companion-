@@ -38,10 +38,11 @@ test('tarefas Windows: interface real cria/edita/reordena/conclui e anima XP sem
     await page.waitForFunction(() => document.querySelector('#tarefas .todo-task-title')?.textContent === 'Treinar');
     await page.getByRole('checkbox', { name: 'Concluir Estudar física', exact: true }).check();
     await page.waitForFunction(() => document.querySelector('.jojo-xp-feedback')?.textContent.includes('+10 XP'));
-    const xp = await app.evaluate(() => globalThis.__jojo.companion.progress.st.xp);
+    const taskXp = () => app.evaluate(() => globalThis.__jojo.companion.progress.st.rewards.history.filter(r => r.source === 'todo').reduce((sum, r) => sum + r.amount, 0));
+    const xp = await taskXp(); assert.equal(xp, 10);
     await page.getByRole('checkbox', { name: 'Concluir Estudar física', exact: true }).uncheck();
     await page.getByRole('checkbox', { name: 'Concluir Estudar física', exact: true }).check();
-    assert.equal(await app.evaluate(() => globalThis.__jojo.companion.progress.st.xp), xp);
+    assert.equal(await taskXp(), xp, 'remarcar não duplica XP de tarefas; descobertas de animação são outra fonte legítima');
     await page.getByRole('button', { name: 'Estudar física', exact: true }).click();
     await page.locator('dialog').getByLabel('Título', { exact: true }).fill('Estudar óptica');
     await page.locator('dialog').getByRole('button', { name: 'Salvar', exact: true }).click();

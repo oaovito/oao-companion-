@@ -25,6 +25,7 @@ document.getElementById('openCare').addEventListener('click', () => api.openApp(
 
 let state = null;
 let animator = null;
+let localBadges = {};
 let rig = null;
 let effects = new Effects();
 let facing = 1;
@@ -46,6 +47,8 @@ let cmdSel = 0;
 
 async function init() {
   const assets = await api.getAssets();
+  localBadges = assets.localBadges || {};
+  api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   rig = new RigRenderer(assets.rig);
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
@@ -133,6 +136,7 @@ function renderNeeds(s) {
       button = document.createElement('button'); button.type = 'button'; button.className = 'litter-piece fresh'; button.dataset.id = item.id; button.dataset.type = item.type;
       button.title = 'Ative a interação e clique para limpar'; button.setAttribute('aria-label', `Limpar ${item.type}`);
       const image = document.createElement('img'); image.src = `../../../assets/litter/${item.type}.svg`; image.alt = ''; button.append(image);
+      if (localBadges[item.egg] && /^data:image\/png;base64,[a-z0-9+/]+=*$/i.test(localBadges[item.egg])) { const badge = document.createElement('img'); badge.src = localBadges[item.egg]; badge.alt = ''; badge.className = 'local-app-badge'; button.append(badge); }
       button.addEventListener('click', async e => { e.stopPropagation(); const result = await api.needs({ action: 'clean', id: item.id }); if (result?.error) button.title = result.error; });
       litterEl.append(button); setTimeout(() => button.classList.remove('fresh'), 900);
     }

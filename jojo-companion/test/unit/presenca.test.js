@@ -2,6 +2,9 @@
 // mas nunca quando ela encerra pela bandeja. Testa o processo real do vigia.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { createRequire } from 'node:module';
 import { criarPresenca, alvoDoApp, garantirAtalho } from '../../src/main/presenca.js';
 
@@ -24,11 +27,12 @@ test('alvo: portátil reabre o próprio .exe; instalado, o executável', () => {
   assert.equal(alvoDoApp({ env: {}, execPath: 'C:\\p\\JoJo Companion.exe' }), 'C:\\p\\JoJo Companion.exe');
 });
 
-test('atalho na área de trabalho: só no Windows empacotado; cria e não recria à toa', () => {
+test('atalho na área de trabalho: só no Windows empacotado; cria e não recria à toa', t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-shortcut-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   const log = () => {};
   const chamadas = [];
   const shell = { readShortcutLink: () => { throw new Error('não existe'); }, writeShortcutLink: (...a) => (chamadas.push(a), true) };
-  const app = { isPackaged: true, getPath: () => 'C:\\Users\\m\\Desktop' };
+  const app = { isPackaged: true, getPath: () => dir };
   assert.equal(garantirAtalho({ app, shell, log, env: {}, platform: 'linux' }), false);
   assert.equal(garantirAtalho({ app: { ...app, isPackaged: false }, shell, log, env: {}, platform: 'win32' }), false);
   assert.equal(garantirAtalho({ app, shell, log, env: { PORTABLE_EXECUTABLE_FILE: 'D:\\JoJoCompanion.exe' }, platform: 'win32' }), true);

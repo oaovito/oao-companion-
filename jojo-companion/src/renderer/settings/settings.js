@@ -84,6 +84,7 @@ function renderPersonality(i) {
     if (el.type === 'checkbox') el.checked = !!v;
     else el.value = v == null ? '' : el.type === 'number' ? String(Math.round(v / scale)) : String(v);
   }
+  document.getElementById('discordFocusStatus').textContent = i.focusApps?.message || 'O Discord não será reaberto quando o foco terminar.';
   const fg = document.getElementById('foregroundStatus');
   fg.textContent = i.foreground.available
     ? 'Funciona no navegador e no app do Windows: compara só o título da janela em primeiro plano com "Instagram". Nada é lido, salvo ou enviado. Respeita o modo silencioso e a pausa.'

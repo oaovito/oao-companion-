@@ -17,7 +17,17 @@
 - Vinte animações de necessidades e novos patamares de evolução após Megalodon,
   preservando XP e limiares dos dez níveis anteriores.
 
+- Cinquenta encenações novas (25 memes e 25 profissões), adereços animados,
+  botões na Coleção e cooldown persistente, sem interceptar perguntas técnicas.
+- Fechamento normal verificado do Discord ao iniciar Trabalho/Foco; força
+  desligada por padrão, disponível por preferência explícita.
+- Ícone original de tubarão musculoso em resoluções próprias para o Windows.
+
 ### Correções
+- Migração conservadora de atalhos padrão evita duplicatas entre versões e
+  respeita preferências, remoções manuais e atalhos personalizados.
+- Anatomia do personagem usa nadadeiras e cauda, preservando o catálogo anterior.
+- Recompensas próximas mostram notificações em sequência, sem ocultar XP de tarefas.
 - Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.
 - Estado e falhas da agenda são consultados antes de afirmar conexão ou ausência de compromissos.
 - Resultados de pesquisa sem correspondência com o assunto são descartados.

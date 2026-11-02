@@ -1282,6 +1282,9 @@ export class Companion {
     if (!safety && this.careChat) {
       const reply = this.careChat(text); if (reply) return this._quickReply(conv, reply, 'cuidados');
     }
+    if (!safety && ciencia !== 'emergencia' && this.livingChat) {
+      const reply = this.livingChat(text); if (reply) return this._quickReply(conv, reply, 'encenacao');
+    }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
       const novo = !(this.nerdUntil > this.clock.now());
@@ -2331,6 +2334,7 @@ export class Companion {
   _enterWork(perfil, { silent = false, instant = false } = {}) {
     const now = this.clock.now();
     this.work = { perfil, desde: now };
+    this.onWorkStart?.();
     // Descarta tudo o que estava na fila: nada de reações atrasadas depois.
     this.ambientQueue.length = 0;
     this.game = null;
@@ -2363,6 +2367,7 @@ export class Companion {
     if (!this.work) return null;
     const now = this.clock.now();
     this.work = null;
+    this.onWorkEnd?.();
     this.workHidden = false;
     this.store.update({ trabalhoAtivo: false, trabalhoFim: 0 });
     this.opacity = 1;
@@ -2821,6 +2826,7 @@ export class Companion {
   startFocus(min = 25, tipo = 'estudo') {
     const now = this.clock.now();
     this.focus = { inicio: now, fim: now + min * 60e3, min, tipo, marcas: 0 };
+    this.onFocusStart?.();
     const c = this.conversations.create({ id: 'foco', title: 'Foco com o JoJo', kind: 'reminder' });
     this.conversations.setStatus(c.id, 'running', `Foco: ${min} min. ${tipo === 'treino' ? 'Treinando junto.' : 'Estudando junto, em silêncio.'}`);
     this._focusAnim(now);
@@ -2854,6 +2860,7 @@ export class Companion {
   _endFocus(done) {
     const f = this.focus;
     this.focus = null;
+    this.onFocusEnd?.();
     if (!f) return null;
     // Para de estudar/treinar do lado na hora.
     if (/^cat_(estudarJunto|treinarJunto)/.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, this.clock.now());

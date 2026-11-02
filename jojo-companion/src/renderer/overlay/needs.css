@@ -15,3 +15,5 @@
 .reduced .litter-piece { animation: none !important; }
 @keyframes litter-drop { 0% { transform: translateY(-28px) rotate(-15deg); opacity: 0; } 55% { transform: translateY(0) scaleY(.75); opacity: 1; } 75% { transform: translateY(-8px) rotate(8deg); } 100% { transform: translateY(0) rotate(0); } }
 @keyframes litter-aura { 0%,100% { filter: drop-shadow(0 0 3px #b294d4); } 50% { filter: drop-shadow(0 0 6px #7bc3cd); } }
+
+.litter-piece img.local-app-badge { position: absolute; width: 14px; height: 14px; bottom: 5px; right: 0; border-radius: 3px; }

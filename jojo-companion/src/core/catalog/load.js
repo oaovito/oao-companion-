@@ -7,5 +7,6 @@ export function fullCatalog(read) {
   const pacotes = read('assets/catalog/pacotes.json');
   const darkest = read('assets/catalog/darkest-animations.json');
   const needs = read('assets/catalog/needs-animations.json');
-  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens], pacotes };
+  const living = read('assets/catalog/living-interactions.json');
+  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens], pacotes };
 }

@@ -21,6 +21,8 @@ let api = null;
 const own = new Set();
 const { verifyDarkestImage } = require('../core/darkest-process.cjs');
 const fs = require('node:fs');
+const { isDiscord, brandFor } = require('../core/windows-app-policy.cjs');
+const cancelledDiscord = new Set();
 let darkestKnown = [];
 let darkestScanAt = 0;
 const darkestProofs = new Map();
@@ -33,9 +35,11 @@ function init() {
   const RECT = koffi.struct('JOJO_RECT', { left: 'int32', top: 'int32', right: 'int32', bottom: 'int32' });
   const MONITORINFO = koffi.struct('JOJO_MONITORINFO', { cbSize: 'uint32', rcMonitor: RECT, rcWork: RECT, dwFlags: 'uint32' });
   koffi.struct('JOJO_FILETIME', { low: 'uint32', high: 'uint32' });
+  const PROCESSENTRY32 = koffi.struct('JOJO_PROCESSENTRY32', { dwSize: 'uint32', cntUsage: 'uint32', th32ProcessID: 'uint32', th32DefaultHeapID: 'uintptr_t', th32ModuleID: 'uint32', cntThreads: 'uint32', th32ParentProcessID: 'uint32', pcPriClassBase: 'int32', dwFlags: 'uint32', szExeFile: koffi.array('uint16_t', 260) });
   api = {
     koffi,
     MONITORINFO,
+    PROCESSENTRY32,
     GetForegroundWindow: user32.func('uintptr_t __stdcall GetForegroundWindow()'),
     GetShellWindow: user32.func('uintptr_t __stdcall GetShellWindow()'),
     GetDesktopWindow: user32.func('uintptr_t __stdcall GetDesktopWindow()'),
@@ -51,8 +55,70 @@ function init() {
     CloseHandle: kernel32.func('int __stdcall CloseHandle(uintptr_t hObject)'),
     GetProcessTimes: kernel32.func('int __stdcall GetProcessTimes(uintptr_t hProcess, _Out_ JOJO_FILETIME *creation, _Out_ JOJO_FILETIME *exit, _Out_ JOJO_FILETIME *kernel, _Out_ JOJO_FILETIME *user)'),
     GetExitCodeProcess: kernel32.func('int __stdcall GetExitCodeProcess(uintptr_t hProcess, _Out_ uint32 *code)'),
+    CreateToolhelp32Snapshot: kernel32.func('uintptr_t __stdcall CreateToolhelp32Snapshot(uint32 flags, uint32 pid)'),
+    Process32FirstW: kernel32.func('int __stdcall Process32FirstW(uintptr_t snapshot, _Inout_ JOJO_PROCESSENTRY32 *entry)'),
+    Process32NextW: kernel32.func('int __stdcall Process32NextW(uintptr_t snapshot, _Inout_ JOJO_PROCESSENTRY32 *entry)'),
+    PostMessageW: user32.func('int __stdcall PostMessageW(uintptr_t hwnd, uint32 message, uintptr_t wParam, intptr_t lParam)'),
+    TerminateProcess: kernel32.func('int __stdcall TerminateProcess(uintptr_t process, uint32 code)'),
     FindWindowExW: user32.func('uintptr_t __stdcall FindWindowExW(uintptr_t hWndParent, uintptr_t hWndChildAfter, str16 lpszClass, str16 lpszWindow)'),
   };
+}
+
+function knownProcesses() {
+  const snapshot = api.CreateToolhelp32Snapshot(2, 0);
+  if (!snapshot || String(snapshot) === '18446744073709551615' || snapshot === -1) throw new Error('process_snapshot');
+  const found = [];
+  try {
+    const entry = { dwSize: api.koffi.sizeof(api.PROCESSENTRY32) }; let ok = api.Process32FirstW(snapshot, entry);
+    for (let n = 0; ok && n < 10000; n++) {
+      const chars = Array.from(entry.szExeFile || []); const end = chars.indexOf(0); const name = String.fromCharCode(...chars.slice(0, end < 0 ? chars.length : end));
+      if (brandFor(name)) found.push({ pid: entry.th32ProcessID, name });
+      ok = api.Process32NextW(snapshot, entry);
+    }
+  } finally { api.CloseHandle(snapshot); }
+  return found;
+}
+function processInfo(pid, callback = null, allowTerminate = false) {
+  const h = api.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | (allowTerminate ? 1 : 0), 0, pid); if (!h) return null;
+  try {
+    const name = new Uint16Array(2048), size = [2048], code = [0];
+    if (!api.QueryFullProcessImageNameW(h, 0, name, size) || !api.GetExitCodeProcess(h, code) || code[0] !== 259) return null;
+    const creation = {}; if (!api.GetProcessTimes(h, creation, {}, {}, {})) return null;
+    const image = String.fromCharCode(...name.slice(0, size[0])); const info = { pid, image, key: `${pid}:${creation.high}:${creation.low}` };
+    if (callback) callback(info, h); return info;
+  } finally { api.CloseHandle(h); }
+}
+async function closeDiscord({ force = false } = {}, id) {
+  const initial = knownProcesses().filter(p => isDiscord(p.name)).map(p => processInfo(p.pid)).filter(p => p && isDiscord(p.image));
+  const pids = new Set(initial.map(p => p.pid)); let requests = 0;
+  let hwnd = 0;
+  for (let n = 0; n < 2048; n++) {
+    hwnd = api.FindWindowExW(0, hwnd, null, null); if (!hwnd) break;
+    const pid = [0]; api.GetWindowThreadProcessId(hwnd, pid);
+    if (pids.has(pid[0]) && !own.has(String(hwnd))) {
+      const current = processInfo(pid[0]); const expected = initial.find(p => p.pid === pid[0]);
+      if (current?.key === expected?.key && api.PostMessageW(hwnd, 0x0010, 0, 0)) requests++;
+    }
+  }
+  if (initial.length) await new Promise(resolve => setTimeout(resolve, 1200));
+  let forced = 0;
+  if (force === true && !cancelledDiscord.has(id)) for (const original of initial) {
+    processInfo(original.pid, (current, handle) => {
+      if (current.key === original.key && isDiscord(current.image) && api.TerminateProcess(handle, 0)) forced++;
+    }, true);
+  }
+  if (forced) await new Promise(resolve => setTimeout(resolve, 250));
+  const remaining = knownProcesses().filter(p => isDiscord(p.name)).length;
+  const cancelled = cancelledDiscord.delete(id);
+  return { detected: initial.length, requests, remaining, forced, cancelled };
+}
+function brandIcons() {
+  const result = {};
+  for (const candidate of knownProcesses()) {
+    const info = processInfo(candidate.pid); const brand = info && brandFor(info.image);
+    if (brand && !result[brand]) result[brand] = info.image;
+  }
+  return result;
 }
 
 function darkestProcess(hwnd) {
@@ -253,7 +319,7 @@ function detectFullscreen() {
 
 module.exports = { musicaDaJanela, categoriaApp };
 
-if (process.parentPort) process.parentPort.on('message', (e) => {
+if (process.parentPort) process.parentPort.on('message', async (e) => {
   const msg = e.data || {};
   try {
     if (msg.type === 'init') {
@@ -263,6 +329,13 @@ if (process.parentPort) process.parentPort.on('message', (e) => {
       process.parentPort.postMessage({ type: 'ready' });
     } else if (msg.type === 'detect') {
       process.parentPort.postMessage({ type: 'result', id: msg.id, result: detect(msg.opts || {}) });
+    } else if (msg.type === 'closeDiscord') {
+      const result = await closeDiscord(msg.opts, msg.id); process.parentPort.postMessage({ type: 'result', id: msg.id, result });
+    } else if (msg.type === 'cancelDiscord') {
+      if (cancelledDiscord.size >= 64) cancelledDiscord.delete(cancelledDiscord.values().next().value);
+      cancelledDiscord.add(msg.id);
+    } else if (msg.type === 'brandIcons') {
+      process.parentPort.postMessage({ type: 'result', id: msg.id, result: brandIcons() });
     }
   } catch (err) {
     process.parentPort.postMessage({ type: 'error', id: msg.id, message: String(err && err.message) });

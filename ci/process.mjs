@@ -8,7 +8,7 @@ export function execute(command, args, { cwd, env = process.env, log, timeoutMs 
     fs.writeFileSync(log, 'Cancelado antes de iniciar a ferramenta\n');
     return Promise.resolve({ exitCode: 1, timedOut: false, cancelled: true, durationMs: 0 });
   }
-  const secrets = Object.entries(env).filter(([key]) => /TOKEN|SECRET|PASSWORD|CREDENTIAL|(?:^|_)KEY$/i.test(key)).map(([, value]) => value);
+  const secrets = Object.entries(env).filter(([key]) => /TOKEN|SECRET|PASSWORD|CREDENTIAL|JOJO_ICLOUD_USER|(?:^|_)KEY$/i.test(key)).map(([, value]) => value);
   const stream = fs.createWriteStream(log, { flags: 'w' });
   return new Promise((resolve) => {
     const started = Date.now();

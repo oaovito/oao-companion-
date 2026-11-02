@@ -18,7 +18,8 @@ app.whenReady().then(async () => {
   while (!(await win.webContents.executeJavaScript('!!window.ready'))) await new Promise((r) => setTimeout(r, 50));
   const rig = fs.readFileSync(path.join(ROOT, 'assets/character/jojo.rig.json'), 'utf8');
   const anim = JSON.stringify(expandCatalog(JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/animations/jojo.animations.json'), 'utf8')), fullCatalog((rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8')))));
-  const res = await win.webContents.executeJavaScript(`window.measure(${rig}, ${anim})`);
+  const foods = fs.readFileSync(path.join(ROOT, 'assets/catalog/foods.json'), 'utf8');
+  const res = await win.webContents.executeJavaScript(`window.measure(${rig}, ${anim}, ${foods})`);
   const out = { notes: 'Gerado por scripts/anim-room.mjs: px além da caixa do JoJo (olhando para a direita, escala 1).', ...res };
   fs.writeFileSync(path.join(ROOT, 'assets/animations/jojo.room.json'), JSON.stringify(out, null, 1) + '\n');
   if (process.env.GITHUB_ACTIONS) {

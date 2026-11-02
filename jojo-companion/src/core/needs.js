@@ -58,8 +58,8 @@ export class Needs {
         const total = this.balance.types.reduce((n, t) => n + t.weight, 0); let roll = Math.min(0.999999, Math.max(0, this.rng())) * total;
         const type = this.balance.types.find(t => (roll -= t.weight) < 0) || this.balance.types[0];
         const object = { id: this.id(), type: type.id, createdAt: this.now(), slot: [0, 1, 2, 3, 4, 5].find(slot => !s.objects.some(o => o.slot === slot)), egg: null };
-        // Logos são habilitados somente se houver recurso/licença validado no catálogo.
-        if (this.balance.licensedEggs?.length && this.rng() < 0.025) object.egg = this.balance.licensedEggs[Math.floor(this.rng() * this.balance.licensedEggs.length) % this.balance.licensedEggs.length];
+        // Ícones extraídos da instalação local; nunca redistribuídos com o aplicativo.
+        if (this.balance.localBadges?.length && this.rng() < 0.025) object.egg = this.balance.localBadges[Math.floor(this.rng() * this.balance.localBadges.length) % this.balance.localBadges.length];
         s.objects.push(object); spawned.push(object); s.hygiene = clamp(s.hygiene - 4);
       }
       return { elapsed, spawned };

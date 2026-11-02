@@ -259,6 +259,11 @@ export function buildAnimation(item, intensity = 'normal') {
     }
   }
   for (const obj of [].concat(r.objeto || [])) tracks[PROPS[obj] || `prop_${obj}`] = hold(1);
+  // Adereços flutuantes têm movimento próprio, sem inventar mãos para segurá-los.
+  if (r.aderecosAnimados) for (const obj of [].concat(r.objeto || [])) {
+    tracks[`angle_${obj}`] = alt(-5 * I.i, 5 * I.i, 4, { rest: 0 });
+    tracks[`lift_${obj}`] = alt(0, -3 * I.i, 6, { rest: 0 });
+  }
   for (const [k, v] of Object.entries(r.humor || {})) {
     const ch = MOODS[k];
     if (!ch) throw new Error(`Humor desconhecido: ${k} (${item.id})`);

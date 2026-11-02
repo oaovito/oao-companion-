@@ -19,6 +19,7 @@ export const DEFAULTS = Object.freeze({
   quietMode: false,             // sem falas espontâneas e sem broncas
   interactionHotkey: 'Control+Alt+J',
   startWithWindows: true,       // inicia junto com o Windows (desmarcável)
+  desktopShortcut: 'auto',      // respeitar instalador/remoção; show | hide opcionais
   fullscreenBehavior: 'hide',   // hide (some do monitor com tela cheia) | hideAll (some de todos); nunca cobre tela cheia
   avoidFallback: 'fade',        // fade | hide  (sem espaço seguro / perseguição)
   reduceMotion: 'system',       // system | on | off — redução de movimento (acessibilidade)
@@ -43,6 +44,8 @@ export const DEFAULTS = Object.freeze({
   agendaAvisoMin: 10,           // aviso antes de cada compromisso (5 – 60 min)
   agendaSugerida: false,        // o JoJo já sugeriu conectar a agenda
   darkestAtivo: true,           // detector local Steam DD1 e XP por tempo ativo
+  discordCloseOnFocus: true,   // fechamento normal com conferência dos processos
+  discordForceClose: false,    // força somente após opção explícita
   darkestSugestao: true,        // sugestão diária em momento permitido
   climaAtivo: true,
   climaCidade: '',              // cidade/estado escolhidos; sem geolocalizacao
@@ -121,6 +124,7 @@ const RANGES = {
 };
 
 const ENUMS = {
+  desktopShortcut: ['auto', 'show', 'hide'],
   speechFrequency: ['off', 'rare', 'normal', 'often'],
   fullscreenBehavior: ['hide', 'hideAll'],
   avoidFallback: ['fade', 'hide'],
@@ -134,7 +138,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
+const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
