@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { ForegroundSample } from '../../src/core/foreground-sample.js';
 import { matchFullscreenDisplay } from '../../src/core/displays.js';
-const { classifyFullscreen } = createRequire(import.meta.url)('../../src/core/fullscreen-policy.cjs');
+const { classifyFullscreen, coveredDisplayIds, windowHasCaption } = createRequire(import.meta.url)('../../src/core/fullscreen-policy.cjs');
 const monitor = { left: 0, top: 0, right: 1920, bottom: 1080 };
 const small = { left: 300, top: 100, right: 1200, bottom: 900 };
 test('fullscreen: busy, D3D global e apresentação/Meet não transformam janela comum ou JoJo em tela cheia', () => {
@@ -14,6 +14,8 @@ test('fullscreen: busy, D3D global e apresentação/Meet não transformam janela
 });
 test('fullscreen: janela ativa cobrindo monitor é protegida, mas maximização normal, minimização e shell são distintos', () => {
   assert.equal(classifyFullscreen({ monitor, window: monitor, shell: 1 }).fullscreen, true);
+  assert.equal(windowHasCaption(0x00cf0000), true);
+  assert.equal(windowHasCaption(0x80040000), false, 'thick frame sem título não é janela maximizada comum');
   assert.equal(classifyFullscreen({ monitor, window: monitor, maximized: true, framed: true }).fullscreen, false);
   assert.equal(classifyFullscreen({ monitor, window: monitor, maximized: true, framed: false }).fullscreen, true);
   for (const extra of [{ minimized: true }, { visible: false }, { className: 'WorkerW' }, { shellWindow: true }, { window: null }]) assert.equal(classifyFullscreen({ monitor, window: monitor, ...extra }).fullscreen, false);
@@ -37,4 +39,10 @@ test('foreground: resposta atrasada, amostra velha e geração anterior ao resta
   assert.equal(guard.accept(next, { capturedAt: 1000 }), false);
   assert.equal(guard.accept(next, { capturedAt: now + 1000 }), false);
   assert.equal(guard.accept(next, { capturedAt: now }), true);
+});
+test('fullscreen: janela que ocupa dois monitores protege ambos em pixels físicos, inclusive com escalas diferentes', () => {
+  const displays = [{ id: '200%', bounds: { x: -2560, y: 0, width: 2560, height: 1440 } }, { id: '100%', bounds: { x: 0, y: 0, width: 1920, height: 1080 } }];
+  assert.deepEqual(coveredDisplayIds({ x: -2560, y: 0, width: 4480, height: 1440 }, displays), ['200%', '100%']);
+  assert.deepEqual(coveredDisplayIds({ x: 0, y: 0, width: 1920, height: 1080 }, displays), ['100%']);
+  assert.deepEqual(coveredDisplayIds({ x: 0, y: 0, width: 1200, height: 800 }, displays), []);
 });

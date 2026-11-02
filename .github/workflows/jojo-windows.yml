@@ -134,6 +134,9 @@ jobs:
       - name: Dependencias reprodutiveis
         working-directory: jojo-companion
         run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Exportar icones do modelo original restaurado
+        working-directory: jojo-companion
+        run: npm run icons
       - name: Medir limites de todas as animacoes no Windows real
         if: ${{ inputs.measure_assets }}
         working-directory: jojo-companion

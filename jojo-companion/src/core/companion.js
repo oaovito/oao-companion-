@@ -469,6 +469,21 @@ export class Companion {
     this._schedule(0);
   }
 
+  onRendererRestart() {
+    if (this.quitting) return;
+    const now = this.clock.now();
+    this.visualContext++; this.effect = null; this.layer = null; this.ambientQueue.length = 0; this.movedFor = null;
+    if (this.interaction) this.exitInteraction('suspend');
+    this.dragging = null; this.capture = false; this.mover.stop(); this.avoid.reset();
+    this.overlay.setMouseMode('passthrough');
+    this.behavior.request('idle', { now, force: true });
+    if (this.work) this.behavior.request('meditate', { now, force: true });
+    else if (this.focus) this._focusAnim(now);
+    else if (now < (this.emotionalUntil || 0)) this.behavior.request('comfort', { now, force: true });
+    this.lastRender = ''; this.lastBounds = null; this.lastTick = now;
+    this._applyLayout(true); this._schedule(0);
+  }
+
   // ---------------------------------------------------------------- configurações
 
   applySettings(settings, changed = []) {
@@ -2110,7 +2125,7 @@ export class Companion {
     if (this.clock.now() < (this.emotionalUntil || 0) && !['chat', 'comando', 'pedido', 'manual'].includes(source)) return false;
     if (!item || this.quitting || !this.started || this.userHidden) return false;
     if (SLEEP_ANIMS.has(id) && !this.canSleep()) return false; // dormir de dia: nunca
-    if (this.work) return false; // Modo Trabalho: nenhuma animação
+    if (this.work || this.focus) return false; // Trabalho/Foco preservam o silêncio; o foco usa _focusAnim diretamente.
     if (this.fullscreenHidden) return false; // tela cheia: nada aparece nem fica guardado
     const now = this.clock.now();
     if (item.especial === 'semFiltro') return this._semFiltro();
@@ -2135,13 +2150,14 @@ export class Companion {
   }
 
   _requestCatalog(state, data, now, source) {
+    if (this.work) return false;
     const st = this.behavior.state;
     if (['flee', 'hidden', 'dragged', 'goodbye', 'gone', 'avc'].includes(st) || this.dragging) return false;
     if (this.mover.active && this.mover.kind === 'walk') {
       this.mover.stop();
       if (st === 'walk') this.behavior.finish('walk', now);
     }
-    const force = source !== 'ambiente' && (this.interaction || this.behavior.priority >= PRIORITY.INTERACT);
+    const force = ['comando', 'pedido', 'manual'].includes(source) || source !== 'ambiente' && (this.interaction || this.behavior.priority >= PRIORITY.INTERACT);
     return this.behavior.request(state, { now, data, force });
   }
 

@@ -16,7 +16,7 @@ const MONITOR_DEFAULTTONEAREST = 2;
 let api = null;
 const own = new Set();
 const { verifyDarkestImage } = require('../core/darkest-process.cjs');
-const { classifyFullscreen } = require('../core/fullscreen-policy.cjs');
+const { classifyFullscreen, windowHasCaption } = require('../core/fullscreen-policy.cjs');
 const { identifyGame } = require('../core/steam-library.cjs');
 const winPath = require('node:path').win32;
 let gameInventory = { roots: [], games: [] };
@@ -280,6 +280,7 @@ function spotifyTitle(exe = 'Spotify.exe') {
 
 /** @returns {{fullscreen:boolean, instagram:boolean, monitor?:{x,y,width,height}, shell?:number}} pixels físicos */
 function detect(opts = {}) {
+  const capturedAt = Date.now(), foreground = api.GetForegroundWindow();
   const result = detectFullscreen();
   result.instagram = false;
   result.lol = false;
@@ -294,7 +295,13 @@ function detect(opts = {}) {
     try { result.games = detectGames(); result.darkest = opts.darkest ? result.games.darkest : null; if (opts.percepcao && result.games.games?.some(game => game.active)) result.categoria = 'jogo'; }
     catch { result.games = { known: false, reason: 'process_scan_failed', checkedAt: Date.now() }; result.darkest = { known: false, reason: 'process_scan_failed' }; }
   }
-  result.capturedAt = Date.now();
+  if (api.GetForegroundWindow() !== foreground) {
+    Object.assign(result, detectFullscreen());
+    result.instagram = false; result.lol = false; result.categoria = null;
+    if (result.darkest) result.darkest.active = false;
+    if (result.games?.games) for (const game of result.games.games) game.active = false;
+  }
+  result.capturedAt = capturedAt;
   return result;
 }
 
@@ -313,9 +320,10 @@ function detectFullscreen() {
     const mon = api.MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
     if (!mon || !api.GetMonitorInfoW(mon, mi)) return { fullscreen: false, shell, reason: 'monitor_unavailable' };
     const style = Number(api.GetWindowLongPtrW(hwnd, -16));
-    return classifyFullscreen({ shell, own: own.has(String(hwnd)), shellWindow: hwnd === api.GetShellWindow() || hwnd === api.GetDesktopWindow(),
+    const result = classifyFullscreen({ shell, own: own.has(String(hwnd)), shellWindow: hwnd === api.GetShellWindow() || hwnd === api.GetDesktopWindow(),
       className: className(hwnd), visible: !!api.IsWindowVisible(hwnd), minimized: !!api.IsIconic(hwnd),
-      maximized: !!api.IsZoomed(hwnd), framed: !!(style & 0x00c40000), window: wr, monitor: mi.rcMonitor });
+      maximized: !!api.IsZoomed(hwnd), framed: windowHasCaption(style), window: wr, monitor: mi.rcMonitor });
+    return { ...result, maximized: !!api.IsZoomed(hwnd), framed: windowHasCaption(style), style };
   } finally { if (previousDpi) api.SetThreadDpiAwarenessContext(previousDpi); }
 }
 

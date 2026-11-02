@@ -9,10 +9,12 @@ export function scanSteam({ roots = [] } = {}) {
       if (error) reject(new Error(error)); else resolve(value);
     };
     const timer = setTimeout(() => finish('scan_timeout'), 10000);
+    timer.unref?.();
     worker.once('message', result => finish(result.ok ? null : result.reason, result.inventory));
     worker.once('error', () => finish('scan_failed'));
     worker.once('exit', () => { if (!settled) finish('scan_failed'); });
     worker.postMessage({ roots });
+    worker.unref();
   });
 }
 export function createSteamService({ getDetector, notify = () => {}, scan = scanSteam, extraRoots = [], now = () => Date.now() } = {}) {
@@ -25,7 +27,7 @@ export function createSteamService({ getDetector, notify = () => {}, scan = scan
     scanning: !!scanning, reason: reason || (sample?.known === false ? sample.reason : null),
     diagnostics: inventory?.diagnostics || [],
     games: (inventory?.games || []).map(game => {
-      const process = sample?.games?.find(p => p.appId === game.appId);
+      const process = sample?.games?.find(p => p.appId === game.appId && p.active) || sample?.games?.find(p => p.appId === game.appId);
       return { appId: game.appId, name: game.name, state: reason || !sample || sample.known === false ? 'unknown' : process?.active ? 'active' : process ? 'background' : 'installed' };
     }),
   });

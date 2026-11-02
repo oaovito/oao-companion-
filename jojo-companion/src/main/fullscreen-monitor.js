@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { matchFullscreenDisplay } from '../core/displays.js';
 import { ForegroundSample } from '../core/foreground-sample.js';
+import fullscreenPolicy from '../core/fullscreen-policy.cjs';
 
 const WORKER = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fullscreen-worker.cjs');
 const MAX_CRASHES = 2;
@@ -112,6 +113,8 @@ export function createFullscreenDetector(log = () => {}) {
       }
       const extra = { instagram: !!result.instagram, lol: !!result.lol, spotify: result.spotify || null, categoria: result.categoria || null, darkest: result.darkest || null, games: result.games || null };
       if (!result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
+      const occupied = fullscreenPolicy.coveredDisplayIds(result.janela, opts.displayPixels);
+      if (occupied.length) return { fullscreenIds: occupied, ...extra };
       const d = matchFullscreenDisplay(toDip(result.monitor), displays);
       return { fullscreenIds: d ? [d.id] : [], ...extra };
     },

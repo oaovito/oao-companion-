@@ -14,4 +14,10 @@ function classifyFullscreen({ own = false, shellWindow = false, visible = true, 
     janela: { x: w.left, y: w.top, width: w.right - w.left, height: w.bottom - w.top },
     monitor: { x: m.left, y: m.top, width: m.right - m.left, height: m.bottom - m.top } };
 }
-module.exports = { classifyFullscreen };
+function coveredDisplayIds(window, displays = []) {
+  const w = window;
+  if (!w || ![w.x, w.y, w.width, w.height].every(Number.isFinite)) return [];
+  return displays.filter(({ bounds: b }) => b && w.x <= b.x + 2 && w.y <= b.y + 2 && w.x + w.width >= b.x + b.width - 2 && w.y + w.height >= b.y + b.height - 2).map(d => d.id);
+}
+const windowHasCaption = style => (Number(style) & 0x00c00000) === 0x00c00000;
+module.exports = { classifyFullscreen, coveredDisplayIds, windowHasCaption };

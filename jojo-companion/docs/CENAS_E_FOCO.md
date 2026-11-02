@@ -1,13 +1,15 @@
-# Cenas, foco e atalhos — candidata 0.45.0
+# Cenas, foco e atalhos — correções 0.45.1
 
-Implementado em `codex/living-companion`; não publicado.
+Correções em validação em `codex/living-companion`; 0.45.1 ainda não publicada.
+Os registros de validação 0.45.0 abaixo são históricos.
 
 ## Cinquenta cenas
 
 `assets/catalog/living-interactions.json` acrescenta 25 memes e 25 profissões,
 sem substituir pacotes antigos. Cada conjunto tem fala original, desenho vetorial
 próprio no rig, movimentos do personagem e rotação/flutuação do adereço. Anatomia:
-corpo de tubarão, nadadeiras e cauda; nenhum membro humano é desenhado.
+modelo histórico de tubarão musculoso com braços e pernas, sem cauda. A
+direção anterior da 0.45.0 é histórica e foi revogada pelo pedido crítico.
 
 A Coleção contém os 50 botões. A mesma conversa aceita “encena Médico”, “finge que
 é um médico”, “encena Chef” e “mostra o meme aura”. O reconhecimento exige pedido
@@ -69,3 +71,15 @@ Repetir após as alterações posteriores, junto à
 medição/auditoria de TODAS as 1.268 animações, antes de considerar a candidata validada.
 O run 41367076224 mediu/auditou toda a arte e repetiu os 10 casos com sucesso;
 preview real recuperado dos logs e revisado. Gates integrais continuam pendentes.
+
+## Correções 0.45.1 em validação
+
+Pedidos explícitos são separados do sorteio espontâneo. O serviço confirma dois
+quadros no renderer (um em movimento reduzido) antes de registrar execução.
+Cooldown, foco, fullscreen real do monitor do JoJo, asset ausente e falha do
+renderer têm resultados próprios. Pedidos temporariamente impedidos ficam em
+fila limitada a quatro itens/20 segundos, sem duplicações; novo assunto cancela
+pedidos antigos. A fila não supera fuga, Trabalho/Foco ou tela cheia real.
+As mensagens não atribuem qualquer falha genérica à tela cheia.
+O modelo original foi recuperado do Git; a cauda foi removida conforme pedido.
+Nova medição/auditoria e testes Windows são obrigatórios para esta arte restaurada.

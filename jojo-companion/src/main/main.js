@@ -205,13 +205,8 @@ function main() {
         if (quitting) return;
         setTimeout(() => {
           overlay.recreate();
-          companion.mover.stop();
-          if (!companion.work && !companion.focus) companion.behavior.request('idle', { now: companion.clock.now(), force: true });
+          companion.onRendererRestart();
           syncOwnHandles();
-          companion.lastRender = '';
-          companion.lastBounds = null;
-          companion.overlay.setMouseMode('passthrough');
-          companion._applyLayout(true);
         }, 500);
       },
     });
@@ -324,6 +319,13 @@ function main() {
 
     // ---------------- IPC do overlay
     const fromOverlay = (e) => overlay.alive && e.sender === overlay.win.webContents;
+    ipcMain.on('jojo:renderer-ready', e => {
+      if (!fromOverlay(e)) return;
+      overlay.ready = true; companion.lastRender = '';
+      overlay.setMouseMode(companion.interaction ? 'interactive' : 'passthrough');
+      overlay._send('jojo:visible', overlay.visible);
+      companion._applyLayout(true);
+    });
     ipcMain.handle('jojo:get-assets', (e) => (fromOverlay(e) ? assets : null));
     ipcMain.on('jojo:animation-result', (e, id, ok) => fromOverlay(e) && Number.isSafeInteger(id) && overlay.resolveAnimation(id, ok === true));
     ipcMain.on('jojo:bubble-size', (e, id, size) => fromOverlay(e) && overlay.resolveMeasure(id, size));
@@ -670,6 +672,7 @@ function main() {
           const res = await fullscreen.detect(r => screen.screenToDipRect(null, r), screen.getAllDisplays(), {
             instagram: personality.get().instagram.ativo, lol: s.lolBronca, spotify: s.spotifyReacoes,
             percepcao: s.percepcaoTela, darkest: s.darkestAtivo, games: true, spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
+            displayPixels: screen.getAllDisplays().map(d => ({ id: d.id, bounds: screen.dipToScreenRect(null, d.bounds) })),
           });
           if (epoch !== environmentEpoch || companion.suspended) return;
           companion.setFullscreenDisplays(res.fullscreenIds);

@@ -1,8 +1,8 @@
 {
-  "origin": "Arte original gerada para JoJo Companion em 2026-11-01; ferramenta image_gen.",
-  "source": "app-source.png",
-  "sha256": "bb14f8d34474a82273c22625daf7c63095a04da96b220118364ea5ed238764e1",
-  "anatomy": "Tubarão musculoso com nadadeiras e cauda, sem braços/pernas/mãos/pés.",
+  "origin": "Exportação do rig histórico restaurado pelo Chromium Windows, sem redesenho.",
+  "source": "../character/jojo.rig.json",
+  "sha256": "ba2f64a3c42885475fb1e83c4c5d0cfdcb6b7921c7bb338da9cd378b3d39fb18",
+  "anatomy": "original-legged-v1",
   "sizes": [
     16,
     20,

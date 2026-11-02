@@ -16,6 +16,7 @@ function setup(t, extra = {}) {
 const settle = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 test('cenas explícitas: os três comandos reais iniciam receita própria, mesmo no silêncio de interrupções espontâneas', async t => {
   const e = setup(t); e.store.update({ quietMode: true });
+  e.store.update({ paused: true }); e.companion.behavior.request('paused', { now: e.clock.now(), force: true });
   for (const text of commands) {
     e.companion.behavior.request('idle', { now: e.clock.now(), force: true });
     const result = await e.companion.livingChat(text); assert.equal(result.status, 'executed', text);
@@ -27,6 +28,7 @@ test('cenas: cooldown, foco, asset ausente, relógio e renderer têm causas pró
   assert.equal((await e.companion.livingChat(commands[0])).status, 'executed');
   assert.equal((await e.companion.livingChat(commands[0])).status, 'cooldown');
   e.companion.startFocus(); assert.equal((await e.companion.livingChat(commands[1])).status, 'focus_blocked'); e.companion._endFocus(false);
+  e.companion.startFocus(); assert.equal(e.companion.playCatalog('selfie', { source: 'comando' }), false, 'pedido genérico também não supera Foco'); e.companion._endFocus(false);
   e.companion.catalogById.delete('living_policial'); assert.equal((await e.companion.livingChat(commands[2])).status, 'missing_asset');
   const other = setup(t, { confirmAnimation: async () => false });
   assert.equal((await other.companion.livingChat(commands[1])).status, 'renderer_error');
@@ -53,4 +55,12 @@ test('cenas: falha de persistência não vira erro de tela cheia ou de renderer'
   const e = setup(t); e.service.model.save = () => { throw new Error('disco'); };
   const outcome = await e.companion.livingChat(commands[0]); assert.equal(outcome.status, 'storage_error'); assert.equal(outcome.rendered, true);
   assert.equal(e.service.model.st.recent.length, 0);
+});
+test('renderer: reinício limpa arrasto/captura/fuga e preserva Trabalho e Foco sem reabrir sobre fullscreen', t => {
+  const e = setup(t), c = e.companion;
+  c.enterInteraction(); c.dragging = { offset: { x: 10, y: 10 } }; c.capture = true; c.avoid.state = 'fleeing';
+  c.onRendererRestart(); assert.equal(c.dragging, null); assert.equal(c.interaction, false); assert.equal(c.capture, false); assert.equal(e.overlay.mouseMode, 'passthrough');
+  c.startWork(); c.onRendererRestart(); assert.equal(c.behavior.state, 'meditate'); c.endWork();
+  c.startFocus(); const end = c.focus.fim; c.onRendererRestart(); assert.equal(c.focus.fim, end); assert.match(c.behavior.anim, /^cat_estudarJunto/);
+  c.setFullscreenDisplays([e.env.displays[0].id]); c.onRendererRestart(); assert.equal(e.overlay.visible, false);
 });

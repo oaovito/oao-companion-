@@ -1,7 +1,7 @@
 // Conversa com IA (API gratuita) sempre no jeito do JoJo.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LlmProvider, buildSystemPrompt, parseLlmReply, outOfCharacter, LLM_PRESETS } from '../../src/core/dialogue/llm-provider.js';
+import { LlmProvider, buildSystemPrompt, buildLocalPrompt, parseLlmReply, outOfCharacter, LLM_PRESETS } from '../../src/core/dialogue/llm-provider.js';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
 
@@ -35,6 +35,10 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(p, /CVV 188/);
   assert.match(p, /192/);
   assert.match(p, /South Park/);
+  assert.match(p, /com braços e pernas, sem cauda/);
+  const local = buildLocalPrompt(profile, {}, 'Quem é você?');
+  assert.match(local, /with arms and legs, and no tail/);
+  assert.doesNotMatch(local, /without human arms|fins and a tail/);
   assert.match(p, /Foco, porra\./, 'exemplo real de fala');
   assert.match(p, /Natal/);
   assert.match(p, /ligadão/);

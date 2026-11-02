@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { createSteamService } from '../../src/main/steam-service.js';
 const { parseVdf, discoverSteam, identifyGame } = createRequire(import.meta.url)('../../src/core/steam-library.cjs');
-const root = 'D:\\Apps\\Steam', secondary = 'E:\\Jogos da Manu';
+const root = 'D:\\Apps\\Steam', secondary = 'E:\\Jogos da Manú';
 function fixture({ broken = false } = {}) {
   const files = new Map([
-    [`${root}\\steam.exe`, ''], [`${root}\\steamapps\\libraryfolders.vdf`, String.raw`"libraryfolders" { "0" { "path" "D:\\Apps\\Steam" } "1" { "path" "E:\\Jogos da Manu" "apps" { "262060" "1" } } }`],
+    [`${root}\\steam.exe`, ''], [`${root}\\steamapps\\libraryfolders.vdf`, String.raw`"libraryfolders" { "0" { "path" "D:\\Apps\\Steam" } "1" { "path" "E:\\Jogos da Manú" "apps" { "262060" "1" } } }`],
     [`${secondary}\\steamapps\\appmanifest_262060.acf`, broken ? '"AppState" {' : '"AppState" { "appid" "262060" "installdir" "Darkest Dungeon" "name" "Darkest Dungeon" }'],
     [`${root}\\steamapps\\appmanifest_123.acf`, '"AppState" { "appid" "123" "installdir" "Outro Jogo" "name" "Outro Jogo" }'],
   ]);
@@ -39,7 +39,7 @@ test('Steam serviço: instalada/fechada, aberta, jogo em background, foreground 
   service.observe({ known: true, checkedAt: 100, steamRunning: false, games: [] }); assert.equal(service.snapshot().status, 'closed'); assert.equal(service.snapshot().installed, true);
   service.observe({ known: true, steamRunning: true, games: [{ appId: '262060', active: false }] });
   assert.equal(service.snapshot().status, 'open'); assert.equal(service.snapshot().games.find(g => g.appId === '262060').state, 'background');
-  service.observe({ known: true, steamRunning: true, games: [{ appId: '262060', active: true }] }); assert.equal(service.snapshot().games.find(g => g.appId === '262060').state, 'active');
+  service.observe({ known: true, steamRunning: true, games: [{ appId: '262060', active: false }, { appId: '262060', active: true }] }); assert.equal(service.snapshot().games.find(g => g.appId === '262060').state, 'active');
   service.observe({ known: false }); assert.equal(service.snapshot().status, 'unavailable'); assert.equal(service.snapshot().games[0].state, 'unknown');
   fail = true; await service.refresh(); assert.equal(service.snapshot().status, 'unavailable'); assert.ok(!JSON.stringify(service.snapshot()).includes('E:\\'));
   service.dispose();

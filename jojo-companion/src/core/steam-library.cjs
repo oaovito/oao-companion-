@@ -26,7 +26,7 @@ function parseVdf(text) {
   }
   return object();
 }
-const localRoot = value => typeof value === 'string' && /^[a-z]:[\\/]/i.test(value) && !value.includes('\0') ? path.normalize(value).replace(/\\+$/, '') : null;
+const localRoot = value => typeof value === 'string' && /^[a-z]:[\\/]/i.test(value) && !/[\x00-\x1f]/.test(value) ? path.normalize(value).replace(/\\+$/, '') : null;
 const within = (file, root) => {
   const rel = path.relative(root.toLowerCase(), file.toLowerCase());
   return !!rel && rel !== '..' && !rel.startsWith('..\\') && !path.isAbsolute(rel);
@@ -36,7 +36,7 @@ function installedGame(text, file, library) {
   if (!s || typeof s !== 'object' || !/^\d{1,10}$/.test(s.appid || '') || path.basename(file).toLowerCase() !== `appmanifest_${s.appid}.acf`) throw new Error('manifest_invalid');
   if (s.stateflags != null && (!/^\d+$/.test(s.stateflags) || !(Number(s.stateflags) & 4))) throw new Error('game_incomplete');
   const dir = s.installdir;
-  if (typeof dir !== 'string' || !dir.trim() || dir === '.' || dir === '..' || /[\\/:\x00-\x1f]/.test(dir)) throw new Error('manifest_directory');
+  if (typeof dir !== 'string' || !dir.trim() || dir === '.' || dir === '..' || /[. ]$/.test(dir) || /[\\/:\x00-\x1f]/.test(dir)) throw new Error('manifest_directory');
   const root = path.join(library, 'steamapps', 'common', dir);
   return { appId: s.appid, name: String(s.name || (s.appid === '262060' ? 'Darkest Dungeon' : `Jogo Steam ${s.appid}`)).replace(/[\x00-\x1f]/g, '').slice(0, 160), root };
 }

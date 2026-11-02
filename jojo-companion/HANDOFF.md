@@ -14,6 +14,25 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Diagnóstico da arte e interfaces — 41477698374
+
+Fonte `56e40a4`: medição Windows de 434 bases importada, digest
+`c4925755df8c7931c20c588893ccae71f5e708871d7e8d2f6c84d1794f35bc5d`.
+Auditoria: 1.268 animações, zero erros/cortes/paradas/órfãs, média 0,4565 ms.
+Comparação histórica e 75 cenas inspecionadas; imagens em docs/evidencias.
+Os três comandos exigidos produziram quadros reais diferentes com hashes conferidos.
+
+Diagnóstico global REPROVADO: 12/14 interfaces passaram; recuperação pós-crash
+retornou pedido na fila e o cenário a 150% não reconheceu fullscreen. Corrigir e
+repetir a interface; não confundir auditoria da arte com gates integrais/release.
+Patch posterior limpa arrasto/captura/fuga, solicita estado após o renderer
+carregar e usa geometria física por monitor, sem confundir borda com título.
+Ícones serão exportados do rig restaurado no Windows; a fonte rejeitada foi
+removida do gerador atual, preservada no Git histórico. Prompt local corrigido.
+Ensaio real ampliado a 32 engine +12 Central, sem remover os 31 casos existentes.
+Próximo: diagnóstico de interface/ícones (sem repetir medição), conversa real,
+ler todas as saídas, importar os ícones e só então rodar o pipeline integral.
+
 ## Recuperação do ambiente — 02/11/2026
 
 Novo executor conectado, terminal/Git/rede funcionais. Checkout limpo recuperado

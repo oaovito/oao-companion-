@@ -5,6 +5,7 @@ const ACTIONS = new Set(['pet', 'eat', 'play', 'fidget', 'estimulo']);
 const GESTURES = new Set(['clique', 'duploClique', 'segurar', 'cocegas', 'jogar', 'bolha']);
 
 contextBridge.exposeInMainWorld('jojo', {
+  ready: () => ipcRenderer.send('jojo:renderer-ready'),
   getAssets: () => ipcRenderer.invoke('jojo:get-assets'),
   needs: (request) => ipcRenderer.invoke('needs:request', request),
   onBadges: fn => ipcRenderer.on('jojo:badges', (_e, icons) => fn(icons)),

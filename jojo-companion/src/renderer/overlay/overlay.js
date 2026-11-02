@@ -54,7 +54,10 @@ async function init() {
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
-  api.onAnimationCheck(request => { animationChecks.set(request.id, { ...request, frames: 0 }); requestFrame(); });
+  api.onAnimationCheck(request => {
+    if (animationChecks.size >= 16) { const id = animationChecks.keys().next().value; api.reportAnimation(id, false); animationChecks.delete(id); }
+    animationChecks.set(request.id, { ...request, frames: 0, expires: performance.now() + 2600 }); requestFrame();
+  });
   resize();
   api.onState(onState);
   api.onMeasure(onMeasure);
@@ -79,6 +82,7 @@ async function init() {
   const rm = matchMedia('(prefers-reduced-motion: reduce)');
   api.setReducedMotion(rm.matches);
   rm.addEventListener?.('change', () => api.setReducedMotion(rm.matches));
+  api.ready();
   requestFrame();
 }
 
@@ -395,7 +399,7 @@ function frame(now) {
   try {
     draw(now);
     for (const [id, check] of animationChecks) {
-      if (!animator.has(check.animation)) { api.reportAnimation(id, false); animationChecks.delete(id); }
+      if (now >= check.expires || !animator.has(check.animation)) { api.reportAnimation(id, false); animationChecks.delete(id); }
       else if (state.anim === check.animation && windowVisible && ++check.frames >= (reduced ? 1 : 2)) {
         api.reportAnimation(id, true); animationChecks.delete(id);
       }

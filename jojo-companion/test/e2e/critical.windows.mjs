@@ -41,7 +41,9 @@ test('correções Windows: três cenas pela Central, fullscreen real/saída, jan
     await restored.waitForFunction(() => !!window.__jojoRenderer.state);
     await sleep(1500); await central.bringToFront();
     const result = await app.evaluate(() => globalThis.__jojo.companion.livingChat('Encena Médico'));
-    assert.equal(result.status, 'executed'); await restored.waitForFunction(() => window.__jojoRenderer.anim?.includes('living_medico'));
+    assert.ok(['executed', 'queued'].includes(result.status), JSON.stringify(result));
+    await waitFor(app, () => globalThis.__jojo.livingService.snapshot().last?.itemId === 'living_medico' && globalThis.__jojo.livingService.snapshot().last?.status === 'executed', 22000);
+    await restored.waitForFunction(() => window.__jojoRenderer.anim?.includes('living_medico'));
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });
@@ -51,7 +53,8 @@ test('Windows: fullscreen e Central com escala Electron 150%, geometria nativa e
   try {
     const scale = await app.evaluate(() => globalThis.__jojo.primaryScale()); assert.ok(scale >= 1.4);
     const target = await app.evaluate(() => globalThis.__jojo.makeClickTarget({ x: 0, y: 0, width: 400, height: 300 }, { fullscreen: true }));
-    await waitFor(app, () => globalThis.__jojo.companion.fullscreenHidden);
+    try { await waitFor(app, () => globalThis.__jojo.companion.fullscreenHidden); }
+    catch (error) { error.message += JSON.stringify(await app.evaluate((_e, id) => ({ detector: globalThis.__jojo.fullscreenInfo(), scale: globalThis.__jojo.primaryScale(), target: globalThis.__jojo.targetBounds(id) }), target)); throw error; }
     await app.evaluate((_e, id) => globalThis.__jojo.closeTarget(id), target);
     await waitFor(app, () => !globalThis.__jojo.companion.fullscreenHidden);
     console.log(`JOJO_DPI_EVIDENCE:${JSON.stringify({ scale, fullscreenThenRecovered: true })}`);

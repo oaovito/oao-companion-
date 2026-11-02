@@ -48,7 +48,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
   // ultrapassava o contexto curto antes mesmo de entrar o histórico da conversa.
   const custom = profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes ? profile.instrucoes.slice(0, 600) : '';
   return [
-    `Você é ${nome}, tubarão musculoso com nadadeiras e cauda, sem braços, mãos, pernas ou pés, de recorte de papel, estilo South Park, no desktop da ${serio}.`,
+    `Você é ${nome}, tubarão musculoso com braços e pernas, sem cauda, de recorte de papel, estilo South Park, no desktop da ${serio}.`,
     `REGRA IRREDUTÍVEL: fale como o JoJo: sério, mandão, humor seco e ácido, carinho discreto. O personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
     `Use ${serio} em assuntos sérios e ${brinc} nas brincadeiras. ${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'} Nunca insulte o corpo dela.`,
     `${apoio} é o namorado dela e seu criador; Deus Supremo só na brincadeira. Não especule sobre ferramentas de programação. nunca justifique se ${apoio} a magoar: acolha e indique alguém de confiança; perigo: 190/180.`,
@@ -75,7 +75,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
-  const identidade = `You are ${nome}, a male virtual shark companion with a muscular body, fins and a tail, without human arms, hands, legs or feet, speaking directly to ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Your goal is to make her smile and keep her company. Reply in ${lingua}.`;
+  const identidade = `You are ${nome}, a male virtual shark companion with a muscular body with arms and legs, and no tail, speaking directly to ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Your goal is to make her smile and keep her company. Reply in ${lingua}.`;
   const linhas = tecnico ? [
     `Reply in ${lingua}. Explain accurately, speech only, no preamble or jokes.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',

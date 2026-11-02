@@ -6,7 +6,7 @@ import { isHeavy } from '../core/catalog/variety.js';
 const MESSAGES = {
   fullscreen_blocked: 'A janela ativa está em tela cheia no monitor do JoJo. Vou aguardar ela sair.',
   focus_blocked: 'A encenação fica para depois do foco. Agora eu preservo o silêncio.',
-  animation_busy: 'Aguardo terminar o movimento ou a animação atual para encenar.',
+  animation_busy: 'Aguardo terminar a atividade, o movimento ou a animação atual para encenar.',
   cooldown: 'Essa cena acabou de passar. Escolhe outra na Coleção; meu repertório não é um botão de repetir.',
   missing_asset: 'O desenho dessa cena não foi encontrado no catálogo. Não consigo encenar agora.',
   renderer_error: 'O desenho não respondeu. A cena não foi confirmada; você pode tentar novamente.',
@@ -20,13 +20,13 @@ export function createLivingService({ userData, companion, store, items, log = (
   const disk = new AtomicState(path.join(userData, 'living-interactions.json'), { defaults: emptyScenes, validate: validateScenes, log });
   const model = new LivingInteractions({ items, state: disk.load(), save: state => disk.write(state), rng: companion.rng });
   const queue = []; let timer = null, running = false, disposed = false, generation = 0, last = null;
-  const result = (status, item, extra = {}) => ({ status, itemId: item?.id, message: MESSAGES[status] || '', ...extra });
+  const result = (status, item, extra = {}) => ({ status, itemId: item?.id, message: status === 'focus_blocked' && companion.work ? 'O Modo Trabalho está ligado. Encerre esse modo quando quiser assistir à cena.' : MESSAGES[status] || '', ...extra });
   function blocked(item, ambient) {
     if (!companion.catalogById.has(item.id) || !hasAnimation(companion._catalogData(item, companion.reducedMotion ? 'suave' : undefined).anim)) return 'missing_asset';
     if (companion.work || companion.focus) return 'focus_blocked';
     if (model.remaining(item)) return 'cooldown';
     if (companion.fullscreenHidden) return 'fullscreen_blocked';
-    if (!companion.started || companion.quitting || companion.userHidden) return 'hidden';
+    if (!companion.started || companion.quitting || companion.userHidden || companion.lolHidden) return 'hidden';
     if (companion.suspended || companion.dragging || ['fleeing', 'hidden'].includes(companion.avoid.state) || ['flee', 'hidden', 'dragged', 'goodbye', 'gone', 'avc'].includes(companion.behavior.state)) return 'animation_busy';
     if (!ambient && (companion.game || companion.clock.now() < (companion.emotionalUntil || 0))) return 'animation_busy';
     if (ambient && (!companion._canNag() || companion.game || companion.interaction || companion.bubble || companion.chatQueue || companion.fullscreenIds?.length || queue.length)) return 'animation_busy';
@@ -40,6 +40,8 @@ export function createLivingService({ userData, companion, store, items, log = (
     try {
       if (!companion.playCatalog(item.id, { source: ambient ? 'ambiente' : 'comando', intensity: companion.reducedMotion ? 'suave' : undefined, speak: false })) return result('animation_busy', item);
       if (!await confirmAnimation(animation)) {
+        const interruption = blocked(item, ambient);
+        if (['fullscreen_blocked', 'animation_busy', 'focus_blocked'].includes(interruption) && (companion.fullscreenHidden || companion.focus || companion.work || companion.dragging || ['fleeing', 'hidden'].includes(companion.avoid.state))) return result(interruption, item);
         if (companion.behavior.anim === animation) { companion.behavior.request('idle', { now: companion.clock.now(), force: true }); companion._applyLayout(true); }
         return result('renderer_error', item);
       }

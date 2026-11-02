@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 const read = f => JSON.parse(fs.readFileSync(new URL(`../../assets/${f}`, import.meta.url)));
 test('anatomia original: pernas, mãos e musculatura históricas restauradas, sem cauda rejeitada', () => {
   const r = read('character/jojo.rig.json'); assert.equal(r.anatomy, 'original-legged-v1');
@@ -23,4 +24,10 @@ test('Darkest: cinco animações distintas possuem adereços desenhados e gatilh
     assert.ok(it.gatilho.eventos.length); assert.ok(it.gatilho.frases.length);
   }
   assert.equal(signatures.size, 5);
+});
+
+test('ícones: fonte declarada é o mesmo rig restaurado, sem reintroduzir o desenho rejeitado', () => {
+  const metadata = read('icons/source.json');
+  assert.equal(metadata.anatomy, 'original-legged-v1'); assert.equal(metadata.source, '../character/jojo.rig.json');
+  assert.equal(metadata.sha256, createHash('sha256').update(fs.readFileSync(new URL('../../assets/character/jojo.rig.json', import.meta.url))).digest('hex'));
 });

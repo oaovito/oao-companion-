@@ -1,7 +1,9 @@
 import { requireWindows } from '../src/main/windows-only.js';
 requireWindows();
-// Exporta a nova arte original para todos os tamanhos Windows, sem trocar pelo rig antigo.
-import { app, nativeImage } from 'electron';
+// Gera assets/icons/{app,tray}.{png,ico} desenhando o rig do JoJo.
+import { app, BrowserWindow } from 'electron';
+import { createHash } from 'node:crypto';
+import { gzipSync } from 'node:zlib';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,20 +35,31 @@ function ico(pngs) {
 }
 
 app.whenReady().then(async () => {
-  const source = nativeImage.createFromPath(path.join(OUT, 'app-source.png'));
-  if (source.isEmpty()) throw new Error('Arte original do ícone não encontrada.');
+  const win = new BrowserWindow({ show: false, width: 300, height: 300, transparent: true, webPreferences: { offscreen: false } });
+  await win.loadFile(path.join(ROOT, 'scripts', 'icon-page', 'index.html'));
+  const rig = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/character/jojo.rig.json'), 'utf8'));
+  const anim = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/animations/jojo.animations.json'), 'utf8'));
+  for (let i = 0; i < 50; i++) {
+    if (await win.webContents.executeJavaScript('!!window.iconsReady')) break;
+    await new Promise((r) => setTimeout(r, 100));
+  }
   const sizes = [16, 20, 24, 32, 40, 48, 64, 128, 256];
+  const urls = await win.webContents.executeJavaScript(`window.renderIcons(${JSON.stringify(rig)}, ${JSON.stringify(anim)}, ${JSON.stringify(sizes)})`);
   fs.mkdirSync(OUT, { recursive: true });
   const pngs = {};
-  for (const s of sizes) {
-    pngs[s] = source.resize({ width: s, height: s, quality: 'best' }).toPNG();
-    fs.writeFileSync(path.join(OUT, `app-${s}.png`), pngs[s]);
-  }
+  for (const s of sizes) { pngs[s] = Buffer.from(urls[s].split(',')[1], 'base64'); fs.writeFileSync(path.join(OUT, `app-${s}.png`), pngs[s]); }
   fs.writeFileSync(path.join(OUT, 'app.png'), pngs[256]);
   fs.writeFileSync(path.join(OUT, 'tray.png'), pngs[32]);
   fs.writeFileSync(path.join(OUT, 'tray@2x.png'), pngs[64]);
   fs.writeFileSync(path.join(OUT, 'app.ico'), ico([16, 24, 32, 48, 64, 128, 256].map((s) => ({ size: s, data: pngs[s] }))));
   fs.writeFileSync(path.join(OUT, 'tray.ico'), ico([16, 20, 24, 32, 40, 48, 64].map((s) => ({ size: s, data: pngs[s] }))));
-  console.log('Ícones gerados em', OUT);
+  const metadata = { origin: 'Exportação do rig histórico restaurado pelo Chromium Windows, sem redesenho.', source: '../character/jojo.rig.json', sha256: createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'assets/character/jojo.rig.json'))).digest('hex'), anatomy: 'original-legged-v1', sizes };
+  fs.writeFileSync(path.join(OUT, 'source.json'), JSON.stringify(metadata, null, 2) + '\n');
+  if (process.env.GITHUB_ACTIONS) {
+    const files = Object.fromEntries([...sizes.map(n => `app-${n}.png`), 'app.png', 'tray.png', 'tray@2x.png', 'app.ico', 'tray.ico', 'source.json'].map(name => { const data = fs.readFileSync(path.join(OUT, name)); return [name, { sha256: createHash('sha256').update(data).digest('hex'), base64: data.toString('base64') }]; }));
+    const payload = gzipSync(Buffer.from(JSON.stringify({ commit: process.env.GITHUB_SHA, files }))).toString('base64');
+    for (const part of payload.match(/.{1,4000}/g)) console.log(`JOJO_RESTORED_ICONS:${part}`);
+  }
+  console.log('Ícones exportados do rig restaurado, sem redesenho.');
   app.quit();
 });

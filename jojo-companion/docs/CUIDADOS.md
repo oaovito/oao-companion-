@@ -1,6 +1,7 @@
-# Cuidados, alimentação e progressão — candidata 0.45.0
+# Cuidados, alimentação e progressão — correções 0.45.1
 
-Implementados em código; validação completa Windows/render/build ainda pendente.
+Correções 0.45.1 em validação; os registros 0.45.0 abaixo são históricos e não
+substituem a nova medição/auditoria da arte restaurada.
 As medidas reais do renderer Windows foram importadas do run 41367076224.
 A auditoria aprovou as 1.268 animações, incluindo as 20 receitas de necessidades.
 
@@ -28,8 +29,10 @@ soltam sangue nem osso. Alimentar quando saciado não concede XP; cuidados têm
 cooldown e tetos. Não há som.
 
 Vinte receitas novas de necessidades usam desenho vetorial real do rig, expressões,
-corpo/nadadeiras/cauda e efeitos. A anatomia foi retargetada sem membros humanos;
-IDs de canais antigos permanecem como âncoras de compatibilidade. O catálogo
+corpo, braços, pernas, expressões e efeitos do modelo original restaurado.
+A direção de nadadeiras sem pernas da 0.45.0 é histórica e foi revogada; os
+recursos anteriores foram recuperados, sem cauda, por pedido explícito.
+IDs e canais antigos permanecem compatíveis. O catálogo
 antigo permanece presente. Medição/auditoria Windows 2847e41 passou para os 1.058
 itens então existentes; isto não valida as 20 receitas acrescentadas depois.
 

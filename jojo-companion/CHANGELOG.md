@@ -5,6 +5,7 @@
 ### Correções
 - Restaura pernas, braços, mãos, proporções e musculatura dos recursos históricos
   do JoJo, remove a cauda rejeitada e adapta canais legados sem apagar animações.
+  Ícones e descrição da conversa passam a usar o mesmo personagem restaurado.
 - Detecção de tela cheia usa a janela ativa e geometria física; estados globais
   de notificações/apresentação não bloqueiam uma janela comum ou a Central.
 - Todas as janelas próprias são reconhecidas; amostras antigas são descartadas

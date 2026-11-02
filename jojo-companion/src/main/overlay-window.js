@@ -154,8 +154,8 @@ export class OverlayWindow {
   }
 
   render(state) {
+    this.queuedState = state;
     if (!this.ready) {
-      this.queuedState = state;
       return;
     }
     this._send('jojo:state', state);
