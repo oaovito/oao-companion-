@@ -1,36 +1,35 @@
 # HANDOFF — JoJo Companion
 
-## Missão ativa: 0.45.0 em implementação
+## Missão ativa: 0.45.0 implementada; publicação bloqueada
 
-Branch `codex/living-companion`, baseada em `4193c2b`. A 0.44.0 continua publicada;
-nenhuma publicação 0.45.0 foi autorizada pelo pipeline ou realizada. Requisitos
-cumulativos, estado e pendências em [MISSAO_ATIVA](docs/MISSAO_ATIVA.md), incluindo
-o prompt mestre, Darkest Dungeon e a lista de tarefas. Não encerrar após apenas P0.
-Clima/CalDAV/To-Do/Darkest/cuidados/50 alimentos novos/50 cenas/Discord/atalho foram
-implementados. Evidências Windows anteriores: run 41363120886 passou 6/7 casos;
-falha restante era comparação de XP total (descoberta legítima +1), agora verifica
-somente a fonte de tarefas. DPAPI real, detector DD1 de fixture, cuidados e três
-casos de tarefas passaram nesse run. Não extrapolar esse resultado ao código novo.
+Branch `codex/living-companion`, base `4193c2b`. Aplicativo validado no commit
+**502ba0fd385131dae1ea31512448416d67969162**, Actions **41374307060**.
+Todos os gates da aplicação passaram no mesmo run Windows oficial: 404 unitários,
+31 engine +12 Central com Gemma real, build portátil/NSIS/ZIP, instalador e três
+atualizações/atalho/dados, vigia, 16 integrações, 39 E2E, 1.268 animações,
+desempenho, integridade/hashes, metadados do atualizador e notas. As 43 respostas
+reais foram lidas; evidência hasheada em docs/evidencias/conversa-windows-41374307060.json.
+Não confundir esses cenários com perfeição de qualquer conversa/Windows 11 físico.
 
-Runs 41366600620 e 41367076224 aprovaram os 10 cenários novos Windows.
-A auditoria 41367076224 aprovou 1.268 animações (0 erros/recortes/paradas/órfãs,
-0,44 ms por desenho); medidas reais importadas com hash conferido.
-404/404 testes puros locais passaram após novas regressões de contexto/acolhimento. Total E2E esperado no pipeline integral: 39.
-Catálogo agora tem 1.268 animações. A medição desta arte foi importada: não inventar limites em futuras mudanças
-nem remover a verificação. Ainda faltam os gates integrais do novo commit. `assets_only` no workflow original mede arte e
-roda os cenários novos; `measure_assets=false` testa apenas interfaces primeiro.
+O último passo iCloud FALHOU por ausência de JOJO_ICLOUD_USER e
+JOJO_ICLOUD_APP_PASSWORD. Conta autorizada é requisito explícito do pedido (linha
+798 de docs/REQUISITOS_0.45.0.md). Credenciais somente pelos secrets seguros e
+somente no último passo; jamais solicitar senha no chat. DPAPI e CalDAV de fixture
+passaram, mas não comprovam autenticação Apple real. Não remover esse gate.
 
-Publicação 0.45 exige também autenticação/leitura real iCloud. Novo passo isolado,
-depois dos demais gates, recebe apenas os secrets JOJO_ICLOUD_USER e
-JOJO_ICLOUD_APP_PASSWORD por canal seguro. Sem conta, relatório permanece reprovado,
-sem alterar a evidência histórica 0.44. Não passar essas credenciais ao npm/build/testes.
-Conversa engine: 31/31 com Gemma real passou em 41373138263 /55d1b7a.
-Central falhou no segundo turno porque cuidados interceptava “você está bem?”;
-roteamento corrigido para consultar atributos somente quando explicitamente pedidos.
-Regressão também evita refeição antiga reaparecer após entrar/sair rapidamente do
-Foco/Trabalho, suspensão/tela cheia. Não enfraquecer o ensaio real nem aceitar
-fallback como inferência. Detalhes: CUIDADOS.md, CENAS_E_FOCO.md, AGENDA_ICLOUD.md
- e MISSAO_ATIVA.md. Ainda faltam gates integrais e autenticação iCloud real.
+Quota de armazenamento CI recusou o upload; API confirma zero artefatos retidos.
+Binários foram gerados/validados no runner, não estão disponíveis para download.
+Workflow posterior imprime resumo sanitizado em logs para preservar hashes/status;
+não muda o app validado. Não repetir build pesado sem resolver a conta externa.
+
+0.44.0 segue publicada; as 18 releases históricas e assets continuam iguais.
+Não há tag/release 0.45.0; política de publicação/cron continua em 0.44.0.
+Detalhes, escopo cumulativo e próximos passos: [MISSAO_ATIVA](docs/MISSAO_ATIVA.md).
+Clima/CalDAV/To-Do/DD/cuidados/50 alimentos novos/50 cenas/Discord/atalho/ícone
+implementados; docs TAREFAS.md, AGENDA_ICLOUD.md, CUIDADOS.md, CENAS_E_FOCO.md.
+Arte já medida no Windows e importada; não repetir se não alterar o desenho.
+API timing deste run: WINDOWS total_ms=0; não foram alterados plano/cartão/limites.
+Não extrapolar para fatura/orçamento, que a API não permite consultar.
 
 ## Estado atual e decisão definitiva
 

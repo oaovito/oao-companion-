@@ -249,3 +249,17 @@ zero erros/recortes/paradas/órfãs, média 0,44 ms. JSON real importado, SHA-25
 401/401 testes puros passaram depois da importação. Não repetir medição sem mudar
 arte; continuar pelo pipeline INTEGRAL e ensaio iCloud real. Reações de DD agora
 ficam em fila persistente e só tocam após fechar o jogo, fora de foco/tela cheia.
+
+## Validação integral da candidata — 02/11/2026
+
+Fonte **502ba0f**, Actions **41374307060**: TODOS os gates do aplicativo passaram
+no mesmo Windows oficial: 404 unitários, 31+12 conversa real, build/NSIS e três
+atualizações, portátil/vigia, 16 integração, 39 E2E, 1.268 animações, desempenho,
+hashes, atualizador e notas. Resultado global bloqueado SOMENTE no passo final
+icloud-live por secrets JOJO_ICLOUD_USER/JOJO_ICLOUD_APP_PASSWORD ausentes.
+O pedido exige conta autorizada (REQUISITOS_0.45.0.md:798); não remover o gate.
+Armazenamento CI também recusou upload; zero artefatos retidos, nenhum binário novo
+publicado. Não apagar evidências antigas/comprar cota. Conta autorizada por canal
+seguro é dependência externa; depois retomar fluxo oficial no mesmo run de publicação.
+Não repetir implementação ou testes pesados enquanto a dependência não mudar.
+Evidências/limites/continuidade em HANDOFF e docs/MISSAO_ATIVA.md. 18 releases intactas.

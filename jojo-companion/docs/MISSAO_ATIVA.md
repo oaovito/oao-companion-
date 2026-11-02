@@ -89,17 +89,62 @@ Continuidade das implementações anteriores no Git, sem sobrescrever trabalho.
   do Foco. Transições para Foco/Trabalho/suspensão/tela cheia invalidam contexto visual
   antigo e limpam efeitos. Nenhuma perda de consumo/XP. Suíte atual: 404 testes.
 
-## Próximos gates
+## Validação integral da aplicação — 02/11/2026
 
-1. Concluir pipeline INTEGRAL no novo commit: 404 unitários, 39 E2E, 16 integração,
-   31 engine +12 Central Gemma real, build NSIS/portátil/ZIP, instalação e três
-   atualizações, desempenho, hashes, atualizador e notas incrementais.
-2. Ensaio autenticado iCloud com conta autorizada, secrets por canal seguro.
-   Passo final isolado exige isso e bloqueia relatório/publicação sem prova real.
-3. Somente após TODOS os requisitos/gates, habilitar a candidata na política de
-   publicação oficial. Nunca publicar parte da missão nem reescrever as 18 releases.
+Run **41374307060**, fonte **502ba0fd385131dae1ea31512448416d67969162**,
+GitHub-hosted Windows x64/Node 22.23.4. Todos os gates anteriores à conta iCloud
+PASSARAM no mesmo commit/run: preflight, lint, npm ci, **404 unitários**, conversa
+**31 engine +12 Central com Gemma 3 4B real**, build dos três formatos, NSIS
+instalado/iniciado/desinstalado e três atualizações com atalho/dados preservados,
+portátil, vigia, **16 integrações nativas**, **39 E2E**, **1.268 animações**,
+desempenho, GPU/pesquisa opcionais, integridade dos arquivos, compatibilidade do
+atualizador e notas incrementais. Sem pulos nas suítes obrigatórias.
 
-Medição e diagnóstico de dez cenários já concluídos; NÃO repetir sem mudar arte.
+Todas as 43 falas reais foram recuperadas, hash conferido e lidas; screenshot da
+Central revisado. Evidência sintética, sem conta ou dados pessoais:
+`evidencias/conversa-windows-41374307060.json`, digest do conteúdo
+`4abf120254848b6f5cbfe8dab009deff0ad2df4d96921c13020e6961ecc41546`.
+Isso comprova esses cenários, não perfeição geral do modelo nem teste físico no PC.
+A detecção DD foi validada com fixture nativa, não com uma cópia comercial do jogo.
+
+**Resultado global: BLOQUEADO** no último passo `icloud-live` exclusivamente por
+JOJO_ICLOUD_USER/JOJO_ICLOUD_APP_PASSWORD ausentes no job. Nenhuma autenticação
+Apple real ocorreu. Exigência do próprio pedido: REQUISITOS_0.45.0.md, linha 798.
+Não remover o gate, fingir conta ou solicitar senha no chat. Necessária conta de
+teste autorizada, com senha específica de aplicativo pelos secrets seguros do
+repositório. As credenciais só chegam ao passo final isolado, não ao npm/build.
+
+**Armazenamento CI também esgotado**: upload recusado por `Artifact storage quota
+has been hit`; API confirma zero artefatos preservados nesse run. Os três binários
+foram gerados/validados no runner, mas NÃO estão disponíveis para baixar e NÃO foram
+publicados. Não apagar releases/artefatos históricos nem comprar armazenamento.
+Resumo do run está no GitHub; o workflow agora também imprime o JSON sanitizado
+em logs privados, para preservar status/hashes mesmo sem upload em futuras execuções.
+Essa última mudança é de relatório, não altera o aplicativo validado em 502ba0f.
+
+API timing: WINDOWS total_ms=0, duração total 1.812.000 ms. Nenhum plano/cartão/limite
+foi alterado. A configuração financeira da conta segue sem acesso pela API; esse
+resultado não equivale a verificar a fatura ou confirmar orçamento pago zero.
+
+## Continuidade necessária
+
+1. Disponibilizar a conta iCloud autorizada por canal seguro. A API de Secrets não
+   está autorizada para o Codex; não pode criar valor que não foi fornecido.
+2. Com essa dependência resolvida, retomar o workflow oficial e verificar o ensaio
+   real. Regerar os binários no MESMO run que possa publicar; não reaproveitar
+   hashes de outra execução nem simular o resultado ausente. Upload CI é opcional
+   e não bloqueia a publicação direta dos três binários validados no mesmo job.
+3. Somente com TODOS os gates/requisitos aprovados, atualizar a política oficial de
+   publicação para 0.45.0/branch de fonte correta, integrar/publish pelo mecanismo
+   existente e verificar downloads públicos/anônimos + atualizador. A política
+   horária continua em 0.44.0; não haverá tentativa pesada recorrente sem credencial.
+4. As **18 releases permanecem iguais** ao snapshot inicial (ID, tag, texto,
+   publicação e IDs/nomes/tamanhos/digests/updated_at dos assets); última v0.44.0.
+   Nenhuma tag/release 0.45.0 criada. MNE_Lab intocado; somente GitHub oficial.
+
+Não repetir desenvolvimento, medição ou builds enquanto a dependência externa não
+mudar. Código da aplicação validado: 502ba0f; commit posterior só registra evidências
+ e melhora retenção do relatório. Não prometer execução contínua do Codex.
 
 A API apresentou 401 transitório nesta sessão; Git e API voltaram a responder.
 Nenhuma senha/token foi solicitado no chat ou gravado no projeto. MNE_Lab intocado.

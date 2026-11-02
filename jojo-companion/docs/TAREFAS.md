@@ -1,7 +1,7 @@
 # Lista de Tarefas — candidata 0.45.0
 
 Implementação em `codex/living-companion`. Ainda não distribuída. A 0.44.0 continua
-sendo a versão pública. Os resultados Windows serão registrados após o Actions.
+sendo a versão pública. Os resultados Windows estão registrados abaixo.
 
 ## Uso
 
@@ -59,9 +59,12 @@ negativas não autorizam mutação. A segurança da conversa tem prioridade.
 
 ## Validação
 
-15 testes novos de lógica cobrem CRUD, paginação, reset/fuso/DST, desligamento,
-recorrência, XP/limite/deduplicação, recuperação, importação, foco/lembretes,
-linguagem natural e preservação do XP anterior. Quatro cenários Electron Windows
-foram acrescentados à suíte oficial: interface/arraste/XP, reinício/reset, painel
-nativo/foco e chat/IPC/HTML. Estes cenários ainda precisam ser executados no Actions;
-não representam teste feito no PC físico da usuária.
+A suíte completa passou: 404 testes de lógica no editor e no Windows oficial,
+com CRUD, paginação, reset/fuso/DST, desligamento, recorrência, XP/limite/deduplicação,
+recuperação, importação, foco/lembretes, linguagem natural e XP anterior.
+
+Actions **41374307060**, fonte **502ba0f**: os cinco cenários nativos desta suíte
+passaram (quatro de tarefas + DPAPI real), junto aos demais 39 E2E/16 integrações,
+conversa real e build/instalador. A Central não cria outro chat. Testes usam perfis
+isolados; não foram executados no PC físico da usuária. A publicação 0.45.0 está
+bloqueada pelo ensaio iCloud com conta autorizada, conforme MISSAO_ATIVA.md.

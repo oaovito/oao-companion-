@@ -131,3 +131,14 @@ As 17 releases públicas foram comparadas ao snapshot inicial, incluindo notas e
 IDs/nomes/tamanhos/digests dos assets: nenhuma alteração. Naquela primeira tentativa
 a pública ainda era v0.43.1. A execução final publicou v0.44.0 e repetiu a verificação.
 Não criar outra infraestrutura.
+
+## Candidata 0.45.0 — 02/11/2026
+
+Actions 41374307060 /502ba0f aprovou todos os gates da aplicação: 404 unitários,
+31+12 conversa real, 16 integrações, 39 E2E, 1.268 animações, NSIS e três atualizações,
+portátil/ZIP/vigia/desempenho/hashes/atualizador/notas. O passo final iCloud bloqueou
+por secrets ausentes, preservando a proibição de publicar sem conta autorizada.
+Uploads CI continuam recusados pela quota. Resumo sanitizado agora também é escrito
+no log privado; não contém conta, credencial ou evento pessoal. Nenhuma compra,
+remoção de artefato histórico ou novo provedor foi usada. Política/cron continua
+na versão já publicada 0.44.0, sem loops de repetição pesada da candidata bloqueada.

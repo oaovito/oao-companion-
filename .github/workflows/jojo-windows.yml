@@ -68,7 +68,10 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path 'jojo-companion/out/windows-ci/summary/validation.json') {
-            Get-Content -Raw -Encoding utf8 'jojo-companion/out/windows-ci/summary/validation.json' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+            $report = Get-Content -Raw -Encoding utf8 'jojo-companion/out/windows-ci/summary/validation.json'
+            # Só status, SHA, tempos e hashes; nenhuma credencial ou evento pessoal.
+            Write-Output $report
+            $report | Add-Content -Path $env:GITHUB_STEP_SUMMARY
           }
       - name: Artefatos e evidencias do CI
         if: ${{ !cancelled() }}
