@@ -29,4 +29,4 @@ app.whenReady().then(async () => {
   }
   console.log('Espaço por animação salvo:', Object.keys(res.anims).length, 'animações');
   app.quit();
-});
+}).catch(error => { console.error(error.message); app.exit(1); });

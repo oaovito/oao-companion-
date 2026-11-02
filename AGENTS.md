@@ -242,3 +242,10 @@ O workflow tem passo iCloud isolado DEPOIS dos demais gates; secrets só nesse
 passo, nunca no npm/build/testes. Candidatas >=0.45 exigem `icloud-live` e evidência
 somente de contagens/horário. Sem conta autorizada, NÃO finalizar/publicar.
 Não confundir os diagnósticos `assets_only` com aprovação integral do pipeline.
+
+Medição/auditoria 41367076224 (474bff2) passou: 1.268 animações, 434 bases,
+zero erros/recortes/paradas/órfãs, média 0,44 ms. JSON real importado, SHA-256
+45a74560433377127ddabb567e8d22753d5bed2d2942c023423b2b0c38976287.
+401/401 testes puros passaram depois da importação. Não repetir medição sem mudar
+arte; continuar pelo pipeline INTEGRAL e ensaio iCloud real. Reações de DD agora
+ficam em fila persistente e só tocam após fechar o jogo, fora de foco/tela cheia.

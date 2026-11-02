@@ -3,11 +3,13 @@ import { civilParts, shiftDay, validDay } from './civil-time.js';
 const clone = x => structuredClone(x);
 export const DD_BALANCE = Object.freeze({ start: 15, firstDay: 50, milestones: [[15, 25], [30, 40], [60, 80]], dailyCap: 300, validSeconds: 60, maxStartsPerDay: 3, idleSeconds: 120 });
 export function emptyDarkest() {
-  return { version: 1, daily: {}, session: null, sessions: 0, activeMs: 0, days: [], highDay: null, history: [], outbox: [], lastPhrase: -1, suggestion: null, achievement: false };
+  return { version: 1, daily: {}, session: null, sessions: 0, activeMs: 0, days: [], highDay: null, history: [], outbox: [], lastPhrase: -1, suggestion: null, achievement: false, pendingVisuals: [], lastVisualAt: 0 };
 }
 export function validateDarkest(s) {
   if (!s || s.version !== 1 || !s.daily || !Array.isArray(s.days) || !Array.isArray(s.history) || !Array.isArray(s.outbox)) throw new Error('Registro de Darkest Dungeon inválido.');
-  return { ...emptyDarkest(), ...clone(s) };
+  const state = { ...emptyDarkest(), ...clone(s) };
+  if (!Array.isArray(state.pendingVisuals) || state.pendingVisuals.length > 3 || !state.pendingVisuals.every(id => ['ddXp', 'ddConquista', 'ddDesespero'].includes(id)) || !Number.isFinite(state.lastVisualAt) || state.lastVisualAt < 0) throw new Error('Reação pendente inválida.');
+  return state;
 }
 export class DarkestDungeon {
   constructor({ state, balance = DD_BALANCE, lines = [], save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), monotonic = () => performance.now(), rng = Math.random, zone = () => 'local', changed = () => {} } = {}) {
@@ -28,17 +30,25 @@ export class DarkestDungeon {
     this.changed(); return result;
   }
   daily(day) { return this.st.daily[day] ||= { activeMs: 0, sessions: 0, starts: 0, xp: 0, rewarded: [], valid: false }; }
+  queueVisual(id) { if (!this.st.pendingVisuals.includes(id)) this.st.pendingVisuals.push(id); }
+  takeVisual({ allowed = false, play = () => false } = {}) {
+    if (!allowed || this.running || this.st.outbox.length || this.now() - this.st.lastVisualAt < 10000) return null;
+    const id = ['ddConquista', 'ddXp', 'ddDesespero'].find(id => this.st.pendingVisuals.includes(id));
+    if (!id || !play(id)) return null;
+    this.mutate(() => { this.st.pendingVisuals = this.st.pendingVisuals.filter(v => v !== id); this.st.lastVisualAt = this.now(); });
+    return id;
+  }
   reward(id, amount, day, label) {
     const d = this.daily(day); if (d.rewarded.includes(id) || (this.st.highDay && day < this.st.highDay)) return;
     d.rewarded.push(id); amount = Math.max(0, Math.min(amount, this.balance.dailyCap - d.xp));
-    if (!amount) return; d.xp += amount;
+    if (!amount) return; d.xp += amount; this.queueVisual('ddXp');
     this.st.outbox.push({ id: `darkest:${id}`, amount, day, label, source: 'darkest' });
   }
   drain() {
     while (this.st.outbox.length) {
       let r; try { r = this.award(this.st.outbox[0]); } catch { return; }
       if (!r || r.pending) return;
-      this.mutate(() => this.st.outbox.shift());
+      this.mutate(() => { this.st.outbox.shift(); if (r.levelUp) this.queueVisual('ddConquista'); });
     }
   }
   observe({ running = false, active = false, processKey = null, idleSeconds = Infinity, suspended = false } = {}) {
@@ -54,7 +64,7 @@ export class DarkestDungeon {
     if (!this.running || (this.active && this.st.session?.key !== processKey)) {
       this.mutate(() => {
         const old = this.st.session;
-        if (old?.valid) { this.st.history.push({ type: 'session', start: old.started, end: this.now(), activeMs: old.activeMs }); this.st.history = this.st.history.slice(-500); }
+        if (old?.valid) { this.queueVisual('ddDesespero'); this.st.history.push({ type: 'session', start: old.started, end: this.now(), activeMs: old.activeMs }); this.st.history = this.st.history.slice(-500); }
         this.st.session = this.active ? { key: processKey, started: this.now(), activeMs: 0, valid: false, milestones: [] } : null;
       });
     }
@@ -70,7 +80,7 @@ export class DarkestDungeon {
       if (session.valid && d.activeMs >= this.balance.validSeconds * 1000 && !d.valid && day >= this.st.highDay) {
         d.valid = true; if (!this.st.days.includes(day)) this.st.days.push(day);
         this.reward(`${day}:first`, this.balance.firstDay, day, 'Primeira sessão válida do dia');
-        if (this.st.days.length >= 7) this.st.achievement = true;
+        if (this.st.days.length >= 7 && !this.st.achievement) { this.st.achievement = true; this.queueVisual('ddConquista'); }
       }
       for (const [minutes, xp] of this.balance.milestones) {
         if (session.valid && session.activeMs >= minutes * 60000 && !session.milestones.includes(minutes)) {

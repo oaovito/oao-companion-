@@ -7,7 +7,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { AtomicState } from '../core/atomic-state.js';
-import { SHORTCUT_NAMES, JOJO_APP_ID, migrateShortcuts } from '../core/shortcuts.js';
+import { SHORTCUT_NAMES, isStandardShortcutName, JOJO_APP_ID, migrateShortcuts } from '../core/shortcuts.js';
 
 const VIGIA_SRC = path.join(path.dirname(fileURLToPath(import.meta.url)), 'vigia.cjs');
 
@@ -78,7 +78,7 @@ export function garantirAtalho({ app, shell, log, env = process.env, platform = 
     const dirs = [...new Set([desktop, ...(env.PUBLIC ? [path.join(env.PUBLIC, 'Desktop')] : [])])];
     const entries = [];
     for (const dir of dirs) {
-      let names = []; try { names = fs.readdirSync(dir).filter(n => SHORTCUT_NAMES.some(s => s.toLowerCase() === n.toLowerCase())); } catch { /* público pode não ser acessível */ }
+      let names = []; try { names = fs.readdirSync(dir).filter(isStandardShortcutName); } catch { /* público pode não ser acessível */ }
       if (!names.includes(SHORTCUT_NAMES[0])) names.push(SHORTCUT_NAMES[0]);
       for (const name of names) {
         const file = path.join(dir, name);

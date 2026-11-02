@@ -67,3 +67,5 @@ Windows usam processos Electron de fixture e arquivos .lnk reais em áreas fict�
 não operam no computador da usuária. Os 10 cenários novos passaram no Actions 41366600620, commit ea3b09a.
 Repetir após as alterações posteriores, junto à
 medição/auditoria de TODAS as 1.268 animações, antes de considerar a candidata validada.
+O run 41367076224 mediu/auditou toda a arte e repetiu os 10 casos com sucesso;
+preview real recuperado dos logs e revisado. Gates integrais continuam pendentes.

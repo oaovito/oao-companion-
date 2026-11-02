@@ -12,10 +12,12 @@ falha restante era comparação de XP total (descoberta legítima +1), agora ver
 somente a fonte de tarefas. DPAPI real, detector DD1 de fixture, cuidados e três
 casos de tarefas passaram nesse run. Não extrapolar esse resultado ao código novo.
 
-Novos testes nativos de Discord, atalhos e cenas preparados: total E2E esperado 39.
-Catálogo agora tem 1.268 animações. Medição Windows nova é OBRIGATÓRIA: o teste de
-cobertura continua falhando até importar os limites realmente medidos; não inventar
-geometria nem remover a verificação. `assets_only` no workflow original mede arte e
+Runs 41366600620 e 41367076224 aprovaram os 10 cenários novos Windows.
+A auditoria 41367076224 aprovou 1.268 animações (0 erros/recortes/paradas/órfãs,
+0,44 ms por desenho); medidas reais importadas com hash conferido.
+401/401 testes puros locais passaram. Total E2E esperado no pipeline integral: 39.
+Catálogo agora tem 1.268 animações. A medição desta arte foi importada: não inventar limites em futuras mudanças
+nem remover a verificação. Ainda faltam os gates integrais do novo commit. `assets_only` no workflow original mede arte e
 roda os cenários novos; `measure_assets=false` testa apenas interfaces primeiro.
 
 Publicação 0.45 exige também autenticação/leitura real iCloud. Novo passo isolado,

@@ -24,6 +24,8 @@ test('Discord Windows: WM_CLOSE, confirmação, força opt-in, cancelamento e ex
   const alive = app => { try { process.kill(app.process().pid, 0); return true; } catch { return false; } };
   try {
     const unrelated = await start(updater, true); const normal = await start(discord);
+    const localIcon = await main.app.evaluate(async () => { const j = globalThis.__jojo; await j.focusApps.refreshBadges({ force: true }); return j.needsService.model.balance.localBadges.includes('discord'); });
+    assert.equal(localIcon, true, 'Windows extraiu o ícone do executável local, sem arte de marca incluída no pacote');
     const closed = await main.app.evaluate(() => globalThis.__jojo.nativeDetector().closeDiscord());
     assert.ok(closed.detected >= 1); assert.ok(closed.requests >= 1); assert.equal(closed.remaining, 0, JSON.stringify({ result: closed, events: fs.existsSync(path.join(root, 'profile-1/close-events.txt')) ? fs.readFileSync(path.join(root, 'profile-1/close-events.txt'), 'utf8') : 'no-close-event' })); assert.equal(closed.forced, 0); assert.equal(alive(normal), false); assert.equal(alive(unrelated), true);
     const stubborn = await start(discord, true);

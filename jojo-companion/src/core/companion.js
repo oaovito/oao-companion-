@@ -2860,8 +2860,8 @@ export class Companion {
   _endFocus(done) {
     const f = this.focus;
     this.focus = null;
-    this.onFocusEnd?.();
     if (!f) return null;
+    this.onFocusEnd?.();
     // Para de estudar/treinar do lado na hora.
     if (/^cat_(estudarJunto|treinarJunto)/.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, this.clock.now());
     if (!done) {

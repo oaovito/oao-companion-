@@ -2,15 +2,15 @@
  "notes": "Gerado por scripts/anim-room.mjs: px além da caixa do JoJo (olhando para a direita, escala 1).",
  "anims": {
   "idle": {
-   "l": 7,
+   "l": 0,
    "t": 11,
-   "r": 7,
+   "r": 3,
    "b": 5
   },
   "interactIdle": {
-   "l": 7,
+   "l": 0,
    "t": 10,
-   "r": 7,
+   "r": 0,
    "b": 5
   },
   "lookAround": {
@@ -23,37 +23,37 @@
    "l": 0,
    "t": 40,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "surprised": {
-   "l": 26,
-   "t": 62,
-   "r": 26,
+   "l": 6,
+   "t": 63,
+   "r": 6,
    "b": 5
   },
   "walk": {
    "l": 16,
    "t": 10,
-   "r": 15,
+   "r": 0,
    "b": 5
   },
   "run": {
    "l": 16,
    "t": 8,
-   "r": 19,
-   "b": 9
+   "r": 13,
+   "b": 5
   },
   "sitDown": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "sit": {
    "l": 0,
    "t": 5,
-   "r": 2,
-   "b": 8
+   "r": 3,
+   "b": 5
   },
   "standUp": {
    "l": 0,
@@ -65,54 +65,54 @@
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "lie": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 8
+   "b": 5
   },
   "fallAsleep": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "meditate": {
-   "l": 1,
+   "l": 0,
    "t": 13,
-   "r": 1,
+   "r": 0,
    "b": 5
   },
   "sleep": {
    "l": 0,
    "t": 53,
    "r": 0,
-   "b": 11
+   "b": 5
   },
   "wake": {
-   "l": 3,
+   "l": 6,
    "t": 16,
-   "r": 3,
+   "r": 6,
    "b": 5
   },
   "talk": {
-   "l": 18,
+   "l": 1,
    "t": 7,
-   "r": 18,
+   "r": 1,
    "b": 5
   },
   "happy": {
-   "l": 20,
+   "l": 8,
    "t": 19,
-   "r": 20,
-   "b": 7
+   "r": 8,
+   "b": 5
   },
   "petted": {
-   "l": 12,
+   "l": 0,
    "t": 66,
-   "r": 12,
+   "r": 0,
    "b": 5
   },
   "eat": {
@@ -122,40 +122,40 @@
    "b": 5
   },
   "play": {
-   "l": 8,
+   "l": 9,
    "t": 16,
-   "r": 8,
-   "b": 10
+   "r": 9,
+   "b": 5
   },
   "dragged": {
-   "l": 34,
+   "l": 12,
    "t": 6,
-   "r": 34,
-   "b": 14
+   "r": 12,
+   "b": 5
   },
   "land": {
-   "l": 43,
+   "l": 16,
    "t": 15,
    "r": 0,
-   "b": 16
+   "b": 5
   },
   "appear": {
    "l": 0,
    "t": 22,
-   "r": 11,
+   "r": 1,
    "b": 5
   },
   "goodbye": {
    "l": 0,
    "t": 5,
-   "r": 11,
+   "r": 1,
    "b": 5
   },
   "hide": {
    "l": 0,
    "t": 0,
    "r": 0,
-   "b": 14
+   "b": 5
   },
   "judge": {
    "l": 0,
@@ -164,46 +164,46 @@
    "b": 5
   },
   "scare": {
-   "l": 20,
-   "t": 46,
-   "r": 20,
-   "b": 8
+   "l": 14,
+   "t": 47,
+   "r": 14,
+   "b": 5
   },
   "wave": {
-   "l": 3,
+   "l": 6,
    "t": 6,
-   "r": 13,
+   "r": 6,
    "b": 5
   },
   "nod": {
    "l": 0,
    "t": 5,
-   "r": 5,
+   "r": 0,
    "b": 5
   },
   "lecture": {
-   "l": 20,
+   "l": 0,
    "t": 6,
-   "r": 20,
+   "r": 6,
    "b": 5
   },
   "comfort": {
-   "l": 25,
+   "l": 0,
    "t": 5,
-   "r": 25,
+   "r": 0,
    "b": 5
   },
   "angry": {
-   "l": 9,
-   "t": 43,
-   "r": 9,
-   "b": 10
+   "l": 6,
+   "t": 44,
+   "r": 6,
+   "b": 5
   },
   "sad": {
    "l": 0,
    "t": 6,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "benchPress": {
    "l": 0,
@@ -215,79 +215,79 @@
    "l": 32,
    "t": 5,
    "r": 32,
-   "b": 5
+   "b": 8
   },
   "snort": {
-   "l": 2,
+   "l": 0,
    "t": 5,
-   "r": 2,
+   "r": 0,
    "b": 16
   },
   "chug": {
    "l": 0,
    "t": 5,
-   "r": 20,
-   "b": 6
+   "r": 15,
+   "b": 7
   },
   "sitWired": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 10
+   "b": 5
   },
   "moon": {
    "l": 21,
    "t": 6,
-   "r": 9,
-   "b": 15
+   "r": 6,
+   "b": 10
   },
   "smitten": {
-   "l": 40,
-   "t": 92,
-   "r": 37,
-   "b": 18
+   "l": 27,
+   "t": 93,
+   "r": 26,
+   "b": 23
   },
   "poop": {
    "l": 0,
    "t": 6,
    "r": 31,
-   "b": 25
+   "b": 19
   },
   "finger": {
    "l": 0,
    "t": 6,
-   "r": 7,
+   "r": 6,
    "b": 5
   },
   "avcStrain": {
-   "l": 9,
+   "l": 0,
    "t": 5,
-   "r": 12,
+   "r": 1,
    "b": 5
   },
   "avcClutch": {
-   "l": 20,
-   "t": 40,
+   "l": 0,
+   "t": 41,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "avcFall": {
-   "l": 18,
+   "l": 5,
    "t": 6,
    "r": 0,
-   "b": 9
+   "b": 23
   },
   "avcDead": {
    "l": 0,
    "t": 9,
    "r": 46,
-   "b": 9
+   "b": 23
   },
   "avcRevive": {
-   "l": 17,
-   "t": 92,
+   "l": 5,
+   "t": 93,
    "r": 0,
-   "b": 9
+   "b": 23
   },
   "cat_piscar": {
    "l": 0,
@@ -302,21 +302,21 @@
    "b": 5
   },
   "cat_bocejar": {
-   "l": 23,
+   "l": 2,
    "t": 23,
-   "r": 23,
+   "r": 2,
    "b": 5
   },
   "cat_cochilar": {
    "l": 0,
    "t": 54,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "cat_espreguicar": {
-   "l": 23,
+   "l": 2,
    "t": 23,
-   "r": 23,
+   "r": 2,
    "b": 5
   },
   "cat_balancar": {
@@ -326,9 +326,9 @@
    "b": 5
   },
   "cat_flutuar": {
-   "l": 21,
+   "l": 0,
    "t": 16,
-   "r": 21,
+   "r": 0,
    "b": 5
   },
   "cat_caudaDevagar": {
@@ -388,25 +388,25 @@
   "cat_pesquisando": {
    "l": 0,
    "t": 5,
-   "r": 12,
+   "r": 6,
    "b": 5
   },
   "cat_lendo": {
    "l": 0,
    "t": 5,
-   "r": 18,
+   "r": 15,
    "b": 5
   },
   "cat_tarefaConcluida": {
-   "l": 27,
+   "l": 18,
    "t": 21,
-   "r": 27,
+   "r": 15,
    "b": 14
   },
   "cat_confuso": {
-   "l": 16,
+   "l": 0,
    "t": 40,
-   "r": 16,
+   "r": 0,
    "b": 5
   },
   "cat_seguirOlhar": {
@@ -428,15 +428,15 @@
    "b": 5
   },
   "cat_animado": {
-   "l": 24,
+   "l": 4,
    "t": 15,
-   "r": 24,
+   "r": 4,
    "b": 5
   },
   "cat_puloAlegria": {
-   "l": 27,
+   "l": 6,
    "t": 20,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_risada": {
@@ -452,9 +452,9 @@
    "b": 5
   },
   "cat_orgulhoso": {
-   "l": 0,
+   "l": 2,
    "t": 27,
-   "r": 0,
+   "r": 2,
    "b": 5
   },
   "cat_apaixonado": {
@@ -476,16 +476,16 @@
    "b": 5
   },
   "cat_comemorar": {
-   "l": 27,
+   "l": 18,
    "t": 44,
-   "r": 27,
+   "r": 15,
    "b": 14
   },
   "cat_dancinha": {
-   "l": 42,
+   "l": 16,
    "t": 6,
-   "r": 45,
-   "b": 10
+   "r": 19,
+   "b": 5
   },
   "cat_brilhoOlhos": {
    "l": 0,
@@ -506,9 +506,9 @@
    "b": 5
   },
   "cat_empolgado": {
-   "l": 20,
+   "l": 4,
    "t": 15,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_chorando": {
@@ -560,21 +560,21 @@
    "b": 5
   },
   "cat_frustrado": {
-   "l": 24,
+   "l": 4,
    "t": 47,
-   "r": 24,
+   "r": 4,
    "b": 5
   },
   "cat_assustado": {
    "l": 0,
-   "t": 50,
+   "t": 51,
    "r": 0,
    "b": 5
   },
   "cat_chocado": {
-   "l": 30,
-   "t": 50,
-   "r": 23,
+   "l": 14,
+   "t": 51,
+   "r": 0,
    "b": 5
   },
   "cat_cansado": {
@@ -587,30 +587,30 @@
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "cat_tchau": {
    "l": 0,
    "t": 5,
-   "r": 25,
+   "r": 5,
    "b": 5
   },
   "cat_abraco": {
-   "l": 23,
+   "l": 1,
    "t": 66,
-   "r": 23,
+   "r": 1,
    "b": 5
   },
   "cat_coracao": {
-   "l": 24,
+   "l": 6,
    "t": 45,
-   "r": 24,
+   "r": 6,
    "b": 5
   },
   "cat_highFive": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 6,
    "b": 5
   },
   "cat_piscadinha": {
@@ -626,21 +626,21 @@
    "b": 5
   },
   "cat_ombros": {
-   "l": 16,
+   "l": 0,
    "t": 5,
-   "r": 16,
+   "r": 0,
    "b": 5
   },
   "cat_apontar": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_convidar": {
    "l": 0,
    "t": 5,
-   "r": 19,
+   "r": 0,
    "b": 5
   },
   "cat_desculpas": {
@@ -658,61 +658,61 @@
   "cat_cumprimentar": {
    "l": 0,
    "t": 5,
-   "r": 19,
+   "r": 1,
    "b": 5
   },
   "cat_tarefaFinalizada": {
-   "l": 20,
+   "l": 18,
    "t": 21,
-   "r": 20,
+   "r": 15,
    "b": 14
   },
   "cat_erro": {
-   "l": 24,
+   "l": 4,
    "t": 47,
-   "r": 24,
+   "r": 4,
    "b": 5
   },
   "cat_sucesso": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_sequencia": {
-   "l": 20,
+   "l": 18,
    "t": 21,
-   "r": 20,
+   "r": 15,
    "b": 14
   },
   "cat_aniversario": {
-   "l": 27,
+   "l": 18,
    "t": 30,
-   "r": 27,
+   "r": 15,
    "b": 14
   },
   "cat_bomDia": {
-   "l": 23,
+   "l": 2,
    "t": 21,
-   "r": 28,
+   "r": 23,
    "b": 5
   },
   "cat_boaNoite": {
    "l": 5,
    "t": 37,
-   "r": 24,
+   "r": 8,
    "b": 5
   },
   "cat_lembrete": {
    "l": 0,
-   "t": 40,
-   "r": 23,
+   "t": 41,
+   "r": 16,
    "b": 5
   },
   "cat_horaPausa": {
    "l": 0,
    "t": 5,
-   "r": 23,
+   "r": 16,
    "b": 5
   },
   "cat_modoFoco": {
@@ -729,31 +729,31 @@
   },
   "cat_notificacao": {
    "l": 0,
-   "t": 50,
+   "t": 51,
    "r": 0,
    "b": 5
   },
   "cat_mensagemNova": {
    "l": 0,
-   "t": 40,
-   "r": 20,
+   "t": 41,
+   "r": 14,
    "b": 5
   },
   "cat_ausente": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "cat_voltou": {
-   "l": 27,
+   "l": 6,
    "t": 81,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_clique": {
    "l": 0,
-   "t": 46,
+   "t": 47,
    "r": 0,
    "b": 5
   },
@@ -782,15 +782,15 @@
    "b": 5
   },
   "cat_empurrado": {
-   "l": 14,
+   "l": 18,
    "t": 6,
    "r": 0,
-   "b": 8
+   "b": 5
   },
   "cat_seguir": {
-   "l": 25,
+   "l": 5,
    "t": 5,
-   "r": 33,
+   "r": 8,
    "b": 5
   },
   "cat_esconder": {
@@ -802,7 +802,7 @@
   "cat_espiarBorda": {
    "l": 0,
    "t": 5,
-   "r": 41,
+   "r": 47,
    "b": 5
   },
   "cat_beberShake": {
@@ -812,16 +812,16 @@
    "b": 5
   },
   "cat_ouvirMusica": {
-   "l": 24,
+   "l": 14,
    "t": 6,
-   "r": 20,
+   "r": 15,
    "b": 5
   },
   "cat_estrelas": {
    "l": 5,
    "t": 35,
    "r": 8,
-   "b": 6
+   "b": 5
   },
   "cat_soprarBolhas": {
    "l": 0,
@@ -830,9 +830,9 @@
    "b": 5
   },
   "cat_perseguir": {
-   "l": 32,
+   "l": 13,
    "t": 6,
-   "r": 37,
+   "r": 14,
    "b": 5
   },
   "cat_pular": {
@@ -856,7 +856,7 @@
   "cat_escondeBorda": {
    "l": 0,
    "t": 5,
-   "r": 102,
+   "r": 108,
    "b": 5
   },
   "cat_frio": {
@@ -866,9 +866,9 @@
    "b": 5
   },
   "cat_calor": {
-   "l": 20,
+   "l": 6,
    "t": 47,
-   "r": 32,
+   "r": 35,
    "b": 5
   },
   "cat_chuva": {
@@ -881,7 +881,7 @@
    "l": 20,
    "t": 5,
    "r": 79,
-   "b": 9
+   "b": 5
   },
   "cat_desaparecer": {
    "l": 0,
@@ -908,21 +908,21 @@
    "b": 14
   },
   "cat_modoPoder": {
-   "l": 27,
+   "l": 20,
    "t": 44,
-   "r": 27,
+   "r": 20,
    "b": 5
   },
   "cat_pet": {
    "l": 0,
    "t": 14,
-   "r": 19,
+   "r": 1,
    "b": 5
   },
   "cat_poseEpica": {
-   "l": 24,
+   "l": 14,
    "t": 42,
-   "r": 24,
+   "r": 14,
    "b": 5
   },
   "cat_encararDentes": {
@@ -950,9 +950,9 @@
    "b": 5
   },
   "cat_ombrosDeboche": {
-   "l": 16,
+   "l": 0,
    "t": 5,
-   "r": 16,
+   "r": 0,
    "b": 5
   },
   "cat_superioridade": {
@@ -964,13 +964,13 @@
   "cat_naoFuiEu": {
    "l": 0,
    "t": 5,
-   "r": 13,
+   "r": 14,
    "b": 5
   },
   "cat_assobiar": {
    "l": 0,
    "t": 20,
-   "r": 13,
+   "r": 14,
    "b": 5
   },
   "cat_olharLado": {
@@ -982,8 +982,8 @@
   "cat_beijoExagerado": {
    "l": 0,
    "t": 66,
-   "r": 33,
-   "b": 9
+   "r": 6,
+   "b": 5
   },
   "cat_poseVilao": {
    "l": 0,
@@ -1004,9 +1004,9 @@
    "b": 5
   },
   "cat_circularPresa": {
-   "l": 14,
+   "l": 21,
    "t": 11,
-   "r": 14,
+   "r": 21,
    "b": 5
   },
   "cat_charmeCauda": {
@@ -1016,9 +1016,9 @@
    "b": 5
   },
   "cat_brilharDentes": {
-   "l": 0,
+   "l": 2,
    "t": 27,
-   "r": 0,
+   "r": 2,
    "b": 5
   },
   "cat_olharApaixonado": {
@@ -1042,13 +1042,13 @@
   "cat_soprarBeijo": {
    "l": 0,
    "t": 45,
-   "r": 24,
+   "r": 0,
    "b": 5
   },
   "cat_nadarParaTela": {
-   "l": 40,
+   "l": 12,
    "t": 41,
-   "r": 40,
+   "r": 12,
    "b": 5
   },
   "cat_sussurrar": {
@@ -1060,7 +1060,7 @@
   "cat_elogiarExagero": {
    "l": 0,
    "t": 66,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_ciumento": {
@@ -1070,76 +1070,76 @@
    "b": 5
   },
   "cat_dramaCiumes": {
-   "l": 24,
+   "l": 4,
    "t": 47,
-   "r": 24,
+   "r": 4,
    "b": 5
   },
   "cat_amorEterno": {
    "l": 0,
    "t": 65,
    "r": 0,
-   "b": 8
+   "b": 5
   },
   "cat_cantadaRuim": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_abracoApertado": {
-   "l": 23,
+   "l": 1,
    "t": 66,
-   "r": 25,
+   "r": 3,
    "b": 5
   },
   "cat_espelho": {
    "l": 0,
    "t": 5,
-   "r": 23,
+   "r": 13,
    "b": 5
   },
   "cat_selfie": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 24,
    "b": 5
   },
   "cat_desfile": {
-   "l": 8,
+   "l": 11,
    "t": 5,
-   "r": 5,
+   "r": 9,
    "b": 5
   },
   "cat_seAcharMaximo": {
-   "l": 0,
+   "l": 2,
    "t": 27,
-   "r": 0,
+   "r": 2,
    "b": 5
   },
   "cat_flexionarBiceps": {
    "l": 0,
    "t": 5,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_duploBiceps": {
-   "l": 25,
+   "l": 14,
    "t": 27,
-   "r": 25,
+   "r": 14,
    "b": 5
   },
   "cat_aplausosImaginarios": {
-   "l": 27,
+   "l": 18,
    "t": 21,
-   "r": 27,
+   "r": 15,
    "b": 14
   },
   "cat_agradecerPlateia": {
    "l": 0,
    "t": 66,
    "r": 0,
-   "b": 11
+   "b": 5
   },
   "cat_fingirModestia": {
    "l": 0,
@@ -1150,7 +1150,7 @@
   "cat_pedirElogios": {
    "l": 0,
    "t": 40,
-   "r": 19,
+   "r": 0,
    "b": 5
   },
   "cat_tapinhaAbdomen": {
@@ -1162,14 +1162,14 @@
   "cat_halteres": {
    "l": 0,
    "t": 5,
-   "r": 24,
+   "r": 16,
    "b": 5
   },
   "cat_flexoes": {
    "l": 74,
    "t": 22,
    "r": 0,
-   "b": 24
+   "b": 27
   },
   "cat_incrivel": {
    "l": 0,
@@ -1178,15 +1178,15 @@
    "b": 5
   },
   "cat_toalha": {
-   "l": 20,
+   "l": 6,
    "t": 5,
-   "r": 32,
+   "r": 35,
    "b": 5
   },
   "cat_admirarMusculos": {
    "l": 0,
    "t": 5,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_agachamentoNado": {
@@ -1196,40 +1196,40 @@
    "b": 5
   },
   "cat_alongar": {
-   "l": 23,
+   "l": 2,
    "t": 21,
-   "r": 23,
+   "r": 2,
    "b": 5
   },
   "cat_elastico": {
-   "l": 27,
+   "l": 3,
    "t": 5,
-   "r": 27,
+   "r": 3,
    "b": 5
   },
   "cat_espelhoInvisivel": {
-   "l": 20,
+   "l": 3,
    "t": 5,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_beijoBiceps": {
    "l": 0,
    "t": 66,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_contarRepeticoes": {
    "l": 0,
    "t": 5,
-   "r": 24,
+   "r": 16,
    "b": 5
   },
   "cat_esparramado": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "cat_ignorar": {
    "l": 0,
@@ -1241,7 +1241,7 @@
    "l": 0,
    "t": 53,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "cat_palito": {
    "l": 0,
@@ -1265,7 +1265,7 @@
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "cat_escondeAlga": {
    "l": 0,
@@ -1288,7 +1288,7 @@
   "cat_olharRelogio": {
    "l": 0,
    "t": 5,
-   "r": 23,
+   "r": 16,
    "b": 5
   },
   "cat_arrotar": {
@@ -1340,9 +1340,9 @@
    "b": 5
   },
   "cat_estalar": {
-   "l": 27,
+   "l": 6,
    "t": 7,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_autoCocegas": {
@@ -1355,23 +1355,23 @@
    "l": 79,
    "t": 5,
    "r": 0,
-   "b": 78
+   "b": 83
   },
   "cat_cairJoelhos": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
-   "b": 7
+   "r": 6,
+   "b": 5
   },
   "cat_perdaoTeatral": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 7
+   "b": 5
   },
   "cat_fingirMachucado": {
    "l": 0,
-   "t": 40,
+   "t": 41,
    "r": 0,
    "b": 5
   },
@@ -1379,31 +1379,31 @@
    "l": 82,
    "t": 5,
    "r": 0,
-   "b": 79
+   "b": 85
   },
   "cat_ressuscitar": {
-   "l": 19,
+   "l": 16,
    "t": 40,
-   "r": 19,
+   "r": 16,
    "b": 5
   },
   "cat_gritarSuperficie": {
-   "l": 27,
-   "t": 40,
-   "r": 27,
+   "l": 6,
+   "t": 41,
+   "r": 6,
    "b": 5
   },
   "cat_revolta": {
-   "l": 24,
+   "l": 4,
    "t": 56,
-   "r": 24,
+   "r": 4,
    "b": 5
   },
   "cat_birra": {
    "l": 0,
    "t": 5,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "cat_esconderAtras": {
    "l": 0,
@@ -1414,13 +1414,13 @@
   "cat_puxarCursor": {
    "l": 0,
    "t": 28,
-   "r": 1,
+   "r": 8,
    "b": 5
   },
   "cat_derrubarObjeto": {
    "l": 16,
    "t": 5,
-   "r": 33,
+   "r": 13,
    "b": 5
   },
   "cat_fugirBolhas": {
@@ -1443,9 +1443,9 @@
   },
   "cat_sustoBorda": {
    "l": 0,
-   "t": 40,
+   "t": 41,
    "r": 0,
-   "b": 89
+   "b": 79
   },
   "cat_dorsalTela": {
    "l": 87,
@@ -1455,7 +1455,7 @@
   },
   "cat_pregarPeca": {
    "l": 18,
-   "t": 40,
+   "t": 41,
    "r": 15,
    "b": 14
   },
@@ -1466,39 +1466,39 @@
    "b": 5
   },
   "cat_baguncarJanela": {
-   "l": 26,
+   "l": 22,
    "t": 5,
    "r": 79,
    "b": 5
   },
   "cat_perseguirBolha": {
-   "l": 32,
+   "l": 13,
    "t": 20,
-   "r": 36,
+   "r": 11,
    "b": 5
   },
   "cat_peixeBorracha": {
    "l": 0,
    "t": 15,
-   "r": 17,
+   "r": 14,
    "b": 5
   },
   "cat_baterBorda": {
    "l": 0,
    "t": 6,
    "r": 0,
-   "b": 6
+   "b": 5
   },
   "cat_morderIcone": {
    "l": 0,
    "t": 26,
-   "r": 1,
+   "r": 8,
    "b": 5
   },
   "cat_zombar": {
    "l": 0,
    "t": 6,
-   "r": 33,
+   "r": 8,
    "b": 5
   },
   "cat_imitar": {
@@ -1508,33 +1508,33 @@
    "b": 5
   },
   "cat_linguaVitoria": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_dancaVitoria": {
-   "l": 1,
+   "l": 3,
    "t": 6,
-   "r": 43,
-   "b": 10
+   "r": 15,
+   "b": 5
   },
   "cat_sabiaQueIaErrar": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_apostar": {
    "l": 0,
    "t": 5,
-   "r": 19,
+   "r": 0,
    "b": 5
   },
   "cat_quedaBraco": {
    "l": 0,
    "t": 5,
-   "r": 13,
+   "r": 0,
    "b": 5
   },
   "cat_surpresaSarcastica": {
@@ -1552,13 +1552,13 @@
   "cat_tchauIronico": {
    "l": 0,
    "t": 5,
-   "r": 19,
+   "r": 1,
    "b": 5
   },
   "cat_devorar": {
    "l": 0,
    "t": 5,
-   "r": 13,
+   "r": 3,
    "b": 12
   },
   "cat_lamberDentes": {
@@ -1570,13 +1570,13 @@
   "cat_rostoSujo": {
    "l": 0,
    "t": 5,
-   "r": 13,
+   "r": 3,
    "b": 12
   },
   "cat_roubarComida": {
    "l": 0,
    "t": 5,
-   "r": 44,
+   "r": 29,
    "b": 12
   },
   "cat_engolirTudo": {
@@ -1592,22 +1592,22 @@
    "b": 14
   },
   "cat_dancarSemRitmo": {
-   "l": 36,
+   "l": 11,
    "t": 14,
-   "r": 42,
-   "b": 8
+   "r": 16,
+   "b": 5
   },
   "cat_cantarDesafinado": {
    "l": 0,
    "t": 5,
-   "r": 13,
+   "r": 14,
    "b": 5
   },
   "cat_karaoke": {
    "l": 0,
    "t": 5,
-   "r": 16,
-   "b": 7
+   "r": 14,
+   "b": 5
   },
   "cat_puloOndas": {
    "l": 16,
@@ -1618,25 +1618,25 @@
   "cat_comerPeixinhos": {
    "l": 0,
    "t": 5,
-   "r": 2,
+   "r": 0,
    "b": 6
   },
   "cat_beberAquario": {
    "l": 0,
    "t": 5,
-   "r": 2,
+   "r": 0,
    "b": 6
   },
   "cat_cafeOlhando": {
    "l": 0,
    "t": 5,
-   "r": 1,
+   "r": 0,
    "b": 5
   },
   "cat_pedirComida": {
    "l": 0,
    "t": 5,
-   "r": 19,
+   "r": 0,
    "b": 5
   },
   "cat_semFiltro": {
@@ -1658,16 +1658,16 @@
    "b": 5
   },
   "cat_surtoCarencia": {
-   "l": 29,
+   "l": 7,
    "t": 72,
-   "r": 29,
+   "r": 7,
    "b": 5
   },
   "cat_dancinhaViral": {
-   "l": 22,
+   "l": 9,
    "t": 6,
-   "r": 32,
-   "b": 6
+   "r": 6,
+   "b": 5
   },
   "cat_criseRiso": {
    "l": 0,
@@ -1688,14 +1688,14 @@
    "b": 5
   },
   "cat_nadoSincronizado": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
+   "r": 14,
    "b": 5
   },
   "cat_acordarAssustado": {
    "l": 0,
-   "t": 50,
+   "t": 51,
    "r": 0,
    "b": 5
   },
@@ -1703,13 +1703,13 @@
    "l": 82,
    "t": 56,
    "r": 8,
-   "b": 79
+   "b": 85
   },
   "cat_dormirRonco": {
    "l": 0,
    "t": 53,
    "r": 8,
-   "b": 7
+   "b": 5
   },
   "cat_madrugada": {
    "l": 0,
@@ -1724,33 +1724,33 @@
    "b": 5
   },
   "cat_nadarCirculos": {
-   "l": 41,
+   "l": 19,
    "t": 5,
-   "r": 42,
+   "r": 19,
    "b": 5
   },
   "cat_nadarCanto": {
-   "l": 24,
+   "l": 4,
    "t": 5,
-   "r": 32,
+   "r": 7,
    "b": 5
   },
   "cat_elogioSilencio": {
    "l": 0,
    "t": 66,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_motivacaoAcademia": {
    "l": 0,
    "t": 5,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_torcer": {
-   "l": 27,
+   "l": 6,
    "t": 15,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_nojo": {
@@ -1760,9 +1760,9 @@
    "b": 5
   },
   "cat_tesouro": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
+   "r": 7,
    "b": 5
   },
   "cat_ritmo": {
@@ -1780,19 +1780,19 @@
   "cat_fidget": {
    "l": 0,
    "t": 5,
-   "r": 18,
+   "r": 3,
    "b": 5
   },
   "cat_estudarJunto": {
    "l": 0,
    "t": 5,
-   "r": 18,
+   "r": 15,
    "b": 5
   },
   "cat_treinarJunto": {
    "l": 0,
    "t": 5,
-   "r": 24,
+   "r": 16,
    "b": 5
   },
   "cat_pk_sideEye": {
@@ -1810,7 +1810,7 @@
   "cat_pk_auraFarming": {
    "l": 63,
    "t": 55,
-   "r": 74,
+   "r": 73,
    "b": 29
   },
   "cat_pk_letHimCook": {
@@ -1828,7 +1828,7 @@
   "cat_pk_sixSeven": {
    "l": 0,
    "t": 30,
-   "r": 6,
+   "r": 8,
    "b": 5
   },
   "cat_pk_brainrot": {
@@ -1838,9 +1838,9 @@
    "b": 49
   },
   "cat_pk_npc": {
-   "l": 7,
-   "t": 28,
-   "r": 19,
+   "l": 4,
+   "t": 27,
+   "r": 4,
    "b": 8
   },
   "cat_pk_demure": {
@@ -1850,9 +1850,9 @@
    "b": 5
   },
   "cat_pk_gta6": {
-   "l": 9,
+   "l": 3,
    "t": 38,
-   "r": 9,
+   "r": 3,
    "b": 8
   },
   "cat_pk_menacing": {
@@ -1924,7 +1924,7 @@
   "cat_pk_traicao_leve": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_pk_nuclear": {
@@ -1934,9 +1934,9 @@
    "b": 48
   },
   "cat_pk_nuclear_leve": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_pk_furiaFritas": {
@@ -1948,13 +1948,13 @@
   "cat_pk_furiaFritas_leve": {
    "l": 0,
    "t": 5,
-   "r": 27,
+   "r": 1,
    "b": 5
   },
   "cat_pk_decepcao": {
    "l": 0,
    "t": 5,
-   "r": 13,
+   "r": 14,
    "b": 5
   },
   "cat_pk_decepcao_leve": {
@@ -1994,9 +1994,9 @@
    "b": 36
   },
   "cat_pk_chefeFinal_leve": {
-   "l": 20,
+   "l": 3,
    "t": 5,
-   "r": 20,
+   "r": 3,
    "b": 5
   },
   "cat_pk_crise": {
@@ -2014,13 +2014,13 @@
   "cat_pk_interrogatorio": {
    "l": 0,
    "t": 72,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_pk_interrogatorio_leve": {
    "l": 0,
    "t": 5,
-   "r": 26,
+   "r": 1,
    "b": 5
   },
   "cat_pk_colapso": {
@@ -2030,9 +2030,9 @@
    "b": 39
   },
   "cat_pk_colapso_leve": {
-   "l": 27,
+   "l": 6,
    "t": 5,
-   "r": 27,
+   "r": 6,
    "b": 5
   },
   "cat_pk_operacao": {
@@ -2068,7 +2068,7 @@
   "cat_pk_checklist": {
    "l": 0,
    "t": 5,
-   "r": 75,
+   "r": 74,
    "b": 5
   },
   "cat_pk_ciumes": {
@@ -2078,15 +2078,15 @@
    "b": 5
   },
   "cat_pk_noitePromete": {
-   "l": 27,
+   "l": 23,
    "t": 72,
-   "r": 27,
+   "r": 23,
    "b": 5
   },
   "cat_pk_relatorio": {
-   "l": 13,
+   "l": 9,
    "t": 72,
-   "r": 69,
+   "r": 67,
    "b": 5
   },
   "cat_pk_mudanca": {
@@ -2104,13 +2104,13 @@
   "cat_pk_jMensagem": {
    "l": 19,
    "t": 46,
-   "r": 43,
+   "r": 40,
    "b": 10
   },
   "cat_pk_jPeregrinacao": {
    "l": 51,
    "t": 74,
-   "r": 126,
+   "r": 123,
    "b": 40
   },
   "cat_pk_jSaudade": {
@@ -2154,6 +2154,456 @@
    "t": 75,
    "r": 62,
    "b": 39
+  },
+  "cat_ddAventureiro": {
+   "l": 16,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_ddFurioso": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_ddXp": {
+   "l": 1,
+   "t": 35,
+   "r": 1,
+   "b": 5
+  },
+  "cat_ddDesespero": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_ddConquista": {
+   "l": 1,
+   "t": 44,
+   "r": 1,
+   "b": 5
+  },
+  "cat_needsFome": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsExtrema": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsRonco": {
+   "l": 0,
+   "t": 47,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsFraco": {
+   "l": 3,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsDoente": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsRecuperar": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsPreCoco": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsCoco": {
+   "l": 16,
+   "t": 13,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsFedor": {
+   "l": 0,
+   "t": 16,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsLimpo": {
+   "l": 0,
+   "t": 20,
+   "r": 8,
+   "b": 5
+  },
+  "cat_needsComer": {
+   "l": 0,
+   "t": 28,
+   "r": 8,
+   "b": 5
+  },
+  "cat_needsMastigar": {
+   "l": 0,
+   "t": 6,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsSatisfeito": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsFavorita": {
+   "l": 0,
+   "t": 68,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsDesgosto": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsRaro": {
+   "l": 0,
+   "t": 7,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsLendario": {
+   "l": 10,
+   "t": 60,
+   "r": 8,
+   "b": 5
+  },
+  "cat_needsXp": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_needsNivel": {
+   "l": 18,
+   "t": 35,
+   "r": 15,
+   "b": 14
+  },
+  "cat_needsConquista": {
+   "l": 0,
+   "t": 24,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_medico": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_cientista": {
+   "l": 0,
+   "t": 5,
+   "r": 2,
+   "b": 5
+  },
+  "cat_living_fisico": {
+   "l": 0,
+   "t": 10,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_quimico": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_biologo": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_programador": {
+   "l": 0,
+   "t": 5,
+   "r": 10,
+   "b": 5
+  },
+  "cat_living_engenheiro": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_professor": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_advogado": {
+   "l": 0,
+   "t": 9,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_juiz": {
+   "l": 0,
+   "t": 13,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_policial": {
+   "l": 0,
+   "t": 5,
+   "r": 7,
+   "b": 5
+  },
+  "cat_living_bombeiro": {
+   "l": 0,
+   "t": 13,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_piloto": {
+   "l": 0,
+   "t": 17,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_astronauta": {
+   "l": 0,
+   "t": 33,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_chef": {
+   "l": 0,
+   "t": 35,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_psicologo": {
+   "l": 0,
+   "t": 5,
+   "r": 9,
+   "b": 5
+  },
+  "cat_living_veterinario": {
+   "l": 0,
+   "t": 5,
+   "r": 2,
+   "b": 5
+  },
+  "cat_living_detetive": {
+   "l": 0,
+   "t": 10,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_jornalista": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_mecanico": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_arquiteto": {
+   "l": 0,
+   "t": 5,
+   "r": 12,
+   "b": 5
+  },
+  "cat_living_economista": {
+   "l": 0,
+   "t": 6,
+   "r": 4,
+   "b": 5
+  },
+  "cat_living_treinador": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_marinheiro": {
+   "l": 0,
+   "t": 9,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_pesquisador": {
+   "l": 0,
+   "t": 13,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_auraPlanilha": {
+   "l": 0,
+   "t": 5,
+   "r": 7,
+   "b": 5
+  },
+  "cat_living_fritou": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_deluluContrato": {
+   "l": 0,
+   "t": 10,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_npcFila": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_brainrotFaxina": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_rizzCurriculo": {
+   "l": 0,
+   "t": 5,
+   "r": 7,
+   "b": 5
+  },
+  "cat_living_sigmaSilencio": {
+   "l": 0,
+   "t": 6,
+   "r": 1,
+   "b": 5
+  },
+  "cat_living_sideQuest": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_mainCharacter": {
+   "l": 0,
+   "t": 9,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_grama": {
+   "l": 0,
+   "t": 13,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_eventoCanonico": {
+   "l": 0,
+   "t": 5,
+   "r": 10,
+   "b": 5
+  },
+  "cat_living_skillIssue": {
+   "l": 0,
+   "t": 5,
+   "r": 1,
+   "b": 5
+  },
+  "cat_living_pressF": {
+   "l": 0,
+   "t": 17,
+   "r": 1,
+   "b": 5
+  },
+  "cat_living_stonks": {
+   "l": 0,
+   "t": 13,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_taTudoBem": {
+   "l": 0,
+   "t": 7,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_loading": {
+   "l": 0,
+   "t": 5,
+   "r": 11,
+   "b": 5
+  },
+  "cat_living_lagMental": {
+   "l": 0,
+   "t": 5,
+   "r": 4,
+   "b": 5
+  },
+  "cat_living_plotTwist": {
+   "l": 0,
+   "t": 10,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_buffCafe": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_nerfNotificacao": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_sextou": {
+   "l": 0,
+   "t": 5,
+   "r": 3,
+   "b": 5
+  },
+  "cat_living_pov": {
+   "l": 0,
+   "t": 6,
+   "r": 3,
+   "b": 5
+  },
+  "cat_living_fakeProdutivo": {
+   "l": 0,
+   "t": 15,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_cinema": {
+   "l": 0,
+   "t": 9,
+   "r": 0,
+   "b": 5
+  },
+  "cat_living_baixoPerfil": {
+   "l": 0,
+   "t": 13,
+   "r": 0,
+   "b": 5
   }
  },
  "effects": {

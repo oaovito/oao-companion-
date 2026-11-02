@@ -10,6 +10,7 @@ test('atalhos Windows: .lnk real, migração entre versões, público/pessoal e 
   const desktop = path.join(root, 'Desktop'), userData = path.join(root, 'profile'), publicRoot = path.join(root, 'Public');
   for (const dir of [desktop, userData, path.join(publicRoot, 'Desktop')]) fs.mkdirSync(dir, { recursive: true });
   const main = await launch(); const target = path.join(root, 'JoJoCompanion.exe'); fs.writeFileSync(target, 'Fixture, não executável.');
+  const numbered = path.join(desktop, 'JoJo Companion (12).lnk');
   const canonical = path.join(desktop, 'JoJo Companion.lnk'), old = path.join(desktop, 'JoJoCompanion.lnk'), custom = path.join(desktop, 'Meu JoJo.lnk');
   async function write(file, args = '') {
     return main.app.evaluate((_e, o) => globalThis.__jojo.nativeShell.writeShortcutLink(o.file, 'create', { target: o.target, args: o.args, appUserModelId: 'com.jojocompanion.app', description: 'Abrir o JoJo' }), { file, args, target });
@@ -18,10 +19,11 @@ test('atalhos Windows: .lnk real, migração entre versões, público/pessoal e 
     return main.app.evaluate((_e, o) => { const j = globalThis.__jojo; return j.migrateDesktop({ app: { isPackaged: true, getVersion: () => o.version, getPath: key => key === 'desktop' ? o.desktop : o.userData }, shell: j.nativeShell, log: () => {}, platform: 'win32', preference: o.preference, env: { PUBLIC: o.publicRoot, ...(o.mode === 'portable' ? { PORTABLE_EXECUTABLE_FILE: o.target } : {}) } }); }, { desktop, userData, publicRoot, target, version, preference, mode });
   }
   try {
-    assert.equal(await write(old), true); assert.equal(await write(custom, '--quiet'), true);
-    assert.equal(await run(), true); assert.equal(fs.existsSync(old), false); assert.equal(fs.existsSync(canonical), true);
+    assert.equal(await write(numbered), true); assert.equal(await write(old), true); assert.equal(await write(custom, '--quiet'), true);
+    assert.equal(await run(), true); assert.equal(fs.existsSync(old), false); assert.equal(fs.existsSync(numbered), false); assert.equal(fs.existsSync(canonical), true);
+    fs.renameSync(canonical, path.join(desktop, 'JOJO COMPANION.LNK'));
     for (const version of ['0.45.1', '0.45.2', '0.45.2']) assert.equal(await run({ version }), true);
-    assert.equal(fs.readdirSync(desktop).filter(f => /^JoJo/.test(f)).length, 1);
+    assert.equal(fs.readdirSync(desktop).filter(f => /^jojo/i.test(f)).length, 1);
     const meta = await main.app.evaluate((_e, o) => globalThis.__jojo.nativeShell.readShortcutLink(o), canonical);
     assert.equal(fs.realpathSync.native(meta.target).toLowerCase(), fs.realpathSync.native(target).toLowerCase()); assert.equal(meta.appUserModelId, 'com.jojocompanion.app');
     const personalized = await main.app.evaluate((_e, o) => globalThis.__jojo.nativeShell.readShortcutLink(o), custom); assert.equal(personalized.args, '--quiet');

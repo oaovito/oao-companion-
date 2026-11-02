@@ -10,15 +10,15 @@ export function createFocusApps({ userData, companion, store, getDetector, getFi
   let badges = disk.load().icons, current = { state: 'idle', message: '' }, controller = null, generation = 0, lastBadgeAttempt = 0, refreshing = null;
   onBadges(badges);
   const set = value => { current = value; notify(current); };
-  async function refreshBadges() {
-    if (refreshing || Date.now() - lastBadgeAttempt < 30 * 60000) return refreshing;
+  async function refreshBadges({ force = false } = {}) {
+    if (refreshing || (!force && Date.now() - lastBadgeAttempt < 30 * 60000)) return refreshing;
     lastBadgeAttempt = Date.now();
     refreshing = (async () => {
       const detector = getDetector(); if (!detector?.available || !detector.brandIcons) return;
       const paths = await detector.brandIcons(); const next = { ...badges };
       for (const [id, file] of Object.entries(paths)) {
         if (!names.has(id) || !/\.(exe)$/i.test(file)) continue;
-        const icon = await getFileIcon(file); if (!icon?.isEmpty()) next[id] = icon.toDataURL();
+        const icon = await getFileIcon(file); if (icon && !icon.isEmpty()) next[id] = icon.toDataURL();
       }
       if (JSON.stringify(next) !== JSON.stringify(badges)) { disk.write({ icons: next }); badges = next; onBadges(badges); }
     })().catch(() => {}).finally(() => { refreshing = null; });
@@ -31,7 +31,7 @@ export function createFocusApps({ userData, companion, store, getDetector, getFi
     controller = new AbortController(); const signal = controller.signal;
     try {
       const detector = getDetector(); if (!detector?.available || !detector.closeDiscord) throw new Error('unavailable');
-      await refreshBadges(); if (signal.aborted) return;
+      await refreshBadges({ force: !badges.discord }); if (signal.aborted) return;
       const result = await detector.closeDiscord({ force: store.get().discordForceClose === true, signal });
       if (id !== generation || signal.aborted || (!companion.work && !companion.focus)) return;
       set({ state: result.remaining ? 'still-running' : 'closed', ...result,
@@ -42,9 +42,10 @@ export function createFocusApps({ userData, companion, store, getDetector, getFi
   }
   function stop() { generation++; controller?.abort(); controller = null; set({ state: 'idle', message: '' }); }
   companion.onWorkStart = () => { start(); };
-  companion.onWorkEnd = stop;
+  const stopIfInactive = () => { if (!companion.work && !companion.focus) stop(); };
+  companion.onWorkEnd = stopIfInactive;
   companion.onFocusStart = () => { start(); };
-  companion.onFocusEnd = stop;
+  companion.onFocusEnd = stopIfInactive;
   const beforeTick = companion.onRoutineTick;
   companion.onRoutineTick = () => { beforeTick?.(); refreshBadges(); };
   return { snapshot: () => ({ ...current }), start, stop, refreshBadges, close: stop };

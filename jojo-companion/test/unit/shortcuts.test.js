@@ -41,3 +41,14 @@ test('atalhos: arquivo ocupando nome padrão, argumentos e descrições própria
     const e = env([item]); const r = e.run({ preference: 'show' }); assert.equal(r.ready, false); assert.equal(e.writes.length, 0); assert.equal(e.removed.length, 0);
   }
 });
+
+test('atalhos: cópias numeradas comprovadas são migradas; criação recusada pode ser retomada', () => {
+  const personalizedIcon = env([link(canonical, 'JoJo Companion.lnk', { icon: 'C:\\Meus icones\\tubarao.ico' })]);
+  assert.equal(personalizedIcon.run().ready, false); assert.equal(personalizedIcon.writes.length, 0); assert.equal(personalizedIcon.removed.length, 0);
+  const uppercase = env([link('C:\\Desktop\\JOJO COMPANION.LNK', 'JOJO COMPANION.LNK')]);
+  assert.equal(uppercase.run().present, true); assert.equal(uppercase.removed.length, 0); assert.equal(uppercase.entries.length, 1);
+  const numbered = link('C:\\Desktop\\JoJo Companion (12).lnk', 'JoJo Companion (12).lnk');
+  const e = env([numbered]); assert.equal(e.run().ready, true); assert.deepEqual(e.removed, [numbered.path]);
+  const denied = env(); assert.equal(denied.run({ write: () => false }).ready, false);
+  assert.equal(denied.run().ready, true); assert.equal(denied.writes.length, 1, 'não confundir falha de permissão com remoção manual');
+});

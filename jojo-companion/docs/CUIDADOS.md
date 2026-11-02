@@ -1,8 +1,8 @@
 # Cuidados, alimentação e progressão — candidata 0.45.0
 
 Implementados em código; validação completa Windows/render/build ainda pendente.
-As novas medidas de animação não foram inventadas: o gate de cobertura permanece
-falhando até importar as medidas do renderer Windows.
+As medidas reais do renderer Windows foram importadas do run 41367076224.
+A auditoria aprovou as 1.268 animações, incluindo as 20 receitas de necessidades.
 
 `Needs` guarda saciedade/saúde/humor/higiene, digestão, seis objetos no máximo,
 consumo, histórico e outbox em `needs.json`, com arquivo atômico e backup. Timer

@@ -29,11 +29,22 @@
   respeita preferências, remoções manuais e atalhos personalizados.
 - Anatomia do personagem usa nadadeiras e cauda, preservando o catálogo anterior.
 - Recompensas próximas mostram notificações em sequência, sem ocultar XP de tarefas.
+- Celebrações de Darkest Dungeon aguardam o jogo fechar e um momento permitido,
+  preservadas após reinício e sem conceder XP novamente.
 - Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.
 - Estado e falhas da agenda são consultados antes de afirmar conexão ou ausência de compromissos.
 - Resultados de pesquisa sem correspondência com o assunto são descartados.
 - Leitura de eventos respeita TZID e recorrências/exceções de iCalendar.
 - Correções literais da usuária preservam a palavra afirmada em vez da negada.
+
+### Como testar
+- Na Lista de Tarefas, adicionar, editar, arrastar, concluir e desmarcar; conferir
+  histórico, XP e reinício diário sem duplicação de recompensas.
+- Consultar clima de uma cidade e o estado da agenda antes/depois de conectar nas Configurações.
+- No painel Cuidados, alimentar e limpar; conferir barra de XP, indicadores e persistência.
+- Na Coleção, pedir encenações de memes/profissões; conferir silêncio durante Foco/Trabalho.
+- Jogar Darkest Dungeon original da Steam em primeiro plano; conferir somente
+  o tempo ativo registrado e a celebração após fechar a partida.
 
 ## 0.44.0 — 2026-11-01
 

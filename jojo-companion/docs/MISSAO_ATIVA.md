@@ -45,6 +45,19 @@ Continuidade das implementações anteriores no Git, sem sobrescrever trabalho.
 - Última suíte completa local: 397 testes, 396 passaram; único reprovado foi medida
   Windows ausente. Com o novo teste NSIS, total esperado 398. Não ignorar a falha.
 
+- 41367076224 /474bff2: medição real de 434 bases e auditoria das 1.268 animações
+  PASSARAM; zero erros/recortes/paradas/órfãs, média 0,43985 ms. Os 10 cenários
+  Windows também passaram. JSON recuperado dos logs privados e hash conferido:
+  45a74560433377127ddabb567e8d22753d5bed2d2942c023423b2b0c38976287.
+- Medidas reais importadas; 401/401 testes locais passaram, sem pulos.
+- Depois da medição: filas persistentes de celebração DD (adiadas até fechar jogo,
+  sem invadir foco), ícone local antes de encerrar Discord, recuperação de atalho
+  após permissão e preservação de ícone personalizado/casing Windows. Testes de
+  regressão passaram; pipeline integral do próximo commit ainda necessário.
+- API timing do run 41367076224 informa WINDOWS total_ms=0. Não foi alterado
+  plano, cartão ou limite. APIs financeiras não permitem confirmar a configuração
+  de cobrança da conta; não extrapolar esse resultado observado a todo consumo.
+
 ## Próximos gates
 
 1. Diagnóstico oficial assets_only/measure_assets=false: 10 cenários novos Windows.

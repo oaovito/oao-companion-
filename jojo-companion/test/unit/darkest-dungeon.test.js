@@ -79,3 +79,23 @@ test('Darkest: outbox reenvia crédito idempotente após falha e não confirma d
   e.dd.save = () => { throw new Error('disco'); }; const before = e.dd.snapshot().activeMs;
   assert.throws(() => e.step(5000)); assert.equal(e.dd.snapshot().activeMs, before);
 });
+
+test('Darkest: XP, nível e reação final aguardam fechar o jogo e sobrevivem ao reinício', () => {
+  const e = env(); e.dd.award = reward => ({ ...e.opts.award(reward), levelUp: true }); e.play(61000);
+  assert.ok(e.dd.st.pendingVisuals.includes('ddConquista'));
+  assert.equal(e.dd.takeVisual({ allowed: true, play: () => true }), null, 'nem jogo em janela deve ser interrompido');
+  e.step(1000, {}); const restored = new DarkestDungeon({ ...e.opts, state: e.saved() }); const xp = restored.snapshot().xpToday;
+  assert.equal(restored.takeVisual({ allowed: false, play: () => true }), null, 'foco/tela cheia continuam bloqueando');
+  assert.equal(restored.takeVisual({ allowed: true, play: () => false }), null, 'fuga/estado prioritário não consome reação');
+  assert.equal(restored.takeVisual({ allowed: true, play: () => true }), 'ddConquista');
+  assert.equal(restored.takeVisual({ allowed: true, play: () => true }), null, 'não empilha animações no mesmo quadro');
+  e.step(10000, {}); assert.equal(restored.takeVisual({ allowed: true, play: () => true }), 'ddXp');
+  e.step(10000, {}); assert.equal(restored.takeVisual({ allowed: true, play: () => true }), 'ddDesespero');
+  assert.equal(restored.snapshot().xpToday, xp); assert.deepEqual(restored.st.pendingVisuals, []);
+});
+test('Darkest: conquista no sétimo dia é preservada até haver oportunidade sem criar XP extra', () => {
+  const e = env(); for (let day = 1; day <= 7; day++) { e.time(`2026-11-${String(day).padStart(2, '0')}T12:00Z`); e.play(61000, `visual:${day}`); e.step(1000, {}); }
+  assert.equal(e.dd.st.achievement, true); assert.equal(e.dd.st.pendingVisuals.filter(id => id === 'ddConquista').length, 1);
+  const count = e.rewards.length; assert.equal(e.dd.takeVisual({ allowed: false, play: () => true }), null);
+  assert.equal(e.dd.takeVisual({ allowed: true, play: () => true }), 'ddConquista'); assert.equal(e.rewards.length, count);
+});

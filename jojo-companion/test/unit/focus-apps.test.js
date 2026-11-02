@@ -29,7 +29,8 @@ test('foco: fechamento normal, resultado honesto e força somente por preferênc
 test('foco: sair cancela operação pendente, não reabre apps nem aplica resultado atrasado', async t => {
   let complete, signal; const f = fixture(t, { closeDiscord: options => { signal = options.signal; return new Promise(resolve => { complete = resolve; }); } });
   const pending = f.service.start(); await new Promise(resolve => setImmediate(resolve));
-  assert.ok(signal); f.companion.work = null; f.companion.onWorkEnd(); assert.equal(signal.aborted, true);
+  assert.ok(signal); f.companion.focus = {}; f.companion.work = null; f.companion.onWorkEnd(); assert.equal(signal.aborted, false, 'um foco ainda ativo continua protegido');
+  f.companion.focus = null; f.companion.onFocusEnd(); assert.equal(signal.aborted, true);
   complete({ detected: 1, remaining: 0 }); await pending; assert.notEqual(f.service.snapshot().state, 'closed');
   assert.equal(f.calls.length, 0);
 });

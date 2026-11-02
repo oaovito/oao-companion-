@@ -21,6 +21,8 @@ export class ProgressView {
     this.label.textContent = `Nível ${s.nivel} · ${s.xp} XP`;
     this.fill.style.width = `${s.percentXP ?? Math.min(100, (s.xp % width) / width * 100)}%`;
     this.root.classList.toggle('no-animation', !animations || quiet);
+    this.root.setAttribute('aria-live', quiet ? 'off' : 'polite');
+    this.feedback.setAttribute('aria-live', quiet ? 'off' : 'polite');
     const event = s.reward;
     if (quiet) {
       clearTimeout(this.timer); this.pending = []; this.showing = false; this.feedback.textContent = ''; this.root.classList.remove('xp-received', 'xp-level-up');
