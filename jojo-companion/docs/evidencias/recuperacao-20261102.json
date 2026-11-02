@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-11-02T15:32:32.853Z",
+  "source": "oaovito/oao-companion-",
+  "restoredFrom": "fd20a52c56ddd7a1dc20e6462ee7f06c9c69c2c2",
+  "validatedTag": "v0.45.0",
+  "validatedCommit": "9c213f494602329f4ebc7bbf9f8fa719a1368f1a",
+  "applicationSourceUnchanged": true,
+  "branch": "codex/recovery-validation-20261102",
+  "local": {
+    "platform": "linux",
+    "arch": "x64",
+    "node": "22.23.4",
+    "tests": {
+      "total": 411,
+      "passed": 411,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "lint": {
+      "files": 197,
+      "passed": true
+    },
+    "reports": [
+      {
+        "name": "unit.tap",
+        "sha256": "d408a85cb02356fded473742486e4535e373d816021f3da086aeeef04da88d41"
+      },
+      {
+        "name": "unit.xml",
+        "sha256": "4e2289a777d77ab075234cc50b1ac8bafe9502ed04e0949d0a1b919a45a71bf2"
+      },
+      {
+        "name": "lint.log",
+        "sha256": "bab95bf5c6fc24802f2fc60d72d676eadbc69c8f2eee40f093c825b298514784"
+      }
+    ]
+  },
+  "previousWindows": {
+    "runId": "41383430244",
+    "status": "passed",
+    "commit": "9c213f494602329f4ebc7bbf9f8fa719a1368f1a",
+    "rerun": false,
+    "evidence": "jojo-companion/docs/evidencias/windows-41383430244.json",
+    "requiredGatesPassed": true,
+    "sourceMatchesValidatedTag": true
+  },
+  "public": {
+    "tag": "v0.45.0",
+    "releaseId": 431060770,
+    "notesMatchChangelog": true,
+    "files": [
+      {
+        "name": "JoJoCompanion-0.45.0-win-x64.zip",
+        "size": 144233512,
+        "sha256": "5368b3c603ed7af8e69721f12c5009c66f158cf9d47c8221c2cdb0876b167bbf",
+        "verified": true
+      },
+      {
+        "name": "JoJoCompanion-Setup-0.45.0.exe",
+        "size": 113305067,
+        "sha256": "d7099f82b3f4df78f6e66c4520bec2f1e274f45c6f859f8ecaea975ea745a201",
+        "verified": true
+      },
+      {
+        "name": "JoJoCompanion.exe",
+        "size": 103505584,
+        "sha256": "ab442cab7463d9a5e2cb82f8f407f10476f73058602eaccbbd10c00c792923ea",
+        "verified": true
+      }
+    ],
+    "updates": [
+      {
+        "mode": "portable",
+        "from": "0.44.0",
+        "to": "0.45.0",
+        "asset": "JoJoCompanion.exe",
+        "sha256": "ab442cab7463d9a5e2cb82f8f407f10476f73058602eaccbbd10c00c792923ea"
+      },
+      {
+        "mode": "installer",
+        "from": "0.44.0",
+        "to": "0.45.0",
+        "asset": "JoJoCompanion-Setup-0.45.0.exe",
+        "sha256": "d7099f82b3f4df78f6e66c4520bec2f1e274f45c6f859f8ecaea975ea745a201"
+      }
+    ],
+    "releaseCount": 19,
+    "releasesAndAssetsUnchanged": true
+  },
+  "issuesAndPullRequestsFound": 0,
+  "applicationFixesPendingInCurrentHandoff": 0,
+  "limits": [
+    "Esta sessão executou lógica pura em Linux; não repetiu testes gráficos/Windows.",
+    "Teste físico de Windows 11, DPI misto, suspensão real, jogo comercial e agenda pessoal não comprovados.",
+    "Quota de artefatos CI esgotada no registro anterior; não foi alterada nem reavaliada por upload.",
+    "Comando gh run view de logs retornou arquivo vazio; status do run/jobs reconfirmado pela API e evidência versionada preservada."
+  ]
+}

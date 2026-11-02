@@ -1,5 +1,24 @@
 # HANDOFF — JoJo Companion
 
+## Recuperação do ambiente — 02/11/2026
+
+Novo executor conectado, terminal/Git/rede funcionais. Checkout limpo recuperado
+de `main`/controle para a fonte `fd20a52`, preservando a referência local `work`.
+Branch de registro: `codex/recovery-validation-20261102`, no mesmo checkout.
+Não foi acessado o executor anterior nem o MNE_Lab.
+
+Regressão desta sessão: **411/411 unitários**, sem falhas/pulos, Node **22.23.4**;
+lint de **197 arquivos** aprovado. Fonte/assets/dependências idênticos à tag
+`v0.45.0`; nenhum commit exclusivo nas outras quatro branches de desenvolvimento/QA.
+Nenhuma issue/PR ou correção pendente no registro ativo foi encontrada.
+
+Os três downloads públicos foram novamente conferidos por tamanho/SHA-256;
+UpdateChecker reconheceu 0.44→0.45 em portátil/instalador com metadados públicos
+reais. Notas conferem com o changelog; as **19 releases** mantêm metadados/assets.
+Windows **41383430244** continua aprovado na API; seus testes são evidência anterior,
+não uma nova execução Windows. Sem alteração funcional, não repetir build/release.
+Detalhes, limites e hashes das evidências: [RECUPERACAO_2026-11-02](docs/RECUPERACAO_2026-11-02.md).
+
 ## Estado atual — 0.45.0 publicada e atualização verificada
 
 Versão pública: **0.45.0**, publicada em 02/11/2026 no canal oficial
