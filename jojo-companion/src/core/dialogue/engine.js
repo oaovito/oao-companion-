@@ -75,7 +75,7 @@ export class DialogueEngine {
       this.history = this.history.slice(-20);
       return out;
     }
-    const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1));
+    const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1), { allowCorrection: false });
     if (anchored) {
       this.history.push({ role: 'jojo', text: anchored.text });
       this.history = this.history.slice(-20);
@@ -158,6 +158,12 @@ export class DialogueEngine {
         }
         this.log('warn', `IA: ${e.message}; usando ${achado ? 'a pesquisa' : 'respostas programadas'}.`);
       }
+    }
+    // Correção literal é fallback honesto: o modelo disponível recebe o turno primeiro.
+    const correction = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1));
+    if (correction?.intent === 'correcao') {
+      this.history.push({ role: 'jojo', text: correction.text }); this.history = this.history.slice(-20);
+      return correction;
     }
     const provider = this.active;
     try {

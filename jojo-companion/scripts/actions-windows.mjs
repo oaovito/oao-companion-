@@ -70,11 +70,14 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   const result = await execute(command, commandArgs, { cwd: app, env: stepEnv, log, timeoutMs: minutes * 60000, signal: controller.signal });
   const entry = { id, ...result, optional, status: result.exitCode === 0 && !result.timedOut ? 'passed' : 'failed' };
   report.steps.push(entry); save();
+  if (id === 'conversation') for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
+    if (/^JOJO_CONVERSATION_(REPORT|PREVIEW):/.test(line)) console.log(line);
+  }
   fs.copyFileSync(log, path.join(summary, `${id}.log`));
   if (entry.status !== 'passed') {
     if (optional) { console.log(`${id}: diagnostico opcional falhou; log preservado`); return; }
     // O arquivo ja foi filtrado por execute; manter a causa visivel mesmo sem artefato CI.
-    console.error(fs.readFileSync(log, 'utf8').split('\n').slice(-80).join('\n'));
+    console.error(fs.readFileSync(log, 'utf8').split('\n').filter(line => !/^JOJO_CONVERSATION_(REPORT|PREVIEW):/.test(line)).slice(-80).join('\n'));
     throw new Error(`Falha em ${id}; consultar log privado`);
   }
   try { if (check) check(fs.readFileSync(log, 'utf8')); }

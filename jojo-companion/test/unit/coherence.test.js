@@ -53,6 +53,8 @@ test('correcao vai ao modelo como esclarecimento explicito, preservando a mensag
   assert.equal((await provider.reply({ text: input, history })).text, 'Lilás, entendido.');
   assert.match(calls[0].messages[0].content, /correcting her own wording/);
   assert.match(calls[0].messages[0].content, /does not confirm the truth of medical claims/);
+  assert.match(calls[0].messages[0].content, /affirmed="lilás"/);
+  assert.match(calls[0].messages[0].content, /rejected="rosa"/);
   assert.equal(calls[0].messages.at(-1).content, input);
   assert.ok(calls[0].messages.some((m) => m.content === history[0].text));
 });
@@ -64,9 +66,10 @@ test('correcao pessoal permanece no historico entregue ao modelo no turno seguin
     return { text: 'Lilás, entendido.', action: 'nod' };
   }) });
   const correction = 'Eu disse lilás, não rosa.';
-  assert.equal((await engine.reply(correction)).intent, 'correcao');
+  assert.equal((await engine.reply(correction)).intent, 'ia');
   assert.equal((await engine.reply('Qual cor você deve lembrar?')).intent, 'ia');
-  assert.ok(calls[0].some((h) => h.role === 'user' && h.text === correction));
+  assert.equal(calls.length, 2, 'a correção também precisa executar o modelo');
+  assert.ok(calls[1].some((h) => h.role === 'user' && h.text === correction));
 });
 
 test('correção literal não troca a afirmação pela palavra negada, em português ou inglês', async () => {

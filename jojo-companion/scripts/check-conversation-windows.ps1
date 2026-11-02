@@ -68,4 +68,7 @@ try {
   Get-Content -Tail 60 $stderr
   Remove-Item -LiteralPath $root -Recurse -Force -ErrorAction SilentlyContinue
 }
+# Evidência sintética recuperável dos logs privados quando a cota de artefatos estiver cheia.
+node scripts/emit-conversation-evidence.mjs
+if ($LASTEXITCODE -ne 0) { $qaExit = 1 }
 exit $qaExit

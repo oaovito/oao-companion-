@@ -58,6 +58,15 @@ Continuidade das implementações anteriores no Git, sem sobrescrever trabalho.
   plano, cartão ou limite. APIs financeiras não permitem confirmar a configuração
   de cobrança da conta; não extrapolar esse resultado observado a todo consumo.
 
+- Pipeline integral 41369897754 /727166a: preflight/lint/install/401 unitários
+  Windows passaram. Conversa 30/31: a correção manga estava correta, mas um
+  atalho impediu inferência nesse turno, exigida pelo teste. Fluxo corrigido para
+  executar o modelo com dados explícitos de termo afirmado/negado e fallback
+  identificado como programado se falhar. O teste real continua exigindo IA,
+  sem aceitar o fallback como inferência. 401/401 testes locais passaram.
+- Evidência de conversa agora também é compactada/hasheada nos logs privados,
+  permitindo recuperar todas as falas apesar da cota de artefatos.
+
 ## Próximos gates
 
 1. Diagnóstico oficial assets_only/measure_assets=false: 10 cenários novos Windows.

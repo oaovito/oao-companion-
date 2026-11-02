@@ -9,7 +9,7 @@ export function createDarkestService({ userData, content, companion, store, noti
     save: s => disk.write(s), award: reward => {
       const result = companion.progress.award(reward); lastNotify = 0;
       const previous = result.duplicate && companion.progress.st.rewards?.history.find(event => event.id === reward.id);
-      return { ...result, levelUp: result.levelUp || previous?.levelUp }; 
+      return { ...result, levelUp: result.levelUp || previous?.levelUp };
     } });
   model.changed = () => {
     if (Date.now() - lastNotify >= 5000) { lastNotify = Date.now(); notify(); }

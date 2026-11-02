@@ -36,12 +36,12 @@ export function conversaPessoal(text) {
 }
 
 /** Fatos do app e provocações não são delegados à imaginação do modelo. */
-export function respostaAncorada(text, history = []) {
+export function respostaAncorada(text, history = [], { allowCorrection = true } = {}) {
   const n = norm(text);
   const en = isEnglish(text);
   const out = (text, action = 'nod', intent = 'contexto') => ({ text, action, intent, kind: 'speech', tone: 'brincadeira', ...(en ? { lang: 'en' } : {}) });
   const correction = termosDaCorrecao(text);
-  if (correction && !/\b(cura|cure|remedio|medicamento|dose|matar|suicid|tratamento|treatment)\b/.test(n)) return out(en ? `Understood: “${correction.corrected}”. I'll use your correction.` : `Entendido: “${correction.corrected}”. Sigo com essa correção.`, 'nod', 'correcao');
+  if (allowCorrection && correction && !/\b(cura|cure|remedio|medicamento|dose|matar|suicid|tratamento|treatment)\b/.test(n)) return out(en ? `Understood: “${correction.corrected}”. I'll use your correction.` : `Entendido: “${correction.corrected}”. Sigo com essa correção.`, 'nod', 'correcao');
   const recusa = n.replace(/^(?:(?:ei|jojo|eu)\s+)*/, '');
   const treinoNegado = recusa.match(/^(?:nao|nem|nunca) (?:faz|faca|fazer) (?:mais |nenhum )?(supino|agachamentos?)[?!]*$/);
   if (treinoNegado) return out(`Sem ${treinoNegado[1].replace(/s$/, '')}. Os bíceps esperam.`, 'nod', 'recusa');
@@ -84,6 +84,7 @@ export function erroDeCoerencia(input, output, history = []) {
   if (correcaoPessoal(input) && /\b(tem certeza|certeza disso|are you sure|you sure|sua memoria|tua memoria|your memory|voce se enganou|you are mistaken)\b/.test(r)) return 'contestação da correção pessoal';
   const correction = termosDaCorrecao(input);
   if (correction && correction.denied && r.includes(norm(correction.denied)) && !r.includes(norm(correction.corrected))) return 'termo negado confirmado como correção';
+  if (correction && !r.includes(norm(correction.corrected))) return 'correção não reconheceu o termo afirmado';
   if (/\b(voce vai morrer|vou (te |lhe )?(matar|machucar|agredir)|te (mato|machuco)|se mate|se mata|mate o|matar alguem|kill yourself|i (will|ll|am going to) kill|you will die)\b/.test(r)) return 'ameaça ou incentivo à violência';
   if (/\b(?:eu )?vou\b.{0,100}\bte (mandar|levar|botar)\b.{0,20}\bhospital\b/.test(r)) return 'ameaça ou promessa física inventada';
   if (/\b(derrubei|derramei|caiu)\b/.test(q) && /\b(teclado|computador|notebook)\b/.test(q) && /\b(estou|to|vou) (limpando|limpar|secando|secar|consertando|consertar|verificar)\b/.test(r)) return 'ação física inventada';
