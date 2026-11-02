@@ -32,4 +32,16 @@ test('cuidados: outro turno cancela poses da refeição; foco permite alimentar 
   assert.equal(/^cat_needs/.test(e.companion.behavior.anim || ''), false, 'resposta atual mantém sua expressão');
   e.companion.startFocus(); e.service.model.st.hunger = 50; e.service.feed('atum');
   assert.equal(e.companion.effect, null); assert.equal(e.service.model.st.foods.atum, 1);
+  e.companion._endFocus(false);
+  e.service.model.st.hunger = 50; e.service.feed('salmao');
+  e.companion.startFocus(); e.companion._endFocus(false); e.clock.advance(4000);
+  assert.equal(e.companion.effect, null);
+  assert.equal(/^cat_needs/.test(e.companion.behavior.anim || ''), false, 'refeição anterior não retorna ao sair rapidamente do foco');
+});
+
+test('cuidados: perguntas sociais chegam à conversa; atributos explícitos consultam os registros reais', t => {
+  const e = setup(t);
+  for (const text of ['você está bem?', 'Jojo, como você está?', 'como você está com o projeto?']) assert.equal(e.companion.careChat(text), null, text);
+  e.service.model.st.hunger = 42;
+  for (const text of ['você está com fome?', 'como está sua saúde?', 'como vai a sua higiene?']) assert.match(e.companion.careChat(text), /Saciedade 42\/100/, text);
 });

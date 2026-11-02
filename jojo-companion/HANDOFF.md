@@ -15,7 +15,7 @@ casos de tarefas passaram nesse run. Não extrapolar esse resultado ao código n
 Runs 41366600620 e 41367076224 aprovaram os 10 cenários novos Windows.
 A auditoria 41367076224 aprovou 1.268 animações (0 erros/recortes/paradas/órfãs,
 0,44 ms por desenho); medidas reais importadas com hash conferido.
-403/403 testes puros locais passaram após novas regressões de contexto/acolhimento. Total E2E esperado no pipeline integral: 39.
+404/404 testes puros locais passaram após novas regressões de contexto/acolhimento. Total E2E esperado no pipeline integral: 39.
 Catálogo agora tem 1.268 animações. A medição desta arte foi importada: não inventar limites em futuras mudanças
 nem remover a verificação. Ainda faltam os gates integrais do novo commit. `assets_only` no workflow original mede arte e
 roda os cenários novos; `measure_assets=false` testa apenas interfaces primeiro.
@@ -24,9 +24,13 @@ Publicação 0.45 exige também autenticação/leitura real iCloud. Novo passo i
 depois dos demais gates, recebe apenas os secrets JOJO_ICLOUD_USER e
 JOJO_ICLOUD_APP_PASSWORD por canal seguro. Sem conta, relatório permanece reprovado,
 sem alterar a evidência histórica 0.44. Não passar essas credenciais ao npm/build/testes.
-Conversa real ainda não aprovada: 41371161554 falhou 30/31 por falso positivo
-do classificador de memória; corrigido com regressões PT/EN. Não enfraquecer o
-ensaio real nem aceitar fallback como inferência. Detalhes: CUIDADOS.md, CENAS_E_FOCO.md, AGENDA_ICLOUD.md e MISSAO_ATIVA.md.
+Conversa engine: 31/31 com Gemma real passou em 41373138263 /55d1b7a.
+Central falhou no segundo turno porque cuidados interceptava “você está bem?”;
+roteamento corrigido para consultar atributos somente quando explicitamente pedidos.
+Regressão também evita refeição antiga reaparecer após entrar/sair rapidamente do
+Foco/Trabalho, suspensão/tela cheia. Não enfraquecer o ensaio real nem aceitar
+fallback como inferência. Detalhes: CUIDADOS.md, CENAS_E_FOCO.md, AGENDA_ICLOUD.md
+ e MISSAO_ATIVA.md. Ainda faltam gates integrais e autenticação iCloud real.
 
 ## Estado atual e decisão definitiva
 

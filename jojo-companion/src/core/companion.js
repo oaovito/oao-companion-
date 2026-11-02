@@ -447,6 +447,7 @@ export class Companion {
   // ---------------------------------------------------------------- energia
 
   onSuspend() {
+    this.visualContext++; this.effect = null; this.ambientQueue.length = 0;
     this.suspended = true;
     this._cancelTimer();
     if (this.interaction) this.exitInteraction('suspend');
@@ -564,6 +565,7 @@ export class Companion {
     if (hide === this.fullscreenHidden) return;
     this.fullscreenHidden = hide;
     if (hide) {
+      this.visualContext++; this.effect = null;
       if (this.interaction) this.exitInteraction('fullscreen');
       this._cancelTimer();
       this.mover.stop();
@@ -2351,6 +2353,7 @@ export class Companion {
   }
 
   _enterWork(perfil, { silent = false, instant = false } = {}) {
+    this.visualContext++;
     const now = this.clock.now();
     this.work = { perfil, desde: now };
     this.onWorkStart?.();
@@ -2843,6 +2846,7 @@ export class Companion {
   // -------- foco junto (body doubling)
 
   startFocus(min = 25, tipo = 'estudo') {
+    this.visualContext++; this.effect = null; this.ambientQueue.length = 0; this.hideBubble();
     const now = this.clock.now();
     this.focus = { inicio: now, fim: now + min * 60e3, min, tipo, marcas: 0 };
     this.onFocusStart?.();

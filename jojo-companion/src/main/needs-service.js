@@ -54,7 +54,7 @@ export function createNeedsService({ userData, companion, store, foods, balance,
   companion.onFeed = id => feed(id, { legacy: true });
   companion.careChat = text => {
     const n = String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    if (/^(?:jojo[, ]+)?(?:voce (?:esta|ta) bem|como voce (?:esta|ta)|como (?:esta|ta|vai) (?:sua|a sua) (?:fome|saude|higiene|humor)|voce (?:ta|esta) com fome|esta com fome)/.test(n)) {
+    if (/^(?:jojo[, ]+)?(?:como (?:esta|ta|vai) (?:sua|a sua) (?:fome|saude|higiene|humor)|voce (?:ta|esta) com fome|esta com fome)/.test(n)) {
       const s = model.snapshot(); return `${s.hungerState}. Saciedade ${s.hunger}/100, saúde ${s.health}/100, higiene ${s.hygiene}/100. ${s.ill ? 'Preciso de comida e cuidado. É a mecânica do meu aquário, sem plantão médico.' : 'Meus registros, sem inventar drama.'}`;
     }
     if (/^(?:abre|abrir|mostra|mostrar) (?:o |meu |seu )?(?:aquario|cardapio|painel de cuidados)/.test(n)) { companion.openApp('cuidados'); return 'Cuidados e cardápio abertos na Central. Escolha o alimento; eu cuido da avaliação severa.'; }

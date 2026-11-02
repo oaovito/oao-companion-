@@ -111,7 +111,7 @@ observar a verificação executada. Jobs pulados não comprovam disponibilidade 
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
-E2E, 1.043 animações, medição, conversa REAL (31 engine + 12 Central), artefatos,
+E2E, 1.268 animações, medição, conversa REAL (31 engine + 12 Central), artefatos,
 compatibilidade do atualizador e notas. Pesquisa web/GPU permanecem diagnósticos opcionais.
 Logs privados filtram credenciais; TAP/JUnit/JSON e hashes são retidos localmente (três
 execuções/14 dias). Cache confere SHA-256 do bootstrap/runtime e integridade npm.
@@ -236,8 +236,8 @@ Continuidade/checklist em `jojo-companion/docs/MISSAO_ATIVA.md`.
 Implementados em código os 50 conjuntos de memes/profissões, integração de Discord
 no Trabalho/Foco (força opt-in), migração conservadora de atalhos e ícones locais
 sem redistribuição de marcas. Ver `docs/CENAS_E_FOCO.md`. Catálogo: 1.268 animações.
-Ainda medir TODA a arte no Windows e importar `jojo.room.json` real; o teste de
-cobertura não pode ser desligado. Esperados 39 E2E no pipeline integral.
+Toda esta arte foi medida no Windows e importada (evidência abaixo); futuras
+alterações de desenho exigem nova medição e não podem desligar a cobertura. Esperados 39 E2E no pipeline integral.
 O workflow tem passo iCloud isolado DEPOIS dos demais gates; secrets só nesse
 passo, nunca no npm/build/testes. Candidatas >=0.45 exigem `icloud-live` e evidência
 somente de contagens/horário. Sem conta autorizada, NÃO finalizar/publicar.

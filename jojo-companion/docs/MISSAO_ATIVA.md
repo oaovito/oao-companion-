@@ -80,18 +80,26 @@ Continuidade das implementações anteriores no Git, sem sobrescrever trabalho.
 - Não houve cancelamento do run 41371161554: ele já estava concluído com falha
   quando a solicitação de cancelamento foi feita. Não confundir com run cancelado.
 
+- 41373138263 /55d1b7a: 403 unitários Windows e TODOS os 31 cenários engine
+  com Gemma real passaram. Falas recuperadas dos logs privados e lidas. A Central
+  falhou no segundo turno: cuidados interceptava “você está bem?” como atributos.
+  Roteamento agora só intercepta perguntas explícitas sobre fome/saúde/higiene/humor.
+  Perguntas sociais continuam no modelo. Teste real não foi alterado.
+- Regressão adicional reproduziu refeição antiga voltando após entrar/sair rapidamente
+  do Foco. Transições para Foco/Trabalho/suspensão/tela cheia invalidam contexto visual
+  antigo e limpam efeitos. Nenhuma perda de consumo/XP. Suíte atual: 404 testes.
+
 ## Próximos gates
 
-1. Diagnóstico oficial assets_only/measure_assets=false: 10 cenários novos Windows.
-2. Medir/auditar toda a arte com measure_assets=true; recuperar JSON com SHA-256
-   conferido dos logs se o upload falhar. Importar somente a medida real.
-3. Testes puros completos, lint e pipeline integral Windows (39 E2E, 16 integração,
-   31 engine +12 Central Gemma real, build NSIS/portátil/ZIP, instalação, desempenho,
-   hashes, atualizador e notas incrementais).
-4. Ensaio autenticado iCloud com conta autorizada, secrets por canal seguro.
+1. Concluir pipeline INTEGRAL no novo commit: 404 unitários, 39 E2E, 16 integração,
+   31 engine +12 Central Gemma real, build NSIS/portátil/ZIP, instalação e três
+   atualizações, desempenho, hashes, atualizador e notas incrementais.
+2. Ensaio autenticado iCloud com conta autorizada, secrets por canal seguro.
    Passo final isolado exige isso e bloqueia relatório/publicação sem prova real.
-5. Somente após TODOS os requisitos/gates, habilitar a candidata na política de
+3. Somente após TODOS os requisitos/gates, habilitar a candidata na política de
    publicação oficial. Nunca publicar parte da missão nem reescrever as 18 releases.
+
+Medição e diagnóstico de dez cenários já concluídos; NÃO repetir sem mudar arte.
 
 A API apresentou 401 transitório nesta sessão; Git e API voltaram a responder.
 Nenhuma senha/token foi solicitado no chat ou gravado no projeto. MNE_Lab intocado.
