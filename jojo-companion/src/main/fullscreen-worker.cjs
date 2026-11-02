@@ -40,6 +40,7 @@ function init() {
     koffi,
     MONITORINFO,
     PROCESSENTRY32,
+    IsWindowVisible: user32.func('int __stdcall IsWindowVisible(uintptr_t hwnd)'),
     GetForegroundWindow: user32.func('uintptr_t __stdcall GetForegroundWindow()'),
     GetShellWindow: user32.func('uintptr_t __stdcall GetShellWindow()'),
     GetDesktopWindow: user32.func('uintptr_t __stdcall GetDesktopWindow()'),
@@ -95,20 +96,26 @@ async function closeDiscord({ force = false } = {}, id) {
   for (let n = 0; n < 2048; n++) {
     hwnd = api.FindWindowExW(0, hwnd, null, null); if (!hwnd) break;
     const pid = [0]; api.GetWindowThreadProcessId(hwnd, pid);
-    if (pids.has(pid[0]) && !own.has(String(hwnd))) {
+    if (pids.has(pid[0]) && !own.has(String(hwnd)) && api.IsWindowVisible(hwnd)) {
       const current = processInfo(pid[0]); const expected = initial.find(p => p.pid === pid[0]);
       if (current?.key === expected?.key && api.PostMessageW(hwnd, 0x0010, 0, 0)) requests++;
     }
   }
-  if (initial.length) await new Promise(resolve => setTimeout(resolve, 1200));
+  // Fechamento Chromium é assíncrono: aguardar de forma limitada sem bloquear a UI.
+  let remaining = initial.length;
+  for (let n = 0; n < 12 && remaining; n++) {
+    await new Promise(resolve => setTimeout(resolve, 250));
+    remaining = knownProcesses().filter(p => isDiscord(p.name)).length;
+    if (cancelledDiscord.has(id)) break;
+  }
   let forced = 0;
   if (force === true && !cancelledDiscord.has(id)) for (const original of initial) {
     processInfo(original.pid, (current, handle) => {
       if (current.key === original.key && isDiscord(current.image) && api.TerminateProcess(handle, 0)) forced++;
     }, true);
   }
-  if (forced) await new Promise(resolve => setTimeout(resolve, 250));
-  const remaining = knownProcesses().filter(p => isDiscord(p.name)).length;
+  if (forced) await new Promise(resolve => setTimeout(resolve, 500));
+  remaining = knownProcesses().filter(p => isDiscord(p.name)).length;
   const cancelled = cancelledDiscord.delete(id);
   return { detected: initial.length, requests, remaining, forced, cancelled };
 }

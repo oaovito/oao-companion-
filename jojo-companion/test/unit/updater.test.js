@@ -2,7 +2,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseVersion, isNewer, pickAsset, UpdateChecker, portableSwapScript } from '../../src/core/updater.js';
-import { detectMode } from '../../src/main/auto-update.js';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { detectMode, createAutoUpdater } from '../../src/main/auto-update.js';
 
 const RELEASE = {
   tag_name: 'v0.17.0',
@@ -99,4 +102,13 @@ test('atualização com o JoJo aberto: avisa que já volta (no Modo Trabalho, em
   assert.match(ditas.pop(), /Já volto/);
   e.companion.startWork();
   assert.equal(e.companion.avisarAtualizacao('9.9.9'), false);
+});
+
+
+test('atualizador NSIS: aplicação automática sinaliza update para preservar atalhos e preferências', t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-update-args-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const calls = []; const updater = createAutoUpdater({ app: { getPath: () => dir, getVersion: () => '0.45.0' }, net: {}, store: { get: () => ({ autoUpdate: true }) }, log: () => {}, feed: { owner: 'oaovito', repo: 'jojo-companion-releases' }, env: { JOJO_TEST: '1', JOJO_UPDATE_MODE: 'installer' }, spawnProcess: (...args) => { calls.push(args); return { unref() {} }; } });
+  updater.state.status = 'ready'; updater.state.file = path.join(dir, 'JoJoCompanion-Setup-0.45.0.exe');
+  assert.equal(updater.onIdle(1), true); assert.deepEqual(calls[0][1], ['/S', '--updated', '--force-run']);
+  updater.state.status = 'ready'; assert.equal(updater.onQuit(), true); assert.deepEqual(calls[1][1], ['/S', '--updated']);
 });

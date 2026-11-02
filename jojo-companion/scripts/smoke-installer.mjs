@@ -16,8 +16,11 @@ const run = (exe, args, extra = {}) => new Promise((resolve, reject) => {
   child.on('error', reject); child.on('exit', (code) => code === 0 ? resolve() : reject(new Error('Instalador/desinstalador retornou falha')));
 });
 const stop = (pid) => { try { execFileSync('taskkill.exe', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore' }); } catch { /* ja encerrou */ } };
+const links = () => JSON.parse(execFileSync('pwsh.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/inspect-windows-shortcuts.ps1'], { encoding: 'utf8' }));
+const normalized = value => path.resolve(value).toLowerCase();
 let child, cleanupError, startupError;
 try {
+  if (links().length) throw new Error('Atalho preexistente preservado; conta de teste nao esta isolada');
   // /D e _? sao o ultimo argumento e incluem o resto da linha, conforme o protocolo NSIS.
   await run(setup, ['/S', `/D=${target}`], { windowsVerbatimArguments: true });
   const exe = path.join(target, 'JoJo Companion.exe');
@@ -36,7 +39,21 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
   if (!ready) throw new Error('Aplicativo instalado nao iniciou');
-  console.log(`NSIS ${version}: instalou e iniciou no destino temporario isolado.`);
+  if (child?.pid) { stop(child.pid); child = null; }
+  const before = links();
+  if (before.length !== 1 || normalized(before[0].target) !== normalized(exe) || before[0].arguments) throw new Error('Instalacao precisa criar exatamente um atalho proprio');
+  fs.writeFileSync(path.join(data, 'update-preservation.json'), JSON.stringify({ preserved: true }));
+  await run(setup, ['/S', '--updated', `/D=${target}`], { windowsVerbatimArguments: true });
+  const after = links();
+  if (after.length !== 1 || normalized(after[0].target) !== normalized(exe)) throw new Error('Atualizacao criou duplicata ou alterou destino do atalho');
+  // Remove apenas o atalho criado neste ensaio e com destino confirmado.
+  fs.unlinkSync(after[0].path);
+  for (let n = 0; n < 2; n++) {
+    await run(setup, ['/S', '--updated', `/D=${target}`], { windowsVerbatimArguments: true });
+    if (links().length) throw new Error('Atualizacao recriou atalho removido pela pessoa');
+    if (!JSON.parse(fs.readFileSync(path.join(data, 'update-preservation.json'))).preserved) throw new Error('Atualizacao perdeu dados do perfil');
+  }
+  console.log(`NSIS ${version}: instalou/iniciou e tres atualizacoes preservaram atalho unico, remocao manual e dados.`);
 } finally {
   if (child?.pid) stop(child.pid);
   const log = path.join(data, 'logs/jojo.log');

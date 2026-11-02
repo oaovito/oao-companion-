@@ -13,7 +13,7 @@ test('Discord Windows: WM_CLOSE, confirmação, força opt-in, cancelamento e ex
   const runtime = path.join(root, 'runtime'), fixture = path.join(root, 'fixture');
   fs.cpSync(path.dirname(electron), runtime, { recursive: true }); fs.mkdirSync(fixture);
   fs.writeFileSync(path.join(fixture, 'package.json'), JSON.stringify({ name: 'jojo-discord-fixture', main: 'main.cjs' }));
-  fs.writeFileSync(path.join(fixture, 'main.cjs'), `const {app,BrowserWindow}=require('electron');app.setPath('userData',process.env.JOJO_FIXTURE_PROFILE);app.whenReady().then(()=>{const w=new BrowserWindow({width:300,height:220,webPreferences:{sandbox:true}});w.loadURL('data:text/html,<h1>Fixture de fechamento</h1>');if(process.env.JOJO_HOLD_CLOSE==='1')w.on('close',e=>{e.preventDefault();w.hide()});});app.on('window-all-closed',()=>app.quit());setTimeout(()=>app.exit(),90000);`);
+  fs.writeFileSync(path.join(fixture, 'main.cjs'), `const {app,BrowserWindow}=require('electron');app.setPath('userData',process.env.JOJO_FIXTURE_PROFILE);app.whenReady().then(()=>{const w=new BrowserWindow({width:300,height:220,webPreferences:{sandbox:true}});w.loadURL('data:text/html,<h1>Fixture de fechamento</h1>');w.on('close',()=>require('node:fs').appendFileSync(require('node:path').join(process.env.JOJO_FIXTURE_PROFILE,'close-events.txt'),'close\\n'));if(process.env.JOJO_HOLD_CLOSE==='1')w.on('close',e=>{e.preventDefault();w.hide()});});app.on('window-all-closed',()=>app.quit());setTimeout(()=>app.exit(),90000);`);
   const original = path.join(runtime, 'electron.exe'); const discord = path.join(runtime, 'Discord.exe'), updater = path.join(runtime, 'Update.exe');
   fs.copyFileSync(original, discord); fs.copyFileSync(original, updater);
   const main = await launch(); const opened = [];
@@ -25,7 +25,7 @@ test('Discord Windows: WM_CLOSE, confirmação, força opt-in, cancelamento e ex
   try {
     const unrelated = await start(updater, true); const normal = await start(discord);
     const closed = await main.app.evaluate(() => globalThis.__jojo.nativeDetector().closeDiscord());
-    assert.ok(closed.detected >= 1); assert.ok(closed.requests >= 1); assert.equal(closed.remaining, 0); assert.equal(closed.forced, 0); assert.equal(alive(normal), false); assert.equal(alive(unrelated), true);
+    assert.ok(closed.detected >= 1); assert.ok(closed.requests >= 1); assert.equal(closed.remaining, 0, JSON.stringify({ result: closed, events: fs.existsSync(path.join(root, 'profile-1/close-events.txt')) ? fs.readFileSync(path.join(root, 'profile-1/close-events.txt'), 'utf8') : 'no-close-event' })); assert.equal(closed.forced, 0); assert.equal(alive(normal), false); assert.equal(alive(unrelated), true);
     const stubborn = await start(discord, true);
     const first = await main.app.evaluate(() => globalThis.__jojo.nativeDetector().closeDiscord());
     assert.ok(first.remaining >= 1); assert.equal(first.forced, 0); assert.equal(alive(stubborn), true);

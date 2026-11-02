@@ -23,7 +23,7 @@ test('atalhos Windows: .lnk real, migração entre versões, público/pessoal e 
     for (const version of ['0.45.1', '0.45.2', '0.45.2']) assert.equal(await run({ version }), true);
     assert.equal(fs.readdirSync(desktop).filter(f => /^JoJo/.test(f)).length, 1);
     const meta = await main.app.evaluate((_e, o) => globalThis.__jojo.nativeShell.readShortcutLink(o), canonical);
-    assert.equal(meta.target, target); assert.equal(meta.appUserModelId, 'com.jojocompanion.app');
+    assert.equal(fs.realpathSync.native(meta.target).toLowerCase(), fs.realpathSync.native(target).toLowerCase()); assert.equal(meta.appUserModelId, 'com.jojocompanion.app');
     const personalized = await main.app.evaluate((_e, o) => globalThis.__jojo.nativeShell.readShortcutLink(o), custom); assert.equal(personalized.args, '--quiet');
     fs.unlinkSync(canonical); assert.equal(await run(), true); assert.equal(fs.existsSync(canonical), false, 'remoção manual respeitada');
     assert.equal(await run({ preference: 'show' }), true); assert.equal(fs.existsSync(canonical), true);

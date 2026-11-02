@@ -68,7 +68,11 @@ export function criarPresenca({ app, log, env = process.env, platform = process.
 export function garantirAtalho({ app, shell, log, env = process.env, platform = process.platform, preference = 'auto' }) {
   if (platform !== 'win32' || !app.isPackaged || env.JOJO_TEST === '1') return false;
   try {
-    const alvo = alvoDoApp({ env });
+    const realLocal = file => {
+      if (!/^[a-z]:[\\/]/i.test(file || '')) return file;
+      try { return fs.realpathSync.native(file); } catch { return file; }
+    };
+    const alvo = realLocal(alvoDoApp({ env }));
     const desktop = app.getPath('desktop');
     const disk = new AtomicState(path.join(app.getPath('userData'), 'desktop-shortcut.json'), { defaults: () => ({}), log });
     const dirs = [...new Set([desktop, ...(env.PUBLIC ? [path.join(env.PUBLIC, 'Desktop')] : [])])];
@@ -78,7 +82,7 @@ export function garantirAtalho({ app, shell, log, env = process.env, platform = 
       if (!names.includes(SHORTCUT_NAMES[0])) names.push(SHORTCUT_NAMES[0]);
       for (const name of names) {
         const file = path.join(dir, name);
-        try { entries.push({ path: file, name, link: shell.readShortcutLink(file) }); }
+        try { const link = shell.readShortcutLink(file); entries.push({ path: file, name, link: { ...link, target: realLocal(link.target), icon: link.icon ? realLocal(link.icon) : link.icon } }); }
         catch { if (fs.existsSync(file)) entries.push({ path: file, name, link: null }); }
       }
     }

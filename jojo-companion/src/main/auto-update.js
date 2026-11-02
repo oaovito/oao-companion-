@@ -22,7 +22,7 @@ export function detectMode({ app, env = process.env, platform = process.platform
   return null; // ZIP ou desenvolvimento: sem atualização automática
 }
 
-export function createAutoUpdater({ app, net, store, log, feed, onUpdated = () => {}, env = process.env }) {
+export function createAutoUpdater({ app, net, store, log, feed, onUpdated = () => {}, env = process.env, spawnProcess = spawn }) {
   const mode = detectMode({ app, env });
   const dir = path.join(app.getPath('userData'), 'updates');
   const testBase = env.JOJO_TEST === '1' && env.JOJO_UPDATE_BASE ? env.JOJO_UPDATE_BASE : null;
@@ -112,9 +112,9 @@ export function createAutoUpdater({ app, net, store, log, feed, onUpdated = () =
         if (!target) return false;
         const script = path.join(dir, 'trocar.cmd');
         fs.writeFileSync(script, portableSwapScript({ newPath: state.file, targetPath: target, relaunch }));
-        spawn('cmd.exe', ['/d', '/c', script], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+        spawnProcess('cmd.exe', ['/d', '/c', script], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
       } else if (mode === 'installer') {
-        spawn(state.file, relaunch ? ['/S', '--force-run'] : ['/S'], { detached: true, stdio: 'ignore' }).unref();
+        spawnProcess(state.file, ['/S', '--updated', ...(relaunch ? ['--force-run'] : [])], { detached: true, stdio: 'ignore' }).unref();
       } else return false;
       state.status = 'applying';
       log('info', `Aplicando atualização ${state.version} (${mode}).`);
