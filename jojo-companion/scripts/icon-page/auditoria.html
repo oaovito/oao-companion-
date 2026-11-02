@@ -116,5 +116,19 @@ window.novasCenas = (rigJson, animJson) => {
   }
   return c.toDataURL('image/png');
 };
+// Comparação dos recursos históricos, renderizada no mesmo Chromium Windows.
+window.comparar = (original, rejected, restored, animJson) => {
+  const c = document.createElement('canvas'); c.width = 960; c.height = 720;
+  const ctx = c.getContext('2d'); ctx.fillStyle = '#f4f7fb'; ctx.fillRect(0, 0, c.width, c.height);
+  for (const [i, [label, data]] of [['Original 0.44.0 (histórico)', original], ['0.45.0 rejeitado', rejected], ['Restaurado: pernas, sem cauda', restored]].entries()) {
+    const rig = new RigRenderer(data), a = new Animator(animJson, { rng: () => 0.5 });
+    for (const [j, name] of ['idle', 'walk', 'wave'].entries()) {
+      a.play(name, 0, { variant: name }); ctx.save(); ctx.translate(i * 320, j * 240);
+      ctx.fillStyle = '#263548'; ctx.font = '14px sans-serif'; ctx.fillText(label, 12, 24); ctx.fillText(name, 12, 45);
+      rig.draw(ctx, a.sample((animJson.animations[name].duration || 1000) * 0.5).pose, { origin: { x: 60, y: 65 }, scale: 1, facing: 1 }); ctx.restore();
+    }
+  }
+  return c.toDataURL('image/png');
+};
 window.ready = true;
 </script></body></html>

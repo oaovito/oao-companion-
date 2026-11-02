@@ -17,11 +17,13 @@ export function createDarkestService({ userData, content, companion, store, noti
   companion.darkest = model;
   let lastValidDays = -1, lastSessions = -1;
   const deliverVisual = () => model.takeVisual({
-    allowed: store.get().darkestAtivo && companion._canNag() && !companion.work && !companion.focus && !companion.game && !companion.bubble && !companion.dragging && !companion.fullscreenIds?.length && !companion.chatQueue && !['fleeing', 'hidden'].includes(companion.avoid.state),
+    allowed: model.detection?.known !== false && store.get().darkestAtivo && companion._canNag() && !companion.work && !companion.focus && !companion.game && !companion.bubble && !companion.dragging && !companion.fullscreenIds?.length && !companion.chatQueue && !['fleeing', 'hidden'].includes(companion.avoid.state),
     play: id => companion.playCatalog(id, { speak: false, source: 'evento' }) });
   function observe(sample, idleSeconds) {
     try {
-      model.observe({ ...(sample || {}), ...(store.get().darkestAtivo ? {} : { running: false, active: false }), idleSeconds, suspended: companion.suspended || !companion.progress.clockHealthy() });
+      const previous = [model.running, model.active, model.detection?.known].join();
+      model.observe({ ...(sample || { known: false, reason: 'detector_unavailable' }), ...(store.get().darkestAtivo ? {} : { running: false, active: false, known: true, reason: 'disabled' }), idleSeconds, suspended: companion.suspended || !companion.progress.clockHealthy() });
+      if ([model.running, model.active, model.detection?.known].join() !== previous) { lastNotify = Date.now(); notify(); }
       if (lastValidDays !== model.st.days.length) { lastValidDays = model.st.days.length; companion.progress.count('ddDias', lastValidDays, true); }
       if (lastSessions !== model.st.sessions) { lastSessions = model.st.sessions; companion.progress.count('ddSessoes', lastSessions, true); }
       deliverVisual();

@@ -1,3 +1,7 @@
+> Documento histórico. A direção anatômica com nadadeiras/cauda foi REVOGADA pelo
+> pedido REQUISITOS_CORRECOES_0.45.1.md: restaurar o original com pernas, sem cauda.
+> Requisitos válidos restantes permanecem cumulativos.
+
 > Adendo posterior do usuário — 02/11/2026: “A agenda só deve precisar do link da agenda não log senha de nada”.
 > Essa diretriz substitui os requisitos abaixo sobre autenticação CalDAV, ID Apple,
 > senha específica e teste com conta autorizada. A agenda deve usar somente o link

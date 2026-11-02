@@ -1,7 +1,7 @@
 {
   "name": "jojo-companion",
   "productName": "JoJo Companion",
-  "version": "0.45.0",
+  "version": "0.45.1",
   "description": "JoJo Companion: companion de desktop com o JoJo, um tubarão fisiculturista.",
   "author": "JoJo Companion contributors",
   "license": "MIT",
@@ -57,7 +57,9 @@
       "!node_modules/koffi/src/koffi/CMakeLists.txt"
     ],
     "asarUnpack": [
-      "node_modules/@koromix/**"
+      "node_modules/@koromix/**",
+      "src/main/steam-inventory-worker.cjs",
+      "src/core/steam-library.cjs"
     ],
     "win": {
       "target": [

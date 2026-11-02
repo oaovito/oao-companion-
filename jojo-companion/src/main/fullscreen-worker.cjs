@@ -11,26 +11,26 @@
 // Nada é salvo nem enviado para fora do PC. Não lê conteúdo, pixels, histórico
 // nem entrada do usuário.
 
-const QUNS_BUSY = 2;
-const QUNS_RUNNING_D3D_FULL_SCREEN = 3;
-const QUNS_PRESENTATION_MODE = 4;
-const SHELL_CLASSES = new Set(['Progman', 'WorkerW', 'Shell_TrayWnd', 'Shell_SecondaryTrayWnd']);
 const MONITOR_DEFAULTTONEAREST = 2;
 
 let api = null;
 const own = new Set();
 const { verifyDarkestImage } = require('../core/darkest-process.cjs');
+const { classifyFullscreen } = require('../core/fullscreen-policy.cjs');
+const { identifyGame } = require('../core/steam-library.cjs');
+const winPath = require('node:path').win32;
+let gameInventory = { roots: [], games: [] };
+let gameScanAt = 0, gameKnown = [], rejectedDarkest = false;
 const fs = require('node:fs');
 const { isDiscord, brandFor } = require('../core/windows-app-policy.cjs');
 const cancelledDiscord = new Set();
-let darkestKnown = [];
-let darkestScanAt = 0;
 const darkestProofs = new Map();
 
 function init() {
   const koffi = require('koffi');
   const user32 = koffi.load('user32.dll');
   const shell32 = koffi.load('shell32.dll');
+  const dwmapi = koffi.load('dwmapi.dll');
   const kernel32 = koffi.load('kernel32.dll');
   const RECT = koffi.struct('JOJO_RECT', { left: 'int32', top: 'int32', right: 'int32', bottom: 'int32' });
   const MONITORINFO = koffi.struct('JOJO_MONITORINFO', { cbSize: 'uint32', rcMonitor: RECT, rcWork: RECT, dwFlags: 'uint32' });
@@ -40,6 +40,11 @@ function init() {
     koffi,
     MONITORINFO,
     PROCESSENTRY32,
+    IsIconic: user32.func('int __stdcall IsIconic(uintptr_t hwnd)'),
+    IsZoomed: user32.func('int __stdcall IsZoomed(uintptr_t hwnd)'),
+    GetWindowLongPtrW: user32.func('intptr_t __stdcall GetWindowLongPtrW(uintptr_t hwnd, int index)'),
+    DwmGetWindowAttribute: dwmapi.func('int32 __stdcall DwmGetWindowAttribute(uintptr_t hwnd, uint32 attribute, _Out_ JOJO_RECT *rect, uint32 size)'),
+    SetThreadDpiAwarenessContext: user32.func('intptr_t __stdcall SetThreadDpiAwarenessContext(intptr_t context)'),
     IsWindowVisible: user32.func('int __stdcall IsWindowVisible(uintptr_t hwnd)'),
     GetForegroundWindow: user32.func('uintptr_t __stdcall GetForegroundWindow()'),
     GetShellWindow: user32.func('uintptr_t __stdcall GetShellWindow()'),
@@ -65,7 +70,7 @@ function init() {
   };
 }
 
-function knownProcesses() {
+function knownProcesses(all = false) {
   const snapshot = api.CreateToolhelp32Snapshot(2, 0);
   if (!snapshot || String(snapshot) === '18446744073709551615' || snapshot === -1) throw new Error('process_snapshot');
   const found = [];
@@ -73,7 +78,7 @@ function knownProcesses() {
     const entry = { dwSize: api.koffi.sizeof(api.PROCESSENTRY32) }; let ok = api.Process32FirstW(snapshot, entry);
     for (let n = 0; ok && n < 10000; n++) {
       const chars = Array.from(entry.szExeFile || []); const end = chars.indexOf(0); const name = String.fromCharCode(...chars.slice(0, end < 0 ? chars.length : end));
-      if (brandFor(name)) found.push({ pid: entry.th32ProcessID, name });
+      if (all || brandFor(name)) found.push({ pid: entry.th32ProcessID, name });
       ok = api.Process32NextW(snapshot, entry);
     }
   } finally { api.CloseHandle(snapshot); }
@@ -128,51 +133,46 @@ function brandIcons() {
   return result;
 }
 
-function darkestProcess(hwnd) {
-  if (!hwnd || own.has(String(hwnd))) return null;
-  const pid = [0]; api.GetWindowThreadProcessId(hwnd, pid); if (!pid[0]) return null;
-  const h = api.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid[0]); if (!h) return null;
-  try {
-    const name = new Uint16Array(2048); const size = [2048];
-    if (!api.QueryFullProcessImageNameW(h, 0, name, size)) return null;
-    const full = String.fromCharCode(...name.slice(0, size[0]));
-    if (!/\\Darkest\.exe$/i.test(full)) return null;
-    let proof = darkestProofs.get(full);
+function gameFor(info) {
+  if (!info) return null;
+  let game = identifyGame(info.image, gameInventory.games);
+  if (/\\Darkest\.exe$/i.test(info.image)) {
+    let proof = darkestProofs.get(info.image);
     if (!proof || Date.now() > proof.until) {
-      proof = { valid: verifyDarkestImage(full, f => fs.readFileSync(f, 'utf8')), until: Date.now() + 60000 };
+      proof = { valid: verifyDarkestImage(info.image, f => fs.readFileSync(f, 'utf8')), until: Date.now() + 30000 };
       if (darkestProofs.size >= 64) darkestProofs.delete(darkestProofs.keys().next().value);
-      darkestProofs.set(full, proof);
+      darkestProofs.set(info.image, proof);
     }
-    if (!proof.valid) return null;
-    const creation = {}; const exit = {}; const kernel = {}; const user = {}; const code = [0];
-    if (!api.GetProcessTimes(h, creation, exit, kernel, user) || !api.GetExitCodeProcess(h, code) || code[0] !== 259) return null;
-    return { hwnd: String(hwnd), pid: pid[0], key: `${pid[0]}:${creation.high.toString(16)}:${creation.low.toString(16)}` };
-  } catch { return null; }
-  finally { api.CloseHandle(h); }
+    if (proof.valid) game = { appId: '262060' };
+    else { rejectedDarkest = true; return null; }
+  }
+  if (game?.appId === '262060' && !/^Darkest\.exe$/i.test(winPath.basename(info.image))) return null;
+  return game ? { appId: game.appId, pid: info.pid, processKey: info.key } : null;
 }
-
-function detectDarkest() {
-  const foreground = api.GetForegroundWindow();
-  const active = darkestProcess(foreground);
-  if (active) darkestKnown = [active, ...darkestKnown.filter(x => x.key !== active.key)].slice(0, 8);
-  // Enumera apenas janelas de nível superior a cada 15 s, não todos os processos a cada quadro.
-  if (Date.now() >= darkestScanAt) {
-    darkestScanAt = Date.now() + 15000; const found = active ? [active] : []; let hwnd = 0;
-    for (let i = 0; i < 400; i++) {
-      hwnd = api.FindWindowExW(0, hwnd, null, null); if (!hwnd) break;
-      const candidate = darkestProcess(hwnd);
-      if (candidate && !found.some(x => x.key === candidate.key)) found.push(candidate);
+function detectGames() {
+  const at = Date.now(), hwnd = api.GetForegroundWindow();
+  const pid = [0]; if (hwnd && api.IsWindowVisible(hwnd) && !api.IsIconic(hwnd) && !own.has(String(hwnd))) api.GetWindowThreadProcessId(hwnd, pid);
+  const active = gameFor(pid[0] ? processInfo(pid[0]) : null);
+  if (at >= gameScanAt) {
+    gameScanAt = at + 3000; rejectedDarkest = false; const found = [];
+    for (const candidate of knownProcesses(true)) {
+      if (!gameInventory.games.length && !/^darkest\.exe$|^steam\.exe$/i.test(candidate.name)) continue;
+      const info = processInfo(candidate.pid); if (!info) continue;
+      const game = gameFor(info);
+      if (game) found.push(game);
+      if (winPath.basename(info.image).toLowerCase() === 'steam.exe' && gameInventory.roots.some(root => winPath.dirname(info.image).toLowerCase() === root.toLowerCase())) found.push({ steam: true, pid: info.pid, processKey: info.key });
     }
-    darkestKnown = found.slice(0, 8);
+    gameKnown = found;
   }
-  const valid = [];
-  for (const candidate of darkestKnown) {
-    const current = candidate.key === active?.key ? active : darkestProcess(BigInt(candidate.hwnd));
-    if (current?.key === candidate.key) valid.push(current);
-  }
-  darkestKnown = valid;
-  const game = active || valid[0];
-  return { running: !!game, active: !!active, processKey: game?.key || null };
+  // Confere vida e identidade em cada amostra; PID reutilizado nunca herda sessão/XP.
+  gameKnown = gameKnown.filter(game => processInfo(game.pid)?.key === game.processKey);
+  if (active && !gameKnown.some(game => game.processKey === active.processKey)) gameKnown.push(active);
+  const games = gameKnown.filter(game => !game.steam).map(game => ({ appId: game.appId, processKey: game.processKey, active: game.processKey === active?.processKey }));
+  const darkest = games.find(game => game.appId === '262060' && game.active) || games.find(game => game.appId === '262060');
+  return { known: true, checkedAt: at, steamRunning: gameKnown.some(game => game.steam), games,
+    darkest: { known: true, running: !!darkest, active: !!darkest?.active, processKey: darkest?.processKey || null,
+      installed: !!darkest || gameInventory.games.some(game => game.appId === '262060'), executable: !!darkest, verified: !!darkest,
+      reason: rejectedDarkest && !darkest ? 'installation_not_verified' : null, checkedAt: at } };
 }
 
 function className(hwnd) {
@@ -250,7 +250,8 @@ function musicaDaJanela(title, exe, spotifyExe = 'spotify.exe') {
 // plano, pelo nome do executável (sem título, sem captura). Sai daqui só a categoria.
 const CATEGORIAS = [
   ['mnelab', /mne[_ -]?lab/i],
-  ['jogo', /^(steam|epicgameslauncher|riotclientservices|battle\.net|minecraft\w*|javaw|robloxplayerbeta|gta5|valorant\w*|fortniteclient\w*|r5apex|cs2|eldenring|genshinimpact)\.exe$/i],
+  ['launcher', /^(steam|epicgameslauncher|riotclientservices|battle\.net)\.exe$/i],
+  ['jogo', /^(minecraft\w*|javaw|robloxplayerbeta|gta5|valorant\w*|fortniteclient\w*|r5apex|cs2|eldenring|genshinimpact)\.exe$/i],
   ['video', /^(vlc|mpc-hc64|mpc-be64|potplayermini64|netflix|primevideo|disney\w*|wmplayer)\.exe$/i],
   ['escritorio', /^(winword|excel|powerpnt|onenote|acrord32|acrobat|soffice\w*|notion|obsidian)\.exe$/i],
   ['codigo', /^(code|devenv|idea64|pycharm64|rstudio|matlab|spyder|jupyter\w*|windowsterminal)\.exe$/i],
@@ -289,39 +290,33 @@ function detect(opts = {}) {
     if (opts.percepcao) result.categoria = categoriaApp(exeName(hwnd));
   }
   result.spotify = opts.spotify ? spotifyTitle(opts.spotifyExe || 'Spotify.exe') : null;
-  result.darkest = opts.darkest ? detectDarkest() : null;
+  if (opts.darkest || opts.games) {
+    try { result.games = detectGames(); result.darkest = opts.darkest ? result.games.darkest : null; if (opts.percepcao && result.games.games?.some(game => game.active)) result.categoria = 'jogo'; }
+    catch { result.games = { known: false, reason: 'process_scan_failed', checkedAt: Date.now() }; result.darkest = { known: false, reason: 'process_scan_failed' }; }
+  }
+  result.capturedAt = Date.now();
   return result;
 }
 
 function detectFullscreen() {
-  const q = [0];
-  const hr = api.SHQueryUserNotificationState(q);
-  const shell = hr === 0 ? q[0] : -1;
-  const hwnd = api.GetForegroundWindow();
-  if (!hwnd) return { fullscreen: false, shell };
-  if (own.has(String(hwnd))) return { fullscreen: false, shell };
-  if (hwnd === api.GetShellWindow() || hwnd === api.GetDesktopWindow()) return { fullscreen: false, shell };
-  if (SHELL_CLASSES.has(className(hwnd))) return { fullscreen: false, shell };
-  const wr = {};
-  if (!api.GetWindowRect(hwnd, wr)) return { fullscreen: false, shell };
-  const mon = api.MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-  const mi = { cbSize: api.koffi.sizeof(api.MONITORINFO), rcMonitor: {}, rcWork: {}, dwFlags: 0 };
-  if (!mon || !api.GetMonitorInfoW(mon, mi)) return { fullscreen: false, shell };
-  const m = mi.rcMonitor;
-  // Folga de 2 px: arredondamento de DPI em janelas sem borda; janela maximizada comum
-  // fica bem longe disso (a barra de tarefas ocupa dezenas de pixels).
-  const T = 2;
-  const covers = wr.left <= m.left + T && wr.top <= m.top + T && wr.right >= m.right - T && wr.bottom >= m.bottom - T;
-  const shellFull = [QUNS_BUSY, QUNS_RUNNING_D3D_FULL_SCREEN, QUNS_PRESENTATION_MODE].includes(shell);
-  // Tela cheia = a janela ativa cobre o monitor inteiro (sem borda, F11, vídeo, jogo
-  // em janela cheia) OU o Windows avisa jogo exclusivo/apresentação. Na dúvida, esconde.
-  return {
-    fullscreen: covers || shellFull,
-    shellFull,
-    shell,
-    janela: { x: wr.left, y: wr.top, width: wr.right - wr.left, height: wr.bottom - wr.top },
-    monitor: { x: m.left, y: m.top, width: m.right - m.left, height: m.bottom - m.top },
-  };
+  // Coloca todas as geometrias no mesmo espaço físico, inclusive DPI misto.
+  const previousDpi = api.SetThreadDpiAwarenessContext(-4);
+  try {
+    const q = [0]; const shell = api.SHQueryUserNotificationState(q) === 0 ? q[0] : -1;
+    const hwnd = api.GetForegroundWindow();
+    if (!hwnd) return { fullscreen: false, shell, reason: 'no_foreground' };
+    if (own.has(String(hwnd))) return { fullscreen: false, shell, reason: 'own_window' };
+    const wr = {}; const mi = { cbSize: api.koffi.sizeof(api.MONITORINFO), rcMonitor: {}, rcWork: {}, dwFlags: 0 };
+    if (!api.GetWindowRect(hwnd, wr)) return { fullscreen: false, shell, reason: 'geometry_unavailable' };
+    // DWM exclui a borda invisível das janelas comuns maximizada/restaurada.
+    const frame = {}; if (api.DwmGetWindowAttribute(hwnd, 9, frame, 16) === 0) Object.assign(wr, frame);
+    const mon = api.MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    if (!mon || !api.GetMonitorInfoW(mon, mi)) return { fullscreen: false, shell, reason: 'monitor_unavailable' };
+    const style = Number(api.GetWindowLongPtrW(hwnd, -16));
+    return classifyFullscreen({ shell, own: own.has(String(hwnd)), shellWindow: hwnd === api.GetShellWindow() || hwnd === api.GetDesktopWindow(),
+      className: className(hwnd), visible: !!api.IsWindowVisible(hwnd), minimized: !!api.IsIconic(hwnd),
+      maximized: !!api.IsZoomed(hwnd), framed: !!(style & 0x00c40000), window: wr, monitor: mi.rcMonitor });
+  } finally { if (previousDpi) api.SetThreadDpiAwarenessContext(previousDpi); }
 }
 
 module.exports = { musicaDaJanela, categoriaApp };
@@ -334,6 +329,13 @@ if (process.parentPort) process.parentPort.on('message', async (e) => {
       own.clear();
       for (const h of msg.own || []) own.add(String(h));
       process.parentPort.postMessage({ type: 'ready' });
+    } else if (msg.type === 'own') {
+      own.clear(); for (const handle of msg.own || []) own.add(String(handle));
+    } else if (msg.type === 'inventory') {
+      gameInventory = msg.inventory || { roots: [], games: [] }; gameScanAt = 0;
+    } else if (msg.type === 'steamRoots') {
+      const roots = knownProcesses(true).filter(p => /^steam\.exe$/i.test(p.name)).map(p => processInfo(p.pid)).filter(p => p && /^steam\.exe$/i.test(winPath.basename(p.image))).map(p => winPath.dirname(p.image));
+      process.parentPort.postMessage({ type: 'result', id: msg.id, result: roots.slice(0, 8) });
     } else if (msg.type === 'detect') {
       process.parentPort.postMessage({ type: 'result', id: msg.id, result: detect(msg.opts || {}) });
     } else if (msg.type === 'closeDiscord') {

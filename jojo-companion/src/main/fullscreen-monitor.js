@@ -4,6 +4,7 @@ import { utilityProcess } from 'electron';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { matchFullscreenDisplay } from '../core/displays.js';
+import { ForegroundSample } from '../core/foreground-sample.js';
 
 const WORKER = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fullscreen-worker.cjs');
 const MAX_CRASHES = 2;
@@ -12,7 +13,8 @@ export function createFullscreenDetector(log = () => {}) {
   if (process.platform !== 'win32') {
     return { available: false, reason: 'Disponível apenas no Windows', detect: async () => ({ fullscreenIds: [], instagram: false, lol: false, spotify: null }), setOwnHandles() {}, dispose() {} };
   }
-  const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [], readyWaiters: [] };
+  const samples = new ForegroundSample();
+  const state = { available: true, reason: null, child: null, ready: false, pending: new Map(), seq: 0, crashes: 0, own: [], inventory: null, timeouts: 0, readyWaiters: [] };
 
   function spawn() {
     state.ready = false;
@@ -36,6 +38,7 @@ export function createFullscreenDetector(log = () => {}) {
       for (const p of state.pending.values()) p.reject(new Error('detector encerrado'));
       state.pending.clear();
       state.child = null;
+      state.last = null; samples.invalidate();
       state.ready = false;
       if (!state.available) return;
       state.crashes++;
@@ -44,6 +47,7 @@ export function createFullscreenDetector(log = () => {}) {
       else setTimeout(spawn, 2000);
     });
     state.child.postMessage({ type: 'init', own: state.own });
+    if (state.inventory) state.child.postMessage({ type: 'inventory', inventory: state.inventory });
   }
 
   function disable(reason) {
@@ -83,24 +87,31 @@ export function createFullscreenDetector(log = () => {}) {
     },
     closeDiscord: ({ force = false, signal = null } = {}) => request('closeDiscord', { force: force === true }, 6000, signal),
     brandIcons: () => request('brandIcons', {}, 6000),
+    steamRoots: () => request('steamRoots', {}, 4000),
+    setGameInventory(inventory) { state.inventory = inventory; state.child?.postMessage({ type: 'inventory', inventory }); },
     setOwnHandles(handles) {
-      state.own = handles.map(String);
-      if (state.child) state.child.postMessage({ type: 'init', own: state.own });
+      const next = handles.map(String).sort();
+      if (JSON.stringify(next) === JSON.stringify(state.own)) return;
+      state.own = next; samples.invalidate();
+      state.child?.postMessage({ type: 'own', own: state.own });
     },
-    /** @returns Promise<{fullscreenIds, instagram}> */
+    invalidate() { samples.invalidate(); state.last = null; },
     async detect(toDip, displays, opts = {}) {
-      if (!state.available || !state.child || !state.ready) return { fullscreenIds: [], instagram: false, lol: false, spotify: null };
-      const id = ++state.seq;
-      const result = await new Promise((resolve, reject) => {
-        state.pending.set(id, { resolve, reject });
-        state.child.postMessage({ type: 'detect', id, opts });
-        setTimeout(() => {
-          if (state.pending.delete(id)) reject(new Error('tempo esgotado'));
-        }, 1500);
-      });
-      state.last = result;
-      const extra = { instagram: !!(result && result.instagram), lol: !!(result && result.lol), spotify: (result && result.spotify) || null, categoria: (result && result.categoria) || null, darkest: result?.darkest || null };
-      if (!result || !result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
+      const ticket = samples.begin();
+      const unknown = () => ({ fullscreenIds: [], instagram: false, lol: false, spotify: null, darkest: { known: false, reason: 'detector_unavailable' }, games: { known: false, reason: 'detector_unavailable', checkedAt: Date.now() } });
+      if (!state.available || !state.child || !state.ready) return unknown();
+      let result;
+      try {
+        result = await request('detect', opts, 1500);
+        if (!samples.accept(ticket, result)) { state.last = null; return unknown(); }
+        state.timeouts = 0; state.last = result;
+      } catch (error) {
+        state.last = null;
+        if (++state.timeouts >= 2) { state.timeouts = 0; state.child?.kill(); }
+        throw error;
+      }
+      const extra = { instagram: !!result.instagram, lol: !!result.lol, spotify: result.spotify || null, categoria: result.categoria || null, darkest: result.darkest || null, games: result.games || null };
+      if (!result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
       const d = matchFullscreenDisplay(toDip(result.monitor), displays);
       return { fullscreenIds: d ? [d.id] : [], ...extra };
     },

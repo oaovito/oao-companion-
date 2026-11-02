@@ -21,7 +21,7 @@ test('cenas Windows: 50 botões reais, encenação no único chat, adereço anim
     assert.equal(await page.locator('#progression').getAttribute('aria-live'), 'off');
     const previous = await app.evaluate(() => globalThis.__jojo.livingService.model.st.recent.length);
     const blocked = await app.evaluate(() => globalThis.__jojo.companion.livingChat('Encena Químico'));
-    assert.match(blocked, /depois do foco/); assert.equal(await app.evaluate(() => globalThis.__jojo.livingService.model.st.recent.length), previous);
+    assert.equal(blocked.status, 'focus_blocked'); assert.match(blocked.message, /depois do foco/); assert.equal(await app.evaluate(() => globalThis.__jojo.livingService.model.st.recent.length), previous);
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });

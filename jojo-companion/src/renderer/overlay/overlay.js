@@ -42,6 +42,7 @@ let puffDone = false;
 let windowVisible = true;
 let reduced = false; // movimento reduzido (quadros estáticos)
 let cmdSel = 0;
+const animationChecks = new Map();
 
 // ------------------------------------------------------------------ setup
 
@@ -53,6 +54,7 @@ async function init() {
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
+  api.onAnimationCheck(request => { animationChecks.set(request.id, { ...request, frames: 0 }); requestFrame(); });
   resize();
   api.onState(onState);
   api.onMeasure(onMeasure);
@@ -390,7 +392,20 @@ function frame(now) {
   rafPending = false;
   if (!animator || !state) return;
   lastFrame = now;
-  draw(now);
+  try {
+    draw(now);
+    for (const [id, check] of animationChecks) {
+      if (!animator.has(check.animation)) { api.reportAnimation(id, false); animationChecks.delete(id); }
+      else if (state.anim === check.animation && windowVisible && ++check.frames >= (reduced ? 1 : 2)) {
+        api.reportAnimation(id, true); animationChecks.delete(id);
+      }
+    }
+  } catch (error) {
+    for (const id of animationChecks.keys()) api.reportAnimation(id, false);
+    animationChecks.clear();
+    console.error('Falha no desenho da animação.');
+    return;
+  }
   // Animação escalonada: não adianta desenhar mais vezes que os degraus.
   const cap = animator.style.stepFps || 60;
   const fps = Math.min(targetFps(), cap);

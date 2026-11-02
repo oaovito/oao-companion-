@@ -1221,6 +1221,7 @@ export class Companion {
 
   async chat(text, conversationId = null) {
     this.visualContext = (this.visualContext || 0) + 1;
+    this.onSceneChat?.(text);
     const conv = this.conversations.current();
     const cmd = parseCommand(text);
     if (cmd) return this.runCommand(cmd, conv.id, text);
@@ -1302,7 +1303,9 @@ export class Companion {
       const reply = this.careChat(text); if (reply) return this._quickReply(conv, reply, 'cuidados');
     }
     if (!safety && ciencia !== 'emergencia' && this.livingChat) {
-      const reply = this.livingChat(text); if (reply) return this._quickReply(conv, reply, 'encenacao');
+      const reply = await this.livingChat(text);
+      if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
+      if (reply) return { ...this._quickReply(conv, reply.message, 'encenacao'), scene: { status: reply.status, reason: reply.reason || null, queued: !!reply.queued, itemId: reply.itemId } };
     }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {

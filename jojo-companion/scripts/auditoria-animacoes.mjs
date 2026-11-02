@@ -105,6 +105,9 @@ app.whenReady().then(async () => {
   fs.writeFileSync(path.join(OUT, 'auditoria-animacoes.png'), Buffer.from(png, 'base64'));
   const scenes = (await win.webContents.executeJavaScript(`window.novasCenas(${JSON.stringify(rig)}, ${JSON.stringify(anims)})`)).split(',')[1];
   fs.writeFileSync(path.join(OUT, 'cenas-novas.png'), Buffer.from(scenes, 'base64'));
+  const comparison = (await win.webContents.executeJavaScript(`window.comparar(${JSON.stringify(rj('test/fixtures/jojo-0.44.0.rig.json'))}, ${JSON.stringify(rj('test/fixtures/jojo-0.45.0.rig.json'))}, ${JSON.stringify(rig)}, ${JSON.stringify(anims)})`)).split(',')[1];
+  fs.writeFileSync(path.join(OUT, 'comparacao-original.png'), Buffer.from(comparison, 'base64'));
+  if (process.env.GITHUB_ACTIONS) for (const part of comparison.match(/.{1,4000}/g)) console.log(`JOJO_RESTORATION_PREVIEW:${part}`);
   // Pequena evidência visual recuperável mesmo quando a cota de artefatos está cheia.
   if (process.env.GITHUB_ACTIONS) {
     for (const part of scenes.match(/.{1,4000}/g)) console.log(`JOJO_SCENES_PREVIEW:${part}`);

@@ -3,8 +3,8 @@
   "confirmation": null,
   "normalExecutionAuthorized": true,
   "executionAuthorization": "Instrucao posterior do usuario: So tenta fazer como faria normalmente. Usar Actions oficial, sem alterar faturamento.",
-  "pendingVersion": "0.45.0",
+  "pendingVersion": "0.45.1",
   "sourceBranch": "codex/living-companion",
   "note": "Tentativa normal autorizada explicitamente. Faturamento permanece nao verificavel por HTTP 403; nao afirmar limite zero confirmado nem alterar planos, cartoes ou limites. Preservar todos os gates Windows.",
-  "releaseAuthorization": "Pedidos cumulativos de implementar e distribuir a candidata 0.45.0; correção posterior: agenda somente por link, sem login/senha. Publicar apenas depois de todos os gates Windows no mesmo run."
+  "releaseAuthorization": "Pedido explícito REQUISITOS_CORRECOES_0.45.1.md: restaurar arte original, corrigir fullscreen/cenas/Steam/DD e publicar uma nova versão somente após todos os gates Windows. 0.45.0 e releases anteriores imutáveis."
 }

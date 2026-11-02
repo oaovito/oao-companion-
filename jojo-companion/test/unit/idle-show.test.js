@@ -225,12 +225,12 @@ test('"vai tomar no cu": vira, mostra o prolapso rebolando ~5 s e desvira', asyn
   assert.ok(RIG.groups.filter((g) => g.id === 'head' || g.id === 'arms').every((g) => g.hideIf === 'mooning'));
 });
 
-test('de costas o JoJo continua musculoso com nadadeiras (memes usam a mesma vista)', () => {
+test('de costas o JoJo continua musculoso com pernas e braços originais (memes usam a mesma vista)', () => {
   const back = RIG.groups.filter((g) => g.showIf === 'mooning').flatMap((g) => g.parts.map((p) => p.id));
-  for (const id of ['moonTraps', 'moonLats', 'moonSpine', 'moonRearDelt', 'moonPectoralL', 'moonPectoralR', 'moonTail', 'moonLowerBody']) {
+  for (const id of ['moonTraps', 'moonLats', 'moonSpine', 'moonRearDelt', 'moonHandL', 'moonHandR', 'moonLegs', 'moonHams', 'moonCalf']) {
     assert.ok(back.includes(id), `falta ${id}`);
   }
-  for (const id of ['moonHandL', 'moonHandR', 'moonLegs', 'moonHams', 'moonCalf']) assert.equal(back.includes(id), false, id);
+  for (const id of ['moonPectoralL', 'moonPectoralR', 'moonTail', 'moonLowerBody']) assert.equal(back.includes(id), false, id);
   // Costas em V: ombros bem mais largos que a cintura.
   const torso = RIG.groups.flatMap((g) => g.parts).find((p) => p.id === 'moonTorso').path;
   const xs = torso.match(/-?\d+(\.\d+)?,/g).map((s) => parseFloat(s));

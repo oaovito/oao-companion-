@@ -99,3 +99,14 @@ test('Darkest: conquista no sétimo dia é preservada até haver oportunidade se
   const count = e.rewards.length; assert.equal(e.dd.takeVisual({ allowed: false, play: () => true }), null);
   assert.equal(e.dd.takeVisual({ allowed: true, play: () => true }), 'ddConquista'); assert.equal(e.rewards.length, count);
 });
+
+test('Darkest: falha do detector pausa sem inventar encerramento, tempo ou XP e recupera a mesma sessão', () => {
+  const e = env(); e.play(61000); const before = e.dd.snapshot(), session = e.dd.st.session.key;
+  e.step(5000, { known: false, reason: 'detector_unavailable' });
+  assert.equal(e.dd.snapshot().running, null); assert.equal(e.dd.snapshot().active, false); assert.equal(e.dd.st.session.key, session);
+  assert.equal(e.dd.snapshot().activeMs, before.activeMs); assert.equal(e.dd.snapshot().xpToday, before.xpToday);
+  assert.equal(e.dd.snapshot().history.length, 0);
+  e.step(1000); assert.equal(e.dd.snapshot().activeMs, before.activeMs);
+  e.step(1000); assert.equal(e.dd.snapshot().activeMs, before.activeMs + 1000); assert.equal(e.dd.snapshot().xpToday, before.xpToday);
+  e.step(1000, {}); assert.equal(e.dd.snapshot().running, false); assert.equal(e.dd.snapshot().history.length, 1);
+});

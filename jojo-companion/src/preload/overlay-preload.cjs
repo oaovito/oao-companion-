@@ -9,6 +9,8 @@ contextBridge.exposeInMainWorld('jojo', {
   needs: (request) => ipcRenderer.invoke('needs:request', request),
   onBadges: fn => ipcRenderer.on('jojo:badges', (_e, icons) => fn(icons)),
   onState: (fn) => ipcRenderer.on('jojo:state', (_e, s) => fn(s)),
+  onAnimationCheck: fn => ipcRenderer.on('jojo:animation-check', (_e, r) => fn(r)),
+  reportAnimation: (id, ok) => ipcRenderer.send('jojo:animation-result', id, ok === true),
   onVisible: (fn) => ipcRenderer.on('jojo:visible', (_e, v) => fn(!!v)),
   onMouseMode: (fn) => ipcRenderer.on('jojo:mouse-mode', (_e, s) => fn(s)),
   onMeasure: (fn) => ipcRenderer.on('jojo:measure', (_e, req) => fn(req)),

@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld('appApi', {
   openTodoCentral: () => ipcRenderer.send('todo:open-central'),
   onTodoUpdate: (fn) => ipcRenderer.on('app:todo-update', (_e, s) => fn(s)),
   onDarkestUpdate: (fn) => ipcRenderer.on('app:darkest-update', (_e, s) => fn(s)),
+  refreshGames: () => ipcRenderer.invoke('app:refresh-games'),
+  onSteamUpdate: fn => ipcRenderer.on('app:steam-update', (_e, s) => fn(s)),
   needs: (request) => ipcRenderer.invoke('needs:request', request),
   onNeedsUpdate: (fn) => ipcRenderer.on('app:needs-update', (_e, s) => fn(s)),
   onUpdate: (fn) => ipcRenderer.on('app:update', (_e, s) => fn(s)),

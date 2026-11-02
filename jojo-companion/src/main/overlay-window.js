@@ -14,6 +14,7 @@ export class OverlayWindow {
     this.mouseMode = 'passthrough';
     this.captureOn = false;
     this.pendingMeasure = new Map();
+    this.pendingAnimations = new Map();
     this.measureSeq = 0;
     this.ready = false;
     this.queuedState = null;
@@ -160,6 +161,21 @@ export class OverlayWindow {
     this._send('jojo:state', state);
   }
 
+  confirmAnimation(animation) {
+    if (!this.alive || !this.ready) return Promise.resolve(false);
+    const id = ++this.measureSeq;
+    return new Promise(resolve => {
+      const timer = setTimeout(() => { this.pendingAnimations.delete(id); resolve(false); }, 2500);
+      this.pendingAnimations.set(id, ok => { clearTimeout(timer); resolve(ok === true); });
+      this._send('jojo:animation-check', { id, animation });
+    });
+  }
+
+  resolveAnimation(id, ok) {
+    const done = this.pendingAnimations.get(id); if (!done) return;
+    this.pendingAnimations.delete(id); done(ok);
+  }
+
   _send(ch, payload) {
     if (this.alive && this.ready) this.win.webContents.send(ch, payload);
   }
@@ -194,6 +210,9 @@ export class OverlayWindow {
   }
 
   recreate() {
+    for (const done of this.pendingAnimations.values()) done(false);
+    this.pendingAnimations.clear();
+    this.queuedState = null;
     try {
       if (this.alive) this.win.destroy();
     } catch {

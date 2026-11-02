@@ -13,10 +13,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const ELECTRON = require('electron');
 const { _electron } = require('playwright-core');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-export async function launch({ userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-e2e-')), env = {} } = {}) {
+export async function launch({ userData = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-e2e-')), env = {}, args = [] } = {}) {
   const app = await _electron.launch({
     executablePath: ELECTRON,
-    args: [ROOT],
+    args: [...args, ROOT],
     cwd: ROOT,
     env: { ...process.env, JOJO_TEST: '1', JOJO_USER_DATA: userData, ...env },
   });

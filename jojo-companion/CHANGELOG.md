@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## 0.45.1 — 2026-11-02
+
+### Correções
+- Restaura pernas, braços, mãos, proporções e musculatura dos recursos históricos
+  do JoJo, remove a cauda rejeitada e adapta canais legados sem apagar animações.
+- Detecção de tela cheia usa a janela ativa e geometria física; estados globais
+  de notificações/apresentação não bloqueiam uma janela comum ou a Central.
+- Todas as janelas próprias são reconhecidas; amostras antigas são descartadas
+  após troca de janelas, falha do detector, monitores ou suspensão.
+- Pedidos explícitos de cenas distinguem foco, tela cheia, cooldown, catálogo,
+  relógio e falha de desenho. Fila de até quatro pedidos expira em 20 segundos,
+  cancela pedidos obsoletos e confirma o desenho antes de registrar a execução.
+- Descoberta local de Steam por Registro, processo do cliente e libraryfolders,
+  com manifestos de bibliotecas em outras unidades, inventário e atualização manual.
+- A Central distingue Steam instalada/aberta/fechada/indisponível e jogos
+  instalados, em execução, em primeiro plano ou com estado desconhecido.
+- Darkest Dungeon original é validado pelo AppID 262060 e pelo caminho da
+  instalação, sem exigir o subdiretório fixo _windows. Falhas pausam a contagem
+  sem inventar encerramento, tempo ou XP; webhelper e launchers não viram jogos.
+
+### Como testar
+- Na Central, pedir “Encena Buff de café”, “Encena Protagonista do prazo” e
+  “Encena Policial”; conferir o desenho e mensagens específicas para cada causa.
+- Entrar/sair de tela cheia e usar Alt+Tab para a Central; uma janela comum,
+  apresentação ou jogo em segundo plano não deve manter o bloqueio.
+- Abrir Steam e Darkest Dungeon original, conferir inventário e estados na Central;
+  minimizar/alternar/encerrar deve atualizar a atividade, contando só tempo ativo.
+- Conferir pernas e guarda-roupa em caminhada, reações, cuidados e cenas.
+
 ## 0.45.0 — 2026-11-02
 
 ### Novidades

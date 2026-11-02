@@ -177,12 +177,9 @@ export class RigRenderer {
     }
     if (part.pivot && part.rot) {
       ctx.translate(part.pivot[0], part.pivot[1]);
-      let angle = pose[part.rot] || 0;
-      if (this.rig.anatomy === 'shark-fins-v1') {
-        // Retarget dos canais antigos: abas rígidas e triangulares, sem cotovelo desenhado.
-        if (part.id === 'armL' || part.id === 'armR') angle = Math.max(-38, Math.min(52, angle * 0.35 + (pose.finger || 0) * (part.id === 'armR' ? 18 : -5)));
-        if (part.id === 'foreL' || part.id === 'foreR') angle *= 0.25;
-      }
+      // Canais tailRot legados viram movimento discreto dos pés, sem desenhar cauda.
+      const sway = ['legL', 'legR', 'clawL', 'clawR'].includes(part.id) ? (pose.tailRot || 0) * 0.25 : 0;
+      const angle = (pose[part.rot] || 0) + sway;
       ctx.rotate(angle * (part.rotSign ?? 1) * DEG);
       ctx.translate(-part.pivot[0], -part.pivot[1]);
     }

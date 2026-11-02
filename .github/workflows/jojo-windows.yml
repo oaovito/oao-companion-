@@ -118,7 +118,7 @@ jobs:
     # Diagnostico manual do mesmo Actions oficial; nunca equivale aos gates de release.
     if: ${{ github.repository == 'oaovito/oao-companion-' && github.event_name == 'workflow_dispatch' && inputs.assets_only }}
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
@@ -155,9 +155,9 @@ jobs:
             jojo-companion/assets/animations/jojo.room.json
             jojo-companion/out/assets-windows/animations
       - name: Lista de tarefas no Electron Windows real
-        timeout-minutes: 9
+        timeout-minutes: 12
         working-directory: jojo-companion
-        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs test/e2e/needs.windows.mjs test/e2e/focus-apps.windows.mjs test/e2e/shortcuts.windows.mjs test/e2e/living.windows.mjs test/e2e/calendar-link.windows.mjs
+        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs test/e2e/needs.windows.mjs test/e2e/focus-apps.windows.mjs test/e2e/shortcuts.windows.mjs test/e2e/living.windows.mjs test/e2e/calendar-link.windows.mjs test/e2e/critical.windows.mjs test/e2e/steam.windows.mjs
         env:
           JOJO_TEST_REPORT_DIR: out/assets-windows
       - name: Evidencias privadas e medidas para revisao

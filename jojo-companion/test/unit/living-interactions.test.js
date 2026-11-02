@@ -49,5 +49,5 @@ test('cenas: integrada à conversa única com animação real e sem interromper 
   assert.match(e.companion.behavior.anim, /cat_living_medico/); assert.equal(service.model.st.recent.at(-1), 'living_medico');
   reply = await chat(e, 'Finge que é um médico'); assert.match(reply.text, /Escolhe outra/);
   e.companion.startFocus(); reply = await chat(e, 'Encena Químico'); assert.match(reply.text, /depois do foco/); e.companion._endFocus(false);
-  e.companion.fullscreenHidden = true; const before = service.model.st.recent.length; reply = await chat(e, 'Encena Chef'); assert.match(reply.text, /Não vou interromper/); assert.equal(service.model.st.recent.length, before);
+  e.clock.advance(12000); e.companion.fullscreenHidden = true; const before = service.model.st.recent.length; reply = await chat(e, 'Encena Chef'); assert.equal(reply.scene.status, 'queued'); assert.equal(reply.scene.reason, 'fullscreen_blocked'); assert.match(reply.text, /tela cheia/); assert.equal(service.model.st.recent.length, before);
 });

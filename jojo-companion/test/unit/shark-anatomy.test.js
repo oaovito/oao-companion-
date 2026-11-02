@@ -2,13 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read = f => JSON.parse(fs.readFileSync(new URL(`../../assets/${f}`, import.meta.url)));
-test('anatomia: nadadeiras reais substituem braços/pernas e variantes não desenham mãos ou pés', () => {
-  const r = read('character/jojo.rig.json'); assert.equal(r.anatomy, 'shark-fins-v1');
-  const parts = r.groups.flatMap(g => g.parts);
-  for (const id of ['legL', 'legR', 'clawL', 'clawR', 'bicepL', 'bicepR', 'handMiddle', 'handFist', 'moonHandL', 'moonHandR', 'moonClawsFeet']) assert.equal(parts.some(p => p.id === id), false, id);
-  for (const id of ['armL', 'armR', 'pelvicFinL', 'pelvicFinR', 'tail', 'moonPectoralL', 'moonPectoralR']) assert.ok(parts.some(p => p.id === id), id);
-  for (const id of ['foreL', 'foreR']) assert.equal(parts.find(p => p.id === id).path, 'M0,0', 'âncora de adereços sem membro desenhado');
-  const ids = new Set(parts.map(p => p.id)); for (const p of parts) if (p.parent) assert.ok(ids.has(p.parent), p.id);
+test('anatomia original: pernas, mãos e musculatura históricas restauradas, sem cauda rejeitada', () => {
+  const r = read('character/jojo.rig.json'); assert.equal(r.anatomy, 'original-legged-v1');
+  const original = JSON.parse(fs.readFileSync(new URL('../fixtures/jojo-0.44.0.rig.json', import.meta.url)));
+  const parts = r.groups.flatMap(g => g.parts), ids = new Set(parts.map(p => p.id));
+  for (const id of ['legL', 'legR', 'clawL', 'clawR', 'bicepL', 'bicepR', 'handMiddle', 'handFist', 'moonHandL', 'moonHandR', 'moonClawsFeet']) assert.ok(ids.has(id), id);
+  for (const id of ['tail', 'tailUnder', 'moonTail', 'pelvicFinL', 'pelvicFinR', 'moonPectoralL', 'moonPectoralR', 'sexyNetFin']) assert.equal(ids.has(id), false, id);
+  for (const p of original.groups.flatMap(g => g.parts)) if (!['tail', 'tailUnder', 'moonTail'].includes(p.id)) assert.deepEqual(parts.find(x => x.id === p.id), p, p.id);
+  assert.deepEqual(r.metrics, original.metrics); assert.deepEqual(r.face, original.face);
+  for (const [key, color] of Object.entries(original.palette)) assert.equal(r.palette[key], color, key);
+  for (const p of parts) if (p.parent) assert.ok(ids.has(p.parent), p.id);
 });
 test('Darkest: cinco animações distintas possuem adereços desenhados e gatilho real', async () => {
   const { buildAnimation } = await import('../../src/core/catalog/recipes.js');

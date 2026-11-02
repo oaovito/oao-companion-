@@ -27,7 +27,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | **Espreguiçar** (`espreguicar`) | Base 8; Ambiente 34 | sorteio ambiente (manha); /anim espreguicar | 3,0 s | não | comum |
 | **Balançar suavemente** (`balancar`) | Base 9 | sorteio ambiente; /anim balancar | 4,0 s | sim | comum |
 | **Flutuar parado respirando fundo** (`flutuar`) | Base 10; Ambiente 1 | sorteio ambiente; /anim flutuar | 4,0 s | sim | comum |
-| **Balançar a cauda devagar** (`caudaDevagar`) | Ambiente 2 | sorteio ambiente; /anim caudaDevagar | 4,0 s | não | comum |
+| **Balançar os pés devagar** (`caudaDevagar`) | Ambiente 2 | sorteio ambiente; /anim caudaDevagar | 4,0 s | não | comum |
 | **Mexer as guelras** (`guelras`) | Ambiente 4 | sorteio ambiente; /anim guelras | 3,0 s | não | comum |
 | **Girar o corpo de leve** (`giroLeve`) | Ambiente 5 | sorteio ambiente; /anim giroLeve | 3,0 s | não | comum |
 | **Soltar bolhas ocasionais** (`bolhas`) | Ambiente 6 | sorteio ambiente; /anim bolhas | 3,0 s | não | comum |
@@ -97,7 +97,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | **Acenar (oi)** (`acenar`) | Base 51 | cumprimento; /anim acenar | — | não | comum |
 | **Tchau** (`tchau`) | Base 52 | despedida; /anim tchau | 2,0 s | não | comum |
 | **Abraço** (`abraco`) | Base 53 | “abraco”; “abraço”; “me abraca”; “me abraça”; /anim abraco | 3,0 s | não | comum |
-| **Coração com as nadadeiras** (`coracao`) | Base 54; Sem pudor 22 | sorteio ambiente; “manda um coracao”; “manda coração”; “faz um coracao”; “faz coração”; /anim coracao | 2,6 s | não | rara |
+| **Coração com as mãos** (`coracao`) | Base 54; Sem pudor 22 | sorteio ambiente; “manda um coracao”; “manda coração”; “faz um coracao”; “faz coração”; /anim coracao | 2,6 s | não | rara |
 | **High five** (`highFive`) | Base 55 | “high five”; “toca aqui”; “bate aqui”; /anim highFive | 1,8 s | não | comum |
 | **Piscadinha** (`piscadinha`) | Base 56; Sem pudor 10; Ambiente 62 | sorteio ambiente; /anim piscadinha | 1,8 s | não | comum |
 | **Assentir (sim)** (`assentir`) | Base 57 | /anim assentir | — | não | comum |
@@ -228,7 +228,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | **Levantar uma sobrancelha** (`sobrancelha`) | Sem pudor 3 | sorteio ambiente; /anim sobrancelha | 1,6 s | não | comum |
 | **Revirar os olhos** (`revirarOlhos`) | Sem pudor 4; Ambiente 44 | sorteio ambiente; /anim revirarOlhos | 1,8 s | não | comum |
 | **Dar de ombros com deboche** (`ombrosDeboche`) | Sem pudor 5 | sorteio ambiente; /anim ombrosDeboche | 2,0 s | não | comum |
-| **Cruzar as nadadeiras com superioridade** (`superioridade`) | Sem pudor 6 | sorteio ambiente; /anim superioridade | 2,6 s | não | comum |
+| **Cruzar os braços com superioridade** (`superioridade`) | Sem pudor 6 | sorteio ambiente; /anim superioridade | 2,6 s | não | comum |
 | **Fingir que não fez nada** (`naoFuiEu`) | Sem pudor 7; Ambiente 60 | sorteio ambiente; /anim naoFuiEu | 2,8 s | não | comum |
 | **Assobiar disfarçando (com bolhas)** (`assobiar`) | Sem pudor 8; Ambiente 59 | sorteio ambiente; /anim assobiar | 3,0 s | não | comum |
 | **Olhar para o lado inocentemente** (`olharLado`) | Sem pudor 9 | sorteio ambiente; /anim olharLado | 2,2 s | não | comum |
@@ -242,7 +242,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 
 | Animação | Listas | Gatilho | Duração | Loop | Frequência |
 |---|---|---|---|---|---|
-| **Fazer charme balançando a cauda** (`charmeCauda`) | Sem pudor 16; Ambiente 64 | sorteio ambiente; /anim charmeCauda | 3,0 s | não | comum |
+| **Fazer charme balançando os pés** (`charmeCauda`) | Sem pudor 16; Ambiente 64 | sorteio ambiente; /anim charmeCauda | 3,0 s | não | comum |
 | **Ajeitar a pose e brilhar os dentes** (`brilharDentes`) | Sem pudor 17 | sorteio ambiente; /anim brilharDentes | 2,6 s | não | comum |
 | **Olhar apaixonado demais** (`olharApaixonado`) | Sem pudor 18 | sorteio ambiente; /anim olharApaixonado | 3,0 s | não | rara |
 | **Corar de propósito** (`corar`) | Sem pudor 19 | sorteio ambiente; /anim corar | 2,2 s | não | comum |
@@ -289,7 +289,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | **Fazer careta** (`careta`) | Sem pudor 62; Ambiente 53 | sorteio ambiente; “careta”; /anim careta | 2,0 s | não | comum |
 | **Mostrar a língua** (`lingua`) | Sem pudor 63; Ambiente 54 | sorteio ambiente; “mostra a lingua”; “mostra a língua”; /anim lingua | 1,8 s | não | comum |
 | **Bochechas infladas como baiacu** (`bochechas`) | Sem pudor 64; Ambiente 55 | sorteio ambiente; “baiacu”; “bochecha”; /anim bochechas | 2,2 s | não | comum |
-| **Estalar o pescoço e as nadadeiras** (`estalar`) | Sem pudor 65; Ambiente 15 | sorteio ambiente; /anim estalar | 2,4 s | não | comum |
+| **Estalar o pescoço e os braços** (`estalar`) | Sem pudor 65; Ambiente 15 | sorteio ambiente; /anim estalar | 2,4 s | não | comum |
 | **Fazer cócegas em si mesmo** (`autoCocegas`) | Sem pudor 66 | sorteio ambiente; /anim autoCocegas | 2,4 s | não | rara |
 
 ## Drama exagerado
@@ -297,7 +297,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | Animação | Listas | Gatilho | Duração | Loop | Frequência |
 |---|---|---|---|---|---|
 | **Desmaiar dramaticamente** (`desmaio`) | Sem pudor 67 | sorteio ambiente; /anim desmaio | 3,6 s | não | rara |
-| **Cair de joelhos (nadadeiras)** (`cairJoelhos`) | Sem pudor 69 | sorteio ambiente; /anim cairJoelhos | 3,0 s | não | rara |
+| **Cair de joelhos** (`cairJoelhos`) | Sem pudor 69 | sorteio ambiente; /anim cairJoelhos | 3,0 s | não | rara |
 | **Pedir perdão de forma teatral** (`perdaoTeatral`) | Sem pudor 70 | “me pede perdao”; “me pede perdão”; /anim perdaoTeatral | 3,2 s | não | comum |
 | **Fingir estar machucado** (`fingirMachucado`) | Sem pudor 71 | sorteio ambiente; /anim fingirMachucado | 3,0 s | não | rara |
 | **Falsa morte boiando** (`falsaMorte`) | Sem pudor 72 | sorteio ambiente; /anim falsaMorte | 4,4 s | não | rara |
@@ -383,7 +383,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 |---|---|---|---|---|---|
 | **Sequência rítmica previsível** (`ritmo`) | — | “ritmo”; /anim ritmo | 4,0 s | sim | comum |
 | **Padrão visual calmante (cardume e cores suaves)** (`calma`) | — | “calma”; “me acalma”; /anim calma | 6,0 s | sim | comum |
-| **Fidget de bíceps (bombar)** (`fidget`) | — | /anim fidget | 0,9 s | não | comum |
+| **Fidget de bíceps (bombar)** (`fidget`) | — | sorteio ambiente; /anim fidget | 0,9 s | não | comum |
 | **Estudar junto, em silêncio** (`estudarJunto`) | — | /anim estudarJunto | 6,0 s | sim | comum |
 | **Treinar junto, marcando séries** (`treinarJunto`) | — | /anim treinarJunto | 4,0 s | sim | comum |
 
@@ -394,7 +394,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 
 ## Falas ambientes
 
-145 falas em `assets/dialogue/falas-ambientes.json` (até 80 caracteres). Cada animação aponta uma categoria em `fala`; o motor escolhe uma fala dessa categoria, combinando com a animação, o período do dia e a temporada da semana, sem repetir em sequência.
+148 falas em `assets/dialogue/falas-ambientes.json` (até 80 caracteres). Cada animação aponta uma categoria em `fala`; o motor escolhe uma fala dessa categoria, combinando com a animação, o período do dia e a temporada da semana, sem repetir em sequência.
 
 | Categoria | Falas | Exemplo |
 |---|---|---|
@@ -405,7 +405,7 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | motivacao | 15 | Você está indo bem. Continua. |
 | cuidado | 10 | Bebe água. Hidratação é treino também. |
 | fome | 6 | Estou com fome. De novo. |
-| horario | 8 | Bom dia! Já treinei, já estudei e ainda são 8h. |
+| horario | 11 | Bom dia! Já treinei, já estudei e ainda são 8h. |
 | ausencia | 6 | Fiquei treinando enquanto você sumiu. |
 | filosofia | 10 | Ser o melhor não é chegar. É continuar. |
 | especiais | 5 | Se você está lendo isso, é porque eu quis que lesse. |
@@ -416,4 +416,4 @@ Frequência: comum (peso 10), rara (2.5), easter egg (0.35). Para mudar a frequ�
 | dicas | 6 | Dizem que existe uma pose épica escondida. Rara. Muito rara. |
 | constancia | 4 | Um pouco todo dia vale mais que muito um dia só. |
 
-Desligadas por contradizer a regra de o JoJo ser contra dormir: #84 “Dormir bem é o melhor suplemento.”, #99 “Vai dormir. Músculo cresce no descanso.”.
+Desligadas por contradizer a regra de o JoJo ser contra dormir: .

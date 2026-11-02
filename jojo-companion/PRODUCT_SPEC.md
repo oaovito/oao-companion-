@@ -1,5 +1,9 @@
 # PRODUCT_SPEC — JoJo Companion
 
+Direção vigente: personagem original musculoso com pernas, restaurado do histórico;
+sem cauda, conforme REQUISITOS_CORRECOES_0.45.1.md. Anatomia, silhueta e estilo não
+podem mudar sem solicitação explícita do usuário.
+
 Referência dos requisitos atuais. Mudanças futuras chegam por prompts
 elaborados pelo usuário; preserve o que está aqui salvo substituição explícita.
 
@@ -59,7 +63,7 @@ Estética de recorte de papel no estilo South Park, versão fofa do JoJo da
 referência do usuário: de frente, cabeça grande e redonda, olhos ovais brancos
 com pupilas de ponto, cores chapadas e contorno fino; tubarão bípede azul-ardósia
 com recortes creme serrilhados (focinho, barriga, rabo), sorriso com muitos
-dentinhos, barbatana na cabeça, rabo bifurcado, bermuda preta com faixas cinza.
+dentinhos, barbatana na cabeça, sem cauda, bermuda preta com faixas cinza.
 Versão adulta e intimidadora com físico de fisiculturista: trapézio e ombros
 enormes, cintura fina em V, peitoral/abdômen definidos, braços com bíceps e
 cotovelo articulado (pose de duplo bíceps ao comemorar), olhos de pálpebra pesada, sobrancelhas franzidas e sorriso

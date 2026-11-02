@@ -1,0 +1,2755 @@
+{
+  "format": "jojo-rig/1",
+  "name": "JoJo — recorte de papel, adulto fisiculturista (provisório)",
+  "provisional": true,
+  "notes": "JoJo de frente no estilo recorte de papel de South Park, versão adulta fisiculturista: trapézio e ombros enormes, cintura fina em V, peitoral, abdômen e serrátil definidos, braços com bíceps e antebraço articulado no cotovelo (elbowL/elbowR, positivo = flexionar), olhos menores com pálpebras pesadas, sobrancelhas franzidas e sorriso entreaberto com duas fileiras de dentes pontudos. Elementos da referência do usuário (azul-ardósia, creme serrilhado, barbatana, rabo, bermuda preta com faixas). Caixa 180x170, centro x=90. Canais: legFL/legFR = braço esquerdo/direito; legBL/legBR = perna esquerda/direita; com rotSign, positivo = para fora. Ver assets/README.md.",
+  "metrics": {
+    "box": {
+      "width": 180,
+      "height": 170
+    },
+    "visual": {
+      "x": 20,
+      "y": 0,
+      "width": 140,
+      "height": 167
+    },
+    "head": {
+      "x": 90,
+      "y": 10
+    },
+    "mouth": {
+      "x": 90,
+      "y": 74
+    },
+    "ground": 167,
+    "rootPivot": {
+      "x": 90,
+      "y": 167
+    },
+    "shadowRx": 46
+  },
+  "palette": {
+    "outline": "#17171f",
+    "body": "#5f76a8",
+    "bodyShade": "#4f6593",
+    "muscle": "#3f527c",
+    "cream": "#eadcc0",
+    "shorts": "#26272e",
+    "stripe": "#9096a3",
+    "sclera": "#f7f4ea",
+    "eye": "#111111",
+    "eyeShine": "#ffffff",
+    "mouth": "#3e0f17",
+    "tongue": "#b9455a",
+    "teeth": "#f4f0e2",
+    "blush": "#d9798d",
+    "brow": "#17171f",
+    "metal": "#9aa1ad",
+    "plate": "#2b2d33",
+    "bench": "#7a3b2e",
+    "benchLeg": "#3a3d44",
+    "powder": "#fbfbf7",
+    "shaker": "#e8e1d0",
+    "shakerCap": "#c2453a",
+    "gag": "#c63d55",
+    "gagDark": "#6e1528",
+    "gagRim": "#8f2238",
+    "gagVein": "#4a0f2c",
+    "gagShine": "#ffd9df",
+    "slime": "#e98aa0",
+    "heart": "#e8344e",
+    "poop": "#6b3f1d",
+    "poopDark": "#3b200d",
+    "poopShine": "#b07a42",
+    "corn": "#f2c94c",
+    "poopSlime": "#8a6a2c",
+    "santaRed": "#c62828",
+    "snow": "#f7f5ee",
+    "gold": "#f2c94c",
+    "partyBlue": "#3f7fd4",
+    "partyPink": "#ff5c86",
+    "earPink": "#f4a7b9",
+    "straw": "#e2c27a",
+    "strawDark": "#b8954a",
+    "capeDark": "#2b1838",
+    "capeRed": "#8e1b2b",
+    "capRed": "#d64541",
+    "capYellow": "#f2c94c",
+    "capBlue": "#3f7fd4",
+    "capGreen": "#3fa66b",
+    "featherRed": "#e53935",
+    "featherGreen": "#43a047",
+    "featherBlue": "#1e88e5",
+    "featherPurple": "#8e24aa",
+    "featherOrange": "#fb8c00",
+    "freckle": "#8a5a3a",
+    "crownGold": "#e9b824",
+    "jewelRed": "#d32f2f",
+    "jewelBlue": "#1e63c6",
+    "lanternRed": "#d62d20",
+    "lanternGold": "#f2c94c",
+    "fanousMetal": "#b8862e",
+    "fanousGlass": "#ffe08a",
+    "heartPink": "#ff4f7b",
+    "flowerPink": "#ff8fb8",
+    "flowerCenter": "#ffd54a",
+    "stem": "#3c8c3c",
+    "leaf": "#4caf50",
+    "leafDark": "#2e7d32",
+    "hardHat": "#f6c445",
+    "clay": "#b5653a",
+    "flame": "#ffb300",
+    "flameCore": "#fff3b0",
+    "lotus": "#f7a1c4",
+    "apple": "#d32f2f",
+    "tie": "#c62828",
+    "tieStripe": "#7f1d1d",
+    "scarfBlue": "#2f6fd1",
+    "scarfWhite": "#f4f6fb",
+    "marigold": "#ff9800",
+    "marigoldDark": "#e65100",
+    "pilgrim": "#24242b",
+    "buckle": "#e0c060",
+    "brGreen": "#119c3f",
+    "brYellow": "#ffd400",
+    "brBlue": "#1d3f8f",
+    "paintPink": "#ff3fa4",
+    "paintYellow": "#ffd400",
+    "paintGreen": "#2ecc71",
+    "paintBlue": "#3fa9f5",
+    "paintPurple": "#9b59b6",
+    "rainRed": "#e53935",
+    "rainOrange": "#fb8c00",
+    "rainYellow": "#fdd835",
+    "rainGreen": "#43a047",
+    "rainBlue": "#1e88e5",
+    "rainPurple": "#8e24aa",
+    "patHat": "#1b8a3c",
+    "patBand": "#111111",
+    "fishnet": "#16161c",
+    "garter": "#e8344e",
+    "garterBow": "#ffd6e0",
+    "collar": "#f7f5ee",
+    "bowtie": "#e8344e",
+    "book": "#8a2f3a",
+    "page": "#f6f1e3",
+    "phone": "#1d1f26",
+    "screen": "#7fb6e8",
+    "mirror": "#cfe6f5",
+    "wood": "#c99a5b",
+    "mug": "#e8e1d0",
+    "coffee": "#4a2b17",
+    "glass": "#bfe3f0",
+    "fishOrange": "#f08a2c",
+    "rubber": "#f2c230",
+    "towel": "#f3f3f3",
+    "towelStripe": "#3c7bd1",
+    "seaweed": "#2f8f5a",
+    "seaweedDark": "#1f6b41",
+    "blanket": "#5a7fc4",
+    "blanketStripe": "#e4b84c",
+    "chest": "#7a4a22",
+    "sand": "#e3c78f",
+    "meat": "#b8632e",
+    "bone": "#f2ead6",
+    "laptop": "#3a3d44",
+    "laptopScreen": "#9fd0ff",
+    "shades": "#111216",
+    "ribbon": "#c2453a",
+    "mic": "#2b2d33",
+    "clockFace": "#fbfbf7",
+    "clockRed": "#c2453a"
+  },
+  "outlineWidth": 2.2,
+  "faceAfter": "headDetail",
+  "groups": [
+    {
+      "id": "costumeBack",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "capeBody",
+          "fill": "capeDark",
+          "showIf": "costume_halloween",
+          "path": "M28,74 C40,66 140,66 152,74 L172,166 C150,158 130,166 112,160 C100,166 80,166 68,160 C50,166 30,158 8,166 Z"
+        },
+        {
+          "id": "capeCollar",
+          "fill": "capeRed",
+          "showIf": "costume_halloween",
+          "path": "M44,80 L22,28 L72,66 Z M136,80 L158,28 L108,66 Z"
+        }
+      ]
+    },
+    {
+      "id": "propsBack",
+      "outline": true,
+      "parts": [
+        {
+          "id": "benchPad",
+          "fill": "bench",
+          "showIf": "propBench",
+          "path": "M30,-4 L46,-4 L46,176 L30,176 Z"
+        },
+        {
+          "id": "benchLegs",
+          "fill": "benchLeg",
+          "showIf": "propBench",
+          "path": "M14,14 L30,14 L30,22 L14,22 Z M14,148 L30,148 L30,156 L14,156 Z M8,10 L15,10 L15,26 L8,26 Z M8,144 L15,144 L15,160 L8,160 Z"
+        }
+      ]
+    },
+    {
+      "id": "tail",
+      "outline": true,
+      "parts": [
+        {
+          "id": "tail",
+          "path": "M64,118 C50,120 36,114 26,102 C28,116 28,128 24,142 C38,134 50,132 64,130 Z",
+          "fill": "body",
+          "pivot": [
+            64,
+            124
+          ],
+          "rot": "tailRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "tailDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "tailUnder",
+          "path": "M64,126 C52,128 40,132 28,138 L24,142 C38,134 50,132 64,130 Z",
+          "fill": "cream",
+          "pivot": [
+            64,
+            124
+          ],
+          "rot": "tailRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "legs",
+      "outline": true,
+      "parts": [
+        {
+          "id": "legL",
+          "path": "M56,146 L89,146 L89,159 C93,159 96,163 95,167 L50,167 C49,163 51,159 56,159 Z",
+          "fill": "body",
+          "pivot": [
+            73,
+            148
+          ],
+          "rot": "legBL",
+          "rotSign": 1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "legR",
+          "path": "M124,146 L91,146 L91,159 C87,159 84,163 85,167 L130,167 C131,163 129,159 124,159 Z",
+          "fill": "body",
+          "pivot": [
+            107,
+            148
+          ],
+          "rot": "legBR",
+          "rotSign": -1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "squatLegL",
+          "path": "M88,140 L62,138 C50,137 40,140 36,146 C33,150 32,153 32,155 L58,155 C58,152 55,150 52,150 C62,151 76,151 88,150 Z",
+          "fill": "body",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatLegR",
+          "path": "M92 140L118 138C130 137 140 140 144 146C147 150 148 153 148 155L122 155C122 152 125 150 128 150C118 151 104 151 92 150Z",
+          "fill": "body",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "benchLeg",
+          "path": "M72,140 L72,180 Q72,188 64,188 L26,188 L25,198 L17,198 L17,168 L46,168 L46,140 Z",
+          "fill": "body",
+          "showIf": "propBench"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "legDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "clawL",
+          "path": "M51,162 L56,167 L49,167 Z M58,162 L63,167 L56,167 Z M65,163 L69,167 L63,167 Z",
+          "fill": "cream",
+          "pivot": [
+            73,
+            148
+          ],
+          "rot": "legBL",
+          "rotSign": 1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "clawR",
+          "path": "M129,162 L124,167 L131,167 Z M122,162 L117,167 L124,167 Z M115,163 L111,167 L117,167 Z",
+          "fill": "cream",
+          "pivot": [
+            107,
+            148
+          ],
+          "rot": "legBR",
+          "rotSign": -1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "quads",
+          "path": "M64,150 Q70,156 74,152 Q70,154 64,150 Z M116,150 Q110,156 106,152 Q110,154 116,150 Z",
+          "fill": "muscle",
+          "alpha": 0.7,
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "squatClawL",
+          "path": "M33,150 L38,155 L31,155 Z M40,150 L45,155 L38,155 Z M47,151 L51,155 L45,155 Z",
+          "fill": "cream",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatClawR",
+          "path": "M147 150L142 155L149 155ZM140 150L135 155L142 155ZM133 151L129 155L135 155Z",
+          "fill": "cream",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatKneeL",
+          "path": "M44,141 Q38,144 37,149 Q41,145 47,143 Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatKneeR",
+          "path": "M136 141Q142 144 143 149Q139 145 133 143Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "benchClaw",
+          "path": "M17,190 L21,194 L17,197 Z M20,198 L23,193 L25,198 Z",
+          "fill": "cream",
+          "showIf": "propBench"
+        },
+        {
+          "id": "benchKnee",
+          "path": "M66,176 Q70,182 66,186 Q68,181 63,177 Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "propBench"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "sexyNet",
+      "showIf": "sexy",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "sexyNetL",
+          "fill": "fishnet",
+          "alpha": 0.5,
+          "clipPath": "M52,146 L89,146 L89,167 L49,167 Z M91,146 L128,146 L131,167 L91,167 Z",
+          "path": "M40,146 L62,167 L63.2,167 L41.2,146 Z M62,146 L40,167 L41.2,167 L63.2,146 Z M46,146 L68,167 L69.2,167 L47.2,146 Z M68,146 L46,167 L47.2,167 L69.2,146 Z M52,146 L74,167 L75.2,167 L53.2,146 Z M74,146 L52,167 L53.2,167 L75.2,146 Z M58,146 L80,167 L81.2,167 L59.2,146 Z M80,146 L58,167 L59.2,167 L81.2,146 Z M64,146 L86,167 L87.2,167 L65.2,146 Z M86,146 L64,167 L65.2,167 L87.2,146 Z M70,146 L92,167 L93.2,167 L71.2,146 Z M92,146 L70,167 L71.2,167 L93.2,146 Z M76,146 L98,167 L99.2,167 L77.2,146 Z M98,146 L76,167 L77.2,167 L99.2,146 Z M82,146 L104,167 L105.2,167 L83.2,146 Z M104,146 L82,167 L83.2,167 L105.2,146 Z M88,146 L110,167 L111.2,167 L89.2,146 Z M110,146 L88,167 L89.2,167 L111.2,146 Z M94,146 L116,167 L117.2,167 L95.2,146 Z M116,146 L94,167 L95.2,167 L117.2,146 Z M100,146 L122,167 L123.2,167 L101.2,146 Z M122,146 L100,167 L101.2,167 L123.2,146 Z M106,146 L128,167 L129.2,167 L107.2,146 Z M128,146 L106,167 L107.2,167 L129.2,146 Z M112,146 L134,167 L135.2,167 L113.2,146 Z M134,146 L112,167 L113.2,167 L135.2,146 Z M118,146 L140,167 L141.2,167 L119.2,146 Z M140,146 L118,167 L119.2,167 L141.2,146 Z M124,146 L146,167 L147.2,167 L125.2,146 Z M146,146 L124,167 L125.2,167 L147.2,146 Z M130,146 L152,167 L153.2,167 L131.2,146 Z M152,146 L130,167 L131.2,167 L153.2,146 Z M136,146 L158,167 L159.2,167 L137.2,146 Z M158,146 L136,167 L137.2,167 L159.2,146 Z"
+        }
+      ]
+    },
+    {
+      "id": "body",
+      "outline": true,
+      "parts": [
+        {
+          "id": "traps",
+          "path": "M54,82 C64,70 116,70 126,82 L132,88 L48,88 Z",
+          "fill": "body"
+        },
+        {
+          "id": "torso",
+          "path": "M50,84 C60,78 120,78 130,84 C141,90 143,101 137,109 C131,118 123,124 117,132 L63,132 C57,124 49,118 43,109 C37,101 39,90 50,84 Z",
+          "fill": "body"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "bodyDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "belly",
+          "path": "M70,88 L110,88 L105,96 L111,104 L105,112 L110,120 L106,132 L74,132 L70,120 L75,112 L69,104 L75,96 Z",
+          "fill": "cream"
+        },
+        {
+          "id": "pecs",
+          "path": "M56,100 Q73,112 90,103 Q73,107 56,100 Z M90,103 Q107,112 124,100 Q107,107 90,103 Z",
+          "fill": "muscle",
+          "alpha": 0.85
+        },
+        {
+          "id": "abs",
+          "path": "M89.2,106 L90.8,106 L90.8,131 L89.2,131 Z M79,113 L101,113 L101,114.8 L79,114.8 Z M80,121 L100,121 L100,122.8 L80,122.8 Z",
+          "fill": "muscle",
+          "alpha": 0.75
+        },
+        {
+          "id": "serratus",
+          "path": "M52,106 L60,109 L53,111 Z M54,113 L61,115 L55,117 Z M128,106 L120,109 L127,111 Z M126,113 L119,115 L125,117 Z",
+          "fill": "muscle",
+          "alpha": 0.8
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "catalogChest",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "medalhaFita",
+          "fill": "ribbon",
+          "path": "M78,84 L90,104 L102,84 L96,84 L90,96 L84,84 Z",
+          "showIf": "prop_medalha"
+        },
+        {
+          "id": "medalha",
+          "fill": "gold",
+          "path": "M90,100 A9,9 0 1 1 89.9,100 Z",
+          "showIf": "prop_medalha"
+        }
+      ]
+    },
+    {
+      "id": "shorts",
+      "outline": true,
+      "parts": [
+        {
+          "id": "shortsBody",
+          "path": "M62,126 L118,126 L125,150 L55,150 Z",
+          "fill": "shorts"
+        }
+      ],
+      "hideIf": [
+        "mooning",
+        "sexy"
+      ]
+    },
+    {
+      "id": "shortsDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "stripes",
+          "path": "M64,128 L69,128 L63,149 L58,149 Z M111,128 L116,128 L122,149 L117,149 Z",
+          "fill": "stripe"
+        }
+      ],
+      "hideIf": [
+        "mooning",
+        "sexy"
+      ]
+    },
+    {
+      "id": "sexyLayer",
+      "outline": true,
+      "showIf": "sexy",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "sexySunga",
+          "fill": "shorts",
+          "path": "M62,126 L118,126 L112,140 C104,146 76,146 68,140 Z"
+        },
+        {
+          "id": "sexySungaStripe",
+          "fill": "stripe",
+          "path": "M64,127 L69,127 L72,135 L68,136 Z M111,127 L116,127 L112,136 L108,135 Z"
+        },
+        {
+          "id": "sexyGarter",
+          "fill": "garter",
+          "path": "M54,150 L86,150 L86,154 L54,154 Z M94,150 L126,150 L126,154 L94,154 Z"
+        },
+        {
+          "id": "sexyGarterBow",
+          "fill": "garterBow",
+          "path": "M66,149 L72,152 L66,155 Z M78,149 L72,152 L78,155 Z M102,149 L108,152 L102,155 Z M114,149 L108,152 L114,155 Z"
+        },
+        {
+          "id": "sexyCollar",
+          "fill": "collar",
+          "path": "M68,80 C80,86 100,86 112,80 L112,86 C100,92 80,92 68,86 Z"
+        },
+        {
+          "id": "sexyBowtie",
+          "fill": "bowtie",
+          "path": "M80,84 L90,88 L80,93 Z M100,84 L90,88 L100,93 Z M88,86 L92,86 L92,90 L88,90 Z"
+        }
+      ]
+    },
+    {
+      "id": "propsBar",
+      "outline": true,
+      "parts": [
+        {
+          "id": "squatBar",
+          "fill": "metal",
+          "showIf": "propBar",
+          "path": "M-14,73 L194,73 L194,80 L-14,80 Z"
+        },
+        {
+          "id": "squatPlates",
+          "fill": "plate",
+          "showIf": "propBar",
+          "path": "M-24,50 L-12,50 Q-9,50 -9,53 L-9,101 Q-9,104 -12,104 L-24,104 Q-27,104 -27,101 L-27,53 Q-27,50 -24,50 Z M192,50 L204,50 Q207,50 207,53 L207,101 Q207,104 204,104 L192,104 Q189,104 189,101 L189,53 Q189,50 192,50 Z M-8,60 L-1,60 L-1,94 L-8,94 Z M181,60 L188,60 L188,94 L181,94 Z"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "head",
+      "outline": true,
+      "parts": [
+        {
+          "id": "fin",
+          "path": "M84,12 C88,5 97,1 110,0 C104,6 103,11 105,16 Z",
+          "fill": "body",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "skull",
+          "path": "M40,48 C40,22 62,8 90,8 C118,8 140,22 140,48 C140,72 120,86 90,86 C60,86 40,72 40,48 Z",
+          "fill": "body",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "headDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "muzzle",
+          "path": "M43,56 L52,52 L58,58 L66,52 L74,58 L82,53 L90,55 L98,53 L106,58 L114,52 L122,58 L128,52 L137,56 C132,76 114,86 90,86 C66,86 48,76 43,56 Z",
+          "fill": "cream",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "headProps",
+      "parts": [
+        {
+          "id": "noseDust",
+          "fill": "powder",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot",
+          "showIf": "noseDust",
+          "path": "M80,50 C82,47 86,47 87,50 C86,53 82,53 80,50 Z M93,50 C94,47 98,47 100,50 C98,53 94,53 93,50 Z M88,46 L90,44 L92,46 L90,48 Z"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "catalogHead",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "oculos",
+          "fill": "shades",
+          "path": "M64,29 L92,29 L90,47 L68,47 Z M88,29 L116,29 L112,47 L90,47 Z",
+          "showIf": "prop_oculos",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "palito",
+          "fill": "wood",
+          "path": "M127,63 L147,51 L148,53 L128,66 Z",
+          "showIf": "prop_palito",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "oculosNerd",
+          "fill": "outline",
+          "path": "M65,38 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 Z M68,38 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0 Z M87,38 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 Z M90,38 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0 Z M60,35 L65.5,35 L65.5,39 L60,39 Z M114.5,35 L120,35 L120,39 L114.5,39 Z",
+          "showIf": "prop_oculosNerd",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "dentesNerd",
+          "fill": "teeth",
+          "path": "M83.5,60 L89.6,60 L89.6,75 Q86.5,78 83.5,75 Z M90.4,60 L96.5,60 L96.5,75 Q93.5,78 90.4,75 Z",
+          "showIf": "prop_dentesNerd",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ]
+    },
+    {
+      "id": "costumes",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "santaHat",
+          "fill": "santaRed",
+          "showIf": "costume_natal",
+          "path": "M46,22 C52,0 80,-20 112,-22 C132,-22 150,-10 156,6 C146,-2 134,-6 122,-4 C130,2 136,10 136,18 C110,8 70,8 46,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "santaTrim",
+          "fill": "snow",
+          "showIf": "costume_natal",
+          "path": "M40,24 C58,8 122,8 140,24 C142,30 138,34 132,32 C114,20 66,20 48,32 C42,34 38,30 40,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "santaPom",
+          "fill": "snow",
+          "showIf": "costume_natal",
+          "path": "M150,8 C150,3 154,0 158,0 C162,0 166,3 166,8 C166,13 162,16 158,16 C154,16 150,13 150,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyHat",
+          "fill": "gold",
+          "showIf": "costume_anoNovo",
+          "path": "M98,12 L114,-26 L132,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyStripes",
+          "fill": "partyBlue",
+          "showIf": "costume_anoNovo",
+          "path": "M103,2 L127,-3 L129,1 L105,6 Z M108,-10 L122,-14 L124,-10 L110,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyPom",
+          "fill": "partyPink",
+          "showIf": "costume_anoNovo",
+          "path": "M109,-26 C109,-29 111,-31 114,-31 C117,-31 119,-29 119,-26 C119,-23 117,-21 114,-21 C111,-21 109,-23 109,-26 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyEars",
+          "fill": "snow",
+          "showIf": "costume_pascoa",
+          "path": "M62,16 C54,-2 54,-26 64,-28 C74,-26 76,-2 72,16 Z M108,16 C110,4 116,-6 128,-12 C138,-16 142,-8 134,-2 C126,4 118,10 116,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyInner",
+          "fill": "earPink",
+          "showIf": "costume_pascoa",
+          "path": "M64,10 C60,-4 60,-20 65,-22 C70,-20 70,-4 69,10 Z M112,12 C116,4 122,-2 130,-6 C134,-8 135,-5 131,-2 C124,2 118,8 116,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyBand",
+          "fill": "earPink",
+          "showIf": "costume_pascoa",
+          "path": "M54,18 C70,8 110,8 126,18 L124,23 C108,13 72,13 56,23 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather0",
+          "fill": "featherRed",
+          "showIf": "costume_carnaval",
+          "path": "M58,16 C50,0 56,-18 61,-22 C66,-18 70,0 64,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather1",
+          "fill": "featherOrange",
+          "showIf": "costume_carnaval",
+          "path": "M72,16 C64,0 70,-24 75,-28 C80,-24 84,0 78,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather2",
+          "fill": "featherGreen",
+          "showIf": "costume_carnaval",
+          "path": "M86,16 C78,0 84,-26 89,-30 C94,-26 98,0 92,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather3",
+          "fill": "featherBlue",
+          "showIf": "costume_carnaval",
+          "path": "M100,16 C92,0 98,-24 103,-28 C108,-24 112,0 106,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather4",
+          "fill": "featherPurple",
+          "showIf": "costume_carnaval",
+          "path": "M114,16 C106,0 112,-18 117,-22 C122,-18 126,0 120,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnBand",
+          "fill": "gold",
+          "showIf": "costume_carnaval",
+          "path": "M50,20 C66,8 114,8 130,20 L128,26 C112,15 68,15 52,26 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawCrown",
+          "fill": "straw",
+          "showIf": "costume_festaJunina",
+          "path": "M58,6 C58,-22 122,-22 122,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawBrim",
+          "fill": "straw",
+          "showIf": "costume_festaJunina",
+          "path": "M24,10 C36,-4 144,-4 156,10 C144,22 36,22 24,10 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawBand",
+          "fill": "santaRed",
+          "showIf": "costume_festaJunina",
+          "path": "M58,0 L122,0 L122,6 L58,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawPatch",
+          "fill": "partyBlue",
+          "showIf": "costume_festaJunina",
+          "path": "M100,-14 L110,-14 L110,-6 L100,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawLines",
+          "fill": "strawDark",
+          "showIf": "costume_festaJunina",
+          "path": "M40,10 L44,6 L45,7 L41,11 Z M136,6 L140,10 L139,11 L135,7 Z M70,-12 L72,-4 L71,-4 L69,-12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "freckles",
+          "fill": "freckle",
+          "showIf": "costume_festaJunina",
+          "path": "M58,56 C58,54 61,54 61,56 C61,58 58,58 58,56 Z M64,60 C64,58 67,58 67,60 C67,62 64,62 64,60 Z M56,62 C56,61 58,61 58,62 C58,64 56,64 56,62 Z M119,56 C119,54 122,54 122,56 C122,58 119,58 119,56 Z M113,60 C113,58 116,58 116,60 C116,62 113,62 113,60 Z M122,62 C122,61 124,61 124,62 C124,64 122,64 122,62 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capDome",
+          "fill": "capRed",
+          "showIf": "costume_criancas",
+          "path": "M60,14 C60,-6 120,-6 120,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capStripe",
+          "fill": "capYellow",
+          "showIf": "costume_criancas",
+          "path": "M85,-4 L95,-4 L97,14 L83,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capVisor",
+          "fill": "capBlue",
+          "showIf": "costume_criancas",
+          "path": "M104,12 C120,8 138,10 146,16 C130,18 116,18 104,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capStick",
+          "fill": "outline",
+          "showIf": "costume_criancas",
+          "path": "M89,-14 L91,-14 L91,-4 L89,-4 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capBlades",
+          "fill": "capGreen",
+          "showIf": "costume_criancas",
+          "path": "M70,-16 C80,-20 88,-16 90,-14 C88,-12 80,-10 70,-14 Z M110,-16 C100,-20 92,-16 90,-14 C92,-12 100,-10 110,-14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "crown",
+          "fill": "crownGold",
+          "showIf": "costume_coroa",
+          "path": "M54,18 L50,-14 L66,0 L78,-20 L90,-2 L102,-20 L114,0 L130,-14 L126,18 C112,10 68,10 54,18 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "crownJewels",
+          "fill": "jewelRed",
+          "showIf": "costume_coroa",
+          "path": "M74.5,8 C74.5,6.074999999999999 76.075,4.5 78,4.5 C79.925,4.5 81.5,6.074999999999999 81.5,8 C81.5,9.925 79.925,11.5 78,11.5 C76.075,11.5 74.5,9.925 74.5,8 Z M98.5,8 C98.5,6.074999999999999 100.075,4.5 102,4.5 C103.925,4.5 105.5,6.074999999999999 105.5,8 C105.5,9.925 103.925,11.5 102,11.5 C100.075,11.5 98.5,9.925 98.5,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "crownJewel2",
+          "fill": "jewelBlue",
+          "showIf": "costume_coroa",
+          "path": "M86,5 C86,2.8 87.8,1 90,1 C92.2,1 94,2.8 94,5 C94,7.2 92.2,9 90,9 C87.8,9 86,7.2 86,5 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bopperBand",
+          "fill": "heartPink",
+          "showIf": "costume_coracoes",
+          "path": "M52,20 C68,8 112,8 128,20 L126,24 C110,13 70,13 54,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bopperSprings",
+          "fill": "outline",
+          "showIf": "costume_coracoes",
+          "path": "M70,14 L66,-8 L68,-8 L72,14 Z M110,14 L114,-8 L112,-8 L108,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bopperHearts",
+          "fill": "heartPink",
+          "showIf": "costume_coracoes",
+          "path": "M66,-6 C58,-14 60,-22 67,-20 C74,-22 76,-14 68,-6 Z M114,-6 C106,-14 108,-22 115,-20 C122,-22 124,-14 116,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatBrim",
+          "fill": "patHat",
+          "showIf": "costume_chapeuVerde",
+          "path": "M46,16 C56,6 124,6 134,16 C124,22 56,22 46,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatTop",
+          "fill": "patHat",
+          "showIf": "costume_chapeuVerde",
+          "path": "M62,12 L66,-24 L114,-24 L118,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatBand",
+          "fill": "patBand",
+          "showIf": "costume_chapeuVerde",
+          "path": "M64,2 L116,2 L117,8 L63,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatBuckle",
+          "fill": "buckle",
+          "showIf": "costume_chapeuVerde",
+          "path": "M84,1 L96,1 L96,9 L84,9 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "leafCrown",
+          "fill": "leaf",
+          "showIf": "costume_folhas",
+          "path": "M52,14 C44,8 46,-2 54,-4 C58,2 58,10 52,14 Z M64,14 C56,8 58,-2 66,-4 C70,2 70,10 64,14 Z M76,14 C68,8 70,-2 78,-4 C82,2 82,10 76,14 Z M88,14 C80,8 82,-2 90,-4 C94,2 94,10 88,14 Z M100,14 C92,8 94,-2 102,-4 C106,2 106,10 100,14 Z M112,14 C104,8 106,-2 114,-4 C118,2 118,10 112,14 Z M124,14 C116,8 118,-2 126,-4 C130,2 130,10 124,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "leafVeins",
+          "fill": "leafDark",
+          "showIf": "costume_folhas",
+          "path": "M52,20 C70,10 110,10 128,20 L127,23 C110,14 70,14 53,23 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "hardHatDome",
+          "fill": "hardHat",
+          "showIf": "costume_capacete",
+          "path": "M54,16 C54,-14 126,-14 126,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "hardHatBrim",
+          "fill": "hardHat",
+          "showIf": "costume_capacete",
+          "path": "M44,16 L136,16 L136,22 L44,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "hardHatRidge",
+          "fill": "strawDark",
+          "showIf": "costume_capacete",
+          "path": "M86,-12 L94,-12 L94,16 L86,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "marigolds",
+          "fill": "marigold",
+          "showIf": "costume_calendulas",
+          "path": "M47,8 C47,4.1499999999999995 50.15,1 54,1 C57.85,1 61,4.1499999999999995 61,8 C61,11.850000000000001 57.85,15 54,15 C50.15,15 47,11.850000000000001 47,8 Z M60,12 C60,8.149999999999999 63.15,5 67,5 C70.85,5 74,8.149999999999999 74,12 C74,15.850000000000001 70.85,19 67,19 C63.15,19 60,15.850000000000001 60,12 Z M73,8 C73,4.1499999999999995 76.15,1 80,1 C83.85,1 87,4.1499999999999995 87,8 C87,11.850000000000001 83.85,15 80,15 C76.15,15 73,11.850000000000001 73,8 Z M86,12 C86,8.149999999999999 89.15,5 93,5 C96.85,5 100,8.149999999999999 100,12 C100,15.850000000000001 96.85,19 93,19 C89.15,19 86,15.850000000000001 86,12 Z M99,8 C99,4.1499999999999995 102.15,1 106,1 C109.85,1 113,4.1499999999999995 113,8 C113,11.850000000000001 109.85,15 106,15 C102.15,15 99,11.850000000000001 99,8 Z M112,12 C112,8.149999999999999 115.15,5 119,5 C122.85,5 126,8.149999999999999 126,12 C126,15.850000000000001 122.85,19 119,19 C115.15,19 112,15.850000000000001 112,12 Z M125,8 C125,4.1499999999999995 128.15,1 132,1 C135.85,1 139,4.1499999999999995 139,8 C139,11.850000000000001 135.85,15 132,15 C128.15,15 125,11.850000000000001 125,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "marigoldCenters",
+          "fill": "marigoldDark",
+          "showIf": "costume_calendulas",
+          "path": "M51.5,8 C51.5,6.625 52.625,5.5 54,5.5 C55.375,5.5 56.5,6.625 56.5,8 C56.5,9.375 55.375,10.5 54,10.5 C52.625,10.5 51.5,9.375 51.5,8 Z M64.5,12 C64.5,10.625 65.625,9.5 67,9.5 C68.375,9.5 69.5,10.625 69.5,12 C69.5,13.375 68.375,14.5 67,14.5 C65.625,14.5 64.5,13.375 64.5,12 Z M77.5,8 C77.5,6.625 78.625,5.5 80,5.5 C81.375,5.5 82.5,6.625 82.5,8 C82.5,9.375 81.375,10.5 80,10.5 C78.625,10.5 77.5,9.375 77.5,8 Z M90.5,12 C90.5,10.625 91.625,9.5 93,9.5 C94.375,9.5 95.5,10.625 95.5,12 C95.5,13.375 94.375,14.5 93,14.5 C91.625,14.5 90.5,13.375 90.5,12 Z M103.5,8 C103.5,6.625 104.625,5.5 106,5.5 C107.375,5.5 108.5,6.625 108.5,8 C108.5,9.375 107.375,10.5 106,10.5 C104.625,10.5 103.5,9.375 103.5,8 Z M116.5,12 C116.5,10.625 117.625,9.5 119,9.5 C120.375,9.5 121.5,10.625 121.5,12 C121.5,13.375 120.375,14.5 119,14.5 C117.625,14.5 116.5,13.375 116.5,12 Z M129.5,8 C129.5,6.625 130.625,5.5 132,5.5 C133.375,5.5 134.5,6.625 134.5,8 C134.5,9.375 133.375,10.5 132,10.5 C130.625,10.5 129.5,9.375 129.5,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "pilgrimBrim",
+          "fill": "pilgrim",
+          "showIf": "costume_peregrino",
+          "path": "M42,16 C52,8 128,8 138,16 C128,22 52,22 42,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "pilgrimTop",
+          "fill": "pilgrim",
+          "showIf": "costume_peregrino",
+          "path": "M60,12 L66,-22 L114,-22 L120,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "pilgrimBuckle",
+          "fill": "buckle",
+          "showIf": "costume_peregrino",
+          "path": "M80,-2 L100,-2 L100,10 L80,10 Z M84,1 L96,1 L96,7 L84,7 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "patriotBand",
+          "fill": "brGreen",
+          "showIf": "costume_patriota",
+          "path": "M48,18 C64,6 116,6 132,18 L130,24 C114,13 66,13 50,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "patriotStripe",
+          "fill": "brYellow",
+          "showIf": "costume_patriota",
+          "path": "M52,20 C66,10 114,10 128,20 L127,22 C114,13 66,13 53,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "holiTorso1",
+          "fill": "paintPink",
+          "showIf": "costume_tinta",
+          "path": "M60,98 C56,92 66,88 70,94 C76,96 72,106 64,104 C60,104 58,102 60,98 Z"
+        },
+        {
+          "id": "holiTorso2",
+          "fill": "paintGreen",
+          "showIf": "costume_tinta",
+          "path": "M104,110 C102,104 112,102 116,108 C120,112 112,120 106,116 Z"
+        },
+        {
+          "id": "holiArm",
+          "fill": "paintBlue",
+          "showIf": "costume_tinta",
+          "path": "M140,108 C138,102 148,100 150,106 C152,112 144,116 140,112 Z"
+        },
+        {
+          "id": "holiArmL",
+          "fill": "paintYellow",
+          "showIf": "costume_tinta",
+          "path": "M30,104 C28,98 38,96 40,102 C42,108 34,112 30,108 Z"
+        },
+        {
+          "id": "holiFace1",
+          "fill": "paintPurple",
+          "showIf": "costume_tinta",
+          "path": "M48,40 C46,34 56,32 58,38 C60,44 52,48 48,44 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "holiFace2",
+          "fill": "paintPink",
+          "showIf": "costume_tinta",
+          "path": "M120,30 C118,24 128,22 130,28 C132,34 124,38 120,34 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "holiHead",
+          "fill": "paintYellow",
+          "showIf": "costume_tinta",
+          "path": "M80,14 C78,8 90,6 92,12 C94,18 84,20 80,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "tieKnot",
+          "fill": "tie",
+          "showIf": "costume_gravata",
+          "path": "M84,84 L96,84 L94,92 L86,92 Z"
+        },
+        {
+          "id": "tieBody",
+          "fill": "tie",
+          "showIf": "costume_gravata",
+          "path": "M86,92 L94,92 L98,124 L90,132 L82,124 Z"
+        },
+        {
+          "id": "tieStripes",
+          "fill": "tieStripe",
+          "showIf": "costume_gravata",
+          "path": "M86,100 L95,96 L96,99 L86,103 Z M85,112 L97,107 L98,110 L85,115 Z"
+        },
+        {
+          "id": "scarfWrap",
+          "fill": "scarfBlue",
+          "showIf": "costume_cachecol",
+          "path": "M50,80 C64,90 116,90 130,80 L132,90 C116,100 64,100 48,90 Z"
+        },
+        {
+          "id": "scarfEnd",
+          "fill": "scarfBlue",
+          "showIf": "costume_cachecol",
+          "path": "M108,92 L120,92 L124,128 L110,128 Z"
+        },
+        {
+          "id": "scarfStripes",
+          "fill": "scarfWhite",
+          "showIf": "costume_cachecol",
+          "path": "M60,86 L66,88 L64,96 L58,94 Z M80,88 L86,89 L86,97 L80,96 Z M100,88 L106,87 L106,96 L100,96 Z M110,104 L121,104 L122,110 L111,110 Z M111,118 L123,118 L124,124 L112,124 Z"
+        }
+      ]
+    },
+    {
+      "id": "arms",
+      "outline": true,
+      "parts": [
+        {
+          "id": "armL",
+          "path": "M54,84 C38,80 26,92 25,108 C24,120 28,130 36,132 C44,133 48,126 48,118 C52,110 56,100 58,92 Z",
+          "fill": "body",
+          "pivot": [
+            46,
+            92
+          ],
+          "rot": "legFL",
+          "rotSign": 1,
+          "lift": "legLiftF",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "foreL",
+          "path": "M30,124 C22,132 20,146 28,153 C34,158 44,155 45,148 C46,140 44,132 42,124 Z",
+          "fill": "body",
+          "pivot": [
+            36,
+            128
+          ],
+          "rot": "elbowL",
+          "rotSign": 1,
+          "parent": "armL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "armR",
+          "path": "M126,84 C142,80 154,92 155,108 C156,120 152,130 144,132 C136,133 132,126 132,118 C128,110 124,100 122,92Z",
+          "fill": "body",
+          "pivot": [
+            134,
+            92
+          ],
+          "rot": "legFR",
+          "rotSign": -1,
+          "lift": "legLiftF"
+        },
+        {
+          "id": "foreR",
+          "path": "M150,124 C158,132 160,146 152,153 C146,158 136,155 135,148 C134,140 136,132 138,124Z",
+          "fill": "body",
+          "pivot": [
+            144,
+            128
+          ],
+          "rot": "elbowR",
+          "rotSign": -1,
+          "parent": "armR"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "armDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "deltL",
+          "path": "M50,88 Q38,90 31,99 Q40,93 52,91 Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "bicepL",
+          "path": "M33,102 Q28,112 31,122 Q33,112 38,104 Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "foreLineL",
+          "path": "M32,134 Q29,140 31,146 Q32,140 35,135 Z",
+          "fill": "muscle",
+          "alpha": 0.8,
+          "parent": "foreL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "handClawL",
+          "path": "M27,150 L23,156 L30,155 Z M34,155 L33,161 L39,157 Z",
+          "fill": "cream",
+          "parent": "foreL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "deltR",
+          "path": "M130,88 Q142,90 149,99 Q140,93 128,91Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armR"
+        },
+        {
+          "id": "bicepR",
+          "path": "M147,102 Q152,112 149,122 Q147,112 142,104Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armR"
+        },
+        {
+          "id": "foreLineR",
+          "path": "M148,134 Q151,140 149,146 Q148,140 145,135Z",
+          "fill": "muscle",
+          "alpha": 0.8,
+          "parent": "foreR"
+        },
+        {
+          "id": "handClawR",
+          "path": "M153,150 L157,156 L150,155ZM146,155 L147,161 L141,157Z",
+          "fill": "cream",
+          "parent": "foreR",
+          "hideIf": "finger"
+        },
+        {
+          "id": "benchPlate",
+          "fill": "plate",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "path": "M152,126 A22,22 0 1 1 151.9,126 Z"
+        },
+        {
+          "id": "benchPlateRim",
+          "fill": "metal",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "alpha": 0.55,
+          "path": "M152,133 A15,15 0 1 1 151.9,133 Z M152,136 A12,12 0 1 0 152.1,136 Z"
+        },
+        {
+          "id": "benchPlateHub",
+          "fill": "metal",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "path": "M152,143 A5,5 0 1 1 151.9,143 Z"
+        },
+        {
+          "id": "shaker",
+          "fill": "shaker",
+          "parent": "foreR",
+          "showIf": "propShaker",
+          "path": "M146,140 L160,140 L158,166 L148,166 Z"
+        },
+        {
+          "id": "shakerCap",
+          "fill": "shakerCap",
+          "parent": "foreR",
+          "showIf": "propShaker",
+          "path": "M145,134 L161,134 L161,141 L145,141 Z"
+        },
+        {
+          "id": "poopHandBlob",
+          "fill": "poop",
+          "path": "M140,150 C138,142 146,138 152,140 C152,134 160,132 162,138 C168,140 168,148 164,152 C168,156 166,164 158,164 L146,164 C140,164 138,156 140,150 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandLines",
+          "fill": "poopDark",
+          "path": "M144,156 C150,153 158,153 164,156 C158,155 150,155 144,156 Z M146,146 C152,143 158,143 162,146 C158,145 152,145 146,146 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandShine",
+          "fill": "poopShine",
+          "alpha": 0.8,
+          "path": "M148,150 C149,147 152,146 153,148 C151,148 150,149 148,150 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandCorn",
+          "fill": "corn",
+          "path": "M156,150 L159,149 L159,152 L156,152 Z M147,159 L150,159 L149,162 L146,161 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandDrip",
+          "fill": "poopSlime",
+          "alpha": 0.9,
+          "dy": "poopDrip",
+          "path": "M150,163 C150,168 148,172 150,175 C152,177 154,175 154,172 C154,169 153,166 153,163 Z M160,162 C160,166 158,169 160,171 C162,172 163,170 163,168 C163,166 162,164 162,162 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "catalogHand",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "livroCapa",
+          "fill": "book",
+          "path": "M134,138 L152,142 L170,138 L170,160 L152,164 L134,160 Z",
+          "showIf": "prop_livro",
+          "parent": "foreR"
+        },
+        {
+          "id": "livroPaginas",
+          "fill": "page",
+          "path": "M137,140 L151,144 L151,161 L137,157 Z M153,144 L167,140 L167,157 L153,161 Z",
+          "showIf": "prop_livro",
+          "parent": "foreR"
+        },
+        {
+          "id": "celular",
+          "fill": "phone",
+          "path": "M145,128 L159,128 Q161,128 161,130 L161,156 Q161,158 159,158 L145,158 Q143,158 143,156 L143,130 Q143,128 145,128 Z",
+          "showIf": "prop_celular",
+          "parent": "foreR"
+        },
+        {
+          "id": "celularTela",
+          "fill": "screen",
+          "path": "M146,132 L158,132 L158,153 L146,153 Z",
+          "showIf": "prop_celular",
+          "parent": "foreR"
+        },
+        {
+          "id": "espelhoCabo",
+          "fill": "wood",
+          "path": "M150,140 L154,140 L154,162 L150,162 Z",
+          "showIf": "prop_espelho",
+          "parent": "foreR"
+        },
+        {
+          "id": "espelhoMoldura",
+          "fill": "wood",
+          "path": "M152,112 A12,15 0 1 1 151.9,112 Z",
+          "showIf": "prop_espelho",
+          "parent": "foreR"
+        },
+        {
+          "id": "espelhoVidro",
+          "fill": "mirror",
+          "path": "M152,116 A8,11 0 1 1 151.9,116 Z",
+          "showIf": "prop_espelho",
+          "parent": "foreR"
+        },
+        {
+          "id": "halterBarra",
+          "fill": "metal",
+          "path": "M138,148 L166,148 L166,152 L138,152 Z",
+          "showIf": "prop_halter",
+          "parent": "foreR"
+        },
+        {
+          "id": "halterPesos",
+          "fill": "plate",
+          "path": "M131,140 L139,140 L139,160 L131,160 Z M165,140 L173,140 L173,160 L165,160 Z",
+          "showIf": "prop_halter",
+          "parent": "foreR"
+        },
+        {
+          "id": "canecaAlca",
+          "fill": "mug",
+          "path": "M158,144 Q167,145 166,152 Q165,159 157,158 L157,154 Q162,154 162,151 Q162,148 158,148 Z",
+          "showIf": "prop_cafe",
+          "parent": "foreR"
+        },
+        {
+          "id": "caneca",
+          "fill": "mug",
+          "path": "M143,138 L159,138 L158,162 L144,162 Z",
+          "showIf": "prop_cafe",
+          "parent": "foreR"
+        },
+        {
+          "id": "cafe",
+          "fill": "coffee",
+          "path": "M145,140 L157,140 L157,143 L145,143 Z",
+          "showIf": "prop_cafe",
+          "parent": "foreR"
+        },
+        {
+          "id": "pote",
+          "fill": "glass",
+          "path": "M139,134 L165,134 L163,166 L141,166 Z",
+          "showIf": "prop_pote",
+          "parent": "foreR",
+          "alpha": 0.75
+        },
+        {
+          "id": "poteFish",
+          "fill": "fishOrange",
+          "path": "M144,150 Q148,145 153,150 L156,147 L156,153 L153,150 Q148,155 144,150 Z M148,158 Q152,153 157,158 L160,155 L160,161 L157,158 Q152,163 148,158 Z",
+          "showIf": "prop_pote",
+          "parent": "foreR"
+        },
+        {
+          "id": "trofeuTaca",
+          "fill": "gold",
+          "path": "M140,124 L164,124 Q164,140 152,143 Q140,140 140,124 Z",
+          "showIf": "prop_trofeu",
+          "parent": "foreR"
+        },
+        {
+          "id": "trofeuBase",
+          "fill": "gold",
+          "path": "M149,143 L155,143 L155,151 L149,151 Z M143,151 L161,151 L161,158 L143,158 Z",
+          "showIf": "prop_trofeu",
+          "parent": "foreR"
+        },
+        {
+          "id": "microfoneCabo",
+          "fill": "mic",
+          "path": "M149,140 L155,140 L154,163 L150,163 Z",
+          "showIf": "prop_microfone",
+          "parent": "foreR"
+        },
+        {
+          "id": "microfoneCabeca",
+          "fill": "metal",
+          "path": "M152,126 A8,8 0 1 1 151.9,126 Z",
+          "showIf": "prop_microfone",
+          "parent": "foreR"
+        },
+        {
+          "id": "relogio",
+          "fill": "clockRed",
+          "path": "M152,134 A14,14 0 1 1 151.9,134 Z",
+          "showIf": "prop_relogio",
+          "parent": "foreR"
+        },
+        {
+          "id": "relogioFace",
+          "fill": "clockFace",
+          "path": "M152,138 A10,10 0 1 1 151.9,138 Z",
+          "showIf": "prop_relogio",
+          "parent": "foreR"
+        },
+        {
+          "id": "relogioPonteiros",
+          "fill": "outline",
+          "path": "M151,140 L153,140 L153,149 L151,149 Z M152,147 L159,147 L159,149 L152,149 Z",
+          "showIf": "prop_relogio",
+          "parent": "foreR"
+        },
+        {
+          "id": "peixeBorracha",
+          "fill": "rubber",
+          "path": "M136,150 Q148,136 162,148 L172,140 L170,158 L162,152 Q148,164 136,150 Z",
+          "showIf": "prop_peixeBorracha",
+          "parent": "foreR"
+        },
+        {
+          "id": "caderno",
+          "fill": "page",
+          "path": "M138,132 L164,132 L164,164 L138,164 Z",
+          "showIf": "prop_caderno",
+          "parent": "foreR"
+        },
+        {
+          "id": "cadernoLinhas",
+          "fill": "screen",
+          "path": "M142,140 L160,140 L160,142 L142,142 Z M142,146 L160,146 L160,148 L142,148 Z M142,152 L160,152 L160,154 L142,154 Z",
+          "showIf": "prop_caderno",
+          "parent": "foreR"
+        },
+        {
+          "id": "frangoOsso",
+          "fill": "bone",
+          "path": "M154,150 L168,162 L172,160 L174,166 L168,168 L166,164 L152,154 Z",
+          "showIf": "prop_frango",
+          "parent": "foreR"
+        },
+        {
+          "id": "frangoCarne",
+          "fill": "meat",
+          "path": "M136,146 Q136,132 150,134 Q162,138 158,150 Q154,160 144,158 Q136,156 136,146 Z",
+          "showIf": "prop_frango",
+          "parent": "foreR"
+        },
+        {
+          "id": "toalha",
+          "fill": "towel",
+          "path": "M142,138 L162,138 L164,170 L140,170 Z",
+          "showIf": "prop_toalha",
+          "parent": "foreR"
+        },
+        {
+          "id": "toalhaListra",
+          "fill": "towelStripe",
+          "path": "M141,160 L163,160 L163,164 L141,164 Z",
+          "showIf": "prop_toalha",
+          "parent": "foreR"
+        }
+      ]
+    },
+    {
+      "id": "propsFront",
+      "outline": true,
+      "showIf": "propBar",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "squatBarFront",
+          "fill": "metal",
+          "path": "M-14,73 L46,73 L46,80 L-14,80 Z M134,73 L194,73 L194,80 L134,80 Z"
+        },
+        {
+          "id": "squatCollars",
+          "fill": "metal",
+          "path": "M0,68 L5,68 L5,85 L0,85 Z M175,68 L180,68 L180,85 L175,85 Z"
+        }
+      ]
+    },
+    {
+      "id": "fingerGroup",
+      "outline": true,
+      "showIf": "finger",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "handFist",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M138,148 C138,143 142,141 146,142 L157,142 C161,141 165,143 165,148 L165,163 C165,167 161,169 157,169 L146,169 C141,169 138,166 138,162 Z"
+        },
+        {
+          "id": "handMiddle",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M147,167 L147,192 C147,197 156,197 156,192 L156,167 Z"
+        },
+        {
+          "id": "handThumb",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M137,152 C132,154 132,162 138,164 L150,163 C153,162 153,157 150,156 Z"
+        }
+      ]
+    },
+    {
+      "id": "fingerDetail",
+      "showIf": "finger",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "handFolded",
+          "fill": "muscle",
+          "parent": "foreR",
+          "path": "M139,166 C139,171 146,172 146,167 L145,167 C145,170 140,170 140,166 Z M157,166 C157,171 164,171 164,166 L163,166 C163,169 158,169 158,166 Z M159,160 C163,160 163,165 159,165 L159,164 C162,164 162,161 159,161 Z"
+        },
+        {
+          "id": "handCreases",
+          "fill": "muscle",
+          "parent": "foreR",
+          "path": "M148,176 L155,176 L155,177.4 L148,177.4 Z M148,184 L155,184 L155,185.4 L148,185.4 Z M141,155 L148,155 L148,156.2 L141,156.2 Z"
+        },
+        {
+          "id": "handNail",
+          "fill": "cream",
+          "parent": "foreR",
+          "path": "M149,188 L154,188 L154,192 C154,194.5 149,194.5 149,192 Z"
+        }
+      ]
+    },
+    {
+      "id": "costumeHand",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "lanternString",
+          "fill": "outline",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M151,156 L153,156 L153,166 L151,166 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lanternBody",
+          "fill": "lanternRed",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M140,178 C140,168 146,164 152,164 C158,164 164,168 164,178 C164,188 158,192 152,192 C146,192 140,188 140,178 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lanternCaps",
+          "fill": "lanternGold",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M145,163 L159,163 L159,167 L145,167 Z M145,189 L159,189 L159,193 L145,193 Z M151,193 L153,193 L154,202 L150,202 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lanternRibs",
+          "fill": "lanternGold",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M151,166 L153,166 L153,190 L151,190 Z M145,170 C142,176 142,182 145,188 L146,188 C143,182 143,176 146,170 Z M159,170 C162,176 162,182 159,188 L158,188 C161,182 161,176 158,170 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousString",
+          "fill": "outline",
+          "showIf": "costume_fanous",
+          "path": "M151,156 L153,156 L153,164 L151,164 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousTop",
+          "fill": "fanousMetal",
+          "showIf": "costume_fanous",
+          "path": "M146,164 L158,164 L162,170 L142,170 Z M150,158 C150,154 154,154 154,158 L153,160 L151,160 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousGlass",
+          "fill": "fanousGlass",
+          "showIf": "costume_fanous",
+          "path": "M143,170 L161,170 L158,188 L146,188 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousFrame",
+          "fill": "fanousMetal",
+          "showIf": "costume_fanous",
+          "path": "M151,170 L153,170 L153,188 L151,188 Z M144,186 L160,186 L157,194 L147,194 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousMoon",
+          "fill": "fanousMetal",
+          "showIf": "costume_fanous",
+          "path": "M148,150 C144,146 146,140 150,138 C148,142 149,147 153,149 C151,150 150,150 148,150 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerStem",
+          "fill": "stem",
+          "showIf": "costume_flor",
+          "path": "M151,150 L153,150 L157,112 L155,112 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerLeaf",
+          "fill": "stem",
+          "showIf": "costume_flor",
+          "path": "M154,134 C160,128 166,130 166,132 C160,134 158,136 154,136 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerPetals",
+          "fill": "flowerPink",
+          "showIf": "costume_flor",
+          "path": "M145,104 C145,101.25 147.25,99 150,99 C152.75,99 155,101.25 155,104 C155,106.75 152.75,109 150,109 C147.25,109 145,106.75 145,104 Z M157,104 C157,101.25 159.25,99 162,99 C164.75,99 167,101.25 167,104 C167,106.75 164.75,109 162,109 C159.25,109 157,106.75 157,104 Z M151,96 C151,93.25 153.25,91 156,91 C158.75,91 161,93.25 161,96 C161,98.75 158.75,101 156,101 C153.25,101 151,98.75 151,96 Z M151,112 C151,109.25 153.25,107 156,107 C158.75,107 161,109.25 161,112 C161,114.75 158.75,117 156,117 C153.25,117 151,114.75 151,112 Z M144,110 C144,107.8 145.8,106 148,106 C150.2,106 152,107.8 152,110 C152,112.2 150.2,114 148,114 C145.8,114 144,112.2 144,110 Z M160,98 C160,95.8 161.8,94 164,94 C166.2,94 168,95.8 168,98 C168,100.2 166.2,102 164,102 C161.8,102 160,100.2 160,98 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerCenterP",
+          "fill": "flowerCenter",
+          "showIf": "costume_flor",
+          "path": "M152,104 C152,101.8 153.8,100 156,100 C158.2,100 160,101.8 160,104 C160,106.2 158.2,108 156,108 C153.8,108 152,106.2 152,104 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "diyaBowl",
+          "fill": "clay",
+          "showIf": "costume_diya",
+          "path": "M140,152 C142,162 162,162 164,152 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "diyaFlame",
+          "fill": "flame",
+          "showIf": "costume_diya",
+          "path": "M152,152 C146,144 150,136 152,128 C154,136 158,144 152,152 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "diyaCore",
+          "fill": "flameCore",
+          "showIf": "costume_diya",
+          "path": "M152,150 C150,146 151,142 152,138 C153,142 154,146 152,150 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lotusPetals",
+          "fill": "lotus",
+          "showIf": "costume_lotus",
+          "path": "M140,152 C140,142 146,140 150,146 C150,136 154,136 154,146 C158,140 164,142 164,152 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lotusLeaf",
+          "fill": "leaf",
+          "showIf": "costume_lotus",
+          "path": "M136,154 C144,150 160,150 168,154 C160,158 144,158 136,154 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "appleBody",
+          "fill": "apple",
+          "showIf": "costume_maca",
+          "path": "M142,146 C140,136 148,132 152,136 C156,132 164,136 162,146 C160,154 154,156 152,154 C150,156 144,154 142,146 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "appleLeaf",
+          "fill": "leaf",
+          "showIf": "costume_maca",
+          "path": "M152,136 C152,130 156,128 160,128 C158,132 156,134 152,136 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "appleShine",
+          "fill": "snow",
+          "showIf": "costume_maca",
+          "path": "M145.4,142 C145.4,141.12 146.12,140.4 147,140.4 C147.88,140.4 148.6,141.12 148.6,142 C148.6,142.88 147.88,143.6 147,143.6 C146.12,143.6 145.4,142.88 145.4,142 Z",
+          "parent": "foreR",
+          "alpha": 0.8
+        },
+        {
+          "id": "arcoIrisPole",
+          "fill": "strawDark",
+          "showIf": "costume_arcoIris",
+          "path": "M151,152 L153,152 L153,96 L151,96 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain0",
+          "fill": "rainRed",
+          "showIf": "costume_arcoIris",
+          "path": "M121,96.0 L151,96.0 L151,99.4 L121,99.4 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain1",
+          "fill": "rainOrange",
+          "showIf": "costume_arcoIris",
+          "path": "M121,99.4 L151,99.4 L151,102.8 L121,102.8 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain2",
+          "fill": "rainYellow",
+          "showIf": "costume_arcoIris",
+          "path": "M121,102.8 L151,102.8 L151,106.2 L121,106.2 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain3",
+          "fill": "rainGreen",
+          "showIf": "costume_arcoIris",
+          "path": "M121,106.2 L151,106.2 L151,109.6 L121,109.6 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain4",
+          "fill": "rainBlue",
+          "showIf": "costume_arcoIris",
+          "path": "M121,109.6 L151,109.6 L151,113.0 L121,113.0 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain5",
+          "fill": "rainPurple",
+          "showIf": "costume_arcoIris",
+          "path": "M121,113.0 L151,113.0 L151,116.4 L121,116.4 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "patriotaPole",
+          "fill": "strawDark",
+          "showIf": "costume_patriota",
+          "path": "M151,152 L153,152 L153,96 L151,96 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "brFlagGreen",
+          "fill": "brGreen",
+          "showIf": "costume_patriota",
+          "path": "M121,96 L151,96 L151,116 L121,116 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "brFlagRhombus",
+          "fill": "brYellow",
+          "showIf": "costume_patriota",
+          "path": "M124,106 L136,98 L148,106 L136,114 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "brFlagCircle",
+          "fill": "brBlue",
+          "showIf": "costume_patriota",
+          "path": "M131.5,106 C131.5,103.525 133.525,101.5 136,101.5 C138.475,101.5 140.5,103.525 140.5,106 C140.5,108.475 138.475,110.5 136,110.5 C133.525,110.5 131.5,108.475 131.5,106 Z",
+          "parent": "foreR"
+        }
+      ]
+    },
+    {
+      "id": "moonBack",
+      "outline": true,
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonTail",
+          "fill": "body",
+          "path": "M108,90 C122,78 140,68 162,62 C156,74 152,82 142,90 C152,92 158,96 162,102 C144,100 126,98 110,96 Z"
+        },
+        {
+          "id": "moonLegs",
+          "fill": "body",
+          "path": "M50,128 L86,128 L86,156 C88,159 89,163 88,167 L48,167 C47,162 50,158 52,156 Z M130,128 L94,128 L94,156 C92,159 91,163 92,167 L132,167 C133,162 130,158 128,156 Z"
+        },
+        {
+          "id": "moonShorts",
+          "fill": "shorts",
+          "path": "M46,124 L134,124 L136,142 L44,142 Z"
+        },
+        {
+          "id": "moonTorso",
+          "fill": "body",
+          "path": "M26,66 C28,54 50,46 90,46 C130,46 152,54 154,66 C156,82 140,92 120,96 L60,96 C40,92 24,82 26,66 Z"
+        },
+        {
+          "id": "moonTraps",
+          "fill": "body",
+          "path": "M54,52 C64,38 116,38 126,52 L132,58 L48,58 Z"
+        },
+        {
+          "id": "moonFin",
+          "fill": "body",
+          "path": "M80,48 C86,34 96,26 108,22 C104,32 104,40 106,48 Z"
+        },
+        {
+          "id": "moonHead",
+          "fill": "body",
+          "path": "M8,40 C8,24 20,14 34,14 C48,14 58,24 58,38 C58,52 48,62 34,62 C20,62 8,54 8,40 Z"
+        },
+        {
+          "id": "moonGap",
+          "fill": "gagDark",
+          "path": "M80,90 C84,84 96,84 100,90 L101,124 C96,130 84,130 79,124 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            108
+          ]
+        },
+        {
+          "id": "moonCheekL",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": -1,
+          "path": "M90,106 C90,92 82,84 70,84 C58,84 48,94 48,108 C48,122 58,130 70,130 C82,130 90,120 90,106 Z"
+        },
+        {
+          "id": "moonCheekR",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": 1,
+          "path": "M90,106 C90,92 98,84 110,84 C122,84 132,94 132,108 C132,122 122,130 110,130 C98,130 90,120 90,106 Z"
+        }
+      ]
+    },
+    {
+      "id": "moonDetail",
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonSpine",
+          "fill": "muscle",
+          "path": "M89,50 L91,50 L91,92 L89,92 Z"
+        },
+        {
+          "id": "moonLats",
+          "fill": "muscle",
+          "path": "M38,72 Q56,90 70,94 Q54,84 38,72 Z M142,72 Q124,90 110,94 Q126,84 142,72 Z"
+        },
+        {
+          "id": "moonScapula",
+          "fill": "muscle",
+          "path": "M58,60 Q68,72 80,66 Q68,68 58,60 Z M122,60 Q112,72 100,66 Q112,68 122,60 Z"
+        },
+        {
+          "id": "moonRearDelt",
+          "fill": "muscle",
+          "path": "M30,58 Q40,56 46,64 Q38,60 30,62 Z M150,58 Q140,56 134,64 Q142,60 150,62 Z"
+        },
+        {
+          "id": "moonLowBack",
+          "fill": "muscle",
+          "path": "M80,78 Q84,86 86,92 Q82,86 78,80 Z M100,78 Q96,86 94,92 Q98,86 102,80 Z"
+        },
+        {
+          "id": "moonHams",
+          "fill": "muscle",
+          "path": "M68,144 L70,144 L70,160 L68,160 Z M112,144 L110,144 L110,160 L112,160 Z"
+        },
+        {
+          "id": "moonCalf",
+          "fill": "muscle",
+          "path": "M56,150 Q62,146 66,152 Q62,150 56,152 Z M124,150 Q118,146 114,152 Q118,150 124,152 Z"
+        },
+        {
+          "id": "moonGluteLine",
+          "fill": "muscle",
+          "dx": "spread",
+          "dxSign": -1,
+          "path": "M56,118 Q66,126 80,124 Q66,122 56,118 Z"
+        },
+        {
+          "id": "moonGluteLineR",
+          "fill": "muscle",
+          "dx": "spread",
+          "dxSign": 1,
+          "path": "M124,118 Q114,126 100,124 Q114,122 124,118 Z"
+        },
+        {
+          "id": "moonStripes",
+          "fill": "stripe",
+          "path": "M50,125 L56,125 L54,141 L48,141 Z M130,125 L124,125 L126,141 L132,141 Z"
+        },
+        {
+          "id": "moonClawsFeet",
+          "fill": "cream",
+          "path": "M50,162 L55,167 L48,167 ZM57,162 L62,167 L55,167 Z M130,162 L125,167 L132,167 ZM123,162 L118,167 L125,167 Z"
+        },
+        {
+          "id": "moonEye",
+          "fill": "sclera",
+          "path": "M18,36 C18,30 24,26 30,26 C36,26 40,30 40,36 C40,42 36,46 30,46 C24,46 18,42 18,36 Z"
+        },
+        {
+          "id": "moonPupil",
+          "fill": "eye",
+          "path": "M22,36 C22,33 24,31 27,31 C30,31 32,33 32,36 C32,39 30,41 27,41 C24,41 22,39 22,36 Z"
+        },
+        {
+          "id": "moonBrow",
+          "fill": "outline",
+          "path": "M16,24 L40,28 L40,31 L16,27 Z"
+        },
+        {
+          "id": "moonGrin",
+          "fill": "teeth",
+          "path": "M10,50 L34,52 L30,58 L26,53 L22,58 L18,53 L14,57 Z"
+        },
+        {
+          "id": "gagRimP",
+          "fill": "gagRim",
+          "path": "M70,104 C70,86 80,78 90,78 C100,78 110,86 110,104 C110,122 100,132 90,132 C80,132 70,122 70,104 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagMass",
+          "fill": "gag",
+          "path": "M74,100 C71,88 81,81 90,84 C99,80 109,88 106,99 C112,107 105,123 96,124 C92,129 86,129 82,124 C73,122 68,110 74,100 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagLobe",
+          "fill": "gag",
+          "path": "M96,110 C104,108 112,114 110,122 C108,130 98,130 95,124 C93,120 93,113 96,110 Z M76,112 C70,112 66,118 69,124 C72,129 80,128 82,122 C83,118 81,113 76,112 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagFolds",
+          "fill": "gagDark",
+          "path": "M81,95 C86,90 95,90 99,95 C94,93 86,93 81,95 Z M79,107 C86,102 96,102 101,107 C96,105 86,105 79,107 Z M84,118 C88,114 94,114 98,118 C94,116 88,116 84,118 Z M100,118 C104,116 107,118 107,122 C105,120 103,119 100,118 Z M72,119 C75,116 78,117 79,120 C77,119 75,119 72,119 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagVeins",
+          "fill": "gagVein",
+          "path": "M86,86 L88,92 L85,97 L86,97 L89,92 L87,86 Z M97,90 L95,96 L99,101 L100,100 L96,96 L98,90 Z M76,104 L80,108 L77,113 L78,113 L81,108 L77,104 Z M102,110 L98,113 L101,118 L102,117 L99,113 L103,111 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagSpots",
+          "fill": "gagDark",
+          "path": "M84,99 C84,97 87,97 87,99 C87,101 84,101 84,99 Z M93,111 C93,109 96,109 96,111 C96,113 93,113 93,111 Z M88,121 C88,119 91,119 91,121 C91,123 88,123 88,121 Z M101,103 C101,102 103,102 103,103 C103,105 101,105 101,103 Z M78,114 C78,113 80,113 80,114 C80,116 78,116 78,114 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagShineP",
+          "fill": "gagShine",
+          "alpha": 0.75,
+          "path": "M83,89 C86,85 92,85 94,88 C90,88 86,89 83,92 Z M101,97 C103,96 105,99 104,103 C103,101 102,99 101,97 Z M98,113 C101,112 104,114 104,117 C102,115 100,114 98,113 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagDrips",
+          "fill": "slime",
+          "alpha": 0.92,
+          "dy": "drip",
+          "path": "M86,124 C86,130 84,135 86,138 C88,141 91,139 91,135 C91,131 90,128 90,124 Z M97,122 C97,127 95,131 97,134 C99,136 101,134 101,131 C101,128 100,125 100,122 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagDrops",
+          "fill": "slime",
+          "alpha": 0.92,
+          "dy": "dripFall",
+          "path": "M88,146 C88,143 91,141 91,141 C91,141 93,143 93,146 C93,148 91,149 90,149 C89,149 88,148 88,146 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        }
+      ]
+    },
+    {
+      "id": "moonHandsGroup",
+      "outline": true,
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonUpperL",
+          "fill": "body",
+          "path": "M20,58 C8,64 6,88 16,98 C24,106 36,102 40,90 C44,76 34,54 20,58 Z"
+        },
+        {
+          "id": "moonUpperR",
+          "fill": "body",
+          "path": "M160,58 C172,64 174,88 164,98 C156,106 144,102 140,90 C136,76 146,54 160,58 Z"
+        },
+        {
+          "id": "moonForeL",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": -0.6,
+          "path": "M26,92 C32,102 42,108 52,106 C58,104 58,96 52,93 C44,90 34,86 26,92 Z"
+        },
+        {
+          "id": "moonForeR",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": 0.6,
+          "path": "M154,92 C148,102 138,108 128,106 C122,104 122,96 128,93 C136,90 146,86 154,92 Z"
+        },
+        {
+          "id": "moonHandL",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": -1.2,
+          "path": "M48,96 C42,102 44,113 52,117 C59,120 66,114 66,107 C66,99 60,94 53,94 Z"
+        },
+        {
+          "id": "moonHandR",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": 1.2,
+          "path": "M132,96 C138,102 136,113 128,117 C121,120 114,114 114,107 C114,99 120,94 127,94 Z"
+        },
+        {
+          "id": "moonClawL",
+          "fill": "cream",
+          "dx": "spread",
+          "dxSign": -1.2,
+          "path": "M64,102 L69,99 L67,106 ZM64,110 L70,109 L66,115 Z"
+        },
+        {
+          "id": "moonClawR",
+          "fill": "cream",
+          "dx": "spread",
+          "dxSign": 1.2,
+          "path": "M116,102 L111,99 L113,106 ZM116,110 L110,109 L114,115 Z"
+        }
+      ]
+    },
+    {
+      "id": "moonArmDetail",
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonTriL",
+          "fill": "muscle",
+          "path": "M18,70 Q14,82 20,92 Q22,82 26,74 Z"
+        },
+        {
+          "id": "moonTriR",
+          "fill": "muscle",
+          "path": "M162,70 Q166,82 160,92 Q158,82 154,74 Z"
+        }
+      ]
+    },
+    {
+      "id": "propsFloor",
+      "outline": true,
+      "parts": [
+        {
+          "id": "powderLine",
+          "fill": "powder",
+          "showIf": "propPowder",
+          "path": "M104,161 C112,159 132,159 142,161 C134,164 112,164 104,161 Z"
+        },
+        {
+          "id": "poopPuddle",
+          "fill": "poopSlime",
+          "alpha": 0.85,
+          "path": "M96,166 C100,160 146,160 150,166 C146,170 100,170 96,166 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopPile",
+          "fill": "poop",
+          "path": "M104,165 C102,157 110,154 116,155 C112,148 118,141 124,143 C122,136 128,130 132,134 C138,138 136,144 132,146 C140,147 142,155 136,158 C144,159 144,166 138,167 L108,167 C105,167 104,166 104,165 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopLines",
+          "fill": "poopDark",
+          "path": "M108,160 C116,157 128,157 138,160 C128,159 118,159 108,160 Z M114,151 C120,148 128,148 134,151 C128,150 120,150 114,151 Z M120,141 C124,139 128,139 131,141 C128,140 124,140 120,141 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopShineF",
+          "fill": "poopShine",
+          "alpha": 0.8,
+          "path": "M112,158 C113,155 116,154 117,156 C115,156 114,157 112,158 Z M125,147 C126,145 128,145 129,146 C127,146 126,147 125,147 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopCorn",
+          "fill": "corn",
+          "path": "M110,162 L113,161 L113,164 L110,164 Z M129,153 L132,152 L132,155 L129,155 Z M120,158 L123,158 L122,161 L119,160 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        }
+      ]
+    },
+    {
+      "id": "catalogFloor",
+      "outline": true,
+      "parts": [
+        {
+          "id": "notebookTela",
+          "fill": "laptop",
+          "path": "M2,118 L46,118 L48,150 L0,150 Z",
+          "showIf": "prop_notebook"
+        },
+        {
+          "id": "notebookBrilho",
+          "fill": "laptopScreen",
+          "path": "M6,122 L42,122 L44,146 L4,146 Z",
+          "showIf": "prop_notebook"
+        },
+        {
+          "id": "notebookBase",
+          "fill": "laptop",
+          "path": "M-4,150 L52,150 L56,167 L-8,167 Z",
+          "showIf": "prop_notebook"
+        },
+        {
+          "id": "bauTampa",
+          "fill": "chest",
+          "path": "M134,124 Q158,110 182,124 L182,138 L134,138 Z",
+          "showIf": "prop_bau"
+        },
+        {
+          "id": "bau",
+          "fill": "chest",
+          "path": "M134,138 L182,138 L182,167 L134,167 Z",
+          "showIf": "prop_bau"
+        },
+        {
+          "id": "bauOuro",
+          "fill": "gold",
+          "path": "M154,134 L162,134 L162,146 L154,146 Z M134,136 L182,136 L182,140 L134,140 Z",
+          "showIf": "prop_bau"
+        },
+        {
+          "id": "castelo",
+          "fill": "sand",
+          "path": "M-6,167 L-6,142 L0,142 L0,136 L6,136 L6,142 L12,142 L12,126 L20,126 L20,118 L26,118 L26,126 L34,126 L34,142 L40,142 L40,167 Z",
+          "showIf": "prop_castelo"
+        },
+        {
+          "id": "torrePesos",
+          "fill": "plate",
+          "path": "M-8,159 L34,159 L34,167 L-8,167 Z M-4,150 L30,150 L30,158 L-4,158 Z M0,141 L26,141 L26,149 L0,149 Z",
+          "showIf": "prop_torrePesos"
+        }
+      ]
+    },
+    {
+      "id": "catalogFront",
+      "outline": true,
+      "parts": [
+        {
+          "id": "alga",
+          "fill": "seaweed",
+          "path": "M26,170 C14,140 40,120 26,86 C52,110 40,140 58,170 Z M70,170 C58,130 92,110 76,60 C104,98 90,140 104,170 Z M110,170 C100,138 128,120 120,80 C146,112 134,142 150,170 Z",
+          "showIf": "prop_alga"
+        },
+        {
+          "id": "algaVeio",
+          "fill": "seaweedDark",
+          "path": "M34,166 C30,140 42,124 34,100 C40,122 38,142 40,166 Z M80,166 C76,128 92,110 82,74 C92,104 88,130 88,166 Z M120,166 C116,140 130,122 124,94 C132,118 128,142 128,166 Z",
+          "showIf": "prop_alga"
+        },
+        {
+          "id": "coberta",
+          "fill": "blanket",
+          "path": "M8,118 Q90,96 176,118 L182,168 L2,168 Z",
+          "showIf": "prop_coberta"
+        },
+        {
+          "id": "cobertaListras",
+          "fill": "blanketStripe",
+          "path": "M10,134 Q90,114 176,134 L177,140 Q90,120 9,140 Z M6,152 Q90,134 179,152 L180,158 Q90,140 5,158 Z",
+          "showIf": "prop_coberta"
+        }
+      ]
+    }
+  ],
+  "face": {
+    "style": "sp",
+    "pivot": [
+      90,
+      86
+    ],
+    "center": 90,
+    "restingLid": 0.3,
+    "browAlways": true,
+    "browFrown": 4,
+    "eyes": [
+      {
+        "x": 79,
+        "y": 38,
+        "rx": 10,
+        "ry": 11,
+        "pupil": 2.8,
+        "pupilOffset": 2
+      },
+      {
+        "x": 101,
+        "y": 38,
+        "rx": 10,
+        "ry": 11,
+        "pupil": 2.8,
+        "pupilOffset": -2
+      }
+    ],
+    "brows": [
+      {
+        "x": 77,
+        "y": 24,
+        "w": 18
+      },
+      {
+        "x": 103,
+        "y": 24,
+        "w": 18
+      }
+    ],
+    "mouth": {
+      "x1": 48,
+      "y1": 60,
+      "cx": 90,
+      "cy": 74,
+      "x2": 132,
+      "y2": 60
+    },
+    "restJaw": 0.5,
+    "teeth": [
+      0.1,
+      0.24,
+      0.38,
+      0.5,
+      0.62,
+      0.76,
+      0.9
+    ],
+    "toothSize": 10,
+    "lowerTeeth": [
+      0.17,
+      0.31,
+      0.44,
+      0.56,
+      0.69,
+      0.83
+    ],
+    "lowerToothSize": 7,
+    "gills": [
+      [
+        46,
+        40,
+        44,
+        50
+      ],
+      [
+        51,
+        38,
+        49,
+        48
+      ],
+      [
+        129,
+        38,
+        131,
+        48
+      ],
+      [
+        134,
+        40,
+        136,
+        50
+      ]
+    ],
+    "blush": [
+      {
+        "x": 58,
+        "y": 50,
+        "rx": 6,
+        "ry": 3
+      },
+      {
+        "x": 122,
+        "y": 50,
+        "rx": 6,
+        "ry": 3
+      }
+    ],
+    "nostrils": [
+      {
+        "x": 86,
+        "y": 52,
+        "r": 1.3
+      },
+      {
+        "x": 94,
+        "y": 52,
+        "r": 1.3
+      }
+    ],
+    "mouthDepth": 34,
+    "toothWidth": 0.4
+  },
+  "moods": {
+    "_notes": "Emoção → cor do corpo. Cada canal (0..1) mistura a cor da paleta com o alvo, até 'max'. Raiva avermelha, tristeza acinzenta, medo empalidece, alegria aquece, cansaço escurece, vergonha rosa, nojo esverdeia.",
+    "moodAngry": {
+      "max": 0.75,
+      "to": {
+        "body": "#c0392b",
+        "bodyShade": "#a2301f",
+        "muscle": "#7a2216",
+        "cream": "#f0b09c"
+      }
+    },
+    "moodSad": {
+      "max": 0.85,
+      "to": {
+        "body": "#8b8e94",
+        "bodyShade": "#777a80",
+        "muscle": "#606369",
+        "cream": "#d3d1cc"
+      }
+    },
+    "moodScared": {
+      "max": 0.6,
+      "to": {
+        "body": "#b4c3df",
+        "bodyShade": "#a0b0cf",
+        "muscle": "#8596b8",
+        "cream": "#f6efe2"
+      }
+    },
+    "moodJoy": {
+      "max": 0.45,
+      "to": {
+        "body": "#6f92de",
+        "bodyShade": "#5c7fca",
+        "muscle": "#4865a3",
+        "cream": "#f8e7c2"
+      }
+    },
+    "moodTired": {
+      "max": 0.5,
+      "to": {
+        "body": "#4e5872",
+        "bodyShade": "#434c64",
+        "muscle": "#353d52",
+        "cream": "#cfc6b4"
+      }
+    },
+    "moodShy": {
+      "max": 0.5,
+      "to": {
+        "body": "#8a7fb8",
+        "cream": "#f2c2c6"
+      }
+    },
+    "moodWired": {
+      "max": 0.6,
+      "to": {
+        "body": "#8794bf",
+        "bodyShade": "#7683ad",
+        "cream": "#f5d6cf"
+      }
+    },
+    "moodNojo": {
+      "max": 0.6,
+      "to": {
+        "body": "#7f9a52",
+        "bodyShade": "#6b8545",
+        "muscle": "#4f6633",
+        "cream": "#d9dfa8"
+      }
+    }
+  },
+  "costumes": {
+    "_notes": "Fantasia de data festiva: canal costume_<id> liga as peças; 'palette' troca cores enquanto ativa. Guarda-roupa: costume_bermuda* só troca a cor da bermuda e tem prioridade sobre a paleta das fantasias.",
+    "bermudaBranca": {
+      "palette": {
+        "shorts": "#f2f2ec",
+        "stripe": "#d4a72c"
+      }
+    },
+    "bermudaVermelha": {
+      "palette": {
+        "shorts": "#c62828",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "bermudaRosa": {
+      "palette": {
+        "shorts": "#ff5c9a",
+        "stripe": "#ffd6e0"
+      }
+    },
+    "bermudaAzul": {
+      "palette": {
+        "shorts": "#2f5fa8",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "bermudaVerde": {
+      "palette": {
+        "shorts": "#1b8a3c",
+        "stripe": "#f2c94c"
+      }
+    },
+    "bermudaDourada": {
+      "palette": {
+        "shorts": "#d4a72c",
+        "stripe": "#26272e"
+      }
+    },
+    "bermudaLaranja": {
+      "palette": {
+        "shorts": "#fb8c00",
+        "stripe": "#26272e"
+      }
+    },
+    "anoNovo": {
+      "palette": {
+        "shorts": "#f2f2ec",
+        "stripe": "#d4a72c"
+      }
+    },
+    "carnaval": {
+      "palette": {
+        "shorts": "#d4a72c",
+        "stripe": "#c0392b"
+      }
+    },
+    "festaJunina": {
+      "palette": {
+        "shorts": "#2f5fa8",
+        "stripe": "#d64541"
+      }
+    },
+    "natal": {
+      "palette": {
+        "shorts": "#c62828",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "lanternaChinesa": {
+      "palette": {
+        "shorts": "#d62d20",
+        "stripe": "#f2c94c"
+      }
+    },
+    "chapeuVerde": {
+      "palette": {
+        "shorts": "#1b8a3c",
+        "stripe": "#f2c94c"
+      }
+    },
+    "patriota": {
+      "palette": {
+        "shorts": "#119c3f",
+        "stripe": "#ffd400"
+      }
+    }
+  }
+}

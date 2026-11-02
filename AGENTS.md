@@ -1,5 +1,23 @@
 # JoJo Companion — instruções permanentes do Codex
 
+## Correção crítica vigente — 02/11/2026, candidata 0.45.1
+
+O pedido em `jojo-companion/docs/REQUISITOS_CORRECOES_0.45.1.md` REVOGA a direção
+artística com cauda/sem pernas. Restaurar os recursos originais com pernas e
+musculatura do histórico anterior a `2847e41`; remover a cauda conforme pedido.
+Nenhuma mudança futura de anatomia, silhueta ou estilo é autorizada sem solicitação
+explícita do usuário. Não redesenhar o personagem. Os trechos históricos abaixo
+não impõem a anatomia rejeitada. Testes e documentos devem refletir esta correção.
+
+Prioridade: tela cheia real da janela ativa, todas as janelas próprias, estados
+frescos/recuperáveis; cenas explícitas com causas/fila limitada e confirmação do
+renderer; Steam/bibliotecas/metadados/processos locais e DD1 AppID 262060, com
+estados desconhecidos sem XP. Requisitos cumulativos, agenda só por link e
+privacidade/silêncio mantidos. Validar visualmente no Windows oficial, auditar
+as 1.268 animações e executar todos os gates antes de nova publicação.
+0.45.0 e anteriores são imutáveis. Não alegar jogo/Steam comercial ou PC da usuária
+comprovados por fixtures. Fonte permanece em `codex/living-companion`.
+
 ## Diretriz mais recente — agenda somente por link (02/11/2026)
 
 O usuário corrigiu explicitamente: “A agenda só deve precisar do link da agenda
@@ -229,9 +247,9 @@ Requisitos completos: `jojo-companion/docs/REQUISITOS_0.45.0.md` e
 (diario 06–21 local, 15 falas, 5 animacoes, Steam app 262060, so tempo ativo,
 XP 15 inicio +50 primeira sessao/dia +25/40/80 aos 15/30/60 min, limites,
 7 dias distintos = O Herdeiro da Ruina). Todos os pedidos sao cumulativos.
-Diretriz anatomica posterior substitui a antiga: tubarao musculoso com corpo,
-nadadeiras e cauda; SEM bracos, pernas, maos ou pes. Adaptar animacoes antigas
-sem apagar o catalogo. Silencio/foco/tela cheia/desvio/privacidade continuam prioritarios.
+A diretriz anatômica dessa missão é HISTÓRICA E REVOGADA. Vigora a restauração
+original com pernas e sem cauda, determinada no topo deste arquivo; preservar
+o catálogo e adaptar seus movimentos. Silencio/foco/tela cheia/desvio/privacidade continuam prioritarios.
 Novos sistemas: clima real, CalDAV iCloud/credenciais Windows, necessidades e seis
 raridades de coco, XP compartilhado, 50 comidas NOVAS, 25 memes +25 profissoes,
 atalho unico, icone novo, Discord no foco, Darkest Dungeon e To-Do completa.

@@ -279,7 +279,7 @@
   },
   {
    "id": "caudaDevagar",
-   "nome": "Balançar a cauda devagar",
+   "nome": "Balançar os pés devagar",
    "categoria": "base",
    "listas": {
     "ambiente": [
@@ -1512,7 +1512,7 @@
   },
   {
    "id": "coracao",
-   "nome": "Coração com as nadadeiras",
+   "nome": "Coração com as mãos",
    "categoria": "social",
    "listas": {
     "base": [
@@ -3265,7 +3265,7 @@
   },
   {
    "id": "superioridade",
-   "nome": "Cruzar as nadadeiras com superioridade",
+   "nome": "Cruzar os braços com superioridade",
    "categoria": "descarado",
    "listas": {
     "semPudor": [
@@ -3509,7 +3509,7 @@
   },
   {
    "id": "charmeCauda",
-   "nome": "Fazer charme balançando a cauda",
+   "nome": "Fazer charme balançando os pés",
    "categoria": "flerte",
    "listas": {
     "semPudor": [
@@ -5083,7 +5083,7 @@
   },
   {
    "id": "estalar",
-   "nome": "Estalar o pescoço e as nadadeiras",
+   "nome": "Estalar o pescoço e os braços",
    "categoria": "corpo",
    "listas": {
     "semPudor": [
@@ -5161,7 +5161,7 @@
   },
   {
    "id": "cairJoelhos",
-   "nome": "Cair de joelhos (nadadeiras)",
+   "nome": "Cair de joelhos",
    "categoria": "drama",
    "listas": {
     "semPudor": [
@@ -7049,7 +7049,9 @@
    "nome": "Fidget de bíceps (bombar)",
    "categoria": "estimulo",
    "listas": {},
-   "gatilho": { "ambiente": true },
+   "gatilho": {
+    "ambiente": true
+   },
    "duracao": 900,
    "loop": false,
    "entrada": 60,

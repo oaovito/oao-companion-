@@ -12,7 +12,8 @@ test('Steam DD1: exige executável, diretório e manifesto do app 262060, não D
   assert.equal(verifyDarkestImage(image, () => manifest.replace('262060', '1940340')), false);
   assert.equal(verifyDarkestImage(image, () => manifest.replace('DarkestDungeon', 'OtherGame')), false);
   assert.equal(verifyDarkestImage('C:\\Temp\\Darkest.exe', () => manifest), false);
-  assert.equal(verifyDarkestImage(image.replace('_windows', '_windowsnosteam'), () => manifest), false);
+  assert.equal(verifyDarkestImage(image.replace('_windows', '_windowsnosteam'), () => manifest), true, 'manifesto Steam válido é a prova; o subdiretório não precisa ter nome fixo');
+  assert.equal(verifyDarkestImage(image.replace('\\_windows', ''), () => manifest), true, 'executável na raiz da instalação validada');
   assert.equal(verifyDarkestImage(image, () => { throw new Error('ausente'); }), false);
   assert.equal(verifyDarkestImage(image.toLowerCase(), () => manifest), true);
 });

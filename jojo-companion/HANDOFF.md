@@ -1,5 +1,19 @@
 # HANDOFF — JoJo Companion
 
+## Missão ativa — correções críticas 0.45.1 (ainda não publicada)
+
+O novo pedido revogou a anatomia de nadadeiras/cauda: restaurar o rig histórico
+com pernas, sem cauda; proibir mudanças futuras de conceito sem pedido explícito.
+Requisitos integrais em `docs/REQUISITOS_CORRECOES_0.45.1.md`. Base: `fd20a52`,
+branch `codex/living-companion`; recuperação anterior preservada em `cff4e1d`.
+
+Implementação em validação: rig anterior a `2847e41`, cenas com resultados/fila
+limitada/confirmação do desenho, fullscreen por foreground/geometria, janelas
+próprias e expiração de amostras, inventário Steam em worker separado e DD sem
+exigir nome fixo de subdiretório. Não confundir implementação com gates aprovados.
+Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
+O estado de entrega concluída nas seções abaixo descreve a versão anterior.
+
 ## Recuperação do ambiente — 02/11/2026
 
 Novo executor conectado, terminal/Git/rede funcionais. Checkout limpo recuperado

@@ -74,7 +74,7 @@ test('percepção de tela: só o tipo do app (sem captura), raro, nunca em tela 
   const require = createRequire(import.meta.url);
   const { categoriaApp } = require('../../src/main/fullscreen-worker.cjs');
   assert.equal(categoriaApp('WINWORD.EXE'), 'escritorio');
-  assert.equal(categoriaApp('steam.exe'), 'jogo');
+  assert.equal(categoriaApp('steam.exe'), 'launcher');
   assert.equal(categoriaApp('MNE_Lab.exe'), 'mnelab');
   assert.equal(categoriaApp('notepad.exe'), 'outro');
   const { DEFAULTS } = await import('../../src/core/settings-schema.js');

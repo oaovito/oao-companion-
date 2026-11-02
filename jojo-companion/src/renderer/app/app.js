@@ -280,14 +280,28 @@ function renderDarkest() {
   $('darkest').classList.toggle('hidden', !showingDarkest);
   if (!showingDarkest || !st?.darkest) return;
   const d = st.darkest; $('convTitle').textContent = 'Darkest Dungeon'; chip($('convStatus'), 'idle', '');
-  const status = el('div', 'card'); status.append(el('h2', null, d.active ? 'Expedição em andamento' : d.running ? 'Jogo em segundo plano — tempo pausado' : 'Sem atividade verificada'));
+  const status = el('div', 'card'); status.append(el('h2', null, d.detection?.known === false ? 'Detecção indisponível — tempo pausado' : d.active ? 'Expedição em andamento' : d.running ? 'Jogo em segundo plano — tempo pausado' : 'Sem atividade verificada'));
   status.append(el('p', null, d.playedToday ? 'Sessão válida registrada hoje.' : 'Ainda não há sessão válida registrada hoje.'));
+  status.append(el('p', 'muted', `Instalação Steam: ${d.detection?.installed == null ? 'não verificada' : d.detection.installed ? 'encontrada' : 'não encontrada'} · Executável: ${d.detection?.executable ? 'identificado' : 'não confirmado'} · Sessão: ${d.active ? 'ativa' : 'pausada'}.`));
+  if (d.detection?.reason === 'installation_not_verified') status.append(el('p', 'muted', 'Darkest.exe encontrado, mas a instalação do AppID 262060 não pôde ser validada. Atualize as bibliotecas Steam.'));
   const numbers = el('div', 'card'); numbers.append(el('h3', null, 'Seu registro real'));
   for (const line of [`${d.sessions} sessões válidas · ${d.days} dias distintos · sequência de ${d.streak} dias`, `${Math.floor(d.todayMs / 60000)} min ativos hoje · ${Math.floor(d.activeMs / 60000)} min no total`, `+${d.xpToday}/${d.cap} XP hoje · ${d.xpTotal} XP no total`]) numbers.append(el('p', null, line));
   if (d.pendingXp) numbers.append(el('p', 'muted', `${d.pendingXp} XP aguardam confirmação no disco.`));
   const achievement = el('div', 'card'); achievement.append(el('h3', null, d.achievement ? '◆ O Herdeiro da Ruína' : '◇ O Herdeiro da Ruína'), el('p', null, `${Math.min(7, d.days)}/7 dias distintos com sessão válida.`));
   const rules = el('div', 'card'); rules.append(el('h3', null, 'Tocha acesa, registro honesto.'), el('p', 'muted', 'Darkest Dungeon original da Steam. Sessão válida após 1 minuto ativo; +15 XP, primeira do dia +50, marcos de 15/30/60 min +25/+40/+80. Só primeiro plano, sem inatividade prolongada. Menus e pausas internas não podem ser distinguidos sem ler o jogo. Não conto tempo com o JoJo fechado.'));
-  $('darkest').replaceChildren(status, numbers, achievement, rules);
+  const steam = el('div', 'card'); steam.id = 'steamStatus'; const s = st.steam;
+  const states = { scanning: 'verificando', unavailable: 'indisponível', open: 'aberta', closed: 'fechada' };
+  steam.append(el('h2', null, `Steam: ${s?.installed === false && s?.status !== 'unavailable' ? 'não encontrada' : states[s?.status] || 'indisponível'}`));
+  steam.append(el('p', null, `Instalação: ${s?.installed == null ? 'desconhecida' : s.installed ? 'detectada' : 'não detectada'} · Bibliotecas: ${s?.libraries == null ? 'desconhecidas' : s.libraries ? `${s.libraries} detectada(s)` : 'não detectadas'} · Jogos identificados: ${s?.count ?? 'desconhecido'}.`));
+  steam.append(el('p', 'muted', `Última verificação: ${s?.checkedAt ? new Date(s.checkedAt).toLocaleString('pt-BR') : 'aguardando detector'}. Inventário: ${s?.lastScan ? new Date(s.lastScan).toLocaleString('pt-BR') : 'aguardando leitura'}.`));
+  const refresh = el('button', 'ghost', s?.scanning ? 'Verificando…' : 'Atualizar jogos'); refresh.disabled = !!s?.scanning;
+  refresh.addEventListener('click', async () => { refresh.disabled = true; try { st.steam = await api.refreshGames(); } catch { st.steam = { ...st.steam, status: 'unavailable' }; } renderDarkest(); });
+  steam.append(refresh);
+  if (s?.reason || s?.diagnostics?.length || s?.installed === false) steam.append(el('p', 'muted', s?.installed === false ? 'Não localizei uma instalação Steam no Registro, nos diretórios padrão ou nos processos atuais. Abra a Steam e clique em Atualizar jogos; bibliotecas em outros discos também são lidas.' : 'Não foi possível confirmar parte dos metadados locais. Os estados desconhecidos não contam tempo ou XP. Atualize novamente após conferir a instalação.'));
+  const gameStates = { active: 'em primeiro plano', background: 'em execução, segundo plano', installed: 'instalado, sem execução confirmada', unknown: 'execução desconhecida' };
+  const list = el('ul'); for (const game of s?.games || []) list.append(el('li', null, `${game.name}: ${gameStates[game.state]}`));
+  steam.append(list);
+  $('darkest').replaceChildren(steam, status, numbers, achievement, rules);
 }
 $('darkestBtn').addEventListener('click', async () => {
   showingCuidados = false;
@@ -298,6 +312,7 @@ api.onDarkestUpdate(s => {
   if (st) { st.foco = s.foco; st.trabalho = s.trabalho; st.darkest = s.darkest; st.colecao = { ...st.colecao, ...s.colecao }; }
   renderDarkest(); xpView.render(s.colecao, { quiet: s.trabalho || s.foco });
 });
+api.onSteamUpdate(s => { if (st) st.steam = s; renderDarkest(); });
 $('cuidadosBtn').addEventListener('click', async () => {
   showingCuidados = !showingCuidados; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false; render(await api.state());
 });

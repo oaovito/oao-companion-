@@ -1,0 +1,4074 @@
+{
+  "format": "jojo-rig/1",
+  "name": "JoJo — tubarão musculoso com nadadeiras e cauda",
+  "provisional": true,
+  "notes": "Anatomia de tubarão: torso musculoso, nadadeiras peitorais e pélvicas, dorsal e cauda bifurcada. Sem braços, mãos, dedos, pernas ou pés. IDs/canais antigos legFL/FR, elbowL/R e foreL/R são âncoras compatíveis de nadadeiras/adereços, sem desenho de membros humanos. Catálogo legado preservado e retarget no renderer.",
+  "metrics": {
+    "box": {
+      "width": 180,
+      "height": 170
+    },
+    "visual": {
+      "x": 20,
+      "y": 0,
+      "width": 140,
+      "height": 167
+    },
+    "head": {
+      "x": 90,
+      "y": 10
+    },
+    "mouth": {
+      "x": 90,
+      "y": 74
+    },
+    "ground": 167,
+    "rootPivot": {
+      "x": 90,
+      "y": 167
+    },
+    "shadowRx": 46
+  },
+  "palette": {
+    "outline": "#17171f",
+    "body": "#5f76a8",
+    "bodyShade": "#4f6593",
+    "muscle": "#3f527c",
+    "cream": "#eadcc0",
+    "shorts": "#26272e",
+    "stripe": "#9096a3",
+    "sclera": "#f7f4ea",
+    "eye": "#111111",
+    "eyeShine": "#ffffff",
+    "mouth": "#3e0f17",
+    "tongue": "#b9455a",
+    "teeth": "#f4f0e2",
+    "blush": "#d9798d",
+    "brow": "#17171f",
+    "metal": "#9aa1ad",
+    "plate": "#2b2d33",
+    "bench": "#7a3b2e",
+    "benchLeg": "#3a3d44",
+    "powder": "#fbfbf7",
+    "shaker": "#e8e1d0",
+    "shakerCap": "#c2453a",
+    "gag": "#c63d55",
+    "gagDark": "#6e1528",
+    "gagRim": "#8f2238",
+    "gagVein": "#4a0f2c",
+    "gagShine": "#ffd9df",
+    "slime": "#e98aa0",
+    "heart": "#e8344e",
+    "poop": "#6b3f1d",
+    "poopDark": "#3b200d",
+    "poopShine": "#b07a42",
+    "corn": "#f2c94c",
+    "poopSlime": "#8a6a2c",
+    "santaRed": "#c62828",
+    "snow": "#f7f5ee",
+    "gold": "#f2c94c",
+    "partyBlue": "#3f7fd4",
+    "partyPink": "#ff5c86",
+    "earPink": "#f4a7b9",
+    "straw": "#e2c27a",
+    "strawDark": "#b8954a",
+    "capeDark": "#2b1838",
+    "capeRed": "#8e1b2b",
+    "capRed": "#d64541",
+    "capYellow": "#f2c94c",
+    "capBlue": "#3f7fd4",
+    "capGreen": "#3fa66b",
+    "featherRed": "#e53935",
+    "featherGreen": "#43a047",
+    "featherBlue": "#1e88e5",
+    "featherPurple": "#8e24aa",
+    "featherOrange": "#fb8c00",
+    "freckle": "#8a5a3a",
+    "crownGold": "#e9b824",
+    "jewelRed": "#d32f2f",
+    "jewelBlue": "#1e63c6",
+    "lanternRed": "#d62d20",
+    "lanternGold": "#f2c94c",
+    "fanousMetal": "#b8862e",
+    "fanousGlass": "#ffe08a",
+    "heartPink": "#ff4f7b",
+    "flowerPink": "#ff8fb8",
+    "flowerCenter": "#ffd54a",
+    "stem": "#3c8c3c",
+    "leaf": "#4caf50",
+    "leafDark": "#2e7d32",
+    "hardHat": "#f6c445",
+    "clay": "#b5653a",
+    "flame": "#ffb300",
+    "flameCore": "#fff3b0",
+    "lotus": "#f7a1c4",
+    "apple": "#d32f2f",
+    "tie": "#c62828",
+    "tieStripe": "#7f1d1d",
+    "scarfBlue": "#2f6fd1",
+    "scarfWhite": "#f4f6fb",
+    "marigold": "#ff9800",
+    "marigoldDark": "#e65100",
+    "pilgrim": "#24242b",
+    "buckle": "#e0c060",
+    "brGreen": "#119c3f",
+    "brYellow": "#ffd400",
+    "brBlue": "#1d3f8f",
+    "paintPink": "#ff3fa4",
+    "paintYellow": "#ffd400",
+    "paintGreen": "#2ecc71",
+    "paintBlue": "#3fa9f5",
+    "paintPurple": "#9b59b6",
+    "rainRed": "#e53935",
+    "rainOrange": "#fb8c00",
+    "rainYellow": "#fdd835",
+    "rainGreen": "#43a047",
+    "rainBlue": "#1e88e5",
+    "rainPurple": "#8e24aa",
+    "patHat": "#1b8a3c",
+    "patBand": "#111111",
+    "fishnet": "#16161c",
+    "garter": "#e8344e",
+    "garterBow": "#ffd6e0",
+    "collar": "#f7f5ee",
+    "bowtie": "#e8344e",
+    "book": "#8a2f3a",
+    "page": "#f6f1e3",
+    "phone": "#1d1f26",
+    "screen": "#7fb6e8",
+    "mirror": "#cfe6f5",
+    "wood": "#c99a5b",
+    "mug": "#e8e1d0",
+    "coffee": "#4a2b17",
+    "glass": "#bfe3f0",
+    "fishOrange": "#f08a2c",
+    "rubber": "#f2c230",
+    "towel": "#f3f3f3",
+    "towelStripe": "#3c7bd1",
+    "seaweed": "#2f8f5a",
+    "seaweedDark": "#1f6b41",
+    "blanket": "#5a7fc4",
+    "blanketStripe": "#e4b84c",
+    "chest": "#7a4a22",
+    "sand": "#e3c78f",
+    "meat": "#b8632e",
+    "bone": "#f2ead6",
+    "laptop": "#3a3d44",
+    "laptopScreen": "#9fd0ff",
+    "shades": "#111216",
+    "ribbon": "#c2453a",
+    "mic": "#2b2d33",
+    "clockFace": "#fbfbf7",
+    "clockRed": "#c2453a",
+    "dd_211f30": "#211f30",
+    "dd_7b4451": "#7b4451",
+    "dd_704b30": "#704b30",
+    "dd_e39a3d": "#e39a3d",
+    "dd_ffe0a0": "#ffe0a0",
+    "dd_bb4250": "#bb4250",
+    "dd_719ccb": "#719ccb",
+    "dd_7ed1cb": "#7ed1cb",
+    "dd_d7b879": "#d7b879",
+    "dd_815b9f": "#815b9f",
+    "dd_b5a165": "#b5a165",
+    "dd_6a3560": "#6a3560",
+    "needs_c4b593": "#c4b593",
+    "needs_b55853": "#b55853",
+    "needs_ad8d5a": "#ad8d5a",
+    "needs_d4dce0": "#d4dce0",
+    "needs_e8cfa9": "#e8cfa9",
+    "needs_b99c78": "#b99c78",
+    "needs_7babc2": "#7babc2",
+    "needs_8b8268": "#8b8268",
+    "needs_d2e9e8": "#d2e9e8",
+    "needs_d8e0dd": "#d8e0dd",
+    "needs_729a7d": "#729a7d",
+    "needs_e1bb64": "#e1bb64",
+    "needs_c19bd5": "#c19bd5",
+    "needs_8ac8bc": "#8ac8bc",
+    "needs_d4b875": "#d4b875",
+    "needs_dbba6c": "#dbba6c",
+    "living_e3e9e7": "#e3e9e7",
+    "living_759d9c": "#759d9c",
+    "living_75bcae": "#75bcae",
+    "living_d2e8da": "#d2e8da",
+    "living_90b5dc": "#90b5dc",
+    "living_e9d58b": "#e9d58b",
+    "living_cae0df": "#cae0df",
+    "living_7fb992": "#7fb992",
+    "living_6eaa77": "#6eaa77",
+    "living_c1d8a1": "#c1d8a1",
+    "living_495f7b": "#495f7b",
+    "living_b5d6d9": "#b5d6d9",
+    "living_335a72": "#335a72",
+    "living_d4b45a": "#d4b45a",
+    "living_f2d680": "#f2d680",
+    "living_aa8562": "#aa8562",
+    "living_37594e": "#37594e",
+    "living_e8dfbf": "#e8dfbf",
+    "living_c7b47e": "#c7b47e",
+    "living_ded2a7": "#ded2a7",
+    "living_92735b": "#92735b",
+    "living_c4ad86": "#c4ad86",
+    "living_496a8c": "#496a8c",
+    "living_d2bd78": "#d2bd78",
+    "living_ac5047": "#ac5047",
+    "living_d7ba70": "#d7ba70",
+    "living_775940": "#775940",
+    "living_95b3bd": "#95b3bd",
+    "living_dce5e6": "#dce5e6",
+    "living_7893b0": "#7893b0",
+    "living_f0ece2": "#f0ece2",
+    "living_a8b5bc": "#a8b5bc",
+    "living_c6b5d7": "#c6b5d7",
+    "living_745d91": "#745d91",
+    "living_e2bf9d": "#e2bf9d",
+    "living_9c7b67": "#9c7b67",
+    "living_997b60": "#997b60",
+    "living_c5e0e0": "#c5e0e0",
+    "living_5c7487": "#5c7487",
+    "living_d3dde2": "#d3dde2",
+    "living_9baeb7": "#9baeb7",
+    "living_4e6478": "#4e6478",
+    "living_6a8ba6": "#6a8ba6",
+    "living_e1e7dc": "#e1e7dc",
+    "living_d6d1ba": "#d6d1ba",
+    "living_79ad98": "#79ad98",
+    "living_d1b96e": "#d1b96e",
+    "living_b7c9ce": "#b7c9ce",
+    "living_667e98": "#667e98",
+    "living_9db5c5": "#9db5c5",
+    "living_d5dce0": "#d5dce0",
+    "living_b1c8cb": "#b1c8cb",
+    "living_79929d": "#79929d",
+    "living_b4a0d1": "#b4a0d1",
+    "living_d5c38c": "#d5c38c",
+    "living_9e9da8": "#9e9da8",
+    "living_c4bfc5": "#c4bfc5",
+    "living_e7ddc5": "#e7ddc5",
+    "living_b48aa7": "#b48aa7",
+    "living_879bb9": "#879bb9",
+    "living_dce2d0": "#dce2d0",
+    "living_ab9377": "#ab9377",
+    "living_cfb787": "#cfb787",
+    "living_b87589": "#b87589",
+    "living_e1c8b0": "#e1c8b0",
+    "living_9fb4c3": "#9fb4c3",
+    "living_d4c79b": "#d4c79b",
+    "living_d2c6a5": "#d2c6a5",
+    "living_a77861": "#a77861",
+    "living_546982": "#546982",
+    "living_d1bc80": "#d1bc80",
+    "living_80aa77": "#80aa77",
+    "living_a47b5d": "#a47b5d",
+    "living_8898b5": "#8898b5",
+    "living_d9d9ce": "#d9d9ce",
+    "living_556b87": "#556b87",
+    "living_9482ad": "#9482ad",
+    "living_ddc68d": "#ddc68d",
+    "living_b3c2cd": "#b3c2cd",
+    "living_586b80": "#586b80",
+    "living_75a18c": "#75a18c",
+    "living_d0b26e": "#d0b26e",
+    "living_b0a9bd": "#b0a9bd",
+    "living_d18a5f": "#d18a5f",
+    "living_63768e": "#63768e",
+    "living_a9c4b7": "#a9c4b7",
+    "living_94b0bf": "#94b0bf",
+    "living_d4c58f": "#d4c58f",
+    "living_d4cfba": "#d4cfba",
+    "living_607b8d": "#607b8d",
+    "living_9c7559": "#9c7559",
+    "living_b9c99b": "#b9c99b",
+    "living_a1b4bf": "#a1b4bf",
+    "living_c37d7a": "#c37d7a",
+    "living_9cb5bf": "#9cb5bf",
+    "living_b38caa": "#b38caa",
+    "living_6d8093": "#6d8093",
+    "living_adc8cd": "#adc8cd",
+    "living_45647b": "#45647b",
+    "living_baa56d": "#baa56d",
+    "living_7c718c": "#7c718c",
+    "living_75849a": "#75849a",
+    "living_d2be86": "#d2be86",
+    "living_a8bac5": "#a8bac5",
+    "living_6e7e9c": "#6e7e9c"
+  },
+  "outlineWidth": 2.2,
+  "faceAfter": "headDetail",
+  "groups": [
+    {
+      "id": "darkestCloak",
+      "outline": true,
+      "parts": [
+        {
+          "id": "ddManto",
+          "showIf": "prop_ddManto",
+          "path": "M48,85 Q90,74 132,85 L151,154 Q125,145 116,155 Q90,147 64,155 Q48,145 29,154 Z",
+          "fill": "dd_211f30"
+        },
+        {
+          "id": "ddMantoBorda",
+          "showIf": "prop_ddManto",
+          "path": "M48,85 Q90,94 132,85 L126,96 Q90,105 54,96 Z",
+          "fill": "dd_7b4451"
+        }
+      ]
+    },
+    {
+      "id": "costumeBack",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "capeBody",
+          "fill": "capeDark",
+          "showIf": "costume_halloween",
+          "path": "M28,74 C40,66 140,66 152,74 L172,166 C150,158 130,166 112,160 C100,166 80,166 68,160 C50,166 30,158 8,166 Z"
+        },
+        {
+          "id": "capeCollar",
+          "fill": "capeRed",
+          "showIf": "costume_halloween",
+          "path": "M44,80 L22,28 L72,66 Z M136,80 L158,28 L108,66 Z"
+        }
+      ]
+    },
+    {
+      "id": "propsBack",
+      "outline": true,
+      "parts": [
+        {
+          "id": "benchPad",
+          "fill": "bench",
+          "showIf": "propBench",
+          "path": "M30,-4 L46,-4 L46,176 L30,176 Z"
+        },
+        {
+          "id": "benchLegs",
+          "fill": "benchLeg",
+          "showIf": "propBench",
+          "path": "M14,14 L30,14 L30,22 L14,22 Z M14,148 L30,148 L30,156 L14,156 Z M8,10 L15,10 L15,26 L8,26 Z M8,144 L15,144 L15,160 L8,160 Z"
+        }
+      ]
+    },
+    {
+      "id": "tail",
+      "outline": true,
+      "parts": [
+        {
+          "id": "tail",
+          "path": "M64,118 C50,120 36,114 26,102 C28,116 28,128 24,142 C38,134 50,132 64,130 Z",
+          "fill": "body",
+          "pivot": [
+            64,
+            124
+          ],
+          "rot": "tailRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "tailDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "tailUnder",
+          "path": "M64,126 C52,128 40,132 28,138 L24,142 C38,134 50,132 64,130 Z",
+          "fill": "cream",
+          "pivot": [
+            64,
+            124
+          ],
+          "rot": "tailRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "pelvicFins",
+      "outline": true,
+      "parts": [
+        {
+          "id": "pelvicFinL",
+          "fill": "body",
+          "path": "M72,124 L60,147 L84,137 Z",
+          "pivot": [
+            77,
+            129
+          ],
+          "rot": "legBL"
+        },
+        {
+          "id": "pelvicFinR",
+          "fill": "body",
+          "path": "M108,124 L120,147 L96,137 Z",
+          "pivot": [
+            103,
+            129
+          ],
+          "rot": "legBR"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "legDetail",
+      "outline": false,
+      "parts": [],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "sexyNet",
+      "showIf": "sexy",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "sexyNetFin",
+          "fill": "garter",
+          "alpha": 0.45,
+          "path": "M64,137 L75,132 L79,137 L69,142 Z M103,135 L110,140 L116,143 L107,132 Z"
+        }
+      ]
+    },
+    {
+      "id": "body",
+      "outline": true,
+      "parts": [
+        {
+          "id": "traps",
+          "path": "M54,82 C64,70 116,70 126,82 L132,88 L48,88 Z",
+          "fill": "body"
+        },
+        {
+          "id": "torso",
+          "path": "M50,84 C60,78 120,78 130,84 C143,92 141,105 130,118 C118,132 111,147 94,156 Q90,159 86,156 C69,147 62,132 50,118 C39,105 37,92 50,84 Z",
+          "fill": "body"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "bodyDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "belly",
+          "path": "M70,88 L110,88 L105,96 L111,104 L105,112 L110,120 L106,132 L74,132 L70,120 L75,112 L69,104 L75,96 Z",
+          "fill": "cream"
+        },
+        {
+          "id": "pecs",
+          "path": "M56,100 Q73,112 90,103 Q73,107 56,100 Z M90,103 Q107,112 124,100 Q107,107 90,103 Z",
+          "fill": "muscle",
+          "alpha": 0.85
+        },
+        {
+          "id": "abs",
+          "path": "M89.2,106 L90.8,106 L90.8,131 L89.2,131 Z M79,113 L101,113 L101,114.8 L79,114.8 Z M80,121 L100,121 L100,122.8 L80,122.8 Z",
+          "fill": "muscle",
+          "alpha": 0.75
+        },
+        {
+          "id": "serratus",
+          "path": "M52,106 L60,109 L53,111 Z M54,113 L61,115 L55,117 Z M128,106 L120,109 L127,111 Z M126,113 L119,115 L125,117 Z",
+          "fill": "muscle",
+          "alpha": 0.8
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "catalogChest",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "medalhaFita",
+          "fill": "ribbon",
+          "path": "M78,84 L90,104 L102,84 L96,84 L90,96 L84,84 Z",
+          "showIf": "prop_medalha"
+        },
+        {
+          "id": "medalha",
+          "fill": "gold",
+          "path": "M90,100 A9,9 0 1 1 89.9,100 Z",
+          "showIf": "prop_medalha"
+        }
+      ]
+    },
+    {
+      "id": "shorts",
+      "outline": true,
+      "parts": [
+        {
+          "id": "shortsBody",
+          "path": "M66,126 L114,126 L105,143 Q90,153 75,143 Z",
+          "fill": "shorts"
+        }
+      ],
+      "hideIf": [
+        "mooning",
+        "sexy"
+      ]
+    },
+    {
+      "id": "shortsDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "stripes",
+          "path": "M69,128 L74,128 L81,145 L77,143 Z M106,128 L111,128 L103,143 L99,145 Z",
+          "fill": "stripe"
+        }
+      ],
+      "hideIf": [
+        "mooning",
+        "sexy"
+      ]
+    },
+    {
+      "id": "sexyLayer",
+      "outline": true,
+      "showIf": "sexy",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "sexySunga",
+          "fill": "shorts",
+          "path": "M62,126 L118,126 L112,140 C104,146 76,146 68,140 Z"
+        },
+        {
+          "id": "sexySungaStripe",
+          "fill": "stripe",
+          "path": "M64,127 L69,127 L72,135 L68,136 Z M111,127 L116,127 L112,136 L108,135 Z"
+        },
+        {
+          "id": "sexyGarter",
+          "fill": "garter",
+          "path": "M54,150 L86,150 L86,154 L54,154 Z M94,150 L126,150 L126,154 L94,154 Z"
+        },
+        {
+          "id": "sexyGarterBow",
+          "fill": "garterBow",
+          "path": "M66,149 L72,152 L66,155 Z M78,149 L72,152 L78,155 Z M102,149 L108,152 L102,155 Z M114,149 L108,152 L114,155 Z"
+        },
+        {
+          "id": "sexyCollar",
+          "fill": "collar",
+          "path": "M68,80 C80,86 100,86 112,80 L112,86 C100,92 80,92 68,86 Z"
+        },
+        {
+          "id": "sexyBowtie",
+          "fill": "bowtie",
+          "path": "M80,84 L90,88 L80,93 Z M100,84 L90,88 L100,93 Z M88,86 L92,86 L92,90 L88,90 Z"
+        }
+      ]
+    },
+    {
+      "id": "propsBar",
+      "outline": true,
+      "parts": [
+        {
+          "id": "squatBar",
+          "fill": "metal",
+          "showIf": "propBar",
+          "path": "M-14,73 L194,73 L194,80 L-14,80 Z"
+        },
+        {
+          "id": "squatPlates",
+          "fill": "plate",
+          "showIf": "propBar",
+          "path": "M-24,50 L-12,50 Q-9,50 -9,53 L-9,101 Q-9,104 -12,104 L-24,104 Q-27,104 -27,101 L-27,53 Q-27,50 -24,50 Z M192,50 L204,50 Q207,50 207,53 L207,101 Q207,104 204,104 L192,104 Q189,104 189,101 L189,53 Q189,50 192,50 Z M-8,60 L-1,60 L-1,94 L-8,94 Z M181,60 L188,60 L188,94 L181,94 Z"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "head",
+      "outline": true,
+      "parts": [
+        {
+          "id": "fin",
+          "path": "M84,12 C88,5 97,1 110,0 C104,6 103,11 105,16 Z",
+          "fill": "body",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "skull",
+          "path": "M40,48 C40,22 62,8 90,8 C118,8 140,22 140,48 C140,72 120,86 90,86 C60,86 40,72 40,48 Z",
+          "fill": "body",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "headDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "muzzle",
+          "path": "M43,56 L52,52 L58,58 L66,52 L74,58 L82,53 L90,55 L98,53 L106,58 L114,52 L122,58 L128,52 L137,56 C132,76 114,86 90,86 C66,86 48,76 43,56 Z",
+          "fill": "cream",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "headProps",
+      "parts": [
+        {
+          "id": "noseDust",
+          "fill": "powder",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot",
+          "showIf": "noseDust",
+          "path": "M80,50 C82,47 86,47 87,50 C86,53 82,53 80,50 Z M93,50 C94,47 98,47 100,50 C98,53 94,53 93,50 Z M88,46 L90,44 L92,46 L90,48 Z"
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "catalogHead",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "oculos",
+          "fill": "shades",
+          "path": "M64,29 L92,29 L90,47 L68,47 Z M88,29 L116,29 L112,47 L90,47 Z",
+          "showIf": "prop_oculos",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "palito",
+          "fill": "wood",
+          "path": "M127,63 L147,51 L148,53 L128,66 Z",
+          "showIf": "prop_palito",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "oculosNerd",
+          "fill": "outline",
+          "path": "M65,38 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 Z M68,38 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0 Z M87,38 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 Z M90,38 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0 Z M60,35 L65.5,35 L65.5,39 L60,39 Z M114.5,35 L120,35 L120,39 L114.5,39 Z",
+          "showIf": "prop_oculosNerd",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "dentesNerd",
+          "fill": "teeth",
+          "path": "M83.5,60 L89.6,60 L89.6,75 Q86.5,78 83.5,75 Z M90.4,60 L96.5,60 L96.5,75 Q93.5,78 90.4,75 Z",
+          "showIf": "prop_dentesNerd",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        }
+      ]
+    },
+    {
+      "id": "costumes",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "santaHat",
+          "fill": "santaRed",
+          "showIf": "costume_natal",
+          "path": "M46,22 C52,0 80,-20 112,-22 C132,-22 150,-10 156,6 C146,-2 134,-6 122,-4 C130,2 136,10 136,18 C110,8 70,8 46,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "santaTrim",
+          "fill": "snow",
+          "showIf": "costume_natal",
+          "path": "M40,24 C58,8 122,8 140,24 C142,30 138,34 132,32 C114,20 66,20 48,32 C42,34 38,30 40,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "santaPom",
+          "fill": "snow",
+          "showIf": "costume_natal",
+          "path": "M150,8 C150,3 154,0 158,0 C162,0 166,3 166,8 C166,13 162,16 158,16 C154,16 150,13 150,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyHat",
+          "fill": "gold",
+          "showIf": "costume_anoNovo",
+          "path": "M98,12 L114,-26 L132,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyStripes",
+          "fill": "partyBlue",
+          "showIf": "costume_anoNovo",
+          "path": "M103,2 L127,-3 L129,1 L105,6 Z M108,-10 L122,-14 L124,-10 L110,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "partyPom",
+          "fill": "partyPink",
+          "showIf": "costume_anoNovo",
+          "path": "M109,-26 C109,-29 111,-31 114,-31 C117,-31 119,-29 119,-26 C119,-23 117,-21 114,-21 C111,-21 109,-23 109,-26 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyEars",
+          "fill": "snow",
+          "showIf": "costume_pascoa",
+          "path": "M62,16 C54,-2 54,-26 64,-28 C74,-26 76,-2 72,16 Z M108,16 C110,4 116,-6 128,-12 C138,-16 142,-8 134,-2 C126,4 118,10 116,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyInner",
+          "fill": "earPink",
+          "showIf": "costume_pascoa",
+          "path": "M64,10 C60,-4 60,-20 65,-22 C70,-20 70,-4 69,10 Z M112,12 C116,4 122,-2 130,-6 C134,-8 135,-5 131,-2 C124,2 118,8 116,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bunnyBand",
+          "fill": "earPink",
+          "showIf": "costume_pascoa",
+          "path": "M54,18 C70,8 110,8 126,18 L124,23 C108,13 72,13 56,23 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather0",
+          "fill": "featherRed",
+          "showIf": "costume_carnaval",
+          "path": "M58,16 C50,0 56,-18 61,-22 C66,-18 70,0 64,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather1",
+          "fill": "featherOrange",
+          "showIf": "costume_carnaval",
+          "path": "M72,16 C64,0 70,-24 75,-28 C80,-24 84,0 78,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather2",
+          "fill": "featherGreen",
+          "showIf": "costume_carnaval",
+          "path": "M86,16 C78,0 84,-26 89,-30 C94,-26 98,0 92,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather3",
+          "fill": "featherBlue",
+          "showIf": "costume_carnaval",
+          "path": "M100,16 C92,0 98,-24 103,-28 C108,-24 112,0 106,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnFeather4",
+          "fill": "featherPurple",
+          "showIf": "costume_carnaval",
+          "path": "M114,16 C106,0 112,-18 117,-22 C122,-18 126,0 120,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "carnBand",
+          "fill": "gold",
+          "showIf": "costume_carnaval",
+          "path": "M50,20 C66,8 114,8 130,20 L128,26 C112,15 68,15 52,26 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawCrown",
+          "fill": "straw",
+          "showIf": "costume_festaJunina",
+          "path": "M58,6 C58,-22 122,-22 122,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawBrim",
+          "fill": "straw",
+          "showIf": "costume_festaJunina",
+          "path": "M24,10 C36,-4 144,-4 156,10 C144,22 36,22 24,10 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawBand",
+          "fill": "santaRed",
+          "showIf": "costume_festaJunina",
+          "path": "M58,0 L122,0 L122,6 L58,6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawPatch",
+          "fill": "partyBlue",
+          "showIf": "costume_festaJunina",
+          "path": "M100,-14 L110,-14 L110,-6 L100,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "strawLines",
+          "fill": "strawDark",
+          "showIf": "costume_festaJunina",
+          "path": "M40,10 L44,6 L45,7 L41,11 Z M136,6 L140,10 L139,11 L135,7 Z M70,-12 L72,-4 L71,-4 L69,-12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "freckles",
+          "fill": "freckle",
+          "showIf": "costume_festaJunina",
+          "path": "M58,56 C58,54 61,54 61,56 C61,58 58,58 58,56 Z M64,60 C64,58 67,58 67,60 C67,62 64,62 64,60 Z M56,62 C56,61 58,61 58,62 C58,64 56,64 56,62 Z M119,56 C119,54 122,54 122,56 C122,58 119,58 119,56 Z M113,60 C113,58 116,58 116,60 C116,62 113,62 113,60 Z M122,62 C122,61 124,61 124,62 C124,64 122,64 122,62 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capDome",
+          "fill": "capRed",
+          "showIf": "costume_criancas",
+          "path": "M60,14 C60,-6 120,-6 120,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capStripe",
+          "fill": "capYellow",
+          "showIf": "costume_criancas",
+          "path": "M85,-4 L95,-4 L97,14 L83,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capVisor",
+          "fill": "capBlue",
+          "showIf": "costume_criancas",
+          "path": "M104,12 C120,8 138,10 146,16 C130,18 116,18 104,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capStick",
+          "fill": "outline",
+          "showIf": "costume_criancas",
+          "path": "M89,-14 L91,-14 L91,-4 L89,-4 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "capBlades",
+          "fill": "capGreen",
+          "showIf": "costume_criancas",
+          "path": "M70,-16 C80,-20 88,-16 90,-14 C88,-12 80,-10 70,-14 Z M110,-16 C100,-20 92,-16 90,-14 C92,-12 100,-10 110,-14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "crown",
+          "fill": "crownGold",
+          "showIf": "costume_coroa",
+          "path": "M54,18 L50,-14 L66,0 L78,-20 L90,-2 L102,-20 L114,0 L130,-14 L126,18 C112,10 68,10 54,18 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "crownJewels",
+          "fill": "jewelRed",
+          "showIf": "costume_coroa",
+          "path": "M74.5,8 C74.5,6.074999999999999 76.075,4.5 78,4.5 C79.925,4.5 81.5,6.074999999999999 81.5,8 C81.5,9.925 79.925,11.5 78,11.5 C76.075,11.5 74.5,9.925 74.5,8 Z M98.5,8 C98.5,6.074999999999999 100.075,4.5 102,4.5 C103.925,4.5 105.5,6.074999999999999 105.5,8 C105.5,9.925 103.925,11.5 102,11.5 C100.075,11.5 98.5,9.925 98.5,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "crownJewel2",
+          "fill": "jewelBlue",
+          "showIf": "costume_coroa",
+          "path": "M86,5 C86,2.8 87.8,1 90,1 C92.2,1 94,2.8 94,5 C94,7.2 92.2,9 90,9 C87.8,9 86,7.2 86,5 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bopperBand",
+          "fill": "heartPink",
+          "showIf": "costume_coracoes",
+          "path": "M52,20 C68,8 112,8 128,20 L126,24 C110,13 70,13 54,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bopperSprings",
+          "fill": "outline",
+          "showIf": "costume_coracoes",
+          "path": "M70,14 L66,-8 L68,-8 L72,14 Z M110,14 L114,-8 L112,-8 L108,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "bopperHearts",
+          "fill": "heartPink",
+          "showIf": "costume_coracoes",
+          "path": "M66,-6 C58,-14 60,-22 67,-20 C74,-22 76,-14 68,-6 Z M114,-6 C106,-14 108,-22 115,-20 C122,-22 124,-14 116,-6 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatBrim",
+          "fill": "patHat",
+          "showIf": "costume_chapeuVerde",
+          "path": "M46,16 C56,6 124,6 134,16 C124,22 56,22 46,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatTop",
+          "fill": "patHat",
+          "showIf": "costume_chapeuVerde",
+          "path": "M62,12 L66,-24 L114,-24 L118,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatBand",
+          "fill": "patBand",
+          "showIf": "costume_chapeuVerde",
+          "path": "M64,2 L116,2 L117,8 L63,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "greenHatBuckle",
+          "fill": "buckle",
+          "showIf": "costume_chapeuVerde",
+          "path": "M84,1 L96,1 L96,9 L84,9 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "leafCrown",
+          "fill": "leaf",
+          "showIf": "costume_folhas",
+          "path": "M52,14 C44,8 46,-2 54,-4 C58,2 58,10 52,14 Z M64,14 C56,8 58,-2 66,-4 C70,2 70,10 64,14 Z M76,14 C68,8 70,-2 78,-4 C82,2 82,10 76,14 Z M88,14 C80,8 82,-2 90,-4 C94,2 94,10 88,14 Z M100,14 C92,8 94,-2 102,-4 C106,2 106,10 100,14 Z M112,14 C104,8 106,-2 114,-4 C118,2 118,10 112,14 Z M124,14 C116,8 118,-2 126,-4 C130,2 130,10 124,14 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "leafVeins",
+          "fill": "leafDark",
+          "showIf": "costume_folhas",
+          "path": "M52,20 C70,10 110,10 128,20 L127,23 C110,14 70,14 53,23 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "hardHatDome",
+          "fill": "hardHat",
+          "showIf": "costume_capacete",
+          "path": "M54,16 C54,-14 126,-14 126,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "hardHatBrim",
+          "fill": "hardHat",
+          "showIf": "costume_capacete",
+          "path": "M44,16 L136,16 L136,22 L44,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "hardHatRidge",
+          "fill": "strawDark",
+          "showIf": "costume_capacete",
+          "path": "M86,-12 L94,-12 L94,16 L86,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "marigolds",
+          "fill": "marigold",
+          "showIf": "costume_calendulas",
+          "path": "M47,8 C47,4.1499999999999995 50.15,1 54,1 C57.85,1 61,4.1499999999999995 61,8 C61,11.850000000000001 57.85,15 54,15 C50.15,15 47,11.850000000000001 47,8 Z M60,12 C60,8.149999999999999 63.15,5 67,5 C70.85,5 74,8.149999999999999 74,12 C74,15.850000000000001 70.85,19 67,19 C63.15,19 60,15.850000000000001 60,12 Z M73,8 C73,4.1499999999999995 76.15,1 80,1 C83.85,1 87,4.1499999999999995 87,8 C87,11.850000000000001 83.85,15 80,15 C76.15,15 73,11.850000000000001 73,8 Z M86,12 C86,8.149999999999999 89.15,5 93,5 C96.85,5 100,8.149999999999999 100,12 C100,15.850000000000001 96.85,19 93,19 C89.15,19 86,15.850000000000001 86,12 Z M99,8 C99,4.1499999999999995 102.15,1 106,1 C109.85,1 113,4.1499999999999995 113,8 C113,11.850000000000001 109.85,15 106,15 C102.15,15 99,11.850000000000001 99,8 Z M112,12 C112,8.149999999999999 115.15,5 119,5 C122.85,5 126,8.149999999999999 126,12 C126,15.850000000000001 122.85,19 119,19 C115.15,19 112,15.850000000000001 112,12 Z M125,8 C125,4.1499999999999995 128.15,1 132,1 C135.85,1 139,4.1499999999999995 139,8 C139,11.850000000000001 135.85,15 132,15 C128.15,15 125,11.850000000000001 125,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "marigoldCenters",
+          "fill": "marigoldDark",
+          "showIf": "costume_calendulas",
+          "path": "M51.5,8 C51.5,6.625 52.625,5.5 54,5.5 C55.375,5.5 56.5,6.625 56.5,8 C56.5,9.375 55.375,10.5 54,10.5 C52.625,10.5 51.5,9.375 51.5,8 Z M64.5,12 C64.5,10.625 65.625,9.5 67,9.5 C68.375,9.5 69.5,10.625 69.5,12 C69.5,13.375 68.375,14.5 67,14.5 C65.625,14.5 64.5,13.375 64.5,12 Z M77.5,8 C77.5,6.625 78.625,5.5 80,5.5 C81.375,5.5 82.5,6.625 82.5,8 C82.5,9.375 81.375,10.5 80,10.5 C78.625,10.5 77.5,9.375 77.5,8 Z M90.5,12 C90.5,10.625 91.625,9.5 93,9.5 C94.375,9.5 95.5,10.625 95.5,12 C95.5,13.375 94.375,14.5 93,14.5 C91.625,14.5 90.5,13.375 90.5,12 Z M103.5,8 C103.5,6.625 104.625,5.5 106,5.5 C107.375,5.5 108.5,6.625 108.5,8 C108.5,9.375 107.375,10.5 106,10.5 C104.625,10.5 103.5,9.375 103.5,8 Z M116.5,12 C116.5,10.625 117.625,9.5 119,9.5 C120.375,9.5 121.5,10.625 121.5,12 C121.5,13.375 120.375,14.5 119,14.5 C117.625,14.5 116.5,13.375 116.5,12 Z M129.5,8 C129.5,6.625 130.625,5.5 132,5.5 C133.375,5.5 134.5,6.625 134.5,8 C134.5,9.375 133.375,10.5 132,10.5 C130.625,10.5 129.5,9.375 129.5,8 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "pilgrimBrim",
+          "fill": "pilgrim",
+          "showIf": "costume_peregrino",
+          "path": "M42,16 C52,8 128,8 138,16 C128,22 52,22 42,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "pilgrimTop",
+          "fill": "pilgrim",
+          "showIf": "costume_peregrino",
+          "path": "M60,12 L66,-22 L114,-22 L120,12 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "pilgrimBuckle",
+          "fill": "buckle",
+          "showIf": "costume_peregrino",
+          "path": "M80,-2 L100,-2 L100,10 L80,10 Z M84,1 L96,1 L96,7 L84,7 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "patriotBand",
+          "fill": "brGreen",
+          "showIf": "costume_patriota",
+          "path": "M48,18 C64,6 116,6 132,18 L130,24 C114,13 66,13 50,24 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "patriotStripe",
+          "fill": "brYellow",
+          "showIf": "costume_patriota",
+          "path": "M52,20 C66,10 114,10 128,20 L127,22 C114,13 66,13 53,22 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "holiTorso1",
+          "fill": "paintPink",
+          "showIf": "costume_tinta",
+          "path": "M60,98 C56,92 66,88 70,94 C76,96 72,106 64,104 C60,104 58,102 60,98 Z"
+        },
+        {
+          "id": "holiTorso2",
+          "fill": "paintGreen",
+          "showIf": "costume_tinta",
+          "path": "M104,110 C102,104 112,102 116,108 C120,112 112,120 106,116 Z"
+        },
+        {
+          "id": "holiArm",
+          "fill": "paintBlue",
+          "showIf": "costume_tinta",
+          "path": "M140,108 C138,102 148,100 150,106 C152,112 144,116 140,112 Z"
+        },
+        {
+          "id": "holiArmL",
+          "fill": "paintYellow",
+          "showIf": "costume_tinta",
+          "path": "M30,104 C28,98 38,96 40,102 C42,108 34,112 30,108 Z"
+        },
+        {
+          "id": "holiFace1",
+          "fill": "paintPurple",
+          "showIf": "costume_tinta",
+          "path": "M48,40 C46,34 56,32 58,38 C60,44 52,48 48,44 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "holiFace2",
+          "fill": "paintPink",
+          "showIf": "costume_tinta",
+          "path": "M120,30 C118,24 128,22 130,28 C132,34 124,38 120,34 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "holiHead",
+          "fill": "paintYellow",
+          "showIf": "costume_tinta",
+          "path": "M80,14 C78,8 90,6 92,12 C94,18 84,20 80,16 Z",
+          "pivot": [
+            90,
+            86
+          ],
+          "rot": "headRot"
+        },
+        {
+          "id": "tieKnot",
+          "fill": "tie",
+          "showIf": "costume_gravata",
+          "path": "M84,84 L96,84 L94,92 L86,92 Z"
+        },
+        {
+          "id": "tieBody",
+          "fill": "tie",
+          "showIf": "costume_gravata",
+          "path": "M86,92 L94,92 L98,124 L90,132 L82,124 Z"
+        },
+        {
+          "id": "tieStripes",
+          "fill": "tieStripe",
+          "showIf": "costume_gravata",
+          "path": "M86,100 L95,96 L96,99 L86,103 Z M85,112 L97,107 L98,110 L85,115 Z"
+        },
+        {
+          "id": "scarfWrap",
+          "fill": "scarfBlue",
+          "showIf": "costume_cachecol",
+          "path": "M50,80 C64,90 116,90 130,80 L132,90 C116,100 64,100 48,90 Z"
+        },
+        {
+          "id": "scarfEnd",
+          "fill": "scarfBlue",
+          "showIf": "costume_cachecol",
+          "path": "M108,92 L120,92 L124,128 L110,128 Z"
+        },
+        {
+          "id": "scarfStripes",
+          "fill": "scarfWhite",
+          "showIf": "costume_cachecol",
+          "path": "M60,86 L66,88 L64,96 L58,94 Z M80,88 L86,89 L86,97 L80,96 Z M100,88 L106,87 L106,96 L100,96 Z M110,104 L121,104 L122,110 L111,110 Z M111,118 L123,118 L124,124 L112,124 Z"
+        }
+      ]
+    },
+    {
+      "id": "arms",
+      "outline": true,
+      "parts": [
+        {
+          "id": "armL",
+          "path": "M52,85 Q30,91 17,130 Q36,121 52,103 Z",
+          "fill": "body",
+          "pivot": [
+            46,
+            92
+          ],
+          "rot": "legFL",
+          "rotSign": 1
+        },
+        {
+          "id": "foreL",
+          "path": "M0,0",
+          "fill": "body",
+          "pivot": [
+            36,
+            128
+          ],
+          "rot": "elbowL",
+          "rotSign": 1,
+          "parent": "armL",
+          "hideIf": "propBench",
+          "alpha": 0
+        },
+        {
+          "id": "armR",
+          "path": "M128,85 Q150,91 163,130 Q144,121 128,103 Z",
+          "fill": "body",
+          "pivot": [
+            134,
+            92
+          ],
+          "rot": "legFR",
+          "rotSign": -1
+        },
+        {
+          "id": "foreR",
+          "path": "M0,0",
+          "fill": "body",
+          "pivot": [
+            144,
+            128
+          ],
+          "rot": "elbowR",
+          "rotSign": -1,
+          "parent": "armR",
+          "alpha": 0
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "armDetail",
+      "outline": false,
+      "parts": [
+        {
+          "id": "benchPlate",
+          "fill": "plate",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "path": "M152,126 A22,22 0 1 1 151.9,126 Z"
+        },
+        {
+          "id": "benchPlateRim",
+          "fill": "metal",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "alpha": 0.55,
+          "path": "M152,133 A15,15 0 1 1 151.9,133 Z M152,136 A12,12 0 1 0 152.1,136 Z"
+        },
+        {
+          "id": "benchPlateHub",
+          "fill": "metal",
+          "parent": "foreR",
+          "showIf": "propBench",
+          "path": "M152,143 A5,5 0 1 1 151.9,143 Z"
+        },
+        {
+          "id": "shaker",
+          "fill": "shaker",
+          "parent": "foreR",
+          "showIf": "propShaker",
+          "path": "M146,140 L160,140 L158,166 L148,166 Z"
+        },
+        {
+          "id": "shakerCap",
+          "fill": "shakerCap",
+          "parent": "foreR",
+          "showIf": "propShaker",
+          "path": "M145,134 L161,134 L161,141 L145,141 Z"
+        },
+        {
+          "id": "poopHandBlob",
+          "fill": "poop",
+          "path": "M140,150 C138,142 146,138 152,140 C152,134 160,132 162,138 C168,140 168,148 164,152 C168,156 166,164 158,164 L146,164 C140,164 138,156 140,150 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandLines",
+          "fill": "poopDark",
+          "path": "M144,156 C150,153 158,153 164,156 C158,155 150,155 144,156 Z M146,146 C152,143 158,143 162,146 C158,145 152,145 146,146 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandShine",
+          "fill": "poopShine",
+          "alpha": 0.8,
+          "path": "M148,150 C149,147 152,146 153,148 C151,148 150,149 148,150 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandCorn",
+          "fill": "corn",
+          "path": "M156,150 L159,149 L159,152 L156,152 Z M147,159 L150,159 L149,162 L146,161 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "poopHandDrip",
+          "fill": "poopSlime",
+          "alpha": 0.9,
+          "dy": "poopDrip",
+          "path": "M150,163 C150,168 148,172 150,175 C152,177 154,175 154,172 C154,169 153,166 153,163 Z M160,162 C160,166 158,169 160,171 C162,172 163,170 163,168 C163,166 162,164 162,162 Z",
+          "parent": "foreR",
+          "showIf": "poopHand"
+        },
+        {
+          "id": "finRayL",
+          "path": "M43,97 Q30,109 23,124 Q34,115 46,104 Z",
+          "fill": "muscle",
+          "parent": "armL",
+          "alpha": 0.6
+        },
+        {
+          "id": "finRayR",
+          "path": "M137,97 Q150,109 157,124 Q146,115 134,104 Z",
+          "fill": "muscle",
+          "parent": "armR",
+          "alpha": 0.6
+        }
+      ],
+      "hideIf": "mooning"
+    },
+    {
+      "id": "catalogHand",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "livroCapa",
+          "fill": "book",
+          "path": "M134,138 L152,142 L170,138 L170,160 L152,164 L134,160 Z",
+          "showIf": "prop_livro",
+          "parent": "foreR"
+        },
+        {
+          "id": "livroPaginas",
+          "fill": "page",
+          "path": "M137,140 L151,144 L151,161 L137,157 Z M153,144 L167,140 L167,157 L153,161 Z",
+          "showIf": "prop_livro",
+          "parent": "foreR"
+        },
+        {
+          "id": "celular",
+          "fill": "phone",
+          "path": "M145,128 L159,128 Q161,128 161,130 L161,156 Q161,158 159,158 L145,158 Q143,158 143,156 L143,130 Q143,128 145,128 Z",
+          "showIf": "prop_celular",
+          "parent": "foreR"
+        },
+        {
+          "id": "celularTela",
+          "fill": "screen",
+          "path": "M146,132 L158,132 L158,153 L146,153 Z",
+          "showIf": "prop_celular",
+          "parent": "foreR"
+        },
+        {
+          "id": "espelhoCabo",
+          "fill": "wood",
+          "path": "M150,140 L154,140 L154,162 L150,162 Z",
+          "showIf": "prop_espelho",
+          "parent": "foreR"
+        },
+        {
+          "id": "espelhoMoldura",
+          "fill": "wood",
+          "path": "M152,112 A12,15 0 1 1 151.9,112 Z",
+          "showIf": "prop_espelho",
+          "parent": "foreR"
+        },
+        {
+          "id": "espelhoVidro",
+          "fill": "mirror",
+          "path": "M152,116 A8,11 0 1 1 151.9,116 Z",
+          "showIf": "prop_espelho",
+          "parent": "foreR"
+        },
+        {
+          "id": "halterBarra",
+          "fill": "metal",
+          "path": "M138,148 L166,148 L166,152 L138,152 Z",
+          "showIf": "prop_halter",
+          "parent": "foreR"
+        },
+        {
+          "id": "halterPesos",
+          "fill": "plate",
+          "path": "M131,140 L139,140 L139,160 L131,160 Z M165,140 L173,140 L173,160 L165,160 Z",
+          "showIf": "prop_halter",
+          "parent": "foreR"
+        },
+        {
+          "id": "canecaAlca",
+          "fill": "mug",
+          "path": "M158,144 Q167,145 166,152 Q165,159 157,158 L157,154 Q162,154 162,151 Q162,148 158,148 Z",
+          "showIf": "prop_cafe",
+          "parent": "foreR"
+        },
+        {
+          "id": "caneca",
+          "fill": "mug",
+          "path": "M143,138 L159,138 L158,162 L144,162 Z",
+          "showIf": "prop_cafe",
+          "parent": "foreR"
+        },
+        {
+          "id": "cafe",
+          "fill": "coffee",
+          "path": "M145,140 L157,140 L157,143 L145,143 Z",
+          "showIf": "prop_cafe",
+          "parent": "foreR"
+        },
+        {
+          "id": "pote",
+          "fill": "glass",
+          "path": "M139,134 L165,134 L163,166 L141,166 Z",
+          "showIf": "prop_pote",
+          "parent": "foreR",
+          "alpha": 0.75
+        },
+        {
+          "id": "poteFish",
+          "fill": "fishOrange",
+          "path": "M144,150 Q148,145 153,150 L156,147 L156,153 L153,150 Q148,155 144,150 Z M148,158 Q152,153 157,158 L160,155 L160,161 L157,158 Q152,163 148,158 Z",
+          "showIf": "prop_pote",
+          "parent": "foreR"
+        },
+        {
+          "id": "trofeuTaca",
+          "fill": "gold",
+          "path": "M140,124 L164,124 Q164,140 152,143 Q140,140 140,124 Z",
+          "showIf": "prop_trofeu",
+          "parent": "foreR"
+        },
+        {
+          "id": "trofeuBase",
+          "fill": "gold",
+          "path": "M149,143 L155,143 L155,151 L149,151 Z M143,151 L161,151 L161,158 L143,158 Z",
+          "showIf": "prop_trofeu",
+          "parent": "foreR"
+        },
+        {
+          "id": "microfoneCabo",
+          "fill": "mic",
+          "path": "M149,140 L155,140 L154,163 L150,163 Z",
+          "showIf": "prop_microfone",
+          "parent": "foreR"
+        },
+        {
+          "id": "microfoneCabeca",
+          "fill": "metal",
+          "path": "M152,126 A8,8 0 1 1 151.9,126 Z",
+          "showIf": "prop_microfone",
+          "parent": "foreR"
+        },
+        {
+          "id": "relogio",
+          "fill": "clockRed",
+          "path": "M152,134 A14,14 0 1 1 151.9,134 Z",
+          "showIf": "prop_relogio",
+          "parent": "foreR"
+        },
+        {
+          "id": "relogioFace",
+          "fill": "clockFace",
+          "path": "M152,138 A10,10 0 1 1 151.9,138 Z",
+          "showIf": "prop_relogio",
+          "parent": "foreR"
+        },
+        {
+          "id": "relogioPonteiros",
+          "fill": "outline",
+          "path": "M151,140 L153,140 L153,149 L151,149 Z M152,147 L159,147 L159,149 L152,149 Z",
+          "showIf": "prop_relogio",
+          "parent": "foreR"
+        },
+        {
+          "id": "peixeBorracha",
+          "fill": "rubber",
+          "path": "M136,150 Q148,136 162,148 L172,140 L170,158 L162,152 Q148,164 136,150 Z",
+          "showIf": "prop_peixeBorracha",
+          "parent": "foreR"
+        },
+        {
+          "id": "caderno",
+          "fill": "page",
+          "path": "M138,132 L164,132 L164,164 L138,164 Z",
+          "showIf": "prop_caderno",
+          "parent": "foreR"
+        },
+        {
+          "id": "cadernoLinhas",
+          "fill": "screen",
+          "path": "M142,140 L160,140 L160,142 L142,142 Z M142,146 L160,146 L160,148 L142,148 Z M142,152 L160,152 L160,154 L142,154 Z",
+          "showIf": "prop_caderno",
+          "parent": "foreR"
+        },
+        {
+          "id": "frangoOsso",
+          "fill": "bone",
+          "path": "M154,150 L168,162 L172,160 L174,166 L168,168 L166,164 L152,154 Z",
+          "showIf": "prop_frango",
+          "parent": "foreR"
+        },
+        {
+          "id": "frangoCarne",
+          "fill": "meat",
+          "path": "M136,146 Q136,132 150,134 Q162,138 158,150 Q154,160 144,158 Q136,156 136,146 Z",
+          "showIf": "prop_frango",
+          "parent": "foreR"
+        },
+        {
+          "id": "toalha",
+          "fill": "towel",
+          "path": "M142,138 L162,138 L164,170 L140,170 Z",
+          "showIf": "prop_toalha",
+          "parent": "foreR"
+        },
+        {
+          "id": "toalhaListra",
+          "fill": "towelStripe",
+          "path": "M141,160 L163,160 L163,164 L141,164 Z",
+          "showIf": "prop_toalha",
+          "parent": "foreR"
+        }
+      ]
+    },
+    {
+      "id": "propsFront",
+      "outline": true,
+      "showIf": "propBar",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "squatBarFront",
+          "fill": "metal",
+          "path": "M-14,73 L46,73 L46,80 L-14,80 Z M134,73 L194,73 L194,80 L134,80 Z"
+        },
+        {
+          "id": "squatCollars",
+          "fill": "metal",
+          "path": "M0,68 L5,68 L5,85 L0,85 Z M175,68 L180,68 L180,85 L175,85 Z"
+        }
+      ]
+    },
+    {
+      "id": "fingerGroup",
+      "outline": true,
+      "showIf": "finger",
+      "hideIf": "mooning",
+      "parts": []
+    },
+    {
+      "id": "fingerDetail",
+      "showIf": "finger",
+      "hideIf": "mooning",
+      "parts": []
+    },
+    {
+      "id": "costumeHand",
+      "outline": true,
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "lanternString",
+          "fill": "outline",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M151,156 L153,156 L153,166 L151,166 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lanternBody",
+          "fill": "lanternRed",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M140,178 C140,168 146,164 152,164 C158,164 164,168 164,178 C164,188 158,192 152,192 C146,192 140,188 140,178 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lanternCaps",
+          "fill": "lanternGold",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M145,163 L159,163 L159,167 L145,167 Z M145,189 L159,189 L159,193 L145,193 Z M151,193 L153,193 L154,202 L150,202 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lanternRibs",
+          "fill": "lanternGold",
+          "showIf": "costume_lanternaChinesa",
+          "path": "M151,166 L153,166 L153,190 L151,190 Z M145,170 C142,176 142,182 145,188 L146,188 C143,182 143,176 146,170 Z M159,170 C162,176 162,182 159,188 L158,188 C161,182 161,176 158,170 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousString",
+          "fill": "outline",
+          "showIf": "costume_fanous",
+          "path": "M151,156 L153,156 L153,164 L151,164 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousTop",
+          "fill": "fanousMetal",
+          "showIf": "costume_fanous",
+          "path": "M146,164 L158,164 L162,170 L142,170 Z M150,158 C150,154 154,154 154,158 L153,160 L151,160 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousGlass",
+          "fill": "fanousGlass",
+          "showIf": "costume_fanous",
+          "path": "M143,170 L161,170 L158,188 L146,188 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousFrame",
+          "fill": "fanousMetal",
+          "showIf": "costume_fanous",
+          "path": "M151,170 L153,170 L153,188 L151,188 Z M144,186 L160,186 L157,194 L147,194 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "fanousMoon",
+          "fill": "fanousMetal",
+          "showIf": "costume_fanous",
+          "path": "M148,150 C144,146 146,140 150,138 C148,142 149,147 153,149 C151,150 150,150 148,150 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerStem",
+          "fill": "stem",
+          "showIf": "costume_flor",
+          "path": "M151,150 L153,150 L157,112 L155,112 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerLeaf",
+          "fill": "stem",
+          "showIf": "costume_flor",
+          "path": "M154,134 C160,128 166,130 166,132 C160,134 158,136 154,136 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerPetals",
+          "fill": "flowerPink",
+          "showIf": "costume_flor",
+          "path": "M145,104 C145,101.25 147.25,99 150,99 C152.75,99 155,101.25 155,104 C155,106.75 152.75,109 150,109 C147.25,109 145,106.75 145,104 Z M157,104 C157,101.25 159.25,99 162,99 C164.75,99 167,101.25 167,104 C167,106.75 164.75,109 162,109 C159.25,109 157,106.75 157,104 Z M151,96 C151,93.25 153.25,91 156,91 C158.75,91 161,93.25 161,96 C161,98.75 158.75,101 156,101 C153.25,101 151,98.75 151,96 Z M151,112 C151,109.25 153.25,107 156,107 C158.75,107 161,109.25 161,112 C161,114.75 158.75,117 156,117 C153.25,117 151,114.75 151,112 Z M144,110 C144,107.8 145.8,106 148,106 C150.2,106 152,107.8 152,110 C152,112.2 150.2,114 148,114 C145.8,114 144,112.2 144,110 Z M160,98 C160,95.8 161.8,94 164,94 C166.2,94 168,95.8 168,98 C168,100.2 166.2,102 164,102 C161.8,102 160,100.2 160,98 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "flowerCenterP",
+          "fill": "flowerCenter",
+          "showIf": "costume_flor",
+          "path": "M152,104 C152,101.8 153.8,100 156,100 C158.2,100 160,101.8 160,104 C160,106.2 158.2,108 156,108 C153.8,108 152,106.2 152,104 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "diyaBowl",
+          "fill": "clay",
+          "showIf": "costume_diya",
+          "path": "M140,152 C142,162 162,162 164,152 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "diyaFlame",
+          "fill": "flame",
+          "showIf": "costume_diya",
+          "path": "M152,152 C146,144 150,136 152,128 C154,136 158,144 152,152 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "diyaCore",
+          "fill": "flameCore",
+          "showIf": "costume_diya",
+          "path": "M152,150 C150,146 151,142 152,138 C153,142 154,146 152,150 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lotusPetals",
+          "fill": "lotus",
+          "showIf": "costume_lotus",
+          "path": "M140,152 C140,142 146,140 150,146 C150,136 154,136 154,146 C158,140 164,142 164,152 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "lotusLeaf",
+          "fill": "leaf",
+          "showIf": "costume_lotus",
+          "path": "M136,154 C144,150 160,150 168,154 C160,158 144,158 136,154 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "appleBody",
+          "fill": "apple",
+          "showIf": "costume_maca",
+          "path": "M142,146 C140,136 148,132 152,136 C156,132 164,136 162,146 C160,154 154,156 152,154 C150,156 144,154 142,146 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "appleLeaf",
+          "fill": "leaf",
+          "showIf": "costume_maca",
+          "path": "M152,136 C152,130 156,128 160,128 C158,132 156,134 152,136 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "appleShine",
+          "fill": "snow",
+          "showIf": "costume_maca",
+          "path": "M145.4,142 C145.4,141.12 146.12,140.4 147,140.4 C147.88,140.4 148.6,141.12 148.6,142 C148.6,142.88 147.88,143.6 147,143.6 C146.12,143.6 145.4,142.88 145.4,142 Z",
+          "parent": "foreR",
+          "alpha": 0.8
+        },
+        {
+          "id": "arcoIrisPole",
+          "fill": "strawDark",
+          "showIf": "costume_arcoIris",
+          "path": "M151,152 L153,152 L153,96 L151,96 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain0",
+          "fill": "rainRed",
+          "showIf": "costume_arcoIris",
+          "path": "M121,96.0 L151,96.0 L151,99.4 L121,99.4 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain1",
+          "fill": "rainOrange",
+          "showIf": "costume_arcoIris",
+          "path": "M121,99.4 L151,99.4 L151,102.8 L121,102.8 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain2",
+          "fill": "rainYellow",
+          "showIf": "costume_arcoIris",
+          "path": "M121,102.8 L151,102.8 L151,106.2 L121,106.2 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain3",
+          "fill": "rainGreen",
+          "showIf": "costume_arcoIris",
+          "path": "M121,106.2 L151,106.2 L151,109.6 L121,109.6 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain4",
+          "fill": "rainBlue",
+          "showIf": "costume_arcoIris",
+          "path": "M121,109.6 L151,109.6 L151,113.0 L121,113.0 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "rain5",
+          "fill": "rainPurple",
+          "showIf": "costume_arcoIris",
+          "path": "M121,113.0 L151,113.0 L151,116.4 L121,116.4 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "patriotaPole",
+          "fill": "strawDark",
+          "showIf": "costume_patriota",
+          "path": "M151,152 L153,152 L153,96 L151,96 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "brFlagGreen",
+          "fill": "brGreen",
+          "showIf": "costume_patriota",
+          "path": "M121,96 L151,96 L151,116 L121,116 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "brFlagRhombus",
+          "fill": "brYellow",
+          "showIf": "costume_patriota",
+          "path": "M124,106 L136,98 L148,106 L136,114 Z",
+          "parent": "foreR"
+        },
+        {
+          "id": "brFlagCircle",
+          "fill": "brBlue",
+          "showIf": "costume_patriota",
+          "path": "M131.5,106 C131.5,103.525 133.525,101.5 136,101.5 C138.475,101.5 140.5,103.525 140.5,106 C140.5,108.475 138.475,110.5 136,110.5 C133.525,110.5 131.5,108.475 131.5,106 Z",
+          "parent": "foreR"
+        }
+      ]
+    },
+    {
+      "id": "moonBack",
+      "outline": true,
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonTail",
+          "fill": "body",
+          "path": "M108,90 C122,78 140,68 162,62 C156,74 152,82 142,90 C152,92 158,96 162,102 C144,100 126,98 110,96 Z"
+        },
+        {
+          "id": "moonLowerBody",
+          "fill": "body",
+          "path": "M50,125 Q90,119 130,125 Q112,151 90,160 Q68,151 50,125 Z"
+        },
+        {
+          "id": "moonShorts",
+          "fill": "shorts",
+          "path": "M50,124 L130,124 Q117,140 90,148 Q63,140 50,124 Z"
+        },
+        {
+          "id": "moonTorso",
+          "fill": "body",
+          "path": "M26,66 C28,54 50,46 90,46 C130,46 152,54 154,66 C156,82 140,92 120,96 L60,96 C40,92 24,82 26,66 Z"
+        },
+        {
+          "id": "moonTraps",
+          "fill": "body",
+          "path": "M54,52 C64,38 116,38 126,52 L132,58 L48,58 Z"
+        },
+        {
+          "id": "moonFin",
+          "fill": "body",
+          "path": "M80,48 C86,34 96,26 108,22 C104,32 104,40 106,48 Z"
+        },
+        {
+          "id": "moonHead",
+          "fill": "body",
+          "path": "M8,40 C8,24 20,14 34,14 C48,14 58,24 58,38 C58,52 48,62 34,62 C20,62 8,54 8,40 Z"
+        },
+        {
+          "id": "moonGap",
+          "fill": "gagDark",
+          "path": "M80,90 C84,84 96,84 100,90 L101,124 C96,130 84,130 79,124 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            108
+          ]
+        },
+        {
+          "id": "moonCheekL",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": -1,
+          "path": "M90,106 C90,92 82,84 70,84 C58,84 48,94 48,108 C48,122 58,130 70,130 C82,130 90,120 90,106 Z"
+        },
+        {
+          "id": "moonCheekR",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": 1,
+          "path": "M90,106 C90,92 98,84 110,84 C122,84 132,94 132,108 C132,122 122,130 110,130 C98,130 90,120 90,106 Z"
+        }
+      ]
+    },
+    {
+      "id": "moonDetail",
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonSpine",
+          "fill": "muscle",
+          "path": "M89,50 L91,50 L91,92 L89,92 Z"
+        },
+        {
+          "id": "moonLats",
+          "fill": "muscle",
+          "path": "M38,72 Q56,90 70,94 Q54,84 38,72 Z M142,72 Q124,90 110,94 Q126,84 142,72 Z"
+        },
+        {
+          "id": "moonScapula",
+          "fill": "muscle",
+          "path": "M58,60 Q68,72 80,66 Q68,68 58,60 Z M122,60 Q112,72 100,66 Q112,68 122,60 Z"
+        },
+        {
+          "id": "moonRearDelt",
+          "fill": "muscle",
+          "path": "M30,58 Q40,56 46,64 Q38,60 30,62 Z M150,58 Q140,56 134,64 Q142,60 150,62 Z"
+        },
+        {
+          "id": "moonLowBack",
+          "fill": "muscle",
+          "path": "M80,78 Q84,86 86,92 Q82,86 78,80 Z M100,78 Q96,86 94,92 Q98,86 102,80 Z"
+        },
+        {
+          "id": "moonGluteLine",
+          "fill": "muscle",
+          "dx": "spread",
+          "dxSign": -1,
+          "path": "M56,118 Q66,126 80,124 Q66,122 56,118 Z"
+        },
+        {
+          "id": "moonGluteLineR",
+          "fill": "muscle",
+          "dx": "spread",
+          "dxSign": 1,
+          "path": "M124,118 Q114,126 100,124 Q114,122 124,118 Z"
+        },
+        {
+          "id": "moonStripes",
+          "fill": "stripe",
+          "path": "M50,125 L56,125 L54,141 L48,141 Z M130,125 L124,125 L126,141 L132,141 Z"
+        },
+        {
+          "id": "moonEye",
+          "fill": "sclera",
+          "path": "M18,36 C18,30 24,26 30,26 C36,26 40,30 40,36 C40,42 36,46 30,46 C24,46 18,42 18,36 Z"
+        },
+        {
+          "id": "moonPupil",
+          "fill": "eye",
+          "path": "M22,36 C22,33 24,31 27,31 C30,31 32,33 32,36 C32,39 30,41 27,41 C24,41 22,39 22,36 Z"
+        },
+        {
+          "id": "moonBrow",
+          "fill": "outline",
+          "path": "M16,24 L40,28 L40,31 L16,27 Z"
+        },
+        {
+          "id": "moonGrin",
+          "fill": "teeth",
+          "path": "M10,50 L34,52 L30,58 L26,53 L22,58 L18,53 L14,57 Z"
+        },
+        {
+          "id": "gagRimP",
+          "fill": "gagRim",
+          "path": "M70,104 C70,86 80,78 90,78 C100,78 110,86 110,104 C110,122 100,132 90,132 C80,132 70,122 70,104 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagMass",
+          "fill": "gag",
+          "path": "M74,100 C71,88 81,81 90,84 C99,80 109,88 106,99 C112,107 105,123 96,124 C92,129 86,129 82,124 C73,122 68,110 74,100 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagLobe",
+          "fill": "gag",
+          "path": "M96,110 C104,108 112,114 110,122 C108,130 98,130 95,124 C93,120 93,113 96,110 Z M76,112 C70,112 66,118 69,124 C72,129 80,128 82,122 C83,118 81,113 76,112 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagFolds",
+          "fill": "gagDark",
+          "path": "M81,95 C86,90 95,90 99,95 C94,93 86,93 81,95 Z M79,107 C86,102 96,102 101,107 C96,105 86,105 79,107 Z M84,118 C88,114 94,114 98,118 C94,116 88,116 84,118 Z M100,118 C104,116 107,118 107,122 C105,120 103,119 100,118 Z M72,119 C75,116 78,117 79,120 C77,119 75,119 72,119 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagVeins",
+          "fill": "gagVein",
+          "path": "M86,86 L88,92 L85,97 L86,97 L89,92 L87,86 Z M97,90 L95,96 L99,101 L100,100 L96,96 L98,90 Z M76,104 L80,108 L77,113 L78,113 L81,108 L77,104 Z M102,110 L98,113 L101,118 L102,117 L99,113 L103,111 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagSpots",
+          "fill": "gagDark",
+          "path": "M84,99 C84,97 87,97 87,99 C87,101 84,101 84,99 Z M93,111 C93,109 96,109 96,111 C96,113 93,113 93,111 Z M88,121 C88,119 91,119 91,121 C91,123 88,123 88,121 Z M101,103 C101,102 103,102 103,103 C103,105 101,105 101,103 Z M78,114 C78,113 80,113 80,114 C80,116 78,116 78,114 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagShineP",
+          "fill": "gagShine",
+          "alpha": 0.75,
+          "path": "M83,89 C86,85 92,85 94,88 C90,88 86,89 83,92 Z M101,97 C103,96 105,99 104,103 C103,101 102,99 101,97 Z M98,113 C101,112 104,114 104,117 C102,115 100,114 98,113 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagDrips",
+          "fill": "slime",
+          "alpha": 0.92,
+          "dy": "drip",
+          "path": "M86,124 C86,130 84,135 86,138 C88,141 91,139 91,135 C91,131 90,128 90,124 Z M97,122 C97,127 95,131 97,134 C99,136 101,134 101,131 C101,128 100,125 100,122 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        },
+        {
+          "id": "gagDrops",
+          "fill": "slime",
+          "alpha": 0.92,
+          "dy": "dripFall",
+          "path": "M88,146 C88,143 91,141 91,141 C91,141 93,143 93,146 C93,148 91,149 90,149 C89,149 88,148 88,146 Z",
+          "scaleBy": "gagSize",
+          "scalePivot": [
+            90,
+            104
+          ]
+        }
+      ]
+    },
+    {
+      "id": "moonHandsGroup",
+      "outline": true,
+      "showIf": "mooning",
+      "parts": [
+        {
+          "id": "moonPectoralL",
+          "fill": "body",
+          "path": "M30,66 Q12,83 12,112 Q25,99 43,82 Z",
+          "dx": "spread",
+          "dxSign": -0.2
+        },
+        {
+          "id": "moonPectoralR",
+          "fill": "body",
+          "path": "M150,66 Q168,83 168,112 Q155,99 137,82 Z",
+          "dx": "spread",
+          "dxSign": 0.2
+        }
+      ]
+    },
+    {
+      "id": "moonArmDetail",
+      "showIf": "mooning",
+      "parts": []
+    },
+    {
+      "id": "propsFloor",
+      "outline": true,
+      "parts": [
+        {
+          "id": "powderLine",
+          "fill": "powder",
+          "showIf": "propPowder",
+          "path": "M104,161 C112,159 132,159 142,161 C134,164 112,164 104,161 Z"
+        },
+        {
+          "id": "poopPuddle",
+          "fill": "poopSlime",
+          "alpha": 0.85,
+          "path": "M96,166 C100,160 146,160 150,166 C146,170 100,170 96,166 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopPile",
+          "fill": "poop",
+          "path": "M104,165 C102,157 110,154 116,155 C112,148 118,141 124,143 C122,136 128,130 132,134 C138,138 136,144 132,146 C140,147 142,155 136,158 C144,159 144,166 138,167 L108,167 C105,167 104,166 104,165 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopLines",
+          "fill": "poopDark",
+          "path": "M108,160 C116,157 128,157 138,160 C128,159 118,159 108,160 Z M114,151 C120,148 128,148 134,151 C128,150 120,150 114,151 Z M120,141 C124,139 128,139 131,141 C128,140 124,140 120,141 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopShineF",
+          "fill": "poopShine",
+          "alpha": 0.8,
+          "path": "M112,158 C113,155 116,154 117,156 C115,156 114,157 112,158 Z M125,147 C126,145 128,145 129,146 C127,146 126,147 125,147 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        },
+        {
+          "id": "poopCorn",
+          "fill": "corn",
+          "path": "M110,162 L113,161 L113,164 L110,164 Z M129,153 L132,152 L132,155 L129,155 Z M120,158 L123,158 L122,161 L119,160 Z",
+          "showIf": "propPoop",
+          "scaleBy": "poopSize",
+          "scalePivot": [
+            122,
+            166
+          ]
+        }
+      ]
+    },
+    {
+      "id": "catalogFloor",
+      "outline": true,
+      "parts": [
+        {
+          "id": "notebookTela",
+          "fill": "laptop",
+          "path": "M2,118 L46,118 L48,150 L0,150 Z",
+          "showIf": "prop_notebook"
+        },
+        {
+          "id": "notebookBrilho",
+          "fill": "laptopScreen",
+          "path": "M6,122 L42,122 L44,146 L4,146 Z",
+          "showIf": "prop_notebook"
+        },
+        {
+          "id": "notebookBase",
+          "fill": "laptop",
+          "path": "M-4,150 L52,150 L56,167 L-8,167 Z",
+          "showIf": "prop_notebook"
+        },
+        {
+          "id": "bauTampa",
+          "fill": "chest",
+          "path": "M134,124 Q158,110 182,124 L182,138 L134,138 Z",
+          "showIf": "prop_bau"
+        },
+        {
+          "id": "bau",
+          "fill": "chest",
+          "path": "M134,138 L182,138 L182,167 L134,167 Z",
+          "showIf": "prop_bau"
+        },
+        {
+          "id": "bauOuro",
+          "fill": "gold",
+          "path": "M154,134 L162,134 L162,146 L154,146 Z M134,136 L182,136 L182,140 L134,140 Z",
+          "showIf": "prop_bau"
+        },
+        {
+          "id": "castelo",
+          "fill": "sand",
+          "path": "M-6,167 L-6,142 L0,142 L0,136 L6,136 L6,142 L12,142 L12,126 L20,126 L20,118 L26,118 L26,126 L34,126 L34,142 L40,142 L40,167 Z",
+          "showIf": "prop_castelo"
+        },
+        {
+          "id": "torrePesos",
+          "fill": "plate",
+          "path": "M-8,159 L34,159 L34,167 L-8,167 Z M-4,150 L30,150 L30,158 L-4,158 Z M0,141 L26,141 L26,149 L0,149 Z",
+          "showIf": "prop_torrePesos"
+        }
+      ]
+    },
+    {
+      "id": "catalogFront",
+      "outline": true,
+      "parts": [
+        {
+          "id": "alga",
+          "fill": "seaweed",
+          "path": "M26,170 C14,140 40,120 26,86 C52,110 40,140 58,170 Z M70,170 C58,130 92,110 76,60 C104,98 90,140 104,170 Z M110,170 C100,138 128,120 120,80 C146,112 134,142 150,170 Z",
+          "showIf": "prop_alga"
+        },
+        {
+          "id": "algaVeio",
+          "fill": "seaweedDark",
+          "path": "M34,166 C30,140 42,124 34,100 C40,122 38,142 40,166 Z M80,166 C76,128 92,110 82,74 C92,104 88,130 88,166 Z M120,166 C116,140 130,122 124,94 C132,118 128,142 128,166 Z",
+          "showIf": "prop_alga"
+        },
+        {
+          "id": "coberta",
+          "fill": "blanket",
+          "path": "M8,118 Q90,96 176,118 L182,168 L2,168 Z",
+          "showIf": "prop_coberta"
+        },
+        {
+          "id": "cobertaListras",
+          "fill": "blanketStripe",
+          "path": "M10,134 Q90,114 176,134 L177,140 Q90,120 9,140 Z M6,152 Q90,134 179,152 L180,158 Q90,140 5,158 Z",
+          "showIf": "prop_coberta"
+        }
+      ]
+    },
+    {
+      "id": "darkestProps",
+      "outline": true,
+      "parts": [
+        {
+          "id": "ddTochaCabo",
+          "showIf": "prop_ddTocha",
+          "path": "M143,98 L150,98 L149,140 L144,140 Z",
+          "fill": "dd_704b30"
+        },
+        {
+          "id": "ddTochaFogo",
+          "showIf": "prop_ddTocha",
+          "path": "M145,101 C132,91 143,84 143,73 Q160,88 150,102 Z",
+          "fill": "dd_e39a3d"
+        },
+        {
+          "id": "ddTochaMiolo",
+          "showIf": "prop_ddTocha",
+          "path": "M145,98 Q140,93 147,86 Q153,95 145,98 Z",
+          "fill": "dd_ffe0a0"
+        },
+        {
+          "id": "ddImpaciente",
+          "showIf": "prop_ddImpaciente",
+          "path": "M152,48 L168,48 L157,62 L167,62 L151,80 L158,65 L149,65 Z",
+          "fill": "dd_bb4250"
+        },
+        {
+          "id": "ddCristal1",
+          "showIf": "prop_ddCristais",
+          "path": "M30,60 L38,47 L46,60 L38,76 Z",
+          "fill": "dd_719ccb"
+        },
+        {
+          "id": "ddCristal2",
+          "showIf": "prop_ddCristais",
+          "path": "M139,36 L146,24 L153,36 L146,52 Z",
+          "fill": "dd_7ed1cb"
+        },
+        {
+          "id": "ddCristal3",
+          "showIf": "prop_ddCristais",
+          "path": "M146,119 L153,109 L160,119 L153,133 Z",
+          "fill": "dd_d7b879"
+        },
+        {
+          "id": "ddEstresse",
+          "showIf": "prop_ddEstresse",
+          "path": "M20,43 Q3,29 17,22 Q35,14 37,29 Q38,42 25,37 Q18,33 24,27 Q29,23 31,29 Q26,25 24,30 Q24,35 29,33 Q34,29 28,24 Q16,19 14,29 Q11,37 20,43 Z",
+          "fill": "dd_815b9f"
+        },
+        {
+          "id": "ddCoroa",
+          "showIf": "prop_ddCoroa",
+          "path": "M60,13 L57,0 L77,9 L90,-8 L103,9 L123,0 L120,13 Z",
+          "fill": "dd_b5a165"
+        },
+        {
+          "id": "ddCoroaGema",
+          "showIf": "prop_ddCoroa",
+          "path": "M85,5 L90,0 L95,5 L90,11 Z",
+          "fill": "dd_6a3560"
+        }
+      ]
+    },
+    {
+      "id": "needsProps",
+      "outline": false,
+      "parts": [
+        {
+          "id": "needsBarriga",
+          "showIf": "prop_needsBarriga",
+          "path": "M76,111Q91,103 106,111L106,128Q91,139 76,128Z",
+          "fill": "needs_c4b593"
+        },
+        {
+          "id": "needsRaiva",
+          "showIf": "prop_needsFomeRaiva",
+          "path": "M14,56L22,49L16,45L23,37L10,46L15,50Z M152,40L161,49L157,56L165,63L163,48Z",
+          "fill": "needs_b55853"
+        },
+        {
+          "id": "needsRumble",
+          "showIf": "prop_needsRumble",
+          "path": "M63,110L54,115L61,119L52,125M118,110L128,115L121,119L130,125",
+          "fill": "needs_ad8d5a"
+        },
+        {
+          "id": "needsTermometro",
+          "showIf": "prop_needsTermometro",
+          "path": "M126,50L138,47L142,52L131,58Z M130,56L134,54L135,58L131,60Z",
+          "fill": "needs_d4dce0"
+        },
+        {
+          "id": "needsCurativo",
+          "showIf": "prop_needsCurativo",
+          "path": "M75,102L96,90L108,111L87,123Z",
+          "fill": "needs_e8cfa9"
+        },
+        {
+          "id": "needsCurativoMiolo",
+          "showIf": "prop_needsCurativo",
+          "path": "M86,103L94,99L99,109L91,113Z",
+          "fill": "needs_b99c78"
+        },
+        {
+          "id": "needsEsforco",
+          "showIf": "prop_needsEsforco",
+          "path": "M148,42L150,34L153,42L151,47Z M27,36L24,44L27,49L30,44Z",
+          "fill": "needs_7babc2"
+        },
+        {
+          "id": "needsSujo",
+          "showIf": "prop_needsSujo",
+          "path": "M43,77Q29,71 32,85Q45,92 49,84Z M104,108Q110,100 117,107L113,117L104,113Z",
+          "fill": "needs_8b8268"
+        },
+        {
+          "id": "needsBolha1",
+          "showIf": "prop_needsBolhas",
+          "path": "M34,102A9,9 0 1 1 33.9,102Z M147,80A7,7 0 1 1 146.9,80Z",
+          "fill": "needs_d2e9e8"
+        },
+        {
+          "id": "needsPrato",
+          "showIf": "prop_needsPrato",
+          "path": "M120,103Q140,96 157,104Q160,113 139,117Q119,115 120,103Z",
+          "fill": "needs_d8e0dd"
+        },
+        {
+          "id": "needsSaciedade",
+          "showIf": "prop_needsSaciedade",
+          "path": "M151,48L156,55L171,35L174,39L156,64L148,53Z",
+          "fill": "needs_729a7d"
+        },
+        {
+          "id": "needsRaridade",
+          "showIf": "prop_needsRaridade",
+          "path": "M32,8L36,17L45,21L36,25L32,34L28,25L19,21L28,17Z",
+          "fill": "needs_e1bb64"
+        },
+        {
+          "id": "needsLenda",
+          "showIf": "prop_needsLenda",
+          "path": "M14,40L21,47L14,54L7,47Z M152,23L163,34L152,45L141,34Z M84,-11L91,-20L99,-11L91,-2Z",
+          "fill": "needs_c19bd5"
+        },
+        {
+          "id": "needsXp",
+          "showIf": "prop_needsXp",
+          "path": "M146,91L158,105L146,119L134,105Z",
+          "fill": "needs_8ac8bc"
+        },
+        {
+          "id": "needsNivel",
+          "showIf": "prop_needsNivel",
+          "path": "M147,20L159,35L151,35L151,57L143,57L143,35L135,35Z",
+          "fill": "needs_d4b875"
+        },
+        {
+          "id": "needsMedalha",
+          "showIf": "prop_needsMedalha",
+          "path": "M77,84L85,102L95,102L103,84L94,86L90,94L86,86Z M103,111A13,13 0 1 1 102.9,111Z",
+          "fill": "needs_dbba6c"
+        }
+      ]
+    },
+    {
+      "id": "livingProps",
+      "outline": false,
+      "parts": [
+        {
+          "id": "living_medico_0",
+          "showIf": "prop_living_medico",
+          "fill": "living_e3e9e7",
+          "path": "M66,88Q66,114 87,114Q109,114 109,91L109,83L103,83L103,92Q103,107 87,107Q72,107 72,88Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_medico",
+          "dy": "lift_living_medico"
+        },
+        {
+          "id": "living_medico_1",
+          "showIf": "prop_living_medico",
+          "fill": "living_759d9c",
+          "path": "M105,86Q120,83 127,97L132,109L138,106L131,93Q120,77 105,81Z M127,110A8,8 0 1,0 143,110A8,8 0 1,0 127,110",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_medico",
+          "dy": "lift_living_medico"
+        },
+        {
+          "id": "living_cientista_0",
+          "showIf": "prop_living_cientista",
+          "fill": "living_75bcae",
+          "path": "M133,71L159,87L145,112L123,97Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_cientista",
+          "dy": "lift_living_cientista"
+        },
+        {
+          "id": "living_cientista_1",
+          "showIf": "prop_living_cientista",
+          "fill": "living_d2e8da",
+          "path": "M129,65A7,7 0 1,0 143,65A7,7 0 1,0 129,65M154,87A8,8 0 1,0 170,87A8,8 0 1,0 154,87M137,114A7,7 0 1,0 151,114A7,7 0 1,0 137,114M115,96A6,6 0 1,0 127,96A6,6 0 1,0 115,96",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_cientista",
+          "dy": "lift_living_cientista"
+        },
+        {
+          "id": "living_fisico_0",
+          "showIf": "prop_living_fisico",
+          "fill": "living_90b5dc",
+          "path": "M125,72Q169,70 160,101Q144,123 127,91Q117,66 140,74Q169,88 148,108Q128,122 129,91Q133,63 151,75L149,78Q136,70 134,91Q133,115 146,105Q162,91 138,78Q123,72 132,89Q145,113 155,99Q165,76 127,76Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_fisico",
+          "dy": "lift_living_fisico"
+        },
+        {
+          "id": "living_fisico_1",
+          "showIf": "prop_living_fisico",
+          "fill": "living_e9d58b",
+          "path": "M138,91A5,5 0 1,0 148,91A5,5 0 1,0 138,91",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_fisico",
+          "dy": "lift_living_fisico"
+        },
+        {
+          "id": "living_quimico_0",
+          "showIf": "prop_living_quimico",
+          "fill": "living_cae0df",
+          "path": "M137,67L151,67L151,72L148,72L148,85L165,112Q167,118 159,118L126,118Q120,118 123,112L140,85L140,72L137,72Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_quimico",
+          "dy": "lift_living_quimico"
+        },
+        {
+          "id": "living_quimico_1",
+          "showIf": "prop_living_quimico",
+          "fill": "living_7fb992",
+          "path": "M132,98L156,98L163,112L125,112Z M138,92L143,89L148,94L143,97Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_quimico",
+          "dy": "lift_living_quimico"
+        },
+        {
+          "id": "living_biologo_0",
+          "showIf": "prop_living_biologo",
+          "fill": "living_6eaa77",
+          "path": "M126,113Q118,80 165,68Q168,109 130,116Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_biologo",
+          "dy": "lift_living_biologo"
+        },
+        {
+          "id": "living_biologo_1",
+          "showIf": "prop_living_biologo",
+          "fill": "living_c1d8a1",
+          "path": "M128,113L155,78L159,79L132,116Z M138,101L126,89L129,86L141,97Z M143,94L160,95L159,99L140,98Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_biologo",
+          "dy": "lift_living_biologo"
+        },
+        {
+          "id": "living_programador_0",
+          "showIf": "prop_living_programador",
+          "fill": "living_495f7b",
+          "path": "M123,80L168,80L168,111L123,111Z M119,113L172,113L177,121L115,121Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_programador",
+          "dy": "lift_living_programador"
+        },
+        {
+          "id": "living_programador_1",
+          "showIf": "prop_living_programador",
+          "fill": "living_b5d6d9",
+          "path": "M128,85L163,85L163,105L128,105Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_programador",
+          "dy": "lift_living_programador"
+        },
+        {
+          "id": "living_programador_2",
+          "showIf": "prop_living_programador",
+          "fill": "living_335a72",
+          "path": "M138,89L132,95L138,101L140,99L136,95L140,91Z M153,89L159,95L153,101L151,99L155,95L151,91Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_programador",
+          "dy": "lift_living_programador"
+        },
+        {
+          "id": "living_engenheiro_0",
+          "showIf": "prop_living_engenheiro",
+          "fill": "living_d4b45a",
+          "path": "M53,24Q54,-1 88,-1Q121,-1 124,24L133,29L46,29Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_engenheiro",
+          "dy": "lift_living_engenheiro"
+        },
+        {
+          "id": "living_engenheiro_1",
+          "showIf": "prop_living_engenheiro",
+          "fill": "living_f2d680",
+          "path": "M78,1L86,0L86,23L78,23Z M95,0L103,2L103,23L95,23Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_engenheiro",
+          "dy": "lift_living_engenheiro"
+        },
+        {
+          "id": "living_professor_0",
+          "showIf": "prop_living_professor",
+          "fill": "living_aa8562",
+          "path": "M115,76L174,76L174,119L115,119Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_professor",
+          "dy": "lift_living_professor"
+        },
+        {
+          "id": "living_professor_1",
+          "showIf": "prop_living_professor",
+          "fill": "living_37594e",
+          "path": "M120,81L169,81L169,113L120,113Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_professor",
+          "dy": "lift_living_professor"
+        },
+        {
+          "id": "living_professor_2",
+          "showIf": "prop_living_professor",
+          "fill": "living_e8dfbf",
+          "path": "M126,88L142,88L142,91L126,91Z M126,96L161,96L161,99L126,99Z M126,104L154,104L154,107L126,107Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_professor",
+          "dy": "lift_living_professor"
+        },
+        {
+          "id": "living_advogado_0",
+          "showIf": "prop_living_advogado",
+          "fill": "living_c7b47e",
+          "path": "M143,70L148,70L148,115L162,115L162,120L129,120L129,115L143,115Z M123,80L168,80L168,85L123,85Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_advogado",
+          "dy": "lift_living_advogado"
+        },
+        {
+          "id": "living_advogado_1",
+          "showIf": "prop_living_advogado",
+          "fill": "living_ded2a7",
+          "path": "M121,85L131,106L111,106Z M160,85L170,106L150,106Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_advogado",
+          "dy": "lift_living_advogado"
+        },
+        {
+          "id": "living_juiz_0",
+          "showIf": "prop_living_juiz",
+          "fill": "living_92735b",
+          "path": "M129,81L137,72L164,96L156,105Z M139,96L144,91L161,118L155,121Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_juiz",
+          "dy": "lift_living_juiz"
+        },
+        {
+          "id": "living_juiz_1",
+          "showIf": "prop_living_juiz",
+          "fill": "living_c4ad86",
+          "path": "M120,119L151,119L154,125L117,125Z M130,77L134,73L161,97L157,101Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_juiz",
+          "dy": "lift_living_juiz"
+        },
+        {
+          "id": "living_policial_0",
+          "showIf": "prop_living_policial",
+          "fill": "living_496a8c",
+          "path": "M127,71L146,76L165,71L165,98Q162,116 146,123Q130,116 127,98Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_policial",
+          "dy": "lift_living_policial"
+        },
+        {
+          "id": "living_policial_1",
+          "showIf": "prop_living_policial",
+          "fill": "living_d2bd78",
+          "path": "M146,83L150,92L161,93L153,101L155,112L146,106L137,112L139,101L131,93L142,92Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_policial",
+          "dy": "lift_living_policial"
+        },
+        {
+          "id": "living_bombeiro_0",
+          "showIf": "prop_living_bombeiro",
+          "fill": "living_ac5047",
+          "path": "M54,23Q56,-2 89,-2Q120,-2 123,23L134,30L45,30Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_bombeiro",
+          "dy": "lift_living_bombeiro"
+        },
+        {
+          "id": "living_bombeiro_1",
+          "showIf": "prop_living_bombeiro",
+          "fill": "living_d7ba70",
+          "path": "M80,2L100,2L100,18L90,24L80,18Z M47,26L131,26L132,31L46,31Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_bombeiro",
+          "dy": "lift_living_bombeiro"
+        },
+        {
+          "id": "living_piloto_0",
+          "showIf": "prop_living_piloto",
+          "fill": "living_775940",
+          "path": "M54,21Q69,14 85,23L94,23Q111,14 127,21L124,42Q109,47 97,35L83,35Q69,47 56,41Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_piloto",
+          "dy": "lift_living_piloto"
+        },
+        {
+          "id": "living_piloto_1",
+          "showIf": "prop_living_piloto",
+          "fill": "living_95b3bd",
+          "path": "M60,23Q70,20 80,26L78,35Q68,40 61,35Z M101,26Q113,20 121,24L119,36Q109,40 102,34Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_piloto",
+          "dy": "lift_living_piloto"
+        },
+        {
+          "id": "living_astronauta_0",
+          "showIf": "prop_living_astronauta",
+          "fill": "living_dce5e6",
+          "path": "M40,40Q32,-13 90,-13Q147,-13 140,40L131,45L131,24Q125,-4 90,-4Q54,-4 49,24L49,45Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_astronauta",
+          "dy": "lift_living_astronauta"
+        },
+        {
+          "id": "living_astronauta_1",
+          "showIf": "prop_living_astronauta",
+          "fill": "living_7893b0",
+          "path": "M38,40L50,40L50,62L38,62Z M130,40L142,40L142,62L130,62Z M133,13L146,5L150,11L137,20Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_astronauta",
+          "dy": "lift_living_astronauta"
+        },
+        {
+          "id": "living_chef_0",
+          "showIf": "prop_living_chef",
+          "fill": "living_f0ece2",
+          "path": "M61,17Q44,10 53,-1Q58,-8 69,-3Q73,-18 88,-11Q102,-19 110,-4Q130,-9 132,7Q130,17 118,18L117,30L62,30Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_chef",
+          "dy": "lift_living_chef"
+        },
+        {
+          "id": "living_chef_1",
+          "showIf": "prop_living_chef",
+          "fill": "living_a8b5bc",
+          "path": "M64,22L116,22L116,30L64,30Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_chef",
+          "dy": "lift_living_chef"
+        },
+        {
+          "id": "living_psicologo_0",
+          "showIf": "prop_living_psicologo",
+          "fill": "living_c6b5d7",
+          "path": "M118,76Q143,60 169,76L169,103Q151,116 132,105L121,115L122,101Q114,88 118,76Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_psicologo",
+          "dy": "lift_living_psicologo"
+        },
+        {
+          "id": "living_psicologo_1",
+          "showIf": "prop_living_psicologo",
+          "fill": "living_745d91",
+          "path": "M130,82L133,82L133,91Q143,104 153,91L153,82L156,82L156,92Q143,111 130,92Z M142,78L145,78L145,103L142,103Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_psicologo",
+          "dy": "lift_living_psicologo"
+        },
+        {
+          "id": "living_veterinario_0",
+          "showIf": "prop_living_veterinario",
+          "fill": "living_e2bf9d",
+          "path": "M132,95Q145,84 158,96L164,111Q157,121 147,115Q135,122 128,112Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_veterinario",
+          "dy": "lift_living_veterinario"
+        },
+        {
+          "id": "living_veterinario_1",
+          "showIf": "prop_living_veterinario",
+          "fill": "living_9c7b67",
+          "path": "M122,88A6,8 0 1,0 134,88A6,8 0 1,0 122,88M136,78A6,8 0 1,0 148,78A6,8 0 1,0 136,78M151,80A6,8 0 1,0 163,80A6,8 0 1,0 151,80M161,92A5,7 0 1,0 171,92A5,7 0 1,0 161,92",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_veterinario",
+          "dy": "lift_living_veterinario"
+        },
+        {
+          "id": "living_detetive_0",
+          "showIf": "prop_living_detetive",
+          "fill": "living_997b60",
+          "path": "M119,84A17,17 0 1,0 153,84A17,17 0 1,0 119,84 M124,84A12,12 0 1,1 148,84A12,12 0 1,1 124,84Z M146,97L151,93L170,113L165,119Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_detetive",
+          "dy": "lift_living_detetive"
+        },
+        {
+          "id": "living_detetive_1",
+          "showIf": "prop_living_detetive",
+          "fill": "living_c5e0e0",
+          "path": "M128,77L133,72L143,76L141,80L133,77L130,81Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_detetive",
+          "dy": "lift_living_detetive"
+        },
+        {
+          "id": "living_jornalista_0",
+          "showIf": "prop_living_jornalista",
+          "fill": "living_5c7487",
+          "path": "M134,75Q134,62 148,62Q162,62 162,75L162,90Q149,102 134,90Z M144,96L153,96L153,122L144,122Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_jornalista",
+          "dy": "lift_living_jornalista"
+        },
+        {
+          "id": "living_jornalista_1",
+          "showIf": "prop_living_jornalista",
+          "fill": "living_d3dde2",
+          "path": "M133,97L164,97L164,110L133,110Z M138,101L159,101L159,105L138,105Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_jornalista",
+          "dy": "lift_living_jornalista"
+        },
+        {
+          "id": "living_mecanico_0",
+          "showIf": "prop_living_mecanico",
+          "fill": "living_9baeb7",
+          "path": "M131,68L137,82L148,79L147,64Q165,68 161,84L151,94L139,121L129,117L141,91Q124,88 131,68Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_mecanico",
+          "dy": "lift_living_mecanico"
+        },
+        {
+          "id": "living_mecanico_1",
+          "showIf": "prop_living_mecanico",
+          "fill": "living_4e6478",
+          "path": "M133,113L139,115L137,120L131,118Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_mecanico",
+          "dy": "lift_living_mecanico"
+        },
+        {
+          "id": "living_arquiteto_0",
+          "showIf": "prop_living_arquiteto",
+          "fill": "living_6a8ba6",
+          "path": "M118,72L171,72L171,123L118,123Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_arquiteto",
+          "dy": "lift_living_arquiteto"
+        },
+        {
+          "id": "living_arquiteto_1",
+          "showIf": "prop_living_arquiteto",
+          "fill": "living_e1e7dc",
+          "path": "M125,80L164,80L164,115L125,115Z M129,84L129,111L160,111L160,84Z M142,80L146,80L146,96L164,96L164,100L142,100Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_arquiteto",
+          "dy": "lift_living_arquiteto"
+        },
+        {
+          "id": "living_economista_0",
+          "showIf": "prop_living_economista",
+          "fill": "living_d6d1ba",
+          "path": "M120,74L125,74L125,116L172,116L172,121L120,121Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_economista",
+          "dy": "lift_living_economista"
+        },
+        {
+          "id": "living_economista_1",
+          "showIf": "prop_living_economista",
+          "fill": "living_79ad98",
+          "path": "M131,102L138,102L138,114L131,114Z M144,91L151,91L151,114L144,114Z M157,79L164,79L164,114L157,114Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_economista",
+          "dy": "lift_living_economista"
+        },
+        {
+          "id": "living_economista_2",
+          "showIf": "prop_living_economista",
+          "fill": "living_d1b96e",
+          "path": "M129,94L144,82L151,87L164,68L169,73L152,95L145,89L132,100Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_economista",
+          "dy": "lift_living_economista"
+        },
+        {
+          "id": "living_treinador_0",
+          "showIf": "prop_living_treinador",
+          "fill": "living_b7c9ce",
+          "path": "M130,90L149,79L161,83L161,98L148,111L129,104Z M157,92L171,92L171,100L158,100Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_treinador",
+          "dy": "lift_living_treinador"
+        },
+        {
+          "id": "living_treinador_1",
+          "showIf": "prop_living_treinador",
+          "fill": "living_667e98",
+          "path": "M135,96A5,5 0 1,0 145,96A5,5 0 1,0 135,96M132,88Q118,74 127,66L131,69Q126,75 137,85Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_treinador",
+          "dy": "lift_living_treinador"
+        },
+        {
+          "id": "living_marinheiro_0",
+          "showIf": "prop_living_marinheiro",
+          "fill": "living_9db5c5",
+          "path": "M141,68A7,7 0 1,0 155,68A7,7 0 1,0 141,68M145,74L151,74L151,109Q165,109 165,95L171,95Q171,118 148,123Q124,118 124,95L131,95Q131,109 145,109Z M134,86L163,86L163,92L134,92Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_marinheiro",
+          "dy": "lift_living_marinheiro"
+        },
+        {
+          "id": "living_marinheiro_1",
+          "showIf": "prop_living_marinheiro",
+          "fill": "living_d5dce0",
+          "path": "M119,99L127,88L136,99Z M159,99L168,88L176,99Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_marinheiro",
+          "dy": "lift_living_marinheiro"
+        },
+        {
+          "id": "living_pesquisador_0",
+          "showIf": "prop_living_pesquisador",
+          "fill": "living_b1c8cb",
+          "path": "M135,69L147,63L159,84L148,90Z M143,92L151,89L155,98L147,101Z M127,104L162,104L162,110L127,110Z M154,89Q177,112 155,118L133,118L130,124L171,124L171,118L164,115Q180,99 159,84Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pesquisador",
+          "dy": "lift_living_pesquisador"
+        },
+        {
+          "id": "living_pesquisador_1",
+          "showIf": "prop_living_pesquisador",
+          "fill": "living_79929d",
+          "path": "M137,71L144,67L147,73L140,77Z M136,112L144,112L144,118L136,118Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pesquisador",
+          "dy": "lift_living_pesquisador"
+        },
+        {
+          "id": "living_auraPlanilha_0",
+          "showIf": "prop_living_auraPlanilha",
+          "fill": "living_b4a0d1",
+          "path": "M123,110L133,93L145,101L161,75L168,80L147,111L136,104L130,116Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_auraPlanilha",
+          "dy": "lift_living_auraPlanilha"
+        },
+        {
+          "id": "living_auraPlanilha_1",
+          "showIf": "prop_living_auraPlanilha",
+          "fill": "living_d5c38c",
+          "path": "M143,65L148,55L153,65L164,70L153,75L148,85L143,75L132,70Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_auraPlanilha",
+          "dy": "lift_living_auraPlanilha"
+        },
+        {
+          "id": "living_fritou_0",
+          "showIf": "prop_living_fritou",
+          "fill": "living_9e9da8",
+          "path": "M122,94L169,94L169,120L122,120Z M132,88L140,88L140,96L132,96Z M151,88L159,88L159,96L151,96Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_fritou",
+          "dy": "lift_living_fritou"
+        },
+        {
+          "id": "living_fritou_1",
+          "showIf": "prop_living_fritou",
+          "fill": "living_c4bfc5",
+          "path": "M132,86Q123,76 137,68L141,72Q131,78 138,84Z M153,85Q166,76 151,67L147,71Q158,78 150,83Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_fritou",
+          "dy": "lift_living_fritou"
+        },
+        {
+          "id": "living_deluluContrato_0",
+          "showIf": "prop_living_deluluContrato",
+          "fill": "living_e7ddc5",
+          "path": "M123,68L161,68L169,77L169,121L123,121Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_deluluContrato",
+          "dy": "lift_living_deluluContrato"
+        },
+        {
+          "id": "living_deluluContrato_1",
+          "showIf": "prop_living_deluluContrato",
+          "fill": "living_b48aa7",
+          "path": "M130,80L157,80L157,84L130,84Z M130,92L161,92L161,96L130,96Z M138,111L145,104L151,110L159,102L163,107L151,118Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_deluluContrato",
+          "dy": "lift_living_deluluContrato"
+        },
+        {
+          "id": "living_npcFila_0",
+          "showIf": "prop_living_npcFila",
+          "fill": "living_879bb9",
+          "path": "M120,78L163,78L163,108L120,108Z M126,84L169,84L169,114L126,114Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_npcFila",
+          "dy": "lift_living_npcFila"
+        },
+        {
+          "id": "living_npcFila_1",
+          "showIf": "prop_living_npcFila",
+          "fill": "living_dce2d0",
+          "path": "M132,90L163,90L163,107L132,107Z M143,92L150,92L150,99L143,99Z M143,102L150,102L150,106L143,106Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_npcFila",
+          "dy": "lift_living_npcFila"
+        },
+        {
+          "id": "living_brainrotFaxina_0",
+          "showIf": "prop_living_brainrotFaxina",
+          "fill": "living_ab9377",
+          "path": "M128,99L159,99L169,122L119,122Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_brainrotFaxina",
+          "dy": "lift_living_brainrotFaxina"
+        },
+        {
+          "id": "living_brainrotFaxina_1",
+          "showIf": "prop_living_brainrotFaxina",
+          "fill": "living_cfb787",
+          "path": "M142,67L148,67L148,102L142,102Z M126,107L130,107L134,120L130,120Z M140,107L144,107L146,120L142,120Z M153,107L157,107L161,120L157,120Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_brainrotFaxina",
+          "dy": "lift_living_brainrotFaxina"
+        },
+        {
+          "id": "living_rizzCurriculo_0",
+          "showIf": "prop_living_rizzCurriculo",
+          "fill": "living_b87589",
+          "path": "M125,76Q134,64 145,77Q157,64 167,77L167,88L145,109L125,89Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_rizzCurriculo",
+          "dy": "lift_living_rizzCurriculo"
+        },
+        {
+          "id": "living_rizzCurriculo_1",
+          "showIf": "prop_living_rizzCurriculo",
+          "fill": "living_e1c8b0",
+          "path": "M130,114L164,114L164,119L130,119Z M138,96L146,88L154,96L146,104Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_rizzCurriculo",
+          "dy": "lift_living_rizzCurriculo"
+        },
+        {
+          "id": "living_sigmaSilencio_0",
+          "showIf": "prop_living_sigmaSilencio",
+          "fill": "living_9fb4c3",
+          "path": "M128,74L166,74L166,80L139,80L152,94L139,111L166,111L166,118L127,118L127,111L143,94L128,81Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_sigmaSilencio",
+          "dy": "lift_living_sigmaSilencio"
+        },
+        {
+          "id": "living_sigmaSilencio_1",
+          "showIf": "prop_living_sigmaSilencio",
+          "fill": "living_d4c79b",
+          "path": "M117,120L174,120L174,124L117,124Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_sigmaSilencio",
+          "dy": "lift_living_sigmaSilencio"
+        },
+        {
+          "id": "living_sideQuest_0",
+          "showIf": "prop_living_sideQuest",
+          "fill": "living_d2c6a5",
+          "path": "M119,76L135,70L153,76L170,70L170,118L153,124L135,118L119,124Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_sideQuest",
+          "dy": "lift_living_sideQuest"
+        },
+        {
+          "id": "living_sideQuest_1",
+          "showIf": "prop_living_sideQuest",
+          "fill": "living_a77861",
+          "path": "M131,80L135,80L135,113L131,113Z M150,82L154,82L154,116L150,116Z M158,88L163,84L167,88L163,94Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_sideQuest",
+          "dy": "lift_living_sideQuest"
+        },
+        {
+          "id": "living_mainCharacter_0",
+          "showIf": "prop_living_mainCharacter",
+          "fill": "living_546982",
+          "path": "M123,77L168,77L168,118L123,118Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_mainCharacter",
+          "dy": "lift_living_mainCharacter"
+        },
+        {
+          "id": "living_mainCharacter_1",
+          "showIf": "prop_living_mainCharacter",
+          "fill": "living_d1bc80",
+          "path": "M138,86L157,97L138,110Z M128,71L134,64L139,70L133,77Z M155,70L161,62L166,69L160,76Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_mainCharacter",
+          "dy": "lift_living_mainCharacter"
+        },
+        {
+          "id": "living_grama_0",
+          "showIf": "prop_living_grama",
+          "fill": "living_80aa77",
+          "path": "M120,116L126,94L133,109L139,84L147,109L156,90L161,108L172,97L168,120Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_grama",
+          "dy": "lift_living_grama"
+        },
+        {
+          "id": "living_grama_1",
+          "showIf": "prop_living_grama",
+          "fill": "living_a47b5d",
+          "path": "M134,118L157,118L154,128L138,128Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_grama",
+          "dy": "lift_living_grama"
+        },
+        {
+          "id": "living_eventoCanonico_0",
+          "showIf": "prop_living_eventoCanonico",
+          "fill": "living_8898b5",
+          "path": "M123,73L165,73L171,81L171,120L123,120Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_eventoCanonico",
+          "dy": "lift_living_eventoCanonico"
+        },
+        {
+          "id": "living_eventoCanonico_1",
+          "showIf": "prop_living_eventoCanonico",
+          "fill": "living_d9d9ce",
+          "path": "M131,74L158,74L158,89L131,89Z M132,98L162,98L162,117L132,117Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_eventoCanonico",
+          "dy": "lift_living_eventoCanonico"
+        },
+        {
+          "id": "living_eventoCanonico_2",
+          "showIf": "prop_living_eventoCanonico",
+          "fill": "living_556b87",
+          "path": "M149,77L154,77L154,86L149,86Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_eventoCanonico",
+          "dy": "lift_living_eventoCanonico"
+        },
+        {
+          "id": "living_skillIssue_0",
+          "showIf": "prop_living_skillIssue",
+          "fill": "living_9482ad",
+          "path": "M127,96L137,83L147,94L157,78L169,90L163,118L130,118Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_skillIssue",
+          "dy": "lift_living_skillIssue"
+        },
+        {
+          "id": "living_skillIssue_1",
+          "showIf": "prop_living_skillIssue",
+          "fill": "living_ddc68d",
+          "path": "M137,76L142,70L147,76L142,82Z M150,65L156,57L162,65L156,73Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_skillIssue",
+          "dy": "lift_living_skillIssue"
+        },
+        {
+          "id": "living_pressF_0",
+          "showIf": "prop_living_pressF",
+          "fill": "living_b3c2cd",
+          "path": "M129,75L165,75L165,83L139,83L139,94L160,94L160,102L139,102L139,121L129,121Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pressF",
+          "dy": "lift_living_pressF"
+        },
+        {
+          "id": "living_pressF_1",
+          "showIf": "prop_living_pressF",
+          "fill": "living_586b80",
+          "path": "M120,122L174,122L174,128L120,128Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pressF",
+          "dy": "lift_living_pressF"
+        },
+        {
+          "id": "living_stonks_0",
+          "showIf": "prop_living_stonks",
+          "fill": "living_75a18c",
+          "path": "M123,120L123,99L132,99L132,120Z M139,120L139,89L148,89L148,120Z M155,120L155,77L164,77L164,120Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_stonks",
+          "dy": "lift_living_stonks"
+        },
+        {
+          "id": "living_stonks_1",
+          "showIf": "prop_living_stonks",
+          "fill": "living_d0b26e",
+          "path": "M122,89L144,74L153,80L167,63L173,70L153,91L144,85L126,98Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_stonks",
+          "dy": "lift_living_stonks"
+        },
+        {
+          "id": "living_taTudoBem_0",
+          "showIf": "prop_living_taTudoBem",
+          "fill": "living_b0a9bd",
+          "path": "M121,94L152,94L152,120L121,120Z M152,98Q174,97 166,115L152,115L152,110Q164,112 161,103L152,103Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_taTudoBem",
+          "dy": "lift_living_taTudoBem"
+        },
+        {
+          "id": "living_taTudoBem_1",
+          "showIf": "prop_living_taTudoBem",
+          "fill": "living_d18a5f",
+          "path": "M129,89Q118,79 132,70Q131,80 141,86Z M150,89Q163,81 153,68Q150,77 146,80Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_taTudoBem",
+          "dy": "lift_living_taTudoBem"
+        },
+        {
+          "id": "living_loading_0",
+          "showIf": "prop_living_loading",
+          "fill": "living_63768e",
+          "path": "M117,88L175,88L175,111L117,111Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_loading",
+          "dy": "lift_living_loading"
+        },
+        {
+          "id": "living_loading_1",
+          "showIf": "prop_living_loading",
+          "fill": "living_a9c4b7",
+          "path": "M122,93L133,93L133,106L122,106Z M137,93L148,93L148,106L137,106Z M152,93L162,93L162,106L152,106Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_loading",
+          "dy": "lift_living_loading"
+        },
+        {
+          "id": "living_lagMental_0",
+          "showIf": "prop_living_lagMental",
+          "fill": "living_94b0bf",
+          "path": "M126,98Q145,80 165,98L160,104Q145,91 131,104Z M119,87Q145,63 172,87L168,94Q145,73 123,94Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_lagMental",
+          "dy": "lift_living_lagMental"
+        },
+        {
+          "id": "living_lagMental_1",
+          "showIf": "prop_living_lagMental",
+          "fill": "living_d4c58f",
+          "path": "M138,114A7,7 0 1,0 152,114A7,7 0 1,0 138,114",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_lagMental",
+          "dy": "lift_living_lagMental"
+        },
+        {
+          "id": "living_plotTwist_0",
+          "showIf": "prop_living_plotTwist",
+          "fill": "living_d4cfba",
+          "path": "M121,81L169,81L169,119L121,119Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_plotTwist",
+          "dy": "lift_living_plotTwist"
+        },
+        {
+          "id": "living_plotTwist_1",
+          "showIf": "prop_living_plotTwist",
+          "fill": "living_607b8d",
+          "path": "M121,71L166,62L169,72L123,82Z M129,71L133,66L139,75L135,80Z M147,67L151,63L157,72L153,76Z M139,90L156,100L139,112Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_plotTwist",
+          "dy": "lift_living_plotTwist"
+        },
+        {
+          "id": "living_buffCafe_0",
+          "showIf": "prop_living_buffCafe",
+          "fill": "living_9c7559",
+          "path": "M123,92L155,92L155,120L123,120Z M156,97Q176,95 169,113L156,113L156,108Q167,110 164,102L156,102Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_buffCafe",
+          "dy": "lift_living_buffCafe"
+        },
+        {
+          "id": "living_buffCafe_1",
+          "showIf": "prop_living_buffCafe",
+          "fill": "living_b9c99b",
+          "path": "M133,86L133,68L141,68L141,76L153,76L153,84L141,84L141,92L133,92Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_buffCafe",
+          "dy": "lift_living_buffCafe"
+        },
+        {
+          "id": "living_nerfNotificacao_0",
+          "showIf": "prop_living_nerfNotificacao",
+          "fill": "living_a1b4bf",
+          "path": "M126,101L131,92L131,81Q145,61 160,81L160,92L165,101Z M138,106L152,106L152,113L138,113Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_nerfNotificacao",
+          "dy": "lift_living_nerfNotificacao"
+        },
+        {
+          "id": "living_nerfNotificacao_1",
+          "showIf": "prop_living_nerfNotificacao",
+          "fill": "living_c37d7a",
+          "path": "M121,72L127,67L172,113L166,119Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_nerfNotificacao",
+          "dy": "lift_living_nerfNotificacao"
+        },
+        {
+          "id": "living_sextou_0",
+          "showIf": "prop_living_sextou",
+          "fill": "living_9cb5bf",
+          "path": "M129,72L162,72L158,101Q146,113 133,101Z M142,108L149,108L149,122L159,122L159,127L132,127L132,122L142,122Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_sextou",
+          "dy": "lift_living_sextou"
+        },
+        {
+          "id": "living_sextou_1",
+          "showIf": "prop_living_sextou",
+          "fill": "living_b38caa",
+          "path": "M133,82L158,82L154,99Q145,107 137,99Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_sextou",
+          "dy": "lift_living_sextou"
+        },
+        {
+          "id": "living_pov_0",
+          "showIf": "prop_living_pov",
+          "fill": "living_6d8093",
+          "path": "M121,81L133,81L133,73L158,73L158,81L170,81L170,115L121,115Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pov",
+          "dy": "lift_living_pov"
+        },
+        {
+          "id": "living_pov_1",
+          "showIf": "prop_living_pov",
+          "fill": "living_adc8cd",
+          "path": "M134,97A12,12 0 1,0 158,97A12,12 0 1,0 134,97",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pov",
+          "dy": "lift_living_pov"
+        },
+        {
+          "id": "living_pov_2",
+          "showIf": "prop_living_pov",
+          "fill": "living_45647b",
+          "path": "M141,97A5,5 0 1,0 151,97A5,5 0 1,0 141,97",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_pov",
+          "dy": "lift_living_pov"
+        },
+        {
+          "id": "living_fakeProdutivo_0",
+          "showIf": "prop_living_fakeProdutivo",
+          "fill": "living_baa56d",
+          "path": "M119,83L136,83L142,91L172,91L172,120L119,120Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_fakeProdutivo",
+          "dy": "lift_living_fakeProdutivo"
+        },
+        {
+          "id": "living_fakeProdutivo_1",
+          "showIf": "prop_living_fakeProdutivo",
+          "fill": "living_7c718c",
+          "path": "M135,107Q145,94 156,107L151,115L140,115Z M139,105L143,105L143,108L139,108Z M149,105L153,105L153,108L149,108Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_fakeProdutivo",
+          "dy": "lift_living_fakeProdutivo"
+        },
+        {
+          "id": "living_cinema_0",
+          "showIf": "prop_living_cinema",
+          "fill": "living_75849a",
+          "path": "M126,84L161,84L161,112L126,112Z M119,112L169,112L173,121L115,121Z M123,77L164,77L164,83L123,83Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_cinema",
+          "dy": "lift_living_cinema"
+        },
+        {
+          "id": "living_cinema_1",
+          "showIf": "prop_living_cinema",
+          "fill": "living_d2be86",
+          "path": "M138,91L152,98L138,106Z M134,69L138,65L143,72L139,76Z M151,67L156,65L159,73L154,75Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_cinema",
+          "dy": "lift_living_cinema"
+        },
+        {
+          "id": "living_baixoPerfil_0",
+          "showIf": "prop_living_baixoPerfil",
+          "fill": "living_a8bac5",
+          "path": "M120,94Q145,76 171,94Q145,114 120,94Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_baixoPerfil",
+          "dy": "lift_living_baixoPerfil"
+        },
+        {
+          "id": "living_baixoPerfil_1",
+          "showIf": "prop_living_baixoPerfil",
+          "fill": "living_6e7e9c",
+          "path": "M138,94A8,8 0 1,0 154,94A8,8 0 1,0 138,94M118,76L124,70L174,118L168,124Z",
+          "pivot": [
+            145,
+            95
+          ],
+          "rot": "angle_living_baixoPerfil",
+          "dy": "lift_living_baixoPerfil"
+        }
+      ]
+    }
+  ],
+  "face": {
+    "style": "sp",
+    "pivot": [
+      90,
+      86
+    ],
+    "center": 90,
+    "restingLid": 0.3,
+    "browAlways": true,
+    "browFrown": 4,
+    "eyes": [
+      {
+        "x": 79,
+        "y": 38,
+        "rx": 10,
+        "ry": 11,
+        "pupil": 2.8,
+        "pupilOffset": 2
+      },
+      {
+        "x": 101,
+        "y": 38,
+        "rx": 10,
+        "ry": 11,
+        "pupil": 2.8,
+        "pupilOffset": -2
+      }
+    ],
+    "brows": [
+      {
+        "x": 77,
+        "y": 24,
+        "w": 18
+      },
+      {
+        "x": 103,
+        "y": 24,
+        "w": 18
+      }
+    ],
+    "mouth": {
+      "x1": 48,
+      "y1": 60,
+      "cx": 90,
+      "cy": 74,
+      "x2": 132,
+      "y2": 60
+    },
+    "restJaw": 0.5,
+    "teeth": [
+      0.1,
+      0.24,
+      0.38,
+      0.5,
+      0.62,
+      0.76,
+      0.9
+    ],
+    "toothSize": 10,
+    "lowerTeeth": [
+      0.17,
+      0.31,
+      0.44,
+      0.56,
+      0.69,
+      0.83
+    ],
+    "lowerToothSize": 7,
+    "gills": [
+      [
+        46,
+        40,
+        44,
+        50
+      ],
+      [
+        51,
+        38,
+        49,
+        48
+      ],
+      [
+        129,
+        38,
+        131,
+        48
+      ],
+      [
+        134,
+        40,
+        136,
+        50
+      ]
+    ],
+    "blush": [
+      {
+        "x": 58,
+        "y": 50,
+        "rx": 6,
+        "ry": 3
+      },
+      {
+        "x": 122,
+        "y": 50,
+        "rx": 6,
+        "ry": 3
+      }
+    ],
+    "nostrils": [
+      {
+        "x": 86,
+        "y": 52,
+        "r": 1.3
+      },
+      {
+        "x": 94,
+        "y": 52,
+        "r": 1.3
+      }
+    ],
+    "mouthDepth": 34,
+    "toothWidth": 0.4
+  },
+  "moods": {
+    "_notes": "Emoção → cor do corpo. Cada canal (0..1) mistura a cor da paleta com o alvo, até 'max'. Raiva avermelha, tristeza acinzenta, medo empalidece, alegria aquece, cansaço escurece, vergonha rosa, nojo esverdeia.",
+    "moodAngry": {
+      "max": 0.75,
+      "to": {
+        "body": "#c0392b",
+        "bodyShade": "#a2301f",
+        "muscle": "#7a2216",
+        "cream": "#f0b09c"
+      }
+    },
+    "moodSad": {
+      "max": 0.85,
+      "to": {
+        "body": "#8b8e94",
+        "bodyShade": "#777a80",
+        "muscle": "#606369",
+        "cream": "#d3d1cc"
+      }
+    },
+    "moodScared": {
+      "max": 0.6,
+      "to": {
+        "body": "#b4c3df",
+        "bodyShade": "#a0b0cf",
+        "muscle": "#8596b8",
+        "cream": "#f6efe2"
+      }
+    },
+    "moodJoy": {
+      "max": 0.45,
+      "to": {
+        "body": "#6f92de",
+        "bodyShade": "#5c7fca",
+        "muscle": "#4865a3",
+        "cream": "#f8e7c2"
+      }
+    },
+    "moodTired": {
+      "max": 0.5,
+      "to": {
+        "body": "#4e5872",
+        "bodyShade": "#434c64",
+        "muscle": "#353d52",
+        "cream": "#cfc6b4"
+      }
+    },
+    "moodShy": {
+      "max": 0.5,
+      "to": {
+        "body": "#8a7fb8",
+        "cream": "#f2c2c6"
+      }
+    },
+    "moodWired": {
+      "max": 0.6,
+      "to": {
+        "body": "#8794bf",
+        "bodyShade": "#7683ad",
+        "cream": "#f5d6cf"
+      }
+    },
+    "moodNojo": {
+      "max": 0.6,
+      "to": {
+        "body": "#7f9a52",
+        "bodyShade": "#6b8545",
+        "muscle": "#4f6633",
+        "cream": "#d9dfa8"
+      }
+    }
+  },
+  "costumes": {
+    "_notes": "Fantasia de data festiva: canal costume_<id> liga as peças; 'palette' troca cores enquanto ativa. Guarda-roupa: costume_bermuda* só troca a cor da bermuda e tem prioridade sobre a paleta das fantasias.",
+    "bermudaBranca": {
+      "palette": {
+        "shorts": "#f2f2ec",
+        "stripe": "#d4a72c"
+      }
+    },
+    "bermudaVermelha": {
+      "palette": {
+        "shorts": "#c62828",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "bermudaRosa": {
+      "palette": {
+        "shorts": "#ff5c9a",
+        "stripe": "#ffd6e0"
+      }
+    },
+    "bermudaAzul": {
+      "palette": {
+        "shorts": "#2f5fa8",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "bermudaVerde": {
+      "palette": {
+        "shorts": "#1b8a3c",
+        "stripe": "#f2c94c"
+      }
+    },
+    "bermudaDourada": {
+      "palette": {
+        "shorts": "#d4a72c",
+        "stripe": "#26272e"
+      }
+    },
+    "bermudaLaranja": {
+      "palette": {
+        "shorts": "#fb8c00",
+        "stripe": "#26272e"
+      }
+    },
+    "anoNovo": {
+      "palette": {
+        "shorts": "#f2f2ec",
+        "stripe": "#d4a72c"
+      }
+    },
+    "carnaval": {
+      "palette": {
+        "shorts": "#d4a72c",
+        "stripe": "#c0392b"
+      }
+    },
+    "festaJunina": {
+      "palette": {
+        "shorts": "#2f5fa8",
+        "stripe": "#d64541"
+      }
+    },
+    "natal": {
+      "palette": {
+        "shorts": "#c62828",
+        "stripe": "#f7f5ee"
+      }
+    },
+    "lanternaChinesa": {
+      "palette": {
+        "shorts": "#d62d20",
+        "stripe": "#f2c94c"
+      }
+    },
+    "chapeuVerde": {
+      "palette": {
+        "shorts": "#1b8a3c",
+        "stripe": "#f2c94c"
+      }
+    },
+    "patriota": {
+      "palette": {
+        "shorts": "#119c3f",
+        "stripe": "#ffd400"
+      }
+    }
+  },
+  "anatomy": "shark-fins-v1"
+}

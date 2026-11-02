@@ -44,19 +44,19 @@ test('fantasia ousada por padrão; "se veste direito" → dedo do meio e versão
   for (const id of ['ramada', 'eidFitr', 'roshHashana', 'hanukkah', 'diwali', 'vesak']) assert.equal(HOLIDAYS[id].ousada, false, id);
 });
 
-test('camada ousada preservada e gesto legado usa nadadeira, sem mão humana', () => {
+test('camada ousada e gesto originais restaurados com mãos e pernas', () => {
   const parts = RIG.groups.flatMap((g) => g.parts.map((p) => ({ ...p, group: g })));
-  for (const id of ['sexySunga', 'sexyGarter', 'sexyCollar', 'sexyNetFin']) assert.ok(parts.some((p) => p.id === id), id);
+  for (const id of ['sexySunga', 'sexyGarter', 'sexyCollar', 'sexyNetL']) assert.ok(parts.some((p) => p.id === id), id);
   const shorts = RIG.groups.find((g) => g.id === 'shorts');
   assert.ok([].concat(shorts.hideIf).includes('sexy'), 'bermuda some na versão ousada');
-  // Diretriz anatômica atual: gesto provocador com nadadeira; nenhum dedo/punho desenhado.
-  for (const id of ['handFist', 'handThumb', 'handMiddle', 'handNail', 'handCreases']) assert.equal(parts.some((p) => p.id === id), false, id);
-  assert.ok(parts.some(p => p.id === 'armR' && p.path.includes('163,130')), 'nadadeira triangular real');
+  // A direção vigente restaura os dedos e o punho do rig original.
+  for (const id of ['handFist', 'handThumb', 'handMiddle', 'handNail', 'handCreases']) assert.equal(parts.some((p) => p.id === id), true, id);
+  assert.ok(parts.some(p => p.id === 'armR' && p.path !== 'M0,0'), 'braço original visível');
   const an = new Animator(ANIMS);
   an.play('finger', 0, { restart: true, variant: 'finger' });
   const pose = an.sample(1300).pose;
   assert.equal(pose.finger, 1);
-  // Canais preservados para compatibilidade; renderer os retargeta à nadadeira.
+  // Canais originais movem braço, cotovelo e mão restaurados.
   assert.ok(pose.legFR >= 60 && pose.elbowR >= 90, 'receita legada continua animada');
 });
 

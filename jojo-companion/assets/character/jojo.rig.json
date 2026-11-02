@@ -1,8 +1,8 @@
 {
   "format": "jojo-rig/1",
-  "name": "JoJo — tubarão musculoso com nadadeiras e cauda",
+  "name": "JoJo — recorte de papel, adulto fisiculturista (provisório)",
   "provisional": true,
-  "notes": "Anatomia de tubarão: torso musculoso, nadadeiras peitorais e pélvicas, dorsal e cauda bifurcada. Sem braços, mãos, dedos, pernas ou pés. IDs/canais antigos legFL/FR, elbowL/R e foreL/R são âncoras compatíveis de nadadeiras/adereços, sem desenho de membros humanos. Catálogo legado preservado e retarget no renderer.",
+  "notes": "JoJo de frente no estilo recorte de papel de South Park, versão adulta fisiculturista: trapézio e ombros enormes, cintura fina em V, peitoral, abdômen e serrátil definidos, braços com bíceps e antebraço articulado no cotovelo (elbowL/elbowR, positivo = flexionar), olhos menores com pálpebras pesadas, sobrancelhas franzidas e sorriso entreaberto com duas fileiras de dentes pontudos. Elementos da referência do usuário (azul-ardósia, creme serrilhado, barbatana, bermuda preta com faixas). Caixa 180x170, centro x=90. Canais: legFL/legFR = braço esquerdo/direito; legBL/legBR = perna esquerda/direita; com rotSign, positivo = para fora. Ver assets/README.md. Restaurado do Git; cauda removida por solicitação expressa. Adereços de necessidades/cenas preservados.",
   "metrics": {
     "box": {
       "width": 180,
@@ -353,62 +353,60 @@
       ]
     },
     {
-      "id": "tail",
+      "id": "legs",
       "outline": true,
       "parts": [
         {
-          "id": "tail",
-          "path": "M64,118 C50,120 36,114 26,102 C28,116 28,128 24,142 C38,134 50,132 64,130 Z",
+          "id": "legL",
+          "path": "M56,146 L89,146 L89,159 C93,159 96,163 95,167 L50,167 C49,163 51,159 56,159 Z",
           "fill": "body",
           "pivot": [
-            64,
-            124
+            73,
+            148
           ],
-          "rot": "tailRot"
-        }
-      ],
-      "hideIf": "mooning"
-    },
-    {
-      "id": "tailDetail",
-      "outline": false,
-      "parts": [
-        {
-          "id": "tailUnder",
-          "path": "M64,126 C52,128 40,132 28,138 L24,142 C38,134 50,132 64,130 Z",
-          "fill": "cream",
-          "pivot": [
-            64,
-            124
-          ],
-          "rot": "tailRot"
-        }
-      ],
-      "hideIf": "mooning"
-    },
-    {
-      "id": "pelvicFins",
-      "outline": true,
-      "parts": [
-        {
-          "id": "pelvicFinL",
-          "fill": "body",
-          "path": "M72,124 L60,147 L84,137 Z",
-          "pivot": [
-            77,
-            129
-          ],
-          "rot": "legBL"
+          "rot": "legBL",
+          "rotSign": 1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
         },
         {
-          "id": "pelvicFinR",
+          "id": "legR",
+          "path": "M124,146 L91,146 L91,159 C87,159 84,163 85,167 L130,167 C131,163 129,159 124,159 Z",
           "fill": "body",
-          "path": "M108,124 L120,147 L96,137 Z",
           "pivot": [
-            103,
-            129
+            107,
+            148
           ],
-          "rot": "legBR"
+          "rot": "legBR",
+          "rotSign": -1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "squatLegL",
+          "path": "M88,140 L62,138 C50,137 40,140 36,146 C33,150 32,153 32,155 L58,155 C58,152 55,150 52,150 C62,151 76,151 88,150 Z",
+          "fill": "body",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatLegR",
+          "path": "M92 140L118 138C130 137 140 140 144 146C147 150 148 153 148 155L122 155C122 152 125 150 128 150C118 151 104 151 92 150Z",
+          "fill": "body",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "benchLeg",
+          "path": "M72,140 L72,180 Q72,188 64,188 L26,188 L25,198 L17,198 L17,168 L46,168 L46,140 Z",
+          "fill": "body",
+          "showIf": "propBench"
         }
       ],
       "hideIf": "mooning"
@@ -416,7 +414,93 @@
     {
       "id": "legDetail",
       "outline": false,
-      "parts": [],
+      "parts": [
+        {
+          "id": "clawL",
+          "path": "M51,162 L56,167 L49,167 Z M58,162 L63,167 L56,167 Z M65,163 L69,167 L63,167 Z",
+          "fill": "cream",
+          "pivot": [
+            73,
+            148
+          ],
+          "rot": "legBL",
+          "rotSign": 1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "clawR",
+          "path": "M129,162 L124,167 L131,167 Z M122,162 L117,167 L124,167 Z M115,163 L111,167 L117,167 Z",
+          "fill": "cream",
+          "pivot": [
+            107,
+            148
+          ],
+          "rot": "legBR",
+          "rotSign": -1,
+          "lift": "legLiftB",
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "quads",
+          "path": "M64,150 Q70,156 74,152 Q70,154 64,150 Z M116,150 Q110,156 106,152 Q110,154 116,150 Z",
+          "fill": "muscle",
+          "alpha": 0.7,
+          "hideIf": [
+            "squatPose",
+            "propBench"
+          ]
+        },
+        {
+          "id": "squatClawL",
+          "path": "M33,150 L38,155 L31,155 Z M40,150 L45,155 L38,155 Z M47,151 L51,155 L45,155 Z",
+          "fill": "cream",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatClawR",
+          "path": "M147 150L142 155L149 155ZM140 150L135 155L142 155ZM133 151L129 155L135 155Z",
+          "fill": "cream",
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatKneeL",
+          "path": "M44,141 Q38,144 37,149 Q41,145 47,143 Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "squatKneeR",
+          "path": "M136 141Q142 144 143 149Q139 145 133 143Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "squatPose",
+          "dy": "squatLegDy"
+        },
+        {
+          "id": "benchClaw",
+          "path": "M17,190 L21,194 L17,197 Z M20,198 L23,193 L25,198 Z",
+          "fill": "cream",
+          "showIf": "propBench"
+        },
+        {
+          "id": "benchKnee",
+          "path": "M66,176 Q70,182 66,186 Q68,181 63,177 Z",
+          "fill": "muscle",
+          "alpha": 0.75,
+          "showIf": "propBench"
+        }
+      ],
       "hideIf": "mooning"
     },
     {
@@ -425,10 +509,11 @@
       "hideIf": "mooning",
       "parts": [
         {
-          "id": "sexyNetFin",
-          "fill": "garter",
-          "alpha": 0.45,
-          "path": "M64,137 L75,132 L79,137 L69,142 Z M103,135 L110,140 L116,143 L107,132 Z"
+          "id": "sexyNetL",
+          "fill": "fishnet",
+          "alpha": 0.5,
+          "clipPath": "M52,146 L89,146 L89,167 L49,167 Z M91,146 L128,146 L131,167 L91,167 Z",
+          "path": "M40,146 L62,167 L63.2,167 L41.2,146 Z M62,146 L40,167 L41.2,167 L63.2,146 Z M46,146 L68,167 L69.2,167 L47.2,146 Z M68,146 L46,167 L47.2,167 L69.2,146 Z M52,146 L74,167 L75.2,167 L53.2,146 Z M74,146 L52,167 L53.2,167 L75.2,146 Z M58,146 L80,167 L81.2,167 L59.2,146 Z M80,146 L58,167 L59.2,167 L81.2,146 Z M64,146 L86,167 L87.2,167 L65.2,146 Z M86,146 L64,167 L65.2,167 L87.2,146 Z M70,146 L92,167 L93.2,167 L71.2,146 Z M92,146 L70,167 L71.2,167 L93.2,146 Z M76,146 L98,167 L99.2,167 L77.2,146 Z M98,146 L76,167 L77.2,167 L99.2,146 Z M82,146 L104,167 L105.2,167 L83.2,146 Z M104,146 L82,167 L83.2,167 L105.2,146 Z M88,146 L110,167 L111.2,167 L89.2,146 Z M110,146 L88,167 L89.2,167 L111.2,146 Z M94,146 L116,167 L117.2,167 L95.2,146 Z M116,146 L94,167 L95.2,167 L117.2,146 Z M100,146 L122,167 L123.2,167 L101.2,146 Z M122,146 L100,167 L101.2,167 L123.2,146 Z M106,146 L128,167 L129.2,167 L107.2,146 Z M128,146 L106,167 L107.2,167 L129.2,146 Z M112,146 L134,167 L135.2,167 L113.2,146 Z M134,146 L112,167 L113.2,167 L135.2,146 Z M118,146 L140,167 L141.2,167 L119.2,146 Z M140,146 L118,167 L119.2,167 L141.2,146 Z M124,146 L146,167 L147.2,167 L125.2,146 Z M146,146 L124,167 L125.2,167 L147.2,146 Z M130,146 L152,167 L153.2,167 L131.2,146 Z M152,146 L130,167 L131.2,167 L153.2,146 Z M136,146 L158,167 L159.2,167 L137.2,146 Z M158,146 L136,167 L137.2,167 L159.2,146 Z"
         }
       ]
     },
@@ -443,7 +528,7 @@
         },
         {
           "id": "torso",
-          "path": "M50,84 C60,78 120,78 130,84 C143,92 141,105 130,118 C118,132 111,147 94,156 Q90,159 86,156 C69,147 62,132 50,118 C39,105 37,92 50,84 Z",
+          "path": "M50,84 C60,78 120,78 130,84 C141,90 143,101 137,109 C131,118 123,124 117,132 L63,132 C57,124 49,118 43,109 C37,101 39,90 50,84 Z",
           "fill": "body"
         }
       ],
@@ -504,7 +589,7 @@
       "parts": [
         {
           "id": "shortsBody",
-          "path": "M66,126 L114,126 L105,143 Q90,153 75,143 Z",
+          "path": "M62,126 L118,126 L125,150 L55,150 Z",
           "fill": "shorts"
         }
       ],
@@ -519,7 +604,7 @@
       "parts": [
         {
           "id": "stripes",
-          "path": "M69,128 L74,128 L81,145 L77,143 Z M106,128 L111,128 L103,143 L99,145 Z",
+          "path": "M64,128 L69,128 L63,149 L58,149 Z M111,128 L116,128 L122,149 L117,149 Z",
           "fill": "stripe"
         }
       ],
@@ -1331,18 +1416,20 @@
       "parts": [
         {
           "id": "armL",
-          "path": "M52,85 Q30,91 17,130 Q36,121 52,103 Z",
+          "path": "M54,84 C38,80 26,92 25,108 C24,120 28,130 36,132 C44,133 48,126 48,118 C52,110 56,100 58,92 Z",
           "fill": "body",
           "pivot": [
             46,
             92
           ],
           "rot": "legFL",
-          "rotSign": 1
+          "rotSign": 1,
+          "lift": "legLiftF",
+          "hideIf": "propBench"
         },
         {
           "id": "foreL",
-          "path": "M0,0",
+          "path": "M30,124 C22,132 20,146 28,153 C34,158 44,155 45,148 C46,140 44,132 42,124 Z",
           "fill": "body",
           "pivot": [
             36,
@@ -1351,23 +1438,23 @@
           "rot": "elbowL",
           "rotSign": 1,
           "parent": "armL",
-          "hideIf": "propBench",
-          "alpha": 0
+          "hideIf": "propBench"
         },
         {
           "id": "armR",
-          "path": "M128,85 Q150,91 163,130 Q144,121 128,103 Z",
+          "path": "M126,84 C142,80 154,92 155,108 C156,120 152,130 144,132 C136,133 132,126 132,118 C128,110 124,100 122,92Z",
           "fill": "body",
           "pivot": [
             134,
             92
           ],
           "rot": "legFR",
-          "rotSign": -1
+          "rotSign": -1,
+          "lift": "legLiftF"
         },
         {
           "id": "foreR",
-          "path": "M0,0",
+          "path": "M150,124 C158,132 160,146 152,153 C146,158 136,155 135,148 C134,140 136,132 138,124Z",
           "fill": "body",
           "pivot": [
             144,
@@ -1375,8 +1462,7 @@
           ],
           "rot": "elbowR",
           "rotSign": -1,
-          "parent": "armR",
-          "alpha": 0
+          "parent": "armR"
         }
       ],
       "hideIf": "mooning"
@@ -1385,6 +1471,65 @@
       "id": "armDetail",
       "outline": false,
       "parts": [
+        {
+          "id": "deltL",
+          "path": "M50,88 Q38,90 31,99 Q40,93 52,91 Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "bicepL",
+          "path": "M33,102 Q28,112 31,122 Q33,112 38,104 Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "foreLineL",
+          "path": "M32,134 Q29,140 31,146 Q32,140 35,135 Z",
+          "fill": "muscle",
+          "alpha": 0.8,
+          "parent": "foreL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "handClawL",
+          "path": "M27,150 L23,156 L30,155 Z M34,155 L33,161 L39,157 Z",
+          "fill": "cream",
+          "parent": "foreL",
+          "hideIf": "propBench"
+        },
+        {
+          "id": "deltR",
+          "path": "M130,88 Q142,90 149,99 Q140,93 128,91Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armR"
+        },
+        {
+          "id": "bicepR",
+          "path": "M147,102 Q152,112 149,122 Q147,112 142,104Z",
+          "fill": "muscle",
+          "alpha": 0.85,
+          "parent": "armR"
+        },
+        {
+          "id": "foreLineR",
+          "path": "M148,134 Q151,140 149,146 Q148,140 145,135Z",
+          "fill": "muscle",
+          "alpha": 0.8,
+          "parent": "foreR"
+        },
+        {
+          "id": "handClawR",
+          "path": "M153,150 L157,156 L150,155ZM146,155 L147,161 L141,157Z",
+          "fill": "cream",
+          "parent": "foreR",
+          "hideIf": "finger"
+        },
         {
           "id": "benchPlate",
           "fill": "plate",
@@ -1458,20 +1603,6 @@
           "path": "M150,163 C150,168 148,172 150,175 C152,177 154,175 154,172 C154,169 153,166 153,163 Z M160,162 C160,166 158,169 160,171 C162,172 163,170 163,168 C163,166 162,164 162,162 Z",
           "parent": "foreR",
           "showIf": "poopHand"
-        },
-        {
-          "id": "finRayL",
-          "path": "M43,97 Q30,109 23,124 Q34,115 46,104 Z",
-          "fill": "muscle",
-          "parent": "armL",
-          "alpha": 0.6
-        },
-        {
-          "id": "finRayR",
-          "path": "M137,97 Q150,109 157,124 Q146,115 134,104 Z",
-          "fill": "muscle",
-          "parent": "armR",
-          "alpha": 0.6
         }
       ],
       "hideIf": "mooning"
@@ -1703,13 +1834,51 @@
       "outline": true,
       "showIf": "finger",
       "hideIf": "mooning",
-      "parts": []
+      "parts": [
+        {
+          "id": "handFist",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M138,148 C138,143 142,141 146,142 L157,142 C161,141 165,143 165,148 L165,163 C165,167 161,169 157,169 L146,169 C141,169 138,166 138,162 Z"
+        },
+        {
+          "id": "handMiddle",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M147,167 L147,192 C147,197 156,197 156,192 L156,167 Z"
+        },
+        {
+          "id": "handThumb",
+          "fill": "body",
+          "parent": "foreR",
+          "path": "M137,152 C132,154 132,162 138,164 L150,163 C153,162 153,157 150,156 Z"
+        }
+      ]
     },
     {
       "id": "fingerDetail",
       "showIf": "finger",
       "hideIf": "mooning",
-      "parts": []
+      "parts": [
+        {
+          "id": "handFolded",
+          "fill": "muscle",
+          "parent": "foreR",
+          "path": "M139,166 C139,171 146,172 146,167 L145,167 C145,170 140,170 140,166 Z M157,166 C157,171 164,171 164,166 L163,166 C163,169 158,169 158,166 Z M159,160 C163,160 163,165 159,165 L159,164 C162,164 162,161 159,161 Z"
+        },
+        {
+          "id": "handCreases",
+          "fill": "muscle",
+          "parent": "foreR",
+          "path": "M148,176 L155,176 L155,177.4 L148,177.4 Z M148,184 L155,184 L155,185.4 L148,185.4 Z M141,155 L148,155 L148,156.2 L141,156.2 Z"
+        },
+        {
+          "id": "handNail",
+          "fill": "cream",
+          "parent": "foreR",
+          "path": "M149,188 L154,188 L154,192 C154,194.5 149,194.5 149,192 Z"
+        }
+      ]
     },
     {
       "id": "costumeHand",
@@ -1949,19 +2118,14 @@
       "showIf": "mooning",
       "parts": [
         {
-          "id": "moonTail",
+          "id": "moonLegs",
           "fill": "body",
-          "path": "M108,90 C122,78 140,68 162,62 C156,74 152,82 142,90 C152,92 158,96 162,102 C144,100 126,98 110,96 Z"
-        },
-        {
-          "id": "moonLowerBody",
-          "fill": "body",
-          "path": "M50,125 Q90,119 130,125 Q112,151 90,160 Q68,151 50,125 Z"
+          "path": "M50,128 L86,128 L86,156 C88,159 89,163 88,167 L48,167 C47,162 50,158 52,156 Z M130,128 L94,128 L94,156 C92,159 91,163 92,167 L132,167 C133,162 130,158 128,156 Z"
         },
         {
           "id": "moonShorts",
           "fill": "shorts",
-          "path": "M50,124 L130,124 Q117,140 90,148 Q63,140 50,124 Z"
+          "path": "M46,124 L134,124 L136,142 L44,142 Z"
         },
         {
           "id": "moonTorso",
@@ -2039,6 +2203,16 @@
           "path": "M80,78 Q84,86 86,92 Q82,86 78,80 Z M100,78 Q96,86 94,92 Q98,86 102,80 Z"
         },
         {
+          "id": "moonHams",
+          "fill": "muscle",
+          "path": "M68,144 L70,144 L70,160 L68,160 Z M112,144 L110,144 L110,160 L112,160 Z"
+        },
+        {
+          "id": "moonCalf",
+          "fill": "muscle",
+          "path": "M56,150 Q62,146 66,152 Q62,150 56,152 Z M124,150 Q118,146 114,152 Q118,150 124,152 Z"
+        },
+        {
           "id": "moonGluteLine",
           "fill": "muscle",
           "dx": "spread",
@@ -2056,6 +2230,11 @@
           "id": "moonStripes",
           "fill": "stripe",
           "path": "M50,125 L56,125 L54,141 L48,141 Z M130,125 L124,125 L126,141 L132,141 Z"
+        },
+        {
+          "id": "moonClawsFeet",
+          "fill": "cream",
+          "path": "M50,162 L55,167 L48,167 ZM57,162 L62,167 L55,167 Z M130,162 L125,167 L132,167 ZM123,162 L118,167 L125,167 Z"
         },
         {
           "id": "moonEye",
@@ -2180,25 +2359,74 @@
       "showIf": "mooning",
       "parts": [
         {
-          "id": "moonPectoralL",
+          "id": "moonUpperL",
           "fill": "body",
-          "path": "M30,66 Q12,83 12,112 Q25,99 43,82 Z",
-          "dx": "spread",
-          "dxSign": -0.2
+          "path": "M20,58 C8,64 6,88 16,98 C24,106 36,102 40,90 C44,76 34,54 20,58 Z"
         },
         {
-          "id": "moonPectoralR",
+          "id": "moonUpperR",
           "fill": "body",
-          "path": "M150,66 Q168,83 168,112 Q155,99 137,82 Z",
+          "path": "M160,58 C172,64 174,88 164,98 C156,106 144,102 140,90 C136,76 146,54 160,58 Z"
+        },
+        {
+          "id": "moonForeL",
+          "fill": "body",
           "dx": "spread",
-          "dxSign": 0.2
+          "dxSign": -0.6,
+          "path": "M26,92 C32,102 42,108 52,106 C58,104 58,96 52,93 C44,90 34,86 26,92 Z"
+        },
+        {
+          "id": "moonForeR",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": 0.6,
+          "path": "M154,92 C148,102 138,108 128,106 C122,104 122,96 128,93 C136,90 146,86 154,92 Z"
+        },
+        {
+          "id": "moonHandL",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": -1.2,
+          "path": "M48,96 C42,102 44,113 52,117 C59,120 66,114 66,107 C66,99 60,94 53,94 Z"
+        },
+        {
+          "id": "moonHandR",
+          "fill": "body",
+          "dx": "spread",
+          "dxSign": 1.2,
+          "path": "M132,96 C138,102 136,113 128,117 C121,120 114,114 114,107 C114,99 120,94 127,94 Z"
+        },
+        {
+          "id": "moonClawL",
+          "fill": "cream",
+          "dx": "spread",
+          "dxSign": -1.2,
+          "path": "M64,102 L69,99 L67,106 ZM64,110 L70,109 L66,115 Z"
+        },
+        {
+          "id": "moonClawR",
+          "fill": "cream",
+          "dx": "spread",
+          "dxSign": 1.2,
+          "path": "M116,102 L111,99 L113,106 ZM116,110 L110,109 L114,115 Z"
         }
       ]
     },
     {
       "id": "moonArmDetail",
       "showIf": "mooning",
-      "parts": []
+      "parts": [
+        {
+          "id": "moonTriL",
+          "fill": "muscle",
+          "path": "M18,70 Q14,82 20,92 Q22,82 26,74 Z"
+        },
+        {
+          "id": "moonTriR",
+          "fill": "muscle",
+          "path": "M162,70 Q166,82 160,92 Q158,82 154,74 Z"
+        }
+      ]
     },
     {
       "id": "propsFloor",
@@ -4070,5 +4298,10 @@
       }
     }
   },
-  "anatomy": "shark-fins-v1"
+  "anatomy": "original-legged-v1",
+  "restoration": {
+    "source": "a3240e4976736eee5c319b71a249a0b87ad6e132",
+    "withoutTail": true,
+    "rule": "Nenhuma alteração futura de anatomia, silhueta ou estilo sem solicitação explícita do usuário."
+  }
 }

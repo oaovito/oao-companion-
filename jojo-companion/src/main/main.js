@@ -36,6 +36,7 @@ import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
 import { createCalendarLinkService, readCalendarFeed } from './calendar-link-service.js';
 import { createLivingService } from './living-service.js';
+import { createSteamService } from './steam-service.js';
 import { createFocusApps } from './focus-apps.js';
 import { createNeedsService } from './needs-service.js';
 import { CredentialVault } from './credential-vault.js';
@@ -204,6 +205,9 @@ function main() {
         if (quitting) return;
         setTimeout(() => {
           overlay.recreate();
+          companion.mover.stop();
+          if (!companion.work && !companion.focus) companion.behavior.request('idle', { now: companion.clock.now(), force: true });
+          syncOwnHandles();
           companion.lastRender = '';
           companion.lastBounds = null;
           companion.overlay.setMouseMode('passthrough');
@@ -321,6 +325,7 @@ function main() {
     // ---------------- IPC do overlay
     const fromOverlay = (e) => overlay.alive && e.sender === overlay.win.webContents;
     ipcMain.handle('jojo:get-assets', (e) => (fromOverlay(e) ? assets : null));
+    ipcMain.on('jojo:animation-result', (e, id, ok) => fromOverlay(e) && Number.isSafeInteger(id) && overlay.resolveAnimation(id, ok === true));
     ipcMain.on('jojo:bubble-size', (e, id, size) => fromOverlay(e) && overlay.resolveMeasure(id, size));
     ipcMain.on('jojo:capture', (e, on) => fromOverlay(e) && companion.setCapture(!!on));
     ipcMain.on('jojo:activity', (e) => fromOverlay(e) && companion.noteActivity());
@@ -380,6 +385,7 @@ function main() {
         todo: todoService?.model.snapshot() || null,
         abrirTarefas,
         darkest: darkestService?.model.snapshot() || null,
+        steam: steamService?.snapshot() || null,
         needs: needsService?.snapshot() || null,
         focusApps: focusApps?.snapshot() || null,
         livingScenes: livingService?.list() || [],
@@ -402,6 +408,7 @@ function main() {
     let needsService = null;
     let focusApps = null;
     let livingService = null;
+    let steamService = null;
     let abrirCuidados = 0;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
@@ -440,6 +447,7 @@ function main() {
     const calTimer = setInterval(syncCalendar, 10 * 60e3);
     app.on('will-quit', () => clearInterval(calTimer));
     companion.onOpenSettings = () => openSettings();
+    ipcMain.handle('app:refresh-games', async e => { if (!fromApp(e)) return null; if (!fullscreen?.available) startFullscreenWatch(); await steamService.refresh(); await sampleEnvironment(true); return steamService.snapshot(); });
     ipcMain.handle('app:state', (e) => (fromApp(e) ? appState() : null));
     ipcMain.handle('app:select', (e, id) => {
       if (!fromApp(e)) return null;
@@ -489,10 +497,13 @@ function main() {
       },
       notify: () => { appWin.send('app:update', appState()); settingsWin.send('settings:changed', settingsInfo()); } });
     app.on('before-quit', () => focusApps.close());
-    livingService = createLivingService({ userData, companion, store, items: readJSON('assets/catalog/living-interactions.json').itens, log });
+    livingService = createLivingService({ userData, companion, store, items: readJSON('assets/catalog/living-interactions.json').itens, log,
+      refreshContext: () => sampleEnvironment(true), hasAnimation: name => !!assets.animations.animations[name],
+      confirmAnimation: name => overlay.confirmAnimation(name) });
+    steamService = createSteamService({ extraRoots: TEST && process.env.JOJO_TEST_STEAM_ROOT ? [process.env.JOJO_TEST_STEAM_ROOT] : [], getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; }, notify: data => appWin.send('app:steam-update', data) });
     // Antes de fechar as janelas: o X do painel apenas oculta, mas nunca pode vetar app.quit.
     app.on('before-quit', () => todoService.close());
-    app.on('will-quit', () => darkestService.close());
+    app.on('will-quit', () => { darkestService.close(); livingService.dispose(); steamService.dispose(); });
     ipcMain.handle('settings:get', (e) => (fromSettings(e) ? settingsInfo() : null));
     ipcMain.handle('settings:set', (e, patch) => {
       if (!fromSettings(e) || !patch || typeof patch !== 'object') return settingsInfo();
@@ -633,50 +644,50 @@ function main() {
     }
 
     // ---------------- Tela cheia
+    let environmentPending = null, environmentEpoch = 0, lastDetectorError = 0;
+    function syncOwnHandles() {
+      fullscreen?.setOwnHandles(BrowserWindow.getAllWindows().filter(win => !win.isDestroyed() && !win.__jojoExternalTest).map(win => hwndToString(win.getNativeWindowHandle())).filter(Boolean));
+    }
+    app.on('browser-window-created', (_e, win) => {
+      setTimeout(syncOwnHandles, 0);
+      win.once('closed', () => setTimeout(syncOwnHandles, 0));
+    });
+    function clearEnvironment() {
+      environmentEpoch++; fullscreen?.invalidate();
+      companion.setFullscreenDisplays([]);
+      darkestService.observe({ known: false, reason: 'detector_unavailable' }, powerMonitor.getSystemIdleTime());
+      steamService?.observe(null);
+    }
+    async function sampleEnvironment(fresh = false) {
+      if (fresh && environmentPending) await environmentPending;
+      if (environmentPending) return environmentPending;
+      if (companion.suspended) return;
+      const epoch = environmentEpoch;
+      environmentPending = (async () => {
+        try {
+          syncOwnHandles();
+          const s = store.get();
+          const res = await fullscreen.detect(r => screen.screenToDipRect(null, r), screen.getAllDisplays(), {
+            instagram: personality.get().instagram.ativo, lol: s.lolBronca, spotify: s.spotifyReacoes,
+            percepcao: s.percepcaoTela, darkest: s.darkestAtivo, games: true, spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
+          });
+          if (epoch !== environmentEpoch || companion.suspended) return;
+          companion.setFullscreenDisplays(res.fullscreenIds);
+          todoService.guard(); darkestService.observe(res.darkest, powerMonitor.getSystemIdleTime()); steamService?.observe(res.games);
+          companion.onForeground({ instagram: personality.get().instagram.ativo && res.instagram, lol: s.lolBronca && res.lol });
+          companion.onSpotify(s.spotifyReacoes ? res.spotify : null); companion.onAppCategoria(s.percepcaoTela ? res.categoria : null);
+        } catch {
+          if (epoch === environmentEpoch) clearEnvironment();
+          if (Date.now() - lastDetectorError > 15000) { lastDetectorError = Date.now(); log('warn', 'Detector de janelas indisponível; estado antigo descartado e contagem de jogos pausada.'); }
+        }
+      })();
+      try { await environmentPending; } finally { environmentPending = null; }
+    }
     function startFullscreenWatch() {
       clearInterval(fullscreenTimer);
-      const wantFullscreen = () => true; // proteção de tela cheia sempre ligada
-      const wantInstagram = () => personality.get().instagram.ativo;
-      const wantLol = () => store.get().lolBronca;
-      const wantSpotify = () => store.get().spotifyReacoes;
-      if (!wantFullscreen() && !wantInstagram() && !wantLol() && !wantSpotify()) return;
-      if (!fullscreen) {
-        fullscreen = createFullscreenDetector(log);
-        if (fullscreen.available && overlay.alive) fullscreen.setOwnHandles([hwndToString(overlay.win.getNativeWindowHandle())].filter(Boolean));
-      }
-      if (!fullscreen.available) return;
-      let busy = false;
-      fullscreenTimer = setInterval(async () => {
-        if (companion.suspended || busy) return;
-        if (!fullscreen.available) {
-          clearInterval(fullscreenTimer);
-          companion.reportSystem('detector', 'Sistema: detector de janelas', `Detecção de tela cheia e do Instagram parou: ${fullscreen.reason || 'falha'}.`);
-          companion.setFullscreenDisplays([]);
-          settingsWin.send('settings:changed', settingsInfo());
-          return;
-        }
-        busy = true;
-        try {
-          const res = await fullscreen.detect((r) => screen.screenToDipRect(null, r), screen.getAllDisplays(), {
-            instagram: wantInstagram(),
-            lol: wantLol(),
-            spotify: wantSpotify(),
-            percepcao: store.get().percepcaoTela,
-            darkest: store.get().darkestAtivo,
-            spotifyExe: TEST ? process.env.JOJO_SPOTIFY_EXE : undefined,
-          });
-          companion.setFullscreenDisplays(wantFullscreen() ? res.fullscreenIds : []);
-          todoService.guard();
-          darkestService.observe(res.darkest, powerMonitor.getSystemIdleTime());
-          companion.onForeground({ instagram: wantInstagram() && res.instagram, lol: wantLol() && res.lol });
-          companion.onSpotify(wantSpotify() ? res.spotify : null);
-          companion.onAppCategoria(store.get().percepcaoTela ? res.categoria : null);
-        } catch (err) {
-          log('warn', `Falha na detecção de tela cheia: ${err.message}`);
-        } finally {
-          busy = false;
-        }
-      }, 500); // tela cheia some em até meio segundo
+      if (!fullscreen || !fullscreen.available) { fullscreen?.dispose(); fullscreen = createFullscreenDetector(log); if (steamService?.inventory()) fullscreen.setGameInventory(steamService.inventory()); }
+      syncOwnHandles();
+      fullscreenTimer = setInterval(() => void sampleEnvironment(), 500);
     }
 
     // ---------------- Monitores e energia
@@ -685,7 +696,7 @@ function main() {
       clearTimeout(displayTimer);
       displayTimer = setTimeout(() => {
         log('info', `Topologia de monitores mudou (${why})`);
-        companion.onDisplaysChanged();
+        clearEnvironment(); companion.onDisplaysChanged(); void sampleEnvironment(true);
         settingsWin.send('settings:changed', settingsInfo());
       }, 300);
     };
@@ -694,17 +705,19 @@ function main() {
     screen.on('display-metrics-changed', () => onDisplays('métricas'));
     powerMonitor.on('suspend', () => {
       log('info', 'Suspensão');
-      companion.onSuspend();
+      clearEnvironment(); companion.onSuspend();
       todoService.guard();
       store.flush();
     });
     powerMonitor.on('resume', () => {
       log('info', 'Retomada');
+      if (!fullscreen?.available) startFullscreenWatch();
+      clearEnvironment();
       companion.progress.resetRewardClock();
-      setTimeout(() => companion.onResume(), 800);
+      setTimeout(() => { companion.onResume(); void sampleEnvironment(true); }, 800);
     });
-    powerMonitor.on('lock-screen', () => { companion.onSuspend(); todoService.guard(); });
-    powerMonitor.on('unlock-screen', () => companion.onResume());
+    powerMonitor.on('lock-screen', () => { clearEnvironment(); companion.onSuspend(); todoService.guard(); });
+    powerMonitor.on('unlock-screen', () => { clearEnvironment(); companion.onResume(); void sampleEnvironment(true); });
 
     // ---------------- Bandeja
     trayCtl = createTray({
@@ -786,6 +799,9 @@ function main() {
     // Testes automáticos não registram o app no Windows sozinhos (só quando o teste pede).
     if (!TEST) applyAutostart();
     startFullscreenWatch();
+    void steamService.refresh();
+    const steamTimer = setInterval(() => { if (!companion.suspended) void steamService.refresh(); }, 60000);
+    app.on('will-quit', () => clearInterval(steamTimer));
     companion.start();
     trayCtl.refresh();
     // Ociosidade do sistema: só o contador de segundos sem uso (não lê teclas nem cliques).
@@ -842,6 +858,7 @@ function main() {
         // Janela comum que registra cliques: usada para provar que cliques atravessam o JoJo.
         async makeClickTarget(bounds, { fullscreen = false } = {}) {
           const w = new BrowserWindow({ ...bounds, show: false, frame: false, fullscreen, title: 'JoJo test target', webPreferences: { sandbox: true } });
+          w.__jojoExternalTest = true;
           await w.loadURL('data:text/html,' + encodeURIComponent('<body style="margin:0;background:#cfe0f5"><script>window.__clicks=[];addEventListener("mousedown",e=>window.__clicks.push({x:e.screenX,y:e.screenY}));</script></body>'));
           w.show();
           if (!fullscreen) w.setBounds(bounds);
@@ -865,6 +882,9 @@ function main() {
         needsService,
         focusApps,
         livingService,
+        steamService,
+        restartDetector: () => { fullscreen.dispose(); startFullscreenWatch(); return sampleEnvironment(true); },
+        refreshEnvironment: () => sampleEnvironment(true),
         nativeDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
         migrateDesktop: options => garantirAtalho(options),
         nativeShell: shell,

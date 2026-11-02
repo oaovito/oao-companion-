@@ -51,7 +51,9 @@ export class DarkestDungeon {
       this.mutate(() => { this.st.outbox.shift(); if (r.levelUp) this.queueVisual('ddConquista'); });
     }
   }
-  observe({ running = false, active = false, processKey = null, idleSeconds = Infinity, suspended = false } = {}) {
+  observe({ running = false, active = false, processKey = null, idleSeconds = Infinity, suspended = false, known = true, installed = null, executable = false, verified = false, reason = null, checkedAt = null } = {}) {
+    this.detection = { known, installed, executable, verified, reason, checkedAt };
+    if (!known) { this.running = null; this.active = false; this.sample = null; this.changed(); return; }
     const at = this.monotonic(); const day = this.day();
     this.running = running && typeof processKey === 'string' && processKey.length > 0 && processKey.length < 160;
     this.active = this.running && active && !suspended && Number.isFinite(idleSeconds) && idleSeconds >= 0 && idleSeconds <= this.balance.idleSeconds;
@@ -64,7 +66,10 @@ export class DarkestDungeon {
     if (!this.running || (this.active && this.st.session?.key !== processKey)) {
       this.mutate(() => {
         const old = this.st.session;
-        if (old?.valid) { this.queueVisual('ddDesespero'); this.st.history.push({ type: 'session', start: old.started, end: this.now(), activeMs: old.activeMs }); this.st.history = this.st.history.slice(-500); }
+        if (old) {
+          if (old.valid) this.queueVisual('ddDesespero');
+          this.st.history.push({ type: 'session', start: old.started, end: this.now(), activeMs: old.activeMs, valid: !!old.valid }); this.st.history = this.st.history.slice(-500);
+        }
         this.st.session = this.active ? { key: processKey, started: this.now(), activeMs: 0, valid: false, milestones: [] } : null;
       });
     }
@@ -92,6 +97,7 @@ export class DarkestDungeon {
   }
   flush() { this.save(this.st); this.lastSavedAt = this.monotonic(); }
   suggest({ focus = false, fullscreen = false, important = false, canSpeak = true } = {}) {
+    if (this.detection?.known === false) return null;
     const day = this.day(); const p = civilParts(this.now(), this.zone()); const minute = Number(p.hour) * 60 + Number(p.minute);
     if (!this.st.suggestion || this.st.suggestion.day < day) this.mutate(() => {
       this.st.suggestion = { day, minute: 360 + Math.min(899, Math.floor(Math.max(0, this.rng()) * 900)), delivered: false };
@@ -109,7 +115,7 @@ export class DarkestDungeon {
     const day = this.day(); const d = this.st.daily[day]; const days = this.st.days.filter(validDay).sort();
     let streak = 0, key = days.includes(day) ? day : shiftDay(day, -1);
     while (days.includes(key)) { streak++; key = shiftDay(key, -1); }
-    return { running: this.running, active: this.active, activeMs: this.st.activeMs, todayMs: d?.activeMs || 0,
+    return { detection: this.detection || { known: false }, running: this.running, active: this.active, activeMs: this.st.activeMs, todayMs: d?.activeMs || 0,
       sessionMs: this.st.session?.activeMs || 0, sessionValid: this.st.session?.valid || false,
       sessions: this.st.sessions, todaySessions: d?.sessions || 0, playedToday: !!d?.valid,
       days: days.length, streak, xpToday: d?.xp || 0, xpTotal: Object.values(this.st.daily).reduce((n, x) => n + x.xp, 0),
