@@ -1,5 +1,17 @@
 # JoJo Companion — instruções permanentes do Codex
 
+## Diretriz mais recente — agenda somente por link (02/11/2026)
+
+O usuário corrigiu explicitamente: “A agenda só deve precisar do link da agenda
+não log senha de nada”. Esta instrução SUPERA os trechos antigos sobre CalDAV
+com ID Apple/senha, conta autorizada e gate icloud-live, inclusive o prompt mestre.
+Agenda usa somente link iCal Google/iCloud (webcal/HTTPS), somente leitura, sem
+formulário de conta/senha. Nunca solicitar JOJO_ICLOUD_USER/APP_PASSWORD para
+usar, testar ou publicar o JoJo. Validar o fluxo de link e preservar todos os
+demais gates Windows/artefatos/atualizador. Histórico anterior abaixo não é bloqueio
+vigente. Estado corrente no início do HANDOFF e docs/MISSAO_ATIVA.md.
+
+
 ## Missão e continuidade
 
 Responsabilidade técnica: desenvolver, testar, corrigir, versionar e distribuir o JoJo,
@@ -111,7 +123,7 @@ observar a verificação executada. Jobs pulados não comprovam disponibilidade 
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
-E2E, 1.043 animações, medição, conversa REAL (31 engine + 12 Central), artefatos,
+E2E, 1.268 animações, medição, conversa REAL (31 engine + 12 Central), artefatos,
 compatibilidade do atualizador e notas. Pesquisa web/GPU permanecem diagnósticos opcionais.
 Logs privados filtram credenciais; TAP/JUnit/JSON e hashes são retidos localmente (três
 execuções/14 dias). Cache confere SHA-256 do bootstrap/runtime e integridade npm.
@@ -208,3 +220,58 @@ por `schedule` e passou. Controle na main, fonte na Codex; sem outros provedores
 Relato/hashes/limites em HANDOFF e `jojo-companion/docs/VALIDACAO_0.44.0.md`.
 Não confundir sucesso dos cenários com perfeição de toda conversa ou teste físico
 de Windows 11. Não repetir builds/publicação para demonstrar trabalho já concluído.
+
+## Missao ativa — 0.45.0 em desenvolvimento
+
+Branch: `codex/living-companion`, baseada em `4193c2b` (0.44.0 publicada).
+Requisitos completos: `jojo-companion/docs/REQUISITOS_0.45.0.md` e
+`jojo-companion/docs/REQUISITOS_TAREFAS_0.45.0.md`; inclui tambem Darkest Dungeon
+(diario 06–21 local, 15 falas, 5 animacoes, Steam app 262060, so tempo ativo,
+XP 15 inicio +50 primeira sessao/dia +25/40/80 aos 15/30/60 min, limites,
+7 dias distintos = O Herdeiro da Ruina). Todos os pedidos sao cumulativos.
+Diretriz anatomica posterior substitui a antiga: tubarao musculoso com corpo,
+nadadeiras e cauda; SEM bracos, pernas, maos ou pes. Adaptar animacoes antigas
+sem apagar o catalogo. Silencio/foco/tela cheia/desvio/privacidade continuam prioritarios.
+Novos sistemas: clima real, CalDAV iCloud/credenciais Windows, necessidades e seis
+raridades de coco, XP compartilhado, 50 comidas NOVAS, 25 memes +25 profissoes,
+atalho unico, icone novo, Discord no foco, Darkest Dungeon e To-Do completa.
+Nenhum segredo no chat/repositorio/log. Teste real iCloud exige conta autorizada
+e credencial por canal seguro, nunca presumir autenticacao. Sem conta, preparar
+protocolo/UI reais e registrar somente essa validacao pendente apos fazer o restante.
+Branch nova valida CI mas NAO publica automaticamente: politica continua 0.44.0
+no controle oficial. Nova publicacao somente apos requisitos e gates; nao publicar
+parte do pedido nem modificar as 18 releases existentes.
+Continuidade/checklist em `jojo-companion/docs/MISSAO_ATIVA.md`.
+
+## Continuidade da candidata — 02/11/2026
+
+Implementados em código os 50 conjuntos de memes/profissões, integração de Discord
+no Trabalho/Foco (força opt-in), migração conservadora de atalhos e ícones locais
+sem redistribuição de marcas. Ver `docs/CENAS_E_FOCO.md`. Catálogo: 1.268 animações.
+Toda esta arte foi medida no Windows e importada (evidência abaixo); futuras
+alterações de desenho exigem nova medição e não podem desligar a cobertura. Esperados 39 E2E no pipeline integral.
+O workflow tem passo iCloud isolado DEPOIS dos demais gates; secrets só nesse
+passo, nunca no npm/build/testes. Candidatas >=0.45 exigem `icloud-live` e evidência
+somente de contagens/horário. Sem conta autorizada, NÃO finalizar/publicar.
+Não confundir os diagnósticos `assets_only` com aprovação integral do pipeline.
+
+Medição/auditoria 41367076224 (474bff2) passou: 1.268 animações, 434 bases,
+zero erros/recortes/paradas/órfãs, média 0,44 ms. JSON real importado, SHA-256
+45a74560433377127ddabb567e8d22753d5bed2d2942c023423b2b0c38976287.
+401/401 testes puros passaram depois da importação. Não repetir medição sem mudar
+arte; continuar pelo pipeline INTEGRAL e ensaio iCloud real. Reações de DD agora
+ficam em fila persistente e só tocam após fechar o jogo, fora de foco/tela cheia.
+
+## Validação integral da candidata — 02/11/2026
+
+Fonte **502ba0f**, Actions **41374307060**: TODOS os gates do aplicativo passaram
+no mesmo Windows oficial: 404 unitários, 31+12 conversa real, build/NSIS e três
+atualizações, portátil/vigia, 16 integração, 39 E2E, 1.268 animações, desempenho,
+hashes, atualizador e notas. Resultado global bloqueado SOMENTE no passo final
+icloud-live por secrets JOJO_ICLOUD_USER/JOJO_ICLOUD_APP_PASSWORD ausentes.
+O pedido exige conta autorizada (REQUISITOS_0.45.0.md:798); não remover o gate.
+Armazenamento CI também recusou upload; zero artefatos retidos, nenhum binário novo
+publicado. Não apagar evidências antigas/comprar cota. Conta autorizada por canal
+seguro é dependência externa; depois retomar fluxo oficial no mesmo run de publicação.
+Não repetir implementação ou testes pesados enquanto a dependência não mudar.
+Evidências/limites/continuidade em HANDOFF e docs/MISSAO_ATIVA.md. 18 releases intactas.
