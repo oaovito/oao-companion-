@@ -17,7 +17,7 @@ const run = (exe, args, extra = {}) => new Promise((resolve, reject) => {
 });
 const stop = (pid) => { try { execFileSync('taskkill.exe', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore' }); } catch { /* ja encerrou */ } };
 const links = () => JSON.parse(execFileSync('pwsh.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/inspect-windows-shortcuts.ps1'], { encoding: 'utf8' }));
-const normalized = value => path.resolve(value).toLowerCase();
+const normalized = value => { try { return fs.realpathSync.native(value).toLowerCase(); } catch { return path.resolve(value).toLowerCase(); } };
 let child, cleanupError, startupError;
 try {
   if (links().length) throw new Error('Atalho preexistente preservado; conta de teste nao esta isolada');

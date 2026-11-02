@@ -17,7 +17,7 @@ export function createTodoService({ userData, root, icon, companion, fromApp, fr
     return result;
   } });
   const blocked = () => !!(companion.work || companion.focus || companion.fullscreenHidden || companion.suspended || companion.fullscreenIds?.length);
-  const state = () => ({ todo: model.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work });
+  const state = () => ({ todo: model.snapshot(), colecao: companion.progress.snapshot(new Date()), foco: !!companion.focus, trabalho: !!companion.work });
   const dock = new TodoWindow({ preloadPath: path.join(root, 'src/preload/app-preload.cjs'), htmlPath: path.join(root, 'src/renderer/todo/index.html'), iconPath: icon, state: () => model.snapshot() });
   dock.blocked = blocked;
   dock.onHide = () => model.configure({ visible: false });

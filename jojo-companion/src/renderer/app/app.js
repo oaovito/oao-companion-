@@ -17,8 +17,8 @@ let lastTarefasReq = 0;
 let showingDarkest = false;
 let showingCuidados = false, lastCareRequest = 0;
 const xpView = new ProgressView($('progression'));
-const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho, animations: st?.todo?.settings.animations !== false }) });
-const careView = new CareView($('cuidados'), api, s => xpView.render(s, { quiet: st?.trabalho }));
+const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho || st?.foco, animations: st?.todo?.settings.animations !== false }) });
+const careView = new CareView($('cuidados'), api, s => xpView.render(s, { quiet: st?.trabalho || st?.foco }));
 
 function chip(el, status, label) {
   el.className = `chip ${status}`;
@@ -83,7 +83,7 @@ function render(s) {
   renderDarkest();
   $('cuidados').classList.toggle('hidden', !showingCuidados);
   if (showingCuidados) { $('convTitle').textContent = 'Cuidados e cardápio'; chip($('convStatus'), 'idle', ''); careView.refresh(); }
-  xpView.render(s.colecao, { quiet: s.trabalho, animations: s.todo?.settings.animations !== false });
+  xpView.render(s.colecao, { quiet: s.trabalho || s.foco, animations: s.todo?.settings.animations !== false });
 }
 
 // ---------------- coleção, progressão, mini-jogos e estímulos
@@ -295,21 +295,21 @@ $('darkestBtn').addEventListener('click', async () => {
   render(await api.state());
 });
 api.onDarkestUpdate(s => {
-  if (st) { st.darkest = s.darkest; st.colecao = { ...st.colecao, ...s.colecao }; }
-  renderDarkest(); xpView.render(s.colecao, { quiet: s.trabalho });
+  if (st) { st.foco = s.foco; st.trabalho = s.trabalho; st.darkest = s.darkest; st.colecao = { ...st.colecao, ...s.colecao }; }
+  renderDarkest(); xpView.render(s.colecao, { quiet: s.trabalho || s.foco });
 });
 $('cuidadosBtn').addEventListener('click', async () => {
   showingCuidados = !showingCuidados; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false; render(await api.state());
 });
 api.onNeedsUpdate(s => {
-  if (st) { st.needs = s.needs; st.colecao = { ...st.colecao, ...s.colecao }; }
+  if (st) { st.foco = s.foco; st.trabalho = s.trabalho; st.needs = s.needs; st.colecao = { ...st.colecao, ...s.colecao }; }
   if (showingCuidados && s.needs) careView.render(s.needs);
-  xpView.render(s.colecao, { quiet: s.trabalho });
+  xpView.render(s.colecao, { quiet: s.trabalho || s.foco });
 });
 api.onTodoUpdate(s => {
-  if (st) { st.todo = s.todo; if (s.colecao) st.colecao = { ...st.colecao, ...s.colecao }; }
+  if (st) { st.foco = s.foco; st.trabalho = s.trabalho; st.todo = s.todo; if (s.colecao) st.colecao = { ...st.colecao, ...s.colecao }; }
   if (showingTarefas) todoView.refresh();
-  xpView.render(s.colecao, { quiet: s.trabalho, animations: s.todo?.settings.animations !== false });
+  xpView.render(s.colecao, { quiet: s.trabalho || s.foco, animations: s.todo?.settings.animations !== false });
 });
 
 function renderConversation() {

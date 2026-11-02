@@ -33,6 +33,18 @@ Continuidade das implementações anteriores no Git, sem sobrescrever trabalho.
 - Quota de artefatos CI esgotada; uploads opcionais e medidas/preview têm fallback
   em logs privados. Sem alteração financeira ou remoção de releases históricas.
 
+- 41366167751 /3ec3bcf: 8/10 novos cenários passaram. Discord precisava
+  limitar WM_CLOSE às janelas visíveis e aguardar saída assíncrona; atalhos tinham
+  comparação textual de caminho DOS 8.3 versus caminho longo. Causas corrigidas.
+- 41366600620 /ea3b09a: TODOS os 10 cenários novos Windows passaram, sem pulos.
+  Inclui fechamento normal/força opt-in/cancelamento do Discord e .lnk reais.
+  Depois disso foram acrescentados preview das 75 receitas, silêncio do XP no Foco
+  e ensaio NSIS com três atualizações; ainda exigem validação do novo commit.
+- Atualizador agora passa --updated ao NSIS, necessário para preservar preferências
+  de atalhos em instalações com diretório configurável. Teste puro de aplicação passou.
+- Última suíte completa local: 397 testes, 396 passaram; único reprovado foi medida
+  Windows ausente. Com o novo teste NSIS, total esperado 398. Não ignorar a falha.
+
 ## Próximos gates
 
 1. Diagnóstico oficial assets_only/measure_assets=false: 10 cenários novos Windows.

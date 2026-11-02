@@ -100,5 +100,21 @@ window.contato = (rigJson, animJson) => {
   }
   return c.toDataURL('image/png');
 };
+// Contato das 75 receitas novas, separado da folha histórica de anatomia.
+window.novasCenas = (rigJson, animJson) => {
+  const names = Object.keys(animJson.animations).filter(n => /^cat_(dd|needs|living_)/.test(n) && !n.includes('~'));
+  const w = 230, h = 230, cols = 5, c = document.createElement('canvas');
+  c.width = cols * w; c.height = Math.ceil(names.length / cols) * h;
+  const ctx = c.getContext('2d'), rig = new RigRenderer(rigJson);
+  ctx.fillStyle = '#f4f7fb'; ctx.fillRect(0, 0, c.width, c.height);
+  for (const [i, name] of names.entries()) {
+    const a = new Animator(animJson, { rng: () => 0.5 }); a.play(name, 0, { variant: name });
+    ctx.save(); ctx.translate((i % cols) * w, Math.floor(i / cols) * h);
+    ctx.fillStyle = '#263548'; ctx.font = '12px sans-serif'; ctx.fillText(name.replace('cat_', ''), 12, 20, w - 24);
+    rig.draw(ctx, a.sample((animJson.animations[name].duration || 1000) * 0.5).pose, { origin: { x: 35, y: 50 }, scale: 0.85, facing: 1 });
+    ctx.restore();
+  }
+  return c.toDataURL('image/png');
+};
 window.ready = true;
 </script></body></html>

@@ -17,6 +17,7 @@ test('cenas Windows: 50 botões reais, encenação no único chat, adereço anim
     // A arte é de fato desenhável no catálogo; auditoria completa confere pixels e recortes.
     assert.equal(await app.evaluate(() => globalThis.__jojo.companion.catalogById.get('living_medico').receita.aderecosAnimados), true);
     await app.evaluate(() => globalThis.__jojo.companion.startFocus());
+    await page.waitForFunction(() => document.getElementById('progression').classList.contains('no-animation'));
     const previous = await app.evaluate(() => globalThis.__jojo.livingService.model.st.recent.length);
     const blocked = await app.evaluate(() => globalThis.__jojo.companion.livingChat('Encena Químico'));
     assert.match(blocked, /depois do foco/); assert.equal(await app.evaluate(() => globalThis.__jojo.livingService.model.st.recent.length), previous);

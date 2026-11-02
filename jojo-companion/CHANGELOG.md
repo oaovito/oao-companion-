@@ -24,6 +24,7 @@
 - Ícone original de tubarão musculoso em resoluções próprias para o Windows.
 
 ### Correções
+- Atualizador sinaliza atualização ao NSIS para preservar a preferência de atalhos.
 - Migração conservadora de atalhos padrão evita duplicatas entre versões e
   respeita preferências, remoções manuais e atalhos personalizados.
 - Anatomia do personagem usa nadadeiras e cauda, preservando o catálogo anterior.

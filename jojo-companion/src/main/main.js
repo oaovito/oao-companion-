@@ -376,7 +376,7 @@ function main() {
         colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome, recorde: companion._record(j.id) == null ? null : companion._fmtRecord(j.id, companion._record(j.id)) })) : [] },
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
-        trabalho: !!companion.work,
+        foco: !!companion.focus, trabalho: !!companion.work,
         abrirGuardaRoupa,
         todo: todoService?.model.snapshot() || null,
         abrirTarefas,
@@ -514,9 +514,9 @@ function main() {
     app.on('will-quit', () => caldavService.dispose());
     todoService = createTodoService({ userData, root: ROOT, icon: appIcon, companion, fromApp, fromSettings, appWin, settingsWin, log });
     darkestService = createDarkestService({ userData, content: readJSON('assets/catalog/darkest-dungeon.json'), companion, store, log,
-      notify: () => { appWin.send('app:darkest-update', { darkest: darkestService?.model.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
+      notify: () => { appWin.send('app:darkest-update', { darkest: darkestService?.model.snapshot(), colecao: companion.progress.snapshot(new Date()), foco: !!companion.focus, trabalho: !!companion.work }); } });
     needsService = createNeedsService({ userData, companion, store, foods: assets.foods, balance: readJSON('assets/catalog/needs-balance.json'), ipcMain, fromApp, fromOverlay, log,
-      notify: () => { if (needsService) appWin.send('app:needs-update', { needs: needsService.snapshot(), colecao: companion.progress.snapshot(new Date()), trabalho: !!companion.work }); } });
+      notify: () => { if (needsService) appWin.send('app:needs-update', { needs: needsService.snapshot(), colecao: companion.progress.snapshot(new Date()), foco: !!companion.focus, trabalho: !!companion.work }); } });
     app.on('will-quit', () => needsService.close());
     focusApps = createFocusApps({ userData, companion, store,
       getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },

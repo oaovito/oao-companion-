@@ -103,8 +103,11 @@ app.whenReady().then(async () => {
   fs.writeFileSync(path.join(OUT, 'auditoria-animacoes.json'), JSON.stringify({ total: nomes.length, erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, null, 1) + '\n');
   const png = (await win.webContents.executeJavaScript(`window.contato(${JSON.stringify(rig)}, ${JSON.stringify(anims)})`)).split(',')[1];
   fs.writeFileSync(path.join(OUT, 'auditoria-animacoes.png'), Buffer.from(png, 'base64'));
+  const scenes = (await win.webContents.executeJavaScript(`window.novasCenas(${JSON.stringify(rig)}, ${JSON.stringify(anims)})`)).split(',')[1];
+  fs.writeFileSync(path.join(OUT, 'cenas-novas.png'), Buffer.from(scenes, 'base64'));
   // Pequena evidência visual recuperável mesmo quando a cota de artefatos está cheia.
   if (process.env.GITHUB_ACTIONS) {
+    for (const part of scenes.match(/.{1,4000}/g)) console.log(`JOJO_SCENES_PREVIEW:${part}`);
     for (const part of png.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_PREVIEW:${part}`);
     const report = gzipSync(Buffer.from(JSON.stringify({ markdown: linhas.join('\n'), summary: { erros, fora, paradas, semGatilho: semGatilho.length, mediaMs: media }, commit: process.env.JOJO_VALIDATED_COMMIT || process.env.GITHUB_SHA }))).toString('base64');
     for (const part of report.match(/.{1,4000}/g)) console.log(`JOJO_ANIMATION_REPORT:${part}`);

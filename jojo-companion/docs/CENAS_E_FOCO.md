@@ -55,12 +55,15 @@ comprovada são preservados. Sem permissão para remover duplicata, registra blo
 
 A configuração permite automático, mostrar ou ocultar. A remoção manual não é
 revertida em cada inicialização. Estado/versão ficam em `desktop-shortcut.json`.
-O atualizador continua no canal público e não cria atalhos por conta própria.
+O atualizador continua no canal público e passa --updated ao NSIS para respeitar
+as preferências em atualizações seguintes. Não cria atalhos por conta própria.
+O ensaio do instalador verifica três atualizações e preservação dos dados.
 
 ## Validação
 
 Testes puros cobrem catálogo, comandos, segurança, variedade/cooldown, persistência,
 relógio, fechamento normal/força/cancelamento e migração de atalhos. Novos cenários
 Windows usam processos Electron de fixture e arquivos .lnk reais em áreas fictícias;
-não operam no computador da usuária. Executá-los no Actions original, junto à
+não operam no computador da usuária. Os 10 cenários novos passaram no Actions 41366600620, commit ea3b09a.
+Repetir após as alterações posteriores, junto à
 medição/auditoria de TODAS as 1.268 animações, antes de considerar a candidata validada.
