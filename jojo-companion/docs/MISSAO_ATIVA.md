@@ -67,6 +67,19 @@ Continuidade das implementações anteriores no Git, sem sobrescrever trabalho.
 - Evidência de conversa agora também é compactada/hasheada nos logs privados,
   permitindo recuperar todas as falas apesar da cota de artefatos.
 
+- 41371161554 /34f68f4: 401 unitários Windows passaram, conversa 30/31.
+  Desta vez Gemma respondeu “Manga, confirmado. Sua memória é impressionante.”
+  corretamente, mas o classificador tratou QUALQUER menção a memória como dúvida.
+  Corrigido para diferenciar reconhecimento de contestação, com testes positivos
+  e negativos PT/EN. Teste real continua obrigatório e sem aceitar fallback como IA.
+- Novas regressões reproduziram alimentação atrasada sobre acolhimento e novo turno.
+  Corrigidas por contexto visual e proteção temporária da conversa importante,
+  cancelando comida/balão anterior, poses automáticas e notificações de XP.
+  Dados e recompensas reais permanecem registrados; foco também não exibe comida.
+  403/403 testes locais passaram. Cenário nativo de cuidados estendido para isso.
+- Não houve cancelamento do run 41371161554: ele já estava concluído com falha
+  quando a solicitação de cancelamento foi feita. Não confundir com run cancelado.
+
 ## Próximos gates
 
 1. Diagnóstico oficial assets_only/measure_assets=false: 10 cenários novos Windows.

@@ -36,6 +36,8 @@
 - Resultados de pesquisa sem correspondência com o assunto são descartados.
 - Leitura de eventos respeita TZID e recorrências/exceções de iCalendar.
 - Correções literais da usuária preservam a palavra afirmada em vez da negada.
+- Alimentação e eventos atrasados não substituem acolhimento nem uma conversa nova;
+  recompensas ficam discretas durante conversas importantes, sem perder XP.
 
 ### Como testar
 - Na Lista de Tarefas, adicionar, editar, arrastar, concluir e desmarcar; conferir

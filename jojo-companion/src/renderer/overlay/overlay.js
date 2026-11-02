@@ -127,7 +127,7 @@ function renderNeeds(s) {
   needsHud.classList.toggle('hidden', !panel); if (!panel) return;
   Object.assign(needsHud.style, { left: `${panel.rect.x}px`, top: `${panel.rect.y}px`, width: `${panel.rect.width}px`, height: `${panel.rect.height}px` });
   document.getElementById('needsNumbers').textContent = `Saciedade ${panel.hunger} · Saúde ${panel.health} · Higiene ${panel.hygiene}`;
-  needsXp.render(panel.progress, { quiet: !!s.work, animations: !s.reducedMotion });
+  needsXp.render(panel.progress, { quiet: !!s.work || !!s.feedbackQuiet, animations: !s.reducedMotion });
   const current = new Set(panel.objects.map(o => o.id));
   for (const child of [...litterEl.children]) if (!current.has(child.dataset.id)) child.remove();
   for (const item of panel.objects) {

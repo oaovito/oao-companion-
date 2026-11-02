@@ -17,6 +17,7 @@ export class ProgressView {
   }
   render(s, { quiet = false, animations = true } = {}) {
     if (!s) return;
+    quiet = quiet || !!s.quiet;
     const width = s.xpPorNivel || 60;
     this.label.textContent = `Nível ${s.nivel} · ${s.xp} XP`;
     this.fill.style.width = `${s.percentXP ?? Math.min(100, (s.xp % width) / width * 100)}%`;

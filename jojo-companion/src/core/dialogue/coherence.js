@@ -81,7 +81,10 @@ export function erroDeCoerencia(input, output, history = []) {
   const q = norm(input);
   const r = norm(output);
   if (!r || /^\s*\{\s*"(?:texto|text|acao|action)"|"texto"\s*:/.test(String(output))) return 'resposta estruturada incompleta';
-  if (correcaoPessoal(input) && /\b(tem certeza|certeza disso|are you sure|you sure|sua memoria|tua memoria|your memory|voce se enganou|you are mistaken)\b/.test(r)) return 'contestação da correção pessoal';
+  const doubts = /\b(tem certeza|certeza disso|are you sure|you sure|voce se enganou|you are mistaken)\b/.test(r)
+    || /\b(?:(?:sua|tua) memoria|your memory)\b.{0,50}\b(falh\w*|engana\w*|ruim|fraca|pessima|errad\w*|confus\w*|unreliable|poor|bad|wrong|fail\w*)\b/.test(r)
+    || /\b(voce|vc|tu|you)\b.{0,35}\b(enganad\w*|errad\w*|mistaken|misremember\w*)\b/.test(r);
+  if (correcaoPessoal(input) && doubts) return 'contestação da correção pessoal';
   const correction = termosDaCorrecao(input);
   if (correction && correction.denied && r.includes(norm(correction.denied)) && !r.includes(norm(correction.corrected))) return 'termo negado confirmado como correção';
   if (correction && !r.includes(norm(correction.corrected))) return 'correção não reconheceu o termo afirmado';

@@ -17,10 +17,12 @@ export function createNeedsService({ userData, companion, store, foods, balance,
     // HUD pequeno em cache: nada de clonar catálogo/histórico em cada tick do overlay.
     companion.needs = { hunger: snapshot.hunger, health: snapshot.health, hygiene: snapshot.hygiene, mood: snapshot.mood, ill: snapshot.ill, weak: snapshot.weak, objects: snapshot.objects.map(({ badge, ...object }) => object) };
     const progress = companion.progress.snapshot(new Date());
-    companion.progressHud = Object.fromEntries(['xp', 'nivel', 'xpPorNivel', 'percentXP', 'proximo', 'reward'].map(key => [key, progress[key]]));
+    companion.progressHud = Object.fromEntries(['xp', 'nivel', 'xpPorNivel', 'percentXP', 'proximo', 'reward', 'quiet'].map(key => [key, progress[key]]));
     companion.progressHud.rewardHistory = progress.rewardHistory.slice(0, 5);
     companion._applyLayout(true); notify();
   }
+  const beforeGuard = companion.onConversationGuard;
+  companion.onConversationGuard = () => { beforeGuard?.(); update(); };
   model.changed = update;
   companion.progress.onAward = update;
   companion.progress.onXp = update;
@@ -29,14 +31,14 @@ export function createNeedsService({ userData, companion, store, foods, balance,
     const result = model.feed(id);
     if (result.fed) {
       const achievements = companion.progress.count('comidasDiferentes', Object.keys(model.st.foods).length, true);
-      const epoch = ++feedEpoch;
+      const epoch = ++feedEpoch; const context = companion.visualContext;
       if (!legacy) {
-        companion.effect = { name: 'food', kind: id, until: companion.clock.now() + 3400 };
-        if (!companion.work && !companion.focus) {
+        if (canExpress(true)) {
+          companion.effect = { name: 'food', kind: id, until: companion.clock.now() + 3400 };
           companion.playCatalog(result.animation, { source: 'pedido', speak: false }); companion.say(result.text, 'speech');
         }
-        companion.clock.setTimeout(() => { if (epoch === feedEpoch && canExpress(true)) companion.playCatalog('needsMastigar', { source: 'evento', speak: false }); }, 1200);
-        companion.clock.setTimeout(() => { if (epoch === feedEpoch && canExpress(true)) companion.playCatalog(achievements.length ? 'needsConquista' : 'needsSatisfeito', { source: 'evento', speak: false }); }, 3500);
+        companion.clock.setTimeout(() => { if (epoch === feedEpoch && context === companion.visualContext && canExpress(true)) companion.playCatalog('needsMastigar', { source: 'evento', speak: false }); }, 1200);
+        companion.clock.setTimeout(() => { if (epoch === feedEpoch && context === companion.visualContext && canExpress(true)) companion.playCatalog(achievements.length ? 'needsConquista' : 'needsSatisfeito', { source: 'evento', speak: false }); }, 3500);
       }
     }
     update(); return result;

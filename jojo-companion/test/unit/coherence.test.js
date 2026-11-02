@@ -35,6 +35,10 @@ test('correcao pessoal nao aceita resposta que duvida da memoria ou certeza da u
   assert.equal(erroDeCoerencia(input, 'Você tem certeza? A memória às vezes falha.'), 'contestação da correção pessoal');
   assert.equal(erroDeCoerencia('I meant Thursday, not Tuesday.', 'Are you sure?'), 'contestação da correção pessoal');
   assert.equal(erroDeCoerencia(input, 'Lilás, entendido. Eu que troquei as coisas.'), null);
+  assert.equal(erroDeCoerencia(input, 'Lilás. Sua memória é impressionante.'), null, 'mencionar memória sem contestar não pode reprovar uma correção correta');
+  assert.equal(erroDeCoerencia(input, 'Lilás, mas sua memória é ruim.'), 'contestação da correção pessoal');
+  assert.equal(erroDeCoerencia('I meant Thursday, not Tuesday.', 'Thursday. Your memory is impressive.'), null);
+  assert.equal(erroDeCoerencia('I meant Thursday, not Tuesday.', 'Thursday, but your memory is unreliable.'), 'contestação da correção pessoal');
   assert.equal(erroDeCoerencia('Não sei se desliguei o forno.', 'Tem certeza de que ficou ligado?'), null);
 });
 

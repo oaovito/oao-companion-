@@ -22,6 +22,13 @@ test('cuidados Windows: 56 alimentos reais, saciedade, limpeza persistente e XP 
     assert.equal(rewards.length, 1); assert.equal(rewards[0].amount, 250);
     const second = await page.evaluate(() => window.appApi.needs({ action: 'clean', id: 'native-litter-fixture' }));
     assert.equal(second.result.duplicate, true);
+    await app.evaluate(() => { const n = globalThis.__jojo.needsService.model; n.mutate(() => { n.st.hunger = 50; }); });
+    await page.locator('[data-food=atum]').click();
+    const crisis = await app.evaluate(() => globalThis.__jojo.companion.chat('quero morrer')); assert.match(crisis.text, /188/);
+    await page.waitForFunction(() => document.getElementById('progression').getAttribute('aria-live') === 'off');
+    await new Promise(resolve => setTimeout(resolve, 3800));
+    assert.equal(await app.evaluate(() => globalThis.__jojo.companion.effect), null);
+    assert.equal(await win.evaluate(() => /^cat_needs/.test(window.__jojoRenderer.state.anim || '')), false);
     await app.evaluate(() => globalThis.__jojo.companion.startWork());
     await win.waitForFunction(() => window.__jojoRenderer.state.work);
     assert.equal(await win.evaluate(() => window.__jojoRenderer.state.needsPanel), null);

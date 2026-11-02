@@ -18,12 +18,13 @@ export function emptyProgress() {
 // ---------------------------------------------------------------- progressão e coleções
 
 export class Progress {
-  constructor({ data, state, save = () => {}, rng = Math.random, now = () => Date.now(), wallNow = () => Date.now(), monotonicNow = () => performance.now() }) {
+  constructor({ data, state, save = () => {}, rng = Math.random, now = () => Date.now(), wallNow = () => Date.now(), monotonicNow = () => performance.now(), getQuiet = () => false }) {
     this.data = data;
     this.st = { ...emptyProgress(), ...(state || {}) };
     this.save = save;
     this.rng = rng;
     this.now = now;
+    this.getQuiet = getQuiet;
     this.wallNow = wallNow; this.monotonicNow = monotonicNow; this.resetRewardClock();
   }
 
@@ -217,6 +218,7 @@ export class Progress {
 
   snapshot(date = new Date()) {
     return {
+      quiet: this.getQuiet(),
       nivel: this.nivel,
       nomeNivel: this.nomeNivel,
       xp: this.st.xp,

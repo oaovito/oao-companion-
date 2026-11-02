@@ -181,10 +181,13 @@ export class Companion {
       },
       rng,
       now: () => this.clock.now(),
+      getQuiet: () => this.feedbackQuiet,
     });
     this.game = null; // mini-jogo em andamento
     this.focus = null; // bloco de foco (body doubling)
     this.calmUntil = 0;
+    this.emotionalUntil = 0;
+    this.visualContext = 0;
     this.lastAmbientAt = 0;
     this.lastAmbientItemAt = 0;
     // Google Agenda: eventos lidos do endereço iCal (o main busca); avisos já dados.
@@ -491,6 +494,10 @@ export class Companion {
     if (changed.includes('spotifyReacoes') && !settings.spotifyReacoes) this.onSpotify(null);
     this._applyLayout(true);
     this._schedule(0);
+  }
+
+  get feedbackQuiet() {
+    return !!(this.work || this.focus || this.fullscreenHidden || this.suspended || this.store.get().quietMode || this.clock.now() < (this.emotionalUntil || 0));
   }
 
   get paused() {
@@ -1204,13 +1211,21 @@ export class Companion {
    * (ex.: /pet) são tratados aqui. Atualiza o status da conversa:
    * running → ready/needsInput/blocked.
    */
+  _protectConversation() {
+    this.emotionalUntil = this.clock.now() + 120000;
+    this.effect = null; this.layer = null; this.ambientQueue.length = 0; this.nerdUntil = 0;
+    this.hideBubble(); this.onConversationGuard?.(); this._applyLayout(true);
+  }
+
   async chat(text, conversationId = null) {
+    this.visualContext = (this.visualContext || 0) + 1;
     const conv = this.conversations.current();
     const cmd = parseCommand(text);
     if (cmd) return this.runCommand(cmd, conv.id, text);
     if (!this.dialogue) return null;
     // Segurança não entra na fila atrás de uma geração lenta.
     const urgent = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text)) || modoCiencia(text) === 'emergencia';
+    if (urgent) this._protectConversation();
     if (urgent && this.chatQueue) {
       this.chatEpoch = (this.chatEpoch || 0) + 1;
       this.dialogue.cancelPending?.();
@@ -1255,6 +1270,7 @@ export class Companion {
     // Ela conta que o namorado a magoou: acolher (nada de piada nem de "fala com ele").
     const nam = intent0 === 'avcReal' ? null : detectNamorado(text, { joao: this.personality.get().pessoaApoio || 'João', jaMencionou: !!this.joaoMencionado });
     if (nam && nam.cuidado) {
+      this._protectConversation();
       this.nerdUntil = 0;
       this.nerdAbertura = null;
       const nome = profileVars(this.personality.get(), 'serio').nome;
@@ -1266,6 +1282,7 @@ export class Companion {
     // Emergência médica: segurança antes de tudo (192), sem óculos nem piada.
     const ciencia = intent0 === 'avcReal' ? null : modoCiencia(text);
     if (ciencia === 'emergencia') {
+      this._protectConversation();
       this.nerdUntil = 0;
       this.nerdAbertura = null;
       this.react('comfort');
@@ -2085,6 +2102,7 @@ export class Companion {
    */
   playCatalog(id, { source = 'comando', speak = true, intensity = null } = {}) {
     const item = this.catalogById.get(id);
+    if (this.clock.now() < (this.emotionalUntil || 0) && !['chat', 'comando', 'pedido', 'manual'].includes(source)) return false;
     if (!item || this.quitting || !this.started || this.userHidden) return false;
     if (SLEEP_ANIMS.has(id) && !this.canSleep()) return false; // dormir de dia: nunca
     if (this.work) return false; // Modo Trabalho: nenhuma animação
@@ -2124,6 +2142,7 @@ export class Companion {
 
   /** Sorteio ambiente (chamado pela máquina de comportamento ao sair do repouso). */
   _pickAmbient() {
+    if (this.clock.now() < (this.emotionalUntil || 0)) return null;
     const s = this.store.get();
     const date = new Date();
     // Foco junto: continua estudando/treinando do lado dela.
@@ -2561,7 +2580,7 @@ export class Companion {
   /** Pode dar uma bronca/lembrete agora? Respeita silêncio, pausa, ocultação e despedida. */
   _canNag() {
     const s = this.store.get();
-    return !this.work && this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.lolHidden;
+    return !this.work && this.started && !s.quietMode && !this.paused && !this.userHidden && !this.fullscreenHidden && !this.suspended && !this.quitting && !this.ghost && !this.lolHidden && this.clock.now() >= (this.emotionalUntil || 0);
   }
 
   /**
@@ -3505,6 +3524,7 @@ export class Companion {
       // Acessórios liberados por nível aparecem às vezes (camada extra de variedade).
       layer: this.behavior.state === 'ambient' ? this.layer || null : null,
       mode: this.wired ? 'wired' : null,
+      feedbackQuiet: this.feedbackQuiet,
       work: this.work ? this.work.perfil : null,
       // Roupa do guarda-roupa vale mais que a fantasia da data festiva.
       costume: vestido ? null : this.costume,

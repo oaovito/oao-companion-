@@ -10,7 +10,7 @@ export function createTodoService({ userData, root, icon, companion, fromApp, fr
   const disk = new AtomicState(path.join(userData, 'tasks.json'), { validate: validateTodo, defaults: emptyTodo, log });
   const model = new TodoModel({ state: disk.load(), save: st => disk.write(st), clockHealthy: () => companion.progress.clockHealthy(), award: reward => {
     const result = companion.progress.award(reward);
-    if (result.amount > 0 && !companion.work && !companion.focus && !companion.fullscreenHidden && !companion.suspended) {
+    if (result.amount > 0 && !companion.feedbackQuiet && !companion.work && !companion.focus && !companion.fullscreenHidden && !companion.suspended) {
       companion.react('happy');
       if (result.levelUp) companion.fireEvent('nivel', { speak: false });
     }
@@ -29,6 +29,8 @@ export function createTodoService({ userData, root, icon, companion, fromApp, fr
       settingsWin.send('todo:changed', s.todo);
     }, 40);
   }
+  const beforeGuard = companion.onConversationGuard;
+  companion.onConversationGuard = () => { beforeGuard?.(); update(); };
   model.onChange = update;
   companion.todoChat = new TodoChat(model);
   companion.onRoutineTick = () => {
