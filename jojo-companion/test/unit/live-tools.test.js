@@ -63,7 +63,7 @@ test('agenda: configurada, sincronizando, erro, conectada e vazia sao estados di
   e.companion.setCalendar({ error: 'auth' });
   assert.equal(e.companion.calendar.lastSync, 1000);
   r = await chatAdv(e, 'Qual é a minha agenda de hoje?');
-  assert.match(r.text, /falhou.*autorização/); assert.doesNotMatch(r.text, /Nada mais hoje/);
+  assert.match(r.text, /falhou.*link compartilhado/); assert.doesNotMatch(r.text, /Nada mais hoje/);
   await chatAdv(e, 'não desconecta minha agenda'); assert.ok(e.store.get().agendaUrl);
 });
 

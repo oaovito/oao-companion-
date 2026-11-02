@@ -1,6 +1,16 @@
 # Missão ativa — JoJo Companion 0.45.0
 
-Estado: EM VALIDAÇÃO, sem publicação nova. Branch codex/living-companion.
+Estado: EM VALIDAÇÃO, sem publicação nova.
+
+**Correção vigente do usuário (02/11): agenda somente por link, sem login/senha.**
+Substitui a exigência anterior de conta autorizada e o gate icloud-live. Nenhuma
+credencial externa é necessária agora. Campo de link/GET sem autenticação,
+persistência, sincronização, erros e desconexão implementados; sete testes novos
+de lógica e cenário Windows completo pela interface preparados. Suíte esperada:
+411 unitários, 40 E2E. As evidências abaixo anteriores a essa correção são históricas.
+Não solicitar os secrets iCloud; continuar pela validação do novo fluxo e publicação.
+
+ Branch codex/living-companion.
 Base: 4193c2b; publicada 0.44.0, histórica e imutável. Os três pedidos são cumulativos.
 
 ## Implementação atual

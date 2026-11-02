@@ -19,18 +19,16 @@
   <div id="notice" class="notice hidden" role="alert"></div>
 
   <form id="form">
-    <fieldset id="icloudFields">
-      <legend>Agenda iCloud</legend>
-      <p class="hint">Conexão autenticada e somente leitura. Use uma senha específica de aplicativo criada na conta Apple, nunca a senha principal. A credencial é protegida pelo Windows neste perfil, fora das configurações comuns.</p>
-      <label class="row">ID Apple <input id="icloudUser" type="text" autocomplete="username" maxlength="254" placeholder="seu@email.com"></label>
-      <label class="row">Senha específica de aplicativo <input id="icloudPassword" type="password" autocomplete="off" maxlength="256"></label>
+    <fieldset id="calendarFields">
+      <legend>Agenda</legend>
+      <p class="hint">Cole o link iCal da sua agenda Google ou iCloud. A conexão é somente leitura, sem login ou senha. No iCloud, use o link de Calendário Público (webcal://); quem tiver esse link poderá ler os compromissos.</p>
+      <label class="row">Link da agenda <input id="calendarLink" type="text" autocomplete="off" spellcheck="false" placeholder="webcal://… ou https://…" maxlength="4096"></label>
       <div class="buttons">
-        <button id="icloudConnect" type="button">Conectar iCloud</button>
-        <button id="icloudSync" type="button">Sincronizar agora</button>
-        <button id="icloudDisconnect" type="button">Desconectar iCloud</button>
+        <button id="calendarConnect" type="button">Conectar agenda</button>
+        <button id="calendarSync" type="button">Sincronizar agora</button>
+        <button id="calendarDisconnect" type="button">Desconectar</button>
       </div>
-      <p id="icloudStatus" class="hint" role="status">Conferindo conexão…</p>
-      <div id="icloudCalendars" aria-label="Calendários iCloud"></div>
+      <p id="calendarStatus" class="hint" role="status">Conferindo conexão…</p>
       <label class="check"><input type="checkbox" name="agendaAtiva"> Consultar agenda e avisar compromissos</label>
     </fieldset>
     <fieldset>

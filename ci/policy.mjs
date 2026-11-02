@@ -1,13 +1,5 @@
 // Contrato de evidência compartilhado pelo executor e pelo publicador.
 export const REQUIRED_STEPS = Object.freeze(['preflight', 'lint', 'install', 'unit', 'build', 'installer', 'portable', 'presence', 'windows', 'e2e', 'animations', 'performance', 'conversation', 'artifacts', 'updater', 'notes']);
-export function requiresIcloud(version) {
-  if (!/^\d+\.\d+\.\d+$/.test(version || '')) throw new Error('Versao invalida');
-  const [major, minor] = version.split('.').map(Number); return major > 0 || minor >= 45;
-}
-export const requiredSteps = version => [...REQUIRED_STEPS, ...(requiresIcloud(version) ? ['icloud-live'] : [])];
-export function assertIcloudEvidence(evidence) {
-  if (evidence?.status !== 'passed' || evidence.readOnly !== true || !Number.isInteger(evidence.calendars) || evidence.calendars < 1 || !Number.isInteger(evidence.events) || evidence.events < 0 || !Number.isFinite(Date.parse(evidence.checkedAt))) throw new Error('Evidencia real de autenticacao/leitura iCloud ausente');
-}
 export const SOURCE_REPO = 'oaovito/oao-companion-';
 
 export function pipelineArgs(args) {
@@ -30,11 +22,10 @@ export function assertValidation(report, { version, commit, files }) {
   if (report.executor !== 'github-hosted' || !/^\d+$/.test(String(report.runId || ''))) throw new Error('Validacao exige runner oficial GitHub e identificacao de execucao');
   if (report.source !== SOURCE_REPO || report.version !== version || report.commit !== commit) throw new Error('Validacao de outra origem/versao/commit');
   if (report.tag !== `v${version}`) throw new Error('Tag da validacao nao corresponde');
-  for (const id of requiredSteps(version)) {
+  for (const id of REQUIRED_STEPS) {
     const steps = report.steps?.filter((s) => s.id === id);
     if (steps?.length !== 1 || steps[0].status !== 'passed' || steps[0].exitCode !== 0 || steps[0].timedOut || steps[0].cancelled) throw new Error(`Gate obrigatorio nao aprovado: ${id}`);
   }
-  if (requiresIcloud(version)) assertIcloudEvidence(report.icloud);
   if (report.files?.length !== 3 || files.length !== 3) throw new Error('Exige os tres formatos');
   for (const file of files) {
     const saved = report.files.find((f) => f.name === file.name);

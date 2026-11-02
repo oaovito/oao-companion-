@@ -1,6 +1,5 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
-import { parseIcs, falhaAgenda, mensagemAgenda } from '../core/calendar.js';
 import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
@@ -35,7 +34,7 @@ import { WeatherService } from '../core/weather.js';
 import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
-import { createCalendarService } from './calendar-service.js';
+import { createCalendarLinkService, readCalendarFeed } from './calendar-link-service.js';
 import { createLivingService } from './living-service.js';
 import { createFocusApps } from './focus-apps.js';
 import { createNeedsService } from './needs-service.js';
@@ -416,52 +415,14 @@ function main() {
     };
 
     // Agenda (só leitura, Google ou iCloud): busca o .ics a cada 10 min.
-    let caldavService = null;
+    let calendarLinks = null;
     companion.weather = new WeatherService({ fetch: (url, options) => net.fetch(url, options) });
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;
-    const fetchCalendar = async (url) => {
-      const res = await net.fetch(calBase ? `${calBase}/basic.ics` : url, { signal: AbortSignal.timeout(12000), redirect: 'error', headers: { 'User-Agent': `JoJoCompanion/${app.getVersion()}` } });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
-      if (!/BEGIN:VCALENDAR/.test(text)) throw new Error('não é uma agenda');
-      return parseIcs(text);
-    };
-    // Falha de rede (ligou o PC, acordou, Wi-Fi caiu) tenta de novo calada; só avisa depois de 1 h.
-    const agendaFalha = { falhas: 0, desde: 0 };
-    let agendaRetry = null;
-    const syncCalendar = async (query = null) => {
-      clearTimeout(agendaRetry);
-      if (caldavService?.configured) return caldavService.sync(query);
-      const s = store.get();
-      if (!s.agendaUrl || !s.agendaAtiva) return;
-      companion.setCalendar({ state: 'syncing' });
-      try {
-        companion.setCalendar({ events: await fetchCalendar(s.agendaUrl) });
-        agendaFalha.falhas = 0;
-        agendaFalha.desde = 0;
-        companion.reportSystem('agenda', 'Sistema: Agenda', null);
-      } catch (err) {
-        log('warn', `Agenda: ${err.message}`);
-        const f = falhaAgenda(agendaFalha, err.message);
-        companion.setCalendar({ events: companion.calendar.events, error: err.message });
-        if (f.avisar) companion.reportSystem('agenda', 'Sistema: Agenda', mensagemAgenda(err.message));
-        agendaRetry = setTimeout(syncCalendar, f.proximaMs);
-      }
-    };
+    const fetchCalendar = url => readCalendarFeed({ url, userAgent: `JoJoCompanion/${app.getVersion()}`,
+      fetch: (target, options) => net.fetch(calBase ? `${calBase}/basic.ics` : target, options) });
+    const syncCalendar = () => calendarLinks?.sync();
     companion.onCalendarSync = syncCalendar;
-    // Voltou da suspensão: a rede demora uns segundos; lê a agenda de novo depois.
     powerMonitor.on('resume', () => setTimeout(syncCalendar, 20e3));
-    companion.onCalendarConnect = async (url) => {
-      try {
-        const events = await fetchCalendar(url);
-        if (caldavService?.configured) await caldavService.disconnect();
-        store.update({ agendaUrl: url, agendaAtiva: true });
-        companion.setCalendar({ events });
-        return { ok: true, count: events.length };
-      } catch (err) {
-        return { ok: false, error: mensagemAgenda(err.message) };
-      }
-    };
     // Ao abrir junto com o Windows a internet pode ainda não estar pronta: espera um pouco.
     setTimeout(syncCalendar, TEST ? 0 : 15e3);
     // Primeira vez: progresso do download como atividade (sem fingir resposta enquanto isso).
@@ -508,10 +469,11 @@ function main() {
       iconPath: appIcon,
     });
     const fromSettings = (e) => settingsWin.isOpen && e.sender === settingsWin.win.webContents;
-    caldavService = createCalendarService({ userData, safeStorage, fetch: (url, opts) => net.fetch(url, opts), companion, store, fromSettings, ipcMain,
+    calendarLinks = createCalendarLinkService({ userData, fetchCalendar, companion, store, fromSettings, ipcMain,
       notify: snapshot => settingsWin.send('calendar:changed', snapshot) });
-    companion.onCalendarDisconnect = () => caldavService.disconnect();
-    app.on('will-quit', () => caldavService.dispose());
+    companion.onCalendarConnect = url => calendarLinks.connect(url);
+    companion.onCalendarDisconnect = () => calendarLinks.disconnect();
+    app.on('will-quit', () => calendarLinks.dispose());
     todoService = createTodoService({ userData, root: ROOT, icon: appIcon, companion, fromApp, fromSettings, appWin, settingsWin, log });
     darkestService = createDarkestService({ userData, content: readJSON('assets/catalog/darkest-dungeon.json'), companion, store, log,
       notify: () => { appWin.send('app:darkest-update', { darkest: darkestService?.model.snapshot(), colecao: companion.progress.snapshot(new Date()), foco: !!companion.focus, trabalho: !!companion.work }); } });
@@ -572,7 +534,7 @@ function main() {
     });
 
     store.onChange((s, changed) => {
-      if (changed.includes('agendaUrl') || changed.includes('agendaAtiva')) syncCalendar();
+      if (changed.includes('agendaUrl') || changed.includes('agendaAtiva')) calendarLinks.settingsChanged();
       if (changed.includes('iaAtivo') && !s.iaAtivo) cerebro.parar('conversa desligada');
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();
@@ -899,7 +861,7 @@ function main() {
         personality,
         appWin,
         todoService,
-        caldavService,
+        calendarLinks,
         needsService,
         focusApps,
         livingService,

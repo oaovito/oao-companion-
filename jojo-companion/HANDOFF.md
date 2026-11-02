@@ -1,5 +1,22 @@
 # HANDOFF — JoJo Companion
 
+## Diretriz corrente — agenda somente por link
+
+Correção explícita do usuário em 02/11/2026: “A agenda só deve precisar do link da
+agenda não log senha de nada”. Substitui a exigência anterior de conta autorizada,
+ID Apple/senha e gate icloud-live. Não solicitar mais essas credenciais.
+
+Implementado: campo único de link nas Configurações; conexão webcal/HTTPS Google
+ou iCloud por GET sem autenticação/cookies; sincronização a cada 10 min/retomada,
+leitura de recorrências/fusos, último sucesso persistente, estados honestos,
+coalescência e cancelamento de respostas antigas. Links válidos existentes são
+preservados. Novos testes de lógica e cenário nativo Windows preparados.
+Pipeline preserva TODOS os gates da aplicação e dispensa o antigo passo de senha.
+Validação Windows e publicação desta correção ainda pendentes; não confundir com
+502ba0f validado antes. Demais funcionalidades da candidata permanecem implementadas.
+
+## Histórico anterior à correção do usuário
+
 ## Missão ativa: 0.45.0 implementada; publicação bloqueada
 
 Branch `codex/living-companion`, base `4193c2b`. Aplicativo validado no commit

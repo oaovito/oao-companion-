@@ -56,13 +56,6 @@ jobs:
         run: node jojo-companion/scripts/actions-windows.mjs
         env:
           JOJO_CI_CACHE: ${{ runner.temp }}/jojo-actions-cache
-      - name: Validar autenticacao iCloud real e concluir evidencia da candidata
-        if: ${{ steps.validation.outputs.version != '0.44.0' }}
-        run: node jojo-companion/scripts/finalize-icloud-validation.mjs
-        env:
-          VALIDATION_REPORT: ${{ steps.validation.outputs.report_path }}
-          JOJO_ICLOUD_USER: ${{ secrets.JOJO_ICLOUD_USER }}
-          JOJO_ICLOUD_APP_PASSWORD: ${{ secrets.JOJO_ICLOUD_APP_PASSWORD }}
       - name: Registrar relatorio privado
         if: ${{ !cancelled() }}
         shell: pwsh
@@ -164,7 +157,7 @@ jobs:
       - name: Lista de tarefas no Electron Windows real
         timeout-minutes: 9
         working-directory: jojo-companion
-        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs test/e2e/needs.windows.mjs test/e2e/focus-apps.windows.mjs test/e2e/shortcuts.windows.mjs test/e2e/living.windows.mjs
+        run: node --test --test-concurrency=1 --test-reporter=tap test/e2e/todo.windows.mjs test/e2e/darkest.windows.mjs test/e2e/needs.windows.mjs test/e2e/focus-apps.windows.mjs test/e2e/shortcuts.windows.mjs test/e2e/living.windows.mjs test/e2e/calendar-link.windows.mjs
         env:
           JOJO_TEST_REPORT_DIR: out/assets-windows
       - name: Evidencias privadas e medidas para revisao

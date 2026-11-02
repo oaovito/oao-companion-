@@ -1,5 +1,17 @@
 # JoJo Companion — instruções permanentes do Codex
 
+## Diretriz mais recente — agenda somente por link (02/11/2026)
+
+O usuário corrigiu explicitamente: “A agenda só deve precisar do link da agenda
+não log senha de nada”. Esta instrução SUPERA os trechos antigos sobre CalDAV
+com ID Apple/senha, conta autorizada e gate icloud-live, inclusive o prompt mestre.
+Agenda usa somente link iCal Google/iCloud (webcal/HTTPS), somente leitura, sem
+formulário de conta/senha. Nunca solicitar JOJO_ICLOUD_USER/APP_PASSWORD para
+usar, testar ou publicar o JoJo. Validar o fluxo de link e preservar todos os
+demais gates Windows/artefatos/atualizador. Histórico anterior abaixo não é bloqueio
+vigente. Estado corrente no início do HANDOFF e docs/MISSAO_ATIVA.md.
+
+
 ## Missão e continuidade
 
 Responsabilidade técnica: desenvolver, testar, corrigir, versionar e distribuir o JoJo,

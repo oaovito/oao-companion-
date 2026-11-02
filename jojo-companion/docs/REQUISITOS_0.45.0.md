@@ -1,3 +1,9 @@
+> Adendo posterior do usuário — 02/11/2026: “A agenda só deve precisar do link da agenda não log senha de nada”.
+> Essa diretriz substitui os requisitos abaixo sobre autenticação CalDAV, ID Apple,
+> senha específica e teste com conta autorizada. A agenda deve usar somente o link
+> iCal compartilhado (Google/iCloud), sem solicitar credenciais. O texto original
+> permanece como histórico; os demais requisitos continuam válidos.
+
 # PROMPT MESTRE PARA CODEX — JOJO COMPANION
 ## Correções críticas, sistema de sobrevivência, progressão de XP, animações e integração com Windows
 

@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execute } from '../../ci/process.mjs';
-import { REQUIRED_STEPS, requiresIcloud, SOURCE_REPO, tapTotals, pipelineArgs } from '../../ci/policy.mjs';
+import { REQUIRED_STEPS, SOURCE_REPO, tapTotals, pipelineArgs } from '../../ci/policy.mjs';
 import { sourceCommit } from '../../ci/validation.mjs';
 import { conferirArtefatos } from './publish-release.mjs';
 
@@ -93,7 +93,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 404));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 411));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
@@ -110,7 +110,7 @@ try {
   await step('presence', node, ['scripts/presenca-windows.mjs', 'dist/JoJoCompanion.exe'], 6);
   await cleanupShortcut();
   await step('windows', node, ['test/e2e/run-e2e.mjs', '--integration'], 8, (text) => tapTotals(text, 16));
-  await step('e2e', node, ['test/e2e/run-e2e.mjs'], 8, (text) => tapTotals(text, 39));
+  await step('e2e', node, ['test/e2e/run-e2e.mjs'], 8, (text) => tapTotals(text, 40));
   await step('animations', node, [npm, 'run', 'audit:animations'], 10, () => {
     const audit = JSON.parse(fs.readFileSync(path.join(env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json')));
     if (audit.total < 1268 || audit.erros.length || audit.fora.length || audit.paradas.length || audit.semGatilho) throw new Error('Auditoria de animacoes incompleta/reprovada');
@@ -124,7 +124,7 @@ try {
   if (sourceCommit(root) !== commit) throw new Error('Codigo alterado durante a validacao');
   report.files = conferirArtefatos(path.join(app, 'dist'), version).map(({ name, size, digest }) => ({ name, size, digest }));
   if (REQUIRED_STEPS.some((id) => !report.steps.some((s) => s.id === id && s.status === 'passed'))) throw new Error('Gates incompletos');
-  report.status = requiresIcloud(version) ? 'awaiting-icloud' : 'passed'; report.finishedAt = new Date().toISOString(); save();
+  report.status = 'passed'; report.finishedAt = new Date().toISOString(); save();
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `report_path=${reportPath}\nvalidated_sha=${commit}\nversion=${version}\n`);
   for (const name of ['animations', 'junit', 'conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png', 'RELEASE_NOTES.md']) {
     if (fs.existsSync(path.join(run, name))) fs.cpSync(path.join(run, name), path.join(summary, name), { recursive: true });

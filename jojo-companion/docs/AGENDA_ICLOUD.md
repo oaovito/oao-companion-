@@ -1,40 +1,28 @@
-# Agenda iCloud — candidata 0.45.0
+# Agenda por link — Google e iCloud
 
-Conexão CalDAV autenticada implementada em `src/core/caldav.js`, com descoberta do
-principal, home, lista de calendários e REPORT por intervalo. Somente PROPFIND e
-REPORT são permitidos; nenhum PUT/DELETE/POST é enviado. Hosts HTTPS são restritos
-a `caldav.icloud.com` e `pNN-caldav.icloud.com`, inclusive nos redirecionamentos.
-XML tem parser com namespaces, limite de tamanho/profundidade e rejeição de DTD.
-Falhas de autenticação/rede/resposta não viram consulta válida vazia.
+Diretriz vigente do usuário em 02/11/2026: a agenda só precisa do link, sem login
+ou senha. Substitui o experimento de conexão autenticada, ainda não publicado.
 
-Configurações → Agenda iCloud oferece ID Apple, campo de senha específica de
-aplicativo, conectar, selecionar calendários, sincronizar e desconectar. Não enviar
-credenciais pelo chat. `safeStorage` no Windows protege o arquivo de credenciais
-com DPAPI; se a cifra não estiver disponível, a gravação é recusada. Configurações
-normais, respostas IPC de status e logs não contêm a senha.
+Configurações → Agenda: colar o link e clicar Conectar agenda. Também é possível
+colar no único chat. iCloud: link do Calendário Público (webcal:// ou HTTPS).
+Google: endereço iCal público ou secreto da agenda. Quem possui o link pode ler
+os compromissos; o JoJo só faz leitura. Não pede ID Apple, senha ou credenciais Steam.
 
-O timer original de 10 minutos e a retomada da suspensão foram reaproveitados;
-sync concorrente de chat, UI e timer é reunido em um pedido. A última consulta
-válida fica registrada sem avançar em erro. Um resultado antigo não reconecta a
-conta depois de uma desconexão. Feeds públicos Google/iCloud continuam compatíveis.
-Reiniciar preserva conexão/calendários/última sincronização; uma nova consulta é
-necessária para recuperar os eventos, sem fingir que o cache está atualizado.
+Somente GET, sem Authorization/cookies. Destinos e redirecionamentos são restritos
+aos provedores de calendário existentes, com timeout e limite de 8 MiB.
+Não usar um link de página HTML/login em lugar do link iCal.
 
-iCalendar usa `ical.js` para recorrências, EXDATE/RDATE e exceções canceladas ou
-transferidas. TZID IANA sem VTIMEZONE usa a base Intl; VTIMEZONE fornecido é
-respeitado. A consulta não termina silenciosamente após 2.000 ocorrências. Limites
-de segurança falham explicitamente em vez de declarar calendário vazio.
+Sincronização a cada dez minutos, após retomada e manualmente pelo botão ou chat.
+Pedidos concorrentes são reunidos. Desconectar/trocar o link invalida respostas
+antigas. Falha não vira “agenda vazia” e não avança o último sucesso. O link válido
+anterior é preservado se uma tentativa nova falhar. A última sincronização é
+persistida no perfil local, mas eventos precisam ser consultados após reiniciar.
 
-Testes locais cobrem protocolo com servidor simulado, namespaces, leitura sem
-escrita, destinos, falhas, coalescência, DPAPI simulado, fusos/DST/recorrências e
-exceções. Um cenário Windows separado exige `safeStorage` real. Isto **não** comprova
-autenticação com conta Apple real.
+Leitura iCalendar com fusos, recorrências e exceções continua em ical.js. Links
+salvos da versão 0.44.0 permanecem compatíveis. Nenhum compromisso remoto é alterado.
 
-## Dependência externa restante
-
-O ambiente não possui conta iCloud autorizada nem credenciais vinculadas. O ensaio
-real `scripts/check-icloud-live.mjs` retorna BLOQUEADO (código 2) nessa situação;
-não retorna sucesso por omissão. Precisa de `JOJO_ICLOUD_USER` e
-`JOJO_ICLOUD_APP_PASSWORD` por injeção segura autorizada. Não criar conta, pedir
-senha no chat, utilizar credencial de terceiros ou alegar que uma fixture é iCloud.
-Essa evidência permanece necessária antes da publicação que inclua a integração.
+Sete novos testes de lógica cobrem transporte sem autenticação, destino/redirect,
+limites, configuração/persistência, falha e concorrência/desconexão. Cenário Windows
+exercita Configurações, HTTP local real, reinício, erro, vazia e desconexão. Fixtures
+são agendas sintéticas, não representam acesso à agenda pessoal de alguém.
+Não há gate de conta externa; todos os gates Windows da aplicação permanecem.

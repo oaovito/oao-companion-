@@ -10,8 +10,8 @@
   recompensas idempotente, barra animada e confirmação durável das conclusões.
 - Atividade Darkest Dungeon original: sugestão diária, detector Steam local,
   tempo em primeiro plano, XP por marcos, estatísticas e conquista por sete dias.
-- Conexão iCloud autenticada e somente leitura, seleção de calendários e
-  credencial protegida pelo Windows. Teste com conta real ainda pendente.
+- Configuração da agenda por link iCal Google/iCloud, sem login ou senha,
+  com sincronização manual, status e último sucesso registrados.
 - Cuidados persistentes com fome, saúde, humor, higiene, seis tipos de objetos
   clicáveis para limpeza e alimentação por cardápio com 50 opções novas.
 - Vinte animações de necessidades e novos patamares de evolução após Megalodon,
@@ -33,6 +33,8 @@
   preservadas após reinício e sem conceder XP novamente.
 - Perguntas meteorológicas usam ferramenta própria; falhas não viram pesquisa genérica ou previsão inventada.
 - Estado e falhas da agenda são consultados antes de afirmar conexão ou ausência de compromissos.
+- Consultas simultâneas da agenda são reunidas; desconectar impede resultados antigos
+  de reconectar o link, e falhas preservam a última sincronização válida.
 - Resultados de pesquisa sem correspondência com o assunto são descartados.
 - Leitura de eventos respeita TZID e recorrências/exceções de iCalendar.
 - Correções literais da usuária preservam a palavra afirmada em vez da negada.

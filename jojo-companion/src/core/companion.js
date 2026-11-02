@@ -3245,15 +3245,14 @@ export class Companion {
       return `Conectado. Agora eu cobro seus compromissos, ${profileVars(this.personality.get(), 'serio').nome}. Hoje você tem ${hoje.length}. Aviso ${this.store.get().agendaAvisoMin} min antes.`;
     }
     if (/\b(desconecta|desliga|remove|tira)\w* (a |minha |o )?(google |icloud )?(agenda|calendario|icloud)\b|\bdisconnect (my )?calendar\b/.test(n)) {
-      this.store.update({ agendaUrl: '' });
-      await this.onCalendarDisconnect?.();
+      if (this.onCalendarDisconnect) await this.onCalendarDisconnect();
+      else this.store.update({ agendaUrl: '' });
       this.calendar = { events: [], error: null, lastSync: 0, synced: false, state: 'disconnected', configured: false };
       return 'Agenda desconectada. Seus calendários e compromissos foram preservados.';
     }
     const conectar = /\b(conecta|conectar|integra|integrar|liga|ligar|configura|configurar|vincula|vincular)\w* (a |minha |o |meu |com a |com o |com )?(google |icloud |apple )?(agenda|calendario|google calendar|icloud|calendario do iphone)\b|\bconnect (my )?(google |icloud |apple )?calendar\b/.test(n);
     const icloud = /\b(icloud|iphone|apple|ipad|mac)\b/.test(n);
     if (conectar && icloud) {
-      if (this.onCalendarDisconnect) return 'Abra Configurações → Agenda iCloud. Informe seu ID Apple e uma senha específica de aplicativo nos campos seguros; não mande senha no chat. Eu descubro os calendários e só leio os compromissos. O link de Calendário Público continua compatível, mas não é necessário para a conexão autenticada.';
       return [
         'iCloud, beleza. É rápido:',
         '1) No iPhone, abre o app Calendário e toca em "Calendários" lá embaixo.',
@@ -3288,7 +3287,7 @@ export class Companion {
       const status = query.kind === 'status';
       if (this.calendar.state === 'syncing') return 'Estou sincronizando sua agenda. Ainda não confirmei os compromissos.';
       if (!status && this.onCalendarSync && (!this.calendar.synced || this.dateNow().getTime() - this.calendar.lastSync > 2 * 60e3)) await this.onCalendarSync(query);
-      if (this.calendar.error || this.calendar.state === 'error') return `A consulta da agenda falhou. ${this.calendar.error === 'auth' ? 'A autorização precisa ser renovada nas Configurações.' : 'Não consegui obter uma consulta válida agora.'}${this.calendar.lastSync ? ` Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.` : ''} Não vou dizer que está vazia sem confirmar.`;
+      if (this.calendar.error || this.calendar.state === 'error') return `A consulta da agenda falhou. ${this.calendar.error === 'auth' ? 'Confira se o link compartilhado continua disponível.' : 'Não consegui obter uma consulta válida agora.'}${this.calendar.lastSync ? ` Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.` : ''} Não vou dizer que está vazia sem confirmar.`;
       if (!this.calendar.synced) return 'A agenda foi configurada, mas ainda não consegui concluir uma sincronização. Não tenho compromissos confirmados.';
       if (status) return `Sua agenda está conectada e a consulta foi concluída. Última sincronização válida: ${new Date(this.calendar.lastSync).toLocaleString('pt-BR')}.`;
       let found;
