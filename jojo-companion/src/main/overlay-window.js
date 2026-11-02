@@ -59,6 +59,8 @@ export class OverlayWindow {
     win.setMenu(null);
     win.on('blur', () => this.onBlur && this.onBlur());
     win.webContents.on('render-process-gone', (_e, details) => {
+      if (this.win !== win) return;
+      this._disconnectRenderer();
       this.log('error', `Renderer do overlay encerrou: ${details.reason}`);
       this.onCrash && this.onCrash(details);
     });
@@ -75,10 +77,8 @@ export class OverlayWindow {
     win.on('session-end', () => this.onSessionEnd && this.onSessionEnd());
     win.webContents.on('will-navigate', (e) => e.preventDefault());
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-    win.webContents.on('did-finish-load', () => {
-      this.ready = true;
-      if (this.queuedState) this.render(this.queuedState);
-    });
+    // Apenas jojo:renderer-ready confirma que os assets e os listeners de
+    // desenho já foram preparados; did-finish-load ainda pode ser cedo demais.
     win.loadFile(this.htmlPath);
   }
 
@@ -209,19 +209,26 @@ export class OverlayWindow {
     return { x: this.bounds.x + p.x, y: this.bounds.y + p.y };
   }
 
-  recreate() {
+  _disconnectRenderer() {
+    this.ready = false;
     for (const done of this.pendingAnimations.values()) done(false);
     this.pendingAnimations.clear();
+  }
+
+  recreate() {
+    this._disconnectRenderer();
     this.queuedState = null;
     try {
       if (this.alive) this.win.destroy();
     } catch {
       /* ignora */
     }
-    this.ready = false;
     this.mouseMode = 'passthrough';
     this._create();
-    if (this.visible) this.win.once('ready-to-show', () => this.show());
+    const recreated = this.win;
+    if (this.visible) recreated.once('ready-to-show', () => {
+      if (this.win === recreated && this.visible) this.show();
+    });
   }
 
   destroy() {

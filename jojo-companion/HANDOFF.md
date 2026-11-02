@@ -33,6 +33,34 @@ Ensaio real ampliado a 32 engine +12 Central, sem remover os 31 casos existentes
 Próximo: diagnóstico de interface/ícones (sem repetir medição), conversa real,
 ler todas as saídas, importar os ícones e só então rodar o pipeline integral.
 
+### Diagnósticos seguintes e correções verificadas
+
+Fonte `1613989`, interfaces **41483917417**: 13/14 passaram, incluindo recuperação
+do renderer, os três comandos e fullscreen físico a 150%. Única falha no preparo
+da fixture Steam, antes de abrir o aplicativo: cópia presumiu `electron.exe`.
+Corrigido para usar o caminho real do pacote, com cliente Unicode no Registro e
+biblioteca em outra unidade. Ícones exportados nesse Windows foram importados e
+inspecionados; hash do rig normalizado para LF, sem alterar a imagem.
+
+Conversa real **41483923275**: 31/32 engine passaram; Central não executou porque
+o modelo negou as pernas. Prompt reforça os fatos do personagem antropomórfico
+apenas em perguntas sobre sua anatomia. O verificador agora aceita a negação
+correta de cauda. Repetir inferência real e ler todas as respostas antes do build.
+
+Revisão adicional corrigiu estado fantasma após reset de fuga, corrida entre
+recriação/ocultação da janela e pedido antigo atrás da fila de conversa. Renderer
+só fica pronto após o handshake dos assets; carregamento aguarda na fila limitada.
+Inventário Steam incompleto preserva jogos conhecidos como desconhecidos, invalida
+caches/amostras e pausa XP até recuperar. Fullscreen considera todos os monitores
+integralmente cobertos, mesmo se o maior não estiver coberto. Comparação de caminhos
+Steam usa cache normalizado: benchmark puro Node, 5.000 jogos ×300 processos,
+2.796→56 ms (host Linux; não equivale a medição de desempenho Windows).
+
+Estado local após correções: **445/445 unitários**, zero pulos, Node22.23.4;
+lint210 arquivos, actionlint e diff-check aprovados. Próximo: novos diagnósticos
+Windows de interface e conversa, depois todos os gates oficiais no mesmo commit.
+Nenhuma release nova publicada; as 19 releases existentes permanecem preservadas.
+
 ## Recuperação do ambiente — 02/11/2026
 
 Novo executor conectado, terminal/Git/rede funcionais. Checkout limpo recuperado

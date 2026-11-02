@@ -24,9 +24,13 @@ function registryFixture(directory) {
   return restore;
 }
 test('Steam Windows: inventário real por arquivos, cliente fechado/aberto/encerrado e webhelper não é Steam nem jogo', { timeout: 120000 }, async () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-steam-native-'));
-  const client = path.join(root, 'Cliente personalizado áé'), library = path.join(root, 'Biblioteca secundária'), fixture = path.join(root, 'fixture');
-  fs.cpSync(path.dirname(electron), client, { recursive: true }); fs.renameSync(path.join(client, 'electron.exe'), path.join(client, 'steam.exe')); fs.copyFileSync(path.join(client, 'steam.exe'), path.join(client, 'steamwebhelper.exe'));
+  const temp = path.join(process.env.LOCALAPPDATA || os.tmpdir(), 'Temp'); fs.mkdirSync(temp, { recursive: true });
+  const root = fs.mkdtempSync(path.join(temp, 'jojo-steam-native-'));
+  const client = path.join(root, 'Cliente personalizado áé'), library = fs.mkdtempSync(path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'jojo-biblioteca-')), fixture = path.join(root, 'fixture');
+  fs.mkdirSync(client, { recursive: true }); fs.cpSync(path.dirname(electron), client, { recursive: true });
+  // Copia pelo caminho real fornecido pelo pacote, sem presumir o nome do binário
+  // no diretório copiado. O cliente de fixture ainda é executado no caminho Unicode.
+  fs.copyFileSync(electron, path.join(client, 'steam.exe')); fs.copyFileSync(electron, path.join(client, 'steamwebhelper.exe'));
   fs.mkdirSync(path.join(client, 'steamapps'), { recursive: true }); fs.mkdirSync(path.join(library, 'steamapps/common/Fixture instalada'), { recursive: true }); fs.mkdirSync(fixture);
   fs.writeFileSync(path.join(client, 'steamapps/libraryfolders.vdf'), `"libraryfolders" { "1" { "path" ${JSON.stringify(library)} } }`);
   fs.writeFileSync(path.join(library, 'steamapps/appmanifest_123456.acf'), '"AppState" { "appid" "123456" "name" "Fixture instalada" "installdir" "Fixture instalada" "StateFlags" "4" }');
@@ -49,8 +53,9 @@ test('Steam Windows: inventário real por arquivos, cliente fechado/aberto/encer
     await central.locator('#steamStatus button').click(); await waitFor(main.app, () => !globalThis.__jojo.steamService.snapshot().scanning);
     assert.equal((await main.app.evaluate(() => globalThis.__jojo.steamService.snapshot())).count, 1);
     assert.equal(main.errors.length, 0);
+    console.log(`JOJO_STEAM_EVIDENCE:${JSON.stringify({ installed: true, unicodeRegistry: true, helperIgnored: true, states: ['closed', 'open', 'closed'], differentVolumes: path.parse(client).root.toLowerCase() !== path.parse(library).root.toLowerCase(), fixtureGameFound: true })}`);
   } finally {
     if (steam) await steam.close().catch(() => {}); if (helper) await helper.close().catch(() => {});
-    try { if (main) await quit(main.app); } finally { restoreRegistry(); fs.rmSync(root, { recursive: true, force: true }); }
+    try { if (main) await quit(main.app); } finally { restoreRegistry(); fs.rmSync(root, { recursive: true, force: true }); fs.rmSync(library, { recursive: true, force: true }); }
   }
 });

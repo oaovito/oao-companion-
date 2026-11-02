@@ -9,6 +9,7 @@ const MESSAGES = {
   animation_busy: 'Aguardo terminar a atividade, o movimento ou a animação atual para encenar.',
   cooldown: 'Essa cena acabou de passar. Escolhe outra na Coleção; meu repertório não é um botão de repetir.',
   missing_asset: 'O desenho dessa cena não foi encontrado no catálogo. Não consigo encenar agora.',
+  renderer_loading: 'O desenho está sendo preparado ou recuperado. Vou aguardar ele ficar pronto.',
   renderer_error: 'O desenho não respondeu. A cena não foi confirmada; você pode tentar novamente.',
   storage_error: 'A cena foi desenhada, mas não consegui confirmar sua memória no disco.',
   clock_error: 'O relógio mudou para trás. Não consigo confirmar o intervalo dessa cena agora.',
@@ -16,7 +17,8 @@ const MESSAGES = {
   expired: 'O pedido de cena expirou enquanto o contexto estava ocupado. Pode pedir de novo.',
   cancelled: 'A cena pendente foi cancelada porque o contexto mudou.',
 };
-export function createLivingService({ userData, companion, store, items, log = () => {}, refreshContext = null, hasAnimation = () => true, confirmAnimation = async () => true }) {
+const RETRYABLE = new Set(['animation_busy', 'fullscreen_blocked', 'renderer_loading']);
+export function createLivingService({ userData, companion, store, items, log = () => {}, refreshContext = null, hasAnimation = () => true, rendererReady = () => true, confirmAnimation = async () => true }) {
   const disk = new AtomicState(path.join(userData, 'living-interactions.json'), { defaults: emptyScenes, validate: validateScenes, log });
   const model = new LivingInteractions({ items, state: disk.load(), save: state => disk.write(state), rng: companion.rng });
   const queue = []; let timer = null, running = false, disposed = false, generation = 0, last = null;
@@ -28,6 +30,7 @@ export function createLivingService({ userData, companion, store, items, log = (
     if (companion.fullscreenHidden) return 'fullscreen_blocked';
     if (!companion.started || companion.quitting || companion.userHidden || companion.lolHidden) return 'hidden';
     if (companion.suspended || companion.dragging || ['fleeing', 'hidden'].includes(companion.avoid.state) || ['flee', 'hidden', 'dragged', 'goodbye', 'gone', 'avc'].includes(companion.behavior.state)) return 'animation_busy';
+    if (!rendererReady()) return 'renderer_loading';
     if (!ambient && (companion.game || companion.clock.now() < (companion.emotionalUntil || 0))) return 'animation_busy';
     if (ambient && (!companion._canNag() || companion.game || companion.interaction || companion.bubble || companion.chatQueue || companion.fullscreenIds?.length || queue.length)) return 'animation_busy';
     if (!ambient && companion.behavior.state === 'act' && companion.clock.now() < companion.behavior.cur.phaseEnd) return 'animation_busy';
@@ -43,6 +46,7 @@ export function createLivingService({ userData, companion, store, items, log = (
         const interruption = blocked(item, ambient);
         if (['fullscreen_blocked', 'animation_busy', 'focus_blocked'].includes(interruption) && (companion.fullscreenHidden || companion.focus || companion.work || companion.dragging || ['fleeing', 'hidden'].includes(companion.avoid.state))) return result(interruption, item);
         if (companion.behavior.anim === animation) { companion.behavior.request('idle', { now: companion.clock.now(), force: true }); companion._applyLayout(true); }
+        if (!rendererReady()) return result('renderer_loading', item);
         return result('renderer_error', item);
       }
       if (expectedGeneration !== generation || disposed) return result('cancelled', item);
@@ -65,7 +69,7 @@ export function createLivingService({ userData, companion, store, items, log = (
     try {
       const outcome = await perform(next.item, { expectedGeneration: ticket });
       if (ticket !== generation) return;
-      if (['animation_busy', 'fullscreen_blocked'].includes(outcome.status)) return;
+      if (RETRYABLE.has(outcome.status)) return;
       queue.shift(); last = outcome; notify(outcome);
     } finally { running = false; schedule(); }
   }
@@ -77,18 +81,20 @@ export function createLivingService({ userData, companion, store, items, log = (
     generation++; queue.length = 0;
     if (timer) companion.clock.clearTimeout(timer); timer = null;
   }
-  companion.onSceneChat = text => { if (!model.match(text)) cancel(); };
-  companion.livingChat = async text => {
+  companion.onSceneChat = text => { if (!model.match(text)) cancel(); return generation; };
+  companion.livingChat = async (text, { expectedGeneration = generation } = {}) => {
     const item = model.match(text); if (!item) return null;
-    const requestedGeneration = generation;
+    const requestedGeneration = expectedGeneration;
+    if (requestedGeneration !== generation) return result('cancelled', item);
     if (refreshContext) await refreshContext().catch(() => {});
     if (requestedGeneration !== generation) return result('cancelled', item);
     const immediate = blocked(item, false);
-    if (immediate && !['animation_busy', 'fullscreen_blocked'].includes(immediate)) return result(immediate, item);
+    if (immediate && !RETRYABLE.has(immediate)) return result(immediate, item);
     let outcome;
     if (running || queue.length) outcome = result('animation_busy', item);
     else { running = true; try { outcome = await perform(item); } finally { running = false; schedule(); } }
-    if (['animation_busy', 'fullscreen_blocked'].includes(outcome.status)) {
+    if (requestedGeneration !== generation) return result('cancelled', item);
+    if (RETRYABLE.has(outcome.status)) {
       if (!queue.some(entry => entry.item.id === item.id)) {
         if (queue.length >= 4) return result('animation_busy', item, { message: 'Já tenho quatro cenas aguardando. Espere a fila terminar.' });
         queue.push({ item, expires: companion.clock.now() + 20000 });

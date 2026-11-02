@@ -89,7 +89,10 @@ export function createFullscreenDetector(log = () => {}) {
     closeDiscord: ({ force = false, signal = null } = {}) => request('closeDiscord', { force: force === true }, 6000, signal),
     brandIcons: () => request('brandIcons', {}, 6000),
     steamRoots: () => request('steamRoots', {}, 4000),
-    setGameInventory(inventory) { state.inventory = inventory; state.child?.postMessage({ type: 'inventory', inventory }); },
+    setGameInventory(inventory) {
+      state.inventory = inventory; samples.invalidate(); state.last = null;
+      state.child?.postMessage({ type: 'inventory', inventory });
+    },
     setOwnHandles(handles) {
       const next = handles.map(String).sort();
       if (JSON.stringify(next) === JSON.stringify(state.own)) return;
@@ -112,9 +115,11 @@ export function createFullscreenDetector(log = () => {}) {
         throw error;
       }
       const extra = { instagram: !!result.instagram, lol: !!result.lol, spotify: result.spotify || null, categoria: result.categoria || null, darkest: result.darkest || null, games: result.games || null };
-      if (!result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
+      // MonitorFromWindow escolhe a maior interseção: a janela pode cobrir outro
+      // monitor menor por inteiro sem cobrir aquele escolhido pelo Windows.
       const occupied = fullscreenPolicy.coveredDisplayIds(result.janela, opts.displayPixels);
       if (occupied.length) return { fullscreenIds: occupied, ...extra };
+      if (!result.fullscreen || !result.monitor) return { fullscreenIds: [], ...extra };
       const d = matchFullscreenDisplay(toDip(result.monitor), displays);
       return { fullscreenIds: d ? [d.id] : [], ...extra };
     },

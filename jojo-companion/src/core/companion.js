@@ -433,7 +433,7 @@ export class Companion {
       this.pos = { x: rect.x, y: rect.y };
       this.mover.stop();
       if (this.behavior.state === 'walk' || this.behavior.state === 'flee') this.behavior.finish(this.behavior.state, this.clock.now());
-      this.avoid.reset();
+      this._resetAvoidance();
       this.log('info', 'Posição ajustada para área válida de monitor');
     }
     this._applyLayout(true);
@@ -460,7 +460,7 @@ export class Companion {
     this.suspended = false;
     const now = this.clock.now();
     this.lastTick = now;
-    this.avoid.reset();
+    this._resetAvoidance(now);
     this.refreshDisplays();
     this._recoverPosition();
     const st = this.behavior.state;
@@ -474,7 +474,7 @@ export class Companion {
     const now = this.clock.now();
     this.visualContext++; this.effect = null; this.layer = null; this.ambientQueue.length = 0; this.movedFor = null;
     if (this.interaction) this.exitInteraction('suspend');
-    this.dragging = null; this.capture = false; this.mover.stop(); this.avoid.reset();
+    this.dragging = null; this.capture = false; this.mover.stop(); this._resetAvoidance(now);
     this.overlay.setMouseMode('passthrough');
     this.behavior.request('idle', { now, force: true });
     if (this.work) this.behavior.request('meditate', { now, force: true });
@@ -716,6 +716,15 @@ export class Companion {
     this.ghost = false;
     this.opacity = 1;
     if (!keepState && this.behavior.state === 'hidden') this.behavior.finish('hidden', now);
+  }
+
+  _resetAvoidance(now = this.clock.now()) {
+    this.avoid.reset();
+    // O controlador e a aparência precisam voltar juntos: após reset não haverá
+    // mais a transição "unhide" que retiraria a ocultação anterior da fuga.
+    this._exitGhost(now);
+    this.opacity = this.work ? this._workOpacity() : 1;
+    if (this.work) this._workFade();
   }
 
   _onArrive(now) {
@@ -1236,7 +1245,7 @@ export class Companion {
 
   async chat(text, conversationId = null) {
     this.visualContext = (this.visualContext || 0) + 1;
-    this.onSceneChat?.(text);
+    const sceneGeneration = this.onSceneChat?.(text);
     const conv = this.conversations.current();
     const cmd = parseCommand(text);
     if (cmd) return this.runCommand(cmd, conv.id, text);
@@ -1247,7 +1256,7 @@ export class Companion {
     if (urgent && this.chatQueue) {
       this.chatEpoch = (this.chatEpoch || 0) + 1;
       this.dialogue.cancelPending?.();
-      const p = this._chat(text, conv, this.chatEpoch);
+      const p = this._chat(text, conv, this.chatEpoch, sceneGeneration);
       this.urgentChat = p;
       try { return await p; }
       finally { if (this.urgentChat === p) this.urgentChat = null; }
@@ -1262,9 +1271,9 @@ export class Companion {
     const anterior = this.chatQueue;
     const start = async () => {
       if (this.urgentChat) await this.urgentChat;
-      return this._chat(text, conv, this.chatEpoch || 0);
+      return this._chat(text, conv, this.chatEpoch || 0, sceneGeneration);
     };
-    const p = anterior ? anterior.catch(() => {}).then(start) : this._chat(text, conv, this.chatEpoch || 0);
+    const p = anterior ? anterior.catch(() => {}).then(start) : this._chat(text, conv, this.chatEpoch || 0, sceneGeneration);
     this.chatQueue = p;
     this.chatsPendentes.set(chave, p);
     try {
@@ -1275,7 +1284,7 @@ export class Companion {
     }
   }
 
-  async _chat(text, conv, epoch = this.chatEpoch || 0) {
+  async _chat(text, conv, epoch = this.chatEpoch || 0, sceneGeneration = undefined) {
     this.noteActivity();
     this.conversations.addMessage(conv.id, 'user', text);
     this.conversations.setStatus(conv.id, 'running');
@@ -1318,7 +1327,7 @@ export class Companion {
       const reply = this.careChat(text); if (reply) return this._quickReply(conv, reply, 'cuidados');
     }
     if (!safety && ciencia !== 'emergencia' && this.livingChat) {
-      const reply = await this.livingChat(text);
+      const reply = await this.livingChat(text, { expectedGeneration: sceneGeneration });
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       if (reply) return { ...this._quickReply(conv, reply.message, 'encenacao'), scene: { status: reply.status, reason: reply.reason || null, queued: !!reply.queued, itemId: reply.itemId } };
     }

@@ -18,14 +18,17 @@ export function scanSteam({ roots = [] } = {}) {
   });
 }
 export function createSteamService({ getDetector, notify = () => {}, scan = scanSteam, extraRoots = [], now = () => Date.now() } = {}) {
-  let inventory = null, scanning = null, lastScan = null, reason = null, sample = null, disposed = false, lastSignature = null, lastNotify = 0;
+  let inventory = null, scanning = null, lastScan = null, reason = null, sample = null, disposed = false, lastSignature = null, lastNotify = 0, scanDiagnostics = [];
+  const diagnostics = () => [...new Set([...(inventory?.diagnostics || []), ...scanDiagnostics])];
+  const detectorInventory = () => ({ roots: [], libraries: [], games: [], ...inventory, known: !!inventory && !reason, diagnostics: diagnostics() });
+  const invalidateSample = () => { sample = { known: false, reason: 'inventory_changed' }; lastSignature = null; };
   const snapshot = () => ({
     status: reason ? 'unavailable' : !inventory || !sample ? 'scanning' : sample?.known === false ? 'unavailable' : sample?.steamRunning ? 'open' : 'closed',
     installed: inventory ? inventory.roots.length > 0 : null,
     libraries: inventory ? inventory.libraries.length : null,
     count: inventory ? inventory.games.length : null, lastScan, checkedAt: sample?.checkedAt || null,
     scanning: !!scanning, reason: reason || (sample?.known === false ? sample.reason : null),
-    diagnostics: inventory?.diagnostics || [],
+    diagnostics: diagnostics(),
     games: (inventory?.games || []).map(game => {
       const process = sample?.games?.find(p => p.appId === game.appId && p.active) || sample?.games?.find(p => p.appId === game.appId);
       return { appId: game.appId, name: game.name, state: reason || !sample || sample.known === false ? 'unknown' : process?.active ? 'active' : process ? 'background' : 'installed' };
@@ -35,14 +38,22 @@ export function createSteamService({ getDetector, notify = () => {}, scan = scan
     if (disposed) return snapshot();
     if (scanning) return scanning;
     scanning = (async () => {
+      let detector, failedDiagnostics = [];
       try {
-        const detector = getDetector();
+        detector = getDetector();
         const roots = await detector?.steamRoots?.().catch(() => []) || [];
         const found = await scan({ roots: [...roots, ...extraRoots] });
         if (disposed) return;
-        inventory = found; reason = null; lastScan = now();
-        detector?.setGameInventory?.(inventory);
-      } catch { reason = 'inventory_unavailable'; lastScan = now(); }
+        if (found.known === false) { failedDiagnostics = found.diagnostics || []; throw new Error('inventory_unavailable'); }
+        inventory = { ...found, known: true }; scanDiagnostics = []; reason = null; lastScan = now();
+        invalidateSample();
+        detector?.setGameInventory?.(detectorInventory());
+      } catch {
+        reason = 'inventory_unavailable'; scanDiagnostics = failedDiagnostics; lastScan = now();
+        invalidateSample();
+        // Mantém os jogos já conhecidos, mas pausa processos/XP até uma leitura completa.
+        if (!disposed) try { detector?.setGameInventory?.(detectorInventory()); } catch { /* detector em recuperação */ }
+      }
       finally { scanning = null; if (!disposed) notify(snapshot()); }
       return snapshot();
     })();
@@ -53,5 +64,5 @@ export function createSteamService({ getDetector, notify = () => {}, scan = scan
       const signature = JSON.stringify([sample.known, sample.reason, sample.steamRunning, sample.games]);
       if (signature !== lastSignature || now() - lastNotify >= 5000) { lastSignature = signature; lastNotify = now(); notify(snapshot()); }
     },
-    inventory: () => inventory, dispose() { disposed = true; } };
+    inventory: detectorInventory, dispose() { disposed = true; } };
 }

@@ -42,37 +42,75 @@ function installedGame(text, file, library) {
 }
 function discoverSteam({ roots = [], readFile, exists, readdir }) {
   const verifiedRoots = [], libraries = new Map(), games = new Map(), diagnostics = new Set();
-  const add = value => { const root = localRoot(value); if (root && libraries.size < 32) libraries.set(root.toLowerCase(), root); };
+  let incomplete = false;
+  const unavailable = reason => { incomplete = true; diagnostics.add(reason); };
+  const add = value => {
+    const root = localRoot(value); if (!root) { unavailable('library_metadata_invalid'); return; }
+    if (!libraries.has(root.toLowerCase()) && libraries.size >= 32) { unavailable('inventory_limit'); return; }
+    libraries.set(root.toLowerCase(), root);
+  };
+  if (roots.length > 32) unavailable('inventory_limit');
   for (const candidate of roots.slice(0, 32)) {
     const root = localRoot(candidate); if (!root) continue;
     if (!exists(path.join(root, 'steam.exe'))) continue;
     verifiedRoots.push(root); add(root);
-    let folders;
+    let folders, metadataFailed = false;
     for (const file of [path.join(root, 'steamapps', 'libraryfolders.vdf'), path.join(root, 'config', 'libraryfolders.vdf')]) {
       if (!exists(file)) continue;
-      try { folders = parseVdf(readFile(file)).libraryfolders; break; } catch { diagnostics.add('library_metadata_invalid'); }
+      let text;
+      try { text = readFile(file); } catch { diagnostics.add('library_unreadable'); metadataFailed = true; continue; }
+      try {
+        folders = parseVdf(text).libraryfolders;
+        if (!folders || typeof folders !== 'object') throw new Error('library_metadata_invalid');
+        break;
+      } catch { folders = null; diagnostics.add('library_metadata_invalid'); metadataFailed = true; }
     }
+    if (metadataFailed) incomplete = true;
     if (folders && typeof folders === 'object') for (const [key, entry] of Object.entries(folders)) if (/^\d+$/.test(key)) add(typeof entry === 'string' ? entry : entry?.path);
   }
   const detected = [];
   for (const library of libraries.values()) {
     const steamapps = path.join(library, 'steamapps'); if (!exists(steamapps)) continue;
     detected.push(library);
-    let entries; try { entries = readdir(steamapps); } catch { diagnostics.add('library_unreadable'); continue; }
-    if (entries.length > 10000) diagnostics.add('inventory_limit');
+    let entries; try { entries = readdir(steamapps); } catch { unavailable('library_unreadable'); continue; }
+    if (entries.length > 10000) unavailable('inventory_limit');
     for (const file of entries.slice(0, 10000).filter(name => /^appmanifest_\d+\.acf$/i.test(name))) {
+      let text;
+      try { text = readFile(path.join(steamapps, file)); } catch { unavailable('manifest_unreadable'); continue; }
+      let game;
       try {
-        const game = installedGame(readFile(path.join(steamapps, file)), file, library);
+        game = installedGame(text, file, library);
+      } catch (error) {
+        if (['metadata_size', 'metadata_depth'].includes(error.message)) unavailable('inventory_limit');
+        else diagnostics.add('manifest_invalid');
+        continue;
+      }
+      try {
         if (exists(game.root)) { if (!games.has(game.appId)) games.set(game.appId, game); }
         else diagnostics.add('game_directory_missing');
-      } catch { diagnostics.add('manifest_invalid'); }
+      } catch { unavailable('library_unreadable'); }
     }
   }
-  return { roots: [...new Set(verifiedRoots)], libraries: detected, games: [...games.values()], diagnostics: [...diagnostics] };
+  return { known: !incomplete, roots: [...new Set(verifiedRoots)], libraries: detected, games: [...games.values()], diagnostics: [...diagnostics] };
 }
 const excluded = /^(?:steam|steamwebhelper|steamservice|gameoverlayui|setup|unins\d*|uninstall|.*(?:crash|launcher|updater|redist|webhelper).*|UnityCrashHandler\d*|easyanticheat.*|beservice)\.exe$/i;
+const gameRoots = new WeakMap();
 function identifyGame(image, games = []) {
   const full = localRoot(image); if (!full || excluded.test(path.basename(full)) || path.extname(full).toLowerCase() !== '.exe') return null;
-  return games.filter(game => within(full, game.root)).sort((a,b) => b.root.length - a.root.length)[0] || null;
+  const normalized = full.toLowerCase(); let found = null, longest = -1;
+  for (const game of games) {
+    if (!game || typeof game !== 'object') continue;
+    let cached = gameRoots.get(game);
+    if (!cached || cached.raw !== game.root) {
+      const root = localRoot(game.root);
+      cached = { raw: game.root, prefix: root ? `${root.toLowerCase()}\\` : null };
+      gameRoots.set(game, cached);
+    }
+    // A normalização remove travessias; o separador impede aceitar pastas irmãs.
+    if (cached.prefix && cached.prefix.length > longest && normalized.startsWith(cached.prefix)) {
+      found = game; longest = cached.prefix.length;
+    }
+  }
+  return found;
 }
 module.exports = { parseVdf, localRoot, within, installedGame, discoverSteam, identifyGame };

@@ -53,7 +53,7 @@ app.whenReady().then(async () => {
   fs.writeFileSync(path.join(OUT, 'tray@2x.png'), pngs[64]);
   fs.writeFileSync(path.join(OUT, 'app.ico'), ico([16, 24, 32, 48, 64, 128, 256].map((s) => ({ size: s, data: pngs[s] }))));
   fs.writeFileSync(path.join(OUT, 'tray.ico'), ico([16, 20, 24, 32, 40, 48, 64].map((s) => ({ size: s, data: pngs[s] }))));
-  const metadata = { origin: 'Exportação do rig histórico restaurado pelo Chromium Windows, sem redesenho.', source: '../character/jojo.rig.json', sha256: createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'assets/character/jojo.rig.json'))).digest('hex'), anatomy: 'original-legged-v1', sizes };
+  const metadata = { origin: 'Exportação do rig histórico restaurado pelo Chromium Windows, sem redesenho.', source: '../character/jojo.rig.json', sha256: createHash('sha256').update(fs.readFileSync(path.join(ROOT, 'assets/character/jojo.rig.json'), 'utf8').replace(/\r\n/g, '\n')).digest('hex'), anatomy: 'original-legged-v1', sizes };
   fs.writeFileSync(path.join(OUT, 'source.json'), JSON.stringify(metadata, null, 2) + '\n');
   if (process.env.GITHUB_ACTIONS) {
     const files = Object.fromEntries([...sizes.map(n => `app-${n}.png`), 'app.png', 'tray.png', 'tray@2x.png', 'app.ico', 'tray.ico', 'source.json'].map(name => { const data = fs.readFileSync(path.join(OUT, name)); return [name, { sha256: createHash('sha256').update(data).digest('hex'), base64: data.toString('base64') }]; }));

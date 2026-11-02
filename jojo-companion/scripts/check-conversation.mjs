@@ -94,7 +94,7 @@ for (const c of cases) {
   const text = reply.text.replace(/\{(\w+)\}/g, (m, key) => vars[key] || m);
   engine.history.at(-1).text = text;
   const errors = [erroDeCoerencia(c.text, text), c.model && reply.intent !== 'ia' && `modelo não respondeu (${reply.intent})`, c.pattern && !c.pattern.test(text) && 'assunto esperado ausente'].filter(Boolean);
-  if (/Você tem pernas ou cauda/.test(c.text) && /sem pernas|n[aã]o (?:tenho|tem|possuo) pernas|tenho (?:uma )?cauda/i.test(text)) errors.push('contradisse o modelo original restaurado');
+  if (/Você tem pernas ou cauda/.test(c.text) && /sem pernas|n[aã]o (?:tenho|tem|possuo) pernas|(?<!não )(?<!nao )(?<!nunca )\b(?:tenho|possuo) (?:uma )?cauda/i.test(text)) errors.push('contradisse o modelo original restaurado');
   if (c.action && reply.action !== c.action) errors.push(`expressão ${reply.action} não corresponde a ${c.action}`);
   if (c.forbiddenActions?.includes(reply.action)) errors.push(`expressão ${reply.action} contradiz a recusa`);
   if (/Qual cor/.test(c.text) && /n[aã]o (é|e|foi) verde/i.test(text)) errors.push('contradisse a preferência explicitamente informada');

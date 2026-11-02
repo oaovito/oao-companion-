@@ -36,14 +36,30 @@ test('correções Windows: três cenas pela Central, fullscreen real/saída, jan
     await app.evaluate(() => globalThis.__jojo.restartDetector());
     await waitFor(app, () => globalThis.__jojo.fullscreenInfo().last?.reason === 'own_window', 12000);
     await app.evaluate(() => globalThis.__jojo.companion.onSceneChat('Outra conversa.'));
-    const replacement = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.overlay.win.webContents.forcefullyCrashRenderer());
+    const recoveryTarget = await app.evaluate(() => globalThis.__jojo.makeClickTarget({ x: 0, y: 0, width: 500, height: 400 }, { fullscreen: true }));
+    await waitFor(app, () => globalThis.__jojo.companion.fullscreenHidden);
+    const pending = await app.evaluate(() => globalThis.__jojo.companion.livingChat('Encena Médico'));
+    assert.equal(pending.status, 'queued'); assert.equal(pending.reason, 'fullscreen_blocked');
+    const replacement = app.waitForEvent('window');
+    const disconnected = await app.evaluate(() => new Promise(resolve => {
+      const overlay = globalThis.__jojo.overlay;
+      overlay.win.webContents.once('render-process-gone', () => resolve({ ready: overlay.ready, queued: globalThis.__jojo.livingService.snapshot().queued }));
+      overlay.win.webContents.forcefullyCrashRenderer();
+    }));
+    assert.equal(disconnected.ready, false); assert.ok(disconnected.queued.includes('living_medico'));
+    await app.evaluate((_electron, id) => globalThis.__jojo.closeTarget(id), recoveryTarget); await central.bringToFront();
     const restored = await replacement; restored.on('pageerror', error => errors.push(error.message));
     await restored.waitForFunction(() => !!window.__jojoRenderer.state);
-    await sleep(1500); await central.bringToFront();
-    const result = await app.evaluate(() => globalThis.__jojo.companion.livingChat('Encena Médico'));
-    assert.ok(['executed', 'queued'].includes(result.status), JSON.stringify(result));
     await waitFor(app, () => globalThis.__jojo.livingService.snapshot().last?.itemId === 'living_medico' && globalThis.__jojo.livingService.snapshot().last?.status === 'executed', 22000);
     await restored.waitForFunction(() => window.__jojoRenderer.anim?.includes('living_medico'));
+    const concealedWindow = app.waitForEvent('window');
+    const concealed = await app.evaluate(() => new Promise(resolve => {
+      const { overlay, companion } = globalThis.__jojo;
+      overlay.recreate(); companion.onRendererRestart(); companion.setVisible(false);
+      overlay.win.once('ready-to-show', () => resolve({ visible: overlay.visible, windowVisible: overlay.win.isVisible() }));
+    }));
+    const concealedPage = await concealedWindow; concealedPage.on('pageerror', error => errors.push(error.message));
+    assert.deepEqual(concealed, { visible: false, windowVisible: false }, 'ocultar durante a recuperação continua valendo quando o renderer carrega');
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });

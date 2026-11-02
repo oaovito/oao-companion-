@@ -19,7 +19,7 @@ const { verifyDarkestImage } = require('../core/darkest-process.cjs');
 const { classifyFullscreen, windowHasCaption } = require('../core/fullscreen-policy.cjs');
 const { identifyGame } = require('../core/steam-library.cjs');
 const winPath = require('node:path').win32;
-let gameInventory = { roots: [], games: [] };
+let gameInventory = { known: false, roots: [], games: [] };
 let gameScanAt = 0, gameKnown = [], rejectedDarkest = false;
 const fs = require('node:fs');
 const { isDiscord, brandFor } = require('../core/windows-app-policy.cjs');
@@ -150,6 +150,8 @@ function gameFor(info) {
   return game ? { appId: game.appId, pid: info.pid, processKey: info.key } : null;
 }
 function detectGames() {
+  if (gameInventory.known === false) return { known: false, reason: 'inventory_unavailable', checkedAt: Date.now(),
+    darkest: { known: false, reason: 'inventory_unavailable' } };
   const at = Date.now(), hwnd = api.GetForegroundWindow();
   const pid = [0]; if (hwnd && api.IsWindowVisible(hwnd) && !api.IsIconic(hwnd) && !own.has(String(hwnd))) api.GetWindowThreadProcessId(hwnd, pid);
   const active = gameFor(pid[0] ? processInfo(pid[0]) : null);
@@ -340,7 +342,8 @@ if (process.parentPort) process.parentPort.on('message', async (e) => {
     } else if (msg.type === 'own') {
       own.clear(); for (const handle of msg.own || []) own.add(String(handle));
     } else if (msg.type === 'inventory') {
-      gameInventory = msg.inventory || { roots: [], games: [] }; gameScanAt = 0;
+      gameInventory = msg.inventory || { known: false, roots: [], games: [] };
+      gameScanAt = 0; gameKnown = []; rejectedDarkest = false; darkestProofs.clear();
     } else if (msg.type === 'steamRoots') {
       const roots = knownProcesses(true).filter(p => /^steam\.exe$/i.test(p.name)).map(p => processInfo(p.pid)).filter(p => p && /^steam\.exe$/i.test(winPath.basename(p.image))).map(p => winPath.dirname(p.image));
       process.parentPort.postMessage({ type: 'result', id: msg.id, result: roots.slice(0, 8) });

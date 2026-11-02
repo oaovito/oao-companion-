@@ -75,7 +75,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
-  const identidade = `You are ${nome}, a male virtual shark companion with a muscular body with arms and legs, and no tail, speaking directly to ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Your goal is to make her smile and keep her company. Reply in ${lingua}.`;
+  const identidade = `You are ${nome}, a male anthropomorphic cartoon shark with a muscular body with arms and legs, and no tail, speaking directly to ${pessoa} (${profile.nomeBrincadeira || 'Manu'}). Your goal is to make her smile and keep her company. Reply in ${lingua}.`;
   const linhas = tecnico ? [
     `Reply in ${lingua}. Explain accurately, speech only, no preamble or jokes.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
@@ -85,6 +85,9 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     'Humor is optional, not a duty in every reply. Never threaten, insult or scold her. Accept corrections without blaming her. Do not turn ordinary conversation into orders to work.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
+  const body = '(?:pernas?|pés|pes|braços?|bracos?|mãos|maos|cauda|corpo|anatomia|legs?|feet|arms?|hands?|tail|body)';
+  const ownBody = new RegExp(`\\b(?:(?:voc[eê]|vc|jojo) (?:não |nao )?(?:tem|possui) (?:duas? |dois |uma? )?${body}|(?:seus|suas|teus|tuas|your) ${body}|(?:do you have|you have) (?:two |a |any )?${body})\\b`, 'i').test(text);
+  if (ownBody) linhas.push('Fatos do seu desenho: JoJo tem duas pernas com pés e dois braços musculosos com mãos; NÃO tem cauda. Esse é o personagem antropomórfico desenhado, não um tubarão real. Responda sobre essa anatomia estabelecida, com naturalidade; não negue as próprias pernas.');
   if ((!tecnico || conversaPessoal(text)) && /\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
   if (correcaoPessoal(text)) linhas.push('She is correcting her own wording. Briefly acknowledge and repeat the corrected wording explicitly (the affirmative part before "não/not"). Do not question her certainty or memory. Acknowledging her words does not confirm the truth of medical claims.');
   const correction = termosDaCorrecao(text);

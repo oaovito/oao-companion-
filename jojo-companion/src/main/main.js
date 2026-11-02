@@ -501,7 +501,7 @@ function main() {
     app.on('before-quit', () => focusApps.close());
     livingService = createLivingService({ userData, companion, store, items: readJSON('assets/catalog/living-interactions.json').itens, log,
       refreshContext: () => sampleEnvironment(true), hasAnimation: name => !!assets.animations.animations[name],
-      confirmAnimation: name => overlay.confirmAnimation(name) });
+      rendererReady: () => overlay.alive && overlay.ready, confirmAnimation: name => overlay.confirmAnimation(name) });
     steamService = createSteamService({ extraRoots: TEST && process.env.JOJO_TEST_STEAM_ROOT ? [process.env.JOJO_TEST_STEAM_ROOT] : [], getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; }, notify: data => appWin.send('app:steam-update', data) });
     // Antes de fechar as janelas: o X do painel apenas oculta, mas nunca pode vetar app.quit.
     app.on('before-quit', () => todoService.close());

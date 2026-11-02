@@ -29,5 +29,5 @@ test('Darkest: cinco animações distintas possuem adereços desenhados e gatilh
 test('ícones: fonte declarada é o mesmo rig restaurado, sem reintroduzir o desenho rejeitado', () => {
   const metadata = read('icons/source.json');
   assert.equal(metadata.anatomy, 'original-legged-v1'); assert.equal(metadata.source, '../character/jojo.rig.json');
-  assert.equal(metadata.sha256, createHash('sha256').update(fs.readFileSync(new URL('../../assets/character/jojo.rig.json', import.meta.url))).digest('hex'));
+  assert.equal(metadata.sha256, createHash('sha256').update(fs.readFileSync(new URL('../../assets/character/jojo.rig.json', import.meta.url), 'utf8').replace(/\r\n/g, '\n')).digest('hex'));
 });
