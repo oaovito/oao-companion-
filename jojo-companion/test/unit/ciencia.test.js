@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeEnv, chatAdv, loadJSON } from './helpers.js';
-import { modoCiencia } from '../../src/core/ciencia.js';
+import { modoCiencia, ABERTURAS } from '../../src/core/ciencia.js';
 import { buildSystemPrompt } from '../../src/core/dialogue/llm-provider.js';
 
 test('detecção: acadêmico, pessoal e emergência; academia/whey não ativam', () => {
@@ -28,11 +28,11 @@ function started() {
   return e;
 }
 
-test('companion: pergunta de ciência põe óculos e dentes, abre com "Erm" e tira depois; emergência → 192', async () => {
+test('companion: pergunta de ciência põe óculos e dentes, mantém abertura científica e tira depois; emergência → 192', async () => {
   const e = started();
   e.companion.enterInteraction('test');
   const r = await chatAdv(e, 'o que é potencial zeta?');
-  assert.match(r.text, /^(Erm|Finalmente|Vamos separar)/);
+  assert.match(r.text, /^(Erm|Vamos)/);
   e.companion._applyLayout(true);
   assert.equal(e.overlay.state.outfit.prop_oculosNerd, 1);
   assert.equal(e.overlay.state.outfit.prop_dentesNerd, 1);
@@ -50,6 +50,24 @@ test('companion: pergunta de ciência põe óculos e dentes, abre com "Erm" e ti
   await chatAdv(e, 'qual a fisiopatologia da asma?');
   e.companion._applyLayout(true);
   assert.equal(e.overlay.state.outfit, null);
+});
+
+test('abertura acrescentada após o engine preserva conteúdo e visual sem depreciar a pergunta entregue', async () => {
+  const input = 'o que é diabetes tipo 2?';
+  const answer = 'Diabetes tipo 2 envolve resistência à insulina e pode ter produção insuficiente desse hormônio.';
+  for (const [index, opening] of ABERTURAS.entries()) {
+    const e = started();
+    e.companion.rng = () => (index + 0.5) / ABERTURAS.length;
+    e.companion.dialogue.llm = { isAvailable: async () => true, reply: async () => ({ text: answer, action: 'lecture' }) };
+    const delivered = await chatAdv(e, input);
+    assert.equal(delivered.intent, 'ia');
+    assert.equal(delivered.text, `${opening} ${answer}`);
+    assert.doesNotMatch(delivered.text, /pergunta.{0,40}(?:neur[oô]nios|burra|idiota|intelig[eê]ncia)/i);
+    assert.equal(e.companion.conversations.current().messages.at(-1).text, delivered.text);
+    e.companion._applyLayout(true);
+    assert.equal(e.overlay.state.outfit.prop_oculosNerd, 1);
+    assert.equal(e.overlay.state.outfit.prop_dentesNerd, 1);
+  }
 });
 
 test('prompt técnico: especialista rigoroso, sem inventar, sério em saúde pessoal', () => {

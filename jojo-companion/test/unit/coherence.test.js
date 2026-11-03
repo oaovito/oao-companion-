@@ -48,6 +48,12 @@ test('lembrança e correção não viram teste de atenção ou ironia da memóri
   assert.equal(erroDeCoerencia('Which color did I mention?', 'Green. Just testing whether you were paying attention.'), 'condescendência sobre memória ou atenção');
   assert.equal(erroDeCoerencia('Qual cor eu acabei de dizer que prefiro?', 'Verde. Você repete muito, Manu.'), 'condescendência sobre memória ou atenção');
   assert.equal(erroDeCoerencia('Which animal did I just mention?', "A cat, Manu. Don't overthink it."), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia(correction, 'Verde, certo. Não confunda a minha memória com a sua, então.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia('I said green, not blue.', 'Green. Do not confuse my memory with yours.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia(correction, 'Verde. Minha memória de peixe deu uma volta.'), null, 'brincar com a própria memória sem compará-la à usuária continua permitido');
+  assert.equal(erroDeCoerencia(correction, 'Minha memória guardou sua preferência: verde.'), null, 'os dois possessivos sem comparação não são condescendência');
+  assert.equal(erroDeCoerencia('I said green, not blue.', 'My memory kept your preference: green.'), null);
+  assert.equal(erroDeCoerencia(correction, 'Verde. Minha memória é melhor do que a sua.'), 'condescendência sobre memória ou atenção');
   assert.equal(erroDeCoerencia(correction, 'Verde. Eu que troquei as coisas.'), null);
   assert.equal(erroDeCoerencia('Como evitar repetir frases no texto?', 'Você repete muito a mesma ideia; tente juntar os trechos.'), null, 'analisar repetição quando foi o assunto continua permitido');
   assert.equal(erroDeCoerencia('Which animal did I mention?', 'A cat. My memory earns its fish today.'), null, 'o personagem pode brincar consigo mesmo');
@@ -106,6 +112,8 @@ test('correcao vai ao modelo como esclarecimento explicito, preservando a mensag
   assert.match(calls[0].messages[0].content, /does not confirm the truth of medical claims/);
   assert.match(calls[0].messages[0].content, /affirmed="lilás"/);
   assert.match(calls[0].messages[0].content, /rejected="rosa"/);
+  assert.match(calls[0].messages[0].content.split('\n').at(-1), /Acknowledge only the affirmed wording briefly, then stop/);
+  assert.doesNotMatch(calls[0].messages[0].content, /Do not question her certainty or memory|Do not comment on her memory or intelligence/);
   assert.equal(calls[0].messages.at(-1).content, input);
   assert.ok(calls[0].messages.some((m) => m.content === history[0].text));
 });

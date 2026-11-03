@@ -32,5 +32,5 @@ export function modoCiencia(text) {
 export const RESPOSTA_EMERGENCIA = 'Emanuele, isso pode ser emergência. Liga agora pro SAMU no 192 (ou vai ao pronto-socorro). Não espera passar sozinho.';
 
 // Aberturas e fechos do modo "Erm, ackshually" (só em assunto acadêmico).
-export const ABERTURAS = ['Erm, na verdade...', 'Erm, tecnicamente...', 'Finalmente uma pergunta que exige neurônios.', 'Vamos separar fato de achismo.'];
+export const ABERTURAS = ['Erm, na verdade...', 'Erm, tecnicamente...', 'Vamos aos fatos.', 'Vamos separar fato de achismo.'];
 export const FECHOS = ['A ciência venceu novamente.', 'Precisão continua sendo uma virtude.', 'Pronto. Agora é cientificamente defensável.'];

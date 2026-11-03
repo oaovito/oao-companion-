@@ -8,6 +8,7 @@
   Ícones e descrição da conversa passam a usar o mesmo personagem restaurado.
 - Conversa rejeita insultos dirigidos à usuária ou à pergunta, ironias observadas
   sobre memória/atenção e preferências atribuídas sem contexto fornecido por ela.
+  Abertura científica deixa de depreciar perguntas anteriores.
 - Detecção de tela cheia usa a janela ativa e geometria física; estados globais
   de notificações/apresentação não bloqueiam uma janela comum ou a Central.
 - Todas as janelas próprias são reconhecidas; amostras antigas são descartadas

@@ -105,6 +105,9 @@ export function erroDeCoerencia(input, output, history = []) {
   const personalInsult = /\b(?:voce|vc|tu) (?:e|eh|es|parece) (?:muito |uma? )?(?:idiota|burr[oa]|estupid[oa])\b|\byou (?:are|re) (?:so |an? )?(?:stupid|dumb|an idiot)\b/.test(r);
   if (questionInsult || personalInsult) return 'insulto à usuária ou à pergunta';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
+  const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
+    && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);
+  if (recall && memoryComparison) return 'condescendência sobre memória ou atenção';
   if (recall && /\b(?:que bom que voce (?:se )?lembra|ainda bem que voce (?:se )?lembra|good (?:that )?you remember|(?:so |apenas )?(?:estava )?testando se (?:voce )?(?:esta )?prestando atencao|testing (?:if|whether) you (?:are |were )?paying attention|(?:voce|vc|tu) (?:se )?repete(?: muito)?|you keep repeating|(?:don t|do not) overthink(?: it|this)?|nao complique)\b/.test(r)) return 'condescendência sobre memória ou atenção';
   const preference = q.match(/\b(?:minha|meu) [a-z0-9 ]{1,50} (?:favorit[oa]|preferid[oa]) (?:e|eh) (.+)$/)?.[1]
     || q.match(/\bmy (?:favou?rite|preferred) [a-z0-9 ]{1,50} is (.+)$/)?.[1];
