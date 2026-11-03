@@ -1,5 +1,5 @@
 name: JoJo — conversa real no Windows (avaliação)
-run-name: JoJo conversa — ${{ (inputs.ui_only || contains(github.event.head_commit.message, '[jojo-ui]')) && 'somente Central' || 'engine e Central' }} — ${{ github.ref_name }}
+run-name: JoJo conversa — ${{ contains(github.event.head_commit.message, '[jojo-net]') && 'rede do modelo' || (inputs.ui_only || contains(github.event.head_commit.message, '[jojo-ui]')) && 'somente Central' || 'engine e Central' }} — ${{ github.ref_name }}
 
 on:
   push:
@@ -19,6 +19,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  rede-modelo:
+    if: ${{ github.repository == 'oaovito/oao-companion-' && github.event_name == 'push' && contains(github.event.head_commit.message, '[jojo-net]') }}
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - name: Verificar manifesto e transferencia parcial sem baixar o modelo inteiro
+        working-directory: jojo-companion
+        run: node scripts/check-model-network.mjs
+
   conversa-real:
     # Avaliacao opcional somente por dispatch; o pipeline completo ja executa o ensaio.
     if: ${{ github.repository == 'oaovito/oao-companion-' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[jojo-ui]') || contains(github.event.head_commit.message, '[jojo-qa]')) }}

@@ -16,6 +16,33 @@ O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
 ### Retomada em 03/11/2026 — ainda sem publicação
 
+Atualização: **459/459 unitários** locais, lint220 e actionlint aprovados. O run
+**41724376443** falhou ANTES dos cenários: `/api/pull` excedeu660segundos baixando
+os pesos. Engine e Central NÃO executaram. Runtime Ollama baixou/iniciou; não é
+evidência de falha de resposta do JoJo. Próximo diagnóstico `[jojo-net]` verifica
+manifesto e Range de1MiB no Windows em até45s de rede, evitando outro download
+completo enquanto o bloqueio não estiver esclarecido. Evidência em
+`docs/evidencias/model-download-41724376443.json`.
+O pipeline integral agora aguarda registro técnico da revisão das44falas em
+`semantic-review.json` na branch de evidência (mesmo SHA/run/tentativa/digest),
+antes do build. Codex registra a leitura; não exige confirmação manual da usuária.
+Rejeição, ausência em5min ou falha de integridade bloqueiam publicação.
+
+Estado mais recente: `6496fe664976bab3ddb9a95e7923cdcb27077fab`, branch local e
+remota em sincronia por Git Data API/CAS; checkout limpo. **454/454 unitários**
+locais passaram, lint218. Token do `gh` expirou (401); conector GitHub continua
+com escrita. Não substituir credenciais injetadas nem pedir comandos manuais.
+UI isolada **41660524964** reprovou no2º caso por timeout comprovado: o caminho
+`ui_only` omitia a pré-carga feita pelo engine; modelo frio mais `baseOverride`
+consumiu a janela de resposta. Pré-carga igual à original adicionada, sem aumentar
+timeout. Novo ensaio **41724376443** em execução, somente12 cenários da Central.
+`[jojo-ui]` em commit roda esse diagnóstico; `[jojo-qa]` roda32engine+12Central.
+São parciais de pré-build: o Windows integral/publicador não roda nesses commits.
+Push normal na living preserva todos os gates obrigatórios antes da publicação.
+CI integral agora salva conversa/progresso na branch privada
+`codex/ci-evidence-<runId>-<attempt>` (token só do orquestrador), permitindo revisão
+antes de publicar apesar de quota esgotada e CLI indisponível. Nenhuma release nova.
+
 Último ensaio completo da conversa: fonte `81b287a`; implementação em revisão.
 **450/450 unitários** locais passaram, lint215. Steam nativo isolado1/1 aprovado.
 Conversa **41655112676**:32/32 engine; Central passou9 cenários e falhou no10º

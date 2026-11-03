@@ -102,14 +102,14 @@ try {
   for (const name of fs.readdirSync(summary)) if (name !== 'validation.json') fs.rmSync(path.join(summary, name), { recursive: true, force: true });
   save();
   const evidence = createPrivateEvidence({ commit, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, token: process.env.GITHUB_TOKEN });
-  report.evidence = { branch: evidence.branch, conversationPath: evidence.conversationPath, validationPath: evidence.validationPath }; save();
+  report.evidence = { branch: evidence.branch, conversationPath: evidence.conversationPath, validationPath: evidence.validationPath, reviewPath: evidence.reviewPath }; save();
   for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) fs.rmSync(path.join(app, 'out', name), { force: true });
   await step('preflight', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/preflight-windows.ps1'], 1);
   await step('lint', node, ['scripts/lint.mjs']);
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 454));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 459));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
@@ -128,8 +128,23 @@ try {
     return { engineCases: qa.rows.length, uiCases: ui.rows.length, modelDigest: qa.digest };
   });
   await evidence.writeConversation({ engine: JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json'))), ui: JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-interface-windows.json'))) });
-  await evidence.writeValidation(report);
-  console.log(`Evidencias privadas disponiveis na branch ${evidence.branch}`);
+  const conversationStep = report.steps.find(entry => entry.id === 'conversation');
+  conversationStep.status = 'running';
+  conversationStep.validation.semanticReview = { status: 'pending', branch: evidence.branch, path: evidence.reviewPath }; save();
+  console.log(`Evidencias privadas disponiveis na branch ${evidence.branch}; aguardando revisao em ${evidence.reviewPath} por ate cinco minutos.`);
+  try {
+    await evidence.writeValidation(report);
+    conversationStep.validation.semanticReview = await evidence.awaitSemanticReview();
+    conversationStep.status = 'passed'; save();
+    await evidence.writeValidation(report);
+    console.log('Revisao semantica desta execucao aprovada e registrada.');
+  } catch (error) {
+    conversationStep.status = 'failed';
+    conversationStep.validation.semanticReview = { status: error.semanticReviewStatus || 'failed', branch: evidence.branch, path: evidence.reviewPath };
+    report.status = 'failed'; save();
+    try { await evidence.writeValidation(report); } catch { console.error('Nao foi possivel preservar o estado de falha da revisao privada.'); }
+    throw error;
+  }
   await step('build', node, ['scripts/build-win.mjs'], 15);
   await step('installer', node, ['scripts/smoke-installer.mjs'], 5, text => {
     const match = text.match(/^JOJO_PACKAGED_STEAM:(.+)$/m);

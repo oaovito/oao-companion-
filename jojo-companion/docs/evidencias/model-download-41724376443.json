@@ -1,0 +1,18 @@
+{
+  "runId": "41724376443",
+  "commit": "6496fe664976bab3ddb9a95e7923cdcb27077fab",
+  "scope": "Central isolada com modelo real; preparo falhou antes de executar testes",
+  "status": "failed",
+  "phase": "model_download",
+  "engineCasesExecuted": 0,
+  "uiCasesExecuted": 0,
+  "evidence": {
+    "httpClientTimeoutSeconds": 660,
+    "runtimeDownloadCompleted": true,
+    "ollamaServerStarted": true,
+    "modelBlobDownloadStarted": true,
+    "modelBlobDigestPrefix": "f06e91e18fc7",
+    "logSha256": "03bae1ca92d22bdf0f6e6e02cbe8822026ad02e6686bf4becae3bca2bcb7977b"
+  },
+  "note": "Nenhuma conversa foi avaliada nesta execução. Não confundir falha de transferência do modelo com aprovação ou regressão da Central. Próximo diagnóstico curto mede manifesto e Range de 1MiB no Windows oficial."
+}

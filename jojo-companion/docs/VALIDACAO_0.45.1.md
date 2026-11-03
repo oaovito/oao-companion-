@@ -159,9 +159,11 @@ candidata; fonte privada não deve ser enviada ao repositório público de biná
 - Não há evidência específica de uso real de Google Meet compartilhando a tela
   ou de Steam/DD comerciais. Estados globais/apresentação têm testes de lógica;
   não equivalem à validação de todos esses aplicativos.
-- O resultado mais recente da conversa continua em 31/32 engine, sem
-  execução da Central. A correção do prompt não recebeu aprovação real posterior
-  neste corte. O último diagnóstico geral de interfaces continua em 13/14.
+- A conversa ainda não recebeu aprovação integral nesta candidata. O último ensaio
+  completo passou32/32 engine, mas parou no10º cenário da Central (nove aprovados).
+  O diagnósticoUI isolado seguinte expôs pré-carga omitida, já corrigida no script.
+  O último diagnóstico geral de interfaces ficou13/14; o caso Steam restante passou
+  depois em ensaio isolado1/1. Não somar esses runs como uma aprovação integral.
 - Instalador, portátil, vigia, dados, atualizador e desempenho da versão 0.45.0
   têm evidências históricas próprias; elas não aprovam esses gates para 0.45.1.
 - Agenda permanece somente por link iCal, sem login/senha; silêncio, privacidade,
@@ -198,6 +200,49 @@ Próximo: corrigir o preparo de processos da fixture Steam com diagnóstico limi
 por fase e ajustar a conversa para não insultar perguntas, ironizar memória ou
 inventar preferências. Repetir ambos no Windows e ler cada saída antes dos gates
 integrais. Um resultado automático verde não substitui essa revisão.
+
+## Estado da retomada — 03/11/2026
+
+Fonte atual: `6496fe664976bab3ddb9a95e7923cdcb27077fab`, branch privada
+`codex/living-companion`. **454/454 testes de lógica** locais passaram sem pulos;
+lint218 e actionlint aprovados. Novos testes cobrem as quatro aberturas científicas
+no texto realmente entregue pelo Companion e a persistência privada de evidências.
+
+- Steam [41651499749](https://github.com/oaovito/oao-companion-/actions/runs/41651499749):
+  **1/1 aprovado**, Registro Unicode, biblioteca em outra unidade,
+  webhelper excluído e sequência fechada→aberta→fechada.
+- Conversa [41655112676](https://github.com/oaovito/oao-companion-/actions/runs/41655112676):
+  **32/32 engine**, Central9cenários aprovados,10º falhou com fallbackunknown,
+  últimos2 não executaram. Causa do descarte científico ainda não comprovada;
+  a instrumentação agora preserva raw/warnings somente nos testes sintéticos.
+- UI isolada [41660524964](https://github.com/oaovito/oao-companion-/actions/runs/41660524964):
+  **1 aprovado/1 falhou/10 não executaram**, engine não executado. Raw e warning
+  comprovaram tempo esgotado na primeira geração. O novo ramoUI_only pulava
+  `carregarModelo`; TEST/baseOverride pula a preparação normal do cérebro. Isso
+  foi corrigido mantendo o mesmo timeout e medindo a pré-carga separadamente.
+- Novo diagnóstico [41724376443](https://github.com/oaovito/oao-companion-/actions/runs/41724376443)
+  está em execução, somente Central, com o preparo corrigido. Não aprova release.
+
+Na leitura anterior, uma abertura depreciativa veio de `src/core/ciencia.js`,
+acrescentada após validar a fala do modelo. Somente essa abertura foi substituída
+por “Vamos aos fatos.”, preservando as outras três e o visual de ciência. Correções
+literais usam dados de termos e instrução positiva breve; guardas não fingem
+inferência quando a fala foi descartada. Clima externo sem informação não deve
+aparecer como observação do personagem; relatos, hipóteses e ferramenta de clima
+mantêm seus caminhos.
+
+CLI GitHub passou a responder401; o conector conservou permissão de escrita.
+Objetos Git foram enviados e comparados por SHA, árvore conferida, atualização
+remota com lease e sincronização local sem reset/force. As referências local e
+remota apontam para o mesmo commit, preservando todo o histórico. Nenhuma credencial
+injetada foi substituída. Não usar o token recusado nem afirmar terminal offline.
+
+O pipeline integral passa a salvar evidência sintética/progresso na branch privada
+`codex/ci-evidence-<runId>-<attempt>`, sem mover a branch de fonte. Isso permite ler
+as44falas desta execução antes de publicar, mesmo sem quota de artefatos. Falha em
+preservar a evidência bloqueia a publicação. Essa coleta ainda aguarda validação
+no pipeline integral. Commits `[jojo-ui]` e `[jojo-qa]` são diagnósticos explícitos;
+um push normal mantém todos os gates de release. Nenhum binário novo foi publicado.
 
 ## Pipeline integral e publicação — a atualizar
 
