@@ -136,7 +136,16 @@ try {
     if (audit.total < 1268 || audit.erros.length || audit.fora.length || audit.paradas.length || audit.semGatilho) throw new Error('Auditoria de animacoes incompleta/reprovada');
     return { total: audit.total, errors: audit.erros.length, cuts: audit.fora.length, stopped: audit.paradas.length, orphaned: audit.semGatilho };
   });
-  await step('performance', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20' });
+  await step('performance', node, ['scripts/measure.mjs'], 3, text => {
+    const match = text.match(/^JOJO_PERFORMANCE_EVIDENCE:(.+)$/m);
+    if (!match) throw new Error('Medicao de desempenho ausente');
+    const proof = JSON.parse(match[1]);
+    for (const name of ['ocioso', 'cursorPerseguindo', 'modoTrabalho', 'oculto']) {
+      const sample = proof.resultados?.[name];
+      if (!sample || ![sample.cpuAvg, sample.cpuMax, sample.memMB].every(Number.isFinite) || sample.cpuAvg < 0 || sample.cpuMax < sample.cpuAvg || sample.memMB <= 0) throw new Error('Medicao de desempenho incompleta');
+    }
+    return proof;
+  }, { ...env, MEASURE_SECONDS: '20' });
   await step('performance-gpu', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20', JOJO_GPU: '1' }, true);
   await step('web-search', node, ['scripts/check-web-search.mjs'], 2, null, env, true);
   await step('artifacts', node, ['scripts/publish-release.mjs', '--artifacts'], 3);

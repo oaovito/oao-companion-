@@ -90,6 +90,7 @@ const info = {
   contadores: stats,
 };
 console.log(JSON.stringify(info, null, 2));
+console.log(`JOJO_PERFORMANCE_EVIDENCE:${JSON.stringify(info)}`);
 await app.evaluate(() => globalThis.__jojo.quit()).catch(() => {});
 await sleep(2500);
 try {
