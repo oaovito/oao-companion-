@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "commit": "49005d4903ac84fa8324b4b6631ce606f0bd2719",
+  "runId": "41727762420",
+  "jobId": "126236910879",
+  "runner": "windows-latest",
+  "conclusion": "success",
+  "manifest": {
+    "status": 200,
+    "host": "registry.ollama.ai"
+  },
+  "transfer": {
+    "phase": "blob_range",
+    "status": 206,
+    "host": "dd20bb891979d25aebc8bec07b2b3bbc.r2.cloudflarestorage.com",
+    "range": "bytes 0-1048575/2499012288",
+    "model": "gemma3:4b-it-q4_K_M",
+    "blobBytes": 2499012288,
+    "receivedBytes": 1048576,
+    "elapsedMs": 1246,
+    "complete": true
+  },
+  "scope": "Manifesto e 1 MiB por Range; não comprova transferência completa nem inferência.",
+  "next": "Uma tentativa limitada dos 12 cenários reais da Central, com pré-carga corrigida."
+}

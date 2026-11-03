@@ -16,32 +16,30 @@ O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
 ### Retomada em 03/11/2026 — ainda sem publicação
 
-Atualização: **459/459 unitários** locais, lint220 e actionlint aprovados. O run
-**41724376443** falhou ANTES dos cenários: `/api/pull` excedeu660segundos baixando
-os pesos. Engine e Central NÃO executaram. Runtime Ollama baixou/iniciou; não é
-evidência de falha de resposta do JoJo. Próximo diagnóstico `[jojo-net]` verifica
-manifesto e Range de1MiB no Windows em até45s de rede, evitando outro download
-completo enquanto o bloqueio não estiver esclarecido. Evidência em
-`docs/evidencias/model-download-41724376443.json`.
-O pipeline integral agora aguarda registro técnico da revisão das44falas em
-`semantic-review.json` na branch de evidência (mesmo SHA/run/tentativa/digest),
-antes do build. Codex registra a leitura; não exige confirmação manual da usuária.
-Rejeição, ausência em5min ou falha de integridade bloqueiam publicação.
+Estado atual: fonte `49005d4`, branch local/remota `codex/living-companion`
+sincronizada por Git Data API/CAS; **459/459 unitários** locais, lint220 e
+actionlint aprovados. Token do `gh` expirado (401); conector GitHub continua com
+escrita. Não substituir credenciais injetadas nem pedir comandos manuais.
 
-Estado mais recente: `6496fe664976bab3ddb9a95e7923cdcb27077fab`, branch local e
-remota em sincronia por Git Data API/CAS; checkout limpo. **454/454 unitários**
-locais passaram, lint218. Token do `gh` expirou (401); conector GitHub continua
-com escrita. Não substituir credenciais injetadas nem pedir comandos manuais.
-UI isolada **41660524964** reprovou no2º caso por timeout comprovado: o caminho
-`ui_only` omitia a pré-carga feita pelo engine; modelo frio mais `baseOverride`
-consumiu a janela de resposta. Pré-carga igual à original adicionada, sem aumentar
-timeout. Novo ensaio **41724376443** em execução, somente12 cenários da Central.
-`[jojo-ui]` em commit roda esse diagnóstico; `[jojo-qa]` roda32engine+12Central.
-São parciais de pré-build: o Windows integral/publicador não roda nesses commits.
+O run **41724376443** falhou ANTES dos cenários: `/api/pull` excedeu660segundos
+baixando os pesos. Engine e Central NÃO executaram; runtime Ollama baixou/iniciou.
+Diagnóstico limitado **41727762420** passou no Windows: manifesto HTTP200 e
+1MiB HTTP206 em1246ms, sem download integral/inferência. Evidência em
+`docs/evidencias/model-network-41727762420.json`. Isso justifica UMA nova tentativa
+limitada da Central; não prova que o bloqueio da transferência completa acabou.
+
+UI isolada **41660524964** reprovou no2º caso por timeout comprovado: `ui_only`
+omitia a pré-carga feita pelo engine; modelo frio mais `baseOverride` consumiu a
+janela de resposta. Pré-carga original adicionada, sem aumentar timeout.
+`[jojo-ui]` roda12 cenários da Central; `[jojo-qa]` roda32engine+12Central.
+São diagnósticos de pré-build; Windows integral/publicador não roda nesses commits.
 Push normal na living preserva todos os gates obrigatórios antes da publicação.
-CI integral agora salva conversa/progresso na branch privada
-`codex/ci-evidence-<runId>-<attempt>` (token só do orquestrador), permitindo revisão
-antes de publicar apesar de quota esgotada e CLI indisponível. Nenhuma release nova.
+
+O pipeline integral salva conversa/progresso na branch privada
+`codex/ci-evidence-<runId>-<attempt>` e aguarda revisão técnica das44falas em
+`semantic-review.json` (mesmo SHA/run/tentativa/digest), antes do build.
+Codex registra a leitura; não exige confirmação manual da usuária. Rejeição,
+ausência em5min ou falha de integridade bloqueiam publicação. Nenhuma release nova.
 
 Último ensaio completo da conversa: fonte `81b287a`; implementação em revisão.
 **450/450 unitários** locais passaram, lint215. Steam nativo isolado1/1 aprovado.
