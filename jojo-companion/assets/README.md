@@ -5,7 +5,14 @@ o JoJo é um personagem próprio, desenhado como vetores à mão em código/JSON
 falas escritas originalmente. Ícones são
 renderizados a partir do próprio rig (`scripts/make-icons.mjs`).
 
-**Direção de arte (v0.3):** estética de **recorte de papel no estilo South Park**
+**Direção vigente:** personagem original musculoso com braços e pernas, restaurado
+do histórico, sem cauda, conforme `../docs/REQUISITOS_CORRECOES_0.45.1.md`.
+Nenhuma mudança de anatomia, silhueta ou estilo é autorizada sem solicitação
+explícita do usuário.
+
+**Registro histórico da direção de arte (v0.3):** a descrição abaixo é preservada
+como histórico; seus trechos sobre rabo/cauda foram revogados pelo pedido atual.
+Estética de **recorte de papel no estilo South Park**
 (apenas o estilo; nenhum personagem da série é copiado): JoJo de frente, cabeça
 grande e redonda, cores chapadas, contorno fino, olhos ovais brancos encostados
 com pupilas de ponto, pálpebras da cor do corpo, sobrancelhas em traço reto.
@@ -18,8 +25,9 @@ faixas cinza**. A imagem de referência não foi copiada nem incluída.
 interpolação linear, mudanças secas (`step`), boca que abre e fecha em degraus,
 saltinhos ao andar, virada de lado instantânea (`style.turnMs` = 0).
 
-**Estado:** a arte é **PROVISÓRIA** (`"provisional": true` no rig). Substitua
-mantendo os formatos abaixo; o código não precisa mudar.
+**Estado:** a arte é **PROVISÓRIA** (`"provisional": true` no rig). Isso não autoriza
+substituí-la ou redesenhá-la. Alterações futuras exigem solicitação explícita do
+usuário e devem preservar os formatos abaixo.
 
 ## `character/jojo.rig.json` (formato `jojo-rig/1`)
 

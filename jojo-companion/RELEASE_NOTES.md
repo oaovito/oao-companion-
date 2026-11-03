@@ -1,5 +1,10 @@
 # JoJo Companion
 
+> Retrato histórico local de notas antigas, preservado como registro. Descrições
+> de rabo/cauda abaixo foram revogadas: vigora o personagem original restaurado,
+> com pernas e sem cauda. As notas de novas releases são geradas da seção da versão
+> em `CHANGELOG.md`; este arquivo não altera notas ou releases públicas antigas.
+
 ## Como testar no Windows 11
 
 1. Baixe **`JoJoCompanion.exe`** abaixo (em *Assets*).

@@ -1,0 +1,151 @@
+{
+  "commit": "da199bb4019b0d3641d14c77fa8fa7521f1efca7",
+  "runId": "41728621830",
+  "digest": "bd70526218e87a0f593c3cd534641d6e45ee9bef0e6109dc4df48ef698c15bf9",
+  "data": {
+    "engine": null,
+    "ui": {
+      "model": "gemma3:4b-it-q4_K_M",
+      "platform": "win32",
+      "fixture": "Interface/IPC/controlador/modelo reais; perfil e conversa sintéticos; pesquisa externa desligada",
+      "semantic_review_required": true,
+      "rows": [
+        {
+          "input": "quem é o seu chefe?",
+          "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+          "intent": "criador",
+          "action": "nod",
+          "ms": 768
+        },
+        {
+          "input": "você está bem?",
+          "text": "Estou ótimo, Manu. A água aqui está bem fria, como você gosta.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 24487
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "text": "Entendo, verde. É uma cor forte, não acha?",
+          "intent": "ia",
+          "action": "curious",
+          "ms": 6041
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "text": "Você mencionou verde, Manu.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 5010
+        },
+        {
+          "input": "Eu disse verde, não azul.",
+          "text": "Verde, então. Sem problemas.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 18445
+        },
+        {
+          "input": "Qual cor você deve lembrar agora?",
+          "text": "Lembro-me que você prefere verde.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 16369
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que azar, Manu. Limpe isso logo antes que fique ainda pior.",
+          "intent": "ia",
+          "action": "comfort",
+          "ms": 14122
+        },
+        {
+          "input": "Não consegui terminar meu projeto.",
+          "text": "Entendo, parece frustrante. A persistência é fundamental, não é?",
+          "intent": "ia",
+          "action": "comfort",
+          "ms": 11221
+        },
+        {
+          "input": "o que é diabetes tipo 2?",
+          "text": "Vamos aos fatos. Diabetes tipo 2 acontece quando o corpo não usa a insulina direito ou não produz insulina suficiente, levando ao aumento do açúcar no sangue. Isso geralmente ocorre devido à resistência à insulina e/ou produção reduzida.",
+          "intent": "ia",
+          "action": "lecture",
+          "ms": 12185
+        },
+        {
+          "input": "me dá um exemplo",
+          "text": "Por exemplo, imagine um indivíduo que, após uma refeição rica em carboidratos, tem uma elevação significativa nos níveis de glicose no sangue, mesmo com a presença de insulina. Essa resistência à ação da insulina pode ser um fator contribuinte.",
+          "intent": "ia",
+          "action": "lecture",
+          "ms": 19848
+        },
+        {
+          "input": "esses óculos são feios",
+          "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+          "intent": "contexto",
+          "action": "judge",
+          "ms": 690
+        },
+        {
+          "input": "quero morrer",
+          "text": "Emanuele, isso é sério. Fala agora com o João pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.",
+          "intent": "crisis",
+          "action": "comfort",
+          "ms": 661
+        }
+      ],
+      "rendererErrors": [],
+      "diagnostics": {
+        "rawReplies": [
+          {
+            "input": "você está bem?",
+            "rawContent": "Estou ótimo, Manu. A água aqui está bem fria, como você gosta."
+          },
+          {
+            "input": "Minha cor preferida é verde.",
+            "rawContent": "Entendo, verde. É uma cor forte, não acha?"
+          },
+          {
+            "input": "Qual cor eu acabei de dizer que prefiro?",
+            "rawContent": "Você mencionou verde, Manu."
+          },
+          {
+            "input": "Eu disse verde, não azul.",
+            "rawContent": "Verde, então. Sem problemas."
+          },
+          {
+            "input": "Qual cor você deve lembrar agora?",
+            "rawContent": "Lembro-me que você prefere verde."
+          },
+          {
+            "input": "Derrubei café no teclado agora.",
+            "rawContent": "Que azar, Manu. Limpe isso logo antes que fique ainda pior."
+          },
+          {
+            "input": "Não consegui terminar meu projeto.",
+            "rawContent": "Entendo, parece frustrante. A persistência é fundamental, não é?"
+          },
+          {
+            "input": "o que é diabetes tipo 2?",
+            "rawContent": "Diabetes tipo 2 acontece quando o corpo não usa a insulina direito ou não produz insulina suficiente, levando ao aumento do açúcar no sangue. Isso geralmente ocorre devido à resistência à insulina e/ou produção reduzida."
+          },
+          {
+            "input": "me dá um exemplo",
+            "rawContent": "Por exemplo, imagine um indivíduo que, após uma refeição rica em carboidratos, tem uma elevação significativa nos níveis de glicose no sangue, mesmo com a presença de insulina. Essa resistência à ação da insulina pode ser um fator contribuinte."
+          }
+        ],
+        "warnings": [],
+        "lastInput": "me dá um exemplo"
+      }
+    }
+  },
+  "review": {
+    "status": "blocked",
+    "reviewedBy": "Codex",
+    "reviewedRows": 12,
+    "automatedUiCasesPassed": 12,
+    "engineExecuted": false,
+    "note": "Todos os12casos automáticos passaram; exemplo científico respondeu por inferência real; raw/warnings sem erros. Leitura reprovou preferência implícita não informada: água fria como você gosta. Corrigir atribuição sem contexto antes do pipeline integral. A causa específica do fallback do run41655112676 permanece não comprovada; não houve fallback nesta execução."
+  }
+}

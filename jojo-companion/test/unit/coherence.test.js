@@ -94,6 +94,37 @@ test('conversa casual não inventa chuva observada; relato, hipótese e ferramen
   assert.notEqual((await engine.reply(input)).intent, 'ia');
 });
 
+test('preferência implícita exige o assunto afirmado pela usuária, sem derivar de cor ou da fala do modelo', async () => {
+  const input = 'você está bem?';
+  const invented = 'Estou ótimo, Manu. A água aqui está bem fria, como você gosta.';
+  const english = 'I am fine. The water here is cold, just as you like it.';
+  for (const text of [invented, english, 'A água está fria, como você prefere.']) {
+    assert.equal(erroDeCoerencia(input, text), 'preferência pessoal não informada');
+    assert.equal(erroDeCoerencia(input, text, [{ role: 'user', text: 'Minha cor preferida é verde.' }]), 'preferência pessoal não informada');
+    assert.equal(erroDeCoerencia(input, text, [{ role: 'jojo', text: 'Você gosta de água fria.' }]), 'preferência pessoal não informada');
+  }
+  assert.equal(erroDeCoerencia(input, invented, [{ role: 'user', text: 'Eu gosto de água fria.' }]), null);
+  assert.equal(erroDeCoerencia('Prefiro água fria.', invented), null);
+  assert.equal(erroDeCoerencia('How are you?', english, [{ role: 'user', text: 'I like cold water.' }]), null);
+  for (const fact of ['Não gosto de água fria.', 'Eu gosto de café, não de água fria.', 'Gosto de água fria?', 'O João gosta de água fria.']) {
+    assert.equal(erroDeCoerencia(input, invented, [{ role: 'user', text: fact }]), 'preferência pessoal não informada', fact);
+  }
+  const reply = await new DialogueEngine({ llm: model({ text: invented }) }).reply(input);
+  assert.notEqual(reply.intent, 'ia');
+  assert.equal(reply.text.includes('como você gosta'), false);
+});
+
+test('guarda de preferência implícita preserva perguntas, hipóteses e humor sobre o próprio personagem', () => {
+  for (const text of [
+    'A água está fria, como você gosta?',
+    'Se a água estivesse fria, como você gosta, eu ainda seria um tubarão de desenho.',
+    'Talvez esteja fria, como você gosta.',
+    'Você gosta de água fria?',
+    'Estou ótimo. Meu bíceps imaginário não falta ao trabalho.',
+    'Eu gosto de água fria. Preferências de tubarão de desenho.',
+  ]) assert.equal(erroDeCoerencia('você está bem?', text), null, text);
+});
+
 test('correcao das proprias palavras distingue esclarecimento de pergunta e relato de terceiros', () => {
   for (const text of ['Eu disse lilás, não rosa.', 'JoJo, falei de manhã, não à noite.', 'Eu quis dizer quinta-feira.', 'I said Thursday, not Tuesday.', 'I meant blue.']) assert.equal(correcaoPessoal(text), true, text);
   for (const text of ['O João disse quinta, não terça.', 'Eu disse isso ontem?', 'Qual é a diferença entre azul e verde?']) assert.equal(correcaoPessoal(text), false, text);

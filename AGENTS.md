@@ -123,7 +123,10 @@ bibliotecas dos gates do Actions e testes, não outra infraestrutura de execuç�
 
 `jojo-windows.yml` usa `scripts/actions-windows.mjs` para reunir as suítes originais no
 mesmo job e preservar hashes/relatórios/instalador. Só aceita `github-hosted` Windows x64.
-`jojo-conversation-windows.yml` fica somente manual para evitar repetir o ensaio por push.
+`jojo-conversation-windows.yml` roda por dispatch ou marcadores explícitos
+`[jojo-ui]`, `[jojo-qa]` e `[jojo-net]` na living; pushes comuns não repetem esse
+diagnóstico. Esses marcadores excluem o pipeline integral/publicador; somente
+push normal ou dispatch integral pode completar a validação e publicar a candidata.
 `jojo-recovery.yml` agenda `17 * * * *` na branch padrão, com concorrência e idempotência.
 main guarda somente controle (não usar como fonte do aplicativo); o worker faz checkout
 da branch correta. Mudanças do controle devem ser sincronizadas na main, preservando
@@ -141,8 +144,12 @@ observar a verificação executada. Jobs pulados não comprovam disponibilidade 
 
 Todos os gates continuam obrigatórios: preflight, lint, instalação, unitários, build,
 NSIS instalado/iniciado/desinstalado em perfil isolado, portátil, vigia, integração,
-E2E, 1.268 animações, medição, conversa REAL (31 engine + 12 Central), artefatos,
+E2E, 1.268 animações, medição, conversa REAL (32 engine + 12 Central), artefatos,
 compatibilidade do atualizador e notas. Pesquisa web/GPU permanecem diagnósticos opcionais.
+O pipeline integral preserva as44falas na branch privada de evidência do mesmo run
+e aguarda revisão técnica de Codex, vinculada a SHA/run/tentativa/digest, antes do
+build. Rejeição, ausência em5min ou integridade inválida bloqueiam publicação.
+Não é um pedido de confirmação manual da usuária.
 Logs privados filtram credenciais; TAP/JUnit/JSON e hashes são retidos localmente (três
 execuções/14 dias). Cache confere SHA-256 do bootstrap/runtime e integridade npm.
 Não alegar teste em Windows físico: runner Windows Server de um monitor não comprova

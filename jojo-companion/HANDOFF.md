@@ -17,7 +17,7 @@ O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 ### Retomada em 03/11/2026 — ainda sem publicação
 
 Estado atual: fonte `49005d4`, branch local/remota `codex/living-companion`
-sincronizada por Git Data API/CAS; **459/459 unitários** locais, lint220 e
+sincronizada por Git Data API/CAS; **462/462 unitários** locais, lint221 e
 actionlint aprovados. Token do `gh` expirado (401); conector GitHub continua com
 escrita. Não substituir credenciais injetadas nem pedir comandos manuais.
 
@@ -27,6 +27,18 @@ Diagnóstico limitado **41727762420** passou no Windows: manifesto HTTP200 e
 1MiB HTTP206 em1246ms, sem download integral/inferência. Evidência em
 `docs/evidencias/model-network-41727762420.json`. Isso justifica UMA nova tentativa
 limitada da Central; não prova que o bloqueio da transferência completa acabou.
+
+Central **41728621830**, fonte `da199bb`:12/12cenários automáticos passaram,
+zero warnings do motor e zero erros do renderer. Pré-carga45,6s; primeira geração
+24,5s. Exemplo científico respondeu por inferência real em19,8s, sem fallback.
+Leitura das12falas reprovou “água fria, como você gosta”: preferência implícita
+não fornecida. Correção limita comparações implícitas ao assunto de uma preferência afirmada
+pela usuária; saudações pedem somente o próprio humor do JoJo, sem resposta fixa,
+troca de modelo ou relaxamento dos cenários. Três regressões novas passaram;
+próximo ensaio é o pipeline integral, ainda sem aprovação da nova inferência. Evidência em
+`docs/evidencias/conversa-windows-41728621830.json`.
+Referências documentais de cauda ainda ativas foram corrigidas, preservando
+histórico e marcando descrições antigas como revogadas, sem mudar a arte.
 
 UI isolada **41660524964** reprovou no2º caso por timeout comprovado: `ui_only`
 omitia a pré-carga feita pelo engine; modelo frio mais `baseOverride` consumiu a

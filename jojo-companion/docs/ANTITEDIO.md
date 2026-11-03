@@ -2,6 +2,11 @@
 
 O JoJo não pode parecer repetitivo, parado ou previsível demais. Ao mesmo tempo, ela precisa de controle total sobre intensidade e surpresas. O sistema funciona por **camadas**: se uma fica repetitiva, as outras sustentam a variedade. Tudo respeita "Reduzir movimento", pode ser desligado e é interrompido por clique, arrasto ou `/pet`.
 
+As camadas usam o personagem original restaurado, com braços e pernas, sem cauda.
+Identificadores legados de cauda permanecem por compatibilidade; seus movimentos
+foram adaptados aos pés. Anatomia, silhueta e estilo só podem mudar por solicitação
+explícita do usuário.
+
 ## Onde está cada coisa
 
 | Camada | Arquivo (conteúdo editável) | Lógica |
@@ -60,7 +65,7 @@ Na coluna "Peso / não repetir": "memória 30" quer dizer que o item entra no so
 |---|---|---|---|---|
 | 1 | Sorteio com memória de 30 | todo sorteio ambiente | — | última com peso 0; recentes × 0,15 |
 | 2 | Pesos dinâmicos | idem | — | até × 4 pelo tempo sem aparecer |
-| 3 | Combinação de camadas | idem | — | corpo, braços, cabeça, rosto, cauda, dorsal, objeto, efeito, humor + fala + acessório + lado |
+| 3 | Combinação de camadas | idem | — | corpo, braços, pernas, cabeça, rosto, dorsal, objeto, efeito, humor + fala + acessório + lado |
 | 4 | Velocidade, direção e posição | idem | ± 15–30 % | intensidade, lado sorteado, itens com deslocamento (borda, cantos, cursor) |
 | 5 | Intensidade pelo humor | energia atual | — | discreta (zen, sono, foco) / exagerada (pilhado, caótico, competitivo) |
 | 6 | Temporadas semanais | semana ISO | 1 semana | anúncio uma vez por semana; × 1,8 no tema |
@@ -68,7 +73,7 @@ Na coluna "Peso / não repetir": "memória 30" quer dizer que o item entra no so
 | 8 | Easter eggs com dicas | falas "dicas" (raras) | — | memória de falas (30) |
 | 9 | Linha do tempo do dia | período | — | × 2,5 / × 0,35 |
 | 10 | Tédio do tubarão | 6 min sem novidade com ela ativa | — | tédio ≥ 3 → rotina ou item inédito do dia |
-| 11–20 | Micromovimentos | sempre (exceto movimento reduzido ou desligado) | contínuo | respiração e piscar (idle), cauda, guelras, bolhas (18–48 s), olhar segue o cursor, contração de músculo (a cada 23 s), tremidinha da dorsal, brilho no dente ou nas escamas (26–66 s), sombra |
+| 11–20 | Micromovimentos | sempre (exceto movimento reduzido ou desligado) | contínuo | respiração e piscar (idle), pés, guelras, bolhas (18–48 s), olhar segue o cursor, contração de músculo (a cada 23 s), tremidinha da dorsal, brilho no dente ou nas escamas (26–66 s), sombra |
 | 21–30 | Estados de energia | troca a cada 15–40 min | 15–40 min | nunca a mesma energia duas vezes seguidas (× 0,3); caótico emenda reações |
 | 31–45 | Rotinas e mini-histórias | 12 % dos sorteios ou tédio | 3–5 passos | não repete a anterior; recentes × 0,2; torre e truque progridem no dia; história em 8 episódios |
 | 46–60 | Mini-jogos | ela pede (Central, `/jogo`, "bora jogar") | 10–90 s | `/jogo` sorteado nunca repete o último |

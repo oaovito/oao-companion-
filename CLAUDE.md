@@ -16,6 +16,11 @@ mesmo run `github-hosted`. O usuário autorizou tentativa normal do Actions, sem
 adicional de confirmação manual. Não alterar faturamento nem presumir limite pago zero
 confirmado. Referência atual: `jojo-companion/docs/GITHUB_ACTIONS.md`.
 
+Direção visual vigente: o personagem original musculoso com pernas, restaurado
+do histórico, sem cauda. Nenhuma mudança futura de anatomia, silhueta ou estilo
+é autorizada sem solicitação explícita do usuário; ver
+`jojo-companion/docs/REQUISITOS_CORRECOES_0.45.1.md`.
+
 ## O que é
 
 Companion de desktop para **Windows 11**: o JoJo, um tubarão fisiculturista em
@@ -91,7 +96,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   1 chance em 1 bilhão a cada escolha autônoma (`MOON_IDLE_CHANCE` em `behavior.js`).
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
-- Idle nunca parado: toda animação de repouso respira, balança braços, inclina a cabeça e abana o rabo.
+- Idle nunca parado: toda animação de repouso respira, balança braços e inclina a cabeça, preservando o modelo original com pernas e sem cauda.
 - "Eu deveria jogar lol?": caga no chão, pega e oferece — "Passa na cara de uma vez." (estado `poop`, 7 s).
 - Datas festivas (38): feriados nacionais do Brasil + datas religiosas e culturais do mundo;
   fantasia do dia + cumprimento (solenes sem fantasia/piada; religiosas sem zombaria);

@@ -1,267 +1,156 @@
-# Validação da candidata JoJo Companion 0.45.1 — rascunho privado
+# Validação JoJo Companion 0.45.1 — rascunho privado
 
-Registro iniciado em 02/11/2026, retomado em 03/11/2026. **A candidata 0.45.1 ainda NÃO foi publicada e não tem
-aprovação integral de release.** A versão pública continua 0.45.0; suas tags,
-arquivos e notas, assim como as demais releases históricas, permanecem imutáveis.
+**Ainda não publicada.** Em 03/11/2026, a fonte é a branch privada
+`codex/living-companion`, HEAD `da199bb4019b0d3641d14c77fa8fa7521f1efca7`.
+A release pública vigente é 0.45.0. Nenhum diagnóstico parcial abaixo aprova
+automaticamente o pipeline integral da candidata ou o computador da Emanuele.
 
-Fonte: branch `codex/living-companion`. Corte deste rascunho:
-`f28503223f0ca9453ffce1e4a31d8ade48ac36b3`. As evidências Windows abaixo pertencem
-aos commits indicados em cada execução; não comprovam automaticamente as correções
-posteriores. Requisitos vigentes: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md)
-e [HANDOFF](../HANDOFF.md).
+Requisitos: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md).
+Desenvolvimento: `oaovito/oao-companion-`; distribuição de binários:
+`oaovito/jojo-companion-releases`. `main` permanece controle operacional.
 
-## Causas identificadas e correções
+## Causas comprovadas e comportamento corrigido
 
-| Área | Causa comprovada no código ou nos ensaios | Correção na candidata |
+| Área | Causa identificada | Alteração na candidata |
 | --- | --- | --- |
-| Anatomia | A mudança anterior substituiu pernas, mãos e musculatura do modelo histórico por nadadeiras/cauda, contrariando a direção vigente. Os testes também impunham essa anatomia rejeitada. | Restaurados recursos históricos com pernas e musculatura; removida a cauda; testes passam a comparar as peças históricas, métricas, rosto e cores. Canais legados movimentam as pernas sem redesenhar uma cauda. |
-| Falso fullscreen | Estados globais de `SHQueryUserNotificationState` eram usados como prova de tela cheia, inclusive após Alt+Tab; somente o handle do overlay era registrado como próprio. | Decisão pela janela ativa, visibilidade, minimização, moldura e geometria física. Busy/D3D/apresentação não bastam para bloquear. Todas as `BrowserWindow` próprias são registradas e excluídas. |
-| DPI e monitores | O primeiro diagnóstico falhou em reconhecer fullscreen a 150%. A revisão também reproduziu uma janela que cobre um monitor menor, embora a maior interseção escolhida pelo Windows esteja coberta apenas parcialmente. | Geometria nativa física, contexto de DPI, limites DWM e comparação com os monitores físicos. Verificação de todos os monitores integralmente cobertos antes do retorno negativo. Janelas próprias, minimizadas e maximização comum continuam excluídas. |
-| Cenas explícitas | Bloqueios distintos retornavam uma justificativa genérica; pedidos podiam se perder ou permanecer atrás de uma conversa antiga. | Resultados específicos, contexto atualizado, prioridade de pedidos explícitos, deduplicação e fila de até quatro pedidos com expiração de 20 segundos. Cooldown, foco, fullscreen, asset ausente e falha de desenho têm causas próprias. Execução só é registrada após confirmação do renderer. |
-| Recuperação do renderer | Estados de fuga/arrasto/captura e atividade visual podiam sobreviver ao crash. A janela podia parecer pronta antes dos assets e reaparecer mesmo após ser ocultada durante a recriação. | Limpeza dos estados transitórios, invalidação de pedidos antigos e disponibilidade somente após o handshake `renderer-ready`. Carregamento retorna `renderer_loading` e aguarda na fila limitada; falha real continua `renderer_error`. A recriação respeita ocultação, Trabalho, Foco e fullscreen. |
-| Descoberta Steam | Faltava uma descoberta reutilizável de bibliotecas/metadados locais. Na revisão, uma falha EACCES de leitura substituía o inventário anterior por um parcial vazio conhecido. | Registro Windows, processo do cliente, `libraryfolders.vdf` e manifestos em worker separado. Falha ou leitura incompleta preserva jogos anteriores como desconhecidos, informa diagnóstico e envia `known:false` ao detector. Zero jogos confirmado permanece distinto de falha. |
-| Custo da identificação | `identifyGame` normalizava/comparava todas as raízes com `path.relative` e ordenava resultados para cada processo. A carga sintética de 5.000 jogos ×300 processos ultrapassou o timeout de 1,5 s do detector. | Raízes normalizadas em cache por objeto, invalidado quando a raiz muda; imagem normalizada uma vez, contenção com separador e preferência pela raiz mais específica, mantendo exclusão de launchers. |
-| Darkest Dungeon | A validação de `Darkest.exe` exigia exatamente um subdiretório `_windows`; falha de detecção não tinha estado desconhecido explícito. | Validação local do AppID `262060`, manifesto e contenção na instalação, sem exigir esse subdiretório. Processo identificado por PID e horário de criação; primeiro plano é distinto de execução em background. Estado desconhecido pausa a amostra sem inventar encerramento, tempo ou XP. |
+| Personagem | A alteração anterior substituiu recursos do personagem com pernas por nadadeiras/cauda; testes impunham a direção rejeitada. | Recursos históricos recuperados, cauda removida e testes comparando peças, proporções, rosto, cores e hierarquia originais. Canais legados adaptados às pernas; catálogo preservado. |
+| Tela cheia | Estado global de notificações/apresentação era tratado como tela cheia; nem todas as janelas próprias eram reconhecidas. | Decisão pela janela ativa, visível e não minimizada, moldura e geometria física. Todas as janelas próprias excluídas. Jogo em background ou maximização comum não bastam para bloquear. |
+| DPI e recuperação | O primeiro ensaio a150% falhou; amostras antigas podiam sobreviver a alterações do ambiente. | Limites DWM, contexto de DPI e verificação de monitores cobertos; validade temporal/geração das amostras e descarte após troca de janela, monitor, falha ou reinício do detector. |
+| Cenas explícitas | Resposta genérica escondia a causa; pedidos podiam ficar atrás de conversa antiga ou se perder durante indisponibilidade do renderer. | Causas distintas, prioridade explícita, fila de4 com TTL20s, deduplicação e cancelamento de pedidos obsoletos. Cooldown somente após confirmação de quadros pelo renderer. |
+| Renderer | Fuga/arrasto/captura podiam deixar estado visual transitório após crash; recriação podia reabrir janela ocultada. | Limpeza dos estados, handshake dos assets, espera limitada durante carregamento e recuperação respeitando ocultação, Trabalho/Foco e fullscreen. |
+| Steam | Descoberta não cobria bibliotecas locais de forma reutilizável; falha parcial de leitura podia substituir inventário conhecido por vazio. | Registro, diretórios do cliente, libraryfolders e manifestos em worker separado. Atualização manual e indicadores reais na Central. Falha preserva jogos como desconhecidos e invalida amostras antigas. |
+| Jogos e DD | DD exigia subdiretório fixo `_windows`; desconhecido não era distinguido suficientemente de encerrado. | AppID262060, manifesto e executável contido na instalação válida, sem subdiretório obrigatório. PID/criação identificam sessão; desconhecido pausa tempo/XP sem inventar encerramento. Background não conta como tempo ativo. |
+| Identificação e custo | Normalização e ordenação de raízes repetiam trabalho para cada processo. | Cache de raízes normalizadas com invalidação, contenção com separador e raiz mais específica; launchers e webhelper não viram jogos. |
+| Conversa | Ensaios reais revelaram insultos, ironia sobre memória e preferências inventadas; uma abertura depreciativa vinha do Companion após validar o modelo. | Guardas dirigidas aos desvios observados, instrução positiva para correção literal e substituição daquela abertura por “Vamos aos fatos.”. Sem modelo alternativo, resposta de demonstração ou inferência fictícia. |
 
-Na recuperação do inventário, o detector descarta processos/provas em cache e
-amostras de gerações anteriores. O serviço aguarda nova observação para voltar a
-exibir atividade. DD preserva sessão e resultados duráveis; encerramento conhecido
-registra histórico, e a outbox com recompensas idempotentes impede XP duplicado.
-Os marcos, limites, conquista e sugestão diária entre 06:00 e 21:00 permanecem.
+Steam continua sem senha/token/autenticação. DD preserva marcos, limites,
+conquista, sugestão06–21, sessão persistente e recompensas idempotentes.
+Agenda permanece somente por link iCal, sem login/senha. To-Do, XP, cuidados,
+comidas, clima, coleção, guarda-roupa, Discord, atalhos, atualização, silêncio e
+privacidade seguem no escopo de regressão obrigatório.
 
-## Origem da restauração e comparação visual
+## Restauração histórica e revisão visual
 
-Fonte histórica utilizada: **`a3240e4976736eee5c319b71a249a0b87ad6e132`**, anterior
-à mudança anatômica de `2847e41`. A fixture histórica é
-`test/fixtures/jojo-0.44.0.rig.json`. Foram preservadas as peças originais com
-pernas, braços, mãos, musculatura, proporções, rosto e cores; as peças de cauda
-foram removidas conforme o pedido, mantendo os adereços e o catálogo posterior.
-Nenhuma nova direção artística está autorizada.
+Fonte original: **`a3240e4976736eee5c319b71a249a0b87ad6e132`**, anterior à
+mudança `2847e41`. Fixture: `test/fixtures/jojo-0.44.0.rig.json`.
+Preservadas pernas, braços, mãos, pés, musculatura, proporções, rosto e cores;
+removida a cauda conforme pedido, mantendo adereços e catálogo posterior.
+Nenhuma mudança futura de anatomia, silhueta ou estilo está autorizada sem pedido
+explícito; regra registrada nas instruções e especificação.
 
-Comparação renderizada no Windows: [original histórico / 0.45.0 rejeitado / restaurado](evidencias/restauracao-0.45.1.png),
-nas poses de repouso, caminhada e aceno. Contato das 75 cenas novas, incluindo
-DD, cuidados, profissões e memes: [cenas restauradas](evidencias/cenas-restauradas-0.45.1.png).
-As imagens foram recuperadas dos logs oficiais e inspecionadas visualmente.
+Renderização Windows inspecionada:
+[histórico / versão rejeitada / restaurado](evidencias/restauracao-0.45.1.png) e
+[75 cenas restauradas](evidencias/cenas-restauradas-0.45.1.png).
+Ícones exportados pelo Chromium Windows a partir do rig restaurado e importados;
+origem conferida com normalização CRLF→LF, sem alterar a imagem.
 
-Auditoria completa: [AUDITORIA_ANIMACOES.md](AUDITORIA_ANIMACOES.md),
-[resumo JSON](auditoria-animacoes.json) e [contato visual](auditoria-animacoes.png).
-O catálogo preserva **1.268 animações**. Os ícones foram exportados do rig
-restaurado pelo Chromium Windows no segundo diagnóstico e importados; o hash do
-rig usado na origem é normalizado para LF, sem mudança da imagem.
-
-## Evidências Windows já executadas
-
-Somente GitHub Actions oficial, em Windows hospedado pelo GitHub. Estes foram
-diagnósticos parciais; nenhum deles equivale ao pipeline integral da candidata.
-
-| Execução privada | Fonte | Resultado confirmado | Pendência ou falha |
-| --- | --- | --- | --- |
-| [41477698374 — arte e interfaces](https://github.com/oaovito/oao-companion-/actions/runs/41477698374) | `56e40a445d7423ac45d308b6bf41d47a7d096006` | Medidas 434 bases; auditadas 1.268 animações, zero erros/cortes/paradas/órfãs; desenho médio 0,45654 ms por quadro. Os três comandos produziram quadros diferentes. Interfaces: **12/14**. | Recuperação pós-crash retornou `queued` onde o teste esperava `executed`; cenário de fullscreen a 150% excedeu a espera. Diagnóstico global reprovado. |
-| [41483917417 — interfaces e ícones](https://github.com/oaovito/oao-companion-/actions/runs/41483917417) | `161398946439af0442030b2eefbbebf7f7347f11` | Interfaces: **13/14**. Passaram os três comandos, recuperação do renderer/detector e fullscreen físico com escala Electron 1,5. Ícones exportados no Windows. | Única falha no preparo da fixture Steam: `rename` presumiu a presença de `electron.exe` no destino e retornou ENOENT antes de abrir o aplicativo. Diagnóstico global reprovado. |
-| [41483923275 — conversa real](https://github.com/oaovito/oao-companion-/actions/runs/41483923275) | `161398946439af0442030b2eefbbebf7f7347f11` | **31/32 casos engine** com o modelo local real. | O novo caso “Você tem pernas ou cauda?” recebeu “Não tenho, Manu. Só braços fortes…”, contradizendo as pernas restauradas. Os **12 casos da Central não executaram**, pois a etapa depende da aprovação do engine. Diagnóstico reprovado. |
-
-Digest registrado para o conteúdo da medição de espaço das 434 bases:
+Run [41477698374](https://github.com/oaovito/oao-companion-/actions/runs/41477698374):
+434 bases medidas, **1.268 animações**, zero erros/cortes/paradas/órfãs,
+desenho médio0,45654ms na amostragem. Digest da medição serializada:
 `c4925755df8c7931c20c588893ccae71f5e708871d7e8d2f6c84d1794f35bc5d`.
-É o digest do conteúdo serializado da medição, não do arquivo JSON formatado.
-A auditoria foi feita no renderer real, Electron 44.9.3, Windows 10.0.26100,
-com amostragem a 24 qps. Zero cortes na amostragem não dispensa a revisão visual.
+Isso é evidência da arte daquele commit; o gate integral ainda precisa vincular
+arte, executável e relatório ao mesmo commit final.
 
-A falha de setup Steam não comprova um defeito Unicode do produto. A fixture foi
-corrigida para copiar explicitamente o executável retornado pelo pacote Electron,
-mantendo cliente Unicode registrado no Windows e biblioteca em outra unidade.
-Esse patch e as correções adicionais de inventário/recuperação ainda precisam do
-próximo diagnóstico Windows.
+## Evidência dos três comandos
 
-Após o ensaio de conversa, o prompt passou a reforçar a anatomia antropomórfica
-somente quando perguntada; o verificador foi ajustado para aceitar a negação
-correta de cauda. São mudanças de código com regressões locais; a qualidade da
-nova resposta depende de repetir a inferência real e ler todas as saídas.
+Em [41521403707](https://github.com/oaovito/oao-companion-/actions/runs/41521403707),
+os três comandos foram enviados pela Central, iniciaram suas cenas e produziram
+dois quadros diferentes separados por700ms. Capturas privadas importadas:
 
-### Os três comandos exigidos
-
-No run `41483917417`, cada comando foi enviado pela Central; o teste confirmou a
-animação correspondente e comparou duas capturas separadas por 700 ms. Todos
-registraram `framesDiffer:true`. SHA-256 do segundo quadro:
-
-| Comando | Cena | SHA-256 |
+| Comando | Captura | SHA-256 do quadro |
 | --- | --- | --- |
-| Encena Buff de café | `living_buffCafe` | `5fc3d2404707097bd389d64a62a8eaf7dc8255e97af38931522d47cbe6a5af16` |
-| Encena Protagonista do prazo | `living_mainCharacter` | `01e99d992d0cfe879bdfd19a6daca0d886f5164b7a026b4b1447d57c653137fe` |
-| Encena Policial | `living_policial` | `039f12482d4c5277e915bd4d4328661ac1251d9a365afcb1beb379721e6af98a` |
+| Encena Buff de café | [Buff de café](evidencias/living_buffCafe-0.45.1.png) | `88074bad8ef2aa4c1c38112236c8a406cb0f8820204b84608ef60268a8932adf` |
+| Encena Protagonista do prazo | [Protagonista](evidencias/living_mainCharacter-0.45.1.png) | `bda164a285240573e9988a558b4fb21456da20a0715e64ad1aed0007cc0ccae3` |
+| Encena Policial | [Policial](evidencias/living_policial-0.45.1.png) | `ce9d4d0182c7e765ec26937f7874fff2457b132603331a16591fa547c836dcee` |
 
-Os hashes identificam os quadros daquela execução. O fluxo alterado posteriormente,
-incluindo pedido enfileirado durante crash e ocultação na recuperação, precisa ser
-revalidado no commit candidato atual.
+O mesmo diagnóstico aprovou fila durante crash, ocultação durante recriação e
+fullscreen a150%, mas terminou13/14 por falha no preparo da fixture Steam.
+Não somar diagnósticos separados como aprovação integral.
 
-## Verificações locais após as correções adicionais
+## Verificações executadas e problemas encontrados
 
-Estado incorporado em `f285032`: **445/445 unitários**, zero falhas e zero pulos,
-Node **22.23.4**; lint de **210 arquivos**, `actionlint` e `git diff --check`
-aprovados. O teste dos ícones compara o hash do rig com normalização LF, evitando
-divergência apenas por CRLF do checkout Windows. Esses testes locais são de lógica
-e não comprovam execução gráfica ou integração nativa Windows.
+**Local:**462/462 testes de lógica, zero falhas/pulos, Node22.23.4; lint221,
+actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 
-Regressões novas cobrem biblioteca EACCES/parcial, zero jogos legítimo, recuperação
-sem amostra antiga, invalidação de provas de DD, mudança da raiz em cache,
-contenção/normalização de caminhos, monitor menor integralmente coberto, descarte
-de tickets antigos, renderer ainda carregando, fila atravessando crash e corrida
-de ocultação. A versão anterior desta execução local teve uma divergência de hash
-rig/ícones; o resultado final **445/445** é o registrado após corrigir a
-normalização, sem enfraquecer a verificação da anatomia.
+| Execução Windows | Evidência efetiva | Resultado/ação |
+| --- | --- | --- |
+| [41477698374](https://github.com/oaovito/oao-companion-/actions/runs/41477698374) | Arte acima; interfaces12/14 | Crash/DPI falharam, corrigidos depois. |
+| [41521403707](https://github.com/oaovito/oao-companion-/actions/runs/41521403707) | Interfaces13/14; três cenas e recuperação passaram | Setup Steam falhou; diagnóstico posterior revelou `locales` ausente na cópia Unicode. Cópia substituída por recursão explícita e conferência de todos os arquivos. |
+| [41651499749](https://github.com/oaovito/oao-companion-/actions/runs/41651499749) | Steam isolado1/1: Registro Unicode, outra unidade, webhelper ignorado, fechada→aberta→fechada e jogo encontrado | Passou. Cliente/jogo são fixtures nativas; não prova Steam comercial. [JSON](evidencias/steam-windows-41651499749.json). |
+| [41521410154](https://github.com/oaovito/oao-companion-/actions/runs/41521410154) e [41652278031](https://github.com/oaovito/oao-companion-/actions/runs/41652278031) |32engine+12Central automáticos verdes | Revisão semântica reprovou insulto/ironia/preferência inventada. Correções posteriores exigem novo ensaio real. |
+| [41655112676](https://github.com/oaovito/oao-companion-/actions/runs/41655112676) |32/32engine;9Central passaram;10º fallbackunknown;2não executaram | Causa do descarte científico não comprovada. Revisão detectou chuva externa inventada; guarda corrigida. Instrumentação do ensaio agora preserva raw/warnings. |
+| [41660524964](https://github.com/oaovito/oao-companion-/actions/runs/41660524964) |UI isolada:1passou/1falhou/10não executaram | Raw/warning comprovaram timeout da primeira geração; `ui_only` omitia pré-carga. Preparo corrigido sem aumentar timeout. |
+| [41724376443](https://github.com/oaovito/oao-companion-/actions/runs/41724376443) |0cenários executados | `/api/pull` excedeu660s antes dos testes; runtime baixou/iniciou. Não é resultado de conversa. [JSON](evidencias/model-download-41724376443.json). |
+| [41727762420](https://github.com/oaovito/oao-companion-/actions/runs/41727762420) |Manifesto HTTP200; Range1MiB HTTP206 em1246ms | Passou, sem inferência/download completo. Justifica uma tentativa limitada. [JSON](evidencias/model-network-41727762420.json). |
+| [41728621830](https://github.com/oaovito/oao-companion-/actions/runs/41728621830) |Central isolada com pré-carga corrigida | 12/12automáticos, zero warnings/erros do renderer; revisão reprovou preferência não informada (“água fria, como você gosta”). Exemplo científico respondeu sem fallback. Comparações implícitas agora exigem o mesmo assunto em preferência afirmativa da usuária; saudação orienta o próprio humor.35/35focados e462/462locais passaram; nova inferência pendente. |
 
-Benchmark puro de identificação de jogos, Node 22.23.4 no host Linux:
+O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
+`app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e
+saída normal antes das três atualizações. **Essa ampliação ainda não passou no
+pipeline integral.**
 
-| Jogos × processos | Antes | Depois |
-| --- | ---: | ---: |
-| 1.000 ×300 | 548,17 ms | 32,62 ms |
-| 5.000 ×300 | 2.795,62 ms | 56,09 ms |
+Benchmark puro de `identifyGame` no host Linux/Node22,5.000jogos×300processos:
+2.795,62→56,09ms;1.000×300:548,17→32,62ms. Mede apenas a função com caminhos
+sintéticos, não o monitoramento Windows ou desempenho global.
 
-A carga usa caminhos sintéticos na mesma unidade, sem correspondências. Mede
-somente `identifyGame`, não a enumeração nativa nem o desempenho global Windows.
+## Versionamento e arquivos principais
 
-Logs locais privados em `/workspace/work/jojo-critical/`: `diag1.log`, `ui2.log`,
-`qa2.log`, `unit-445.tap`, `native-regressions.tap`, `steam-review-unit.tap`,
-`scene-readiness-after.log`, `native-steam-lint-final.log` e
-`steam-identify-benchmark.json`. A quota de artefatos recusou uploads dos
-diagnósticos; as evidências citadas foram preservadas nos logs e nas imagens
-importadas, sem pressupor artefatos de download disponíveis.
-
-## Arquivos principais alterados
+Histórico preservado sem reset/force. Recuperação registrada em `cff4e1d`;
+implementação principal em `56e40a4`, `1613989`, `f285032`, `5297759`, `467b475`,
+`60336df`, `81b287a` e `dfc2dc4`; evidência/revisão técnica em `6496fe6`,
+`49005d4` e `da199bb`. CLI `gh` retornou401; conector GitHub permaneceu funcional.
+Git Data API conferiu blobs/árvore/commit e atualizou a ref com lease, preservando
+histórico e sincronizando checkout sem substituir credenciais.
 
 - Arte: `assets/character/jojo.rig.json`, `assets/animations/jojo.room.json`,
-  `assets/catalog/animacoes.json`, `assets/icons/`, `src/renderer/shared/rig-renderer.js`,
-  `scripts/make-icons.mjs`, auditoria e fixtures/testes de anatomia.
-- Foreground/fullscreen: `src/core/fullscreen-policy.cjs`, `foreground-sample.js`,
-  `src/main/fullscreen-worker.cjs`, `fullscreen-monitor.js`, `main.js` e testes nativos.
-- Cenas/renderer: `src/core/companion.js`, `src/main/living-service.js`,
-  `overlay-window.js`, preload/renderer do overlay e testes de cenas/recuperação.
-- Steam/DD: `src/core/steam-library.cjs`, `darkest-process.cjs`, `darkest-dungeon.js`,
-  `src/main/steam-inventory-worker.cjs`, `steam-service.js`, `darkest-service.js`,
-  interface/preload da Central e testes unitários/Windows.
-- Identidade na conversa: `src/core/dialogue/llm-provider.js`,
-  `scripts/check-conversation.mjs` e regressões correspondentes.
+  catálogo/ícones, `rig-renderer.js`, gerador e testes históricos de anatomia.
+- Windows: `fullscreen-policy.cjs`, `foreground-sample.js`, `fullscreen-worker.cjs`,
+  `fullscreen-monitor.js`, `main.js`, `overlay-window.js`, preload e renderer.
+- Cenas: `companion.js`, `living-service.js` e testes de cenas/recuperação.
+- Steam/DD: `steam-library.cjs`, `darkest-process.cjs`, `darkest-dungeon.js`,
+  worker/inventário/serviços e interface da Central.
+- Conversa: `llm-provider.js`, `ciencia.js`, ensaio real e regressões.
+- Validação: workflows oficiais, `actions-windows.mjs`, `ci-evidence.mjs`,
+  `measure.mjs`, smoke NSIS e testes Windows.
 
-Commits da correção: `56e40a4` (restauração e correções iniciais), `1613989`
-(renderer/DPI e arte medida) e `f285032` (recuperação, inventário, otimização,
-ícones e identidade). Documentação, versão e controles oficiais acompanham a
-candidata; fonte privada não deve ser enviada ao repositório público de binários.
+## Pipeline final e distribuição — preencher somente com evidência
 
-## Limites efetivos da evidência
-
-- Steam/DD Windows usam processos, manifestos e bibliotecas de fixture. Isso
-  verifica mecanismos locais reais, mas não uma instalação comercial do jogo nem
-  o computador da Emanuele. DD em background/foreground/encerramento passou no
-  diagnóstico; a fixture Steam ampliada com Unicode/outra unidade ainda precisa
-  executar após o ajuste de setup.
-- Fullscreen a 150% passou em um runner; duas telas com DPI misto, desconexão
-  física e suspensão real em Windows 11 doméstico não estão comprovadas.
-  A regressão de dois monitores desta revisão é pura, com geometria sintética.
-- Não há evidência específica de uso real de Google Meet compartilhando a tela
-  ou de Steam/DD comerciais. Estados globais/apresentação têm testes de lógica;
-  não equivalem à validação de todos esses aplicativos.
-- A conversa ainda não recebeu aprovação integral nesta candidata. O último ensaio
-  completo passou32/32 engine, mas parou no10º cenário da Central (nove aprovados).
-  O diagnósticoUI isolado seguinte expôs pré-carga omitida, já corrigida no script.
-  O último diagnóstico geral de interfaces ficou13/14; o caso Steam restante passou
-  depois em ensaio isolado1/1. Não somar esses runs como uma aprovação integral.
-- Instalador, portátil, vigia, dados, atualizador e desempenho da versão 0.45.0
-  têm evidências históricas próprias; elas não aprovam esses gates para 0.45.1.
-- Agenda permanece somente por link iCal, sem login/senha; silêncio, privacidade,
-  Trabalho/Foco e demais funcionalidades cumulativas continuam obrigatórios.
-  MNE_Lab não foi acessado nem modificado.
-
-## Diagnóstico adicional e revisão manual — 41521403707 /41521410154
-
-Fonte `f28503223f0ca9453ffce1e4a31d8ade48ac36b3`:
-
-- [Interfaces41521403707](https://github.com/oaovito/oao-companion-/actions/runs/41521403707):
-  **13/14 passaram**. Passaram os três comandos, a cena aguardando durante crash,
-  recuperação do detector/renderer, ocultação durante recriação e fullscreen a150%.
-  Steam falhou com `Process failed to launch!` ao iniciar processo de fixture;
-  o log não identifica qual inicialização falhou. Não comprova defeito do cliente
-  Steam real. Os ícones reexportados conferem byte a byte com os importados.
-- [Conversa41521410154](https://github.com/oaovito/oao-companion-/actions/runs/41521410154):
-  verificações automáticas **32/32 engine +12/12 Central**, sem erro de renderer.
-  Digest do relatório `6f8bd7dc8822606595e7774a74c96fbe7b6e46d650654c98d9cd09cc3bbedc8e`.
-  **Revisão manual reprovada**: anatomia reconhecida, mas a pergunta foi chamada de
-  “idiota”; houve ironia sobre a memória da usuária e invenção de uma preferência
-  por algas marinhas. Evidência integral e motivos em
-  [conversa-windows-41521410154.json](evidencias/conversa-windows-41521410154.json).
-
-As três cenas tiveram novamente dois quadros diferentes. Capturas privadas:
-[Buff de café](evidencias/living_buffCafe-0.45.1.png),
-[Protagonista do prazo](evidencias/living_mainCharacter-0.45.1.png),
-[Policial](evidencias/living_policial-0.45.1.png).
-Hashes respectivos: `88074bad8ef2aa4c1c38112236c8a406cb0f8820204b84608ef60268a8932adf`,
-`bda164a285240573e9988a558b4fb21456da20a0715e64ad1aed0007cc0ccae3`,
-`ce9d4d0182c7e765ec26937f7874fff2457b132603331a16591fa547c836dcee`.
-
-Próximo: corrigir o preparo de processos da fixture Steam com diagnóstico limitado
-por fase e ajustar a conversa para não insultar perguntas, ironizar memória ou
-inventar preferências. Repetir ambos no Windows e ler cada saída antes dos gates
-integrais. Um resultado automático verde não substitui essa revisão.
-
-## Estado da retomada — 03/11/2026
-
-Fonte atual: `6496fe664976bab3ddb9a95e7923cdcb27077fab`, branch privada
-`codex/living-companion`. **454/454 testes de lógica** locais passaram sem pulos;
-lint218 e actionlint aprovados. Novos testes cobrem as quatro aberturas científicas
-no texto realmente entregue pelo Companion e a persistência privada de evidências.
-
-- Steam [41651499749](https://github.com/oaovito/oao-companion-/actions/runs/41651499749):
-  **1/1 aprovado**, Registro Unicode, biblioteca em outra unidade,
-  webhelper excluído e sequência fechada→aberta→fechada.
-- Conversa [41655112676](https://github.com/oaovito/oao-companion-/actions/runs/41655112676):
-  **32/32 engine**, Central9cenários aprovados,10º falhou com fallbackunknown,
-  últimos2 não executaram. Causa do descarte científico ainda não comprovada;
-  a instrumentação agora preserva raw/warnings somente nos testes sintéticos.
-- UI isolada [41660524964](https://github.com/oaovito/oao-companion-/actions/runs/41660524964):
-  **1 aprovado/1 falhou/10 não executaram**, engine não executado. Raw e warning
-  comprovaram tempo esgotado na primeira geração. O novo ramoUI_only pulava
-  `carregarModelo`; TEST/baseOverride pula a preparação normal do cérebro. Isso
-  foi corrigido mantendo o mesmo timeout e medindo a pré-carga separadamente.
-- Novo diagnóstico [41724376443](https://github.com/oaovito/oao-companion-/actions/runs/41724376443)
-  está em execução, somente Central, com o preparo corrigido. Não aprova release.
-
-Na leitura anterior, uma abertura depreciativa veio de `src/core/ciencia.js`,
-acrescentada após validar a fala do modelo. Somente essa abertura foi substituída
-por “Vamos aos fatos.”, preservando as outras três e o visual de ciência. Correções
-literais usam dados de termos e instrução positiva breve; guardas não fingem
-inferência quando a fala foi descartada. Clima externo sem informação não deve
-aparecer como observação do personagem; relatos, hipóteses e ferramenta de clima
-mantêm seus caminhos.
-
-CLI GitHub passou a responder401; o conector conservou permissão de escrita.
-Objetos Git foram enviados e comparados por SHA, árvore conferida, atualização
-remota com lease e sincronização local sem reset/force. As referências local e
-remota apontam para o mesmo commit, preservando todo o histórico. Nenhuma credencial
-injetada foi substituída. Não usar o token recusado nem afirmar terminal offline.
-
-O pipeline integral passa a salvar evidência sintética/progresso na branch privada
-`codex/ci-evidence-<runId>-<attempt>`, sem mover a branch de fonte. Isso permite ler
-as44falas desta execução antes de publicar, mesmo sem quota de artefatos. Falha em
-preservar a evidência bloqueia a publicação. Essa coleta ainda aguarda validação
-no pipeline integral. Commits `[jojo-ui]` e `[jojo-qa]` são diagnósticos explícitos;
-um push normal mantém todos os gates de release. Nenhum binário novo foi publicado.
-
-## Pipeline integral e publicação — a atualizar
-
-**Ainda não concluído para 0.45.1.** Após os diagnósticos, executar os gates
-obrigatórios no mesmo commit/run Windows oficial e preencher:
-
-| Gate ou entrega | Estado neste rascunho |
+| Campo | Resultado a registrar |
 | --- | --- |
-| Preflight, instalação, lint e unitários no Windows | Pendente para o commit final |
-| Integração nativa, E2E e recuperação | Pendente para o commit final |
-| Conversa real engine +Central e revisão semântica | Pendente |
-| Arte/auditoria de 1.268 animações e vínculo com o commit final | Auditoria anterior disponível; gate integral pendente |
-| Build, NSIS instalado/iniciado/desinstalado, portátil e ZIP | Pendente |
-| Vigia, desempenho e preservação de dados/atalhos | Pendente |
-| Atualizações, compatibilidade, nomes/tamanhos/SHA-256 e notas | Pendente |
-| Relatório integral, tag privada e três arquivos oficiais | Pendente |
-| Publicação pública e verificação anônima do atualizador | **Não publicada** |
+| Commit final validado /tag privada nova | **PENDENTE** |
+| Run/job/tentativa Windows integral | **PENDENTE** |
+|16gates do mesmo run | **PENDENTE**; não preencher com diagnósticos parciais |
+| Unitários/integração/E2E efetivamente executados | **PENDENTE** |
+|32engine+12Central e leitura de todas as saídas | **PENDENTE** |
+| Digest e aprovação semântica do mesmo SHA/run/tentativa | **PENDENTE** |
+| Auditoria1.268 e revisão visual final | **PENDENTE** |
+| NSIS/portátil/ZIP, vigia, dados, atalhos e três atualizações | **PENDENTE** |
+| CPU/memória por cenário Windows | **PENDENTE**; registrar números e escopo, sem inventar limite |
+| Três assets públicos, tamanhos e SHA-256 | **PENDENTE** |
+| Release nova/notas incrementais e downloads anônimos | **NÃO PUBLICADA** |
+| Updater0.45.0→0.45.1 nos dois modos e sem repetição em0.45.1 | **PENDENTE** |
+| Comparação das19releases históricas e suas tags/assets | Metadados/assets19inalterados; SHAs19tags públicas/27privadas registrados antes da candidata. Comparação final **PENDENTE** |
+| Controle main0.45.1 e verificação horária idempotente | **PENDENTE** após publicação |
 
-Somente após todos os gates obrigatórios aprovados pode ser preparada a nova
-publicação. Preservar as 19 releases existentes; não mover tags nem substituir
-arquivos da 0.45.0 ou anteriores. Atualizar este relatório com os resultados reais,
-incluindo falhas e limites, antes de declarar a entrega concluída.
+O pipeline integral exige evidência privada das44falas e registro técnico em
+`semantic-review.json`, vinculados ao mesmo commit/run/tentativa/digest, antes do
+build. A ausência, rejeição ou falha de integridade bloqueia publicação. Trata-se
+da revisão de Codex; não exige confirmação manual da usuária.
+
+## Limitações e pendências efetivas
+
+- Fixtures Windows verificam mecanismos nativos de Steam/DD e transições de
+  atividade; não comprovam instalações comerciais ou o PC da Emanuele.
+- Um runner hospedado Windows Server não comprova Windows11 doméstico, duas
+  telas físicas com DPI misto, desconexão física ou suspensão real. Há testes
+  puros de geometria e um cenário Windows a150%.
+- Não foi comprovado compartilhamento real de GoogleMeet no PC da usuária.
+- Conversa real e todos os gates finais permanecem pendentes neste corte.
+  Verificações lexicais verdes não substituem a leitura das respostas.
+- A quota de artefatos CI recusou uploads; evidências recuperáveis permanecem em
+  logs/JSON privados. Não foram compradas quotas nem removidos artefatos antigos.
+-0.45.0 e versões anteriores são imutáveis. MNE_Lab não foi acessado/modificado.
+
+Após os gates e publicação, substituir os campos pendentes por dados do run
+oficial e registrar apenas “nenhuma regressão detectada nos testes executados”,
+sem prometer perfeição universal ou validação física não realizada.

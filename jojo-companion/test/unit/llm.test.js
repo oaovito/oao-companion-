@@ -66,6 +66,14 @@ test('resposta: JSON ou texto; trava descarta cara de assistente', () => {
   assert.equal(outOfCharacter('Comi um surfista. Tava bom.'), null);
 });
 
+test('pergunta de bem-estar prioriza o próprio humor do personagem sem resposta pronta', () => {
+  for (const text of ['você está bem?', 'JoJo, como você está?', 'How are you?', 'Are you okay?']) {
+    assert.match(buildLocalPrompt(profile, {}, text).split('\n').at(-1), /one self-contained sentence about your own present mood as JoJo/);
+  }
+  assert.doesNotMatch(buildLocalPrompt(profile, {}, 'Qual a previsão do tempo?'), /For this greeting/);
+  assert.doesNotMatch(buildLocalPrompt(profile, {}, 'O que é diabetes?', { tecnico: true }), /For this greeting/);
+});
+
 test('IA responde no lugar das falas programadas, com histórico e ação de corpo', async () => {
   const calls = [];
   const eng = new DialogueEngine({ llm: llm('{"texto":"Dia bom é dia de supino, Manu.","acao":"flex","tom":"brincadeira"}', {}, calls) });

@@ -121,7 +121,9 @@ executar ações que não foram pedidas. Texto livre não exige JSON nem narraç
 Código e CI vivem somente em `oaovito/oao-companion-` (privado). Nova tag oficial,
 após testes, build, auditoria visual e conversa real no Windows, pode publicar os três
 binários em `oaovito/jojo-companion-releases` (público). API Releases e assets com SHA-256
-são os metadados do atualizador próprio. Push comum não publica; versões históricas,
+são os metadados do atualizador próprio. Push na branch fonte pode publicar somente
+a candidata autorizada pela política, depois de todos os gates e revisão do mesmo
+run. Pushes diagnósticos não publicam. Versões históricas,
 seus arquivos e tags são imutáveis. `scripts/check-conversation-windows.ps1` é compartilhado pelo ensaio real e pelo
 workflow oficial. GitHub Actions é a única infraestrutura. `scripts/actions-windows.mjs`
 reúne os gates originais, instalador e relatórios no mesmo job oficial Windows; o

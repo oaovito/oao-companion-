@@ -62,7 +62,7 @@ registro do atalho é exibida nas configurações; bandeja continua funcionando.
 Estética de recorte de papel no estilo South Park, versão fofa do JoJo da
 referência do usuário: de frente, cabeça grande e redonda, olhos ovais brancos
 com pupilas de ponto, cores chapadas e contorno fino; tubarão bípede azul-ardósia
-com recortes creme serrilhados (focinho, barriga, rabo), sorriso com muitos
+com recortes creme serrilhados (focinho e barriga), sorriso com muitos
 dentinhos, barbatana na cabeça, sem cauda, bermuda preta com faixas cinza.
 Versão adulta e intimidadora com físico de fisiculturista: trapézio e ombros
 enormes, cintura fina em V, peitoral/abdômen definidos, braços com bíceps e

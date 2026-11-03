@@ -85,7 +85,7 @@ function chuvaForaAfirmada(text) {
   });
 }
 
-function preferenciaInventada(output, known) {
+function preferenciaInventada(output, known, userFacts) {
   // Guarda conservadora para preferências atribuídas como fato. Perguntas novas
   // e hipóteses continuam permitidas; o contexto confiável vem da usuária.
   for (const sentence of String(output).split(/(?<=[.!?])\s+/)) {
@@ -99,6 +99,20 @@ function preferenciaInventada(output, known) {
     for (const object of objects) {
       const words = object[1].split(' ').filter(w => !/^(?:de|do|da|dos|das|o|a|os|as|the|of)$/.test(w));
       if (words.some(w => !new RegExp(`\\b${w}\\b`).test(known))) return true;
+    }
+    // "Como você gosta" também atribui uma preferência. Uma cor ou uma fala
+    // anterior do próprio modelo não fundamenta gostar da temperatura da água.
+    const implicit = punctuation.match(/\b(?:como (?:voce|vc|tu) (?:gosta|prefere)|(?:just )?as you (?:like|prefer)(?: it| them)?|(?:just )?the way you (?:like|prefer)(?: it| them)?)\b/);
+    if (implicit?.index > 0 && !sentence.trim().endsWith('?')) {
+      const subject = punctuation.slice(0, implicit.index).replace(/[,\s]+$/, '').split(/,|\b(?:e|and)\b/).at(-1);
+      const words = subject.split(' ').filter(w => w && !/^(?:a|o|as|os|um|uma|the|an|de|do|da|dos|das|of|is|are|was|were|it|its|esta|ta|eh|e|aqui|here|bem|muito|very|just|exactly)$/.test(w));
+      const grounded = words.length && userFacts.some(fact => {
+        if (/[?]/.test(fact)) return false;
+        const value = norm(fact).match(/^(?:(?:eu )?(?:gosto|prefiro|adoro|amo) (?:de )?|i (?:really )?(?:like|prefer|love) |(?:minha|meu) .{1,50} (?:favorit[oa]|preferid[oa]) (?:e|eh) |my (?:favou?rite|preferred) .{1,50} is )(.+)$/)?.[1];
+        const affirmative = value?.split(/\b(?:nao|not|mas|but|porem|except|exceto)\b/)[0];
+        return affirmative && words.every(word => new RegExp(`\\b${word}\\b`).test(affirmative));
+      });
+      if (!grounded) return true;
     }
   }
   return false;
@@ -124,8 +138,9 @@ export function erroDeCoerencia(input, output, history = []) {
     const item = preference.replace(/[?!]+$/, '').replace(/^(?:um|uma|a|an|the) /, '');
     if (item && !r.includes(item)) return 'preferência da usuária substituída pela do personagem';
   }
-  const known = norm([input, ...history.filter(h => h.role === 'user').map(h => h.text)].join(' '));
-  if (preferenciaInventada(output, known)) return 'preferência pessoal não informada';
+  const userFacts = [input, ...history.filter(h => h.role === 'user').map(h => h.text)].flatMap(text => String(text).split(/(?<=[.!?])\s+/));
+  const known = norm(userFacts.join(' '));
+  if (preferenciaInventada(output, known, userFacts)) return 'preferência pessoal não informada';
   const fiction = /^imagine\b|\b(?:conte|escreva|crie|invente|tell|write|create) (?:um |uma |a |an |the )?(?:conto|historia|cena|story|scene)\b/.test(q);
   if (chuvaForaAfirmada(output) && !fiction && !weatherRequest(input) && ![input, ...history.filter(h => h.role === 'user').map(h => h.text)].some(chuvaForaAfirmada)) return 'observação de clima não informada';
   const doubts = /\b(tem certeza|certeza disso|are you sure|you sure|voce se enganou|you are mistaken)\b/.test(r)

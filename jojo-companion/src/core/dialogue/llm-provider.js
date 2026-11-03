@@ -96,6 +96,8 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
   if (!tecnico) linhas.push(`Output only your spoken reply, no narration, stage directions, labels or JSON. Response language: ${lingua}.`);
+  const greeting = String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  if (!tecnico && /^(?:jojo[, ]+)?(?:voce (?:esta|ta) bem|vc (?:esta|ta) bem|como (?:voce|vc) (?:esta|ta)|how are you|are you (?:ok|okay|well))[?!.,\s]*$/.test(greeting)) linhas.push('For this greeting, give one self-contained sentence about your own present mood as JoJo.');
   if (correcaoPessoal(text)) linhas.push(`She is correcting her own wording. ${correction ? 'Acknowledge only the affirmed wording briefly, then stop. Use this corrected wording in subsequent turns.' : 'Briefly acknowledge her clarified wording.'} Acknowledging her words does not confirm the truth of medical claims.`);
   return linhas.join('\n');
 }
