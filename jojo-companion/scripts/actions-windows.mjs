@@ -112,6 +112,13 @@ try {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
     const ui = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-interface-windows.json')));
     if (qa.digest !== tools.modelDigest || qa.rows.length !== 32 || qa.rows.some((r) => r.errors.length) || ui.rows.length !== 12 || ui.rendererErrors.length) throw new Error('Conversa real incompleta/reprovada');
+    // Anotações privadas ficam disponíveis enquanto os demais gates continuam.
+    // Só falas sintéticas: permitem revisão da execução atual antes da publicação.
+    const rows = [...qa.rows.map(row => ({ source: 'engine', ...row })), ...ui.rows.map(row => ({ source: 'central', ...row }))];
+    for (let offset = 0; offset < rows.length; offset += 8) {
+      const message = JSON.stringify({ commit, offset, total: rows.length, rows: rows.slice(offset, offset + 8) }).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+      console.log(`::notice title=JoJo conversa::${message}`);
+    }
     for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) {
       if (fs.existsSync(path.join(app, 'out', name))) fs.copyFileSync(path.join(app, 'out', name), path.join(run, name));
     }
