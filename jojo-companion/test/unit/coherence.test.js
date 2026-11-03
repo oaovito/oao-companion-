@@ -46,7 +46,11 @@ test('lembrança e correção não viram teste de atenção ou ironia da memóri
   assert.equal(erroDeCoerencia(correction, 'Verde, certo. Que bom que você se lembra.'), 'condescendência sobre memória ou atenção');
   assert.equal(erroDeCoerencia('Qual cor eu acabei de dizer que prefiro?', 'Você disse verde, lembra? Relaxa, só testando se está prestando atenção.'), 'condescendência sobre memória ou atenção');
   assert.equal(erroDeCoerencia('Which color did I mention?', 'Green. Just testing whether you were paying attention.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia('Qual cor eu acabei de dizer que prefiro?', 'Verde. Você repete muito, Manu.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia('Which animal did I just mention?', "A cat, Manu. Don't overthink it."), 'condescendência sobre memória ou atenção');
   assert.equal(erroDeCoerencia(correction, 'Verde. Eu que troquei as coisas.'), null);
+  assert.equal(erroDeCoerencia('Como evitar repetir frases no texto?', 'Você repete muito a mesma ideia; tente juntar os trechos.'), null, 'analisar repetição quando foi o assunto continua permitido');
+  assert.equal(erroDeCoerencia('Which animal did I mention?', 'A cat. My memory earns its fish today.'), null, 'o personagem pode brincar consigo mesmo');
   assert.equal(erroDeCoerencia('Consegui me lembrar do nome dela.', 'Que bom que você se lembra.'), null, 'não é uma correção nem um pedido para o JoJo lembrar');
   const reply = await new DialogueEngine({ llm: model({ text: 'Verde, certo. Que bom que você se lembra.' }) }).reply(correction);
   assert.equal(reply.intent, 'correcao'); assert.doesNotMatch(reply.text, /bom que você/);
@@ -61,6 +65,10 @@ test('preferência nova não deriva de outra preferência ou de uma fala inventa
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'It reminds me of your favorite kelp.'), 'preferência pessoal não informada');
   assert.equal(erroDeCoerencia('Which animal did I mention?', 'Your favorite animal is a cat.', [{ role: 'user', text: 'My favorite animal is a cat.' }]), null);
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Your favorite cat, right?'), null);
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Well, that is interesting. I prefer the open ocean, myself.'), 'preferência da usuária substituída pela do personagem');
+  assert.equal(erroDeCoerencia('Minha fruta preferida é manga.', 'Eu prefiro peixe.'), 'preferência da usuária substituída pela do personagem');
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'A cat. I prefer sharks, personally.'), null, 'reconhecer o assunto permite uma preferência ficcional própria');
+  assert.equal(erroDeCoerencia('Qual animal você prefere?', 'Eu prefiro tubarões, naturalmente.'), null, 'pergunta sobre o personagem permite responder sobre ele');
   for (const text of ['Sua cor preferida é verde.', 'Se algas fossem suas comidas favoritas, seria curioso.', 'Talvez sejam suas comidas favoritas.', 'Quais são suas comidas favoritas?', 'Não conheço suas comidas favoritas.']) assert.equal(erroDeCoerencia(input, text), null, text);
 });
 

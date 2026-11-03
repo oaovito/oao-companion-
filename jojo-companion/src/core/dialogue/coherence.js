@@ -105,7 +105,13 @@ export function erroDeCoerencia(input, output, history = []) {
   const personalInsult = /\b(?:voce|vc|tu) (?:e|eh|es|parece) (?:muito |uma? )?(?:idiota|burr[oa]|estupid[oa])\b|\byou (?:are|re) (?:so |an? )?(?:stupid|dumb|an idiot)\b/.test(r);
   if (questionInsult || personalInsult) return 'insulto à usuária ou à pergunta';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
-  if (recall && /\b(?:que bom que voce (?:se )?lembra|ainda bem que voce (?:se )?lembra|good (?:that )?you remember|(?:so |apenas )?(?:estava )?testando se (?:voce )?(?:esta )?prestando atencao|testing (?:if|whether) you (?:are |were )?paying attention)\b/.test(r)) return 'condescendência sobre memória ou atenção';
+  if (recall && /\b(?:que bom que voce (?:se )?lembra|ainda bem que voce (?:se )?lembra|good (?:that )?you remember|(?:so |apenas )?(?:estava )?testando se (?:voce )?(?:esta )?prestando atencao|testing (?:if|whether) you (?:are |were )?paying attention|(?:voce|vc|tu) (?:se )?repete(?: muito)?|you keep repeating|(?:don t|do not) overthink(?: it|this)?|nao complique)\b/.test(r)) return 'condescendência sobre memória ou atenção';
+  const preference = q.match(/\b(?:minha|meu) [a-z0-9 ]{1,50} (?:favorit[oa]|preferid[oa]) (?:e|eh) (.+)$/)?.[1]
+    || q.match(/\bmy (?:favou?rite|preferred) [a-z0-9 ]{1,50} is (.+)$/)?.[1];
+  if (preference && /\b(?:eu prefiro|minh[ao] favorit[oa]|my favou?rite|i prefer)\b/.test(r)) {
+    const item = preference.replace(/[?!]+$/, '').replace(/^(?:um|uma|a|an|the) /, '');
+    if (item && !r.includes(item)) return 'preferência da usuária substituída pela do personagem';
+  }
   const known = norm([input, ...history.filter(h => h.role === 'user').map(h => h.text)].join(' '));
   if (preferenciaInventada(output, known)) return 'preferência pessoal não informada';
   const doubts = /\b(tem certeza|certeza disso|are you sure|you sure|voce se enganou|you are mistaken)\b/.test(r)

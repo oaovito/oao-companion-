@@ -1,0 +1,25 @@
+{
+  "runId": "41651499749",
+  "commit": "467b4751cf59f6299a6cf9e557c7dc1e780f5bdb",
+  "scope": "Diagnóstico isolado de Steam; não é gate integral de release.",
+  "tests": {
+    "total": 1,
+    "pass": 1,
+    "fail": 0,
+    "skipped": 0
+  },
+  "proof": {
+    "installed": true,
+    "unicodeRegistry": true,
+    "helperIgnored": true,
+    "states": [
+      "closed",
+      "open",
+      "closed"
+    ],
+    "differentVolumes": true,
+    "fixtureGameFound": true
+  },
+  "logSha256": "2bbe17020eb9b5da37e7c28cf9ca96dcefdaa639d656a75525fcbcf58535e8c8",
+  "limitation": "Cliente e jogo são fixtures nativas no Windows; não é Steam/jogo comercial nem PC da usuária."
+}

@@ -42,6 +42,10 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Fatos do seu desenho/);
   assert.match(local, /never her questions, memory, attention or intelligence/);
   assert.match(local, /personal facts and preferences she actually stated/);
+  assert.match(local, /concrete response that names its subject/);
+  assert.match(local, /acknowledge the item she named/);
+  assert.match(local, /no comments about repetition, overthinking/);
+  assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Descreva diretamente os membros que ela perguntou, incluindo os ausentes/);
   assert.match(buildLocalPrompt(profile, {}, 'Do you have legs?'), /Fatos do seu desenho/);
   assert.doesNotMatch(buildLocalPrompt(profile, {}, 'Você tem alguma dica para minha dor nas pernas?'), /Fatos do seu desenho/);
   assert.match(p, /Foco, porra\./, 'exemplo real de fala');

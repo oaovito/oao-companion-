@@ -44,6 +44,16 @@ os gates integrais. NSIS ampliado para confirmar inventário pelo worker do app.
 real instalado, arquivos desempacotados e encerramento normal antes das3 atualizações.
 Essas novas verificações Windows ainda não passaram; sintaxe/actionlint aprovados.
 
+Steam isolado **41651499749**, fonte `467b475`: **1/1 passou**, com Registro Unicode,
+biblioteca em outra unidade, webhelper excluído e fechada→aberta→fechada confirmados.
+O teste isolado não equivale a14 interfaces ou ao pipeline integral. O NSIS ampliado
+continua pendente. Evidência em `docs/evidencias/steam-windows-41651499749.json`.
+Conversa **41650519051**, fonte `5297759`: **30/32 engine**, Central não executou.
+Falharam assunto de prazo e preferência cat; leitura também detectou crítica à
+repetição e “Don't overthink it” em perguntas de memória. Nova correção pede resposta
+concreta ao assunto antes da piada, reconhece a preferência dela e rejeita esses
+desvios sem alterar/remover os32 casos ou padrões exigidos. Repetir inferência real.
+
 ### Diagnóstico da arte e interfaces — 41477698374
 
 Fonte `56e40a4`: medição Windows de 434 bases importada, digest
