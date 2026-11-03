@@ -16,6 +16,15 @@ O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
 ### Retomada em 03/11/2026 — ainda sem publicação
 
+Último ensaio completo da conversa: fonte `81b287a`; implementação em revisão.
+**450/450 unitários** locais passaram, lint215. Steam nativo isolado1/1 aprovado.
+Conversa **41655112676**:32/32 engine; Central passou9 cenários e falhou no10º
+(exemplo científico→fallbackunknown); dois não executaram. A revisão detectou
+chuva inventada na resposta de bem-estar. Motivo do fallback não está nos logs,
+não chamar de timeout. Próximo diagnóstico preserva raw/warnings somente no ensaio
+sintético da Central; `ui_only=true` é parcial, nunca gate de publicação.
+Todos os gates Windows/NSIS/desempenho/atualização seguem pendentes para0.45.1.
+
 Novo ambiente conectado; terminal/Git/rede funcionais e alterações locais intactas.
 Fonte `f285032`: interfaces **41521403707** ficaram em13/14; passaram três cenas,
 fila durante crash, ocultação durante recriação e DPI150%. Steam falhou ao iniciar

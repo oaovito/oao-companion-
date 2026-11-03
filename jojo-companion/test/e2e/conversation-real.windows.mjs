@@ -48,6 +48,28 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
     await app.evaluate(() => {
       globalThis.__jojo.setCursor({ x: 5, y: 5 });
       globalThis.__jojo.companion.dateNow = () => new Date(2026, 9, 30, 15);
+      // Instrumentação só deste ensaio sintético. O aplicativo distribuído não
+      // recebe ganchos nem passa a registrar o conteúdo das conversas.
+      const dialogue = globalThis.__jojo.companion.dialogue;
+      const diagnostics = globalThis.__jojoConversationQa = { rawReplies: [], warnings: [], lastInput: null };
+      const originalReply = dialogue.llm._replyOllama;
+      dialogue.llm._replyOllama = async function (...args) {
+        const input = diagnostics.lastInput = String(args[0]?.text || '');
+        try {
+          const rawContent = await originalReply.apply(this, args);
+          diagnostics.rawReplies.push({ input, rawContent });
+          return rawContent;
+        } catch (error) {
+          diagnostics.rawReplies.push({ input, error: { name: String(error?.name || 'Error'), message: String(error?.message || error) } });
+          throw error;
+        }
+      };
+      const originalLog = dialogue.log;
+      dialogue.log = function (...args) {
+        const [level, message] = args;
+        if (level === 'warn' || level === 'error') diagnostics.warnings.push({ input: diagnostics.lastInput, level, message: String(message) });
+        return originalLog.apply(this, args);
+      };
     });
     const opening = app.waitForEvent('window');
     await app.evaluate(() => globalThis.__jojo.companion.openApp());
@@ -72,7 +94,7 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
     for (const c of cases) {
       const start = performance.now();
       const reply = await central.evaluate((input) => window.appApi.send(null, input), c.text);
-      const row = { input: c.text, text: reply.text, intent: reply.intent, action: reply.action, ms: Math.round(performance.now() - start) };
+      const row = { input: c.text, text: reply.text, intent: reply.intent, action: reply.action, ms: Math.round(performance.now() - start), ...(reply.error !== undefined ? { error: reply.error } : {}) };
       rows.push(row); console.log('INTERFACE ' + JSON.stringify(row));
       assert.equal(erroDeCoerencia(c.text, reply.text), null);
       if (c.model) assert.equal(reply.intent, 'ia', `${c.text}: ${reply.text}`);
@@ -89,7 +111,12 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
     assert.deepEqual(after.current.messages, before.current.messages);
     assert.deepEqual(errors, []);
   } finally {
-    fs.writeFileSync(output, JSON.stringify({ model, platform: process.platform, fixture: 'Interface/IPC/controlador/modelo reais; perfil e conversa sintéticos; pesquisa externa desligada', semantic_review_required: true, rows, rendererErrors: errors }, null, 2));
+    let diagnostics = { rawReplies: [], warnings: [] };
+    if (app) {
+      try { diagnostics = await app.evaluate(() => globalThis.__jojoConversationQa || { rawReplies: [], warnings: [] }); }
+      catch (error) { diagnostics.collectionError = String(error.message || error); }
+    }
+    fs.writeFileSync(output, JSON.stringify({ model, platform: process.platform, fixture: 'Interface/IPC/controlador/modelo reais; perfil e conversa sintéticos; pesquisa externa desligada', semantic_review_required: true, rows, rendererErrors: errors, diagnostics }, null, 2));
     if (central && !central.isClosed()) {
       const png = await central.screenshot().catch(() => null);
       if (png) {

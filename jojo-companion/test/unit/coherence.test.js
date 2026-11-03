@@ -78,6 +78,22 @@ test('preferência nova não deriva de outra preferência ou de uma fala inventa
   for (const text of ['Sua cor preferida é verde.', 'Se algas fossem suas comidas favoritas, seria curioso.', 'Talvez sejam suas comidas favoritas.', 'Quais são suas comidas favoritas?', 'Não conheço suas comidas favoritas.']) assert.equal(erroDeCoerencia(input, text), null, text);
 });
 
+test('conversa casual não inventa chuva observada; relato, hipótese e ferramenta de clima permanecem possíveis', async () => {
+  const input = 'você está bem?';
+  const invented = 'Sim, estou ótimo, Manu. A chuva lá fora não me incomoda nem um pouco.';
+  assert.equal(erroDeCoerencia(input, invented), 'observação de clima não informada');
+  assert.equal(erroDeCoerencia('How are you?', 'Fine. The rain outside does not bother me.'), 'observação de clima não informada');
+  assert.equal(erroDeCoerencia(input, invented, [{ role: 'jojo', text: 'Está chovendo lá fora.' }]), 'observação de clima não informada', 'um fato inventado anteriormente pelo modelo não é uma fonte');
+  assert.equal(erroDeCoerencia(input, invented, [{ role: 'user', text: 'Está chovendo lá fora.' }]), null);
+  assert.equal(erroDeCoerencia('Está chovendo lá fora e eu estou em casa.', 'A chuva lá fora pede um descanso.'), null);
+  assert.equal(erroDeCoerencia(input, 'Está chovendo lá fora?'), null);
+  assert.equal(erroDeCoerencia(input, 'Se a chuva lá fora continuar nessa história, o tubarão vai precisar de guarda-chuva.'), null);
+  assert.equal(erroDeCoerencia('Conte uma história com chuva e um tubarão.', 'A chuva lá fora molhava o tubarão da história.'), null);
+  assert.equal(erroDeCoerencia('Vai chover hoje em Guarapuava?', 'A chuva lá fora está leve.'), null, 'solicitação meteorológica usa a ferramenta própria antes do modelo');
+  const engine = new DialogueEngine({ llm: model({ text: invented }) });
+  assert.notEqual((await engine.reply(input)).intent, 'ia');
+});
+
 test('correcao das proprias palavras distingue esclarecimento de pergunta e relato de terceiros', () => {
   for (const text of ['Eu disse lilás, não rosa.', 'JoJo, falei de manhã, não à noite.', 'Eu quis dizer quinta-feira.', 'I said Thursday, not Tuesday.', 'I meant blue.']) assert.equal(correcaoPessoal(text), true, text);
   for (const text of ['O João disse quinta, não terça.', 'Eu disse isso ontem?', 'Qual é a diferença entre azul e verde?']) assert.equal(correcaoPessoal(text), false, text);

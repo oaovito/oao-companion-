@@ -57,8 +57,13 @@ try {
   foreach ($file in @('out/conversa-real-windows.json', 'out/conversa-interface-windows.json', 'out/conversa-interface-windows.png')) {
     if (Test-Path $file) { Remove-Item -LiteralPath $file }
   }
-  node scripts/check-conversation.mjs out/conversa-real-windows.json
-  $qaExit = $LASTEXITCODE
+  if ($env:JOJO_QA_UI_ONLY -eq 'true') {
+    Write-Output 'Diagnostico somente da Central: engine nao executado, sem aprovacao integral.'
+    $qaExit = 0
+  } else {
+    node scripts/check-conversation.mjs out/conversa-real-windows.json
+    $qaExit = $LASTEXITCODE
+  }
   if ($qaExit -eq 0) {
     node --test --test-reporter=tap test/e2e/conversation-real.windows.mjs
     $qaExit = $LASTEXITCODE

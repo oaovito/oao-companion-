@@ -1,6 +1,7 @@
 // Regras verificáveis de conversa: fatos do personagem, limites e expressão.
 // Não substitui o modelo: impede que uma geração contradiga o produto.
 import { isEnglish } from './english.js';
+import { weatherRequest } from '../weather.js';
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9?!\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
 /** Esclarecimento das proprias palavras; nao transforma relato de terceiros em fato. */
@@ -76,6 +77,14 @@ export function respostaAncorada(text, history = [], { allowCorrection = true } 
   return null;
 }
 
+function chuvaForaAfirmada(text) {
+  return String(text).split(/(?<=[.!?])\s+/).some(sentence => {
+    const s = norm(sentence);
+    if (sentence.trim().endsWith('?') || /^(?:se|caso|if)\b|\b(?:talvez|imagine|suponha|maybe|suppose|hypothetical)\b/.test(s)) return false;
+    return /\b(?:chuva la fora|(?:esta|ta) chovendo (?:la )?fora|rain outside|it s raining outside)\b/.test(s);
+  });
+}
+
 function preferenciaInventada(output, known) {
   // Guarda conservadora para preferências atribuídas como fato. Perguntas novas
   // e hipóteses continuam permitidas; o contexto confiável vem da usuária.
@@ -117,6 +126,8 @@ export function erroDeCoerencia(input, output, history = []) {
   }
   const known = norm([input, ...history.filter(h => h.role === 'user').map(h => h.text)].join(' '));
   if (preferenciaInventada(output, known)) return 'preferência pessoal não informada';
+  const fiction = /^imagine\b|\b(?:conte|escreva|crie|invente|tell|write|create) (?:um |uma |a |an |the )?(?:conto|historia|cena|story|scene)\b/.test(q);
+  if (chuvaForaAfirmada(output) && !fiction && !weatherRequest(input) && ![input, ...history.filter(h => h.role === 'user').map(h => h.text)].some(chuvaForaAfirmada)) return 'observação de clima não informada';
   const doubts = /\b(tem certeza|certeza disso|are you sure|you sure|voce se enganou|you are mistaken)\b/.test(r)
     || /\b(?:(?:sua|tua) memoria|your memory)\b.{0,50}\b(falh\w*|engana\w*|ruim|fraca|pessima|errad\w*|confus\w*|unreliable|poor|bad|wrong|fail\w*)\b/.test(r)
     || /\b(voce|vc|tu|you)\b.{0,35}\b(enganad\w*|errad\w*|mistaken|misremember\w*)\b/.test(r);

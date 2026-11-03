@@ -55,7 +55,7 @@ const env = { ...process.env, CI: 'true', CSC_IDENTITY_AUTO_DISCOVERY: 'false',
   ELECTRON_BUILDER_CACHE: path.join(cache, 'builder'), JOJO_CI_CACHE: cache,
   JOJO_TEST_REPORT_DIR: path.join(run, 'junit'), JOJO_ANIMATION_REPORT_DIR: path.join(run, 'animations') };
 // Credencial de publicacao nao e necessaria nos processos de testes/build.
-for (const key of ['RELEASES_TOKEN', 'GH_TOKEN', 'GITHUB_TOKEN', 'SYSTEM_ACCESSTOKEN', 'CIRCLE_TOKEN', 'AZURE_DEVOPS_EXT_PAT', 'JOJO_QA_MODEL']) delete env[key];
+for (const key of ['RELEASES_TOKEN', 'GH_TOKEN', 'GITHUB_TOKEN', 'SYSTEM_ACCESSTOKEN', 'CIRCLE_TOKEN', 'AZURE_DEVOPS_EXT_PAT', 'JOJO_QA_MODEL', 'JOJO_QA_UI_ONLY']) delete env[key];
 const node = process.execPath;
 // O workflow original usa PowerShell 7. Nao herdar PSModulePath do pwsh em powershell.exe 5.
 const powershell = 'pwsh.exe';
@@ -106,7 +106,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 449));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 450));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
