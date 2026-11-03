@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.45.1 — 2026-11-02
+## 0.45.1 — 2026-11-03
 
 ### Correções
 - Restaura pernas, braços, mãos, proporções e musculatura dos recursos históricos

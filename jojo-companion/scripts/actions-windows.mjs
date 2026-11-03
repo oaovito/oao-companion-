@@ -76,6 +76,9 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   if (id === 'e2e') for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
     if (/JOJO_(CRITICAL_EVIDENCE|DPI_EVIDENCE|STEAM_EVIDENCE):/.test(line)) console.log(line);
   }
+  if (id === 'installer') for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
+    if (/^JOJO_PACKAGED_STEAM:/.test(line)) console.log(line);
+  }
   fs.copyFileSync(log, path.join(summary, `${id}.log`));
   if (entry.status !== 'passed') {
     if (optional) { console.log(`${id}: diagnostico opcional falhou; log preservado`); return; }
@@ -113,7 +116,13 @@ try {
     return { engineCases: qa.rows.length, uiCases: ui.rows.length, modelDigest: qa.digest };
   });
   await step('build', node, ['scripts/build-win.mjs'], 15);
-  await step('installer', node, ['scripts/smoke-installer.mjs'], 5);
+  await step('installer', node, ['scripts/smoke-installer.mjs'], 5, text => {
+    const match = text.match(/^JOJO_PACKAGED_STEAM:(.+)$/m);
+    if (!match) throw new Error('Evidencia do inventario Steam instalado ausente');
+    const proof = JSON.parse(match[1]);
+    if (!proof.isPackaged || !proof.archive || !proof.workerUnpacked || !proof.coreUnpacked || !proof.known || !proof.installed || !proof.fixtureFound || proof.count !== 1 || proof.libraries < 1 || proof.status !== 'closed') throw new Error('Worker Steam instalado nao validado');
+    return proof;
+  });
   await step('portable', node, ['scripts/smoke-portable.mjs', 'dist/JoJoCompanion.exe'], 3);
   await cleanupShortcut();
   await step('presence', node, ['scripts/presenca-windows.mjs', 'dist/JoJoCompanion.exe'], 6);

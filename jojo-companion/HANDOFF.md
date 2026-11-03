@@ -35,6 +35,15 @@ o próprio personagem, preferências informadas e hipóteses. **448/448 unitári
 locais passaram, Node22.23.4; lint210, actionlint e diff-check aprovados.
 Pipeline integral ainda pendente. As19 releases históricas continuam imutáveis.
 
+Interfaces **41650512337**, fonte `5297759`:13/14 passaram. O preparo Steam agora
+revelou a causa do runtime incompleto: diretório `locales` ausente após `fs.cpSync`
+no caminho Unicode. Cópia substituída por recursão explícita mkdir/readdir/copyFile,
+com conferência de todos os arquivos preservada. Próximo diagnóstico roda somente
+Steam (`assets_only=true`, `measure_assets=false`, `steam_only=true`), sem alterar
+os gates integrais. NSIS ampliado para confirmar inventário pelo worker do app.asar
+real instalado, arquivos desempacotados e encerramento normal antes das3 atualizações.
+Essas novas verificações Windows ainda não passaram; sintaxe/actionlint aprovados.
+
 ### Diagnóstico da arte e interfaces — 41477698374
 
 Fonte `56e40a4`: medição Windows de 434 bases importada, digest

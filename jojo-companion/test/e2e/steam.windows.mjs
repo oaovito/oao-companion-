@@ -10,9 +10,20 @@ const require = createRequire(import.meta.url), electron = require('electron');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 function copyRuntime(directory) {
   const source = path.dirname(fs.realpathSync(electron)); fs.mkdirSync(directory, { recursive: true });
-  // Copiar e conferir cada entrada torna uma falha de preparo observável antes
-  // de tentar iniciar o processo, inclusive em diretórios com acentos.
-  for (const name of fs.readdirSync(source)) fs.cpSync(path.join(source, name), path.join(directory, name), { recursive: true, dereference: true });
+  // A cópia recursiva de alto nível omitiu recursos no caminho Unicode do
+  // runner Windows. Copiar cada arquivo e conferir toda a árvore evita iniciar
+  // um Electron incompleto e atribuir a falha de preparo ao detector do JoJo.
+  const copy = relative => {
+    const src = path.join(source, relative), dst = path.join(directory, relative), stat = fs.statSync(src);
+    if (stat.isDirectory()) {
+      fs.mkdirSync(dst, { recursive: true });
+      for (const name of fs.readdirSync(src)) copy(path.join(relative, name));
+    } else {
+      assert.ok(stat.isFile(), `recurso Electron não é arquivo comum: ${relative}`);
+      fs.copyFileSync(src, dst);
+    }
+  };
+  for (const name of fs.readdirSync(source)) copy(name);
   const verify = relative => {
     const src = path.join(source, relative), dst = path.join(directory, relative), stat = fs.statSync(src);
     assert.ok(fs.existsSync(dst), `recurso Electron ausente: ${relative}`);
