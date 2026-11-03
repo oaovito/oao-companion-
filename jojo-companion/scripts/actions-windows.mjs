@@ -67,6 +67,7 @@ async function cleanupShortcut() {
 async function step(id, command, commandArgs, minutes = 10, check = null, stepEnv = env, optional = false) {
   const log = path.join(run, `${id}.log`);
   console.log(`Iniciando ${id}`);
+  console.log(`::notice title=JoJo gate::started ${id}`);
   const result = await execute(command, commandArgs, { cwd: app, env: stepEnv, log, timeoutMs: minutes * 60000, signal: controller.signal });
   const entry = { id, ...result, optional, status: result.exitCode === 0 && !result.timedOut ? 'passed' : 'failed' };
   report.steps.push(entry); save();
@@ -94,6 +95,7 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   }
   catch (error) { entry.status = 'failed'; save(); throw error; }
   console.log(`${id}: aprovado (${Math.round(result.durationMs / 1000)} s)`);
+  console.log(`::notice title=JoJo gate::passed ${id} (${Math.round(result.durationMs / 1000)} s)`);
 }
 try {
   for (const name of fs.readdirSync(summary)) if (name !== 'validation.json') fs.rmSync(path.join(summary, name), { recursive: true, force: true });
