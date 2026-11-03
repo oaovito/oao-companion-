@@ -1,0 +1,62 @@
+{
+  "commit": "dfc2dc42650358674895d1e730bcff7cfd2d9a64",
+  "runId": "41660524964",
+  "digest": "7225228a64ebd6bd717d13ccaca77792ec60b60cd3454d721cfe99a60615b66c",
+  "data": {
+    "engine": null,
+    "ui": {
+      "model": "gemma3:4b-it-q4_K_M",
+      "platform": "win32",
+      "fixture": "Interface/IPC/controlador/modelo reais; perfil e conversa sintéticos; pesquisa externa desligada",
+      "semantic_review_required": true,
+      "rows": [
+        {
+          "input": "quem é o seu chefe?",
+          "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+          "intent": "criador",
+          "action": "nod",
+          "ms": 700
+        },
+        {
+          "input": "você está bem?",
+          "text": "Melhor que sua postura.",
+          "intent": "howAreYou",
+          "action": "judge",
+          "ms": 29055
+        }
+      ],
+      "rendererErrors": [],
+      "diagnostics": {
+        "rawReplies": [
+          {
+            "input": "você está bem?",
+            "error": {
+              "name": "Error",
+              "message": "tempo esgotado"
+            }
+          }
+        ],
+        "warnings": [
+          {
+            "input": "você está bem?",
+            "level": "warn",
+            "message": "IA: tempo esgotado; usando respostas programadas."
+          }
+        ],
+        "lastInput": "você está bem?"
+      }
+    }
+  },
+  "semanticReview": {
+    "status": "blocked",
+    "engineExecuted": false,
+    "uiScenariosPassed": 1,
+    "uiScenariosFailed": 1,
+    "uiScenariosNotExecuted": 10,
+    "findings": [
+      "O diagnóstico ui_only não executou carregarModelo; a primeira geração esgotou o tempo enquanto carregava."
+    ],
+    "provenCause": "rawReplies registrou Error tempo esgotado e warning IA: tempo esgotado; modo TEST/baseOverride pula brain.preparar; pré-carga existia somente no ensaio engine omitido.",
+    "unresolved": "Ainda não explica o descarte do exemplo científico de QA6, que foi executado após aquecimento."
+  }
+}

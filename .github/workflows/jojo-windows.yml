@@ -3,7 +3,7 @@ run-name: JoJo Windows — ${{ github.event_name }} — ${{ github.ref_name }}
 
 on:
   push:
-    branches: ['main', 'claude/**', 'codex/**']
+    branches: ['main', 'claude/**', 'codex/**', '!codex/ci-evidence-*']
     tags: ['v*']
     paths: ['jojo-companion/**', 'ci/**', '.github/workflows/jojo-windows.yml', 'AGENTS.md', 'CLAUDE.md']
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
   windows:
     # Tentativa normal autorizada pelo usuario; controles financeiros do GitHub intactos.
     # main guarda somente o controle horario; o aplicativo continua na branch Codex.
-    if: ${{ github.repository == 'oaovito/oao-companion-' && !inputs.assets_only && !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    if: ${{ github.repository == 'oaovito/oao-companion-' && !inputs.assets_only && !(github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[jojo-ui]') || contains(github.event.head_commit.message, '[jojo-qa]'))) }}
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
@@ -60,6 +60,9 @@ jobs:
         run: node jojo-companion/scripts/actions-windows.mjs
         env:
           JOJO_CI_CACHE: ${{ runner.temp }}/jojo-actions-cache
+          # Só o orquestrador persiste evidência sintética no repositório privado;
+          # actions-windows remove este token dos processos de testes/build.
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Registrar relatorio privado
         if: ${{ !cancelled() }}
         shell: pwsh

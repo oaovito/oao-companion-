@@ -59,6 +59,10 @@ try {
   }
   if ($env:JOJO_QA_UI_ONLY -eq 'true') {
     Write-Output 'Diagnostico somente da Central: engine nao executado, sem aprovacao integral.'
+    # A pré-carga normalmente acontece no ensaio do engine. O modo isolado
+    # precisa do mesmo preparo; o tempo de carregar pesos não é tempo de resposta.
+    node --input-type=module -e "import { performance } from 'node:perf_hooks'; import { carregarModelo } from './src/main/cerebro-local.js'; const start = performance.now(); await carregarModelo(fetch, process.env.JOJO_LLM_BASE, process.env.JOJO_QA_MODEL); console.log(JSON.stringify({ scope: 'ui_only', preloadMs: Math.round(performance.now() - start) }));"
+    if ($LASTEXITCODE -ne 0) { throw 'Pre-carga do modelo da Central nao concluiu' }
     $qaExit = 0
   } else {
     node scripts/check-conversation.mjs out/conversa-real-windows.json

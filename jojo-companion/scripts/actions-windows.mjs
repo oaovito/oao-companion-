@@ -7,6 +7,7 @@ import { execute } from '../../ci/process.mjs';
 import { REQUIRED_STEPS, SOURCE_REPO, tapTotals, pipelineArgs } from '../../ci/policy.mjs';
 import { sourceCommit } from '../../ci/validation.mjs';
 import { conferirArtefatos } from './publish-release.mjs';
+import { createPrivateEvidence } from './ci-evidence.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const app = path.join(root, 'jojo-companion');
@@ -100,13 +101,15 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
 try {
   for (const name of fs.readdirSync(summary)) if (name !== 'validation.json') fs.rmSync(path.join(summary, name), { recursive: true, force: true });
   save();
+  const evidence = createPrivateEvidence({ commit, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, token: process.env.GITHUB_TOKEN });
+  report.evidence = { branch: evidence.branch, conversationPath: evidence.conversationPath, validationPath: evidence.validationPath }; save();
   for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) fs.rmSync(path.join(app, 'out', name), { force: true });
   await step('preflight', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/preflight-windows.ps1'], 1);
   await step('lint', node, ['scripts/lint.mjs']);
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 450));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 454));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
@@ -124,6 +127,9 @@ try {
     }
     return { engineCases: qa.rows.length, uiCases: ui.rows.length, modelDigest: qa.digest };
   });
+  await evidence.writeConversation({ engine: JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json'))), ui: JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-interface-windows.json'))) });
+  await evidence.writeValidation(report);
+  console.log(`Evidencias privadas disponiveis na branch ${evidence.branch}`);
   await step('build', node, ['scripts/build-win.mjs'], 15);
   await step('installer', node, ['scripts/smoke-installer.mjs'], 5, text => {
     const match = text.match(/^JOJO_PACKAGED_STEAM:(.+)$/m);
@@ -132,12 +138,14 @@ try {
     if (!proof.isPackaged || !proof.archive || !proof.workerUnpacked || !proof.coreUnpacked || !proof.known || !proof.installed || !proof.fixtureFound || proof.count !== 1 || proof.libraries < 1 || proof.status !== 'closed') throw new Error('Worker Steam instalado nao validado');
     return proof;
   });
+  await evidence.writeValidation(report);
   await step('portable', node, ['scripts/smoke-portable.mjs', 'dist/JoJoCompanion.exe'], 3);
   await cleanupShortcut();
   await step('presence', node, ['scripts/presenca-windows.mjs', 'dist/JoJoCompanion.exe'], 6);
   await cleanupShortcut();
   await step('windows', node, ['test/e2e/run-e2e.mjs', '--integration'], 8, (text) => tapTotals(text, 16));
   await step('e2e', node, ['test/e2e/run-e2e.mjs'], 8, (text) => tapTotals(text, 43));
+  await evidence.writeValidation(report);
   await step('animations', node, [npm, 'run', 'audit:animations'], 10, () => {
     const audit = JSON.parse(fs.readFileSync(path.join(env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json')));
     if (audit.total < 1268 || audit.erros.length || audit.fora.length || audit.paradas.length || audit.semGatilho) throw new Error('Auditoria de animacoes incompleta/reprovada');
@@ -153,6 +161,7 @@ try {
     }
     return proof;
   }, { ...env, MEASURE_SECONDS: '20' });
+  await evidence.writeValidation(report);
   await step('performance-gpu', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20', JOJO_GPU: '1' }, true);
   await step('web-search', node, ['scripts/check-web-search.mjs'], 2, null, env, true);
   await step('artifacts', node, ['scripts/publish-release.mjs', '--artifacts'], 3);
@@ -162,6 +171,8 @@ try {
   report.files = conferirArtefatos(path.join(app, 'dist'), version).map(({ name, size, digest }) => ({ name, size, digest }));
   if (REQUIRED_STEPS.some((id) => !report.steps.some((s) => s.id === id && s.status === 'passed'))) throw new Error('Gates incompletos');
   report.status = 'passed'; report.finishedAt = new Date().toISOString(); save();
+  try { await evidence.writeValidation(report); }
+  catch (error) { report.status = 'failed'; throw error; }
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `report_path=${reportPath}\nvalidated_sha=${commit}\nversion=${version}\n`);
   for (const name of ['animations', 'junit', 'conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png', 'RELEASE_NOTES.md']) {
     if (fs.existsSync(path.join(run, name))) fs.cpSync(path.join(run, name), path.join(summary, name), { recursive: true });

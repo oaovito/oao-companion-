@@ -1,7 +1,9 @@
 name: JoJo — conversa real no Windows (avaliação)
-run-name: JoJo conversa — ${{ inputs.ui_only && 'somente Central' || 'engine e Central' }} — ${{ github.ref_name }}
+run-name: JoJo conversa — ${{ (inputs.ui_only || contains(github.event.head_commit.message, '[jojo-ui]')) && 'somente Central' || 'engine e Central' }} — ${{ github.ref_name }}
 
 on:
+  push:
+    branches: ['codex/living-companion']
   workflow_dispatch:
     inputs:
       ui_only:
@@ -19,7 +21,7 @@ concurrency:
 jobs:
   conversa-real:
     # Avaliacao opcional somente por dispatch; o pipeline completo ja executa o ensaio.
-    if: ${{ github.repository == 'oaovito/oao-companion-' }}
+    if: ${{ github.repository == 'oaovito/oao-companion-' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[jojo-ui]') || contains(github.event.head_commit.message, '[jojo-qa]')) }}
     runs-on: windows-latest
     timeout-minutes: 30
     strategy:
@@ -47,4 +49,4 @@ jobs:
         env:
           # Só o ensaio seleciona um candidato; não muda o modelo do aplicativo.
           JOJO_QA_MODEL: ${{ matrix.model }}
-          JOJO_QA_UI_ONLY: ${{ inputs.ui_only }}
+          JOJO_QA_UI_ONLY: ${{ inputs.ui_only || contains(github.event.head_commit.message, '[jojo-ui]') }}
