@@ -40,6 +40,8 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(local, /with arms and legs, and no tail/);
   assert.doesNotMatch(local, /without human arms|fins and a tail/);
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Fatos do seu desenho/);
+  assert.match(local, /never her questions, memory, attention or intelligence/);
+  assert.match(local, /personal facts and preferences she actually stated/);
   assert.match(buildLocalPrompt(profile, {}, 'Do you have legs?'), /Fatos do seu desenho/);
   assert.doesNotMatch(buildLocalPrompt(profile, {}, 'Você tem alguma dica para minha dor nas pernas?'), /Fatos do seu desenho/);
   assert.match(p, /Foco, porra\./, 'exemplo real de fala');

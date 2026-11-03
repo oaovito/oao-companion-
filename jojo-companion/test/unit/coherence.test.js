@@ -25,6 +25,45 @@ test('recusa explícita de treino confirma a negativa sem chamar o modelo nem ex
 
 const model = (reply) => ({ isAvailable: async () => true, timeoutMs: 1000, reply: typeof reply === 'function' ? reply : async () => reply });
 
+test('voz seca não insulta a usuária ou sua pergunta e rejeição não se passa por inferência válida', async () => {
+  const input = 'Você tem pernas ou cauda?';
+  for (const text of ['Tenho pernas, Manu. Que pergunta idiota!', 'Sua pergunta é idiota.', 'Você é burra.', 'What a stupid question!', 'Your question is dumb.']) {
+    assert.equal(erroDeCoerencia(input, text), 'insulto à usuária ou à pergunta', text);
+  }
+  for (const text of ['Tenho pernas. Os bíceps não são enfeite.', 'Que pergunta idiota eu fiz.', 'Eu sou um tubarão idiota de desenho.']) assert.equal(erroDeCoerencia(input, text), null, text);
+  let calls = 0;
+  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls === 1 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
+  const rejected = await engine.reply(input);
+  assert.notEqual(rejected.intent, 'ia'); assert.doesNotMatch(rejected.text, /idiota/);
+  assert.equal(engine.llmPauseUntil, 0);
+  const accepted = await engine.reply(input);
+  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 2);
+  assert.equal(engine.history.some(h => h.role !== 'user' && /idiota/.test(h.text)), false);
+});
+
+test('lembrança e correção não viram teste de atenção ou ironia da memória', async () => {
+  const correction = 'Eu disse verde, não azul.';
+  assert.equal(erroDeCoerencia(correction, 'Verde, certo. Que bom que você se lembra.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia('Qual cor eu acabei de dizer que prefiro?', 'Você disse verde, lembra? Relaxa, só testando se está prestando atenção.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia('Which color did I mention?', 'Green. Just testing whether you were paying attention.'), 'condescendência sobre memória ou atenção');
+  assert.equal(erroDeCoerencia(correction, 'Verde. Eu que troquei as coisas.'), null);
+  assert.equal(erroDeCoerencia('Consegui me lembrar do nome dela.', 'Que bom que você se lembra.'), null, 'não é uma correção nem um pedido para o JoJo lembrar');
+  const reply = await new DialogueEngine({ llm: model({ text: 'Verde, certo. Que bom que você se lembra.' }) }).reply(correction);
+  assert.equal(reply.intent, 'correcao'); assert.doesNotMatch(reply.text, /bom que você/);
+});
+
+test('preferência nova não deriva de outra preferência ou de uma fala inventada pelo modelo', () => {
+  const input = 'Minha cor preferida é verde.';
+  const ungrounded = 'Verde é uma boa escolha e me lembra suas algas marinhas favoritas, né?';
+  assert.equal(erroDeCoerencia(input, ungrounded), 'preferência pessoal não informada');
+  assert.equal(erroDeCoerencia(input, ungrounded, [{ role: 'jojo', text: 'Suas algas marinhas favoritas são nori.' }]), 'preferência pessoal não informada');
+  assert.equal(erroDeCoerencia(input, ungrounded, [{ role: 'user', text: 'Minhas algas marinhas favoritas são nori.' }]), null);
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'It reminds me of your favorite kelp.'), 'preferência pessoal não informada');
+  assert.equal(erroDeCoerencia('Which animal did I mention?', 'Your favorite animal is a cat.', [{ role: 'user', text: 'My favorite animal is a cat.' }]), null);
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Your favorite cat, right?'), null);
+  for (const text of ['Sua cor preferida é verde.', 'Se algas fossem suas comidas favoritas, seria curioso.', 'Talvez sejam suas comidas favoritas.', 'Quais são suas comidas favoritas?', 'Não conheço suas comidas favoritas.']) assert.equal(erroDeCoerencia(input, text), null, text);
+});
+
 test('correcao das proprias palavras distingue esclarecimento de pergunta e relato de terceiros', () => {
   for (const text of ['Eu disse lilás, não rosa.', 'JoJo, falei de manhã, não à noite.', 'Eu quis dizer quinta-feira.', 'I said Thursday, not Tuesday.', 'I meant blue.']) assert.equal(correcaoPessoal(text), true, text);
   for (const text of ['O João disse quinta, não terça.', 'Eu disse isso ontem?', 'Qual é a diferença entre azul e verde?']) assert.equal(correcaoPessoal(text), false, text);

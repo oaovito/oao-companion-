@@ -73,6 +73,9 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   if (id === 'conversation') for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
     if (/^JOJO_CONVERSATION_(REPORT|PREVIEW):/.test(line)) console.log(line);
   }
+  if (id === 'e2e') for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
+    if (/JOJO_(CRITICAL_EVIDENCE|DPI_EVIDENCE|STEAM_EVIDENCE):/.test(line)) console.log(line);
+  }
   fs.copyFileSync(log, path.join(summary, `${id}.log`));
   if (entry.status !== 'passed') {
     if (optional) { console.log(`${id}: diagnostico opcional falhou; log preservado`); return; }
@@ -80,7 +83,12 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
     console.error(fs.readFileSync(log, 'utf8').split('\n').filter(line => !/^JOJO_CONVERSATION_(REPORT|PREVIEW):/.test(line)).slice(-80).join('\n'));
     throw new Error(`Falha em ${id}; consultar log privado`);
   }
-  try { if (check) check(fs.readFileSync(log, 'utf8')); }
+  try {
+    if (check) {
+      const validation = check(fs.readFileSync(log, 'utf8'));
+      if (validation) { entry.validation = validation; save(); }
+    }
+  }
   catch (error) { entry.status = 'failed'; save(); throw error; }
   console.log(`${id}: aprovado (${Math.round(result.durationMs / 1000)} s)`);
 }
@@ -93,7 +101,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 445));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 448));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
@@ -102,6 +110,7 @@ try {
     for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) {
       if (fs.existsSync(path.join(app, 'out', name))) fs.copyFileSync(path.join(app, 'out', name), path.join(run, name));
     }
+    return { engineCases: qa.rows.length, uiCases: ui.rows.length, modelDigest: qa.digest };
   });
   await step('build', node, ['scripts/build-win.mjs'], 15);
   await step('installer', node, ['scripts/smoke-installer.mjs'], 5);
@@ -114,6 +123,7 @@ try {
   await step('animations', node, [npm, 'run', 'audit:animations'], 10, () => {
     const audit = JSON.parse(fs.readFileSync(path.join(env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json')));
     if (audit.total < 1268 || audit.erros.length || audit.fora.length || audit.paradas.length || audit.semGatilho) throw new Error('Auditoria de animacoes incompleta/reprovada');
+    return { total: audit.total, errors: audit.erros.length, cuts: audit.fora.length, stopped: audit.paradas.length, orphaned: audit.semGatilho };
   });
   await step('performance', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20' });
   await step('performance-gpu', node, ['scripts/measure.mjs'], 3, null, { ...env, MEASURE_SECONDS: '20', JOJO_GPU: '1' }, true);

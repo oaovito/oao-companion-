@@ -14,6 +14,27 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Retomada em 03/11/2026 — ainda sem publicação
+
+Novo ambiente conectado; terminal/Git/rede funcionais e alterações locais intactas.
+Fonte `f285032`: interfaces **41521403707** ficaram em13/14; passaram três cenas,
+fila durante crash, ocultação durante recriação e DPI150%. Steam falhou ao iniciar
+processo de fixture com mensagem genérica do Playwright. O preparo agora confere
+os recursos copiados e usa processos dummy sem depurador, confirmação de janela
+carregada e encerramento normal, preservando Unicode/HKCU/biblioteca em outro disco.
+Se falhar, informa fase/código/stderr limitado; causa original específica não provada.
+
+Conversa **41521410154** passou automaticamente32 engine +12 Central, mas a leitura
+reprovou insulto à pergunta, ironia da memória e preferência inventada. Não usar
+esse verde automático como aprovação semântica. Relatório integral preservado em
+`docs/evidencias/conversa-windows-41521410154.json`; conversa será corrigida e
+repetida com inferência real. Relatório principal em `docs/VALIDACAO_0.45.1.md`.
+Prompt e coerência agora rejeitam os quatro desvios observados sem resposta pronta
+nem fingir inferência quando há fallback. Regressões novas preservam humor sobre
+o próprio personagem, preferências informadas e hipóteses. **448/448 unitários**
+locais passaram, Node22.23.4; lint210, actionlint e diff-check aprovados.
+Pipeline integral ainda pendente. As19 releases históricas continuam imutáveis.
+
 ### Diagnóstico da arte e interfaces — 41477698374
 
 Fonte `56e40a4`: medição Windows de 434 bases importada, digest

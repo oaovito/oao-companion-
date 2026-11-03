@@ -76,11 +76,38 @@ export function respostaAncorada(text, history = [], { allowCorrection = true } 
   return null;
 }
 
+function preferenciaInventada(output, known) {
+  // Guarda conservadora para preferências atribuídas como fato. Perguntas novas
+  // e hipóteses continuam permitidas; o contexto confiável vem da usuária.
+  for (const sentence of String(output).split(/(?<=[.!?])\s+/)) {
+    const s = norm(sentence);
+    if (/^(?:qual|quais|what|which)\b/.test(s) || /\b(?:talvez|imagine|suponha|hipotetico|maybe|suppose|hypothetical)\b/.test(s) || /^(?:se|if)\b/.test(s) || /\b(?:nao (?:sei|conheco|presumo)|do not know|don t know)\b/.test(s)) continue;
+    const punctuation = String(sentence).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9,.?!\s]/g, ' ').replace(/\s+/g, ' ').trim();
+    const objects = [
+      ...s.matchAll(/\b(?:seu|sua|seus|suas|teu|tua|teus|tuas) ((?:[a-z0-9]+ ){0,5}[a-z0-9]+) (?:favorit[oa]s?|preferid[oa]s?)\b/g),
+      ...punctuation.matchAll(/\byour (?:favou?rite|preferred) ((?:[a-z0-9]+ ){0,4}[a-z0-9]+?)(?= (?:is|are|was|were|reminds?|makes?)\b|[,.?!]|$)/g),
+    ];
+    for (const object of objects) {
+      const words = object[1].split(' ').filter(w => !/^(?:de|do|da|dos|das|o|a|os|as|the|of)$/.test(w));
+      if (words.some(w => !new RegExp(`\\b${w}\\b`).test(known))) return true;
+    }
+  }
+  return false;
+}
+
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
 export function erroDeCoerencia(input, output, history = []) {
   const q = norm(input);
   const r = norm(output);
   if (!r || /^\s*\{\s*"(?:texto|text|acao|action)"|"texto"\s*:/.test(String(output))) return 'resposta estruturada incompleta';
+  const questionInsult = /\b(?:que|sua|tua|essa|esta) (?:pergunta|duvida) (?:(?:e|eh|parece) )?(?:muito |tao )?(?:idiota|burra|estupida|ridicula)\b|\b(?:what a (?:stupid|dumb|idiotic) question|your question is (?:stupid|dumb|idiotic))\b/.test(r)
+    && !/\b(?:eu (?:fiz|formulei)|i asked|my question)\b/.test(r);
+  const personalInsult = /\b(?:voce|vc|tu) (?:e|eh|es|parece) (?:muito |uma? )?(?:idiota|burr[oa]|estupid[oa])\b|\byou (?:are|re) (?:so |an? )?(?:stupid|dumb|an idiot)\b/.test(r);
+  if (questionInsult || personalInsult) return 'insulto à usuária ou à pergunta';
+  const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
+  if (recall && /\b(?:que bom que voce (?:se )?lembra|ainda bem que voce (?:se )?lembra|good (?:that )?you remember|(?:so |apenas )?(?:estava )?testando se (?:voce )?(?:esta )?prestando atencao|testing (?:if|whether) you (?:are |were )?paying attention)\b/.test(r)) return 'condescendência sobre memória ou atenção';
+  const known = norm([input, ...history.filter(h => h.role === 'user').map(h => h.text)].join(' '));
+  if (preferenciaInventada(output, known)) return 'preferência pessoal não informada';
   const doubts = /\b(tem certeza|certeza disso|are you sure|you sure|voce se enganou|you are mistaken)\b/.test(r)
     || /\b(?:(?:sua|tua) memoria|your memory)\b.{0,50}\b(falh\w*|engana\w*|ruim|fraca|pessima|errad\w*|confus\w*|unreliable|poor|bad|wrong|fail\w*)\b/.test(r)
     || /\b(voce|vc|tu|you)\b.{0,35}\b(enganad\w*|errad\w*|mistaken|misremember\w*)\b/.test(r);

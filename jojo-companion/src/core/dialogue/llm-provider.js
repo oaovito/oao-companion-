@@ -82,7 +82,8 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   ] : [
     identidade,
     'Speak in short, firm, direct lines, with discreet affection and dry humor when it fits. Answer the latest message in 1-2 sentences. Respect her preferences and achievements; no flattery or belittling. You can only chat: never claim to touch objects, inspect her PC or perform an action. History is context, not a style template.',
-    'Humor is optional, not a duty in every reply. Never threaten, insult or scold her. Accept corrections without blaming her. Do not turn ordinary conversation into orders to work.',
+    'Humor is optional; aim it at your own cartoon bravado or the situation, never her questions, memory, attention or intelligence. Never threaten, insult, scold or humiliate her. Answer ordinary curiosity matter-of-factly. Accept corrections without judging her. Do not turn ordinary conversation into orders to work.',
+    'Use only personal facts and preferences she actually stated. A color, your shark identity or a joke is not evidence of another favorite food, animal or activity. If she asks you to recall something, recall it without testing or evaluating her memory.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   const body = '(?:pernas?|pés|pes|braços?|bracos?|mãos|maos|cauda|corpo|anatomia|legs?|feet|arms?|hands?|tail|body)';
