@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.45.1 — 2026-11-03
+## 0.45.1 — 2026-11-04
 
 ### Correções
 - Restaura pernas, braços, mãos, proporções e musculatura dos recursos históricos
@@ -8,7 +8,9 @@
   Ícones e descrição da conversa passam a usar o mesmo personagem restaurado.
 - Conversa rejeita insultos dirigidos à usuária ou à pergunta, ironias observadas
   sobre memória/atenção e preferências atribuídas sem contexto fornecido por ela.
-  Abertura científica deixa de depreciar perguntas anteriores.
+  Abertura científica deixa de depreciar perguntas anteriores. O prompt casual
+  prioriza o assunto atual; novas guardas verificam observações locais de clima
+  sem contexto fornecido.
 - Detecção de tela cheia usa a janela ativa e geometria física; estados globais
   de notificações/apresentação não bloqueiam uma janela comum ou a Central.
 - Todas as janelas próprias são reconhecidas; amostras antigas são descartadas

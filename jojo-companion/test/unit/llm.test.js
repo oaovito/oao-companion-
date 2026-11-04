@@ -42,11 +42,10 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Fatos do seu desenho/);
   assert.match(local, /never her questions, memory, attention or intelligence/);
   assert.match(local, /personal facts and preferences she actually stated/);
-  assert.match(local, /concrete response that names its subject/);
-  assert.match(local, /acknowledge the item she named/);
-  assert.match(local, /no comments about repetition, overthinking/);
-  assert.match(local, /When asked how you are, describe your own character's state/);
-  assert.match(local, /weather only from facts supplied by her or the weather tool/);
+  assert.match(local.split('\n').at(-1), /name the concrete subject.*first sentence/);
+  assert.match(local, /Acknowledge an item she prefers by name/);
+  assert.match(local, /recall them directly/);
+  assert.match(local, /Ground physical surroundings in facts supplied by her or a trusted tool/);
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Descreva diretamente os membros que ela perguntou, incluindo os ausentes/);
   assert.match(buildLocalPrompt(profile, {}, 'Do you have legs?'), /Fatos do seu desenho/);
   assert.doesNotMatch(buildLocalPrompt(profile, {}, 'Você tem alguma dica para minha dor nas pernas?'), /Fatos do seu desenho/);
@@ -68,10 +67,36 @@ test('resposta: JSON ou texto; trava descarta cara de assistente', () => {
 
 test('pergunta de bem-estar prioriza o próprio humor do personagem sem resposta pronta', () => {
   for (const text of ['você está bem?', 'JoJo, como você está?', 'How are you?', 'Are you okay?']) {
-    assert.match(buildLocalPrompt(profile, {}, text).split('\n').at(-1), /one self-contained sentence about your own present mood as JoJo/);
+    assert.match(buildLocalPrompt(profile, {}, text).split('\n').at(-1), /one sentence about your own present mood as JoJo, limited to your fictional character state/);
   }
-  assert.doesNotMatch(buildLocalPrompt(profile, {}, 'Qual a previsão do tempo?'), /For this greeting/);
-  assert.doesNotMatch(buildLocalPrompt(profile, {}, 'O que é diabetes?', { tecnico: true }), /For this greeting/);
+  assert.doesNotMatch(buildLocalPrompt(profile, {}, 'Qual a previsão do tempo?'), /limited to your fictional character state/);
+  assert.doesNotMatch(buildLocalPrompt(profile, {}, 'O que é diabetes?', { tecnico: true }), /Current reply/);
+});
+
+test('transporte local preserva mensagem e contexto e prioriza o assunto atual depois do perfil', async () => {
+  const calls = [];
+  const custom = 'Seja gentil e use exemplos curtos.';
+  const p = new LlmProvider({
+    fetch: async (url, options) => {
+      calls.push({ url, body: JSON.parse(options.body) });
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'A samambaia merece atenção.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }),
+    getProfile: () => ({ ...profile, instrucoes: custom }), baseOverride: 'http://127.0.0.1:1',
+  });
+  const input = 'Minha planta ficou amarela ontem.';
+  const history = [{ role: 'user', text: 'Minha planta é uma samambaia.' }, { role: 'jojo', text: 'Uma samambaia, entendido.' }];
+  await p.reply({ text: input, history });
+  const { url, body } = calls[0];
+  assert.equal(url, 'http://127.0.0.1:1/api/chat');
+  assert.equal(body.messages.at(-1).content, input, 'a tarefa não reescreve nem substitui a mensagem');
+  assert.ok(body.messages.some(m => m.role === 'user' && m.content === history[0].text), 'o fato contextual permanece disponível');
+  const system = body.messages[0].content;
+  assert.ok(system.indexOf('Current reply:') > system.indexOf(custom), 'a prioridade de assunto vem após os dados adaptativos');
+  assert.match(system.split('\n').at(-1), /concrete subject.*first sentence/);
+  await p.reply({ text: 'How are you?', history });
+  assert.equal(calls[1].body.messages.at(-1).content, 'How are you?');
+  assert.match(calls[1].body.messages[0].content.split('\n').at(-1), /own present mood.*fictional character state/);
 });
 
 test('IA responde no lugar das falas programadas, com histórico e ação de corpo', async () => {

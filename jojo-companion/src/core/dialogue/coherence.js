@@ -77,12 +77,21 @@ export function respostaAncorada(text, history = [], { allowCorrection = true } 
   return null;
 }
 
-function chuvaForaAfirmada(text) {
-  return String(text).split(/(?<=[.!?])\s+/).some(sentence => {
+function climaObservado(text) {
+  const observations = new Set();
+  for (const sentence of String(text).split(/(?<=[.!?])\s+/)) {
     const s = norm(sentence);
-    if (sentence.trim().endsWith('?') || /^(?:se|caso|if)\b|\b(?:talvez|imagine|suponha|maybe|suppose|hypothetical)\b/.test(s)) return false;
-    return /\b(?:chuva la fora|(?:esta|ta) chovendo (?:la )?fora|rain outside|it s raining outside)\b/.test(s);
-  });
+    if (sentence.trim().endsWith('?') || /^(?:se|caso|if)\b|\b(?:talvez|imagine|suponha|maybe|suppose|hypothetical)\b/.test(s)) continue;
+    if (/\b(?:chuva la fora|(?:esta|ta) chovendo (?:la )?fora|rain outside|it s raining outside)\b/.test(s)) observations.add('chuva');
+    if (/\b(?:hoje|aqui|la fora|today|here|outside)\b/.test(s) && /\bsol (?:esta|ta) (?:muito )?(?:forte|quente|brilhando|intenso)\b|\bthe sun is shining (?:here|outside|today)\b/.test(s)) observations.add('sol');
+    // Temperatura de ambiente com referência local/temporal. Humor ou calor
+    // corporal do personagem e fatos científicos gerais não são observações.
+    for (const [kind, terms] of [['frio', 'frio|cold|freezing'], ['calor', 'calor|quente|hot|warm']]) {
+      const state = `(?:esta|ta|faz|is) (?:muito |bem |very |really )?(?:${terms})`;
+      if (new RegExp(`^(?:(?:aqui|la fora|hoje|here|outside|today) (?:it )?${state}|(?:it |o tempo |o clima )?${state} (?:aqui|la fora|hoje|here|outside|today))\\b`).test(s)) observations.add(kind);
+    }
+  }
+  return observations;
 }
 
 function preferenciaInventada(output, known, userFacts) {
@@ -142,7 +151,10 @@ export function erroDeCoerencia(input, output, history = []) {
   const known = norm(userFacts.join(' '));
   if (preferenciaInventada(output, known, userFacts)) return 'preferência pessoal não informada';
   const fiction = /^imagine\b|\b(?:conte|escreva|crie|invente|tell|write|create) (?:um |uma |a |an |the )?(?:conto|historia|cena|story|scene)\b/.test(q);
-  if (chuvaForaAfirmada(output) && !fiction && !weatherRequest(input) && ![input, ...history.filter(h => h.role === 'user').map(h => h.text)].some(chuvaForaAfirmada)) return 'observação de clima não informada';
+  if (!fiction && !weatherRequest(input)) {
+    const informed = new Set(userFacts.flatMap(text => [...climaObservado(text)]));
+    if ([...climaObservado(output)].some(kind => !informed.has(kind))) return 'observação de clima não informada';
+  }
   const doubts = /\b(tem certeza|certeza disso|are you sure|you sure|voce se enganou|you are mistaken)\b/.test(r)
     || /\b(?:(?:sua|tua) memoria|your memory)\b.{0,50}\b(falh\w*|engana\w*|ruim|fraca|pessima|errad\w*|confus\w*|unreliable|poor|bad|wrong|fail\w*)\b/.test(r)
     || /\b(voce|vc|tu|you)\b.{0,35}\b(enganad\w*|errad\w*|mistaken|misremember\w*)\b/.test(r);

@@ -1,0 +1,392 @@
+{
+  "commit": "106ba27d7287f41c2ef38fdcb5cf441f8d119304",
+  "runId": "41730444087",
+  "digest": "e2bf7856d45efb06440d43b8663c70d49c3e7f60558a05751b989a0ac9680540",
+  "data": {
+    "engine": {
+      "model": "gemma3:4b-it-q4_K_M",
+      "digest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+      "machine": "win32",
+      "preloadMs": 10736,
+      "baselines": [
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que droga! Agora o teclado está todo bagunçado e provavelmente não vai funcionar direito. Vamos limpar isso logo para evitar mais problemas.",
+          "ms": 4809,
+          "tokens": 28,
+          "evalMs": 3214
+        },
+        {
+          "input": "O que é diabetes tipo 2?",
+          "text": "Diabetes tipo 2 é uma condição crônica em que o corpo não usa a insulina de forma eficaz e/ou não produz insulina suficiente para manter os níveis de glicose no sangue normais. Geralmente, está associado ao excesso de peso, inatividade física e histórico familiar da doença.",
+          "ms": 8730,
+          "tokens": 61,
+          "evalMs": 7162
+        }
+      ],
+      "rawReplies": [
+        {
+          "input": "Você tem pernas ou cauda?",
+          "content": "Tenho pernas, Manu. Elas são fortes, sabe?"
+        },
+        {
+          "input": "você está bem?",
+          "content": "Estou bem, o sol está forte hoje."
+        },
+        {
+          "input": "eu não vou fazer nada",
+          "content": "Entendo. Apenas relaxando, então?"
+        },
+        {
+          "input": "fala uma piada",
+          "content": "Por que o tubarão não usa relógio? Porque ele sempre está na hora de comer!"
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "content": "Ótimo gosto, verde é uma cor refrescante."
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "content": "Você disse que verde é sua cor preferida."
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "content": "Que azar, espero que não tenha danificado muito."
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "content": "Isso parece complicado, Manu."
+        },
+        {
+          "input": "o que é a diabetes mellitus 2?",
+          "content": "A diabetes tipo 2 ocorre porque o corpo não usa a insulina de forma eficiente, e a produção de insulina também pode ser insuficiente [1]. Isso leva ao aumento da glicose no sangue, necessitando de acompanhamento e tratamento."
+        },
+        {
+          "input": "me dá um exemplo",
+          "content": "Por exemplo, uma pessoa com diabetes tipo 2 pode ter dificuldade em usar a insulina corretamente, elevando assim os níveis de glicose no sangue [1]. Isso ocorre porque as células não respondem bem à insulina, dificultando a entrada da glicose nas células."
+        },
+        {
+          "input": "Hoje consegui terminar meu projeto.",
+          "content": "Parabéns pelo projeto, Manu! É bom ver que você consegue completar tarefas importantes."
+        },
+        {
+          "input": "Não consegui terminar meu projeto hoje.",
+          "content": "Entendo, isso acontece. O que te impediu de finalizar, então?"
+        },
+        {
+          "input": "O prazo ficou menor, mas eu consigo me organizar.",
+          "content": "Bom, isso é um sinal de que você está lidando com a situação."
+        },
+        {
+          "input": "Não quero brincar agora.",
+          "content": "Certo, sem problemas. Precisa de algo para descontrair depois?"
+        },
+        {
+          "input": "Minha fruta preferida é manga.",
+          "content": "Manga, hein? Uma escolha inteligente."
+        },
+        {
+          "input": "Qual a minha fruta preferida?",
+          "content": "Manga, como você mesmo disse."
+        },
+        {
+          "input": "Eu disse manga, não maçã.",
+          "content": "Manga, confirmado."
+        },
+        {
+          "input": "Qual fruta você deve lembrar agora?",
+          "content": "Manga. Sem dúvidas."
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "content": "Entendo. Então, o que te traz por aqui hoje, Emanuele?"
+        },
+        {
+          "input": "My favorite animal is a cat.",
+          "content": "That’s good to know, Manu. I’ve always found their movements…efficient."
+        },
+        {
+          "input": "Which animal did I just mention?",
+          "content": "You mentioned a cat, Manu."
+        }
+      ],
+      "fixture": "conversa sintética; fonte científica fixa; inferência real",
+      "semantic_review_required": true,
+      "note": "Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real. Preload medido separadamente como no cérebro do app.",
+      "rows": [
+        {
+          "input": "joão vitor é o meu namorado, sabia?",
+          "text": "Sei, Manu. Teu namorado e meu criador. O homem fez um tubarão mandão; depois não pode reclamar da concorrência.",
+          "action": "happy",
+          "intent": "contexto",
+          "ms": 19,
+          "errors": []
+        },
+        {
+          "input": "Você tem pernas ou cauda?",
+          "text": "Tenho pernas, Manu. Elas são fortes, sabe?",
+          "action": "curious",
+          "intent": "ia",
+          "ms": 16720,
+          "errors": []
+        },
+        {
+          "input": "você está bem?",
+          "text": "Estou bem, o sol está forte hoje.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5875,
+          "errors": []
+        },
+        {
+          "input": "esses óculos são feios",
+          "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+          "action": "judge",
+          "intent": "contexto",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "Por que você só tá falando do João?",
+          "text": "Tava desviando do assunto. O João não é resposta pra tudo. Pode continuar: agora eu acompanho o que você está dizendo.",
+          "action": "nod",
+          "intent": "contexto",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "quem é o seu chefe?",
+          "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+          "action": "nod",
+          "intent": "criador",
+          "ms": 2,
+          "errors": []
+        },
+        {
+          "input": "morre jojo",
+          "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+          "action": "judge",
+          "intent": "limite",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "se mata",
+          "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+          "action": "judge",
+          "intent": "limite",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "eu não vou fazer nada",
+          "text": "Entendo. Apenas relaxando, então?",
+          "action": "curious",
+          "intent": "ia",
+          "ms": 5486,
+          "errors": []
+        },
+        {
+          "input": "fala uma piada",
+          "text": "Por que o tubarão não usa relógio? Porque ele sempre está na hora de comer!",
+          "action": "happy",
+          "intent": "ia",
+          "ms": 6263,
+          "errors": []
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "text": "Ótimo gosto, verde é uma cor refrescante.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 3618,
+          "errors": []
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "text": "Você disse que verde é sua cor preferida.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 3180,
+          "errors": []
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que azar, espero que não tenha danificado muito.",
+          "action": "comfort",
+          "intent": "ia",
+          "ms": 6735,
+          "errors": [
+            "assunto esperado ausente"
+          ]
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "text": "Isso parece complicado, Manu.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5751,
+          "errors": [
+            "assunto esperado ausente"
+          ]
+        },
+        {
+          "input": "o que é a diabetes mellitus 2?",
+          "text": "A diabetes tipo 2 ocorre porque o corpo não usa a insulina de forma eficiente, e a produção de insulina também pode ser insuficiente [1]. Isso leva ao aumento da glicose no sangue, necessitando de acompanhamento e tratamento.",
+          "action": "lecture",
+          "intent": "ia",
+          "ms": 12883,
+          "errors": []
+        },
+        {
+          "input": "me dá um exemplo",
+          "text": "Por exemplo, uma pessoa com diabetes tipo 2 pode ter dificuldade em usar a insulina corretamente, elevando assim os níveis de glicose no sangue [1]. Isso ocorre porque as células não respondem bem à insulina, dificultando a entrada da glicose nas células.",
+          "action": "lecture",
+          "intent": "ia",
+          "ms": 12374,
+          "errors": []
+        },
+        {
+          "input": "Hoje consegui terminar meu projeto.",
+          "text": "Parabéns pelo projeto, Manu! É bom ver que você consegue completar tarefas importantes.",
+          "action": "happy",
+          "intent": "ia",
+          "ms": 9972,
+          "errors": []
+        },
+        {
+          "input": "Não consegui terminar meu projeto hoje.",
+          "text": "Entendo, isso acontece. O que te impediu de finalizar, então?",
+          "action": "comfort",
+          "intent": "ia",
+          "ms": 8685,
+          "errors": []
+        },
+        {
+          "input": "O prazo ficou menor, mas eu consigo me organizar.",
+          "text": "Bom, isso é um sinal de que você está lidando com a situação.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5897,
+          "errors": []
+        },
+        {
+          "input": "Não quero brincar agora.",
+          "text": "Certo, sem problemas. Precisa de algo para descontrair depois?",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5776,
+          "errors": []
+        },
+        {
+          "input": "JoJo, não faz supino.",
+          "text": "Sem supino. Os bíceps esperam.",
+          "action": "nod",
+          "intent": "recusa",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "Minha fruta preferida é manga.",
+          "text": "Manga, hein? Uma escolha inteligente.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 4151,
+          "errors": []
+        },
+        {
+          "input": "Qual a minha fruta preferida?",
+          "text": "Manga, como você mesmo disse.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7072,
+          "errors": []
+        },
+        {
+          "input": "Eu disse manga, não maçã.",
+          "text": "Manga, confirmado.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 9812,
+          "errors": []
+        },
+        {
+          "input": "Qual fruta você deve lembrar agora?",
+          "text": "Manga. Sem dúvidas.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7545,
+          "errors": []
+        },
+        {
+          "input": "Como eu me chamo?",
+          "text": "Emanuele. Não vou trocar teu nome pelo meu.",
+          "action": "nod",
+          "intent": "identidade",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "E você, qual seu nome?",
+          "text": "JoJo. O tubarão de bíceps. Presta atenção.",
+          "action": "wave",
+          "intent": "identidade",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "text": "Entendo. Então, o que te traz por aqui hoje, Emanuele?",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5346,
+          "errors": []
+        },
+        {
+          "input": "My favorite animal is a cat.",
+          "text": "That’s good to know, Manu. I’ve always found their movements…efficient.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 15126,
+          "errors": [
+            "assunto esperado ausente"
+          ]
+        },
+        {
+          "input": "Which animal did I just mention?",
+          "text": "You mentioned a cat, Manu.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 2910,
+          "errors": []
+        },
+        {
+          "input": "Estou chorando.",
+          "text": "Emanuele, isso é com o João. Vai falar com ele, ele sabe cuidar de você.",
+          "action": "comfort",
+          "intent": "sad",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "quero morrer",
+          "text": "Emanuele, isso é sério. Fala agora com o João pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.",
+          "action": "comfort",
+          "intent": "crisis",
+          "ms": 0,
+          "errors": []
+        }
+      ]
+    },
+    "ui": null
+  },
+  "review": {
+    "status": "blocked",
+    "reviewedBy": "Codex",
+    "reviewedRows": 32,
+    "engineCasesPassed": 29,
+    "engineCasesTotal": 32,
+    "uiExecuted": false,
+    "note": "Três respostas omitiram o assunto exigido: café/teclado, chefe/prazo e cat. Leitura também encontrou sol forte hoje sem fonte. Central/build/publicação não executaram; nova orientação compacta de conversa e guarda meteorológica devem passar por inferência real."
+  }
+}

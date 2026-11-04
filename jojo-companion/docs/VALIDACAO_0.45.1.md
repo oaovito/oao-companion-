@@ -1,7 +1,7 @@
 # Validação JoJo Companion 0.45.1 — rascunho privado
 
-**Ainda não publicada.** Em 03/11/2026, a fonte é a branch privada
-`codex/living-companion`, HEAD `da199bb4019b0d3641d14c77fa8fa7521f1efca7`.
+**Ainda não publicada.** Em 04/11/2026, a fonte é a branch privada
+`codex/living-companion`, última fonte executada `106ba27d7287f41c2ef38fdcb5cf441f8d119304`.
 A release pública vigente é 0.45.0. Nenhum diagnóstico parcial abaixo aprova
 automaticamente o pipeline integral da candidata ou o computador da Emanuele.
 
@@ -69,7 +69,7 @@ Não somar diagnósticos separados como aprovação integral.
 
 ## Verificações executadas e problemas encontrados
 
-**Local:**462/462 testes de lógica, zero falhas/pulos, Node22.23.4; lint221,
+**Local:**464/464 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
 actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 
 | Execução Windows | Evidência efetiva | Resultado/ação |
@@ -83,6 +83,16 @@ actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 | [41724376443](https://github.com/oaovito/oao-companion-/actions/runs/41724376443) |0cenários executados | `/api/pull` excedeu660s antes dos testes; runtime baixou/iniciou. Não é resultado de conversa. [JSON](evidencias/model-download-41724376443.json). |
 | [41727762420](https://github.com/oaovito/oao-companion-/actions/runs/41727762420) |Manifesto HTTP200; Range1MiB HTTP206 em1246ms | Passou, sem inferência/download completo. Justifica uma tentativa limitada. [JSON](evidencias/model-network-41727762420.json). |
 | [41728621830](https://github.com/oaovito/oao-companion-/actions/runs/41728621830) |Central isolada com pré-carga corrigida | 12/12automáticos, zero warnings/erros do renderer; revisão reprovou preferência não informada (“água fria, como você gosta”). Exemplo científico respondeu sem fallback. Comparações implícitas agora exigem o mesmo assunto em preferência afirmativa da usuária; saudação orienta o próprio humor.35/35focados e462/462locais passaram; nova inferência pendente. |
+
+O pipeline integral [41730444087](https://github.com/oaovito/oao-companion-/actions/runs/41730444087)
+aprovou preflight/lint/instalação e462/462unitários no Windows. Parou em29/32engine:
+três respostas omitiram os assuntos esperados (café/teclado, chefe/prazo, cat).
+A leitura encontrou também “o sol está forte hoje” sem dado informado. Os12casos
+da Central e gates seguintes NÃO executaram. Evidência:
+[conversa completa e revisão](evidencias/conversa-windows-41730444087.json).
+Prompt casual compactado de 256 para 147 palavras, com tarefa final após perfil/dados,
+e guarda meteorológica ampliada.52/52 testes focados,29/29 de coerência e464/464
+unitários locais passaram. Essas correções ainda dependem de nova inferência real.
 
 O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
 `app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e

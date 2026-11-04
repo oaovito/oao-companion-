@@ -14,9 +14,21 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Retomada em 04/11/2026 — alterações preservadas e prontas para novo Windows
+
+Ambiente reiniciou e retornou; terminal/Git funcionais. **464/464 unitários**
+locais, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos, actionlint e diff-check aprovados.
+Prompt casual compactado de 256 para 147 palavras, com prioridade final ao assunto
+atual, preferências informadas e humor ficcional próprio. Não altera modelo,
+transporte, histórico, fontes/prefixo técnico ou limites de tempo. Guarda de clima
+ampliada para sol/temperatura ambiente sem dado informado, preservando objetos
+frios/quentes, hipóteses, perguntas e fatos científicos. Teste de transporte usa
+assunto novo (samambaia), sem respostas prontas nem alteração dos32+12cenários.
+Novo pipeline integral deve provar essas mudanças; nada publicado até o momento.
+
 ### Retomada em 03/11/2026 — ainda sem publicação
 
-Estado atual: fonte `49005d4`, branch local/remota `codex/living-companion`
+Estado atual: fonte `106ba27`, branch local/remota `codex/living-companion`
 sincronizada por Git Data API/CAS; **462/462 unitários** locais, lint221 e
 actionlint aprovados. Token do `gh` expirado (401); conector GitHub continua com
 escrita. Não substituir credenciais injetadas nem pedir comandos manuais.
@@ -46,6 +58,15 @@ janela de resposta. Pré-carga original adicionada, sem aumentar timeout.
 `[jojo-ui]` roda12 cenários da Central; `[jojo-qa]` roda32engine+12Central.
 São diagnósticos de pré-build; Windows integral/publicador não roda nesses commits.
 Push normal na living preserva todos os gates obrigatórios antes da publicação.
+
+Pipeline integral **41730444087**, fonte `106ba27`: preflight, lint, instalação
+e462/462unitários Windows passaram. Conversa ficou29/32engine: respostas genéricas
+omitiram café/teclado, chefe/prazo e cat. Leitura também detectou sol forte hoje
+sem contexto meteorológico. Central e demais gates NÃO executaram; nenhuma
+branch de revisão, tag ou release nova criada. Evidência integral privada em
+`docs/evidencias/conversa-windows-41730444087.json`. Próxima correção compacta
+prioridades do prompt casual e amplia a guarda das observações meteorológicas;
+não muda casos/padrões/modelo/timeouts. Revalidar antes de publicar.
 
 O pipeline integral salva conversa/progresso na branch privada
 `codex/ci-evidence-<runId>-<attempt>` e aguarda revisão técnica das44falas em
@@ -78,7 +99,7 @@ repetida com inferência real. Relatório principal em `docs/VALIDACAO_0.45.1.md
 Prompt e coerência agora rejeitam os quatro desvios observados sem resposta pronta
 nem fingir inferência quando há fallback. Regressões novas preservam humor sobre
 o próprio personagem, preferências informadas e hipóteses. **448/448 unitários**
-locais passaram, Node22.23.4; lint210, actionlint e diff-check aprovados.
+locais passaram, Node 22.23.4; lint210, actionlint e diff-check aprovados.
 Pipeline integral ainda pendente. As19 releases históricas continuam imutáveis.
 
 Interfaces **41650512337**, fonte `5297759`:13/14 passaram. O preparo Steam agora
@@ -142,7 +163,7 @@ integralmente cobertos, mesmo se o maior não estiver coberto. Comparação de c
 Steam usa cache normalizado: benchmark puro Node, 5.000 jogos ×300 processos,
 2.796→56 ms (host Linux; não equivale a medição de desempenho Windows).
 
-Estado local após correções: **445/445 unitários**, zero pulos, Node22.23.4;
+Estado local após correções: **445/445 unitários**, zero pulos, Node 22.23.4;
 lint210 arquivos, actionlint e diff-check aprovados. Próximo: novos diagnósticos
 Windows de interface e conversa, depois todos os gates oficiais no mesmo commit.
 Nenhuma release nova publicada; as 19 releases existentes permanecem preservadas.

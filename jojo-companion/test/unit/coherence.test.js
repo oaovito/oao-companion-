@@ -94,6 +94,22 @@ test('conversa casual não inventa chuva observada; relato, hipótese e ferramen
   assert.notEqual((await engine.reply(input)).intent, 'ia');
 });
 
+test('saudação não cria observações de sol ou temperatura sem relato da usuária', async () => {
+  const input = 'você está bem?';
+  const actual = 'Estou bem, o sol está forte hoje.';
+  for (const text of [actual, 'Tudo certo. Hoje faz frio.', 'It is very hot outside.', 'The sun is shining today.']) {
+    assert.equal(erroDeCoerencia(input, text), 'observação de clima não informada', text);
+    assert.equal(erroDeCoerencia(input, text, [{ role: 'jojo', text }]), 'observação de clima não informada');
+    assert.equal(erroDeCoerencia(input, text, [{ role: 'user', text }]), null);
+  }
+  assert.equal(erroDeCoerencia(input, actual, [{ role: 'user', text: 'Está chovendo lá fora.' }]), 'observação de clima não informada');
+  for (const text of ['O Sol é uma estrela quente.', 'Estou quente de raiva nessa história.', 'Se o sol está forte hoje, nessa história eu uso óculos.', 'O sol está forte hoje?', 'Talvez hoje faça frio.', 'O café está quente hoje.', 'The water here is cold.']) assert.equal(erroDeCoerencia(input, text), null, text);
+  assert.equal(erroDeCoerencia('Conte uma história com sol.', actual), null);
+  assert.equal(erroDeCoerencia('Como proteger minha pele?', 'Quando o sol está forte, procure sombra.'), null, 'orientação geral não afirma uma observação meteorológica');
+  const reply = await new DialogueEngine({ llm: model({ text: actual }) }).reply(input);
+  assert.notEqual(reply.intent, 'ia');
+});
+
 test('preferência implícita exige o assunto afirmado pela usuária, sem derivar de cor ou da fala do modelo', async () => {
   const input = 'você está bem?';
   const invented = 'Estou ótimo, Manu. A água aqui está bem fria, como você gosta.';
