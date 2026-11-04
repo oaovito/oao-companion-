@@ -94,6 +94,14 @@ Prompt casual compactado de 256 para 147 palavras, com tarefa final após perfil
 e guarda meteorológica ampliada.52/52 testes focados,29/29 de coerência e464/464
 unitários locais passaram. Essas correções ainda dependem de nova inferência real.
 
+Em [41804545246](https://github.com/oaovito/oao-companion-/actions/runs/41804545246),
+fonte `9d9f883`,464/464unitários Windows passaram, engine30/32; Central não executou.
+A guarda rejeitou preferência inventada no café; prazo permaneceu genérico. Leitura
+reprovou ainda Borges favorito inventado e repetição anatômica sem histórico.
+[Saídas e revisão](evidencias/conversa-windows-41804545246.json). Próximo passo:
+avaliar candidato local Qwen4B Instruct2507 no ensaio diagnóstico, sem alterar o
+modelo oficial antes da evidência real e sem trocar infraestrutura ou critérios.
+
 O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
 `app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e
 saída normal antes das três atualizações. **Essa ampliação ainda não passou no

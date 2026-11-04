@@ -10,6 +10,13 @@ on:
         description: Diagnosticar somente a Central com modelo real; nao equivale aos gates integrais
         type: boolean
         default: false
+      model:
+        description: Modelo avaliado somente neste ensaio; nao altera o modelo do aplicativo
+        type: choice
+        default: 'gemma3:4b-it-q4_K_M'
+        options:
+          - 'gemma3:4b-it-q4_K_M'
+          - 'qwen3:4b-instruct-2507-q4_K_M'
 
 permissions:
   contents: read
@@ -44,7 +51,7 @@ jobs:
       fail-fast: false
       matrix:
         model:
-          - 'gemma3:4b-it-q4_K_M'
+          - ${{ inputs.model || (contains(github.event.head_commit.message, '[qwen4]') && 'qwen3:4b-instruct-2507-q4_K_M' || 'gemma3:4b-it-q4_K_M') }}
     defaults:
       run:
         shell: pwsh

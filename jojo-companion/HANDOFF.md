@@ -14,6 +14,23 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Avaliação de candidato local — 04/11/2026
+
+Fonte `9d9f883`, run **41804545246**:464/464unitários Windows passaram; conversa
+30/32engine, Central e gates seguintes NÃO executaram. Café caiu em fallback
+após preferência inventada; prazo ficou genérico. Leitura detectou livro de
+Borges favorito inventado e alegação de repetição anatômica sem histórico.
+Compactar prompt não estabilizou o conjunto. Evidência em
+`docs/evidencias/conversa-windows-41804545246.json`.
+
+Próximo ensaio diagnóstico avalia SOMENTE `qwen3:4b-instruct-2507-q4_K_M`, já
+permitido pelo verificador, no mesmo Windows oficial e nos mesmos32+12casos.
+Marcadores `[jojo-qa] [qwen4]` selecionam o candidato; dispatch também permite
+escolha explícita. Isso NÃO altera o modelo oficial Gemma nem publica. Somente
+qualidade/latência reais aprovadas autorizam integrar uma seleção nova, com digest
+real, migração conservadora, documentação e novo pipeline integral do commit final.
+Sem inferência/download de pesos no Linux, API externa ou infraestrutura nova.
+
 ### Retomada em 04/11/2026 — alterações preservadas e prontas para novo Windows
 
 Ambiente reiniciou e retornou; terminal/Git funcionais. **464/464 unitários**
