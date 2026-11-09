@@ -8,7 +8,8 @@ import { createRequire } from 'node:module';
 import { spawn, execFileSync } from 'node:child_process';
 requireWindows();
 const { _electron } = createRequire(import.meta.url)('playwright-core');
-const version = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url))).version;
+const manifest = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
+const version = manifest.version;
 const setup = path.resolve(`dist/JoJoCompanion-Setup-${version}.exe`);
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-installer-ci-'));
 const target = path.join(temporary, 'installed');
@@ -45,6 +46,32 @@ try {
   await installedApp.firstWindow({ timeout: 15000 });
   const packaging = await installedApp.evaluate(({ app }) => ({ isPackaged: app.isPackaged, archive: /[\\/]app\.asar$/.test(app.getAppPath()) }));
   assert.deepEqual(packaging, { isPackaged: true, archive: true }, 'o ensaio deve executar o app.asar instalado pelo NSIS');
+  const koffiRuntime = await installedApp.evaluate(async ({ app }) => {
+    const fs = await import('node:fs'), path = await import('node:path');
+    const { createRequire } = await import('node:module');
+    const root = app.getAppPath(), require = createRequire(path.join(root, 'package.json'));
+    const proof = { loaded: false, staticLoaderPresent: fs.existsSync(path.join(root, 'node_modules/koffi/src/koffi/src/static.cjs')) };
+    try {
+      const entry = require.resolve('koffi'), relative = path.relative(root, entry);
+      proof.insidePackage = !relative.startsWith('..') && !path.isAbsolute(relative);
+      proof.entry = proof.insidePackage ? relative.replaceAll('\\', '/') : 'outside_package';
+      const koffi = require('koffi');
+      proof.loaded = typeof koffi.load === 'function'; proof.version = koffi.version;
+      const native = path.join(root.replace(/app\.asar$/, 'app.asar.unpacked'), 'node_modules/@koromix/koffi-win32-x64/win32_x64/koffi.node');
+      proof.nativeModulePresent = fs.existsSync(native);
+    } catch (error) {
+      const missing = String(error.message).match(/Cannot find module ['"]([^'"]+)['"]/);
+      proof.error = missing ? 'module_not_found' : error.code === 'ERR_DLOPEN_FAILED' ? 'native_load_failed' : 'runtime_load_failed';
+      if (missing) proof.missingModule = ['static.cjs', 'koffi.node', 'koffi'].includes(path.basename(missing[1])) ? path.basename(missing[1]) : 'dependency';
+    }
+    return proof;
+  });
+  assert.equal(koffiRuntime.staticLoaderPresent, true, `loader JavaScript obrigatório do Koffi precisa existir no aplicativo instalado: ${JSON.stringify(koffiRuntime)}`);
+  assert.equal(koffiRuntime.insidePackage, true, `Koffi deve resolver dentro do aplicativo instalado: ${JSON.stringify(koffiRuntime)}`);
+  assert.equal(koffiRuntime.nativeModulePresent, true, `módulo nativo Windows do Koffi precisa estar desempacotado: ${JSON.stringify(koffiRuntime)}`);
+  assert.equal(koffiRuntime.loaded, true, `require('koffi') deve funcionar no processo instalado: ${JSON.stringify(koffiRuntime)}`);
+  assert.equal(koffiRuntime.version, manifest.dependencies.koffi, 'versão nativa deve corresponder à dependência fixada');
+  console.log(`JOJO_PACKAGED_KOFFI:${JSON.stringify(koffiRuntime)}`);
   let ready = false;
   for (let i = 0; i < 120; i++) {
     if (child.exitCode !== null || child.signalCode !== null) throw new Error('Aplicativo instalado encerrou antes de validar o inventario Steam');
@@ -88,6 +115,21 @@ try {
     if (!JSON.parse(fs.readFileSync(path.join(data, 'update-preservation.json'))).preserved) throw new Error('Atualizacao perdeu dados do perfil');
   }
   console.log(`NSIS ${version}: instalou/iniciou e tres atualizacoes preservaram atalho unico, remocao manual e dados.`);
+} catch (error) {
+  // Só sinais técnicos do perfil sintético. Não registrar títulos de janelas,
+  // paths completos ou o conteúdo de arquivos pessoais em caso de falha.
+  const redactPath = value => String(value || '').replace(/\b[a-z]:[\\/][^\r\n"'<>]*/gi, '[path]').replace(/\\\\[^\r\n"'<>]*/g, '[path]').slice(0, 600);
+  if (installedApp) {
+    const info = await installedApp.evaluate(() => {
+      const value = globalThis.__jojo?.fullscreenInfo?.();
+      return value ? { available: value.available, reason: value.reason, hasSample: !!value.last } : null;
+    }).catch(() => null);
+    if (info?.reason) info.reason = redactPath(info.reason);
+    const log = path.join(data, 'logs/jojo.log');
+    const warnings = fs.existsSync(log) ? fs.readFileSync(log, 'utf8').split(/\r?\n/).filter(line => /Detector de tela cheia|Detecção de tela cheia|Detector de janelas|Processo auxiliar encerrou/.test(line)).slice(-6).map(redactPath) : [];
+    console.error(`JOJO_INSTALLED_NATIVE_FAILURE:${JSON.stringify({ fullscreen: info, warnings })}`);
+  }
+  throw error;
 } finally {
   if (installedApp) {
     await installedApp.evaluate(() => globalThis.__jojo?.quit()).catch(() => {});

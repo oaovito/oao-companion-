@@ -178,6 +178,37 @@ test('parar narração preserva também o marcador de fim de turno do modelo', a
   }
 });
 
+test('candidato Llama conserva os EOS oficiais; família desconhecida mantém seus parâmetros upstream', async () => {
+  const { srv, pedidos } = fakeOllama({ resposta: 'Tudo certo, Manu.' });
+  const base = await listen(srv);
+  try {
+    for (const modelo of ['llama3.1:8b-instruct-q4_K_M', 'candidato-sem-familia:8b']) {
+      const brain = { pronto: () => true, preparar: async () => ({ base, modelo }), usar() {} };
+      const p = provider(brain, { modelo: 'override-ignorado:1b' });
+      await p.reply({ text: 'você está bem?', history: [] });
+      const request = pedidos.at(-1).body;
+      assert.equal(request.model, modelo, 'o modelo preparado prevalece sobre a configuração legada');
+      assert.equal(request.messages.at(-1).content, 'você está bem?');
+      assert.deepEqual([request.options.num_ctx, request.options.num_predict, request.options.num_batch], [2048, 256, 128]);
+      assert.deepEqual([request.options.temperature, request.options.presence_penalty, request.options.repeat_penalty], [0.3, 0, 1.05]);
+      assert.equal(request.stream, true);
+      assert.equal(Object.hasOwn(request, 'think'), false);
+      assert.equal(Object.hasOwn(request, 'format'), false);
+      if (modelo.startsWith('llama3.1:')) {
+        assert.deepEqual(request.options.stop, ['<|start_header_id|>', '<|end_header_id|>', '<|eot_id|>', '[JoJo', '*JoJo']);
+      } else {
+        assert.equal(Object.hasOwn(request.options, 'stop'), false, 'sem conhecimento dos EOS, não substituir a configuração do modelo');
+      }
+      await p.reply({ text: 'abre a central', history: [] });
+      const structured = pedidos.at(-1).body;
+      assert.equal(structured.format, 'json');
+      assert.equal(Object.hasOwn(structured.options, 'stop'), false, 'comandos estruturados continuam usando os stops upstream');
+    }
+  } finally {
+    srv.close();
+  }
+});
+
 test('urgência continua imediata durante a retomada e cancela a pergunta antiga', async () => {
   let resume;
   const loading = new Promise((resolve) => { resume = resolve; });

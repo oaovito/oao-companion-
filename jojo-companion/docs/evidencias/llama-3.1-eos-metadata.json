@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-09T15:25:40.815760+00:00",
+  "model": "llama3.1:8b-instruct-q4_K_M",
+  "manifestUrl": "https://registry.ollama.ai/v2/library/llama3.1/manifests/8b-instruct-q4_K_M",
+  "manifestSha256": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+  "manifestBytes": 858,
+  "paramsUrl": "https://registry.ollama.ai/v2/library/llama3.1/blobs/sha256:56bb8bd477a519ffa694fc449c2413c6f0e1d3b1c88fa7e3c9d88d3ae49d4dcb",
+  "paramsLayer": {
+    "mediaType": "application/vnd.ollama.image.params",
+    "digest": "sha256:56bb8bd477a519ffa694fc449c2413c6f0e1d3b1c88fa7e3c9d88d3ae49d4dcb",
+    "size": 96
+  },
+  "params": {
+    "stop": [
+      "<|start_header_id|>",
+      "<|end_header_id|>",
+      "<|eot_id|>"
+    ]
+  },
+  "paramsSha256Verified": true,
+  "modelWeightsFetched": false
+}

@@ -69,7 +69,7 @@ Não somar diagnósticos separados como aprovação integral.
 
 ## Verificações executadas e problemas encontrados
 
-**Local:**470/470 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
+**Local:**473/473 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
 actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 
 | Execução Windows | Evidência efetiva | Resultado/ação |
@@ -118,6 +118,29 @@ referências claras e histórico visível; sua relevância lexical não pretende
 resolver sinônimos universais. O ensaio real oficial Gemma32+12 e o diagnóstico
 nativo parcial serão executados em paralelo, sem publicar. Todos os16gates do
 run integral final continuam obrigatórios.
+
+Diagnósticos do commit `1e0bf9e`: conversa
+[42642784960](https://github.com/oaovito/oao-companion-/actions/runs/42642784960)
+automaticamente32+12, mas revisão reprovada por preferências inventadas e ironia
+de memória. [Saídas completas](evidencias/conversa-windows-42642784960.json).
+Nativo[42642784947](https://github.com/oaovito/oao-companion-/actions/runs/42642784947)
+compilou três formatos, mas o app instalado retornou detector indisponível;
+demais testes pulados. [Estado](evidencias/nativo-windows-42642784947.json).
+
+A inspeção estática do ZIP público0.45.0, sem executar binários no Linux,
+confirmou Koffi index.cjs com require('./src/static.cjs') e esse arquivo ausente
+no app.asar, embora o módulo nativo@koromix exista. A exclusão de fonte C++ removeu
+também runtimeJS. [Prova/sha](evidencias/koffi-publicado-0.45.0.json).
+A correção do pacote e a captura do erro de inicialização ainda dependem de novo
+NSIS Windows; o próximo candidato8B precisa passar inferência antes de adoção.
+
+Patch de embalagem preserva static.cjs e mantém exclusão apenas de fontes C++;
+monitor agora reconhece falha de init semid e limpa estado sem expor paths.
+O NSIS exigirá carregamento REAL do Koffi/versão/módulo nativo instalado antes de
+Steamclosedknown.473/473unitários locais passaram; novo Windows instalado pendente.
+Candidato Llama3.1 8B será avaliado pelos mesmos32+12casos/timeouts; oficial ainda
+Gemma. EOS oficiais conservados conforme [metadata](evidencias/llama-3.1-eos-metadata.json),
+sem download de pesos ou inferência no Linux.
 
 O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
 `app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e

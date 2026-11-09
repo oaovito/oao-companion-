@@ -254,7 +254,11 @@ export class LlmProvider extends DialogueProvider {
     const structured = pedidoAoApp(text);
     // Customizar stop substitui os parâmetros do modelo: conservar os marcadores
     // de fim declarados upstream evita continuar a resposta como um novo turno.
-    const endStops = /^gemma3:/.test(modelo) ? ['<end_of_turn>'] : /^qwen3/.test(modelo) ? ['<|im_start|>', '<|im_end|>'] : [];
+    // Família sem contrato conhecido mantém os stops definidos pelo motor.
+    const endStops = /^gemma3:/.test(modelo) ? ['<end_of_turn>']
+      : /^qwen3/.test(modelo) ? ['<|im_start|>', '<|im_end|>']
+      : /^llama3\.1:/.test(modelo) ? ['<|start_header_id|>', '<|end_header_id|>', '<|eot_id|>']
+      : null;
     const messages = [{ role: 'system', content: structured
       ? buildSystemPrompt(this.getProfile(), this.getContext(), [], { tecnico })
       : buildLocalPrompt(this.getProfile(), this.getContext(), text, { tecnico }) }];
@@ -305,7 +309,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));

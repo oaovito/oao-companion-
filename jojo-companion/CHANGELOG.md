@@ -13,6 +13,9 @@
   sem contexto fornecido. Descarta contexto técnico irrelevante em assuntos
   pessoais e encerra o tema anterior para que pedidos de exemplo não reabram
   uma aula antiga após uma mudança de assunto.
+- Preserva no instalador o carregador JavaScript obrigatório do Koffi, necessário
+  ao detector nativo. Falhas de inicialização recebem diagnóstico explícito, sem
+  expor caminhos pessoais ou esperar indefinidamente pela disponibilidade.
 - Detecção de tela cheia usa a janela ativa e geometria física; estados globais
   de notificações/apresentação não bloqueiam uma janela comum ou a Central.
 - Todas as janelas próprias são reconhecidas; amostras antigas são descartadas

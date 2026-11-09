@@ -27,6 +27,14 @@ export function createFullscreenDetector(log = () => {}) {
     }
     state.child.on('message', (m) => {
       if (m.type === 'ready') { state.ready = true; for (const fn of state.readyWaiters.splice(0)) fn(); }
+      else if (m.type === 'error' && !state.ready && m.id == null) {
+        // O init não tem request/id. Não descartar seu erro nem expor caminhos
+        // pessoais da mensagem original do carregador nativo nos diagnósticos.
+        const code = /Cannot find module|Cannot find package|Cannot find the native Koffi module/.test(String(m.message || ''))
+          ? 'dependencia_nativa_ausente' : /Mismatched native Koffi modules/.test(String(m.message || ''))
+            ? 'dependencia_nativa_incompativel' : 'inicializacao_nativa_falhou';
+        disable(`falha na inicialização nativa (${code})`);
+      }
       else if (m.type === 'result' || m.type === 'error') {
         const p = state.pending.get(m.id);
         if (!p) return;
@@ -38,6 +46,7 @@ export function createFullscreenDetector(log = () => {}) {
     state.child.on('exit', (code) => {
       for (const p of state.pending.values()) p.reject(new Error('detector encerrado'));
       state.pending.clear();
+      for (const fn of state.readyWaiters.splice(0)) fn(new Error('detector encerrado'));
       state.child = null;
       state.last = null; samples.invalidate();
       state.ready = false;
@@ -53,6 +62,8 @@ export function createFullscreenDetector(log = () => {}) {
 
   function disable(reason) {
     state.available = false;
+    state.ready = false; state.last = null; samples.invalidate();
+    for (const fn of state.readyWaiters.splice(0)) fn(new Error('detector_unavailable'));
     state.reason = `Indisponível: ${reason}`;
     log('warn', `Detecção de tela cheia desativada: ${reason}`);
     if (state.child) state.child.kill();
@@ -63,7 +74,7 @@ export function createFullscreenDetector(log = () => {}) {
   async function request(type, opts, timeoutMs = 6000, signal = null) {
     if (!state.available) throw new Error('detector_unavailable');
     if (!state.ready) await new Promise((resolve, reject) => {
-      const ready = () => { clearTimeout(timer); resolve(); };
+      const ready = error => { clearTimeout(timer); if (error) reject(error); else resolve(); };
       const timer = setTimeout(() => { state.readyWaiters = state.readyWaiters.filter(fn => fn !== ready); reject(new Error('detector_not_ready')); }, 2500);
       state.readyWaiters.push(ready);
     });
@@ -128,6 +139,7 @@ export function createFullscreenDetector(log = () => {}) {
     },
     dispose() {
       state.available = false;
+      for (const fn of state.readyWaiters.splice(0)) fn(new Error('detector_unavailable'));
       if (state.child) state.child.kill();
     },
   };

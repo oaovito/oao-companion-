@@ -17,6 +17,7 @@ on:
         options:
           - 'gemma3:4b-it-q4_K_M'
           - 'qwen3:4b-instruct-2507-q4_K_M'
+          - 'llama3.1:8b-instruct-q4_K_M'
 
 permissions:
   contents: read
@@ -43,7 +44,7 @@ jobs:
         run: node scripts/check-model-network.mjs
 
   conversa-real:
-    # Avaliacao opcional somente por dispatch; o pipeline completo ja executa o ensaio.
+    # Avaliacao por dispatch ou marcador explicito; o pipeline completo ja executa o ensaio.
     if: ${{ github.repository == 'oaovito/oao-companion-' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[jojo-ui]') || contains(github.event.head_commit.message, '[jojo-qa]')) }}
     runs-on: windows-latest
     timeout-minutes: 30
@@ -51,7 +52,7 @@ jobs:
       fail-fast: false
       matrix:
         model:
-          - ${{ inputs.model || (contains(github.event.head_commit.message, '[qwen4]') && 'qwen3:4b-instruct-2507-q4_K_M' || 'gemma3:4b-it-q4_K_M') }}
+          - ${{ inputs.model || (contains(github.event.head_commit.message, '[llama8]') && 'llama3.1:8b-instruct-q4_K_M') || (contains(github.event.head_commit.message, '[qwen4]') && 'qwen3:4b-instruct-2507-q4_K_M') || 'gemma3:4b-it-q4_K_M' }}
     defaults:
       run:
         shell: pwsh

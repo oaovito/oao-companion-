@@ -53,7 +53,7 @@
       "!node_modules/koffi/lib/**",
       "!node_modules/koffi/vendor/**",
       "!node_modules/koffi/doc/**",
-      "!node_modules/koffi/src/koffi/src/**",
+      "!node_modules/koffi/src/koffi/src/**/*.{cc,hh,S,asm,def,inc}",
       "!node_modules/koffi/src/koffi/CMakeLists.txt"
     ],
     "asarUnpack": [

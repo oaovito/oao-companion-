@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "commit": "1e0bf9e94c09794e453682180b5e95d14b484125",
+  "runId": "42642784947",
+  "jobId": "129247964332",
+  "scope": "native-diagnostic",
+  "conclusion": "failure",
+  "passed": [
+    "official-windows-preflight",
+    "lint",
+    "npm-ci",
+    "portable-nsis-zip-build"
+  ],
+  "failed": "installed-steam-detection",
+  "failureSnapshot": {
+    "status": "unavailable",
+    "reason": "detector_unavailable",
+    "count": 1,
+    "diagnostics": []
+  },
+  "notExecuted": [
+    "portable",
+    "presence",
+    "integration",
+    "e2e",
+    "animations",
+    "performance",
+    "artifacts",
+    "updater",
+    "notes"
+  ],
+  "publicationAllowed": false,
+  "causeEvidence": "koffi-publicado-0.45.0.json confirma static.cjs exigido mas ausente no app.asar publicado; exclusão ampla do build remove runtime JS do detector. Erro inicial sem id também era descartado pelo monitor; validar correções no próximo Windows."
+}

@@ -1,0 +1,13 @@
+{
+  "version": "0.45.0",
+  "sourceArchive": "JoJoCompanion-0.45.0-win-x64.zip",
+  "archiveSha256": "5368b3c603ed7af8e69721f12c5009c66f158cf9d47c8221c2cdb0876b167bbf",
+  "indexPresent": true,
+  "staticPresent": false,
+  "requiresStatic": [
+    "var { loadStatic } = require(\"./src/static.cjs\");"
+  ],
+  "nativeDependencyFiles": [
+    "resources/app.asar.unpacked/node_modules/@koromix/koffi-win32-x64/win32_x64/koffi.node"
+  ]
+}

@@ -14,6 +14,42 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Empacotamento nativo corrigido — novos ensaios ainda pendentes
+
+**473/473 unitários** locais passaram, zero falhas/pulos, Node22.23.4.
+18/18transporteOllama e9/9fullscreen-native passaram. O pacote preserva static.cjs
+removendo somente extensões de fonte C++; erro de init semid agora desativa estado
+nativo honestamente, limpa amostras e rejeita esperadores com diagnóstico limitado.
+NSIS exige require('koffi') REAL dentro do app.asar, versão3.3.3, loader e.node
+físico, antes da Steamclosedknown;3atualizações/desinstalação mantidas.
+Isso ainda precisa passar no aplicativo instalado Windows; não antecipar resultado.
+
+O próximo ensaio avalia SOMENTE `llama3.1:8b-instruct-q4_K_M`, no Windows oficial,
+com os mesmos32+12casos/timeouts. Default/oficial permanece Gemma. EOS de Llama
+confirmados no manifesto+params oficiais (96bytes), sem pesos no Linux; transporte
+preserva EOS e não apaga stops upstream de famílias desconhecidas. Metadata em
+`docs/evidencias/llama-3.1-eos-metadata.json`. Só escolher novo oficial após
+qualidade/latência reais, migração conservadora e novo pipeline integral.
+Marcadores do próximo commit: `[jojo-qa] [llama8] [jojo-native]`; NÃO publicam.
+
+### Diagnósticos 1e0bf9e — falhas reais e próximas verificações
+
+Conversa **42642784960** passou32/32engine+12/12Central automaticamente, mas
+leitura integral REPROVOU preferências inventadas (café/cerveja/vinho/chá) e
+comentários de memória. Contexto científico deixou de vazar para assunto pessoal;
+qualidade do modelo oficial ainda não aprovada. Próximo ensaio avaliará apenas
+Llama3.1 8B Q4, mantendo casos/timeouts e sem trocar o oficial antes da evidência.
+
+Nativo **42642784947** compilou3formatos, mas NSIS falhou com detector indisponível,
+embora o inventário tivesse1jogo. Etapas posteriores NÃO executaram. Leitura do
+ZIP público0.45.0 provou: Koffi index.cjs exige src/static.cjs, ausente no app.asar;
+a exclusão ampla de fonte no package.json removia esse runtime JavaScript.
+A biblioteca nativa@koromix.node está presente. Também há erro de init sem id
+ignorado pelo monitor, mascarando o motivo. Corrigir pacote e diagnóstico de init;
+manter exigência de statusclosed/known no aplicativo instalado.
+
+Evidências versionadas por run em docs/evidencias. Nenhuma release alterada.
+
 ### Contexto corrigido e diagnósticos preparados
 
 **470/470 unitários** locais passaram, zero falhas/pulos, Node22.23.4.55/55

@@ -96,6 +96,59 @@ test('fullscreen monitor: protege o monitor menor coberto mesmo quando a maior i
   hold = false; assert.deepEqual((await detect()).fullscreenIds, ['menor']);
 });
 
+async function mockedDetector(utility, label, log = () => {}) {
+  const key = Symbol.for(`jojo.test.fullscreen.${label}`);
+  globalThis[key] = utility;
+  const hook = registerHooks({ resolve(specifier, context, next) {
+    if (specifier === 'electron' && context.parentURL?.includes('/fullscreen-monitor.js')) return { url: `data:text/javascript,export const utilityProcess = globalThis[Symbol.for('jojo.test.fullscreen.${label}')];`, shortCircuit: true };
+    return next(specifier, context);
+  } });
+  let createFullscreenDetector;
+  try { ({ createFullscreenDetector } = await import(`../../src/main/fullscreen-monitor.js?${label}`)); }
+  finally { hook.deregister(); delete globalThis[key]; }
+  const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
+  try { Object.defineProperty(process, 'platform', { value: 'win32' }); return createFullscreenDetector(log); }
+  finally { Object.defineProperty(process, 'platform', originalPlatform); }
+}
+
+test('fullscreen monitor: erro de inicialização sem id fica indisponível, rejeita espera e não expõe o caminho do carregador', async t => {
+  let forks = 0, kills = 0, nativeProcess;
+  const logs = [];
+  class NativeProcess extends EventEmitter {
+    postMessage() {}
+    kill() { kills++; this.emit('exit', 1); }
+  }
+  const detector = await mockedDetector({ fork: () => { forks++; nativeProcess = new NativeProcess(); return nativeProcess; } }, 'init-error', (_level, line) => logs.push(line));
+  t.after(() => detector.dispose());
+  const waiting = assert.rejects(detector.steamRoots(), /detector_unavailable/);
+  nativeProcess.emit('message', { type: 'error', id: undefined, message: "Cannot find module 'C:\\Users\\fixture-private\\app.asar\\node_modules\\koffi\\src\\koffi\\src\\static.cjs'" });
+  await new Promise(resolve => setImmediate(resolve));
+  await waiting;
+  assert.equal(detector.available, false);
+  assert.match(detector.reason, /dependencia_nativa_ausente/);
+  assert.doesNotMatch(JSON.stringify([detector.reason, logs]), /fixture-private|C:\\Users/);
+  assert.equal(forks, 1); assert.equal(kills, 1, 'erro estrutural de init encerra o auxiliar sem reinício infinito');
+  await assert.rejects(detector.brandIcons(), /detector_unavailable/);
+  const state = await detector.detect(r => r, [], {});
+  assert.deepEqual(state.fullscreenIds, []); assert.equal(state.games.known, false);
+  assert.equal(detector.last, null);
+});
+
+test('fullscreen monitor: erro com id após ready rejeita somente a operação e preserva o detector', async t => {
+  class NativeProcess extends EventEmitter {
+    postMessage(message) {
+      if (message.type === 'init') queueMicrotask(() => this.emit('message', { type: 'ready' }));
+      if (message.type === 'brandIcons') queueMicrotask(() => this.emit('message', { type: 'error', id: message.id, message: 'operation_failed' }));
+    }
+    kill() { this.emit('exit', 0); }
+  }
+  const detector = await mockedDetector({ fork: () => new NativeProcess() }, 'request-error');
+  t.after(() => detector.dispose());
+  await new Promise(resolve => setImmediate(resolve));
+  await assert.rejects(detector.brandIcons(), /operation_failed/);
+  assert.equal(detector.available, true); assert.equal(detector.reason, null);
+});
+
 test('detector de jogos: inventário desconhecido pausa atividade e recuperação descarta processos e provas em cache', async () => {
   const workerUrl = new URL('../../src/main/fullscreen-worker.cjs', import.meta.url), require = createRequire(workerUrl);
   const image = 'E:\\SteamLibrary\\steamapps\\common\\Darkest Dungeon\\_windows\\Darkest.exe';
