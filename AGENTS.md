@@ -127,6 +127,9 @@ mesmo job e preservar hashes/relatórios/instalador. Só aceita `github-hosted` 
 `[jojo-ui]`, `[jojo-qa]` e `[jojo-net]` na living; pushes comuns não repetem esse
 diagnóstico. Esses marcadores excluem o pipeline integral/publicador; somente
 push normal ou dispatch integral pode completar a validação e publicar a candidata.
+`jojo-native-windows.yml` usa o marcador `[jojo-native]` para diagnóstico parcial
+de empacotamento/instalação e integração no Windows. Também exclui o publicador;
+seus resultados não substituem todos os gates do mesmo run final.
 `jojo-recovery.yml` agenda `17 * * * *` na branch padrão, com concorrência e idempotência.
 main guarda somente controle (não usar como fonte do aplicativo); o worker faz checkout
 da branch correta. Mudanças do controle devem ser sincronizadas na main, preservando

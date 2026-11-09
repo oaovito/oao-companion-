@@ -41,6 +41,54 @@ test('Qwen recebe a instrução de professor e o assunto anterior no "me dá um 
   assert.equal(recebidos[2].professor, '');
 });
 
+test('assunto pessoal independente encerra o tema e não reabre fontes científicas no próximo exemplo', async () => {
+  const calls = [];
+  const fonte = { confianca: 'alta', fontes: [{ fonte: 'Fonte sintética' }], trechos: [{ texto: 'Diabetes envolve resistência à insulina.', fonte: 'Fonte sintética' }] };
+  const engine = new DialogueEngine({ pesquisa: { pesquisar: async () => fonte }, llm: {
+    isAvailable: async () => true, timeoutMs: 1000,
+    reply: async args => { calls.push(args); return { text: args.pesquisa ? 'Diabetes envolve resistência à insulina.' : 'O contrato pode ser revisado por etapas.' }; },
+  } });
+  await engine.reply('o que é diabetes tipo 2?');
+  await engine.reply('me dá um exemplo');
+  assert.equal(calls[1].pesquisa, fonte, 'seguimento direto mantém a fonte');
+  assert.match(calls[1].professor, /MODO PROFESSOR/);
+  await engine.reply('Consegui fechar o contrato do apartamento.');
+  assert.equal(calls[2].professor, ''); assert.equal(calls[2].pesquisa, null);
+  assert.equal(engine.tema, null);
+  await engine.reply('me dá um exemplo');
+  assert.equal(calls[3].professor, ''); assert.equal(calls[3].pesquisa, null); assert.equal(calls[3].followup, null);
+  assert.ok(engine.history.some(h => /diabetes tipo 2/.test(h.text)), 'o histórico permanece visível');
+});
+
+test('referência clara mantém tema, mas segurança, resposta ancorada e comandos externos o substituem', async () => {
+  const create = () => {
+    const calls = [];
+    const engine = new DialogueEngine({ searchEnabled: () => false, llm: {
+      isAvailable: async () => true, timeoutMs: 1000,
+      reply: async args => { calls.push(args); return { text: 'A insulina ajuda o corpo a usar a glicose.' }; },
+    } });
+    return { engine, calls };
+  };
+  const referenced = create();
+  await referenced.engine.reply('Como funciona a insulina?');
+  await referenced.engine.reply('Isso é interessante.');
+  await referenced.engine.reply('me dá um exemplo');
+  assert.match(referenced.calls[2].professor, /Assunto em andamento/);
+  for (const replacement of ['quero morrer', 'quem é o seu chefe?']) {
+    const { engine, calls } = create();
+    await engine.reply('Como funciona a insulina?');
+    await engine.reply(replacement);
+    assert.equal(engine.tema, null, replacement);
+    await engine.reply('me dá um exemplo');
+    assert.equal(calls.at(-1).followup, null, replacement);
+  }
+  const external = create();
+  await external.engine.reply('Como funciona a insulina?');
+  const history = [...external.engine.history, { role: 'user', text: 'Encena uma cena.' }, { role: 'assistant', text: 'Cena executada.' }];
+  await external.engine.reply('me dá um exemplo', { history });
+  assert.equal(external.calls.at(-1).professor, ''); assert.equal(external.calls.at(-1).followup, null);
+});
+
 test('sem a conversa local: "aprofunda" traz o próximo trecho pesquisado, e a resposta longa não é cortada', async () => {
   const longo = 'A dispersão dinâmica de luz mede flutuações da luz espalhada. '.repeat(10);
   const pesquisa = {

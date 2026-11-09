@@ -14,6 +14,40 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Contexto corrigido e diagnósticos preparados
+
+**470/470 unitários** locais passaram, zero falhas/pulos, Node22.23.4.55/55
+focados, lint e actionlint dos quatro workflows passaram. Seis regressões novas
+capturam o request do transporte simulado: ciência→exemplo mantém fontes;
+janela/projeto→exemplo mantém só o assunto recente, sem diabetes/[1]. O histórico
+visível permanece íntegro; maçã→manga→consulta da fruta mantém a correção.
+Vocativos não ligam assuntos independentes; segurança e comandos externos limpam
+um tema técnico anterior. Isso prova o encaminhamento do contexto, não inferência.
+
+Próximo commit com `[jojo-qa] [jojo-native]` executa em paralelo o ensaio32+12
+com Gemma oficial e um diagnóstico nativo parcial: build/NSIS/Steam empacotada,
+portátil/vigia, integração16, E2E43, auditoria1268, desempenho e atualizador.
+O marcador nativo exclui o publicador e o job tem somente leitura. Resultados
+parciais nunca substituem os16gates do mesmo run integral de publicação.
+Nova inferência e testes nativos ainda pendentes; nenhuma tag/release nova.
+
+### Retomada — candidato reprovado e falhas de contexto reproduzidas
+
+Fonte `a033435`, diagnóstico **41806190187**, Qwen3 4B Instruct2507:29/32engine;
+Central NÃO executou. Anatomia excedeu25s, café/cat retornaram fallback. Leitura
+reprovou depreciação de coragem, citações científicas em respostas pessoais e
+alegações inventadas. Candidato NÃO adotado; oficial continua Gemma3 4B.
+Evidência completa em `docs/evidencias/conversa-windows-41806190187.json`.
+
+Auditoria de payload (transporte simulado, sem inferência no Linux) reproduziu
+duas falhas de implementação: contexto casual enviava duas trocas científicas
+com[1] como falas anteriores; tema técnico não era limpo ao mudar para assunto
+pessoal. Um exemplo após falar de projeto reativava diabetes/fontes antigas.
+Corrigir filtragem de contexto e expiração por mudança de assunto, preservando
+histórico visível, fatos pessoais e seguimento técnico direto. Revalidar32+12 com
+o modelo oficial, sem alterar casos, timeouts ou simular respostas de aprovação.
+Nenhuma tag/release0.45.1 criada;19releases históricas preservadas.
+
 ### Avaliação de candidato local — 04/11/2026
 
 Fonte `9d9f883`, run **41804545246**:464/464unitários Windows passaram; conversa

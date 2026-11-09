@@ -263,6 +263,37 @@ test('histórico relevante não arrasta João/provocações para toda resposta n
   assert.equal(historicoRelevante('E ele?', h).length, 4);
 });
 
+test('assunto novo não recebe preferências ou aulas sem relação; referência e assunto compartilhado preservam contexto', () => {
+  const history = [
+    { role: 'user', text: 'Minha cor preferida é verde.' }, { role: 'jojo', text: 'Verde, entendido.' },
+    { role: 'user', text: 'Como funciona a insulina?' }, { role: 'jojo', text: 'A insulina ajuda a glicose [1].' },
+    { role: 'user', text: 'Minha planta é uma samambaia.' }, { role: 'jojo', text: 'A samambaia está crescendo.' },
+  ];
+  const original = structuredClone(history);
+  assert.deepEqual(historicoRelevante('Derrubei café no teclado.', history), []);
+  assert.deepEqual(historicoRelevante('A janela da cozinha quebrou.', history), []);
+  assert.deepEqual(historicoRelevante('JoJo, minha planta ficou amarela.', [{ role: 'user', text: 'Quem é você?' }, { role: 'jojo', text: 'JoJo, o tubarão de bíceps.' }]), [], 'vocativo não liga assuntos independentes');
+  const plant = historicoRelevante('Minha planta ficou amarela.', history);
+  assert.equal(plant.length, 2);
+  assert.match(plant[0].text, /samambaia/);
+  assert.equal(plant.some(h => /insulina|verde|\[1\]/.test(h.text)), false);
+  assert.ok(historicoRelevante('Ela precisa de água?', history).some(h => /samambaia/.test(h.text)));
+  assert.ok(historicoRelevante('Consegui!', history).some(h => /samambaia/.test(h.text)));
+  assert.deepEqual(history, original, 'a seleção não apaga nenhuma mensagem visível');
+});
+
+test('correção que muda uma preferência mantém a ligação com sua categoria em perguntas posteriores', () => {
+  const history = [
+    { role: 'user', text: 'Minha fruta preferida é maçã.' }, { role: 'jojo', text: 'Maçã, entendido.' },
+    { role: 'user', text: 'Eu disse manga, não maçã.' }, { role: 'jojo', text: 'Manga, corrigido.' },
+    { role: 'user', text: 'A janela da cozinha quebrou.' }, { role: 'jojo', text: 'A janela precisa de reparo.' },
+  ];
+  const selected = historicoRelevante('Qual é minha fruta preferida?', history);
+  assert.ok(selected.some(h => h.role === 'user' && h.text === 'Eu disse manga, não maçã.'));
+  assert.equal(selected.filter(h => h.role === 'user').at(-1).text, 'Eu disse manga, não maçã.');
+  assert.equal(selected.some(h => /janela/.test(h.text)), false);
+});
+
 test('perguntas e sintomas não são engolidos por palavras de ações ou de tristeza', async () => {
   const respostas = [
     ['Como o músculo cresce?', 'O músculo se adapta ao estímulo e à recuperação.'],

@@ -4,7 +4,7 @@ import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 import { precisaPesquisar, linhaFontes } from './pesquisa.js';
 import { classificarSeriedade, seguimento, instrucaoProfessor, respostaFalaDoAssunto } from './professor.js';
-import { conversaPessoal, respostaAncorada, erroDeCoerencia, expressaoCoerente, pedidoAoApp } from './coherence.js';
+import { conversaPessoal, respostaAncorada, erroDeCoerencia, expressaoCoerente, pedidoAoApp, historicoRelevante } from './coherence.js';
 import { weatherRequest } from '../weather.js';
 
 // Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
@@ -63,13 +63,22 @@ export class DialogueEngine {
     // deste engine. É esse histórico REAL que deve alimentar a próxima fala.
     if (Array.isArray(context.history)) this.history = context.history.slice(-19).map((h) => ({ ...h }));
     if (this.history.at(-1)?.role === 'user' && this.history.at(-1)?.text === input) this.history.pop();
+    // Comandos e respostas entregues fora do engine também substituem assunto.
+    // Um follow-up não pode reabrir uma pesquisa anterior a esses novos turnos.
+    if (this.tema && this.lastInput && this.history.findLast(h => h.role === 'user')?.text !== this.lastInput) this.tema = null;
+    this.lastInput = input;
     this.history.push({ role: 'user', text: input });
     let raw;
     let error = null;
     // Segurança e gatilhos com animação própria ficam com as respostas programadas;
     // o resto vai pra IA (se ativa e disponível), com volta às programadas se falhar.
     const intent = detectIntent(input);
-    if (!SCRIPTED_ONLY.has(intent) && weatherRequest(input)) {
+    const weather = !SCRIPTED_ONLY.has(intent) && weatherRequest(input);
+    const temaVivo = this.tema && Date.now() - this.tema.t < TEMA_MS ? this.tema : null;
+    const seg = temaVivo && !SCRIPTED_ONLY.has(intent) && !weather ? seguimento(input) : null;
+    const relatesToTheme = temaVivo && historicoRelevante(input, [{ role: 'user', text: temaVivo.texto }]).length;
+    if (!temaVivo || SCRIPTED_ONLY.has(intent) || weather || (!seg && !relatesToTheme)) this.tema = null;
+    if (weather) {
       const out = { text: 'A previsão precisa de uma consulta meteorológica atual. A ferramenta de clima não está disponível neste caminho; não vou usar uma pesquisa genérica como previsão.', action: 'curious', kind: 'speech', intent: 'weather', error: 'tool_unavailable' };
       this.history.push({ role: 'jojo', text: out.text });
       this.history = this.history.slice(-20);
@@ -77,14 +86,13 @@ export class DialogueEngine {
     }
     const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1), { allowCorrection: false });
     if (anchored) {
+      this.tema = null;
       this.history.push({ role: 'jojo', text: anchored.text });
       this.history = this.history.slice(-20);
       return anchored;
     }
     // Depois de uma falha (rede lenta/fora), pausa a IA um pouco para não fazer esperar de novo.
     // Modo professor: seriedade decidida antes de responder; continuidade usa o assunto anterior.
-    const temaVivo = this.tema && Date.now() - this.tema.t < TEMA_MS ? this.tema : null;
-    const seg = temaVivo ? seguimento(input) : null;
     // Um exemplo continua sendo técnico mesmo sem pesquisa externa. Não depender
     // de out.fontes para manter a expressão/seriedade do assunto em andamento.
     const seriedade = seg ? classificarSeriedade(temaVivo.texto)

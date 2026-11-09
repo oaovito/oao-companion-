@@ -1,6 +1,6 @@
 # Validação JoJo Companion 0.45.1 — rascunho privado
 
-**Ainda não publicada.** Em 04/11/2026, a fonte é a branch privada
+**Ainda não publicada.** Retomada em 09/11/2026, a fonte é a branch privada
 `codex/living-companion`, última fonte executada `106ba27d7287f41c2ef38fdcb5cf441f8d119304`.
 A release pública vigente é 0.45.0. Nenhum diagnóstico parcial abaixo aprova
 automaticamente o pipeline integral da candidata ou o computador da Emanuele.
@@ -69,7 +69,7 @@ Não somar diagnósticos separados como aprovação integral.
 
 ## Verificações executadas e problemas encontrados
 
-**Local:**464/464 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
+**Local:**470/470 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
 actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 
 | Execução Windows | Evidência efetiva | Resultado/ação |
@@ -101,6 +101,23 @@ reprovou ainda Borges favorito inventado e repetição anatômica sem histórico
 [Saídas e revisão](evidencias/conversa-windows-41804545246.json). Próximo passo:
 avaliar candidato local Qwen4B Instruct2507 no ensaio diagnóstico, sem alterar o
 modelo oficial antes da evidência real e sem trocar infraestrutura ou critérios.
+
+O candidato Qwen3 4B Instruct2507 foi **reprovado** no
+[41806190187](https://github.com/oaovito/oao-companion-/actions/runs/41806190187):
+29/32engine e Central não executada. Anatomia excedeu25s; café/cat retornaram
+fallback. Leitura reprovou falas depreciativas e citações em assuntos pessoais.
+[JSON completo](evidencias/conversa-windows-41806190187.json). Modelo oficial
+permanece Gemma. Auditoria de payload reproduziu histórico científico irrelevante
+no contexto casual e tema médico reativado após mudança para assunto pessoal;
+a próxima correção trata a implementação e preserva continuidade pertinente.
+
+Correção de contexto validada em470/470unitários locais e55/55focados. O request
+capturado preserva fontes em seguimento técnico direto e exclui o tema médico
+antigo após assunto pessoal. A seleção por assunto preserva correções reais,
+referências claras e histórico visível; sua relevância lexical não pretende
+resolver sinônimos universais. O ensaio real oficial Gemma32+12 e o diagnóstico
+nativo parcial serão executados em paralelo, sem publicar. Todos os16gates do
+run integral final continuam obrigatórios.
 
 O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
 `app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e

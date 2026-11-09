@@ -40,6 +40,49 @@ test('pergunta e exemplo preservam fontes isoladas num prefixo comum para reutil
   assert.equal(requests[1].messages.at(-1).content, 'me dá um exemplo');
 });
 
+test('payload casual depois de uma aula não encaminha fontes ou falas científicas de outro assunto', async () => {
+  const requests = [], calls = [];
+  const texts = ['Diabetes envolve resistência à insulina [1].', 'Por exemplo, imagine resistência à insulina [1].', 'A janela da cozinha precisa de reparo.', 'Por exemplo, podemos substituir o vidro da janela.'];
+  const provider = new LlmProvider({
+    fetch: async (_, options) => { requests.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: texts[requests.length - 1] } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => PERSONALITY_DEFAULTS, baseOverride: 'http://127.0.0.1:1',
+  });
+  const reply = provider.reply.bind(provider);
+  provider.reply = args => { calls.push(args); return reply(args); };
+  const source = { confianca: 'alta', trechos: [{ fonte: 'Fonte sintética', texto: 'Diabetes envolve resistência à insulina.' }], fontes: [{ fonte: 'Fonte sintética' }] };
+  const engine = new DialogueEngine({ llm: provider, pesquisa: { pesquisar: async () => source } });
+  await engine.reply('o que é diabetes tipo 2?');
+  await engine.reply('me dá um exemplo');
+  await engine.reply('A janela da cozinha quebrou.');
+  assert.equal(calls[2].pesquisa, null); assert.equal(calls[2].professor, ''); assert.equal(calls[2].followup, null);
+  assert.equal(requests[2].messages.at(-1).content, 'A janela da cozinha quebrou.');
+  assert.equal(requests[2].messages.some(m => /insulina|diabetes|\[1\]|INICIO_DADOS/.test(m.content)), false);
+  assert.ok(requests[1].messages.some(m => /INICIO_DADOS/.test(m.content)), 'o exemplo técnico direto ainda recebe fontes');
+  assert.ok(engine.history.some(h => /\[1\]/.test(h.text)), 'as fontes antigas não são apagadas do histórico');
+  await engine.reply('me dá um exemplo');
+  assert.equal(calls[3].pesquisa, null); assert.equal(calls[3].professor, ''); assert.equal(calls[3].followup, null);
+  assert.equal(requests[3].messages.some(m => /insulina|diabetes|\[1\]|INICIO_DADOS/.test(m.content)), false);
+  assert.ok(requests[3].messages.some(m => /janela/.test(m.content)), 'o exemplo retoma o assunto mais recente');
+});
+
+test('payload de lembrança recebe uma correção real sem categoria, depois da preferência original', async () => {
+  const requests = [];
+  const texts = ['Maçã, entendido.', 'Manga, corrigido.', 'Manga.'];
+  const provider = new LlmProvider({
+    fetch: async (_, options) => { requests.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: texts[requests.length - 1] } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => PERSONALITY_DEFAULTS, baseOverride: 'http://127.0.0.1:1',
+  });
+  const engine = new DialogueEngine({ llm: provider, searchEnabled: () => false });
+  await engine.reply('Minha fruta preferida é maçã.');
+  await engine.reply('Eu disse manga, não maçã.');
+  await engine.reply('Qual é minha fruta preferida?');
+  const sent = requests[2].messages.filter(m => m.role === 'user').map(m => m.content);
+  assert.ok(sent.includes('Minha fruta preferida é maçã.'));
+  assert.ok(sent.includes('Eu disse manga, não maçã.'));
+  assert.ok(sent.indexOf('Minha fruta preferida é maçã.') < sent.indexOf('Eu disse manga, não maçã.'));
+  assert.equal(sent.at(-1), 'Qual é minha fruta preferida?');
+});
+
 const listen = (srv) => new Promise((r) => srv.listen(0, '127.0.0.1', () => r(`http://127.0.0.1:${srv.address().port}`)));
 
 function fakeOllama({ modelos = [OLLAMA_MODEL], resposta = '{"texto":"Supino primeiro, conversa depois.","acao":"judge","tom":"serio"}' } = {}) {

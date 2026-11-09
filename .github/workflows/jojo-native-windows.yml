@@ -1,0 +1,133 @@
+name: JoJo — diagnóstico nativo parcial no Windows
+run-name: JoJo nativo parcial — ${{ github.sha }}
+
+on:
+  push:
+    branches: ['codex/living-companion']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jojo-native-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native-diagnostic:
+    # Ensaio parcial explícito: não executa conversa, não valida release nem cria tags.
+    if: ${{ github.repository == 'oaovito/oao-companion-' && contains(github.event.head_commit.message, '[jojo-native]') }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: jojo-companion
+    env:
+      CI: 'true'
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      JOJO_VALIDATED_COMMIT: ${{ github.sha }}
+      JOJO_TEST_REPORT_DIR: ${{ github.workspace }}/jojo-companion/out/native-diagnostic/junit
+      JOJO_ANIMATION_REPORT_DIR: ${{ github.workspace }}/jojo-companion/out/native-diagnostic/animations
+      ELECTRON_CACHE: ${{ github.workspace }}/jojo-companion/out/native-diagnostic/cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/jojo-companion/out/native-diagnostic/cache/builder
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+      - name: Exigir Windows oficial e perfil isolado antes dos ensaios
+        id: preflight
+        timeout-minutes: 1
+        run: |
+          node --input-type=module -e "if (process.env.GITHUB_ACTIONS !== 'true' || process.env.RUNNER_ENVIRONMENT !== 'github-hosted' || process.platform !== 'win32' || process.arch !== 'x64' || process.versions.node !== '22.23.4') throw new Error('Exige Windows x64 oficial GitHub e Node fixado');"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ../ci/preflight-windows.ps1
+          New-Item -ItemType Directory -Force 'out/native-diagnostic' | Out-Null
+      - name: Verificar sintaxe e dados do aplicativo
+        id: lint
+        run: node scripts/lint.mjs
+      - name: Instalar dependências Windows
+        id: install
+        timeout-minutes: 5
+        run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Compilar portátil NSIS e ZIP sem publicação
+        id: build
+        timeout-minutes: 15
+        run: npm run build:win
+      - name: Instalar iniciar verificar Steam empacotada atualizar e desinstalar NSIS
+        id: installer
+        timeout-minutes: 5
+        run: node scripts/smoke-installer.mjs
+      - name: Iniciar portátil real em perfil temporário
+        id: portable
+        timeout-minutes: 3
+        run: node scripts/smoke-portable.mjs dist/JoJoCompanion.exe
+      - name: Limpar somente atalho e autostart criados pelo portátil de teste
+        id: cleanup_portable
+        if: ${{ always() && steps.preflight.outcome == 'success' }}
+        run: ../ci/cleanup-windows-shortcut.ps1 -ExpectedTarget (Join-Path $PWD 'dist/JoJoCompanion.exe')
+      - name: Verificar vigia recuperação de crash e saída explícita
+        id: presence
+        timeout-minutes: 6
+        run: node scripts/presenca-windows.mjs dist/JoJoCompanion.exe
+      - name: Limpar somente atalho e autostart criados pelo ensaio do vigia
+        id: cleanup_presence
+        if: ${{ always() && steps.preflight.outcome == 'success' }}
+        run: ../ci/cleanup-windows-shortcut.ps1 -ExpectedTarget (Join-Path $PWD 'dist/JoJoCompanion.exe')
+      - name: Integração com entrada nativa e processos reais sem testes pulados
+        id: windows
+        timeout-minutes: 8
+        run: |
+          node test/e2e/run-e2e.mjs --integration | Tee-Object -FilePath 'out/native-diagnostic/windows.tap'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --input-type=module -e "import fs from 'node:fs'; import { tapTotals } from '../ci/policy.mjs'; console.log('JOJO_NATIVE_WINDOWS:' + JSON.stringify(tapTotals(fs.readFileSync('out/native-diagnostic/windows.tap', 'utf8'), 16)));"
+      - name: E2E do aplicativo cenas fullscreen Steam DD agenda tarefas e cuidados
+        id: e2e
+        timeout-minutes: 8
+        run: |
+          node test/e2e/run-e2e.mjs | Tee-Object -FilePath 'out/native-diagnostic/e2e.tap'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --input-type=module -e "import fs from 'node:fs'; import { tapTotals } from '../ci/policy.mjs'; console.log('JOJO_NATIVE_E2E:' + JSON.stringify(tapTotals(fs.readFileSync('out/native-diagnostic/e2e.tap', 'utf8'), 43)));"
+      - name: Auditar catálogo completo e preservar imagens medidas nos logs privados
+        id: animations
+        timeout-minutes: 10
+        run: |
+          npm run audit:animations
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --input-type=module -e "import fs from 'node:fs'; import path from 'node:path'; const r = JSON.parse(fs.readFileSync(path.join(process.env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json'))); if (r.total < 1268 || r.erros.length || r.fora.length || r.paradas.length || r.semGatilho) throw new Error('Auditoria incompleta ou reprovada'); console.log('JOJO_NATIVE_ANIMATIONS:' + JSON.stringify({ total: r.total, errors: r.erros.length, cuts: r.fora.length, stopped: r.paradas.length, orphaned: r.semGatilho, meanFrameMs: r.mediaMs }));"
+      - name: Medir CPU e memória Electron nos quatro cenários existentes
+        id: performance
+        timeout-minutes: 3
+        run: node scripts/measure.mjs
+        env:
+          MEASURE_SECONDS: '20'
+      - name: Conferir cabeçalhos tamanhos e hashes dos três binários locais
+        id: artifacts
+        # Importa somente a função local de conferência; não chama a CLI de publicação.
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; import { conferirArtefatos } from './scripts/publish-release.mjs'; const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version; const files = conferirArtefatos('dist', version).map(({ name, size, digest }) => ({ name, size, digest })); console.log('JOJO_NATIVE_ARTIFACTS:' + JSON.stringify({ commit: process.env.GITHUB_SHA, version, files }));"
+      - name: Verificar atualizador com metadados de teste derivados dos binários locais
+        id: updater
+        run: node scripts/check-updater.mjs
+      - name: Gerar notas somente em arquivo privado do diagnóstico
+        id: notes
+        run: node scripts/release-notes.mjs out/native-diagnostic/RELEASE_NOTES.md
+      - name: Registrar escopo parcial e resultados efetivos das etapas
+        if: ${{ always() }}
+        env:
+          JOJO_NATIVE_STEPS: ${{ toJSON(steps) }}
+        run: |
+          $report = [ordered]@{
+            scope = 'native-diagnostic'
+            publicationAllowed = $false
+            includesConversation = $false
+            commit = $env:GITHUB_SHA
+            runId = $env:GITHUB_RUN_ID
+            steps = ($env:JOJO_NATIVE_STEPS | ConvertFrom-Json)
+          }
+          $json = $report | ConvertTo-Json -Depth 8
+          Write-Output ('JOJO_NATIVE_DIAGNOSTIC:' + ($report | ConvertTo-Json -Depth 8 -Compress))
+          $json | Add-Content -Path $env:GITHUB_STEP_SUMMARY

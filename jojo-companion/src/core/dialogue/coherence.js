@@ -181,25 +181,70 @@ export function pedidoAoApp(text) {
   return /^(?:(?:voce|vc) (?:pode|poderia|consegue) )?(?:fica|fique|ficar|abre|abra|abrir|fecha|feche|fechar|liga|ligue|ligar|desliga|desligue|desligar|aumenta|aumente|aumentar|diminui|diminua|diminuir|para|pare|parar|comeca|comece|comecar|mostra|mostre|mostrar|muda|mude|mudar|volta|volte|voltar|sai|saia|sair|entra|entre|entrar)\b/.test(n);
 }
 
-/** Contexto recente relevante, sem arrastar a provocação/identidade para todo assunto. */
+// Termos de assunto: palavras funcionais, verbos gerais e marcadores de
+// preferência não tornam dois assuntos iguais por si sós (cor ≠ fruta).
+const CONTEXT_STOP = new Set(`
+  jojo manu emanuele exemplo exemplos example examples detalhes details resumo summary
+  a o as os um uma uns umas de da do das dos em no
+  na nos nas e ou mas se que qual quais quem quando onde como por porque para com
+  sem sobre eu tu voce vc voces me meu minha meus minhas seu sua seus suas ele ela
+  eles elas isso isto aquilo esse essa esses essas aquele aquela aqueles aquelas oque ao aos the a
+  an and or but if of in on at to from with without about i you he she
+  it they them my your his her its our their this that these those what which who when
+  where how why is are was were be been am do does did can could would should have
+  has had nao not sim yes hoje ontem amanha agora antes depois today yesterday tomorrow now then dia
+  day muito pouco bem good well so very really just always sempre novo nova novamente again only apenas
+  so favor porfavor gosta gosto gostar prefiro prefere preferir preferida preferido favoritas favoritos favorita favorito favorite favourite preferred
+  said say said disse dizer falei falar falou respondeu resposta reply answer answered mention mentioned lembro lembra lembrar
+  remember acabei acabou consegue consegui conseguir terminar terminei terminado fazer faco faz fez vou vai vamos quero quer
+  want wants go goes get got
+`.trim().split(/\s+/));
+function termosContexto(text) {
+  return new Set(norm(text).replace(/[?!]/g, ' ').split(' ').filter(word => word.length >= 3 && !CONTEXT_STOP.has(word)).map(word => word.slice(0, 5)));
+}
+function referenciaContexto(text) {
+  const q = norm(text).replace(/^(?:jojo|ei|hey)\s+/, '');
+  return correcaoPessoal(text)
+    || /\b(?:ele|ela|eles|elas|isso|isto|aquilo|esse|essa|esses|essas|aquele|aquela|aqueles|aquelas|dele|dela|he|she|it|they|them|this|that|these|those)\b/.test(q)
+    || /^(?:e voce|and you|what about you|e depois|and then|como assim|nao entendi|nao entendo|i don t understand|tell me more|mais detalhes|aprofunda|aprofundar|continua|continue|resuma|resume|me da (?:um |outro )?exemplo|give me (?:an? |another )?example)\b/.test(q)
+    || /^(?:sim|nao|yes|no|ok|okay|certo|entendi|obrigad[oa]|valeu|thanks|thank you|got it|consegui|done|por que|why|como|how)[.!?]*$/.test(q)
+    || /\b(?:disse|falou|respondeu|said|answered|mention\w*|lembra\w*|remember)\b/.test(q) && termosContexto(q).size === 0;
+}
+
+/** Contexto por assunto; não modifica o histórico visível nem transforma falas em fatos. */
 export function historicoRelevante(input, history) {
   const q = norm(input);
   const pessoal = /\b(joao|namorado|criador|criou|ele|dele|nele)\b/.test(q);
   const turns = [];
   for (const h of history) {
-    if (h.role === 'user') turns.push([h]);
-    else if (turns.length) turns.at(-1).push(h);
+    if (h.role === 'user') turns.push({ messages: [h], terms: termosContexto(h.text) });
+    else if (turns.length) turns.at(-1).messages.push(h);
+  }
+  for (let i = 0; i < turns.length; i++) {
+    const turn = turns[i];
+    // Uma correção sem categoria ("manga, não maçã") pertence ao assunto que
+    // esclarece. Uma pergunta posterior sobre a fruta precisa receber a correção.
+    if (i && referenciaContexto(turn.messages[0].text)) {
+      for (const word of turns[i - 1].terms) turn.terms.add(word);
+    }
+    for (const message of turn.messages.slice(1)) for (const word of termosContexto(message.text)) turn.terms.add(word);
   }
   const relevant = turns.filter((turn) => {
-    const texts = turn.map((h) => norm(h.text)).join(' ');
+    const texts = turn.messages.map((h) => norm(h.text)).join(' ');
     if (!pessoal && /\bjoao\b/.test(texts)) return false;
     if (!/\b(morre|mata|die|kill)\b/.test(q) && /\b(se mata|morre jojo|kill yourself)\b/.test(texts)) return false;
     return true;
   });
-  // Referências/lembranças mantêm quatro trocas. Assunto novo usa duas, evitando
-  // que aulas e respostas antigas contaminem a fala e aumentem o tempo de prefill.
-  const retoma = /\b(ele|ela|isso|aquilo|dele|dela|antes|disse|falei|lembra\w*|prefer\w*|prefiro|favorit\w*|cor|fruta|animal|he|she|it|that|said|mention\w*|remember)\b/.test(q);
-  return relevant.slice(retoma ? -4 : -2).flat();
+  const terms = termosContexto(input);
+  const matching = relevant.filter(turn => [...terms].some(word => turn.terms.has(word)));
+  if (matching.length) return matching.slice(-4).flatMap(turn => turn.messages);
+  // Referências e elipses continuam usando as trocas anteriores. Uma mensagem
+  // independente sem assunto compartilhado não recebe preferências/aulas alheias.
+  if (!referenciaContexto(input) || !relevant.length) return [];
+  if (pessoal) return relevant.slice(-4).flatMap(turn => turn.messages);
+  const latest = relevant.at(-1);
+  const related = relevant.filter(turn => turn === latest || [...latest.terms].some(word => turn.terms.has(word)));
+  return related.slice(-4).flatMap(turn => turn.messages);
 }
 /** Expressão não pode executar alimentação/sono nem substituir uma ação do app. */
 export function expressaoCoerente(input, reply, seriedade = 'casual') {

@@ -36,7 +36,7 @@ jobs:
   windows:
     # Tentativa normal autorizada pelo usuario; controles financeiros do GitHub intactos.
     # main guarda somente o controle horario; o aplicativo continua na branch Codex.
-    if: ${{ github.repository == 'oaovito/oao-companion-' && !inputs.assets_only && !(github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[jojo-ui]') || contains(github.event.head_commit.message, '[jojo-qa]') || contains(github.event.head_commit.message, '[jojo-net]'))) }}
+    if: ${{ github.repository == 'oaovito/oao-companion-' && !inputs.assets_only && !(github.event_name == 'push' && (github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '[jojo-ui]') || contains(github.event.head_commit.message, '[jojo-qa]') || contains(github.event.head_commit.message, '[jojo-net]') || contains(github.event.head_commit.message, '[jojo-native]'))) }}
     runs-on: windows-latest
     timeout-minutes: 60
     steps:

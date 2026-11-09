@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.45.1 — 2026-11-04
+## 0.45.1 — 2026-11-09
 
 ### Correções
 - Restaura pernas, braços, mãos, proporções e musculatura dos recursos históricos
@@ -10,7 +10,9 @@
   sobre memória/atenção e preferências atribuídas sem contexto fornecido por ela.
   Abertura científica deixa de depreciar perguntas anteriores. O prompt casual
   prioriza o assunto atual; novas guardas verificam observações locais de clima
-  sem contexto fornecido.
+  sem contexto fornecido. Descarta contexto técnico irrelevante em assuntos
+  pessoais e encerra o tema anterior para que pedidos de exemplo não reabram
+  uma aula antiga após uma mudança de assunto.
 - Detecção de tela cheia usa a janela ativa e geometria física; estados globais
   de notificações/apresentação não bloqueiam uma janela comum ou a Central.
 - Todas as janelas próprias são reconhecidas; amostras antigas são descartadas
