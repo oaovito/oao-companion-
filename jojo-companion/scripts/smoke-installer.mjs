@@ -46,9 +46,10 @@ try {
   await installedApp.firstWindow({ timeout: 15000 });
   const packaging = await installedApp.evaluate(({ app }) => ({ isPackaged: app.isPackaged, archive: /[\\/]app\.asar$/.test(app.getAppPath()) }));
   assert.deepEqual(packaging, { isPackaged: true, archive: true }, 'o ensaio deve executar o app.asar instalado pelo NSIS');
-  const koffiRuntime = await installedApp.evaluate(async ({ app }) => {
-    const fs = await import('node:fs'), path = await import('node:path');
-    const { createRequire } = await import('node:module');
+  const koffiRuntime = await installedApp.evaluate(({ app }) => {
+    // O contexto de avaliação não oferece callback para import() dinâmico.
+    const fs = process.getBuiltinModule('fs'), path = process.getBuiltinModule('path');
+    const { createRequire } = process.getBuiltinModule('module');
     const root = app.getAppPath(), require = createRequire(path.join(root, 'package.json'));
     const proof = { loaded: false, staticLoaderPresent: fs.existsSync(path.join(root, 'node_modules/koffi/src/koffi/src/static.cjs')) };
     try {

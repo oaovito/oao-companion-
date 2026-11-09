@@ -14,6 +14,16 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Ajuste do ensaio NSIS — 42721691143
+
+Fonte `627b082`: build3formatos aprovado; NSIS parou ANTES de conferir Koffi,
+porque o callback de avaliação Playwright não permite import() dinâmico.
+Etapas seguintes puladas; isso não comprova falha nova do produto ou sucesso do
+pacote. O ensaio agora obtém fs/path/createRequire por process.getBuiltinModule,
+confirmado em probe puro Node22. Todas asserções Koffi3.3.3/asar/static/.node e
+Steamclosedknown mantidas. Próximo commit somente `[jojo-native]` repete nativo,
+sem duplicar o ensaio Llama8B42721691138 ainda ativo e sem publicação.
+
 ### Empacotamento nativo corrigido — novos ensaios ainda pendentes
 
 **473/473 unitários** locais passaram, zero falhas/pulos, Node22.23.4.

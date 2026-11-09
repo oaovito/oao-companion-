@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "commit": "627b082e401a12b7e6e2434b17f7b870e130456f",
+  "runId": "42721691143",
+  "jobId": "129516947203",
+  "scope": "native-diagnostic",
+  "conclusion": "failure",
+  "buildPassed": true,
+  "failed": "new-installed-koffi-test-loader",
+  "error": "TypeError: A dynamic import callback was not specified.",
+  "koffiVerified": false,
+  "steamVerified": false,
+  "notExecuted": [
+    "portable",
+    "presence",
+    "integration",
+    "e2e",
+    "animations",
+    "performance",
+    "artifacts",
+    "updater",
+    "notes"
+  ],
+  "fix": "A avaliação Playwright usa process.getBuiltinModule no lugar de import() dinâmico; todas asserções Koffi/Steam preservadas. Probe puro Node22 reproduziu a limitação e confirmou existsSync/join/createRequire; validação real Windows ainda pendente.",
+  "publicationAllowed": false
+}
