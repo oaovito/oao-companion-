@@ -99,6 +99,37 @@ test('transporte local preserva mensagem e contexto e prioriza o assunto atual d
   assert.match(calls[1].body.messages[0].content.split('\n').at(-1), /own present mood.*fictional character state/);
 });
 
+test('payload distingue a usuária real da ficção do personagem sem promover falas anteriores a fatos pessoais', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => {
+      calls.push(JSON.parse(options.body));
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'O aquário ficou pronto. Trabalho concluído merece respeito.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  const fact = 'Meu projeto é um aquário para plantas.';
+  const previousReply = 'Seu projeto do restaurante Aurora está pronto.';
+  const input = 'Meu projeto do aquário ficou pronto hoje.';
+  await p.reply({ text: input, history: [{ role: 'user', text: fact }, { role: 'jojo', text: previousReply }] });
+  const { messages } = calls[0];
+  assert.equal(messages.at(-1).role, 'user');
+  assert.equal(messages.at(-1).content, input, 'a instrução não substitui o relato real por uma resposta pronta');
+  assert.ok(messages.some(m => m.role === 'user' && m.content === fact));
+  assert.ok(messages.some(m => m.role === 'assistant' && m.content === previousReply), 'a fala anterior permanece contexto de conversa');
+  assert.equal(messages.some(m => m.role === 'user' && m.content === previousReply), false);
+  const system = messages[0].content;
+  assert.match(system, /real person Emanuele/);
+  assert.match(system, /Only your cartoon body and jokes about yourself are fiction/);
+  assert.match(system, /a fictional scene requires her explicit request/);
+  assert.match(system, /Unknown details stay unknown/);
+  assert.match(system, /Assistant history is speech, not evidence about her/);
+  assert.match(system, /Mention past exchanges only when the history supports them/);
+  assert.doesNotMatch(system, /Aurora|restaurante|aquário/, 'nenhuma fala foi elevada a fato ou instrução do sistema');
+  assert.equal(buildLocalPrompt(profile, {}, 'Como funciona a insulina?', { tecnico: true }),
+    'Reply in Brazilian Portuguese. Explain accurately, speech only, no preamble or jokes.\nNo diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.');
+});
+
 test('IA responde no lugar das falas programadas, com histórico e ação de corpo', async () => {
   const calls = [];
   const eng = new DialogueEngine({ llm: llm('{"texto":"Dia bom é dia de supino, Manu.","acao":"flex","tom":"brincadeira"}', {}, calls) });

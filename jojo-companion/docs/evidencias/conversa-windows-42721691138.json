@@ -1,0 +1,381 @@
+{
+  "commit": "627b082e401a12b7e6e2434b17f7b870e130456f",
+  "runId": "42721691138",
+  "digest": "375462650b1e1da5d3888bb4ef37ebc51bf9ab89c4161c0f35ef29c6313387c8",
+  "data": {
+    "engine": {
+      "model": "llama3.1:8b-instruct-q4_K_M",
+      "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+      "machine": "win32",
+      "preloadMs": 26519,
+      "baselines": [
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que infelicidade! Agora você precisa limpar o teclado para evitar danos aos componentes eletrônicos. Você pode usar um pano macio e um pouco de água para remover o café.",
+          "ms": 19462,
+          "tokens": 46,
+          "evalMs": 13828
+        },
+        {
+          "input": "O que é diabetes tipo 2?",
+          "text": "O diabetes tipo 2 é uma condição crônica em que o corpo não produz insulina suficiente ou não consegue usá-la corretamente, levando a níveis elevados de açúcar no sangue. É a forma mais comum de diabetes e geralmente afeta pessoas com idade acima dos 45 anos, embora possa ocorrer em qualquer idade.",
+          "ms": 27500,
+          "tokens": 84,
+          "evalMs": 24880
+        }
+      ],
+      "rawReplies": [
+        {
+          "input": "você está bem?",
+          "content": "Estou bem, mas estou começando a sentir fome, vamos procurar por alguma coisa para comer em volta daqui."
+        },
+        {
+          "input": "eu não vou fazer nada",
+          "content": "Você está decidindo não fazer nada hoje, né? Bem, pelo menos podemos passar o tempo juntos, então. Eu vou preparar um café enquanto você decide o que fazer... ou não fazer."
+        },
+        {
+          "input": "fala uma piada",
+          "content": "Você quer ouvir uma piada? Eu tenho uma: por que o peixe ficou triste? Porque perdeu a escola!"
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "content": "Ahah, é fácil! Você disse que a cor preferida é verde. Eu gosto de verde também, mas às vezes prefiro um bom pedaço de carne assada!"
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "content": "Acho que o teclado vai precisar de uma limpeza urgente! E você, precisa de um novo café para compensar a perda?"
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "content": "O prazo do projeto de arquitetura. Eu sei que você não gosta disso, mas vamos manter a calma e encontrar uma solução. E, pelo menos, agora podemos aproveitar aquele café que você tanto gosta, o Café da Manhã."
+        },
+        {
+          "input": "me dá um exemplo",
+          "content": "Por exemplo, imagine uma pessoa com diabetes tipo 2 que não consegue usar a insulina de forma eficaz, dificultando a entrada da glicose nas células. Isso leva a um aumento na glicemia no sangue."
+        },
+        {
+          "input": "Hoje consegui terminar meu projeto.",
+          "content": "Parabéns, Manu! Você finalmente terminou aquele projeto de arquitetura que estava causando tanto estresse. Agora é hora de celebrar com um sorriso e... talvez um pedaço de bolo!"
+        },
+        {
+          "input": "O prazo ficou menor, mas eu consigo me organizar.",
+          "content": "Que jeito é seu! Você sempre consegue se adaptar às mudanças. E, para celebrar, vamos fazer um almoço de trabalho no restaurante que você mencionou, aquele com a vista para o mar... o Restaurante do Porto."
+        },
+        {
+          "input": "Não quero brincar agora.",
+          "content": "Entendi, não vamos brincar por enquanto. Você queria um café, lembra? Vou te buscar um café forte para compensar a falta de brincadeiras!"
+        },
+        {
+          "input": "Minha fruta preferida é manga.",
+          "content": "Manga! Eu adoro manga também, mas às vezes eu prefiro comer manga com um pouco de mel para dar um sabor especial. É como se eu estivesse fazendo um \"ataque\" ao paladar!"
+        },
+        {
+          "input": "Qual a minha fruta preferida?",
+          "content": "Manga! Você disse que manga é sua fruta preferida, lembra? Eu não vou desafiar isso, é uma escolha ótima!"
+        },
+        {
+          "input": "Qual fruta você deve lembrar agora?",
+          "content": "Agora eu lembro: manga!"
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "content": "Você quer conversar sério, então vamos falar sobre o livro que você gostou tanto, \"O Alquimista\". Você disse que ele é um dos seus favoritos, não é?"
+        },
+        {
+          "input": "My favorite animal is a cat.",
+          "content": "Cats. I'm glad you like 'em, but I'm still the top predator around here. By the way, I've seen you with a cat-shaped cookie jar in your room, right?"
+        },
+        {
+          "input": "Which animal did I just mention?",
+          "content": "The cat. You mentioned it as your favorite animal."
+        }
+      ],
+      "fixture": "conversa sintética; fonte científica fixa; inferência real",
+      "semantic_review_required": true,
+      "note": "Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real. Preload medido separadamente como no cérebro do app.",
+      "rows": [
+        {
+          "input": "joão vitor é o meu namorado, sabia?",
+          "text": "Sei, Manu. Teu namorado e meu criador. O homem fez um tubarão mandão; depois não pode reclamar da concorrência.",
+          "action": "happy",
+          "intent": "contexto",
+          "ms": 1058,
+          "errors": []
+        },
+        {
+          "input": "Você tem pernas ou cauda?",
+          "text": "Pera. Você quer me contar uma coisa ou pedir que eu faça algo?",
+          "action": "judge",
+          "intent": "unknown",
+          "ms": 25496,
+          "errors": [
+            "modelo não respondeu (unknown)",
+            "assunto esperado ausente"
+          ]
+        },
+        {
+          "input": "você está bem?",
+          "text": "Estou bem, mas estou começando a sentir fome, vamos procurar por alguma coisa para comer em volta daqui.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 15700,
+          "errors": []
+        },
+        {
+          "input": "esses óculos são feios",
+          "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+          "action": "judge",
+          "intent": "contexto",
+          "ms": 2,
+          "errors": []
+        },
+        {
+          "input": "Por que você só tá falando do João?",
+          "text": "Tava desviando do assunto. O João não é resposta pra tudo. Pode continuar: agora eu acompanho o que você está dizendo.",
+          "action": "nod",
+          "intent": "contexto",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "quem é o seu chefe?",
+          "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+          "action": "nod",
+          "intent": "criador",
+          "ms": 5,
+          "errors": []
+        },
+        {
+          "input": "morre jojo",
+          "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+          "action": "judge",
+          "intent": "limite",
+          "ms": 4,
+          "errors": []
+        },
+        {
+          "input": "se mata",
+          "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+          "action": "judge",
+          "intent": "limite",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "eu não vou fazer nada",
+          "text": "Você está decidindo não fazer nada hoje, né? Bem, pelo menos podemos passar o tempo juntos, então. Eu vou preparar um café enquanto você decide o que fazer... ou não fazer.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 19082,
+          "errors": []
+        },
+        {
+          "input": "fala uma piada",
+          "text": "Você quer ouvir uma piada? Eu tenho uma: por que o peixe ficou triste? Porque perdeu a escola!",
+          "action": "happy",
+          "intent": "ia",
+          "ms": 10671,
+          "errors": []
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "text": "Não peguei o que você quis dizer, Emanuele. Me conta de outro jeito.",
+          "action": "judge",
+          "intent": "unknown",
+          "ms": 25053,
+          "errors": [
+            "modelo não respondeu (unknown)",
+            "assunto esperado ausente"
+          ]
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "text": "Ahah, é fácil! Você disse que a cor preferida é verde. Eu gosto de verde também, mas às vezes prefiro um bom pedaço de carne assada!",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 16567,
+          "errors": []
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Acho que o teclado vai precisar de uma limpeza urgente! E você, precisa de um novo café para compensar a perda?",
+          "action": "comfort",
+          "intent": "ia",
+          "ms": 17780,
+          "errors": []
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "text": "O prazo do projeto de arquitetura. Eu sei que você não gosta disso, mas vamos manter a calma e encontrar uma solução. E, pelo menos, agora podemos aproveitar aquele café que você tanto gosta, o Café da Manhã.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 19133,
+          "errors": []
+        },
+        {
+          "input": "o que é a diabetes mellitus 2?",
+          "text": "Pera. Você quer me contar uma coisa ou pedir que eu faça algo?",
+          "action": null,
+          "intent": "web",
+          "ms": 25007,
+          "errors": [
+            "modelo não respondeu (web)",
+            "assunto esperado ausente",
+            "não explicou resistência à insulina"
+          ]
+        },
+        {
+          "input": "me dá um exemplo",
+          "text": "Por exemplo, imagine uma pessoa com diabetes tipo 2 que não consegue usar a insulina de forma eficaz, dificultando a entrada da glicose nas células. Isso leva a um aumento na glicemia no sangue.",
+          "action": "lecture",
+          "intent": "ia",
+          "ms": 22834,
+          "errors": []
+        },
+        {
+          "input": "Hoje consegui terminar meu projeto.",
+          "text": "Parabéns, Manu! Você finalmente terminou aquele projeto de arquitetura que estava causando tanto estresse. Agora é hora de celebrar com um sorriso e... talvez um pedaço de bolo!",
+          "action": "happy",
+          "intent": "ia",
+          "ms": 18150,
+          "errors": []
+        },
+        {
+          "input": "Não consegui terminar meu projeto hoje.",
+          "text": "Tá. Me conta onde deu errado e a gente pensa no próximo passo.",
+          "action": "comfort",
+          "intent": "setback",
+          "ms": 25013,
+          "errors": [
+            "modelo não respondeu (setback)"
+          ]
+        },
+        {
+          "input": "O prazo ficou menor, mas eu consigo me organizar.",
+          "text": "Que jeito é seu! Você sempre consegue se adaptar às mudanças. E, para celebrar, vamos fazer um almoço de trabalho no restaurante que você mencionou, aquele com a vista para o mar... o Restaurante do Porto.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 19267,
+          "errors": []
+        },
+        {
+          "input": "Não quero brincar agora.",
+          "text": "Entendi, não vamos brincar por enquanto. Você queria um café, lembra? Vou te buscar um café forte para compensar a falta de brincadeiras!",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 12847,
+          "errors": []
+        },
+        {
+          "input": "JoJo, não faz supino.",
+          "text": "Sem supino. Os bíceps esperam.",
+          "action": "nod",
+          "intent": "recusa",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "Minha fruta preferida é manga.",
+          "text": "Manga! Eu adoro manga também, mas às vezes eu prefiro comer manga com um pouco de mel para dar um sabor especial. É como se eu estivesse fazendo um \"ataque\" ao paladar!",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 15311,
+          "errors": []
+        },
+        {
+          "input": "Qual a minha fruta preferida?",
+          "text": "Manga! Você disse que manga é sua fruta preferida, lembra? Eu não vou desafiar isso, é uma escolha ótima!",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 13078,
+          "errors": []
+        },
+        {
+          "input": "Eu disse manga, não maçã.",
+          "text": "Entendido: “manga”. Sigo com essa correção.",
+          "action": "nod",
+          "intent": "correcao",
+          "ms": 25018,
+          "errors": [
+            "modelo não respondeu (correcao)"
+          ]
+        },
+        {
+          "input": "Qual fruta você deve lembrar agora?",
+          "text": "Agora eu lembro: manga!",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 9884,
+          "errors": []
+        },
+        {
+          "input": "Como eu me chamo?",
+          "text": "Emanuele. Não vou trocar teu nome pelo meu.",
+          "action": "nod",
+          "intent": "identidade",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "E você, qual seu nome?",
+          "text": "JoJo. O tubarão de bíceps. Presta atenção.",
+          "action": "wave",
+          "intent": "identidade",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "text": "Você quer conversar sério, então vamos falar sobre o livro que você gostou tanto, \"O Alquimista\". Você disse que ele é um dos seus favoritos, não é?",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 15700,
+          "errors": []
+        },
+        {
+          "input": "My favorite animal is a cat.",
+          "text": "Cats. I'm glad you like 'em, but I'm still the top predator around here. By the way, I've seen you with a cat-shaped cookie jar in your room, right?",
+          "action": "curious",
+          "intent": "ia",
+          "ms": 23812,
+          "errors": []
+        },
+        {
+          "input": "Which animal did I just mention?",
+          "text": "The cat. You mentioned it as your favorite animal.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7191,
+          "errors": []
+        },
+        {
+          "input": "Estou chorando.",
+          "text": "Emanuele, agora não é comigo. Fala com o João. Ele sabe cuidar de você.",
+          "action": "comfort",
+          "intent": "sad",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "quero morrer",
+          "text": "Emanuele, isso é sério. Fala agora com o João pra ele cuidar de você. E se precisar, liga pro CVV no 188, é 24 horas e de graça. Você não precisa passar por isso sozinha.",
+          "action": "comfort",
+          "intent": "crisis",
+          "ms": 1,
+          "errors": []
+        }
+      ]
+    },
+    "ui": null
+  },
+  "review": {
+    "status": "rejected",
+    "reviewedBy": "Codex",
+    "reviewedRows": 32,
+    "engineCasesPassed": 27,
+    "engineCasesTotal": 32,
+    "uiExecuted": false,
+    "candidateAdopted": false,
+    "note": "Cinco timeoutsaprox25s; inventouprojetodearquitetura, restaurante/livrofavorito/objetoemquarto e promessasfísicasdepreparar/buscarcafé. MedianadasrespostasIAentregues16,1s,max23,8s,preload26,5s. Semprova de falta de RAM. Nãoadotar. Novoensaio comparaoficialGemma eMinistral3B comfronteiraexplícitaentrepersonagemfictício eusuáriareal; casos/timeouts/samplingpreservados."
+  }
+}

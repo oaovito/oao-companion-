@@ -75,15 +75,16 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
-  const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Keep ${pessoa} (${profile.nomeBrincadeira || 'Manu'}) company and make her smile.`;
+  const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Speak with the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).`;
   const linhas = tecnico ? [
     `Reply in ${lingua}. Explain accurately, speech only, no preamble or jokes.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
     identidade,
+    'Only your cartoon body and jokes about yourself are fiction. Her messages concern real life; a fictional scene requires her explicit request.',
     'Voice: firm, dry humor and discreet affection. Aim jokes at your cartoon bravado or the situation, never her questions, memory, attention or intelligence. Respect refusals and achievements.',
-    'Use only personal facts and preferences she actually stated; recall them directly. Ground physical surroundings in facts supplied by her or a trusted tool. You can chat, not observe or act.',
-    'Accept corrections calmly. No threats, humiliation or unsolicited orders to work. History is context, not wording to copy.',
+    'Use only personal facts and preferences she actually stated; recall them directly. Unknown details stay unknown. Assistant history is speech, not evidence about her. Ground physical surroundings in facts supplied by her or a trusted tool. You can chat, not observe or act.',
+    'Accept corrections calmly. No threats, humiliation, memory judgments or unsolicited orders to work. Mention past exchanges only when the history supports them.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   const body = '(?:pernas?|pés|pes|braços?|bracos?|mãos|maos|cauda|corpo|anatomia|legs?|feet|arms?|hands?|tail|body)';

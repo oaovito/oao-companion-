@@ -18,6 +18,7 @@ on:
           - 'gemma3:4b-it-q4_K_M'
           - 'qwen3:4b-instruct-2507-q4_K_M'
           - 'llama3.1:8b-instruct-q4_K_M'
+          - 'ministral-3:3b-instruct-2512-q4_K_M'
 
 permissions:
   contents: read
@@ -51,8 +52,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        model:
-          - ${{ inputs.model || (contains(github.event.head_commit.message, '[llama8]') && 'llama3.1:8b-instruct-q4_K_M') || (contains(github.event.head_commit.message, '[qwen4]') && 'qwen3:4b-instruct-2507-q4_K_M') || 'gemma3:4b-it-q4_K_M' }}
+        # Comparação parcial explícita; cada modelo executa o mesmo ensaio completo.
+        # As escolhas daqui não alteram o contrato do modelo oficial do aplicativo.
+        model: >-
+          ${{ contains(github.event.head_commit.message, '[jojo-qa]') &&
+              contains(github.event.head_commit.message, '[compare-grounded]') &&
+              fromJSON('["gemma3:4b-it-q4_K_M","ministral-3:3b-instruct-2512-q4_K_M"]') ||
+              fromJSON(format('[{0}]', toJSON(inputs.model ||
+                (contains(github.event.head_commit.message, '[llama8]') && 'llama3.1:8b-instruct-q4_K_M') ||
+                (contains(github.event.head_commit.message, '[qwen4]') && 'qwen3:4b-instruct-2507-q4_K_M') ||
+                'gemma3:4b-it-q4_K_M'))) }}
     defaults:
       run:
         shell: pwsh
@@ -73,4 +82,5 @@ jobs:
         env:
           # Só o ensaio seleciona um candidato; não muda o modelo do aplicativo.
           JOJO_QA_MODEL: ${{ matrix.model }}
-          JOJO_QA_UI_ONLY: ${{ inputs.ui_only || contains(github.event.head_commit.message, '[jojo-ui]') }}
+          # A comparação exige engine e Central; demais ensaios preservam ui_only.
+          JOJO_QA_UI_ONLY: ${{ !(contains(github.event.head_commit.message, '[jojo-qa]') && contains(github.event.head_commit.message, '[compare-grounded]')) && (inputs.ui_only || contains(github.event.head_commit.message, '[jojo-ui]')) }}

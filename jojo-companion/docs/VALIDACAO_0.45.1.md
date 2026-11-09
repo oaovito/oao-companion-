@@ -1,7 +1,7 @@
 # Validação JoJo Companion 0.45.1 — rascunho privado
 
 **Ainda não publicada.** Retomada em 09/11/2026, a fonte é a branch privada
-`codex/living-companion`, última fonte executada `106ba27d7287f41c2ef38fdcb5cf441f8d119304`.
+`codex/living-companion`, cada ensaio corresponde ao commit indicado na sua evidência.
 A release pública vigente é 0.45.0. Nenhum diagnóstico parcial abaixo aprova
 automaticamente o pipeline integral da candidata ou o computador da Emanuele.
 
@@ -69,7 +69,7 @@ Não somar diagnósticos separados como aprovação integral.
 
 ## Verificações executadas e problemas encontrados
 
-**Local:**473/473 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
+**Local:**474/474 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
 actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 
 | Execução Windows | Evidência efetiva | Resultado/ação |
@@ -141,6 +141,15 @@ Steamclosedknown.473/473unitários locais passaram; novo Windows instalado pende
 Candidato Llama3.1 8B será avaliado pelos mesmos32+12casos/timeouts; oficial ainda
 Gemma. EOS oficiais conservados conforme [metadata](evidencias/llama-3.1-eos-metadata.json),
 sem download de pesos ou inferência no Linux.
+
+Llama8B reprovado no[42721691138](https://github.com/oaovito/oao-companion-/actions/runs/42721691138):
+27/32engine,5timeouts,citaçõespessoaisinventadas;Centralnãoexecutou.Nãoadotado.
+[Saídas/revisão](evidencias/conversa-windows-42721691138.json).
+Próximacomparação explícita Gemma/Ministral3B usamesmos32+12/prazos comorientação
+que separa usuáriareal daficção doJoJo.474unitários locaispassaram;qualidadereal
+aindapendente,oficialinalterado. [MetadataMinistral](evidencias/ministral-3b-metadata.json)
+lidasempesos/inferênciaLinux. O NSISrealKoffi/Steam naexecução nativa **42723059182**
+passou,masintegração/E2E/auditoria ainda aguardamconclusão; nãoéaprovacaointegral.
 
 O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
 `app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e

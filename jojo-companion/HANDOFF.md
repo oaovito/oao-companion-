@@ -14,6 +14,26 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Comparação de conversa com fronteira factual explícita
+
+Llama 8B foi reprovado no run **42721691138**: 27/32 casos engine, cinco timeouts
+próximos de 25 s e fatos pessoais inventados. A Central não executou. O candidato
+não foi adotado; Gemma permanece oficial. Saídas e digest estão no JSON desse run.
+
+A orientação agora separa a usuária real da ficção do corpo e do humor do JoJo.
+Uma cena inventada exige pedido explícito; detalhes desconhecidos continuam
+desconhecidos, e falas anteriores do assistente não comprovam fatos pessoais.
+Prefixo técnico, opções e prazos foram preservados. **474/474 unitários** locais
+passaram, incluindo captura de payload com relato de aquário e restaurante
+inventado, preservando os papéis da conversa. Isso não comprova inferência real.
+
+`[jojo-qa] [compare-grounded]` compara Gemma e o candidato
+`ministral-3:3b-instruct-2512-q4_K_M` em dois jobs Windows com os mesmos 32+12
+casos. Metadata oficial do candidato foi lida sem baixar pesos no Linux;
+qualidade, latência e digest devem ser confirmados pelo ensaio. O modelo oficial
+e o publicador não são alterados. O diagnóstico nativo 3 (**42723059182**) segue
+independente na fonte `5421e2a`. O run integral final continua obrigatório.
+
 ### Ajuste do ensaio NSIS — 42721691143
 
 Fonte `627b082`: build3formatos aprovado; NSIS parou ANTES de conferir Koffi,
