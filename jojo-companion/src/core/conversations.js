@@ -156,7 +156,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/reacao', label: 'Reação', hint: 'Memes, anime, comida, namorado e João: /reacao side eye, /reacao bankai…' },
     { cmd: '/trabalho', label: 'Modo Trabalho', hint: 'JoJo medita quieto no canto: /trabalho, /trabalho 50, /trabalho deep, /trabalho invisivel, /trabalho sair' },
     { cmd: '/vestir', label: 'Guarda-roupa', hint: 'Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar' },
-    { cmd: '/rotina', label: 'Rotina fixa', hint: '/rotina bom dia: texto que ele diz sempre igual' },
+    { cmd: '/rotina', label: 'Rotina fixa', hint: 'Rotina do dia: /rotina montar manha 7:00 estudo 14:00 treino 18:00 sono 22:30, /rotina ver, /rotina feito treino, /rotina limpar. Frase fixa: /rotina bom dia: texto' },
     { cmd: '/pausa', label: 'Pausa', hint: 'Pausa/retoma o JoJo na hora' },
     { cmd: '/habitos', label: 'Hábitos', hint: 'Sequências de treino, estudo e sono: /habitos (progresso), /habito treino, /habito estudo, /habito sono, /habito treino desfazer' },
     { cmd: '/quebrar', label: 'Quebrar tarefa', hint: 'Transforma uma tarefa grande em passos pequenos: /quebrar estudar bioquímica (depois diga "adiciona" para ir à lista)' },

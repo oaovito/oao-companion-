@@ -31,6 +31,7 @@ import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
+import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
@@ -1372,6 +1373,10 @@ export class Companion {
     if (!safety) {
       const lembrete = this._reminderChat(text);
       if (lembrete) return this._quickReply(conv, lembrete, 'lembretes');
+      // Rotina diária: montar, ver e limpar respondem; "acordei" só marca a manhã e a conversa segue.
+      const rotina = parseRoutineRequest(text);
+      if (rotina && rotina.natural) this.routine.apply(rotina, dayKey(new Date()));
+      else if (rotina) return this._quickReply(conv, this._reminderReply(this.routine.apply(rotina, dayKey(new Date()))), 'rotina');
       // Hábitos: "treinei hoje" só anota e a conversa segue; pedidos explícitos respondem com o progresso.
       const habito = parseHabitRequest(text);
       if (habito && habito.natural) this.habits.log(habito.habito, dayKey(new Date()));
@@ -1982,6 +1987,9 @@ export class Companion {
       return { text: peca ? this.vestir(peca.id) : 'Não tenho essa peça. Abre o guarda-roupa com /vestir.', command: cmd, conversationId };
     }
     if (cmd === 'rotina') {
+      // Rotina diária (montar, ver, feito, limpar); o resto é a frase fixa de sempre.
+      const diaria = parseRoutineCommand(arg);
+      if (diaria) return { text: this._reminderReply(this.routine.apply(diaria, dayKey(new Date()))), command: cmd, conversationId };
       const m = arg.match(/^(bom dia|boa noite)\s*:\s*(.{2,120})$/i);
       if (!m) return { text: 'Use: /rotina bom dia: texto (ou boa noite). Eu digo sempre igual.', command: cmd, conversationId };
       const key = /dia/i.test(m[1]) ? 'bomDia' : 'boaNoite';
@@ -3527,7 +3535,7 @@ export class Companion {
       this._checkWorkTimer();
       this._musicGroove();
       // Um lembrete por minuto: refeição/treino primeiro; senão água, pausa ou remédio.
-      if (!this.checkDailyReminder(new Date())) this.checkExtraReminders(new Date());
+      if (!this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date())) this.checkRoutine(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
@@ -3593,6 +3601,34 @@ export class Companion {
       save: (s) => { this.progress.st.habitos = s; this.progress.save(this.progress.st); },
     });
     return this._habits;
+  }
+
+  /** Rotina diária: manhã, estudo, treino e sono com horário (salva junto do progresso). */
+  get routine() {
+    this._routine ||= new Routine({
+      state: this.progress.st.rotinaDiaria,
+      save: (s) => { this.progress.st.rotinaDiaria = s; this.progress.save(this.progress.st); },
+      habits: this.habits,
+    });
+    return this._routine;
+  }
+
+  /**
+   * Hora de um bloco da rotina: aviso visual (balão + animação), uma vez por dia
+   * por bloco e só se ele ainda não foi cumprido. Nunca em Trabalho, foco ou jogo.
+   */
+  checkRoutine(date = new Date()) {
+    if (!(this._canNag() && !this.interaction && !this.focus && !this.game)) return null;
+    const day = dayKey(date);
+    const [item] = this.routine.due(date, day);
+    if (!item) return null;
+    this.hideBubble();
+    this.say(this._fala(`rotina_${item.bloco}`, { hora: item.hora }), 'speech');
+    if (item.bloco === 'manha') this.fireEvent('bomDia', { speak: false });
+    else if (item.bloco === 'sono') this.fireEvent('boaNoite', { speak: false });
+    else this.playCatalog(item.bloco === 'treino' ? 'focoAlongar' : 'focoLerPagina', { source: 'evento', speak: false });
+    this.routine.markWarned(item.bloco, day);
+    return item;
   }
 
   /** Notas rápidas (salvas junto do progresso, só neste PC). */
