@@ -9,7 +9,34 @@ Requisitos: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md).
 Desenvolvimento: `oaovito/oao-companion-`; distribuição de binários:
 `oaovito/jojo-companion-releases`. `main` permanece controle operacional.
 
-## Estado atual — 10/11/2026, diagnósticos concluídos
+### Estado atual — resultados da fonte b90aab5
+
+Conversa [42837051036](https://github.com/oaovito/oao-companion-/actions/runs/42837051036):
+**32/32 motor e 12/12 Central**, zero erros do renderer/avisos. As 44 falas,
+30 respostas brutas e dois baselines foram lidos. Preferências e correções foram
+lembradas corretamente. A revisão independente considerou esta amostra aprovável
+com ressalvas; a revisão principal solicitou orientação mais direta para perguntas
+factuais e distinção entre relato e resultado desconhecido: “teclado fora de uso”
+não foi informado pela usuária, e “Não precisa me lembrar” soou brusco.
+Humor sobre a memória do próprio JoJo continua permitido. Isso não aprova release.
+
+Entrada nativa [42837051742](https://github.com/oaovito/oao-companion-/actions/runs/42837051742):
+**15/16**, sem testes pulados. O novo ponto ficou fora do corpo e da interface,
+com alpha zero e captura local do renderer falsa, mas nenhum clique chegou ao
+alvo. A causa ainda não está comprovada: faltam captura no main/Win32 e HWND
+receptor. O próximo diagnóstico apenas observa esses estados, sem forçar foco,
+captura, margem maior ou repetição de clique. E2E, auditoria e medição não executaram.
+
+Próximo ensaio preparado: perguntas de retomada solicitam uma frase factual,
+sem responder ao pedido com comentários adicionais. A conversa comum mantém o
+humor próprio; perguntas causais, de habilidade e piadas não entram nessa rota.
+Relatos reais distinguem fatos informados de consequências possíveis. O prefixo
+técnico, modelo oficial, prazos e guardas permanecem iguais. **486/486 testes
+puros** passaram, sem falhas/pulos; novo Windows ainda pendente neste corte.
+O diagnóstico de mouse observa os estados main/Win32, o HWND sob o cursor,
+a captura por thread e os eventos antes/durante/depois de um único clique real.
+
+### Corte anterior — 10/11/2026, diagnósticos concluídos
 
 Comparação **42724504309**, fonte `56112c4`: Gemma **28/32 engine** e
 Ministral3B **23/32 engine**. A Central não executou em nenhum dos dois jobs.

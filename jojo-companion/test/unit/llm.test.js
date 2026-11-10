@@ -42,7 +42,7 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Fatos do seu desenho/);
   assert.match(local, /Voice: firm, dry humor and discreet affection/);
   assert.match(local, /Respect her corrections, refusals and achievements/);
-  assert.match(local, /Optional humor targets your own cartoon bravado or the situation/);
+  assert.match(local, /optional humor targets your own cartoon bravado or the situation/);
   assert.match(local, /Use literal user facts and preferences; preserve names and corrections/);
   assert.match(local.split('\n').at(-1), /answer the concrete subject of her latest message first/);
   assert.match(local, /recall preferences by exact name/);
@@ -122,7 +122,7 @@ test('payload distingue a usuária real da ficção do personagem sem promover f
   assert.equal(messages.some(m => m.role === 'user' && m.content === previousReply), false);
   const system = messages[0].content;
   assert.match(system, /real person Emanuele/);
-  assert.match(system, /Her messages describe real life/);
+  assert.match(system, /Her real-life reports establish what she stated; present additional outcomes as uncertain possibilities/);
   assert.match(system, /Only your cartoon body and own jokes are fiction/);
   assert.match(system, /fictional scenes require her explicit request/);
   assert.match(system, /Unknown user details stay unknown/);
@@ -192,6 +192,43 @@ test('transporte casual preserva a resposta inteira e rejeita excesso sem cortar
   speech = 'x'.repeat(281);
   await assert.rejects(p.reply({ text: 'Meu vaso de manjericão quebrou.' }), error => error.respostaInvalida && /longa demais/.test(error.message));
   assert.equal(calls.length, 2, 'cada pedido executa uma geração, sem repetição para esconder falhas');
+});
+
+test('retomadas pedem o fato literal enquanto humor e perguntas gerais mantêm suas tarefas', () => {
+  for (const input of ['Qual tecido eu disse que prefiro?', 'Qual é a minha banda favorita?', 'Que horário você deve lembrar?', 'Which fabric did I mention?', 'What is my favourite band?', 'Do you remember my appointment time?']) {
+    const task = buildLocalPrompt(profile, {}, input).split('\n').at(-1);
+    assert.match(task, /only the requested fact.*one short factual sentence/);
+    assert.match(task, /If unavailable, say you do not know/);
+    assert.doesNotMatch(task, /Optional humor/);
+  }
+  for (const input of ['Qual sua banda favorita?', 'Como melhorar a memória?', 'Why do you remember things?', 'Por que eu gosto de jazz?', 'Why do I like jazz?', 'Você lembra como contar uma piada?', 'Me conta uma piada com a minha banda favorita?', 'Fala uma piada.']) {
+    assert.match(buildLocalPrompt(profile, {}, input).split('\n').at(-1), /Optional humor follows the answer/);
+  }
+  assert.match(buildLocalPrompt(profile, {}, 'Você tem braços?').split('\n').at(-1), /body feature/);
+  assert.match(buildLocalPrompt(profile, {}, 'Eu disse linho, não seda.').split('\n').at(-1), /Acknowledge only the affirmed wording briefly/);
+  assert.equal(buildLocalPrompt(profile, {}, 'Como funciona a insulina?', { tecnico: true }),
+    'Reply in Brazilian Portuguese. Explain accurately, speech only, no preamble or jokes.\nNo diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.');
+});
+
+test('consulta factual chega ao modelo com a correção e seus papéis, sem valor pessoal inserido pelo sistema', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => {
+      calls.push(JSON.parse(options.body));
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'Linho.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  const history = [{ role: 'user', text: 'Meu tecido preferido é seda.' }, { role: 'jojo', text: 'Seda.' },
+    { role: 'user', text: 'Eu disse linho, não seda.' }, { role: 'jojo', text: 'Linho, entendido.' }];
+  const original = structuredClone(history);
+  const input = 'Qual tecido eu disse que prefiro?';
+  assert.equal((await p.reply({ text: input, history })).text, 'Linho.');
+  const { messages } = calls[0];
+  assert.deepEqual(messages.slice(1), [...history.map(h => ({ role: h.role === 'jojo' ? 'assistant' : h.role, content: h.text })), { role: 'user', content: input }]);
+  assert.doesNotMatch(messages[0].content, /linho|seda/i, 'o sistema orienta a tarefa sem fabricar o fato solicitado');
+  assert.match(messages[0].content.split('\n').at(-1), /only the requested fact/);
+  assert.deepEqual(history, original);
 });
 
 test('IA responde no lugar das falas programadas, com histórico e ação de corpo', async () => {

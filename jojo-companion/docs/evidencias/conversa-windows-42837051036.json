@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "commit": "b90aab504b0194dfdc023db74c86c67f4e41469f",
+  "runId": "42837051036",
+  "scope": "conversation-diagnostic",
+  "publicationAllowed": false,
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42837051036",
+  "payloadDigest": "e5a5946e1b69b42359fe3135a0536dfbcd7a431968edb85da657f3c5413acc31",
+  "model": "gemma3:4b-it-q4_K_M",
+  "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+  "preloadMs": 12132,
+  "engine": {
+    "passed": 32,
+    "total": 32
+  },
+  "central": {
+    "passed": 12,
+    "total": 12,
+    "rendererErrors": [],
+    "warnings": []
+  },
+  "reviewedRows": 44,
+  "reviewedRawReplies": 30,
+  "reviewedBaselines": 2,
+  "findings": [
+    {
+      "case": "engine13",
+      "quote": "teclado fora de uso",
+      "finding": "Supõe consequência ainda não informada pela usuária. Orientação precisa distinguir relato de resultado possível."
+    },
+    {
+      "case": "central4",
+      "quote": "Não precisa me lembrar",
+      "finding": "Resposta brusca numa pergunta factual. Próximo ajuste encaminha retomadas para uma frase factual direta."
+    }
+  ],
+  "independentReview": {
+    "status": "approved-for-this-diagnostic-sample",
+    "note": "Revisão independente considerou a amostra aprovável, registrando as ressalvas; humor sobre a memória do próprio JoJo não foi tratado como humilhação da usuária."
+  },
+  "nextValidation": "Ajuste das tarefas factuais e consequências incertas ainda requer novo modelo real. Este diagnóstico não substitui os 16 gates do mesmo run integral."
+}

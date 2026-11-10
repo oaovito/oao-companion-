@@ -13,6 +13,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { transparentPointCandidates } from './transparent-point.mjs';
+import { createNativeMouseDiagnostics } from './native-mouse-diagnostics.mjs';
 
 import { requireWindows } from '../../src/main/windows-only.js';
 requireWindows();
@@ -48,13 +49,16 @@ async function moveTo(p, scale) {
   await sleep(30);
 }
 
-async function click(p, scale) {
+async function click(p, scale, observe = null) {
   const i = winInput();
   await moveTo(p, scale);
+  observe?.('beforeDown');
   i.mouse_event(0x0002, 0, 0, 0, 0); // LEFTDOWN
   await sleep(25);
+  observe?.('pressed');
   i.mouse_event(0x0004, 0, 0, 0, 0); // LEFTUP
   await sleep(60);
+  observe?.('released');
 }
 
 async function keys(vks) {
@@ -215,6 +219,28 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
     await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
     await sleep(800);
     const win = await app.firstWindow();
+    const handles = await app.evaluate((_e, target) => ({ overlay: globalThis.__jojo.overlayHwnd(), target: globalThis.__jojo.targetHwnd(target) }), id);
+    const nativeMouse = createNativeMouseDiagnostics(require('koffi'));
+    const diagnostics = { phases: [] };
+    await win.evaluate(() => {
+      window.__jojoInputEvents = [];
+      for (const type of ['focus', 'blur', 'pointerdown', 'pointerup', 'pointercancel', 'gotpointercapture', 'lostpointercapture', 'mousedown', 'mouseup', 'click']) {
+        addEventListener(type, (e) => window.__jojoInputEvents.push({ type, target: e.target?.id || e.target?.dataset?.action || e.target?.tagName || 'window', screenX: e.screenX, screenY: e.screenY, buttons: e.buttons }), true);
+      }
+    });
+    await app.evaluate(async ({ BrowserWindow }, target) => {
+      await BrowserWindow.fromId(target).webContents.executeJavaScript(`(() => {
+        window.__jojoInputEvents = [];
+        for (const type of ['focus', 'blur', 'pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click']) {
+          addEventListener(type, e => window.__jojoInputEvents.push({ type, x: e.screenX, y: e.screenY, buttons: e.buttons }), true);
+        }
+      })()`);
+    }, id);
+    const mainMouse = () => app.evaluate(({ BrowserWindow }, target) => {
+      const { overlay, companion } = globalThis.__jojo;
+      return { mode: overlay.mouseMode, captureOn: overlay.captureOn, companionCapture: companion.capture ?? false, interaction: companion.interaction,
+        windows: BrowserWindow.getAllWindows().map((w) => ({ id: w.id, target: w.id === target, title: w.getTitle(), bounds: w.getBounds(), visible: w.isVisible(), focused: w.isFocused(), focusable: w.isFocusable(), top: w.isAlwaysOnTop() })) };
+    }, id);
     const btn = await win.evaluate(() => {
       const r = document.querySelector('#toolbar button[data-action="eat"]').getBoundingClientRect();
       return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
@@ -227,6 +253,7 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
     await click(p, scale);
     await sleep(400);
     assert.equal((await dbg(app)).behavior, 'eat', 'botão recebeu o clique real');
+    diagnostics.afterButton = { main: await mainMouse(), native: nativeMouse(handles) };
     // O canto da janela pode ser a toolbar. Usa geometria atual e confirmação
     // do renderer; não pula a prova de clique real se o layout mudou ao comer.
     const before = (await app.evaluate((_e, i) => globalThis.__jojo.readClicks(i), id)).length;
@@ -274,10 +301,13 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
     }, { x: transparent.x - currentBounds.x, y: transparent.y - currentBounds.y });
     assert.ok(probe.inside && !probe.overPet && !probe.overUi && probe.alpha === 0 && probe.interaction, `ponto segue transparente após o movimento real: ${JSON.stringify({ transparent, currentBounds, probe })}`);
     assert.equal(probe.capture, false, `renderer liberou a captura no ponto transparente: ${JSON.stringify(probe)}`);
-    await click(transparent, scale);
+    diagnostics.before = { main: await mainMouse(), native: nativeMouse(handles) };
+    await click(transparent, scale, (phase) => diagnostics.phases.push({ phase, native: nativeMouse(handles) }));
     await sleep(300);
+    diagnostics.after = { main: await mainMouse(), native: nativeMouse(handles), overlayEvents: await win.evaluate(() => window.__jojoInputEvents), targetEvents: await app.evaluate(({ BrowserWindow }, target) => BrowserWindow.fromId(target).webContents.executeJavaScript('window.__jojoInputEvents'), id) };
     const after = (await app.evaluate((_e, i) => globalThis.__jojo.readClicks(i), id)).length;
-    assert.ok(after > before, `área transparente não bloqueia o clique: ${JSON.stringify({ transparent, currentBounds, probe, before, after })}`);
+    console.log(`JoJo input diagnostics: ${JSON.stringify({ scale, transparent, currentBounds, probe, before, after, diagnostics })}`);
+    assert.ok(after > before, `área transparente não bloqueia o clique: ${JSON.stringify({ transparent, currentBounds, probe, before, after, diagnostics })}`);
     await app.evaluate(() => globalThis.__jojo.companion.exitInteraction('test'));
   } finally {
     await quit(app);

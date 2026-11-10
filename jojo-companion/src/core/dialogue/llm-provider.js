@@ -82,8 +82,8 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   ] : [
     'Use literal user facts and preferences; preserve names and corrections. Unknown user details stay unknown. Assistant history is conversation, not user evidence.',
     identidade,
-    'Her messages describe real life. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
-    'Voice: firm, dry humor and discreet affection. Respect her corrections, refusals and achievements. Optional humor targets your own cartoon bravado or the situation.',
+    'Her real-life reports establish what she stated; present additional outcomes as uncertain possibilities. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
+    'Voice: firm, dry humor and discreet affection. Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
     'Ground surroundings in user statements or trusted tools. Your actions here are chat replies.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
@@ -98,6 +98,13 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   if (!tecnico) linhas.push(`Spoken reply in ${lingua} only: 1-2 short sentences, at most 25 words and 240 characters.`);
   const greeting = String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   const wellbeing = /^(?:jojo[, ]+)?(?:voce (?:esta|ta) bem|vc (?:esta|ta) bem|como (?:voce|vc) (?:esta|ta)|how are you|are you (?:ok|okay|well))[?!.,\s]*$/.test(greeting);
+  const question = /\?|^(?:(?:jojo|ei|hey)[, ]+)?(?:qual|quais|quem|onde|quando|o que|what|which|who|where|when|(?:voce|vc) lembra|do you remember|remember)\b/.test(greeting);
+  const jokeRequest = /\b(?:conta|conte|fala|fale|faz|faca|tell|make)\b.*\b(?:piada|brincadeira|joke|pun)\b/.test(greeting);
+  const explanation = /^(?:(?:jojo|ei|hey)[, ]+)?(?:por que|porque|why|como|how)\b/.test(greeting);
+  const recall = question && !jokeRequest && !explanation && (/\b(?:eu|i)\b.*\b(?:disse|falei|dizer|mencionei|citei|said|say|mention\w*)\b/.test(greeting)
+    || /\b(?:qual|quais|que|quem|onde|quando|what|which|who|where|when)\b.*\b(?:voce|vc|you)\b.*\b(?:lembr\w*|remember|recall)\b/.test(greeting)
+    || /\b(?:voce|vc|you)\b.*\b(?:lembr\w*|remember|recall)\b.*\b(?:meu|minha|my)\b/.test(greeting)
+    || /\b(?:meu|minha|my)\b.*\b(?:preferid[ao]|favorit[ao]|favou?rite|preferred)\b|\b(?:eu (?:prefiro|gosto)|i (?:prefer|like))\b/.test(greeting));
   // A tarefa fica depois dos dados e do perfil: o modelo curto deve responder ao
   // assunto atual antes de imitar uma reação genérica do histórico.
   if (correcaoPessoal(text)) linhas.push(`She is correcting her own wording. ${correction ? 'Acknowledge only the affirmed wording briefly, then stop. Use this corrected wording in subsequent turns.' : 'Briefly acknowledge her clarified wording.'} Acknowledging her words does not confirm the truth of medical claims.`);
@@ -105,7 +112,9 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     ? 'Current reply: answer the body feature she asked about directly in one factual sentence, including its presence or absence.'
     : wellbeing
       ? 'Current reply: one sentence about your own present mood as JoJo, limited to your fictional character state.'
-      : 'Current reply: answer the concrete subject of her latest message first; recall preferences by exact name. Optional humor follows the answer.');
+      : recall
+        ? 'Current reply: give only the requested fact from the conversation in one short factual sentence, using her stated wording for personal facts. If unavailable, say you do not know.'
+        : 'Current reply: answer the concrete subject of her latest message first; recall preferences by exact name. Optional humor follows the answer.');
   return linhas.join('\n');
 }
 

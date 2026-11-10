@@ -14,6 +14,8 @@
   pessoais e encerra o tema anterior para que pedidos de exemplo não reabram
   uma aula antiga após uma mudança de assunto. Detalhes citados somente pelo
   assistente deixam de selecionar contexto para uma mensagem independente.
+  Perguntas de retomada priorizam o fato solicitado; relatos reais distinguem
+  consequências possíveis de fatos já informados.
 - Preserva no instalador o carregador JavaScript obrigatório do Koffi, necessário
   ao detector nativo. Falhas de inicialização recebem diagnóstico explícito, sem
   expor caminhos pessoais ou esperar indefinidamente pela disponibilidade.

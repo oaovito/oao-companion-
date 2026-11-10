@@ -1,0 +1,125 @@
+{
+  "scope": "native-input-diagnostic",
+  "inputOnly": true,
+  "publicationAllowed": false,
+  "includesConversation": false,
+  "commit": "b90aab504b0194dfdc023db74c86c67f4e41469f",
+  "runId": "42837051742",
+  "steps": {
+    "preflight": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "lint": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "install": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "build": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "build_input": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "installer": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "windows": {
+      "outputs": {},
+      "outcome": "failure",
+      "conclusion": "failure"
+    },
+    "e2e": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "animations": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "performance": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "artifacts": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "updater": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "notes": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    }
+  },
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42837051742",
+  "conclusion": "failure",
+  "integration": {
+    "passed": 15,
+    "failed": 1,
+    "skipped": 0,
+    "total": 16
+  },
+  "failedProbe": {
+    "transparent": {
+      "x": 594,
+      "y": 439
+    },
+    "currentBounds": {
+      "x": 586,
+      "y": 431,
+      "width": 438,
+      "height": 284
+    },
+    "inside": true,
+    "overPet": false,
+    "overUi": false,
+    "alpha": 0,
+    "interaction": true,
+    "rendererCapture": false,
+    "before": 0,
+    "after": 0
+  },
+  "cause": "Não comprovada. O ponto é transparente, mas captureLocal do renderer não comprova o estado de captura no main/Win32 ou o HWND receptor.",
+  "nextValidation": "Instrumentação nativa discriminante preparada sem forçar captura/foco, alterar margem, repetir clique ou relaxar asserção. Produto ainda não corrigido para esta falha."
+}
