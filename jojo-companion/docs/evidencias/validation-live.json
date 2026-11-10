@@ -11,7 +11,7 @@
   "executor": "github-hosted",
   "runId": "42872504850",
   "startedAt": "2026-11-10T18:11:10.103Z",
-  "status": "running",
+  "status": "failed",
   "steps": [
     {
       "id": "preflight",
@@ -62,13 +62,13 @@
       "cancelled": false,
       "durationMs": 450078,
       "optional": false,
-      "status": "running",
+      "status": "failed",
       "validation": {
         "engineCases": 32,
         "uiCases": 12,
         "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
         "semanticReview": {
-          "status": "pending",
+          "status": "missing",
           "branch": "codex/ci-evidence-42872504850-1",
           "path": "jojo-companion/docs/evidencias/semantic-review.json"
         }
