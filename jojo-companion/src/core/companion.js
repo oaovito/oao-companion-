@@ -30,6 +30,7 @@ import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, c
 import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
+import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
@@ -1371,6 +1372,10 @@ export class Companion {
     if (!safety) {
       const lembrete = this._reminderChat(text);
       if (lembrete) return this._quickReply(conv, lembrete, 'lembretes');
+      // Hábitos: "treinei hoje" só anota e a conversa segue; pedidos explícitos respondem com o progresso.
+      const habito = parseHabitRequest(text);
+      if (habito && habito.natural) this.habits.log(habito.habito, dayKey(new Date()));
+      else if (habito) return this._quickReply(conv, this._reminderReply(this.habits.apply(habito, dayKey(new Date()))), 'habitos');
       // Notas rápidas ("anota: …", "minhas notas", "procura nas notas …").
       const nota = this._reminderReply(this.notes.apply(parseNoteRequest(text)));
       if (nota) return this._quickReply(conv, nota, 'notas');
@@ -1920,6 +1925,7 @@ export class Companion {
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
+    if (cmd === 'habito') return { text: this._reminderReply(this.habits.apply(parseHabitCommand(arg), dayKey(new Date()))), command: cmd, conversationId };
     if (cmd === 'nota') return { text: this._reminderReply(this.notes.apply(parseNoteCommand(arg))), command: cmd, conversationId };
     if (cmd === 'lembrete') return { text: this._reminderReply(this.reminders.apply(parseReminderCommand(arg))), command: cmd, conversationId };
     if (cmd === 'estimulo') return { text: this.estimulo() ? 'Toma.' : 'Agora não.', command: cmd, conversationId };
@@ -3068,6 +3074,8 @@ export class Companion {
     this.clock.setTimeout(() => this.packEvent('tarefaConcluida', { falar: false }), 2500);
     this.progress.log('foco');
     this._progress('foco', { conta: 'foco', missao: 'foco' });
+    // Bloco concluído conta para o hábito do dia (treino ou estudo).
+    this.habits.log(f.tipo === 'treino' ? 'treino' : 'estudo', dayKey(new Date()));
     this.fireEvent('parabens', { speak: false });
     const n = this.progress.st.contas.foco;
     // Incentivo do momento, depois da comemoração de sempre: água na pausa entre ciclos, punho no fim.
@@ -3576,6 +3584,15 @@ export class Companion {
       return this._fala('quebraErro', { total: n });
     }
     return this._fala('quebraAdicionada', { total: n, titulo: p.titulo });
+  }
+
+  /** Hábitos de treino, estudo e sono (salvos junto do progresso). */
+  get habits() {
+    this._habits ||= new Habits({
+      state: this.progress.st.habitos,
+      save: (s) => { this.progress.st.habitos = s; this.progress.save(this.progress.st); },
+    });
+    return this._habits;
   }
 
   /** Notas rápidas (salvas junto do progresso, só neste PC). */
