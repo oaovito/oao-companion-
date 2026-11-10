@@ -12,6 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { transparentPointCandidates } from './transparent-point.mjs';
 
 import { requireWindows } from '../../src/main/windows-only.js';
 requireWindows();
@@ -226,20 +227,57 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
     await click(p, scale);
     await sleep(400);
     assert.equal((await dbg(app)).behavior, 'eat', 'botão recebeu o clique real');
-    // Ponto transparente da janela do overlay (canto superior esquerdo) deixa o clique passar.
+    // O canto da janela pode ser a toolbar. Usa geometria atual e confirmação
+    // do renderer; não pula a prova de clique real se o layout mudou ao comer.
     const before = (await app.evaluate((_e, i) => globalThis.__jojo.readClicks(i), id)).length;
-    const st = await dbg(app);
-    const corner = { x: wb.x + 3, y: wb.y + 3 };
-    const vis = st.visual;
-    const insideJoJo = corner.x >= vis.x && corner.x <= vis.x + vis.width && corner.y >= vis.y && corner.y <= vis.y + vis.height;
-    if (!insideJoJo) {
-      await moveTo({ x: corner.x + 2, y: corner.y + 2 }, scale);
-      await sleep(250);
-      await click(corner, scale);
-      await sleep(300);
-      const after = (await app.evaluate((_e, i) => globalThis.__jojo.readClicks(i), id)).length;
-      assert.ok(after > before, 'área transparente não bloqueia o clique');
-    }
+    await win.waitForFunction(() => window.__jojoRenderer.state?.bstate === 'eat' && window.__jojoRenderer.state.interaction);
+    const rendered = await win.evaluate(async () => {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const s = window.__jojoRenderer.state;
+      const regions = [s.jojo, s.visual];
+      for (const el of document.querySelectorAll('#toolbar, #chat, #needsHud, #bubble, #bubbleGame button')) {
+        const r = el.getBoundingClientRect();
+        if (r.width && r.height) regions.push({ x: r.x, y: r.y, width: r.width, height: r.height });
+      }
+      return { width: innerWidth, height: innerHeight, regions };
+    });
+    const bounds = await app.evaluate(() => globalThis.__jojo.overlay.win.getBounds());
+    assert.equal(rendered.width, bounds.width, 'renderer confirmou a largura atual');
+    assert.equal(rendered.height, bounds.height, 'renderer confirmou a altura atual');
+    const candidates = transparentPointCandidates({ bounds, workArea: wa, regions: rendered.regions });
+    const point = await win.evaluate((points) => {
+      const canvas = document.querySelector('#stage');
+      const ctx = canvas.getContext('2d');
+      const dpr = canvas.width / innerWidth;
+      return points.find((p) => {
+        const target = document.elementFromPoint(p.x, p.y);
+        if (target?.closest('#toolbar, #chat, #needsHud, #bubble, #bubbleGame')) return false;
+        const pixels = ctx.getImageData(Math.floor((p.x - 2) * dpr), Math.floor((p.y - 2) * dpr), Math.ceil(5 * dpr), Math.ceil(5 * dpr)).data;
+        return pixels.every((value, i) => i % 4 !== 3 || value === 0);
+      }) || null;
+    }, candidates);
+    assert.ok(point, `há ponto transparente dentro do overlay e da janela de trás: ${JSON.stringify({ bounds, rendered })}`);
+    const transparent = { x: bounds.x + point.x, y: bounds.y + point.y };
+    await moveTo(transparent, scale);
+    await sleep(250);
+    const currentBounds = await app.evaluate(() => globalThis.__jojo.overlay.win.getBounds());
+    const probe = await win.evaluate((p) => {
+      const s = window.__jojoRenderer.state;
+      const target = document.elementFromPoint(p.x, p.y);
+      const inside = p.x >= 8 && p.y >= 8 && p.x <= innerWidth - 8 && p.y <= innerHeight - 8;
+      const overPet = p.x >= s.visual.x && p.x <= s.visual.x + s.visual.width && p.y >= s.visual.y && p.y <= s.visual.y + s.visual.height;
+      const overUi = !!target?.closest('#toolbar, #chat, #needsHud, #bubble, #bubbleGame');
+      const canvas = document.querySelector('#stage');
+      const dpr = canvas.width / innerWidth;
+      const alpha = inside ? canvas.getContext('2d').getImageData(Math.floor(p.x * dpr), Math.floor(p.y * dpr), 1, 1).data[3] : null;
+      return { inside, overPet, overUi, alpha, interaction: s.interaction, capture: window.__jojoRenderer.capture, target: target?.id || target?.tagName };
+    }, { x: transparent.x - currentBounds.x, y: transparent.y - currentBounds.y });
+    assert.ok(probe.inside && !probe.overPet && !probe.overUi && probe.alpha === 0 && probe.interaction, `ponto segue transparente após o movimento real: ${JSON.stringify({ transparent, currentBounds, probe })}`);
+    assert.equal(probe.capture, false, `renderer liberou a captura no ponto transparente: ${JSON.stringify(probe)}`);
+    await click(transparent, scale);
+    await sleep(300);
+    const after = (await app.evaluate((_e, i) => globalThis.__jojo.readClicks(i), id)).length;
+    assert.ok(after > before, `área transparente não bloqueia o clique: ${JSON.stringify({ transparent, currentBounds, probe, before, after })}`);
     await app.evaluate(() => globalThis.__jojo.companion.exitInteraction('test'));
   } finally {
     await quit(app);

@@ -1,6 +1,6 @@
 # Validação JoJo Companion 0.45.1 — rascunho privado
 
-**Ainda não publicada.** Retomada em 09/11/2026, a fonte é a branch privada
+**Ainda não publicada.** Retomada em 10/11/2026, a fonte é a branch privada
 `codex/living-companion`, cada ensaio corresponde ao commit indicado na sua evidência.
 A release pública vigente é 0.45.0. Nenhum diagnóstico parcial abaixo aprova
 automaticamente o pipeline integral da candidata ou o computador da Emanuele.
@@ -8,6 +8,45 @@ automaticamente o pipeline integral da candidata ou o computador da Emanuele.
 Requisitos: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md).
 Desenvolvimento: `oaovito/oao-companion-`; distribuição de binários:
 `oaovito/jojo-companion-releases`. `main` permanece controle operacional.
+
+## Estado atual — 10/11/2026, diagnósticos concluídos
+
+Comparação **42724504309**, fonte `56112c4`: Gemma **28/32 engine** e
+Ministral3B **23/32 engine**. A Central não executou em nenhum dos dois jobs.
+A leitura das32linhas, raw replies e baselines reprovou ambos: preferências e
+histórico inventados, comentários de memória e, no candidato, confusão entre
+falas do assistente e fatos da usuária. Ministral teve seis descartes por tamanho
+e dois timeouts próximos de25s. **Gemma permanece oficial**; nenhum candidato
+foi adotado. [Evidência](evidencias/conversa-windows-42724504309.json).
+
+Diagnóstico nativo3 **42723059182**, fonte `5421e2a`, concluído: build dos três
+formatos, NSIS com Koffi3.3.3 carregado do pacote, Steam empacotada closed/known,
+três atualizações, portátil e vigia passaram. Integração **15/16**: falhou a
+asserção de clique na área transparente no modo de interação. E2E43, auditoria
+1.268, desempenho e etapas seguintes não executaram. Isso não é aprovação
+integral. [Evidência](evidencias/nativo-windows-42723059182.json).
+
+Corrigido também um vazamento comprovado no filtro de contexto: termos
+citados somente pelo assistente não selecionam um assunto independente.
+Referências explícitas, seguimentos e correções literais preservam o histórico.
+Três regressões cobrem termos novos e os papéis reais do payload.
+
+Preparadas correção da geometria do ponto transparente no teste, sem
+alterar a política de entrada do produto, e instrução casual de138palavras com
+limite explícito de25palavras/240caracteres. Casos32+12, guardas, modelo oficial
+e timeouts preservados. O próximo diagnóstico `[input-only]` compila diretório
+desempacotado e executa integração16, E2E43, auditoria e desempenho; não publica
+e não substitui os16gates do mesmo run integral final. **Novo Windows ainda não
+executado neste corte.**
+
+**484/484 testes puros**, zero falhas/pulos, Node22.23.4, e actionlint dos quatro
+workflows aprovados. Isso valida lógica/sintaxe, sem inferência ou gráficos no
+Linux. Release0.45.1 continua não publicada; releases antigas preservadas.
+
+## Registros anteriores
+
+As seções abaixo preservam os cortes anteriores e seus próximos passos da época;
+o estado atual é o registrado acima.
 
 ## Causas comprovadas e comportamento corrigido
 
@@ -69,7 +108,7 @@ Não somar diagnósticos separados como aprovação integral.
 
 ## Verificações executadas e problemas encontrados
 
-**Local:**474/474 testes de lógica, zero falhas/pulos, Node 22.23.4; lint de 222 arquivos,
+**Local:**484/484 testes de lógica, zero falhas/pulos, Node 22.23.4; lint sintático,
 actionlint e diff-check aprovados. Esses resultados não são testes gráficos.
 
 | Execução Windows | Evidência efetiva | Resultado/ação |
@@ -148,8 +187,9 @@ Llama8B reprovado no[42721691138](https://github.com/oaovito/oao-companion-/acti
 Próximacomparação explícita Gemma/Ministral3B usamesmos32+12/prazos comorientação
 que separa usuáriareal daficção doJoJo.474unitários locaispassaram;qualidadereal
 aindapendente,oficialinalterado. [MetadataMinistral](evidencias/ministral-3b-metadata.json)
-lidasempesos/inferênciaLinux. O NSISrealKoffi/Steam naexecução nativa **42723059182**
-passou,masintegração/E2E/auditoria ainda aguardamconclusão; nãoéaprovacaointegral.
+lidasempesos/inferênciaLinux. O diagnóstico nativo **42723059182** concluiu NSIS/Koffi/Steam, três atualizações,
+portátil e vigia com sucesso; integração15/16 falhou no clique transparente.
+E2E/auditoria/desempenho e etapas seguintes não executaram. Não é aprovação integral.
 
 O ensaio NSIS foi ampliado para abrir o executável instalado e comprovar
 `app.isPackaged`, worker/core desempacotados do app.asar, inventário da fixture e

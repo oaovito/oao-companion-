@@ -14,25 +14,44 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
-### Comparação de conversa com fronteira factual explícita
+### Estado atual — 10/11/2026, diagnósticos concluídos
 
-Llama 8B foi reprovado no run **42721691138**: 27/32 casos engine, cinco timeouts
-próximos de 25 s e fatos pessoais inventados. A Central não executou. O candidato
-não foi adotado; Gemma permanece oficial. Saídas e digest estão no JSON desse run.
+Comparação **42724504309**, fonte `56112c4`: Gemma **28/32 engine** e
+Ministral3B **23/32 engine**. A Central não executou em nenhum dos dois jobs.
+A leitura das32linhas, raw replies e baselines reprovou ambos: preferências e
+histórico inventados, comentários de memória e, no candidato, confusão entre
+falas do assistente e fatos da usuária. Ministral teve seis descartes por tamanho
+e dois timeouts próximos de25s. **Gemma permanece oficial**; nenhum candidato
+foi adotado. [Evidência](docs/evidencias/conversa-windows-42724504309.json).
 
-A orientação agora separa a usuária real da ficção do corpo e do humor do JoJo.
-Uma cena inventada exige pedido explícito; detalhes desconhecidos continuam
-desconhecidos, e falas anteriores do assistente não comprovam fatos pessoais.
-Prefixo técnico, opções e prazos foram preservados. **474/474 unitários** locais
-passaram, incluindo captura de payload com relato de aquário e restaurante
-inventado, preservando os papéis da conversa. Isso não comprova inferência real.
+Diagnóstico nativo3 **42723059182**, fonte `5421e2a`, concluído: build dos três
+formatos, NSIS com Koffi3.3.3 carregado do pacote, Steam empacotada closed/known,
+três atualizações, portátil e vigia passaram. Integração **15/16**: falhou a
+asserção de clique na área transparente no modo de interação. E2E43, auditoria
+1.268, desempenho e etapas seguintes não executaram. Isso não é aprovação
+integral. [Evidência](docs/evidencias/nativo-windows-42723059182.json).
 
-`[jojo-qa] [compare-grounded]` compara Gemma e o candidato
-`ministral-3:3b-instruct-2512-q4_K_M` em dois jobs Windows com os mesmos 32+12
-casos. Metadata oficial do candidato foi lida sem baixar pesos no Linux;
-qualidade, latência e digest devem ser confirmados pelo ensaio. O modelo oficial
-e o publicador não são alterados. O diagnóstico nativo 3 (**42723059182**) segue
-independente na fonte `5421e2a`. O run integral final continua obrigatório.
+Corrigido também um vazamento comprovado no filtro de contexto: termos
+citados somente pelo assistente não selecionam um assunto independente.
+Referências explícitas, seguimentos e correções literais preservam o histórico.
+Três regressões cobrem termos novos e os papéis reais do payload.
+
+Preparadas correção da geometria do ponto transparente no teste, sem
+alterar a política de entrada do produto, e instrução casual de138palavras com
+limite explícito de25palavras/240caracteres. Casos32+12, guardas, modelo oficial
+e timeouts preservados. O próximo diagnóstico `[input-only]` compila diretório
+desempacotado e executa integração16, E2E43, auditoria e desempenho; não publica
+e não substitui os16gates do mesmo run integral final. **Novo Windows ainda não
+executado neste corte.**
+
+**484/484 testes puros**, zero falhas/pulos, Node22.23.4, e actionlint dos quatro
+workflows aprovados. Isso valida lógica/sintaxe, sem inferência ou gráficos no
+Linux. Release0.45.1 continua não publicada; releases antigas preservadas.
+
+### Histórico dos diagnósticos anteriores
+
+As seções abaixo preservam os cortes anteriores e seus próximos passos da época;
+o estado atual é o registrado acima.
 
 ### Ajuste do ensaio NSIS — 42721691143
 

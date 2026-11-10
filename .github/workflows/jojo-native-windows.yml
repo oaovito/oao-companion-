@@ -25,6 +25,7 @@ jobs:
     env:
       CI: 'true'
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      JOJO_NATIVE_INPUT_ONLY: ${{ contains(github.event.head_commit.message, '[input-only]') }}
       JOJO_VALIDATED_COMMIT: ${{ github.sha }}
       JOJO_TEST_REPORT_DIR: ${{ github.workspace }}/jojo-companion/out/native-diagnostic/junit
       JOJO_ANIMATION_REPORT_DIR: ${{ github.workspace }}/jojo-companion/out/native-diagnostic/animations
@@ -55,27 +56,36 @@ jobs:
         run: npm ci --prefer-offline --no-audit --no-fund
       - name: Compilar portátil NSIS e ZIP sem publicação
         id: build
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         timeout-minutes: 15
         run: npm run build:win
+      - name: Compilar somente diretório desempacotado para diagnóstico de entrada
+        id: build_input
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY == 'true' }}
+        timeout-minutes: 10
+        run: npm run build:dir
       - name: Instalar iniciar verificar Steam empacotada atualizar e desinstalar NSIS
         id: installer
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         timeout-minutes: 5
         run: node scripts/smoke-installer.mjs
       - name: Iniciar portátil real em perfil temporário
         id: portable
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         timeout-minutes: 3
         run: node scripts/smoke-portable.mjs dist/JoJoCompanion.exe
       - name: Limpar somente atalho e autostart criados pelo portátil de teste
         id: cleanup_portable
-        if: ${{ always() && steps.preflight.outcome == 'success' }}
+        if: ${{ always() && env.JOJO_NATIVE_INPUT_ONLY != 'true' && steps.preflight.outcome == 'success' }}
         run: ../ci/cleanup-windows-shortcut.ps1 -ExpectedTarget (Join-Path $PWD 'dist/JoJoCompanion.exe')
       - name: Verificar vigia recuperação de crash e saída explícita
         id: presence
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         timeout-minutes: 6
         run: node scripts/presenca-windows.mjs dist/JoJoCompanion.exe
       - name: Limpar somente atalho e autostart criados pelo ensaio do vigia
         id: cleanup_presence
-        if: ${{ always() && steps.preflight.outcome == 'success' }}
+        if: ${{ always() && env.JOJO_NATIVE_INPUT_ONLY != 'true' && steps.preflight.outcome == 'success' }}
         run: ../ci/cleanup-windows-shortcut.ps1 -ExpectedTarget (Join-Path $PWD 'dist/JoJoCompanion.exe')
       - name: Integração com entrada nativa e processos reais sem testes pulados
         id: windows
@@ -106,22 +116,28 @@ jobs:
           MEASURE_SECONDS: '20'
       - name: Conferir cabeçalhos tamanhos e hashes dos três binários locais
         id: artifacts
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         # Importa somente a função local de conferência; não chama a CLI de publicação.
         run: |
           node --input-type=module -e "import fs from 'node:fs'; import { conferirArtefatos } from './scripts/publish-release.mjs'; const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version; const files = conferirArtefatos('dist', version).map(({ name, size, digest }) => ({ name, size, digest })); console.log('JOJO_NATIVE_ARTIFACTS:' + JSON.stringify({ commit: process.env.GITHUB_SHA, version, files }));"
       - name: Verificar atualizador com metadados de teste derivados dos binários locais
         id: updater
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         run: node scripts/check-updater.mjs
       - name: Gerar notas somente em arquivo privado do diagnóstico
         id: notes
+        if: ${{ env.JOJO_NATIVE_INPUT_ONLY != 'true' }}
         run: node scripts/release-notes.mjs out/native-diagnostic/RELEASE_NOTES.md
       - name: Registrar escopo parcial e resultados efetivos das etapas
         if: ${{ always() }}
         env:
           JOJO_NATIVE_STEPS: ${{ toJSON(steps) }}
         run: |
+          $inputOnly = $env:JOJO_NATIVE_INPUT_ONLY -eq 'true'
+          $scope = if ($inputOnly) { 'native-input-diagnostic' } else { 'native-diagnostic' }
           $report = [ordered]@{
-            scope = 'native-diagnostic'
+            scope = $scope
+            inputOnly = $inputOnly
             publicationAllowed = $false
             includesConversation = $false
             commit = $env:GITHUB_SHA

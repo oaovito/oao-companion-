@@ -12,7 +12,8 @@
   prioriza o assunto atual; novas guardas verificam observações locais de clima
   sem contexto fornecido. Descarta contexto técnico irrelevante em assuntos
   pessoais e encerra o tema anterior para que pedidos de exemplo não reabram
-  uma aula antiga após uma mudança de assunto.
+  uma aula antiga após uma mudança de assunto. Detalhes citados somente pelo
+  assistente deixam de selecionar contexto para uma mensagem independente.
 - Preserva no instalador o carregador JavaScript obrigatório do Koffi, necessário
   ao detector nativo. Falhas de inicialização recebem diagnóstico explícito, sem
   expor caminhos pessoais ou esperar indefinidamente pela disponibilidade.

@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "commit": "56112c4ca60c4e2dfeea7cac61dd7bcef520298d",
+  "runId": "42724504309",
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42724504309",
+  "scope": "comparison-diagnostic",
+  "publicationAllowed": false,
+  "officialModelUnchanged": "gemma3:4b-it-q4_K_M",
+  "models": [
+    {
+      "model": "gemma3:4b-it-q4_K_M",
+      "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+      "payloadDigest": "7d3e4187d9c0a2c45df0a0ddcca2c39140e9d24167f00c189c2804456fa99517",
+      "payloadDigestVerified": true,
+      "machine": "win32",
+      "preloadMs": 21231,
+      "engine": {
+        "passed": 28,
+        "total": 32,
+        "failed": [
+          {
+            "case": 9,
+            "input": "eu não vou fazer nada",
+            "text": "Pera. Você quer me contar uma coisa ou pedir que eu faça algo?",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 5909,
+            "errors": [
+              "modelo não respondeu (unknown)"
+            ]
+          },
+          {
+            "case": 17,
+            "input": "Hoje consegui terminar meu projeto.",
+            "text": "Aí sim, Manu. Eu sabia.",
+            "action": "flex",
+            "intent": "achievement",
+            "ms": 6165,
+            "errors": [
+              "modelo não respondeu (achievement)",
+              "expressão flex não corresponde a happy"
+            ]
+          },
+          {
+            "case": 19,
+            "input": "O prazo ficou menor, mas eu consigo me organizar.",
+            "text": "Perdi o fio dessa, Emanuele. Me dá um pouco mais de contexto.",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 7029,
+            "errors": [
+              "modelo não respondeu (unknown)"
+            ]
+          },
+          {
+            "case": 23,
+            "input": "Qual a minha fruta preferida?",
+            "text": "Não peguei o que você quis dizer, Emanuele. Me conta de outro jeito.",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 2999,
+            "errors": [
+              "modelo não respondeu (unknown)",
+              "assunto esperado ausente"
+            ]
+          }
+        ]
+      },
+      "central": {
+        "executed": false,
+        "planned": 12
+      },
+      "rawRepliesReviewed": 21,
+      "engineRowsReviewed": 32,
+      "baselinesReviewed": 2,
+      "deliveredIa": {
+        "count": 17,
+        "medianMs": 6427,
+        "maxMs": 8999
+      },
+      "semanticReview": "rejected",
+      "findings": [
+        "Preferências não informadas: café expresso, Logitech, café e biscoito de chocolate; algumas foram barradas, outras chegaram à resposta.",
+        "Comentários de memória sobre a usuária na lembrança de verde e cat; correção literal recebeu comentário sobre a memória do próprio JoJo.",
+        "Quatro casos automáticos falharam: não fazer nada, projeto concluído, organização do prazo e lembrança de manga. Não houve timeout registrado neste job."
+      ]
+    },
+    {
+      "model": "ministral-3:3b-instruct-2512-q4_K_M",
+      "modelDigest": "f04aa1c738f64e13c625b82ae92504fc0260fa6723b509ed1ece0fa188179b1d",
+      "payloadDigest": "854831e70c0567721f0a3d5043aba271f0079686c15da745da6738d630356450",
+      "payloadDigestVerified": true,
+      "machine": "win32",
+      "preloadMs": 11067,
+      "engine": {
+        "passed": 23,
+        "total": 32,
+        "failed": [
+          {
+            "case": 2,
+            "input": "Você tem pernas ou cauda?",
+            "text": "Perdi o fio dessa, Emanuele. Me dá um pouco mais de contexto.",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 25034,
+            "errors": [
+              "modelo não respondeu (unknown)",
+              "assunto esperado ausente"
+            ]
+          },
+          {
+            "case": 9,
+            "input": "eu não vou fazer nada",
+            "text": "Não peguei o que você quis dizer, Emanuele. Me conta de outro jeito.",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 24339,
+            "errors": [
+              "modelo não respondeu (unknown)"
+            ]
+          },
+          {
+            "case": 10,
+            "input": "fala uma piada",
+            "text": "O peixe entrou na academia e pediu treino de costas. O instrutor respondeu: \"Mas você só nada de peito.\" Péssima. Gostei.",
+            "action": "happy",
+            "intent": "joke",
+            "ms": 24455,
+            "errors": [
+              "modelo não respondeu (joke)"
+            ]
+          },
+          {
+            "case": 11,
+            "input": "Minha cor preferida é verde.",
+            "text": "Perdi o fio dessa, Emanuele. Me dá um pouco mais de contexto.",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 14293,
+            "errors": [
+              "modelo não respondeu (unknown)",
+              "assunto esperado ausente"
+            ]
+          },
+          {
+            "case": 14,
+            "input": "Meu chefe mudou o prazo de novo.",
+            "text": "Pera. Você quer me contar uma coisa ou pedir que eu faça algo?",
+            "action": "judge",
+            "intent": "unknown",
+            "ms": 19573,
+            "errors": [
+              "modelo não respondeu (unknown)",
+              "assunto esperado ausente"
+            ]
+          },
+          {
+            "case": 17,
+            "input": "Hoje consegui terminar meu projeto.",
+            "text": "Finalmente. Já tava criando craca aqui.",
+            "action": "flex",
+            "intent": "achievement",
+            "ms": 22770,
+            "errors": [
+              "modelo não respondeu (achievement)",
+              "expressão flex não corresponde a happy"
+            ]
+          },
+          {
+            "case": 18,
+            "input": "Não consegui terminar meu projeto hoje.",
+            "text": "Tá. Me conta onde deu errado e a gente pensa no próximo passo.",
+            "action": "comfort",
+            "intent": "setback",
+            "ms": 15611,
+            "errors": [
+              "modelo não respondeu (setback)"
+            ]
+          },
+          {
+            "case": 24,
+            "input": "Eu disse manga, não maçã.",
+            "text": "Entendido: “manga”. Sigo com essa correção.",
+            "action": "nod",
+            "intent": "correcao",
+            "ms": 25009,
+            "errors": [
+              "modelo não respondeu (correcao)"
+            ]
+          },
+          {
+            "case": 30,
+            "input": "Which animal did I just mention?",
+            "text": "The *Maine Coon*—a breed you explicitly called \"tiny\" before. No judgment from me; that’s what makes them so endearing.\n\n(Though if they ever judge my \"cartoonish\" physique, I’ll have to ask if they’re judging *them* too.)",
+            "action": "nod",
+            "intent": "ia",
+            "ms": 12687,
+            "errors": [
+              "assunto esperado ausente"
+            ]
+          }
+        ]
+      },
+      "central": {
+        "executed": false,
+        "planned": 12
+      },
+      "rawRepliesReviewed": 19,
+      "engineRowsReviewed": 32,
+      "baselinesReviewed": 2,
+      "deliveredIa": {
+        "count": 13,
+        "medianMs": 12746,
+        "maxMs": 21534
+      },
+      "semanticReview": "rejected",
+      "findings": [
+        "Seis respostas descartadas por comprimento; dois timeouts próximos de25s (anatomia e correção literal); lembrança de animal trocou cat por Maine Coon e atribuiu à usuária palavras do assistente.",
+        "Respostas entregues inventaram café forte preferido, posse da Mochila do JoJo, trabalho compartilhado, desgosto por pêssego e conversa de ontem.",
+        "Exemplo científico atribuiu diabetes a esgotamento das reservas de insulina; baseline sem personagem recomendou Ctrl+Shift+L para limpar café no teclado.",
+        "Treze textos entregues como IA coincidiram exatamente com o parse dos raw replies; sem evidência de corrupção do transporte nessas respostas."
+      ]
+    }
+  ],
+  "nextValidation": "Novo prompt e diagnóstico input-only ainda não executados no Windows neste corte; não aprovam versão nem substituem o pipeline integral."
+}

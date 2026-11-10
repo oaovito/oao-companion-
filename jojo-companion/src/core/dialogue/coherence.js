@@ -208,12 +208,14 @@ function referenciaContexto(text) {
     || /\b(?:ele|ela|eles|elas|isso|isto|aquilo|esse|essa|esses|essas|aquele|aquela|aqueles|aquelas|dele|dela|he|she|it|they|them|this|that|these|those)\b/.test(q)
     || /^(?:e voce|and you|what about you|e depois|and then|como assim|nao entendi|nao entendo|i don t understand|tell me more|mais detalhes|aprofunda|aprofundar|continua|continue|resuma|resume|me da (?:um |outro )?exemplo|give me (?:an? |another )?example)\b/.test(q)
     || /^(?:sim|nao|yes|no|ok|okay|certo|entendi|obrigad[oa]|valeu|thanks|thank you|got it|consegui|done|por que|why|como|how)[.!?]*$/.test(q)
+    || /\b(?:voce|vc|tu) (?:me )?(?:disse|falou|respondeu|mencionou|citou|quis dizer)\b|\byou (?:said|say|mentioned|mention|answered|answer|meant|mean)\b/.test(q)
     || /\b(?:disse|falou|respondeu|said|answered|mention\w*|lembra\w*|remember)\b/.test(q) && termosContexto(q).size === 0;
 }
 
 /** Contexto por assunto; não modifica o histórico visível nem transforma falas em fatos. */
 export function historicoRelevante(input, history) {
   const q = norm(input);
+  const reference = referenciaContexto(input);
   const pessoal = /\b(joao|namorado|criador|criou|ele|dele|nele)\b/.test(q);
   const turns = [];
   for (const h of history) {
@@ -227,7 +229,9 @@ export function historicoRelevante(input, history) {
     if (i && referenciaContexto(turn.messages[0].text)) {
       for (const word of turns[i - 1].terms) turn.terms.add(word);
     }
-    for (const message of turn.messages.slice(1)) for (const word of termosContexto(message.text)) turn.terms.add(word);
+    // A fala do JoJo contextualiza referências, mas um detalhe inventado nela
+    // não pode selecionar contexto para uma nova afirmação independente.
+    if (reference) for (const message of turn.messages.slice(1)) for (const word of termosContexto(message.text)) turn.terms.add(word);
   }
   const relevant = turns.filter((turn) => {
     const texts = turn.messages.map((h) => norm(h.text)).join(' ');
@@ -240,7 +244,7 @@ export function historicoRelevante(input, history) {
   if (matching.length) return matching.slice(-4).flatMap(turn => turn.messages);
   // Referências e elipses continuam usando as trocas anteriores. Uma mensagem
   // independente sem assunto compartilhado não recebe preferências/aulas alheias.
-  if (!referenciaContexto(input) || !relevant.length) return [];
+  if (!reference || !relevant.length) return [];
   if (pessoal) return relevant.slice(-4).flatMap(turn => turn.messages);
   const latest = relevant.at(-1);
   const related = relevant.filter(turn => turn === latest || [...latest.terms].some(word => turn.terms.has(word)));

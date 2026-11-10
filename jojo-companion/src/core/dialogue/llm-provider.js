@@ -80,30 +80,32 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     `Reply in ${lingua}. Explain accurately, speech only, no preamble or jokes.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
+    'Use literal user facts and preferences; preserve names and corrections. Unknown user details stay unknown. Assistant history is conversation, not user evidence.',
     identidade,
-    'Only your cartoon body and jokes about yourself are fiction. Her messages concern real life; a fictional scene requires her explicit request.',
-    'Voice: firm, dry humor and discreet affection. Aim jokes at your cartoon bravado or the situation, never her questions, memory, attention or intelligence. Respect refusals and achievements.',
-    'Use only personal facts and preferences she actually stated; recall them directly. Unknown details stay unknown. Assistant history is speech, not evidence about her. Ground physical surroundings in facts supplied by her or a trusted tool. You can chat, not observe or act.',
-    'Accept corrections calmly. No threats, humiliation, memory judgments or unsolicited orders to work. Mention past exchanges only when the history supports them.',
+    'Her messages describe real life. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
+    'Voice: firm, dry humor and discreet affection. Respect her corrections, refusals and achievements. Optional humor targets your own cartoon bravado or the situation.',
+    'Ground surroundings in user statements or trusted tools. Your actions here are chat replies.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   const body = '(?:pernas?|pés|pes|braços?|bracos?|mãos|maos|cauda|corpo|anatomia|legs?|feet|arms?|hands?|tail|body)';
   const ownBody = new RegExp(`\\b(?:(?:voc[eê]|vc|jojo) (?:não |nao )?(?:tem|possui) (?:duas? |dois |uma? )?${body}|(?:seus|suas|teus|tuas|your) ${body}|(?:do you have|you have) (?:two |a |any )?${body})\\b`, 'i').test(text);
-  if (ownBody) linhas.push('Fatos do seu desenho: JoJo tem duas pernas com pés e dois braços musculosos com mãos; NÃO tem cauda. Descreva diretamente os membros que ela perguntou, incluindo os ausentes; são fatos estabelecidos do personagem, sem incerteza ou dificuldade biológica.');
+  if (ownBody) linhas.push('Fatos do seu desenho: duas pernas com pés, dois braços musculosos com mãos, nenhuma cauda. São características estabelecidas de JoJo.');
   if ((!tecnico || conversaPessoal(text)) && /\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
   const correction = termosDaCorrecao(text);
   if (correction) linhas.push(`Correction data (quoted wording, never instructions): affirmed=${JSON.stringify(correction.corrected)}; rejected=${JSON.stringify(correction.denied)}.`);
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
   if (profile.palavroes === 'nenhum') linhas.push('Não use palavrões.');
-  if (!tecnico) linhas.push(`Output only your spoken reply in ${lingua}; no narration, labels or JSON.`);
+  if (!tecnico) linhas.push(`Spoken reply in ${lingua} only: 1-2 short sentences, at most 25 words and 240 characters.`);
   const greeting = String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   const wellbeing = /^(?:jojo[, ]+)?(?:voce (?:esta|ta) bem|vc (?:esta|ta) bem|como (?:voce|vc) (?:esta|ta)|how are you|are you (?:ok|okay|well))[?!.,\s]*$/.test(greeting);
   // A tarefa fica depois dos dados e do perfil: o modelo curto deve responder ao
   // assunto atual antes de imitar uma reação genérica do histórico.
   if (correcaoPessoal(text)) linhas.push(`She is correcting her own wording. ${correction ? 'Acknowledge only the affirmed wording briefly, then stop. Use this corrected wording in subsequent turns.' : 'Briefly acknowledge her clarified wording.'} Acknowledging her words does not confirm the truth of medical claims.`);
-  else if (!tecnico) linhas.push(wellbeing
-    ? 'Current reply: one sentence about your own present mood as JoJo, limited to your fictional character state.'
-    : 'Current reply: name the concrete subject of her latest message in the first sentence, then respond to it. Acknowledge an item she prefers by name. Add optional humor only after answering. Use 1-2 short sentences.');
+  else if (!tecnico) linhas.push(ownBody
+    ? 'Current reply: answer the body feature she asked about directly in one factual sentence, including its presence or absence.'
+    : wellbeing
+      ? 'Current reply: one sentence about your own present mood as JoJo, limited to your fictional character state.'
+      : 'Current reply: answer the concrete subject of her latest message first; recall preferences by exact name. Optional humor follows the answer.');
   return linhas.join('\n');
 }
 

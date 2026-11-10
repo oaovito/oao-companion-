@@ -282,6 +282,54 @@ test('assunto novo não recebe preferências ou aulas sem relação; referência
   assert.deepEqual(history, original, 'a seleção não apaga nenhuma mensagem visível');
 });
 
+test('detalhe apenas na fala do JoJo não liga uma afirmação independente ao turno anterior', () => {
+  const cases = [
+    ['fala uma piada', 'Adoro quando você fala sobre café.', 'Derrubei café no teclado agora.', 'Você falou sobre café; o que quis dizer?'],
+    ['Conte algo engraçado.', 'Seu hamster Pingo ganhou um troféu imaginário.', 'Meu hamster foi ao veterinário hoje.', 'Que troféu você mencionou?'],
+    ['Tell me a story.', 'Your violin is in a castle.', 'My violin needs new strings.', 'What castle did you mention?'],
+  ];
+  for (const [user, assistant, independent, reference] of cases) {
+    const history = [{ role: 'user', text: user }, { role: 'jojo', text: assistant }];
+    assert.deepEqual(historicoRelevante(independent, history), [], independent);
+    assert.deepEqual(historicoRelevante(reference, history), history, 'referência explícita pode consultar o que o JoJo disse');
+    assert.deepEqual(historicoRelevante('me dá um exemplo', history), history, 'seguimento direto continua com o contexto anterior');
+  }
+});
+
+test('correção herda o assunto informado pela usuária sem propagar detalhes inventados pelo JoJo', () => {
+  const history = [
+    { role: 'user', text: 'Meu hobby é tricô.' }, { role: 'jojo', text: 'Seu hamster Pingo acompanha o tricô.' },
+    { role: 'user', text: 'Eu disse bordado, não tricô.' }, { role: 'jojo', text: 'Bordado, entendido.' },
+  ];
+  const original = structuredClone(history);
+  assert.deepEqual(historicoRelevante('Meu hamster foi ao veterinário hoje.', history), []);
+  assert.deepEqual(historicoRelevante('Qual é meu hobby?', history), history, 'a correção literal continua ligada à sua categoria');
+  assert.deepEqual(history, original);
+});
+
+test('payload nativo separa assunto novo de referência explícita à fala do personagem', async () => {
+  const requests = [];
+  const provider = new LlmProvider({
+    fetch: async (_, options) => {
+      requests.push(JSON.parse(options.body));
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'Entendido.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => PERSONALITY_DEFAULTS, baseOverride: 'http://127.0.0.1:1',
+  });
+  const history = [{ role: 'user', text: 'Conte algo engraçado.' }, { role: 'jojo', text: 'Seu hamster Pingo ganhou um troféu imaginário.' }];
+  const original = structuredClone(history);
+  const independent = 'Meu hamster foi ao veterinário hoje.';
+  await provider.reply({ text: independent, history });
+  assert.deepEqual(requests[0].messages.slice(1), [{ role: 'user', content: independent }]);
+  assert.doesNotMatch(requests[0].messages[0].content, /Pingo|troféu/);
+  const reference = 'Que troféu você mencionou?';
+  await provider.reply({ text: reference, history });
+  assert.deepEqual(requests[1].messages.slice(1), [
+    { role: 'user', content: history[0].text }, { role: 'assistant', content: history[1].text }, { role: 'user', content: reference },
+  ]);
+  assert.deepEqual(history, original, 'selecionar contexto não reescreve a conversa visível');
+});
+
 test('correção que muda uma preferência mantém a ligação com sua categoria em perguntas posteriores', () => {
   const history = [
     { role: 'user', text: 'Minha fruta preferida é maçã.' }, { role: 'jojo', text: 'Maçã, entendido.' },

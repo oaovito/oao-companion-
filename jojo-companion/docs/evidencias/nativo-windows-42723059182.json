@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "scope": "native-diagnostic",
+  "publicationAllowed": false,
+  "includesConversation": false,
+  "commit": "5421e2ade18ea7980c175640d867d4f459660f7b",
+  "runId": "42723059182",
+  "steps": {
+    "preflight": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "lint": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "install": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "build": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "installer": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "portable": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "cleanup_portable": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "presence": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "cleanup_presence": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "windows": {
+      "outputs": {},
+      "outcome": "failure",
+      "conclusion": "failure"
+    },
+    "e2e": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "animations": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "performance": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "artifacts": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "updater": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "notes": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    }
+  },
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42723059182",
+  "conclusion": "failure",
+  "buildFormats": [
+    "portable",
+    "nsis",
+    "zip"
+  ],
+  "packagedKoffi": {
+    "loaded": true,
+    "staticLoaderPresent": true,
+    "insidePackage": true,
+    "entry": "node_modules/koffi/index.cjs",
+    "version": "3.3.3",
+    "nativeModulePresent": true
+  },
+  "packagedSteam": {
+    "isPackaged": true,
+    "archive": true,
+    "workerUnpacked": true,
+    "coreUnpacked": true,
+    "installed": true,
+    "libraries": 2,
+    "count": 1,
+    "status": "closed",
+    "fixtureFound": true,
+    "known": true
+  },
+  "installer": "Instalou/iniciou; três atualizações preservaram atalho único, remoção manual e dados; desinstalação sem falha registrada.",
+  "integration": {
+    "passed": 15,
+    "failed": 1,
+    "skipped": 0,
+    "total": 16,
+    "failedCase": 8,
+    "test": "Windows: no modo de interação só as regiões interativas capturam o mouse",
+    "error": "área transparente não bloqueia o clique"
+  },
+  "notExecuted": [
+    "e2e43",
+    "animations1268",
+    "performance",
+    "artifacts",
+    "updater",
+    "notes"
+  ],
+  "nextValidation": "Correção de geometria somente no teste e diagnóstico input-only preparados; ainda não executados no Windows neste corte."
+}
