@@ -161,7 +161,7 @@ test('conversa: silêncio liga o modo silencioso; conquista flexiona; susto teat
 test('falas: tom sério usa Emanuele, brincadeira usa Manu; toda fala com reação existente', async () => {
   const { STATES } = await import('../../src/core/behavior.js');
   const pb = new PhraseBook(PHRASES, { rng: seededRng(5) });
-  const vars = (tone) => ({ atalho: 'Ctrl + Alt + J', musica: 'Música', artista: 'Artista', titulo: 'Reunião', hora: '9h', min: '10', pausa: '5', ciclo: '1', total: '4', remedio: 'Vitamina D', ...profileVars(PERSONALITY_DEFAULTS, tone) });
+  const vars = (tone) => ({ atalho: 'Ctrl + Alt + J', musica: 'Música', artista: 'Artista', titulo: 'Reunião', hora: '9h', min: '10', pausa: '5', ciclo: '1', total: '4', remedio: 'Vitamina D', n: '3', busca: 'creatina', ...profileVars(PERSONALITY_DEFAULTS, tone) });
   for (const [cat, def] of Object.entries(PHRASES.categories)) {
     if (def.reaction) assert.ok(STATES[def.reaction], `${cat}: reação ${def.reaction}`);
     for (const l of def.lines) if (typeof l === 'object' && l.reaction) assert.ok(STATES[l.reaction], `${cat}: ${l.reaction}`);

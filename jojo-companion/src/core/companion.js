@@ -29,6 +29,7 @@ import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
+import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
@@ -1353,6 +1354,9 @@ export class Companion {
     if (!safety) {
       const lembrete = this._reminderChat(text);
       if (lembrete) return this._quickReply(conv, lembrete, 'lembretes');
+      // Notas rápidas ("anota: …", "minhas notas", "procura nas notas …").
+      const nota = this._reminderReply(this.notes.apply(parseNoteRequest(text)));
+      if (nota) return this._quickReply(conv, nota, 'notas');
     }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
@@ -1899,6 +1903,7 @@ export class Companion {
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
+    if (cmd === 'nota') return { text: this._reminderReply(this.notes.apply(parseNoteCommand(arg))), command: cmd, conversationId };
     if (cmd === 'lembrete') return { text: this._reminderReply(this.reminders.apply(parseReminderCommand(arg))), command: cmd, conversationId };
     if (cmd === 'estimulo') return { text: this.estimulo() ? 'Toma.' : 'Agora não.', command: cmd, conversationId };
     if (cmd === 'calma') return { text: this.calma(2) ? 'Respira. Dois minutos de calma.' : 'Agora não.', command: cmd, conversationId };
@@ -3514,6 +3519,15 @@ export class Companion {
       now: () => this.clock.now(),
     });
     return this._reminders;
+  }
+
+  /** Notas rápidas (salvas junto do progresso, só neste PC). */
+  get notes() {
+    this._notes ||= new Notes({
+      state: this.progress.st.notas,
+      save: (s) => { this.progress.st.notas = s; this.progress.save(this.progress.st); },
+    });
+    return this._notes;
   }
 
   /** Texto na voz dele para o resultado de um pedido de lembrete (a lista leva as linhas de dados). */
