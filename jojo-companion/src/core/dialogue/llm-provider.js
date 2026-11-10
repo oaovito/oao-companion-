@@ -336,6 +336,54 @@ export class LlmProvider extends DialogueProvider {
     return content;
   }
 
+  /**
+   * Tarefa estruturada no modelo local (passos de uma tarefa, perguntas de revisão,
+   * resumo…). Devolve o texto bruto ou lança. Não é fala do personagem: quem chama
+   * valida o formato e apresenta o resultado com as falas do perfil. Só o motor
+   * local; nunca cai em serviço externo.
+   */
+  async tarefa({ system, user, json = false, signal = null, timeoutMs = null, maxTokens = 320 }) {
+    const cfg = this.getConfig() || {};
+    if (!this.preset.native) throw new Error('motor local indisponível');
+    if (!(await this.isAvailable())) throw new Error(`motor local indisponível (${this.unavailableReason() || 'sem motor'})`);
+    let base = this.baseOverride;
+    let modelo = cfg.modelo || OLLAMA_MODEL;
+    if (!base) {
+      const p = await this.brain.preparar();
+      base = p.base;
+      modelo = p.modelo;
+      this.brain.usar();
+    }
+    const ctrl = new AbortController();
+    const cancel = () => ctrl.abort();
+    if (signal?.aborted) ctrl.abort();
+    else signal?.addEventListener('abort', cancel, { once: true });
+    const t = setTimeout(() => ctrl.abort(), timeoutMs ?? this.timeoutMs * 3);
+    try {
+      const res = await this.fetch(`${base}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          model: modelo,
+          messages: [{ role: 'system', content: String(system).slice(0, 2000) }, { role: 'user', content: String(user).slice(0, 4000) }],
+          stream: true,
+          ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}),
+          ...(json ? { format: 'json' } : {}),
+          keep_alive: OLLAMA_OPTS.keepAlive,
+          options: { ...OLLAMA_OPTS.tecnico, num_predict: maxTokens, temperature: 0.2, repeat_penalty: 1.05 },
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await readNdjson(res);
+    } catch (e) {
+      throw new Error(e.name === 'AbortError' ? 'tempo esgotado' : e.message);
+    } finally {
+      clearTimeout(t);
+      signal?.removeEventListener('abort', cancel);
+    }
+  }
+
   async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', followup = null, signal = null }) {
     const cfg = this.getConfig() || {};
     const preset = this.preset;

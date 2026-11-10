@@ -30,6 +30,7 @@ import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, c
 import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
+import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
@@ -1267,6 +1268,11 @@ export class Companion {
     const sceneGeneration = this.onSceneChat?.(text);
     const conv = this.conversations.current();
     const cmd = parseCommand(text);
+    // /quebrar consulta o modelo local (assíncrono); os outros comandos respondem na hora.
+    if (cmd === 'quebrar') {
+      const pedido = parseBreakdownCommand(String(text).replace(/^\s*\/\S+\s*/, ''));
+      return { text: pedido ? await this._breakdown(pedido.titulo) : this._fala('quebraAjuda'), command: cmd, conversationId: conv.id };
+    }
     if (cmd) return this.runCommand(cmd, conv.id, text);
     if (!this.dialogue) return null;
     // Segurança não entra na fila atrás de uma geração lenta.
@@ -1349,6 +1355,17 @@ export class Companion {
       const reply = await this.livingChat(text, { expectedGeneration: sceneGeneration });
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       if (reply) return { ...this._quickReply(conv, reply.message, 'encenacao'), scene: { status: reply.status, reason: reply.reason || null, queued: !!reply.queued, itemId: reply.itemId } };
+    }
+    // Quebra de tarefas: resposta a uma quebra pendente ("adiciona") ou pedido novo.
+    if (!safety) {
+      const confirma = this._breakdownConfirm(text);
+      if (confirma) return this._quickReply(conv, confirma, 'quebra');
+      const pedido = parseBreakdownRequest(text);
+      if (pedido) {
+        const passos = await this._breakdown(pedido.titulo);
+        if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
+        return this._quickReply(conv, passos, 'quebra');
+      }
     }
     // Lembretes de água, pausas e remédios pedidos na conversa ("me lembra de tomar X às 8h").
     if (!safety) {
@@ -3519,6 +3536,46 @@ export class Companion {
       now: () => this.clock.now(),
     });
     return this._reminders;
+  }
+
+  /**
+   * Quebra uma tarefa em passos pequenos: tenta o modelo local e valida o formato;
+   * sem modelo (ou com resposta que não serve) usa o roteiro próprio, offline.
+   * Guarda a quebra por 5 min para ela dizer "adiciona" e mandar para a lista.
+   */
+  async _breakdown(titulo) {
+    let passos = null;
+    let fonte = 'roteiro';
+    const llm = this.dialogue && this.dialogue.llm;
+    if (llm && typeof llm.tarefa === 'function') {
+      try {
+        passos = parseSteps(await llm.tarefa({ ...buildBreakdownPrompt(titulo), json: true }));
+        if (passos) fonte = 'modelo';
+      } catch { /* modelo indisponível: segue com o roteiro */ }
+    }
+    if (!passos) passos = fallbackSteps(titulo);
+    this.pendingBreakdown = { titulo, passos, fonte, until: this.clock.now() + 5 * 60e3 };
+    const linhas = passos.map((p, i) => `${i + 1}. ${p}`).join('\n');
+    return `${this._fala('quebraPassos', { titulo, total: passos.length })}\n${linhas}\n${this._fala(this.todoChat ? 'quebraPergunta' : 'quebraSemLista')}`;
+  }
+
+  /** "adiciona"/"não" depois de uma quebra: manda os passos para a Lista de Tarefas ou descarta. */
+  _breakdownConfirm(text) {
+    const p = this.pendingBreakdown;
+    if (!p) return null;
+    if (p.until < this.clock.now()) { this.pendingBreakdown = null; return null; }
+    const resposta = breakdownAnswer(text);
+    if (!resposta) return null;
+    this.pendingBreakdown = null;
+    if (resposta === 'nao') return this._fala('quebraDescartada');
+    if (!this.todoChat) return this._fala('quebraSemLista');
+    let n = 0;
+    try {
+      for (const title of stepTitles(p.titulo, p.passos)) { this.todoChat.model.add({ title }); n++; }
+    } catch {
+      return this._fala('quebraErro', { total: n });
+    }
+    return this._fala('quebraAdicionada', { total: n, titulo: p.titulo });
   }
 
   /** Notas rápidas (salvas junto do progresso, só neste PC). */
