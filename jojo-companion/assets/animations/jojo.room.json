@@ -2604,6 +2604,126 @@
    "t": 13,
    "r": 0,
    "b": 5
+  },
+  "cat_focoLerPagina": {
+   "l": 0,
+   "t": 5,
+   "r": 16,
+   "b": 5
+  },
+  "cat_focoEscrever": {
+   "l": 0,
+   "t": 5,
+   "r": 19,
+   "b": 5
+  },
+  "cat_focoDigitar": {
+   "l": 13,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_focoMarcaTexto": {
+   "l": 0,
+   "t": 5,
+   "r": 19,
+   "b": 5
+  },
+  "cat_focoOculos": {
+   "l": 13,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_focoIdeia": {
+   "l": 0,
+   "t": 5,
+   "r": 26,
+   "b": 5
+  },
+  "cat_focoRiscarLista": {
+   "l": 0,
+   "t": 5,
+   "r": 21,
+   "b": 5
+  },
+  "cat_focoElevacaoLateral": {
+   "l": 27,
+   "t": 5,
+   "r": 36,
+   "b": 5
+  },
+  "cat_focoFlexao": {
+   "l": 74,
+   "t": 13,
+   "r": 0,
+   "b": 26
+  },
+  "cat_focoPrancha": {
+   "l": 76,
+   "t": 13,
+   "r": 0,
+   "b": 19
+  },
+  "cat_focoAgachamento": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 8
+  },
+  "cat_focoAlongar": {
+   "l": 27,
+   "t": 7,
+   "r": 27,
+   "b": 5
+  },
+  "cat_focoRespirar": {
+   "l": 0,
+   "t": 30,
+   "r": 0,
+   "b": 5
+  },
+  "cat_focoMeditar": {
+   "l": 0,
+   "t": 11,
+   "r": 0,
+   "b": 5
+  },
+  "cat_focoNadar": {
+   "l": 22,
+   "t": 13,
+   "r": 26,
+   "b": 5
+  },
+  "cat_focoAmpulheta": {
+   "l": 19,
+   "t": 24,
+   "r": 0,
+   "b": 5
+  },
+  "cat_focoAceno": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_focoBicepsRapido": {
+   "l": 0,
+   "t": 5,
+   "r": 19,
+   "b": 5
+  },
+  "cat_focoBeberAgua": {
+   "l": 0,
+   "t": 5,
+   "r": 20,
+   "b": 5
+  },
+  "cat_focoPunho": {
+   "l": 0,
+   "t": 5,
+   "r": 18,
+   "b": 5
   }
  },
  "effects": {

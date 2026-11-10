@@ -1489,6 +1489,26 @@
     "Fechou os {total} ciclos. Eu vi. Agora água e comida de verdade.",
     "{total} de {total}. Disciplina de tubarão. Pode se achar um pouco, eu deixo."
    ]
-  }
+  },
+  "foco_focoLerPagina": { "kind": "thought", "tone": "serio", "lines": ["Mais uma página. Quem lê mais, apanha menos da prova.", "Virei a página. E você, {nome}?"] },
+  "foco_focoEscrever": { "kind": "thought", "tone": "serio", "lines": ["Anotando. O que não vai pro papel some da cabeça.", "Caderno aberto, boca fechada."] },
+  "foco_focoDigitar": { "kind": "thought", "tone": "serio", "lines": ["Digitando. Tecla por tecla, igual série por série.", "Produzindo. Sem aba aberta à toa."] },
+  "foco_focoMarcaTexto": { "kind": "thought", "tone": "serio", "lines": ["Só marco o que importa. Página toda amarela é desespero.", "Marca-texto na mão. O essencial fica."] },
+  "foco_focoOculos": { "kind": "thought", "tone": "serio", "lines": ["Ajustei os óculos. Agora vai.", "Óculos no lugar, cérebro ligado."] },
+  "foco_focoIdeia": { "kind": "thought", "tone": "serio", "lines": ["Pensando… pronto. Entendi. Eu sempre entendo.", "Travou? Pensa mais um pouco. Comigo funcionou."] },
+  "foco_focoRiscarLista": { "kind": "thought", "tone": "serio", "lines": ["Mais um item riscado. Lista boa é lista morta.", "Risquei um. Próximo."] },
+  "foco_focoElevacaoLateral": { "kind": "thought", "tone": "serio", "lines": ["Elevação lenta. Ombro se constrói sem pressa.", "Sobe devagar, desce devagar. Igual o seu estudo."] },
+  "foco_focoFlexao": { "kind": "thought", "tone": "serio", "lines": ["Flexão no ritmo. Sem roubar na descida.", "Uma, duas… eu conto, você trabalha."] },
+  "foco_focoPrancha": { "kind": "thought", "tone": "serio", "lines": ["Prancha. Tremendo e firme. Você também aguenta.", "Abdômen travado. Mente também."] },
+  "foco_focoAgachamento": { "kind": "thought", "tone": "serio", "lines": ["Agachamento lento. Perna é base de tudo.", "Desce controlando. Ninguém pula perna aqui."] },
+  "foco_focoAlongar": { "kind": "thought", "tone": "serio", "lines": ["Alongando. Pescoço duro não rende.", "Soltando os braços. Solta os ombros aí também."] },
+  "foco_focoRespirar": { "kind": "thought", "tone": "serio", "lines": ["Respira fundo. Peito sobe, peito desce.", "Ar pra dentro, pressa pra fora."] },
+  "foco_focoMeditar": { "kind": "thought", "tone": "serio", "lines": ["Olhos fechados, foco aberto.", "Quieto por dentro. Você continua aí."] },
+  "foco_focoNadar": { "kind": "thought", "tone": "serio", "lines": ["Nadando no lugar. Constância ganha de pressa.", "Braçada calma. O ritmo é esse."] },
+  "foco_focoAmpulheta": { "kind": "thought", "tone": "serio", "lines": ["A areia tá caindo. Usa o tempo ou ele te usa.", "De olho na ampulheta. E em você."] },
+  "foco_focoAceno": { "kind": "thought", "tone": "serio", "lines": ["Metade. Tá indo bem. Continua.", "Aprovado até aqui. Não estraga."] },
+  "foco_focoBicepsRapido": { "kind": "thought", "tone": "serio", "lines": ["Metade do bloco. Olha isso aqui e volta a trabalhar.", "Bíceps de quem cumpre o combinado. Segue."] },
+  "foco_focoBeberAgua": { "kind": "thought", "tone": "serio", "lines": ["Água. Você também, {nome}.", "Hidratando. Cérebro seco não aprende."] },
+  "foco_focoPunho": { "kind": "thought", "tone": "serio", "lines": ["Isso. Bloco fechado.", "Feito. Sem escândalo, só resultado."] }
  }
 }

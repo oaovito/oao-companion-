@@ -231,6 +231,103 @@ export const PRIMITIVES = {
   },
 };
 
+// ------------------------------------------------------------------ modo foco
+// Primitivos das animações de foco: movimento suave e contínuo. Diferente dos
+// de cima, não voltam ao repouso no meio do laço: o último quadro é igual ao
+// primeiro, então o ciclo fecha sem salto.
+
+/** Vai de `a` a `b` e volta, `n` vezes; começa e termina em `a`. */
+const wave = (a, b, n = 1) => Array.from({ length: 2 * n + 1 }, (_, k) => [k / (2 * n), k % 2 ? b : a]);
+/** Fica em `rest`, vai a `v` entre t1 e t2 e volta a `rest` em t3. */
+const pulse = (rest, v, t0, t1, t2, t3) => [[0, rest], [t0, rest], [t1, v], [t2, v], [t3, rest], [1, rest]];
+const left = (leg, elbow) => ({ legFL: leg, elbowL: elbow });
+const seguraDireita = () => ({ legFR: hold(30), elbowR: hold(100) });
+
+Object.assign(PRIMITIVES.corpo, {
+  focoRespira: ({ i }) => ({ squashY: wave(1, 1 + 0.06 * i), rootY: wave(0, -2 * i) }),
+  focoFlutua: () => ({ rootY: wave(-4, -6) }),
+  focoPrancha: ({ i }) => ({ rootRot: hold(-78), rootY: hold(-44), rootX: wave(-0.8 * i, 0.8 * i, 10) }),
+  focoFlexao: ({ n }) => ({ rootRot: hold(-78), rootY: wave(-46, -37, N(n, 2)) }),
+  focoAgacha: ({ n }) => ({ squatPose: wave(0, 1, N(n, 1)), rootY: wave(0, 12, N(n, 1)) }),
+  focoNado: ({ i }) => ({ rootX: wave(-3 * i, 3 * i), rootY: wave(-5, -8, 2), legBL: wave(0, 12, 2), legBR: wave(12, 0, 2) }),
+  // Areia desce, a ampulheta vira: virada com a areia toda embaixo é igual ao começo.
+  focoAmpulheta: () => ({
+    sandTop: [[0, 1], [0.8, 0], [1, 0]],
+    sandBottom: [[0, 0], [0.8, 1], [1, 1]],
+    sandStream: [[0, 0], [0.03, 1], [0.77, 1], [0.8, 0], [1, 0]],
+    hourglassFlip: [[0, 0], [0.86, 0], [0.98, 180], [1, 180]],
+  }),
+});
+
+Object.assign(PRIMITIVES.bracos, {
+  focoViraPagina: () => ({
+    ...seguraDireita(),
+    ...left([[0, ARM.leg], [0.45, ARM.leg], [0.52, -18], [0.72, -18], [0.82, ARM.leg], [1, ARM.leg]], [[0, ARM.elbow], [0.45, ARM.elbow], [0.52, -95], [0.72, -85], [0.82, ARM.elbow], [1, ARM.elbow]]),
+    pageTurnR: [[0, 0], [0.5, 0], [0.57, 1], [0.64, 0], [1, 0]],
+    pageTurnL: [[0, 0], [0.64, 0], [0.71, 1], [0.79, 0], [1, 0]],
+  }),
+  focoEscreve: () => ({ ...seguraDireita(), ...left(hold(-18), wave(-96, -84, 6)) }),
+  focoMarca: () => ({
+    ...seguraDireita(),
+    ...left(hold(-18), [[0, -100], [0.5, -80], [0.62, -100], [1, -100]]),
+    markStroke: [[0, 0], [0.5, 1], [0.8, 1], [0.95, 0], [1, 0]],
+  }),
+  focoRisca: () => ({
+    ...seguraDireita(),
+    ...left(hold(-18), [[0, -100], [0.25, -100], [0.45, -80], [0.55, -100], [1, -100]]),
+    listStrike: [[0, 0], [0.25, 0], [0.45, 1], [0.85, 1], [0.97, 0], [1, 0]],
+  }),
+  focoDigita: () => ({ legFL: hold(-12), legFR: hold(-12), elbowL: wave(-70, -82, 6), elbowR: wave(-82, -70, 6) }),
+  focoOculos: () => ({ ...left(hold(ARM.leg), hold(ARM.elbow)), legFR: pulse(ARM.leg, -28, 0.12, 0.24, 0.42, 0.54), elbowR: pulse(ARM.elbow, -118, 0.12, 0.24, 0.42, 0.54) }),
+  focoQueixo: () => ({
+    ...left(hold(ARM.leg), hold(ARM.elbow)),
+    legFR: [[0, -28], [0.55, -28], [0.66, 110], [0.86, 110], [1, -28]],
+    elbowR: [[0, -118], [0.55, -118], [0.66, 30], [0.86, 30], [1, -118]],
+  }),
+  focoElevacao: ({ n }) => both(wave(12, 78, N(n, 1)), hold(8)),
+  focoCintura: () => both(hold(22), hold(-55)),
+  focoAlonga: () => both([[0, ARM.leg], [0.12, 150], [0.4, 150], [0.52, 60], [0.8, 60], [0.92, ARM.leg], [1, ARM.leg]], [[0, ARM.elbow], [0.12, 10], [0.4, 10], [0.52, 0], [0.8, 0], [0.92, ARM.elbow], [1, ARM.elbow]]),
+  focoReza: () => both(hold(-20), hold(-105)),
+  focoNadaBracos: () => ({ legFL: wave(28, 48, 2), legFR: wave(48, 28, 2), elbowL: wave(30, 52, 2), elbowR: wave(52, 30, 2) }),
+  focoCruzados: () => both(hold(-10), hold(-90)),
+  focoBiceps: () => ({
+    ...left(hold(ARM.leg), hold(ARM.elbow)),
+    legFR: [[0, ARM.leg], [0.15, 92], [0.62, 92], [0.8, ARM.leg], [1, ARM.leg]],
+    elbowR: [[0, ARM.elbow], [0.15, 125], [0.27, 136], [0.39, 120], [0.51, 136], [0.62, 125], [0.8, ARM.elbow], [1, ARM.elbow]],
+  }),
+  focoBebe: () => ({ ...left(hold(ARM.leg), hold(ARM.elbow)), legFR: pulse(ARM.leg, 48, 0, 0.18, 0.72, 0.9), elbowR: pulse(ARM.elbow, 150, 0, 0.18, 0.72, 0.9), headRot: pulse(0, 6, 0.1, 0.2, 0.72, 0.82) }),
+  focoPunho: () => ({
+    ...left(hold(ARM.leg), hold(ARM.elbow)),
+    legFR: [[0, ARM.leg], [0.2, 72], [0.3, 62], [0.4, 72], [0.75, 72], [0.92, ARM.leg], [1, ARM.leg]],
+    elbowR: pulse(ARM.elbow, 122, 0, 0.2, 0.75, 0.92),
+  }),
+});
+
+Object.assign(PRIMITIVES.cabeca, {
+  focoLe: () => ({ pupilX: wave(-0.5, 0.5, 3), pupilY: hold(0.5) }),
+  focoOlhaBaixo: () => ({ pupilX: hold(0.3), pupilY: hold(0.7) }),
+  focoOlhaTela: () => ({ pupilX: hold(-0.6), pupilY: hold(0.6) }),
+  focoOlhaAmpulheta: () => ({ pupilX: hold(-0.7), pupilY: hold(0.3), headRot: hold(-5) }),
+  focoAceno: () => ({ headRot: [[0, 0], [0.2, 0], [0.32, 7], [0.44, 0], [0.56, 7], [0.68, 0], [1, 0]] }),
+  focoPescoco: () => ({ headRot: [[0, 0], [0.5, 0], [0.6, -11], [0.72, -11], [0.8, 11], [0.92, 11], [1, 0]] }),
+});
+
+Object.assign(PRIMITIVES.rosto, {
+  focoSereno: () => ({ eyeOpen: hold(0.8), mouthClose: hold(0.6) }),
+  focoOlhosFechados: () => ({ eyeOpen: hold(0), mouthClose: hold(0.6), moodJoy: hold(0.15) }),
+  focoIdeia: () => ({
+    pupilY: [[0, -0.7], [0.55, -0.7], [0.66, 0], [0.86, 0], [1, -0.7]],
+    eyeScale: [[0, 1], [0.6, 1], [0.68, 1.18], [0.86, 1.18], [1, 1]],
+    browShow: hold(1),
+    brow: [[0, 0], [0.6, 0], [0.68, 1.2], [0.86, 1.2], [1, 0]],
+    mouthClose: [[0, 0.6], [0.6, 0.6], [0.68, 0], [0.86, 0], [1, 0.6]],
+    jaw: [[0, 0], [0.6, 0], [0.68, 0.5], [0.86, 0.5], [1, 0]],
+  }),
+  focoAprova: () => ({ jaw: pulse(0, 0.3, 0.2, 0.32, 0.68, 0.8), browShow: hold(1), brow: pulse(0, 0.8, 0.2, 0.32, 0.68, 0.8) }),
+  focoOrgulho: () => ({ jaw: pulse(0, 0.5, 0.05, 0.2, 0.62, 0.8), moodJoy: pulse(0, 0.3, 0.05, 0.2, 0.62, 0.8) }),
+  focoBebe: () => ({ jaw: pulse(0, 0.4, 0.1, 0.2, 0.72, 0.82), eyeOpen: pulse(1, 0.5, 0.1, 0.2, 0.72, 0.82) }),
+});
+
 // Objetos: nome no catálogo → canal do rig.
 const PROPS = { shake: 'propShaker', banco: 'propBench', barra: 'propBar', po: 'propPowder', coco: 'propPoop' };
 // Efeitos de partículas já existentes (flags do animador) e marcas.

@@ -1808,6 +1808,112 @@
           "path": "M141,160 L163,160 L163,164 L141,164 Z",
           "showIf": "prop_toalha",
           "parent": "foreR"
+        },
+        {
+          "id": "focoPaginaViraR",
+          "fill": "cream",
+          "path": "M153,144 L167,140 L167,157 L153,161 Z",
+          "showIf": "prop_paginaVirando",
+          "parent": "foreR",
+          "scaleBy": "pageTurnR",
+          "scalePivot": [
+            152,
+            153
+          ]
+        },
+        {
+          "id": "focoPaginaViraL",
+          "fill": "cream",
+          "path": "M137,140 L151,144 L151,161 L137,157 Z",
+          "showIf": "prop_paginaVirando",
+          "parent": "foreR",
+          "scaleBy": "pageTurnL",
+          "scalePivot": [
+            152,
+            153
+          ]
+        },
+        {
+          "id": "focoTracoMarca",
+          "fill": "gold",
+          "path": "M142,144.5 L160,144.5 L160,149.5 L142,149.5 Z",
+          "showIf": "prop_marcaTexto",
+          "parent": "foreR",
+          "alpha": 0.6,
+          "scaleBy": "markStroke",
+          "scalePivot": [
+            142,
+            147
+          ]
+        },
+        {
+          "id": "focoLista",
+          "fill": "page",
+          "path": "M138,130 L166,130 L166,166 L138,166 Z",
+          "showIf": "prop_lista",
+          "parent": "foreR"
+        },
+        {
+          "id": "focoListaLinhas",
+          "fill": "screen",
+          "path": "M147,137 L162,137 L162,139 L147,139 Z M147,146 L162,146 L162,148 L147,148 Z M147,155 L162,155 L162,157 L147,157 Z",
+          "showIf": "prop_lista",
+          "parent": "foreR"
+        },
+        {
+          "id": "focoListaCaixas",
+          "fill": "outline",
+          "path": "M141,136 L145,136 L145,140 L141,140 Z M141,145 L145,145 L145,149 L141,149 Z M141,154 L145,154 L145,158 L141,158 Z",
+          "showIf": "prop_lista",
+          "parent": "foreR"
+        },
+        {
+          "id": "focoListaRisco",
+          "fill": "heart",
+          "path": "M146,145.5 L163,145.5 L163,148.5 L146,148.5 Z",
+          "showIf": "prop_lista",
+          "parent": "foreR",
+          "scaleBy": "listStrike",
+          "scalePivot": [
+            146,
+            147
+          ]
+        },
+        {
+          "id": "focoGarrafa",
+          "fill": "partyBlue",
+          "path": "M146,134 L158,134 L159,165 L145,165 Z",
+          "showIf": "prop_garrafa",
+          "parent": "foreR",
+          "alpha": 0.85
+        },
+        {
+          "id": "focoGarrafaTampa",
+          "fill": "stripe",
+          "path": "M148,127 L156,127 L156,134 L148,134 Z",
+          "showIf": "prop_garrafa",
+          "parent": "foreR"
+        },
+        {
+          "id": "focoCaneta",
+          "fill": "plate",
+          "path": "M31,147 L36,147 L36,167 L33.5,173 L31,167 Z",
+          "showIf": "prop_caneta",
+          "parent": "foreL"
+        },
+        {
+          "id": "focoMarcaTexto",
+          "fill": "gold",
+          "path": "M29,145 L38,145 L38,165 L29,165 Z",
+          "showIf": "prop_marcaTexto",
+          "parent": "foreL"
+        },
+        {
+          "id": "focoMarcaTextoPonta",
+          "fill": "stripe",
+          "path": "M31,165 L36,165 L35,172 L32,172 Z",
+          "showIf": "prop_marcaTexto",
+          "parent": "foreL"
         }
       ]
     },
@@ -2548,6 +2654,77 @@
           "fill": "plate",
           "path": "M-8,159 L34,159 L34,167 L-8,167 Z M-4,150 L30,150 L30,158 L-4,158 Z M0,141 L26,141 L26,149 L0,149 Z",
           "showIf": "prop_torrePesos"
+        },
+        {
+          "id": "focoAmpulhetaVidro",
+          "fill": "glass",
+          "path": "M5,117 L27,117 L17.5,139.5 L27,162 L5,162 L14.5,139.5 Z",
+          "showIf": "prop_ampulheta",
+          "pivot": [
+            16,
+            139.5
+          ],
+          "rot": "hourglassFlip",
+          "alpha": 0.75
+        },
+        {
+          "id": "focoAmpulhetaAreiaCima",
+          "fill": "straw",
+          "path": "M8,120 L24,120 L16,138 Z",
+          "showIf": "prop_ampulheta",
+          "pivot": [
+            16,
+            139.5
+          ],
+          "rot": "hourglassFlip",
+          "scaleBy": "sandTop",
+          "scalePivot": [
+            16,
+            138
+          ]
+        },
+        {
+          "id": "focoAmpulhetaAreiaBaixo",
+          "fill": "straw",
+          "path": "M8,159 L24,159 L16,141 Z",
+          "showIf": "prop_ampulheta",
+          "pivot": [
+            16,
+            139.5
+          ],
+          "rot": "hourglassFlip",
+          "scaleBy": "sandBottom",
+          "scalePivot": [
+            16,
+            159
+          ]
+        },
+        {
+          "id": "focoAmpulhetaFio",
+          "fill": "straw",
+          "path": "M15.4,139 L16.6,139 L16.6,158 L15.4,158 Z",
+          "showIf": "prop_ampulheta",
+          "pivot": [
+            16,
+            139.5
+          ],
+          "rot": "hourglassFlip",
+          "scaleBy": "sandStream",
+          "scalePivot": [
+            16,
+            139
+          ]
+        },
+        {
+          "id": "focoAmpulhetaBases",
+          "fill": "bench",
+          "path": "M2,112 L30,112 L30,117 L2,117 Z M2,162 L30,162 L30,167 L2,167 Z",
+          "showIf": "prop_ampulheta",
+          "pivot": [
+            16,
+            139.5
+          ],
+          "rot": "hourglassFlip"
         }
       ]
     },

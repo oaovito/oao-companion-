@@ -99,6 +99,9 @@ const EMOCAO_CONVERSA = [
 const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 'howAreYou', 'help', 'name', 'thanks', 'scare', 'pet']);
 const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
+// Animações do modo foco: as duas de sempre e as do catálogo de foco (ids "foco…").
+const FOCUS_ANIM = /^cat_(estudarJunto|treinarJunto|foco[A-Z])/;
+
 // Partes do pedido de foco que descrevem o plano de ciclos (não são a duração do bloco).
 const FOCUS_PLAN_PARTS = /pausa(?:\s+de)?\s+\d{1,2}(?:\s*min\w*)?|\bx\s*\d{1,2}\b|\b\d{1,2}\s*(?:ciclos?|blocos?|vezes)\b/gi;
 
@@ -2193,7 +2196,7 @@ export class Companion {
     const date = new Date();
     // Foco junto: continua estudando/treinando do lado dela.
     if (this.focus) {
-      const fid = this.focus.tipo === 'treino' ? 'treinarJunto' : 'estudarJunto';
+      const fid = this.focus.animId || (this.focus.tipo === 'treino' ? 'treinarJunto' : 'estudarJunto');
       return { ...this._catalogData(this.catalogById.get(fid), 'suave'), ms: Math.max(2000, this.focus.fim - this.clock.now()) };
     }
     // Temporada nova da semana: anuncia uma vez e marca a área do aquário.
@@ -2940,9 +2943,63 @@ export class Companion {
   }
 
   _focusAnim(now) {
-    if (!this.focus) return;
-    const id = this.focus.tipo === 'treino' ? 'treinarJunto' : 'estudarJunto';
-    this._requestCatalog('act', { ...this._catalogData(this.catalogById.get(id), 'suave'), ms: Math.max(1000, this.focus.fim - now) }, now, 'comando');
+    const f = this.focus;
+    if (!f) return;
+    const classica = f.tipo === 'treino' ? 'treinarJunto' : 'estudarJunto';
+    // Todo bloco começa pela animação de sempre; as outras entram na alternância.
+    if (!f.animId) {
+      f.animId = classica;
+      f.trocaEm = now + this._focusSwapMs();
+    }
+    const item = this.catalogById.get(f.animId) || this.catalogById.get(classica);
+    this._requestCatalog('act', { ...this._catalogData(item, 'suave'), ms: Math.max(1000, f.fim - now) }, now, 'comando');
+  }
+
+  /** Intervalo (longo) entre as trocas de animação durante o foco. */
+  _focusSwapMs() {
+    return Math.max(1, this.catalog.foco?.trocaMin ?? 4) * 60e3;
+  }
+
+  /** Animações em laço do foco para o tipo do bloco: a clássica + grupo do tipo + ritmo e respiração. */
+  _focusPool(tipo) {
+    const grupo = tipo === 'treino' ? 'treino' : 'estudo';
+    return [tipo === 'treino' ? 'treinarJunto' : 'estudarJunto', ...this.catalog.itens.filter((it) => it.categoria === 'foco' && it.loop && (it.grupo === grupo || it.grupo === 'ritmo')).map((it) => it.id)];
+  }
+
+  /** Troca a animação do foco por outra do mesmo conjunto, nunca a mesma em sequência. */
+  _focusSwap(now) {
+    const f = this.focus;
+    if (!f) return;
+    const opcoes = this._focusPool(f.tipo).filter((id) => id !== f.animId && this.catalogById.has(id));
+    if (!opcoes.length) return;
+    f.animId = opcoes[Math.floor(this.rng() * opcoes.length) % opcoes.length];
+    f.trocaEm = now + this._focusSwapMs();
+    this._focusAnim(now);
+    this._focusStatus(this.catalogById.get(f.animId));
+  }
+
+  /** Balão discreto (pensamento) com a fala da animação de foco, na voz dele. */
+  _focusStatus(item) {
+    const texto = item && item.status ? this._fala(item.status) : '';
+    if (texto && this._canNag()) this.say(texto, 'thought', { spontaneous: true });
+  }
+
+  /**
+   * Incentivo discreto, só nos momentos certos: 'metade' (meio do bloco), 'pausa'
+   * (entre ciclos) e 'conclusao' (fim do bloco). Toca uma vez e o foco continua.
+   */
+  _focusIncentive(momento, now) {
+    // Alterna dentro do mesmo momento (ex.: os dois incentivos da metade do bloco).
+    const ultimos = this.focusIncentives ||= {};
+    const opcoes = this.catalog.itens.filter((it) => it.categoria === 'foco' && it.momento === momento && it.id !== ultimos[momento]);
+    const item = opcoes[Math.floor(this.rng() * opcoes.length) % (opcoes.length || 1)] || this.catalog.itens.find((it) => it.categoria === 'foco' && it.momento === momento);
+    if (!item) return false;
+    ultimos[momento] = item.id;
+    this.lastFocusIncentive = item.id;
+    // Durante o bloco o foco pede a animação direto (playCatalog fica em silêncio no foco).
+    const ok = this.focus ? this._requestCatalog('act', this._catalogData(item, 'suave'), now, 'comando') : this.playCatalog(item.id, { source: 'evento', speak: false });
+    if (ok) this._focusStatus(item);
+    return ok;
   }
 
   _focusTick() {
@@ -2958,7 +3015,12 @@ export class Companion {
       f.marcas++;
       this.say(f.tipo === 'treino' ? `Série ${f.marcas} ✓` : `✓ ${passed} min`, 'thought', { spontaneous: true });
     }
-    if (!/^cat_(estudarJunto|treinarJunto)/.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT) this._focusAnim(now);
+    // Metade do bloco: um incentivo curto; fora isso, troca de animação em intervalos longos.
+    if (!f.metade && now - f.inicio >= (f.fim - f.inicio) / 2) {
+      f.metade = true;
+      this._focusIncentive('metade', now);
+    } else if (now >= f.trocaEm) this._focusSwap(now);
+    if (!FOCUS_ANIM.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT) this._focusAnim(now);
     this.clock.setTimeout(() => this._focusTick(), 60e3);
   }
 
@@ -2968,7 +3030,7 @@ export class Companion {
     if (!f) return null;
     this.onFocusEnd?.();
     // Para de estudar/treinar do lado na hora.
-    if (/^cat_(estudarJunto|treinarJunto)/.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, this.clock.now());
+    if (FOCUS_ANIM.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, this.clock.now());
     if (!done) {
       this.conversations.setStatus('foco', 'idle');
       return 'Foco encerrado. Sem drama.';
@@ -2979,6 +3041,9 @@ export class Companion {
     this._progress('foco', { conta: 'foco', missao: 'foco' });
     this.fireEvent('parabens', { speak: false });
     const n = this.progress.st.contas.foco;
+    // Incentivo do momento, depois da comemoração de sempre: água na pausa entre ciclos, punho no fim.
+    const momento = f.plano && f.plano.atual < f.plano.ciclos ? 'pausa' : 'conclusao';
+    this.clock.setTimeout(() => { if (!this.focus && !this.work) this._focusIncentive(momento, this.clock.now()); }, 4500);
     if (f.plano) {
       // Plano de ciclos: pausa e próximo bloco sozinhos; no último, só comemora.
       if (f.plano.atual < f.plano.ciclos) this._startFocusBreak(f);

@@ -8,5 +8,6 @@ export function fullCatalog(read) {
   const darkest = read('assets/catalog/darkest-animations.json');
   const needs = read('assets/catalog/needs-animations.json');
   const living = read('assets/catalog/living-interactions.json');
-  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens], pacotes };
+  const foco = read('assets/catalog/foco-animations.json');
+  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens], pacotes, foco: { trocaMin: foco.trocaMin } };
 }
