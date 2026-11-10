@@ -99,6 +99,19 @@ const EMOCAO_CONVERSA = [
 const CATALOG_CHAT_INTENTS = new Set(['unknown', 'play', 'gym', 'eat', 'greet', 'howAreYou', 'help', 'name', 'thanks', 'scare', 'pet']);
 const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
+// Partes do pedido de foco que descrevem o plano de ciclos (não são a duração do bloco).
+const FOCUS_PLAN_PARTS = /pausa(?:\s+de)?\s+\d{1,2}(?:\s*min\w*)?|\bx\s*\d{1,2}\b|\b\d{1,2}\s*(?:ciclos?|blocos?|vezes)\b/gi;
+
+/** Plano de ciclos pedido no texto, ou null para o bloco único. */
+export function focusPlan(arg) {
+  const n = String(arg || '').toLowerCase();
+  const m = n.match(/\b(\d{1,2})\s*(?:ciclos?|blocos?|vezes)\b/) || n.match(/\bx\s*(\d{1,2})\b/);
+  const ciclos = m ? Number(m[1]) : /pomodoro/.test(n) ? 4 : 0;
+  if (ciclos < 2) return null;
+  const pausa = Number((n.match(/pausa(?:\s+de)?\s+(\d{1,2})/) || [])[1]) || 5;
+  return { ciclos: clamp(ciclos, 2, 8), pausaMin: clamp(pausa, 1, 30), atual: 1 };
+}
+
 const NOD_AFTER = new Set(['foco_parar', 'jogo_parar', 'parar_atividade', 'retomar', 'mostrar', 'silencio_ligar', 'silencio_desligar', 'configuracoes', 'nova_conversa', 'resumo']);
 
 export class Companion {
@@ -185,6 +198,7 @@ export class Companion {
     });
     this.game = null; // mini-jogo em andamento
     this.focus = null; // bloco de foco (body doubling)
+    this.focusBreak = null; // pausa entre blocos de um plano de ciclos
     this.calmUntil = 0;
     this.emotionalUntil = 0;
     this.visualContext = 0;
@@ -1736,7 +1750,7 @@ export class Companion {
         text = this.endWork() || 'O Modo Trabalho não está ligado.';
         break;
       case 'foco_parar':
-        text = this._endFocus(false) || 'Não tem foco rolando.';
+        text = this._endFocus(false) || this._cancelFocusBreak() || 'Não tem foco rolando.';
         break;
       case 'foco_iniciar':
         text = run('foco', `/foco ${arg}`);
@@ -1870,9 +1884,11 @@ export class Companion {
     const arg = String(raw).replace(/^\/\S+\s*/, '').trim();
     if (cmd === 'jogo') return { text: this.startGame(arg), command: cmd, conversationId };
     if (cmd === 'foco') {
-      if (/^(parar|sair|cancelar|fim)/i.test(arg)) return { text: this._endFocus(false) || 'Sem foco ativo.', command: cmd, conversationId };
-      const min = clamp(Number((arg.match(/\d+/) || [25])[0]), 5, 120);
-      return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo'), command: cmd, conversationId };
+      if (/^(parar|sair|cancelar|fim)/i.test(arg)) return { text: this._endFocus(false) || this._cancelFocusBreak() || 'Sem foco ativo.', command: cmd, conversationId };
+      // Ciclos (Pomodoro): "/foco pomodoro", "/foco 25 x4", "/foco 30 pausa 10 3 ciclos".
+      const plano = focusPlan(arg);
+      const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
+      return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
     if (cmd === 'estimulo') return { text: this.estimulo() ? 'Toma.' : 'Agora não.', command: cmd, conversationId };
     if (cmd === 'calma') return { text: this.calma(2) ? 'Respira. Dois minutos de calma.' : 'Agora não.', command: cmd, conversationId };
@@ -2389,6 +2405,7 @@ export class Companion {
     this.ambientQueue.length = 0;
     this.game = null;
     this.focus = null;
+    this.focusBreak = null;
     this.effect = null;
     this.calmUntil = 0;
     this.nextSpeechAt = Infinity;
@@ -2873,16 +2890,53 @@ export class Companion {
 
   // -------- foco junto (body doubling)
 
-  startFocus(min = 25, tipo = 'estudo') {
+  /**
+   * @param plano opcional {ciclos, pausaMin, atual}: blocos seguidos com pausa entre eles
+   *   (Pomodoro). Sem plano, o bloco único de sempre.
+   */
+  startFocus(min = 25, tipo = 'estudo', plano = null) {
     this.visualContext++; this.effect = null; this.ambientQueue.length = 0; this.hideBubble();
     const now = this.clock.now();
-    this.focus = { inicio: now, fim: now + min * 60e3, min, tipo, marcas: 0 };
+    this.focusBreak = null;
+    this.focus = { inicio: now, fim: now + min * 60e3, min, tipo, marcas: 0, ...(plano ? { plano: { ...plano } } : {}) };
     this.onFocusStart?.();
     const c = this.conversations.create({ id: 'foco', title: 'Foco com o JoJo', kind: 'reminder' });
-    this.conversations.setStatus(c.id, 'running', `Foco: ${min} min. ${tipo === 'treino' ? 'Treinando junto.' : 'Estudando junto, em silêncio.'}`);
+    const ciclo = plano ? ` Ciclo ${plano.atual} de ${plano.ciclos}.` : '';
+    this.conversations.setStatus(c.id, 'running', `Foco: ${min} min.${ciclo} ${tipo === 'treino' ? 'Treinando junto.' : 'Estudando junto, em silêncio.'}`);
     this._focusAnim(now);
     this.clock.setTimeout(() => this._focusTick(), 60e3);
+    if (plano) return this._fala('focoCiclos', { min, pausa: plano.pausaMin, ciclo: plano.atual, total: plano.ciclos });
     return `Foco de ${min} min. ${tipo === 'treino' ? 'Eu treino aqui do lado e marco as séries.' : 'Eu estudo aqui do lado, quieto.'} Sem Instagram.`;
+  }
+
+  /** Fala de uma categoria do arquivo de falas (fonte única do tom), com variáveis do perfil. */
+  _fala(category, vars = {}) {
+    const p = this.phrases.pick(category, (tone) => ({ ...profileVars(this.personality.get(), tone), ...vars }));
+    return p ? p.text : '';
+  }
+
+  /** Pausa entre dois blocos de um plano de ciclos; o próximo bloco começa sozinho. */
+  _startFocusBreak(f) {
+    const p = f.plano;
+    const br = this.focusBreak = { fim: this.clock.now() + p.pausaMin * 60e3, min: f.min, tipo: f.tipo, plano: { ...p, atual: p.atual + 1 } };
+    this.conversations.setStatus('foco', 'ready', `Pausa de ${p.pausaMin} min. Ciclo ${p.atual} de ${p.ciclos} concluído.`);
+    this.say(this._fala('focoPausa', { min: p.pausaMin, ciclo: p.atual, total: p.ciclos }), 'speech');
+    this.clock.setTimeout(() => {
+      if (this.focusBreak !== br) return;
+      this.focusBreak = null;
+      // Modo Trabalho ou outro foco começaram na pausa: o plano antigo não atropela.
+      if (this.focus || this.work) return;
+      this.startFocus(br.min, br.tipo, br.plano);
+      this.say(this._fala('focoRetoma', { min: br.min, ciclo: br.plano.atual, total: br.plano.ciclos }), 'thought');
+    }, p.pausaMin * 60e3);
+  }
+
+  /** Cancela a pausa de um plano de ciclos. Devolve o texto ou null se não havia pausa. */
+  _cancelFocusBreak() {
+    if (!this.focusBreak) return null;
+    this.focusBreak = null;
+    this.conversations.setStatus('foco', 'idle');
+    return 'Foco encerrado. Sem drama.';
   }
 
   _focusAnim(now) {
@@ -2925,6 +2979,15 @@ export class Companion {
     this._progress('foco', { conta: 'foco', missao: 'foco' });
     this.fireEvent('parabens', { speak: false });
     const n = this.progress.st.contas.foco;
+    if (f.plano) {
+      // Plano de ciclos: pausa e próximo bloco sozinhos; no último, só comemora.
+      if (f.plano.atual < f.plano.ciclos) this._startFocusBreak(f);
+      else {
+        this.conversations.setStatus('foco', 'ready', `${f.plano.ciclos} ciclos concluídos.`);
+        this.say(this._fala('focoCiclosFim', { total: f.plano.ciclos, min: f.min }), 'speech');
+      }
+      return null;
+    }
     this.say(`Bloco concluído${n > 1 ? ` (${n} no total)` : ''}. Pausa de 5 min: água e alongamento. Eu deixo.`, 'speech');
     this.clock.setTimeout(() => {
       if (this.focus) return;

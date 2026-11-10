@@ -1449,6 +1449,46 @@
     "Começou: {titulo}. Vai.",
     "{titulo} agora, {nome}. Já devia estar lá."
    ]
+  },
+  "focoCiclos": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "nod",
+   "lines": [
+    "{total} ciclos de {min} min, pausa de {pausa} entre eles. Ciclo {ciclo} valendo. Eu fico do lado, quieto. Sem Instagram.",
+    "Fechado: {total} blocos de {min} min, {pausa} de pausa. Começa o {ciclo}. Campeão não negocia com o cronômetro.",
+    "Plano de gente séria, {nome}: {total} ciclos de {min} min, pausa de {pausa}. Ciclo {ciclo}, vai."
+   ]
+  },
+  "focoPausa": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "nod",
+   "lines": [
+    "Ciclo {ciclo} de {total} feito. Pausa de {min} min: água, alonga e volta. Eu aviso.",
+    "Bloco {ciclo} de {total} no bolso. {min} min de pausa. Levanta dessa cadeira, {nome}.",
+    "{ciclo} de {total}. Descansa {min} min. Músculo e cérebro crescem na pausa, não no celular."
+   ]
+  },
+  "focoRetoma": {
+   "kind": "thought",
+   "tone": "serio",
+   "reaction": "nod",
+   "lines": [
+    "Pausa acabou. Ciclo {ciclo} de {total}, {min} min.",
+    "De volta. Ciclo {ciclo} de {total}.",
+    "Ciclo {ciclo} de {total}. Bora."
+   ]
+  },
+  "focoCiclosFim": {
+   "kind": "speech",
+   "tone": "serio",
+   "reaction": "happy",
+   "lines": [
+    "{total} ciclos de {min} min. Todos. É assim que se fica melhor que ontem, {nome}.",
+    "Fechou os {total} ciclos. Eu vi. Agora água e comida de verdade.",
+    "{total} de {total}. Disciplina de tubarão. Pode se achar um pouco, eu deixo."
+   ]
   }
  }
 }

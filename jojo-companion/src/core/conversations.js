@@ -147,7 +147,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/config', label: 'Configurações', hint: 'Abre as configurações' },
     { cmd: '/anim', label: 'Animação', hint: 'Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)' },
     { cmd: '/jogo', label: 'Mini-jogo', hint: 'Joga com o JoJo: /jogo, /jogo quiz, /jogo bolhas…' },
-    { cmd: '/foco', label: 'Foco junto', hint: 'Bloco de foco com o JoJo: /foco 25 (ou /foco treino)' },
+    { cmd: '/foco', label: 'Foco junto', hint: 'Bloco de foco com o JoJo: /foco 25, /foco treino, /foco pomodoro (4 ciclos com pausa), /foco 30 x3 pausa 10' },
     { cmd: '/estimulo', label: 'Me dá estímulo', hint: 'Uma animação surpresa' },
     { cmd: '/calma', label: 'Calma', hint: 'Padrão calmante por 2 min (cardume, cores suaves)' },
     { cmd: '/ritmo', label: 'Ritmo', hint: 'Sequência rítmica previsível por 30 s' },
