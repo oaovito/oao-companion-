@@ -1,0 +1,218 @@
+{
+  "scope": "native-input-diagnostic",
+  "inputOnly": true,
+  "publicationAllowed": false,
+  "includesConversation": false,
+  "commit": "d7e9801eb271075e2d9623e1dd6ada0e173651ce",
+  "runId": "42868110149",
+  "steps": {
+    "preflight": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "lint": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "install": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "build": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "build_input": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "installer": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "windows": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "e2e": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "animations": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "performance": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "artifacts": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "updater": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "notes": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    }
+  },
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42868110149",
+  "conclusion": "success",
+  "windows": {
+    "tests": 16,
+    "pass": 16,
+    "fail": 0,
+    "skipped": 0
+  },
+  "e2e": {
+    "tests": 43,
+    "pass": 43,
+    "fail": 0,
+    "skipped": 0
+  },
+  "animations": {
+    "total": 1268,
+    "errors": 0,
+    "cuts": 0,
+    "stopped": 0,
+    "orphaned": 0,
+    "meanFrameMs": 0.4243955585702813
+  },
+  "performance": {
+    "data": "2026-11-10T18:05:07.253Z",
+    "ambiente": "Windows_NT 10.0.26100, Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz x2, Electron 44.9.3",
+    "observacao": "Windows (runner de CI; não equivale a um PC Windows 11 físico). CPU em % de um núcleo somada entre processos; memória = working set somado.",
+    "segundosPorCenario": 20,
+    "resultados": {
+      "ocioso": {
+        "cpuAvg": 4.63,
+        "cpuMax": 5.94,
+        "memMB": 435,
+        "memByTypeMB": {
+          "Browser": 131,
+          "GPU": 58,
+          "Utility": 106,
+          "Tab": 140
+        }
+      },
+      "cursorPerseguindo": {
+        "cpuAvg": 11.6,
+        "cpuMax": 32.3,
+        "memMB": 431,
+        "memByTypeMB": {
+          "Browser": 120,
+          "GPU": 49,
+          "Utility": 93,
+          "Tab": 168
+        }
+      },
+      "modoTrabalho": {
+        "cpuAvg": 3.55,
+        "cpuMax": 6.94,
+        "memMB": 399,
+        "memByTypeMB": {
+          "Browser": 119,
+          "GPU": 41,
+          "Utility": 83,
+          "Tab": 157
+        }
+      },
+      "oculto": {
+        "cpuAvg": 0.74,
+        "cpuMax": 2.44,
+        "memMB": 336,
+        "memByTypeMB": {
+          "Browser": 121,
+          "GPU": 38,
+          "Utility": 78,
+          "Tab": 100
+        }
+      }
+    },
+    "contadores": {
+      "ticks": 1769,
+      "flees": 5,
+      "hides": 1,
+      "clickThroughRepairs": 0
+    }
+  },
+  "scenes": [
+    {
+      "command": "Encena Buff de café",
+      "item": "living_buffCafe",
+      "framesDiffer": true,
+      "sha256": "a6cf6bcd54c7050b520830e2f8436ef5dffa060e2ff9d6f41b6c0a62b109f446"
+    },
+    {
+      "command": "Encena Protagonista do prazo",
+      "item": "living_mainCharacter",
+      "framesDiffer": true,
+      "sha256": "1cb5fbed9f37455248c36f7a9cca5c514d718d0b4290f41501c56691b4553727"
+    },
+    {
+      "command": "Encena Policial",
+      "item": "living_policial",
+      "framesDiffer": true,
+      "sha256": "6cf6aab0f0062fdd07856043e44dfa08daa99736ad4f2de841cfe1f5b435c2d1"
+    }
+  ],
+  "dpi": {
+    "scale": 1.5,
+    "fullscreenThenRecovered": true
+  },
+  "steam": {
+    "installed": true,
+    "unicodeRegistry": true,
+    "helperIgnored": true,
+    "states": [
+      "closed",
+      "open",
+      "closed"
+    ],
+    "differentVolumes": true,
+    "fixtureGameFound": true
+  },
+  "limits": [
+    "Diagnóstico parcial sem conversa, instalador NSIS, portátil, vigia, três binários, atualização ou publicação neste run.",
+    "Steam/DD são fixtures isoladas; escala1.5 não é prova de monitores físicos/DPI misto ou PC da usuária.",
+    "CPU em percentagem de um núcleo; memória working set somado entre processos Electron, sem Ollama inferindo."
+  ],
+  "animationFramesSampled": 121788,
+  "animationReportSha256": "039a526cdbaa5ba4b089af45a8f89f2f9247cac9e0fe56ce6b5876c524c502dc"
+}

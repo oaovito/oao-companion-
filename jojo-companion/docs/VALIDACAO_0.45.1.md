@@ -9,7 +9,35 @@ Requisitos: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md).
 Desenvolvimento: `oaovito/oao-companion-`; distribuição de binários:
 `oaovito/jojo-companion-releases`. `main` permanece controle operacional.
 
-### Último diagnóstico de entrada — fonte 95343cb
+### Diagnóstico Windows concluído — preparado para validação integral
+
+Fonte **d7e9801**, run [42868110149](https://github.com/oaovito/oao-companion-/actions/runs/42868110149):
+**16/16 integrações, 43/43 E2E, zero testes pulados**, e **1.268 animações**
+sem erros, cortes, paradas ou falta de gatilhos. Média de desenho **0,4244 ms**.
+Os três comandos produziram quadros diferentes; imagens atuais inspecionadas
+confirmam a anatomia original restaurada. Steam isolada: Registro Unicode,
+bibliotecas em outra unidade, webhelper ignorado e closed→open→closed.
+Escala de 1,5 entrou/saiu de fullscreen e recuperou o overlay.
+
+| Cenário de 20 s | CPU média (% de um núcleo) | Working set somado Electron |
+| --- | ---: | ---: |
+| Ocioso | 4,63 | 435 MB |
+| Cursor perseguindo | 11,60 | 431 MB |
+| Trabalho | 3,55 | 399 MB |
+| Oculto | 0,74 | 336 MB |
+
+Essas métricas não incluem Ollama inferindo; o runner Windows Server não
+comprova o PC Windows 11 físico, jogos comerciais ou DPI misto real.
+Evidência permanente: [relatório nativo](evidencias/nativo-windows-42868110149.json)
+e [matriz completa](evidencias/animacoes-42868110149.json), com **121.788 quadros** amostrados.
+
+Conversa da fonte `95343cb` aprovada como amostra: **32/32 motor + 12/12 Central**;
+44 falas, 30 respostas brutas e dois baselines lidos pela revisão principal e independente.
+O próximo commit comum inicia os **16 gates integrais do mesmo SHA/run**,
+incluindo nova conversa/revisão antes do build, NSIS, portátil, vigia, atualização,
+artefatos e notas. **0.45.1 ainda não publicada.** Nenhuma release antiga alterada.
+
+### Histórico — fonte 95343cb
 
 No run [42865725982](https://github.com/oaovito/oao-companion-/actions/runs/42865725982),
 o caso de clique transparente passou: alvo correto sob o cursor, captura nativa
