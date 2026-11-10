@@ -70,6 +70,11 @@ test('preferência nova não deriva de outra preferência ou de uma fala inventa
   assert.equal(erroDeCoerencia(input, ungrounded, [{ role: 'user', text: 'Minhas algas marinhas favoritas são nori.' }]), null);
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'It reminds me of your favorite kelp.'), 'preferência pessoal não informada');
   assert.equal(erroDeCoerencia('Which animal did I mention?', 'Your favorite animal is a cat.', [{ role: 'user', text: 'My favorite animal is a cat.' }]), null);
+  const correction = 'Eu disse Aurora, não Alvorada.';
+  const confirmed = 'Sua banda preferida é Aurora.';
+  assert.equal(erroDeCoerencia(correction, confirmed), 'preferência pessoal não informada', 'a correção sozinha não informa a categoria banda');
+  assert.equal(erroDeCoerencia(correction, confirmed, [{ role: 'user', text: 'Minha banda preferida é Aurora.' }]), null, 'o histórico real da usuária fundamenta a categoria durante a correção');
+  assert.equal(erroDeCoerencia(correction, confirmed, [{ role: 'jojo', text: confirmed }]), 'preferência pessoal não informada', 'a resposta do assistente não pode fundamentar a própria preferência');
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Your favorite cat, right?'), null);
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Well, that is interesting. I prefer the open ocean, myself.'), 'preferência da usuária substituída pela do personagem');
   assert.equal(erroDeCoerencia('Minha fruta preferida é manga.', 'Eu prefiro peixe.'), 'preferência da usuária substituída pela do personagem');

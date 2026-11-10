@@ -34,8 +34,14 @@ function winInput() {
     mouse_event: user32.func('void __stdcall mouse_event(uint32 dwFlags, uint32 dx, uint32 dy, uint32 dwData, uintptr_t dwExtraInfo)'),
     keybd_event: user32.func('void __stdcall keybd_event(uint8 bVk, uint8 bScan, uint32 dwFlags, uintptr_t dwExtraInfo)'),
     GetForegroundWindow: user32.func('uintptr_t __stdcall GetForegroundWindow()'),
+    SetWindowPos: user32.func('int __stdcall SetWindowPos(uintptr_t hwnd, uintptr_t insertAfter, int x, int y, int width, int height, uint32 flags)'),
   };
   return input;
+}
+
+function placeClickTargetBehindOverlay({ target, overlay }) {
+  // SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOOWNERZORDER.
+  return !!winInput().SetWindowPos(BigInt(target), BigInt(overlay), 0, 0, 0, 0, 0x0213);
 }
 
 async function moveTo(p, scale) {
@@ -222,6 +228,14 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
     const handles = await app.evaluate((_e, target) => ({ overlay: globalThis.__jojo.overlayHwnd(), target: globalThis.__jojo.targetHwnd(target) }), id);
     const nativeMouse = createNativeMouseDiagnostics(require('koffi'));
     const diagnostics = { phases: [] };
+    // O alvo comum pode ficar atrás de outra janela do runner. Posiciona
+    // SOMENTE a fixture imediatamente abaixo do overlay, sem ativar nada.
+    // Inserir depois de um HWND topmost põe a fixture na mesma banda.
+    diagnostics.setupBefore = nativeMouse(handles);
+    assert.ok(placeClickTargetBehindOverlay(handles), 'fixture posicionada abaixo do overlay sem mover, redimensionar ou ativar');
+    diagnostics.setupAfter = nativeMouse(handles);
+    assert.equal(diagnostics.setupAfter.foreground, diagnostics.setupBefore.foreground, 'posicionar a fixture preserva o foreground');
+    assert.equal(diagnostics.setupAfter.overlay.exStyle, diagnostics.setupBefore.overlay.exStyle, 'setup não altera estilos do overlay');
     await win.evaluate(() => {
       window.__jojoInputEvents = [];
       for (const type of ['focus', 'blur', 'pointerdown', 'pointerup', 'pointercancel', 'gotpointercapture', 'lostpointercapture', 'mousedown', 'mouseup', 'click']) {
@@ -302,7 +316,21 @@ test('Windows: no modo de interação só as regiões interativas capturam o mou
     assert.ok(probe.inside && !probe.overPet && !probe.overUi && probe.alpha === 0 && probe.interaction, `ponto segue transparente após o movimento real: ${JSON.stringify({ transparent, currentBounds, probe })}`);
     assert.equal(probe.capture, false, `renderer liberou a captura no ponto transparente: ${JSON.stringify(probe)}`);
     diagnostics.before = { main: await mainMouse(), native: nativeMouse(handles) };
-    await click(transparent, scale, (phase) => diagnostics.phases.push({ phase, native: nativeMouse(handles) }));
+    assert.equal(diagnostics.before.main.captureOn, false, 'processo principal liberou a captura');
+    assert.equal(diagnostics.before.native.overlay.transparent, true, 'click-through nativo está ativo');
+    assert.equal(diagnostics.before.native.gui?.captureRoot, '0', 'não há captura Win32 remanescente');
+    assert.equal(diagnostics.before.native.foreground, handles.overlay, 'overlay mantém o foco antes do clique transparente');
+    assert.equal(diagnostics.before.native.hitRoot, handles.target, `a fixture está exposta sob o ponto transparente: ${JSON.stringify(diagnostics.before)}`);
+    await click(transparent, scale, (phase) => {
+      const native = nativeMouse(handles);
+      diagnostics.phases.push({ phase, native });
+      if (phase === 'beforeDown') {
+        assert.equal(native.hitRoot, handles.target, `a fixture segue sob o cursor imediatamente antes de LEFTDOWN: ${JSON.stringify(native)}`);
+        assert.equal(native.overlay.transparent, true, 'click-through segue ativo imediatamente antes de LEFTDOWN');
+        assert.equal(native.gui?.captureRoot, '0', 'LEFTDOWN não é redirecionado por captura Win32');
+        assert.equal(native.foreground, handles.overlay, 'preparar o clique preserva o foco no overlay');
+      }
+    });
     await sleep(300);
     diagnostics.after = { main: await mainMouse(), native: nativeMouse(handles), overlayEvents: await win.evaluate(() => window.__jojoInputEvents), targetEvents: await app.evaluate(({ BrowserWindow }, target) => BrowserWindow.fromId(target).webContents.executeJavaScript('window.__jojoInputEvents'), id) };
     const after = (await app.evaluate((_e, i) => globalThis.__jojo.readClicks(i), id)).length;

@@ -1,0 +1,626 @@
+{
+  "scope": "native-input-diagnostic",
+  "inputOnly": true,
+  "publicationAllowed": false,
+  "includesConversation": false,
+  "commit": "3b54a94d7e3dfce7cb4b340207f9aad35210a595",
+  "runId": "42863401910",
+  "steps": {
+    "preflight": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "lint": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "install": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "build": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "build_input": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "installer": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "windows": {
+      "outputs": {},
+      "outcome": "failure",
+      "conclusion": "failure"
+    },
+    "e2e": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "animations": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "performance": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "artifacts": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "updater": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "notes": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    }
+  },
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42863401910",
+  "conclusion": "failure",
+  "integration": {
+    "passed": 15,
+    "failed": 1,
+    "skipped": 0,
+    "total": 16
+  },
+  "mouseDiagnostic": {
+    "scale": 1,
+    "transparent": {
+      "x": 594,
+      "y": 419
+    },
+    "currentBounds": {
+      "x": 586,
+      "y": 411,
+      "width": 438,
+      "height": 304
+    },
+    "probe": {
+      "inside": true,
+      "overPet": false,
+      "overUi": false,
+      "alpha": 0,
+      "interaction": true,
+      "capture": false,
+      "target": "stage"
+    },
+    "before": 0,
+    "after": 0,
+    "diagnostics": {
+      "phases": [
+        {
+          "phase": "beforeDown",
+          "native": {
+            "cursor": {
+              "x": 594,
+              "y": 419
+            },
+            "hit": "197004",
+            "hitRoot": "197004",
+            "foreground": "393598",
+            "leftDown": false,
+            "overlay": {
+              "hwnd": "393598",
+              "exStyle": "0x2800a8",
+              "transparent": true,
+              "layered": true,
+              "rect": {
+                "left": 586,
+                "top": 411,
+                "right": 1024,
+                "bottom": 715
+              },
+              "client": {
+                "x": 586,
+                "y": 411,
+                "width": 438,
+                "height": 304
+              }
+            },
+            "target": {
+              "hwnd": "393748",
+              "exStyle": "0x200100",
+              "transparent": false,
+              "layered": false,
+              "rect": {
+                "left": -8,
+                "top": 0,
+                "right": 1032,
+                "bottom": 728
+              },
+              "client": {
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 720
+              }
+            },
+            "gui": {
+              "thread": 5252,
+              "active": "393598",
+              "focus": "393598",
+              "capture": "0",
+              "captureRoot": "0"
+            }
+          }
+        },
+        {
+          "phase": "pressed",
+          "native": {
+            "cursor": {
+              "x": 594,
+              "y": 419
+            },
+            "hit": "197004",
+            "hitRoot": "197004",
+            "foreground": "197004",
+            "leftDown": true,
+            "overlay": {
+              "hwnd": "393598",
+              "exStyle": "0x82800a8",
+              "transparent": true,
+              "layered": true,
+              "rect": {
+                "left": 586,
+                "top": 525,
+                "right": 969,
+                "bottom": 715
+              },
+              "client": {
+                "x": 586,
+                "y": 525,
+                "width": 383,
+                "height": 190
+              }
+            },
+            "target": {
+              "hwnd": "393748",
+              "exStyle": "0x200100",
+              "transparent": false,
+              "layered": false,
+              "rect": {
+                "left": -8,
+                "top": 0,
+                "right": 1032,
+                "bottom": 728
+              },
+              "client": {
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 720
+              }
+            },
+            "gui": {
+              "thread": 5252,
+              "active": "0",
+              "focus": "0",
+              "capture": "0",
+              "captureRoot": "0"
+            }
+          }
+        },
+        {
+          "phase": "released",
+          "native": {
+            "cursor": {
+              "x": 594,
+              "y": 419
+            },
+            "hit": "197004",
+            "hitRoot": "197004",
+            "foreground": "197004",
+            "leftDown": false,
+            "overlay": {
+              "hwnd": "393598",
+              "exStyle": "0x82800a8",
+              "transparent": true,
+              "layered": true,
+              "rect": {
+                "left": 586,
+                "top": 485,
+                "right": 969,
+                "bottom": 715
+              },
+              "client": {
+                "x": 586,
+                "y": 485,
+                "width": 383,
+                "height": 230
+              }
+            },
+            "target": {
+              "hwnd": "393748",
+              "exStyle": "0x200100",
+              "transparent": false,
+              "layered": false,
+              "rect": {
+                "left": -8,
+                "top": 0,
+                "right": 1032,
+                "bottom": 728
+              },
+              "client": {
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 720
+              }
+            },
+            "gui": {
+              "thread": 5252,
+              "active": "0",
+              "focus": "0",
+              "capture": "0",
+              "captureRoot": "0"
+            }
+          }
+        }
+      ],
+      "afterButton": {
+        "main": {
+          "mode": "interactive",
+          "captureOn": true,
+          "companionCapture": true,
+          "interaction": true,
+          "windows": [
+            {
+              "id": 2,
+              "target": true,
+              "title": "JoJo test target",
+              "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 720
+              },
+              "visible": true,
+              "focused": false,
+              "focusable": true,
+              "top": false
+            },
+            {
+              "id": 1,
+              "target": false,
+              "title": "JoJo",
+              "bounds": {
+                "x": 586,
+                "y": 411,
+                "width": 438,
+                "height": 304
+              },
+              "visible": true,
+              "focused": true,
+              "focusable": true,
+              "top": true
+            }
+          ]
+        },
+        "native": {
+          "cursor": {
+            "x": 729,
+            "y": 511
+          },
+          "hit": "524664",
+          "hitRoot": "393598",
+          "foreground": "393598",
+          "leftDown": false,
+          "overlay": {
+            "hwnd": "393598",
+            "exStyle": "0x200088",
+            "transparent": false,
+            "layered": false,
+            "rect": {
+              "left": 586,
+              "top": 411,
+              "right": 1024,
+              "bottom": 715
+            },
+            "client": {
+              "x": 586,
+              "y": 411,
+              "width": 438,
+              "height": 304
+            }
+          },
+          "target": {
+            "hwnd": "393748",
+            "exStyle": "0x200100",
+            "transparent": false,
+            "layered": false,
+            "rect": {
+              "left": -8,
+              "top": 0,
+              "right": 1032,
+              "bottom": 728
+            },
+            "client": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 720
+            }
+          },
+          "gui": {
+            "thread": 5252,
+            "active": "393598",
+            "focus": "393598",
+            "capture": "0",
+            "captureRoot": "0"
+          }
+        }
+      },
+      "before": {
+        "main": {
+          "mode": "interactive",
+          "captureOn": false,
+          "companionCapture": false,
+          "interaction": true,
+          "windows": [
+            {
+              "id": 2,
+              "target": true,
+              "title": "JoJo test target",
+              "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 720
+              },
+              "visible": true,
+              "focused": false,
+              "focusable": true,
+              "top": false
+            },
+            {
+              "id": 1,
+              "target": false,
+              "title": "JoJo",
+              "bounds": {
+                "x": 586,
+                "y": 411,
+                "width": 438,
+                "height": 304
+              },
+              "visible": true,
+              "focused": true,
+              "focusable": true,
+              "top": true
+            }
+          ]
+        },
+        "native": {
+          "cursor": {
+            "x": 594,
+            "y": 419
+          },
+          "hit": "197004",
+          "hitRoot": "197004",
+          "foreground": "393598",
+          "leftDown": false,
+          "overlay": {
+            "hwnd": "393598",
+            "exStyle": "0x2800a8",
+            "transparent": true,
+            "layered": true,
+            "rect": {
+              "left": 586,
+              "top": 411,
+              "right": 1024,
+              "bottom": 715
+            },
+            "client": {
+              "x": 586,
+              "y": 411,
+              "width": 438,
+              "height": 304
+            }
+          },
+          "target": {
+            "hwnd": "393748",
+            "exStyle": "0x200100",
+            "transparent": false,
+            "layered": false,
+            "rect": {
+              "left": -8,
+              "top": 0,
+              "right": 1032,
+              "bottom": 728
+            },
+            "client": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 720
+            }
+          },
+          "gui": {
+            "thread": 5252,
+            "active": "393598",
+            "focus": "393598",
+            "capture": "0",
+            "captureRoot": "0"
+          }
+        }
+      },
+      "after": {
+        "main": {
+          "mode": "passthrough",
+          "captureOn": false,
+          "companionCapture": false,
+          "interaction": false,
+          "windows": [
+            {
+              "id": 2,
+              "target": true,
+              "title": "JoJo test target",
+              "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 1024,
+                "height": 720
+              },
+              "visible": true,
+              "focused": false,
+              "focusable": true,
+              "top": false
+            },
+            {
+              "id": 1,
+              "target": false,
+              "title": "JoJo",
+              "bounds": {
+                "x": 586,
+                "y": 485,
+                "width": 383,
+                "height": 230
+              },
+              "visible": true,
+              "focused": false,
+              "focusable": false,
+              "top": true
+            }
+          ]
+        },
+        "native": {
+          "cursor": {
+            "x": 594,
+            "y": 419
+          },
+          "hit": "197004",
+          "hitRoot": "197004",
+          "foreground": "197004",
+          "leftDown": false,
+          "overlay": {
+            "hwnd": "393598",
+            "exStyle": "0x82800a8",
+            "transparent": true,
+            "layered": true,
+            "rect": {
+              "left": 586,
+              "top": 485,
+              "right": 969,
+              "bottom": 715
+            },
+            "client": {
+              "x": 586,
+              "y": 485,
+              "width": 383,
+              "height": 230
+            }
+          },
+          "target": {
+            "hwnd": "393748",
+            "exStyle": "0x200100",
+            "transparent": false,
+            "layered": false,
+            "rect": {
+              "left": -8,
+              "top": 0,
+              "right": 1032,
+              "bottom": 728
+            },
+            "client": {
+              "x": 0,
+              "y": 0,
+              "width": 1024,
+              "height": 720
+            }
+          },
+          "gui": {
+            "thread": 5252,
+            "active": "0",
+            "focus": "0",
+            "capture": "0",
+            "captureRoot": "0"
+          }
+        },
+        "overlayEvents": [
+          {
+            "type": "pointerdown",
+            "target": "SPAN",
+            "screenX": 729,
+            "screenY": 511,
+            "buttons": 1
+          },
+          {
+            "type": "mousedown",
+            "target": "SPAN",
+            "screenX": 729,
+            "screenY": 511,
+            "buttons": 1
+          },
+          {
+            "type": "focus",
+            "target": "eat"
+          },
+          {
+            "type": "pointerup",
+            "target": "SPAN",
+            "screenX": 729,
+            "screenY": 511,
+            "buttons": 0
+          },
+          {
+            "type": "mouseup",
+            "target": "SPAN",
+            "screenX": 729,
+            "screenY": 511,
+            "buttons": 0
+          },
+          {
+            "type": "click",
+            "target": "SPAN",
+            "screenX": 729,
+            "screenY": 511,
+            "buttons": 0
+          },
+          {
+            "type": "blur",
+            "target": "eat"
+          }
+        ],
+        "targetEvents": []
+      }
+    }
+  },
+  "cause": "Antes do clique, o HWND exposto197004 era diferente do alvo393748 e do overlay393598. Main e renderer tinham captura desativada, WS_EX_TRANSPARENT estava ativo e a captura Win32 era zero. Após pressionar,197004 ficou em foreground; o alvo não recebeu eventos. A pré-condição de janela de destino exposta estava ausente no teste.",
+  "nextValidation": "Preparar somente a ordem da fixture, sem mudar captura/foco do produto; exigir HWND do alvo sob o ponto antes do único clique real. Integração ainda precisa passar; E2E, auditoria e medição não executaram."
+}

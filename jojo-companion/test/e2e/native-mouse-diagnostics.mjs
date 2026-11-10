@@ -19,6 +19,8 @@ export function createNativeMouseDiagnostics(koffi) {
     client: user32.func('int __stdcall GetClientRect(uintptr_t hwnd, _Out_ JOJO_INPUT_RECT *rect)'),
     toScreen: user32.func('int __stdcall ClientToScreen(uintptr_t hwnd, _Inout_ JOJO_INPUT_POINT *point)'),
     button: user32.func('int16 __stdcall GetAsyncKeyState(int key)'),
+    className: user32.func('int __stdcall GetClassNameW(uintptr_t hwnd, _Out_ uint16_t *text, int maxCount)'),
+    title: user32.func('int __stdcall GetWindowTextW(uintptr_t hwnd, _Out_ uint16_t *text, int maxCount)'),
   };
   const root = (hwnd) => String(hwnd ? api.ancestor(hwnd, 2) : 0);
   const window = (handle) => {
@@ -34,6 +36,16 @@ export function createNativeMouseDiagnostics(koffi) {
     const cursor = {};
     const cursorOk = !!api.cursor(cursor);
     const hit = cursorOk ? api.atPoint(cursor) : 0;
+    const hitRoot = root(hit);
+    let hitWindow = null;
+    if (hitRoot !== '0') {
+      const hwnd = BigInt(hitRoot);
+      const classText = new Uint16Array(256), titleText = new Uint16Array(512), pid = [0];
+      const classLength = api.className(hwnd, classText, classText.length);
+      const titleLength = api.title(hwnd, titleText, titleText.length);
+      api.thread(hwnd, pid);
+      hitWindow = { ...window(hitRoot), className: String.fromCharCode(...classText.slice(0, classLength)), title: String.fromCharCode(...titleText.slice(0, titleLength)), pid: pid[0] };
+    }
     const gui = { cbSize: koffi.sizeof(GUI), flags: 0, hwndActive: 0, hwndFocus: 0, hwndCapture: 0,
       hwndMenuOwner: 0, hwndMoveSize: 0, hwndCaret: 0, rcCaret: { left: 0, top: 0, right: 0, bottom: 0 } };
     // GetCapture() só consulta a thread de quem chama; a captura relevante é
@@ -41,7 +53,7 @@ export function createNativeMouseDiagnostics(koffi) {
     const thread = api.thread(BigInt(overlay), null);
     const guiOk = !!api.gui(thread, gui);
     return {
-      cursor: cursorOk ? cursor : null, hit: String(hit), hitRoot: root(hit), foreground: String(api.foreground()), leftDown: !!(api.button(1) & 0x8000),
+      cursor: cursorOk ? cursor : null, hit: String(hit), hitRoot, hitWindow, foreground: String(api.foreground()), leftDown: !!(api.button(1) & 0x8000),
       overlay: window(overlay), target: window(target),
       gui: guiOk ? { thread, active: String(gui.hwndActive), focus: String(gui.hwndFocus), capture: String(gui.hwndCapture), captureRoot: root(gui.hwndCapture) } : null,
     };

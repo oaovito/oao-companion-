@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "scope": "conversation-diagnostic",
+  "publicationAllowed": false,
+  "commit": "3b54a94d7e3dfce7cb4b340207f9aad35210a595",
+  "runId": "42863402143",
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42863402143",
+  "payloadDigest": "a70dcb692f4b7811e09e7199047abdddc1509e5418e888dcc0f03f6dad053b5b",
+  "payloadDigestVerified": true,
+  "model": "gemma3:4b-it-q4_K_M",
+  "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+  "engine": {
+    "passed": 32,
+    "total": 32
+  },
+  "central": {
+    "completedCases": 4,
+    "collectedRows": 5,
+    "planned": 12,
+    "failedCase": 5,
+    "rendererErrors": [],
+    "warnings": []
+  },
+  "failedInput": "Eu disse verde, não azul.",
+  "deliveredReply": "Verificado, Manu! Verde é a sua cor preferida, sem dúvidas.",
+  "cause": "O teste chamou erroDeCoerencia sem histórico, apesar de a usuária já ter informado sua cor preferida na terceira mensagem. O motor e o ensaio engine usam o histórico anterior à resposta.",
+  "pureReplay": {
+    "withoutHistory": "preferência pessoal não informada",
+    "withPreviousUserHistory": null
+  },
+  "reviewed": {
+    "engineRows": 32,
+    "centralRows": 5,
+    "engineRaw": 21,
+    "centralRaw": 4,
+    "baselines": 2
+  },
+  "nextValidation": "O harness passa um snapshot real de dialogue.history obtido antes do envio. Guardas, 32+12 casos, padrões, modelo e prazos preservados. Sete casos da Central ainda não executaram; novo Windows obrigatório."
+}

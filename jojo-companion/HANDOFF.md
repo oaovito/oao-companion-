@@ -14,7 +14,38 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
-### Estado atual — resultados da fonte b90aab5
+### Diagnósticos concluídos — fonte 3b54a94
+
+No run [42863401910](https://github.com/oaovito/oao-companion-/actions/runs/42863401910),
+a integração concluiu **15/16**, sem testes pulados. O registro Win32 comprovou
+que o overlay estava com `WS_EX_TRANSPARENT`, captura main/renderer falsa e
+captura nativa zero. Antes do clique, o HWND sob o cursor era outra janela,
+diferente da fixture de destino. Essa outra janela ficou em primeiro plano após
+pressionar; a fixture não recebeu eventos. A falha estava na pré-condição de
+ordem das janelas do ensaio, sem evidência de captura indevida pelo aplicativo.
+
+O próximo diagnóstico prepara somente a fixture abaixo do overlay sem ativá-la,
+confere que o foco permaneceu igual e exige o HWND do alvo sob o ponto antes do
+único clique real. Corpo/interface/pixels transparentes e entrega ao alvo seguem
+obrigatórios. Nenhum código de captura do produto foi alterado. Novo Windows
+continua necessário; E2E, auditoria e medição não executaram nesse run.
+
+Conversa [42863402143](https://github.com/oaovito/oao-companion-/actions/runs/42863402143):
+**32/32 motor**. A Central coletou cinco falas e parou na quinta; quatro casos
+concluíram e sete não executaram. A resposta “Verde é a sua cor preferida” era
+fundamentada na terceira mensagem, mas a asserção extra do teste chamou a guarda
+sem histórico. Replay puro confirmou rejeição sem contexto e aprovação com o
+histórico anterior real. O harness agora usa um snapshot de `dialogue.history`
+anterior ao envio, sem fundamentar a resposta em si mesma. A regressão Aurora/
+Alvorada preserva rejeição sem histórico ou só com fala do assistente.
+**34/34 testes de coerência** passaram após o ajuste; a suíte completa de
+**486 testes puros** passou na fonte anterior. Isso não comprova novo Windows.
+
+Próximo commit repete os diagnósticos de conversa e entrada: mesmos 32+12 casos,
+16 integrações, 43 E2E, auditoria e medição. Nenhum modelo, guarda, prazo ou código
+funcional mudou neste ajuste de harness. Os 16 gates integrais continuam pendentes.
+
+### Resultados anteriores — fonte b90aab5
 
 Conversa [42837051036](https://github.com/oaovito/oao-companion-/actions/runs/42837051036):
 **32/32 motor e 12/12 Central**, zero erros do renderer/avisos. As 44 falas,
