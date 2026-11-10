@@ -32,6 +32,7 @@ import { Reminders, parseReminderRequest, parseReminderCommand } from './reminde
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
+import { Workout, parseWorkoutRequest, parseWorkoutCommand } from './workout.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
@@ -1373,6 +1374,9 @@ export class Companion {
     if (!safety) {
       const lembrete = this._reminderChat(text);
       if (lembrete) return this._quickReply(conv, lembrete, 'lembretes');
+      // Treino: ficha, treino do dia, cargas e histórico.
+      const treino = parseWorkoutRequest(text, { exercicios: this.workout.exercicios });
+      if (treino) return this._quickReply(conv, this._reminderReply(this.workout.apply(treino, dayKey(new Date()))), 'treino');
       // Rotina diária: montar, ver e limpar respondem; "acordei" só marca a manhã e a conversa segue.
       const rotina = parseRoutineRequest(text);
       if (rotina && rotina.natural) this.routine.apply(rotina, dayKey(new Date()));
@@ -1930,6 +1934,7 @@ export class Companion {
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
+    if (cmd === 'treino') return { text: this._reminderReply(this.workout.apply(parseWorkoutCommand(arg), dayKey(new Date()))), command: cmd, conversationId };
     if (cmd === 'habito') return { text: this._reminderReply(this.habits.apply(parseHabitCommand(arg), dayKey(new Date()))), command: cmd, conversationId };
     if (cmd === 'nota') return { text: this._reminderReply(this.notes.apply(parseNoteCommand(arg))), command: cmd, conversationId };
     if (cmd === 'lembrete') return { text: this._reminderReply(this.reminders.apply(parseReminderCommand(arg))), command: cmd, conversationId };
@@ -3603,6 +3608,25 @@ export class Companion {
     return this._habits;
   }
 
+  /** Fichas de treino e cargas (salvas junto do progresso). */
+  get workout() {
+    this._workout ||= new Workout({
+      state: this.progress.st.treino,
+      save: (s) => { this.progress.st.treino = s; this.progress.save(this.progress.st); },
+      habits: this.habits,
+    });
+    return this._workout;
+  }
+
+  /** Deixa o treino do dia à vista na Central (junto do lembrete de treino). */
+  _treinoDoDiaCentral(date = new Date()) {
+    const r = this.workout.apply({ tipo: 'hoje' }, dayKey(date));
+    if (!r || !r.itens || r.fala !== 'treinoHoje') return false;
+    const c = this.conversations.create({ id: 'treino-dia', title: `Treino de hoje: ficha ${r.vars.ficha}`, kind: 'reminder' });
+    this.conversations.setStatus(c.id, 'ready', r.itens.join(' · ').slice(0, 300));
+    return true;
+  }
+
   /** Rotina diária: manhã, estudo, treino e sono com horário (salva junto do progresso). */
   get routine() {
     this._routine ||= new Routine({
@@ -3627,6 +3651,7 @@ export class Companion {
     if (item.bloco === 'manha') this.fireEvent('bomDia', { speak: false });
     else if (item.bloco === 'sono') this.fireEvent('boaNoite', { speak: false });
     else this.playCatalog(item.bloco === 'treino' ? 'focoAlongar' : 'focoLerPagina', { source: 'evento', speak: false });
+    if (item.bloco === 'treino') this._treinoDoDiaCentral(date);
     this.routine.markWarned(item.bloco, day);
     return item;
   }
@@ -3729,6 +3754,7 @@ export class Companion {
       if (JSON.stringify(nt) !== JSON.stringify(t)) this.personality.update({ lembreteTreino: nt }, { silent: true });
       if (deliver) {
         this._nag('treinoLembrete', this.clock.now());
+        this._treinoDoDiaCentral(date); // com ficha salva, o treino do dia fica à vista na Central
         return true;
       }
     }
