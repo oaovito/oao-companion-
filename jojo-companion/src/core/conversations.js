@@ -158,6 +158,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/vestir', label: 'Guarda-roupa', hint: 'Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar' },
     { cmd: '/rotina', label: 'Rotina fixa', hint: '/rotina bom dia: texto que ele diz sempre igual' },
     { cmd: '/pausa', label: 'Pausa', hint: 'Pausa/retoma o JoJo na hora' },
+    { cmd: '/lembrete', label: 'Lembretes', hint: 'Água, pausas e remédios: /lembrete (lista), /lembrete agua 60, /lembrete pausa 45, /lembrete remedio Nome 08:00, /lembrete remover Nome' },
   ];
 }
 
@@ -171,7 +172,7 @@ export function parseCommand(text) {
   if (name === '/nova') return 'new';
   if (name === '/config' || name === '/configuracoes') return 'settings';
   if (name === '/anim' || name === '/animacao' || name === '/animação') return 'anim';
-  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/colecao': 'colecao', '/coleção': 'colecao', '/reacao': 'reacao', '/reação': 'reacao', '/meme': 'reacao', '/anime': 'reacao', '/trabalho': 'trabalho', '/trabalhar': 'trabalho', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
+  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/lembrete': 'lembrete', '/lembretes': 'lembrete', '/colecao': 'colecao', '/coleção': 'colecao', '/reacao': 'reacao', '/reação': 'reacao', '/meme': 'reacao', '/anime': 'reacao', '/trabalho': 'trabalho', '/trabalhar': 'trabalho', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
   if (MAP[name]) return MAP[name];
   return 'unknown';
 }

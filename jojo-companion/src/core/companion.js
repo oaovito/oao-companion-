@@ -28,6 +28,7 @@ import { ConversationManager, parseCommand, commandMenu } from './conversations.
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
+import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
@@ -1348,6 +1349,11 @@ export class Companion {
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       if (reply) return { ...this._quickReply(conv, reply.message, 'encenacao'), scene: { status: reply.status, reason: reply.reason || null, queued: !!reply.queued, itemId: reply.itemId } };
     }
+    // Lembretes de água, pausas e remédios pedidos na conversa ("me lembra de tomar X às 8h").
+    if (!safety) {
+      const lembrete = this._reminderChat(text);
+      if (lembrete) return this._quickReply(conv, lembrete, 'lembretes');
+    }
     // Ciência/medicina acadêmica: óculos e dentes de nerd enquanto o assunto durar.
     if (ciencia === 'academico' && this.store.get().cienciaModo && !this.work) {
       const novo = !(this.nerdUntil > this.clock.now());
@@ -1893,6 +1899,7 @@ export class Companion {
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
+    if (cmd === 'lembrete') return { text: this._reminderReply(this.reminders.apply(parseReminderCommand(arg))), command: cmd, conversationId };
     if (cmd === 'estimulo') return { text: this.estimulo() ? 'Toma.' : 'Agora não.', command: cmd, conversationId };
     if (cmd === 'calma') return { text: this.calma(2) ? 'Respira. Dois minutos de calma.' : 'Agora não.', command: cmd, conversationId };
     if (cmd === 'ritmo') return { text: this.ritmo(30) ? 'Um, dois, três, quatro. Segue o ritmo.' : 'Agora não.', command: cmd, conversationId };
@@ -3489,13 +3496,77 @@ export class Companion {
       this.behavior.wakeIfForbidden(this.clock.now()); // 6h: acorda
       this._checkWorkTimer();
       this._musicGroove();
-      this.checkDailyReminder(new Date());
+      // Um lembrete por minuto: refeição/treino primeiro; senão água, pausa ou remédio.
+      if (!this.checkDailyReminder(new Date())) this.checkExtraReminders(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
       this.onRoutineTick?.();
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);
+  }
+
+  /** Lembretes de água, pausas e remédios (estado salvo junto do progresso). */
+  get reminders() {
+    this._reminders ||= new Reminders({
+      state: this.progress.st.lembretes,
+      save: (s) => { this.progress.st.lembretes = s; this.progress.save(this.progress.st); },
+      now: () => this.clock.now(),
+    });
+    return this._reminders;
+  }
+
+  /** Texto na voz dele para o resultado de um pedido de lembrete (a lista leva as linhas de dados). */
+  _reminderReply(r) {
+    if (!r) return null;
+    const texto = this._fala(r.fala, r.vars);
+    return r.itens ? `${texto}\n${r.itens.join('\n')}` : texto;
+  }
+
+  /** Pedido de lembrete na conversa. Devolve a resposta ou null se não era isso. */
+  _reminderChat(text) {
+    const acao = parseReminderRequest(text);
+    return acao ? this._reminderReply(this.reminders.apply(acao)) : null;
+  }
+
+  /**
+   * Água, pausa e remédio: no máximo um por minuto, sempre visual (balão +
+   * animação), nunca em Modo Trabalho, foco, jogo ou tela cheia. Remédio vencido
+   * aparece na Central na hora, mesmo em silêncio, e o balão sai quando puder.
+   */
+  checkExtraReminders(date = new Date()) {
+    const canTalk = this._canNag() && !this.interaction && !this.focus && !this.game;
+    const activeMs = this.activeSince ? this.clock.now() - this.activeSince : 0;
+    for (const item of this.reminders.due(date, { activeMs })) {
+      if (item.tipo === 'remedio') {
+        if (!item.central) {
+          const c = this.conversations.create({ id: 'lembrete-remedio', title: `Lembrete: ${item.nome}`, kind: 'reminder' });
+          this.conversations.setStatus(c.id, 'needsInput', `${item.nome}, horário das ${item.hora}. Responda quando tomar.`);
+          this.reminders.markCentral(item, date);
+        }
+        // Passou da janela sem poder falar: fica só o aviso da Central.
+        if (item.perdido) { this.reminders.mark(item, date); continue; }
+        if (!canTalk) continue;
+        this.hideBubble();
+        const fala = this._fala('remedioLembrete', { remedio: item.nome, hora: item.hora });
+        this.say(fala, 'speech');
+        this.conversations.addMessage('lembrete-remedio', 'jojo', fala);
+        this.fireEvent('lembrete', { speak: false });
+        this.reminders.mark(item, date);
+        return item;
+      }
+      if (!canTalk) continue;
+      this.hideBubble();
+      this.say(this._fala(item.tipo === 'agua' ? 'aguaLembrete' : 'pausaLembrete', { min: item.min }), 'speech');
+      if (item.tipo === 'agua') this.playCatalog('focoBeberAgua', { source: 'evento', speak: false });
+      else {
+        this.lastPauseHint = this.clock.now(); // o aviso de 90 min não repete em seguida
+        this.fireEvent('pausa', { speak: false });
+      }
+      this.reminders.mark(item, date);
+      return item;
+    }
+    return null;
   }
 
   /** Lembrete diário sobre comer com atenção, em horário aleatório na faixa configurada. */
