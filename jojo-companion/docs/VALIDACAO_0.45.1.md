@@ -1,8 +1,64 @@
-# Validação JoJo Companion 0.45.1 — rascunho privado
+# Validação JoJo Companion 0.45.1 — publicada em 10/11/2026
 
-**Ainda não publicada.** Retomada em 10/11/2026, a fonte é a branch privada
+## Validação integral e publicação
+
+Fonte e tag privada `v0.45.1`: **eedac8f6e330d2e072ac20fd668cc1bb529becba**
+(`codex/living-companion`). Run
+[42895990176](https://github.com/oaovito/oao-companion-/actions/runs/42895990176),
+tentativa 1, runner `github-hosted` Windows x64 (10.0.26100), Node 22.23.4.
+Relatório concluído às 21:06:03 UTC; release pública às 21:06:32 UTC.
+
+| Gate | Resultado |
+| --- | --- |
+| preflight, lint, install | aprovados |
+| unit | 486/486, zero pulados |
+| conversation | 32 motor + 12 Central, modelo `68ceab7e…c38df7`, revisão aprovada |
+| build, portable, presence | aprovados |
+| installer | NSIS instalado; worker Steam empacotado validado (1 fixture, 2 bibliotecas, `closed`) |
+| windows | 16/16 integrações |
+| e2e | 43/43 |
+| animations | 1.268, zero erros, cortes, paradas ou órfãs |
+| performance | ocioso 4,80 %, cursor 11,05 %, trabalho 3,21 % de um núcleo |
+| artifacts, updater, notes | aprovados |
+| performance-gpu, web-search (opcionais) | aprovados |
+
+Arquivos publicados em
+[v0.45.1](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.45.1),
+iguais em tamanho e SHA-256 ao relatório e à API pública `/releases/latest`:
+
+| Arquivo | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `JoJoCompanion.exe` | 102404679 | `0e9f24ce406aa2363786150c6dc44768117d48062f891cd809b5648152311194` |
+| `JoJoCompanion-Setup-0.45.1.exe` | 111920806 | `8956c28a4924444e5b59a6eddde12fd5e3279de868b7a5ecd95ee83c99330d72` |
+| `JoJoCompanion-0.45.1-win-x64.zip` | 142951468 | `8d76a39781e50dedebb07b9ce0ef1875e6d5308a4a79e40df7afdcafcd02b597` |
+
+Evidência permanente: [relatório](evidencias/windows-42895990176.json),
+[44 falas](evidencias/conversa-windows-42895990176.json) (digest `a6a90ed1…6771ff`) e
+[revisão](evidencias/revisao-semantica-42895990176.json). A revisão foi lida e
+registrada pelo Claude Code, em continuidade à sessão do Codex interrompida por
+limite de uso; o campo `reviewedBy: Codex` é o valor fixo exigido pelo gate e a
+autoria real está na nota. Ressalvas sem bloqueio: detalhe ambiente inventado no
+humor do próprio JoJo (“sol escaldante”), oferta de café repetida, piadas oferecidas
+sem pedido e tom mais cordial que o humor seco do perfil. Nenhum fato pessoal
+inventado, prescrição individual ou falha de acolhimento/crise.
+
+Antes disso, no run [42872504850](https://github.com/oaovito/oao-companion-/actions/runs/42872504850)
+(fonte `3a78ce8`): a tentativa 1 expirou sem revisão registrada e a tentativa 2
+reprovou na Central porque a guarda de personagem descartou uma fala com tom de
+assistente e o ensaio exigia `intent: ia`. O commit `eedac8f` ajustou somente o
+harness `test/e2e/conversation-real.windows.mjs`; nenhum código do produto mudou.
+No run aprovado a guarda não foi acionada.
+
+Limites: runner Windows Server não comprova o PC Windows 11 físico da Emanuele,
+jogos comerciais, DPI misto ou a troca real pelo atualizador nesse computador.
+Cota de artefatos do Actions esgotada: zero artefatos retidos. Releases
+anteriores não foram alteradas. As seções abaixo são o histórico dos diagnósticos.
+
+## Histórico dos diagnósticos anteriores à publicação
+
+Retomada em 10/11/2026, a fonte é a branch privada
 `codex/living-companion`, cada ensaio corresponde ao commit indicado na sua evidência.
-A release pública vigente é 0.45.0. Nenhum diagnóstico parcial abaixo aprova
+Nenhum diagnóstico parcial abaixo aprova
 automaticamente o pipeline integral da candidata ou o computador da Emanuele.
 
 Requisitos: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md).

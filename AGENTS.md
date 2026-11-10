@@ -1,5 +1,14 @@
 # JoJo Companion — instruções permanentes do Codex
 
+## Entrega atual — 0.45.1 publicada em 10/11/2026
+
+Tag/fonte **eedac8f6e330d2e072ac20fd668cc1bb529becba**, `codex/living-companion`.
+Actions **42895990176** aprovou os 16 gates e publicou a v0.45.1; downloads e
+digests conferidos na API pública. 0.45.1 e anteriores são imutáveis: não repetir
+build/publicação. A seção “Correção crítica vigente” abaixo continua valendo como
+direção de anatomia; seu trecho sobre candidata é histórico. Detalhes em
+`jojo-companion/HANDOFF.md` e `jojo-companion/docs/VALIDACAO_0.45.1.md`.
+
 ## Correção crítica vigente — 02/11/2026, candidata 0.45.1
 
 O pedido em `jojo-companion/docs/REQUISITOS_CORRECOES_0.45.1.md` REVOGA a direção

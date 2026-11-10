@@ -1,6 +1,25 @@
 # HANDOFF — JoJo Companion
 
-## Missão ativa — correções críticas 0.45.1 (ainda não publicada)
+## Entrega atual — 0.45.1 publicada em 10/11/2026
+
+Tag/fonte **eedac8f6e330d2e072ac20fd668cc1bb529becba**, branch `codex/living-companion`.
+Run [42895990176](https://github.com/oaovito/oao-companion-/actions/runs/42895990176)
+aprovou os 16 gates no mesmo job e publicou
+[v0.45.1](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.45.1):
+486 unitários, conversa real 32 motor + 12 Central com revisão das 44 falas,
+build, NSIS, portátil, vigia, 16 integrações, 43 E2E, 1.268 animações, desempenho,
+artefatos, atualizador e notas; GPU e pesquisa web (opcionais) também passaram.
+API pública `/releases/latest` conferida sem o token de publicação: v0.45.1 com os
+três arquivos e digests iguais ao relatório. Releases anteriores intactas.
+Detalhes, hashes e limites em [docs/VALIDACAO_0.45.1.md](docs/VALIDACAO_0.45.1.md).
+
+Pendências reais: atualização não observada no PC físico da Emanuele; cota de
+artefatos do Actions esgotada (zero artefatos retidos, evidência na pasta
+`docs/evidencias`); o ensaio do motor (32 casos) ainda exige `intent: ia` e pode
+reprovar por variação do modelo; `main` (controle horário) ainda registra 0.45.0.
+Não repetir build/publicação desta versão. As seções abaixo são históricas.
+
+## Missão anterior — correções críticas 0.45.1 (histórico até a publicação)
 
 O novo pedido revogou a anatomia de nadadeiras/cauda: restaurar o rig histórico
 com pernas, sem cauda; proibir mudanças futuras de conceito sem pedido explícito.

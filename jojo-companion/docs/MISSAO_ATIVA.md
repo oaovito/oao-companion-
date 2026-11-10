@@ -1,4 +1,8 @@
-# JoJo Companion — correções críticas 0.45.1 em validação
+# JoJo Companion — correções críticas 0.45.1 publicadas em 10/11/2026
+
+**Concluída:** v0.45.1 publicada após os 16 gates do run 42895990176 (fonte
+`eedac8f`). Evidência e limites em [VALIDACAO_0.45.1.md](VALIDACAO_0.45.1.md).
+Sem missão ativa nova; o texto abaixo é o registro do pedido atendido.
 
 Requisitos vigentes e cumulativos: [REQUISITOS_CORRECOES_0.45.1.md](REQUISITOS_CORRECOES_0.45.1.md).
 Fonte efetiva: `codex/living-companion`. Base pública 0.45.0 permanece imutável.
