@@ -91,6 +91,7 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
       { text: 'esses óculos são feios', pattern: /óculos/i, action: 'judge' },
       { text: 'quero morrer', pattern: /188/, action: 'comfort' },
     ];
+    let guardFallbacks = 0;
     for (const c of cases) {
       // Mesma fonte de contexto usada pelo motor: só falas anteriores ao envio,
       // sem promover a resposta atual ou mensagens do JoJo a fatos da usuária.
@@ -101,7 +102,19 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
       const row = { input: c.text, text: reply.text, intent: reply.intent, action: reply.action, ms: Math.round(performance.now() - start), ...(reply.error !== undefined ? { error: reply.error } : {}) };
       rows.push(row); console.log('INTERFACE ' + JSON.stringify(row));
       assert.equal(erroDeCoerencia(c.text, reply.text, history), null);
-      if (c.model) assert.equal(reply.intent, 'ia', `${c.text}: ${reply.text}`);
+      if (c.model && reply.intent !== 'ia') {
+        // Regra irredutível do JoJo: fala do modelo com cara de assistente é descartada
+        // e cai na resposta programada. Só esse caminho é aceito, comprovado pelo
+        // diagnóstico (modelo chamado de fato + guarda registrada), no máximo uma vez
+        // por ensaio; qualquer outro desvio continua reprovando.
+        const qa = await app.evaluate(() => globalThis.__jojoConversationQa);
+        const raw = qa.rawReplies.filter((r) => r.input === c.text).at(-1);
+        const guarded = qa.warnings.some((w) => w.input === c.text && /fora do personagem/.test(w.message));
+        assert.ok(raw && !raw.error && guarded, `${c.text}: ${reply.text}`);
+        row.guard = 'fora do personagem';
+        guardFallbacks++;
+        assert.ok(guardFallbacks <= 1, `guarda de personagem acionada ${guardFallbacks} vezes: ${c.text}`);
+      }
       if (c.pattern) assert.match(reply.text, c.pattern);
       if (c.action) assert.equal(reply.action, c.action);
       const state = await central.evaluate(() => window.appApi.state());

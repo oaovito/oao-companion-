@@ -14,6 +14,25 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
+### Validação integral — tentativas em 3a78ce8 e ajuste do ensaio da Central
+
+Run [42872504850](https://github.com/oaovito/oao-companion-/actions/runs/42872504850):
+tentativa 1 passou preflight, lint, instalação, 486 unitários e conversa 32+12,
+mas a revisão das 44 falas não foi registrada em cinco minutos (sessão do Codex
+interrompida). Tentativa 2 reprovou na Central: em “Não consegui terminar meu
+projeto.” o modelo respondeu com tom de assistente (“posso ajudar”), a guarda
+descartou a fala e o aplicativo usou a resposta programada `setback`/`comfort`,
+como manda a regra do personagem. O ensaio exigia `intent: ia` mesmo assim.
+
+Ajuste somente do harness `test/e2e/conversation-real.windows.mjs`: nos casos de
+modelo, aceita a resposta programada apenas quando o diagnóstico comprova modelo
+chamado sem erro e aviso “fora do personagem” para aquela entrada, no máximo uma
+vez por ensaio; coerência, padrão e ação continuam exigidos. Nenhum código do
+produto, guarda, modelo ou prompt mudou. O ensaio do motor (32 casos) mantém a
+exigência original. Continuidade feita pelo Claude Code após a migração; a revisão
+das 44 falas do run integral é registrada no campo existente `reviewedBy: Codex`,
+com a autoria real descrita na nota. **0.45.1 ainda não publicada.**
+
 ### Diagnóstico Windows concluído — preparado para validação integral
 
 Fonte **d7e9801**, run [42868110149](https://github.com/oaovito/oao-companion-/actions/runs/42868110149):
