@@ -14,7 +14,39 @@ exigir nome fixo de subdiretório. Não confundir implementação com gates apro
 Última release pública continua 0.45.0; não alterá-la ou publicar sem todos os gates.
 O estado de entrega concluída nas seções abaixo descreve a versão anterior.
 
-### Diagnósticos concluídos — fonte 3b54a94
+### Último diagnóstico de entrada — fonte 95343cb
+
+No run [42865725982](https://github.com/oaovito/oao-companion-/actions/runs/42865725982),
+o caso de clique transparente passou: alvo correto sob o cursor, captura nativa
+zero, `WS_EX_TRANSPARENT` e entrega de um único clique real comprovados.
+A integração terminou **15/16**, sem testes pulados, pela falha do caso9:
+o overlay continuou visível. O caso10 de fullscreen durante interação passou.
+A causa do caso9 ainda não está demonstrada: faltavam foreground Win32 real,
+geometria física da fixture e última amostra. Não atribuir isso ao detector.
+
+O próximo diagnóstico corrige somente essa preparação de teste: expõe a fixture
+sem ativar outras janelas, ativa-a com um único clique real e exige foreground
+correto/cobertura do monitor antes de observar o aplicativo. Mantém os4500ms,
+a amostra real e a exigência de ocultação e reexibição. Sem alteração funcional,
+sem pedido de refresh ao detector e sem repetir o ensaio de conversa ainda ativo.
+E2E, auditoria e medição seguem sem execução nesse diagnóstico incompleto.
+
+Conversa [42865726035](https://github.com/oaovito/oao-companion-/actions/runs/42865726035)
+concluiu **32/32 motor e 12/12 Central** com o histórico correto na validação.
+Zero erros do renderer/avisos. As44falas,30respostas brutas e2baselines foram
+lidos e aprovados para esta amostra por revisão principal e independente, com
+ressalvas sobre humor próprio ambíguo e simplificação de exemplo hipotético.
+Nenhum fato pessoal inventado ou prescrição individual foi identificado. O próximo
+commit de diagnóstico altera somente testes/documentação/workflow, sem repetir
+esta conversa. O run integral final exigirá nova leitura das suas próprias44falas.
+
+No modo parcial `input-only`, E2E, auditoria e desempenho passarão a coletar seus
+resultados mesmo após outra suíte falhar, desde que o build esteja aprovado e
+não haja cancelamento. Cada falha continua reprovando o job; modo normal e
+publicador integral preservam a sequência/gates. Isso evita ocultar falhas
+independentes atrás do primeiro teste, sem aprovar uma execução incompleta.
+
+### Diagnósticos anteriores — fonte 3b54a94
 
 No run [42863401910](https://github.com/oaovito/oao-companion-/actions/runs/42863401910),
 a integração concluiu **15/16**, sem testes pulados. O registro Win32 comprovou

@@ -1,8 +1,12 @@
 // Observação user32 apenas: não muda foco, captura, estilos nem posição.
+const diagnosticsByKoffi = new WeakMap();
+
 export function createNativeMouseDiagnostics(koffi) {
+  if (diagnosticsByKoffi.has(koffi)) return diagnosticsByKoffi.get(koffi);
   const user32 = koffi.load('user32.dll');
   const POINT = koffi.struct('JOJO_INPUT_POINT', { x: 'int32', y: 'int32' });
   const RECT = koffi.struct('JOJO_INPUT_RECT', { left: 'int32', top: 'int32', right: 'int32', bottom: 'int32' });
+  const MONITOR = koffi.struct('JOJO_INPUT_MONITOR', { cbSize: 'uint32', rcMonitor: RECT, rcWork: RECT, dwFlags: 'uint32' });
   const GUI = koffi.struct('JOJO_INPUT_GUI', {
     cbSize: 'uint32', flags: 'uint32', hwndActive: 'uintptr_t', hwndFocus: 'uintptr_t', hwndCapture: 'uintptr_t',
     hwndMenuOwner: 'uintptr_t', hwndMoveSize: 'uintptr_t', hwndCaret: 'uintptr_t', rcCaret: RECT,
@@ -21,6 +25,8 @@ export function createNativeMouseDiagnostics(koffi) {
     button: user32.func('int16 __stdcall GetAsyncKeyState(int key)'),
     className: user32.func('int __stdcall GetClassNameW(uintptr_t hwnd, _Out_ uint16_t *text, int maxCount)'),
     title: user32.func('int __stdcall GetWindowTextW(uintptr_t hwnd, _Out_ uint16_t *text, int maxCount)'),
+    monitor: user32.func('uintptr_t __stdcall MonitorFromWindow(uintptr_t hwnd, uint32 flags)'),
+    monitorInfo: user32.func('int __stdcall GetMonitorInfoW(uintptr_t monitor, _Inout_ JOJO_INPUT_MONITOR *info)'),
   };
   const root = (hwnd) => String(hwnd ? api.ancestor(hwnd, 2) : 0);
   const window = (handle) => {
@@ -29,10 +35,12 @@ export function createNativeMouseDiagnostics(koffi) {
     const rect = {}, client = {}, origin = { x: 0, y: 0 };
     const rectOk = !!api.rect(hwnd, rect);
     const clientOk = !!api.client(hwnd, client) && !!api.toScreen(hwnd, origin);
+    const monitor = { cbSize: koffi.sizeof(MONITOR), rcMonitor: { left: 0, top: 0, right: 0, bottom: 0 }, rcWork: { left: 0, top: 0, right: 0, bottom: 0 }, dwFlags: 0 };
+    const monitorOk = !!api.monitorInfo(api.monitor(hwnd, 2), monitor);
     return { hwnd: String(hwnd), exStyle: `0x${exStyle.toString(16)}`, transparent: !!(exStyle & 0x20), layered: !!(exStyle & 0x80000),
-      rect: rectOk ? rect : null, client: clientOk ? { x: origin.x, y: origin.y, width: client.right, height: client.bottom } : null };
+      rect: rectOk ? rect : null, client: clientOk ? { x: origin.x, y: origin.y, width: client.right, height: client.bottom } : null, monitor: monitorOk ? monitor.rcMonitor : null };
   };
-  return ({ overlay, target }) => {
+  const snapshot = ({ overlay, target }) => {
     const cursor = {};
     const cursorOk = !!api.cursor(cursor);
     const hit = cursorOk ? api.atPoint(cursor) : 0;
@@ -58,4 +66,6 @@ export function createNativeMouseDiagnostics(koffi) {
       gui: guiOk ? { thread, active: String(gui.hwndActive), focus: String(gui.hwndFocus), capture: String(gui.hwndCapture), captureRoot: root(gui.hwndCapture) } : null,
     };
   };
+  diagnosticsByKoffi.set(koffi, snapshot);
+  return snapshot;
 }

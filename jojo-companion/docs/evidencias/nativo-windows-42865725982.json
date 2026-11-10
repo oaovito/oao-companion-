@@ -1,0 +1,118 @@
+{
+  "scope": "native-input-diagnostic",
+  "inputOnly": true,
+  "publicationAllowed": false,
+  "includesConversation": false,
+  "commit": "95343cb0a89020b222b5c321fe3ce03c5c6bc4b3",
+  "runId": "42865725982",
+  "steps": {
+    "preflight": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "lint": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "install": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "build": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "build_input": {
+      "outputs": {},
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "installer": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_portable": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "cleanup_presence": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "windows": {
+      "outputs": {},
+      "outcome": "failure",
+      "conclusion": "failure"
+    },
+    "e2e": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "animations": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "performance": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "artifacts": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "updater": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    },
+    "notes": {
+      "outputs": {},
+      "outcome": "skipped",
+      "conclusion": "skipped"
+    }
+  },
+  "url": "https://github.com/oaovito/oao-companion-/actions/runs/42865725982",
+  "conclusion": "failure",
+  "integration": {
+    "passed": 15,
+    "failed": 1,
+    "skipped": 0,
+    "total": 16
+  },
+  "transparentClick": {
+    "passed": true,
+    "before": 0,
+    "after": 1,
+    "foregroundBefore": "655872",
+    "targetHwnd": "786940",
+    "hitRootBefore": "786940",
+    "nativeTransparentBefore": true,
+    "nativeCaptureBefore": "0",
+    "foregroundAfter": "196806"
+  },
+  "failedCase": 9,
+  "failure": "oculto em tela cheia: overlay continuou visível",
+  "cause": "Não comprovada para o caso9: o teste não registrou foreground Win32, geometria física da janela fullscreen nem última amostra do detector. Caso10 fullscreen durante interação passou.",
+  "nextValidation": "A fixture do caso9 será exposta e ativada por um clique real; pré-condições exigem HWND foreground correto e cobertura do monitor. Mesmos4500ms de observação e ocultação/reexibição obrigatórias, sem forçar estado ou amostra do produto. E2E/auditoria/medição ainda não executaram."
+}

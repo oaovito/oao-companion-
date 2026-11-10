@@ -350,8 +350,38 @@ test('Windows: detecção de tela cheia oculta e reexibe o JoJo', async () => {
     const info = await app.evaluate(() => globalThis.__jojo.fullscreenInfo());
     assert.equal(info.available, true, `detector: ${JSON.stringify(info)}`);
     const id = await app.evaluate((_e) => globalThis.__jojo.makeClickTarget({ x: 0, y: 0, width: 400, height: 300 }, { fullscreen: true }));
+    const handles = await app.evaluate((_e, target) => ({ overlay: globalThis.__jojo.overlayHwnd(), target: globalThis.__jojo.targetHwnd(target) }), id);
+    const nativeMouse = createNativeMouseDiagnostics(require('koffi'));
+    const fullscreenState = () => app.evaluate(({ BrowserWindow }, target) => {
+      const w = BrowserWindow.fromId(target), c = globalThis.__jojo.companion;
+      return { target: { fullscreen: w.isFullScreen(), focused: w.isFocused(), visible: w.isVisible(), bounds: w.getBounds(), client: w.getContentBounds() },
+        detector: globalThis.__jojo.fullscreenInfo(), fullscreenIds: c.fullscreenIds, fullscreenHidden: c.fullscreenHidden, overlayVisible: globalThis.__jojo.overlay.win.isVisible() };
+    }, id);
+    const diagnostics = { created: { native: nativeMouse(handles), state: await fullscreenState() } };
+    // focus() pode ser negado pelo Windows enquanto o terminal do runner está
+    // ativo. Expõe só a fixture e ativa-a com um único clique real do usuário.
+    diagnostics.setupBefore = nativeMouse(handles);
+    assert.ok(placeClickTargetBehindOverlay(handles), 'fixture fullscreen exposta sem alterar o overlay');
+    diagnostics.setupAfter = nativeMouse(handles);
+    assert.equal(diagnostics.setupAfter.foreground, diagnostics.setupBefore.foreground, 'posicionar a fixture fullscreen preserva o foreground');
+    const b = await app.evaluate((_e, target) => globalThis.__jojo.targetBounds(target), id);
+    const center = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    const scale = await app.evaluate(() => globalThis.__jojo.primaryScale());
+    await moveTo(center, scale);
+    diagnostics.beforeInput = nativeMouse(handles);
+    assert.equal(diagnostics.beforeInput.hitRoot, handles.target, `clique de ativação atinge a fixture fullscreen: ${JSON.stringify(diagnostics)}`);
+    await click(center, scale);
+    diagnostics.activated = { native: nativeMouse(handles), state: await fullscreenState() };
+    const { rect, monitor } = diagnostics.activated.native.target;
+    console.log(`JoJo fullscreen setup: ${JSON.stringify(diagnostics)}`);
+    assert.equal(diagnostics.activated.native.foreground, handles.target, `fixture fullscreen realmente em primeiro plano: ${JSON.stringify(diagnostics.activated)}`);
+    assert.equal(diagnostics.activated.state.target.fullscreen, true, 'fixture confirmou modo fullscreen');
+    assert.ok(rect && monitor && rect.left <= monitor.left && rect.top <= monitor.top && rect.right >= monitor.right && rect.bottom >= monitor.bottom, `fixture cobre o monitor físico: ${JSON.stringify({ rect, monitor })}`);
     await sleep(4500);
-    assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.win.isVisible()), false, 'oculto em tela cheia');
+    diagnostics.observed = { native: nativeMouse(handles), state: await fullscreenState() };
+    console.log(`JoJo fullscreen observation: ${JSON.stringify(diagnostics.observed)}`);
+    assert.equal(diagnostics.observed.native.foreground, handles.target, `fixture manteve o foreground durante a observação: ${JSON.stringify(diagnostics.observed)}`);
+    assert.equal(diagnostics.observed.state.overlayVisible, false, `oculto em tela cheia: ${JSON.stringify(diagnostics.observed)}`);
     await app.evaluate((_e, i) => globalThis.__jojo.closeTarget(i), id);
     await sleep(4000);
     assert.equal(await app.evaluate(() => globalThis.__jojo.overlay.win.isVisible()), true, 'reexibido');

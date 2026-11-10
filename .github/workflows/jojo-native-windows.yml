@@ -96,6 +96,8 @@ jobs:
           node --input-type=module -e "import fs from 'node:fs'; import { tapTotals } from '../ci/policy.mjs'; console.log('JOJO_NATIVE_WINDOWS:' + JSON.stringify(tapTotals(fs.readFileSync('out/native-diagnostic/windows.tap', 'utf8'), 16)));"
       - name: E2E do aplicativo cenas fullscreen Steam DD agenda tarefas e cuidados
         id: e2e
+        # No diagnóstico de entrada, recolhe gates independentes sem ocultar falhas.
+        if: ${{ !cancelled() && (success() || (env.JOJO_NATIVE_INPUT_ONLY == 'true' && steps.build_input.outcome == 'success')) }}
         timeout-minutes: 8
         run: |
           node test/e2e/run-e2e.mjs | Tee-Object -FilePath 'out/native-diagnostic/e2e.tap'
@@ -103,6 +105,7 @@ jobs:
           node --input-type=module -e "import fs from 'node:fs'; import { tapTotals } from '../ci/policy.mjs'; console.log('JOJO_NATIVE_E2E:' + JSON.stringify(tapTotals(fs.readFileSync('out/native-diagnostic/e2e.tap', 'utf8'), 43)));"
       - name: Auditar catálogo completo e preservar imagens medidas nos logs privados
         id: animations
+        if: ${{ !cancelled() && (success() || (env.JOJO_NATIVE_INPUT_ONLY == 'true' && steps.build_input.outcome == 'success')) }}
         timeout-minutes: 10
         run: |
           npm run audit:animations
@@ -110,6 +113,7 @@ jobs:
           node --input-type=module -e "import fs from 'node:fs'; import path from 'node:path'; const r = JSON.parse(fs.readFileSync(path.join(process.env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json'))); if (r.total < 1268 || r.erros.length || r.fora.length || r.paradas.length || r.semGatilho) throw new Error('Auditoria incompleta ou reprovada'); console.log('JOJO_NATIVE_ANIMATIONS:' + JSON.stringify({ total: r.total, errors: r.erros.length, cuts: r.fora.length, stopped: r.paradas.length, orphaned: r.semGatilho, meanFrameMs: r.mediaMs }));"
       - name: Medir CPU e memória Electron nos quatro cenários existentes
         id: performance
+        if: ${{ !cancelled() && (success() || (env.JOJO_NATIVE_INPUT_ONLY == 'true' && steps.build_input.outcome == 'success')) }}
         timeout-minutes: 3
         run: node scripts/measure.mjs
         env:
