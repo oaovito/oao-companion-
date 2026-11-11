@@ -92,6 +92,7 @@ export class Routine {
     if (this.st.dia === day) return;
     this.st.dia = day;
     this.st.avisados = [];
+    this.st.reforcados = [];
     this.st.manhaFeita = false;
   }
 
@@ -151,6 +152,29 @@ export class Routine {
       if (atraso >= 0 && atraso <= JANELA_AVISO_MIN) out.push({ bloco: id, hora });
     }
     return out;
+  }
+
+  /**
+   * Reforço (só no dia de energia alta): bloco de estudo ou treino já avisado,
+   * ainda não cumprido, 30 a 60 min depois da hora. No máximo um reforço por bloco.
+   */
+  dueAgain(date, day) {
+    this._virar(day);
+    const agora = date.getHours() * 60 + date.getMinutes();
+    const out = [];
+    for (const id of ['estudo', 'treino']) {
+      const hora = this.st.blocos[id];
+      if (!hora || !this.st.avisados.includes(id) || (this.st.reforcados || []).includes(id) || this.feito(id, day)) continue;
+      const atraso = agora - minutos(hora);
+      if (atraso >= 30 && atraso <= JANELA_AVISO_MIN) out.push({ bloco: id, hora });
+    }
+    return out;
+  }
+
+  markReinforced(id, day) {
+    this._virar(day);
+    this.st.reforcados = [...new Set([...(this.st.reforcados || []), id])];
+    this.save(this.st);
   }
 
   markWarned(id, day) {

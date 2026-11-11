@@ -35,6 +35,7 @@ import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js'
 import { Workout, parseWorkoutRequest, parseWorkoutCommand } from './workout.js';
 import { parseDaySummaryRequest, parseDaySummaryCommand, morningLines, nightLines } from './day-summary.js';
 import { shiftDay } from './civil-time.js';
+import { CHECKIN, paceFor, paceFactor, parseCheckinAnswer, parseCheckinCommand, sanitizeCheckin } from './checkin.js';
 import { StudySession, parseStudyRequest, parseStudyCommand, buildQuizPrompt, parseQuiz, fallbackQuiz, buildSummaryPrompt, parseSummary, fallbackSummary } from './study.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
@@ -1366,6 +1367,11 @@ export class Companion {
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       if (reply) return { ...this._quickReply(conv, reply.message, 'encenacao'), scene: { status: reply.status, reason: reply.reason || null, queued: !!reply.queued, itemId: reply.itemId } };
     }
+    // Check-in esperando resposta ("3", "cansada", "animada"): guarda a energia e ajusta o ritmo.
+    if (!safety) {
+      const energia = this._checkinChat(text);
+      if (energia) return this._quickReply(conv, energia, 'checkin');
+    }
     // Estudo: revisão em andamento, material sendo passado, ou pedido novo de revisão/resumo.
     if (!safety) {
       const estudo = await this._studyChat(text);
@@ -1949,6 +1955,11 @@ export class Companion {
       const plano = focusPlan(arg);
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
+    }
+    if (cmd === 'checkin') {
+      const c = parseCheckinCommand(arg);
+      const text = c.tipo === 'perguntar' ? this.askCheckin(new Date()) : c.tipo === 'responder' ? this.setEnergy(c.energia, new Date()) : this._fala('checkinAjuda');
+      return { text, command: cmd, conversationId };
     }
     if (cmd === 'treino') return { text: this._reminderReply(this.workout.apply(parseWorkoutCommand(arg), dayKey(new Date()))), command: cmd, conversationId };
     if (cmd === 'habito') return { text: this._reminderReply(this.habits.apply(parseHabitCommand(arg), dayKey(new Date()))), command: cmd, conversationId };
@@ -3559,7 +3570,7 @@ export class Companion {
       this._checkWorkTimer();
       this._musicGroove();
       // Um lembrete por minuto: refeição/treino primeiro; senão água, pausa ou remédio.
-      if (!this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date()) && !this.checkRoutine(new Date())) this.checkDaySummary(new Date());
+      if (!this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date()) && !this.checkRoutine(new Date()) && !this.checkDaySummary(new Date())) this.checkCheckin(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
@@ -3688,6 +3699,69 @@ export class Companion {
     return tipo;
   }
 
+  /** Estado do check-in do dia (salvo junto do progresso). */
+  get checkin() {
+    this.progress.st.checkin = sanitizeCheckin(this.progress.st.checkin);
+    return this.progress.st.checkin;
+  }
+
+  /** Ritmo das cobranças hoje: 'leve' | 'normal' | 'forte' (pela energia do check-in). */
+  paceToday(date = new Date()) {
+    const c = this.checkin;
+    return c.dia === dayKey(date) ? paceFor(c.energia) : 'normal';
+  }
+
+  /** Pergunta como ela está (balão + atividade na Central) e espera a resposta por 15 min. */
+  askCheckin(date = new Date()) {
+    const c = this.checkin;
+    c.perguntado = dayKey(date);
+    this.progress.save(this.progress.st);
+    this.checkinAte = this.clock.now() + CHECKIN.esperaMs;
+    const fala = this._fala('checkinPergunta');
+    this.hideBubble();
+    this.say(fala, 'speech');
+    const conv = this.conversations.create({ id: 'checkin', title: 'Como você está?', kind: 'reminder' });
+    this.conversations.addMessage(conv.id, 'jojo', fala);
+    this.conversations.setStatus(conv.id, 'needsInput', 'Energia de 1 a 5. Responda quando puder.');
+    return fala;
+  }
+
+  /** Guarda a energia do dia e ajusta o ritmo. Devolve a fala de confirmação. */
+  setEnergy(energia, date = new Date()) {
+    const day = dayKey(date);
+    this.progress.st.checkin = { dia: day, energia, perguntado: day };
+    const pace = paceFor(energia);
+    // O humor do dia já existente muda o ritmo das animações; o check-in só o informa.
+    if (pace !== 'normal') this.progress.st.humorDia = { dia: day, modo: pace === 'leve' ? 'calmo' : 'pilhado' };
+    this.progress.save(this.progress.st);
+    this.checkinAte = 0;
+    if (this.conversations.get('checkin')) this.conversations.setStatus('checkin', 'ready', `Energia ${energia} de 5. Ritmo ${pace}.`);
+    return this._fala(pace === 'leve' ? 'checkinLeve' : pace === 'forte' ? 'checkinForte' : 'checkinNormal', { energia });
+  }
+
+  /** Resposta ao check-in enquanto ele espera (15 min). Texto ou null. */
+  _checkinChat(text) {
+    if (!(this.checkinAte && this.clock.now() < this.checkinAte)) return null;
+    const energia = parseCheckinAnswer(text);
+    return energia ? this.setEnergy(energia, new Date()) : null;
+  }
+
+  /**
+   * Check-in automático: uma vez por dia, entre 9h e 20h, depois de 10 min de app
+   * aberto, só quando pode falar. Nunca em Trabalho, foco ou jogo.
+   */
+  checkCheckin(date = new Date()) {
+    const h = date.getHours();
+    if (h < CHECKIN.horaInicio || h >= CHECKIN.horaFim) return false;
+    if (!(this._canNag() && !this.interaction && !this.focus && !this.game)) return false;
+    if (this.clock.now() - (this.startedAt || 0) < CHECKIN.aposAbrirMs) return false;
+    const c = this.checkin;
+    const day = dayKey(date);
+    if (c.perguntado === day || c.dia === day) return false;
+    this.askCheckin(date);
+    return true;
+  }
+
   /** Sessão de estudo (material e revisão em andamento; só em memória). */
   get study() {
     this._study ||= new StudySession();
@@ -3789,7 +3863,15 @@ export class Companion {
     if (!(this._canNag() && !this.interaction && !this.focus && !this.game)) return null;
     const day = dayKey(date);
     const [item] = this.routine.due(date, day);
-    if (!item) return null;
+    if (!item) {
+      // Dia de energia alta (check-in): um reforço para estudo ou treino ainda não cumprido.
+      const [reforco] = this.paceToday(date) === 'forte' ? this.routine.dueAgain(date, day) : [];
+      if (!reforco) return null;
+      this.hideBubble();
+      this.say(this._fala('rotinaReforco', { bloco: reforco.bloco, hora: reforco.hora }), 'speech');
+      this.routine.markReinforced(reforco.bloco, day);
+      return { ...reforco, reforco: true };
+    }
     this.hideBubble();
     this.say(this._fala(`rotina_${item.bloco}`, { hora: item.hora }), 'speech');
     if (item.bloco === 'manha') this.fireEvent('bomDia', { speak: false });
@@ -3830,7 +3912,8 @@ export class Companion {
   checkExtraReminders(date = new Date()) {
     const canTalk = this._canNag() && !this.interaction && !this.focus && !this.game;
     const activeMs = this.activeSince ? this.clock.now() - this.activeSince : 0;
-    for (const item of this.reminders.due(date, { activeMs })) {
+    // Dia de pouca energia (check-in): água e pausa são cobradas com intervalo maior.
+    for (const item of this.reminders.due(date, { activeMs, fator: paceFactor(this.paceToday(date)) })) {
       if (item.tipo === 'remedio') {
         if (!item.central) {
           const c = this.conversations.create({ id: 'lembrete-remedio', title: `Lembrete: ${item.nome}`, kind: 'reminder' });

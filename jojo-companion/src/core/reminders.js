@@ -183,7 +183,7 @@ export class Reminders {
    * O que venceu agora. `activeMs` = há quanto tempo ela está no PC sem parar.
    * Devolve uma lista em ordem de prioridade: remédio, pausa, água.
    */
-  due(date, { activeMs = 0 } = {}) {
+  due(date, { activeMs = 0, fator = 1 } = {}) {
     const now = this.now();
     const day = dayKey(date);
     const minuto = date.getHours() * 60 + date.getMinutes();
@@ -200,9 +200,11 @@ export class Reminders {
       if (!cfg.ativo) continue;
       // Relógio trocado (reinício com outra base): recomeça a contagem sem disparar.
       if (cfg.ultimo == null || cfg.ultimo > now) { cfg.ultimo = now; this._commit(); continue; }
-      if (now - cfg.ultimo < cfg.intervaloMin * 60e3) continue;
+      // `fator` estica o intervalo no dia de pouca energia (check-in): ele cobra menos.
+      const intervalo = cfg.intervaloMin * 60e3 * (fator >= 1 ? fator : 1);
+      if (now - cfg.ultimo < intervalo) continue;
       if (k === 'agua' && (date.getHours() < AGUA_HORAS[0] || date.getHours() >= AGUA_HORAS[1])) continue;
-      if (k === 'pausa' && activeMs < cfg.intervaloMin * 60e3) continue;
+      if (k === 'pausa' && activeMs < intervalo) continue;
       out.push({ tipo: k, min: cfg.intervaloMin });
     }
     return out;
