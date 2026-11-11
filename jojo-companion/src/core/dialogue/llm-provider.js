@@ -5,7 +5,7 @@
 // O JoJo responde no jeito dele e devolve ação de corpo e comando validados.
 // Puro: `fetch` é injetado.
 import { blocoPesquisa } from './pesquisa.js';
-import { PERSONALITY_DEFAULTS } from '../personality.js';
+import { PERSONALITY_DEFAULTS, personaJoJo } from '../personality.js';
 import { historicoRelevante, pedidoAoApp, correcaoPessoal, termosDaCorrecao, conversaPessoal } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
@@ -48,6 +48,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
   // ultrapassava o contexto curto antes mesmo de entrar o histórico da conversa.
   const custom = profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes ? profile.instrucoes.slice(0, 600) : '';
   return [
+    personaJoJo(profile, { curto: true }),
     `Você é ${nome}, tubarão musculoso com braços e pernas, sem cauda, de recorte de papel, estilo South Park, no desktop da ${serio}.`,
     `REGRA IRREDUTÍVEL: fale como o JoJo: sério, mandão, humor seco e ácido, carinho discreto. O personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
     `Use ${serio} em assuntos sérios e ${brinc} nas brincadeiras. ${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'} Nunca insulte o corpo dela.`,
@@ -77,13 +78,15 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
   const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Speak with the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).`;
   const linhas = tecnico ? [
-    `Reply in ${lingua}. Explain accurately, speech only, no preamble or jokes.`,
+    personaJoJo(profile, { curto: true }),
+    `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
+    personaJoJo(profile),
     'Use literal user facts and preferences; preserve names and corrections. Unknown user details stay unknown. Assistant history is conversation, not user evidence.',
     identidade,
     'Her real-life reports establish what she stated; present additional outcomes as uncertain possibilities. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
-    'Voice: firm, dry humor and discreet affection. Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
+    'Voice: bossy, dry humor, shameless bodybuilder pride and discreet affection; never a generic assistant. Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
     'Ground surroundings in user statements or trusted tools. Your actions here are chat replies.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
@@ -118,6 +121,28 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   return linhas.join('\n');
 }
 
+// Tokens estimados com folga (português com o Gemma dá ~3,5 caracteres por token).
+const tokens = (s) => Math.ceil(String(s || '').length / 3) + 4;
+
+/**
+ * Histórico que cabe no contexto junto com o prompt de personalidade e a resposta.
+ * O Ollama corta o começo quando o pedido passa do contexto, e o começo é a
+ * personalidade: aqui saem as trocas mais antigas, nunca o prompt.
+ */
+export function cabeNoContexto(system, historico, atual, opts = OLLAMA_OPTS.curto) {
+  let livre = (opts.num_ctx || LOCAL_CONTEXT) - (opts.num_predict || 256) - tokens(system.content) - tokens(atual.content) - 32;
+  const out = [];
+  for (let i = historico.length - 1; i >= 0; i--) {
+    const custo = tokens(historico[i].content);
+    if (custo > livre) break;
+    livre -= custo;
+    out.unshift(historico[i]);
+  }
+  // Começa sempre por uma fala dela: resposta solta do JoJo sem a pergunta confunde o modelo.
+  while (out.length && out[0].role !== 'user') out.shift();
+  return out;
+}
+
 // Sinais de que a resposta saiu do personagem (cara de assistente).
 const ASSISTANT = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!)/i;
 
@@ -137,7 +162,9 @@ function spokenText(text, name) {
   const actor = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return String(text)
     .replace(new RegExp(`\\[${actor}(?:\\s+|['’]s\\s+)[^\\]]{1,500}\\]`, 'gi'), '')
-    .replace(new RegExp(`\\*${actor}(?:\\s+|['’]s\\s+)[^*\\n]{1,500}\\*`, 'gi'), '').trim();
+    .replace(new RegExp(`\\*${actor}(?:\\s+|['’]s\\s+)[^*\\n]{1,500}\\*`, 'gi'), '')
+    // Emoji não é do JoJo: ele fala seco, em texto.
+    .replace(/\p{Extended_Pictographic}️?/gu, '').replace(/[ \t]{2,}/g, ' ').replace(/\s+([.,!?])/g, '$1').trim();
 }
 
 export function parseLlmReply(content, { name = 'JoJo' } = {}) {
@@ -308,8 +335,9 @@ export class LlmProvider extends DialogueProvider {
       if (!matching.length && /\b(remember|said|mention|that|lembra|disse|isso)\b/i.test(text)) messages[0].content += '\nPrevious exchange for reference only: ' + JSON.stringify(previous.slice(-2));
       relevant = matching;
     }
-    for (const h of relevant) messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) });
-    messages.push({ role: 'user', content: String(text).slice(0, 500) });
+    const atual = { role: 'user', content: String(text).slice(0, 500) };
+    messages.push(...cabeNoContexto(messages[0], relevant.map((h) => ({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) })), atual, opts));
+    messages.push(atual);
     const ctrl = new AbortController();
     const cancel = () => ctrl.abort();
     if (signal?.aborted) ctrl.abort();
@@ -366,7 +394,7 @@ export class LlmProvider extends DialogueProvider {
         signal: ctrl.signal,
         body: JSON.stringify({
           model: modelo,
-          messages: [{ role: 'system', content: String(system).slice(0, 2000) }, { role: 'user', content: String(user).slice(0, 4000) }],
+          messages: [{ role: 'system', content: String(system).slice(0, 4500) }, { role: 'user', content: String(user).slice(0, 3000) }],
           stream: true,
           ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}),
           ...(json ? { format: 'json' } : {}),

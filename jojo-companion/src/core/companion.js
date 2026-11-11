@@ -1967,7 +1967,7 @@ export class Companion {
       if (!q) text = `${this.catalog.itens.length} animações no catálogo. Use /anim e o nome, ex.: /anim selfie, /anim modo fera, /anim dancinha viral.`;
       else {
         const it = this.findCatalog(q);
-        if (!it) text = 'Não conheço essa. Tenta outro nome.';
+        if (!it) text = 'Essa animação eu não tenho. E olha que eu tenho centenas. Tenta outro nome.';
         else text = this.playCatalog(it.id, { source: 'comando' }) ? `${it.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
       }
       return { text, command: cmd, conversationId };
@@ -2027,7 +2027,7 @@ export class Companion {
         return { text: `Não tem menu, Manu: eu reajo ao que você fala. Ou pede pela cara: "faz uma cara de julgamento".`, command: cmd, conversationId };
       }
       const it = findReacao(packs, arg);
-      if (!it) return { text: 'Não conheço essa reação.', command: cmd, conversationId };
+      if (!it) return { text: 'Essa reação não existe no meu repertório. Ainda. Tenta outra.', command: cmd, conversationId };
       const fala = this.playPack(it.id, { source: 'comando' });
       return { text: fala || 'Agora não.', command: cmd, conversationId };
     }
@@ -2071,15 +2071,15 @@ export class Companion {
     } else if (cmd === 'quiet') {
       const q = !this.store.get().quietMode;
       this.store.update({ quietMode: q });
-      text = q ? 'Modo silencioso ligado.' : 'Modo silencioso desligado.';
+      text = q ? 'Modo silencioso. Eu fico quieto e sem bronca. Sofrendo, mas quieto.' : 'Voltei a falar. Sentiu falta da bronca, eu sei.';
     } else if (cmd === 'new') {
       const c = this.conversations.newChat();
-      return { text: 'A conversa continua aqui. Não apaguei nosso histórico.', command: cmd, conversationId: c.id };
+      return { text: 'A conversa é uma só e continua aqui. Eu não apago nada do que a gente falou.', command: cmd, conversationId: c.id };
     } else if (cmd === 'settings') {
       if (this.onOpenSettings) this.onOpenSettings();
-      text = 'Abrindo as configurações.';
+      text = 'Abri as configurações. Mexe com cuidado, que o tubarão aqui é calibrado.';
     } else {
-      text = 'Comando desconhecido. Use / para ver a lista.';
+      text = 'Esse comando não existe. Digita só / que eu te mostro a lista inteira.';
     }
     return { text, command: cmd, conversationId };
   }
@@ -3881,7 +3881,7 @@ export class Companion {
   /** /tutorial e seus subcomandos. */
   _tutorialCommand(arg) {
     const t = this.tutorial;
-    if (!t) return 'Comando desconhecido. Use / para ver a lista.';
+    if (!t) return 'Esse comando não existe. Digita só / que eu te mostro a lista inteira.';
     const c = parseTutorialCommand(arg);
     // "/tutorial lista" dentro do passo que pede exatamente isso conta como teste feito.
     const cumpre = t.matches({ comando: 'tutorial' }) && c.tipo === 'lista';

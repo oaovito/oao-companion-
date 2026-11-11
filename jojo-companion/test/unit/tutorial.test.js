@@ -232,7 +232,7 @@ test('percurso completo: cada exemplo do tutorial funciona de verdade e faz o pa
     if (p.espera && !p.espera.evento && !p.espera.config) {
       r = await chatAdv(e, p.tente);
       if (p.espera.comando) assert.equal(r.command, p.espera.comando, `${onde}: "${p.tente}"`);
-      assert.doesNotMatch(r.text, /Comando desconhecido/, onde);
+      assert.doesNotMatch(r.text, /comando não existe/, onde);
       e.clock.advance(1300);
       assert.notEqual(`${t.st.funcao}:${t.st.passo}`, antes, `${onde}: o exemplo "${p.tente}" não fez o tutorial avançar (resposta: ${String(r.text).slice(0, 80)})`);
       assert.ok(DATA.textos.acertou.some((a) => conversa(e).at(-1).startsWith(a)), `${onde}: elogio antes do passo seguinte`);

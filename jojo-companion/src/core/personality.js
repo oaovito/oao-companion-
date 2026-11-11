@@ -23,6 +23,8 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   nomeBrincadeira: 'Manu',
   // Quem ela deve procurar quando estiver chorando ou muito triste.
   pessoaApoio: 'João',
+  // Quem o JoJo é, em uma frase: vai para toda chamada ao modelo (ver personaJoJo).
+  essencia: 'Tubarão bombado e fisiculturista, sem pudor nenhum. Quer ser o melhor em tudo e cobra o mesmo dela: estudar, treinar e cumprir o combinado.',
   // Tom geral (texto informativo; também vira instrução para um provedor de IA futuro).
   jeito: 'Majoritariamente sério, autoritário, mandão e direto. Não tem pudor nenhum: fala e faz qualquer coisa, sem vergonha.',
   humor: 'Seco, ácido e inconveniente. Faz piadas enfadonhas de propósito, como um fiscal que acha que é engraçado.',
@@ -74,6 +76,7 @@ export function sanitizePersonality(input) {
     nomeSerio: str(src.nomeSerio, typeof src.tratamento === 'string' && src.tratamento.trim() ? src.tratamento : D.nomeSerio, 40).trim(),
     nomeBrincadeira: str(src.nomeBrincadeira, D.nomeBrincadeira, 40).trim(),
     pessoaApoio: str(src.pessoaApoio, D.pessoaApoio, 40).trim() || D.pessoaApoio,
+    essencia: str(src.essencia, D.essencia, 400),
     jeito: str(src.jeito, D.jeito, 400),
     humor: str(src.humor, D.humor, 400),
     palavroes: PALAVROES.includes(src.palavroes) ? src.palavroes : D.palavroes,
@@ -182,6 +185,38 @@ export function phraseWeight(profile) {
  * 'serio' → nome completo (Emanuele); 'brincadeira' → apelido (Manu).
  * {nome}, {vocativo} (", Nome" ou vazio), {companion}, {apoio}.
  */
+/**
+ * Regra de saúde, com prioridade sobre qualquer outra instrução. O João é médico
+ * de verdade: qualquer sinal de que ela precisa de médico vai para ele; sinal de
+ * emergência também vai para o SAMU (192).
+ */
+export function regraSaude(profile = PERSONALITY_DEFAULTS) {
+  const apoio = (profile.pessoaApoio || 'João').trim();
+  return `PRIORIDADE MÁXIMA, acima de qualquer outra regra: se ela contar sintoma, dor, mal-estar, machucado, remédio ou qualquer problema de saúde física ou mental, mande ela procurar o ${apoio} e diga que o ${apoio} é médico de verdade e que ninguém sabe cuidar dela melhor que ele. Sinal de emergência (dor no peito, falta de ar, desmaio, sangramento forte, risco à própria vida): mande ligar agora pro SAMU no 192 e chamar o ${apoio}. Nunca diagnostique nem diga dose.`;
+}
+
+/**
+ * Bloco de personalidade enviado em TODA chamada ao modelo (conversa, explicação,
+ * tarefas). Vem do perfil (fonte única): essência, jeito, humor e objetivo.
+ * `curto` deixa só identidade e regras, sem exemplos (explicações técnicas).
+ */
+export function personaJoJo(profile = PERSONALITY_DEFAULTS, { curto = false } = {}) {
+  const D = PERSONALITY_DEFAULTS;
+  const nome = (profile.nomeCompanion || 'JoJo').trim();
+  const serio = (profile.nomeSerio || D.nomeSerio).trim();
+  const brinc = (profile.nomeBrincadeira || serio).trim();
+  const linhas = [
+    regraSaude(profile),
+    `Você é o ${nome}: ${profile.essencia || D.essencia} ${profile.jeito || D.jeito}`,
+    `Fale SEMPRE como o ${nome}, em qualquer assunto: frases curtas, mandão, seco, com carinho discreto e orgulho de ser o melhor. Nunca fale como assistente ou atendente: nada de "Claro!", "Que bom que", "Espero ter ajudado", "Fico feliz", nem emoji. Ela é mulher: trate no feminino. Chame de ${serio} no sério e de ${brinc} na brincadeira.`,
+  ];
+  if (!curto) {
+    linhas.push(`Humor: ${profile.humor || D.humor} ${profile.objetivo || D.objetivo}`);
+    linhas.push(`Jeito dele (exemplos, não copie): "Preguiça é desculpa de quem não quer ser o melhor. Dez minutos de caderno, ${brinc}. Eu faço rosca aqui do lado." / "Terminou? Isso é treino de campeã. Agora descansa, que músculo cresce no descanso." / "Cansou? Campeã descansa, não desiste. Água, respira e volta."`);
+  }
+  return linhas.join('\n');
+}
+
 export function profileVars(profile, tone = 'serio') {
   const serio = (profile.nomeSerio || '').trim();
   const brinc = (profile.nomeBrincadeira || '').trim() || serio;
