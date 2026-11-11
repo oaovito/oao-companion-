@@ -38,6 +38,7 @@ import { createCalendarLinkService, readCalendarFeed } from './calendar-link-ser
 import { createLivingService } from './living-service.js';
 import { createSteamService } from './steam-service.js';
 import { createFocusApps } from './focus-apps.js';
+import { createDiscordGuard } from './discord-guard.js';
 import { createNeedsService } from './needs-service.js';
 import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
@@ -409,6 +410,7 @@ function main() {
     let darkestService = null;
     let needsService = null;
     let focusApps = null;
+    let discordGuard = null;
     let livingService = null;
     let steamService = null;
     let abrirCuidados = 0;
@@ -499,6 +501,15 @@ function main() {
       },
       notify: () => { appWin.send('app:update', appState()); settingsWin.send('settings:changed', settingsInfo()); } });
     app.on('before-quit', () => focusApps.close());
+    // Bloqueio do Discord: só existe no Windows e só age com a chave ligada (desligada por padrão).
+    if (IS_WIN) {
+      discordGuard = createDiscordGuard({ userData, root: ROOT, companion, store, log,
+        getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
+        notify: () => settingsWin.send('settings:changed', settingsInfo()) });
+      app.on('before-quit', () => discordGuard.close());
+      discordGuard.apply();
+    }
+    ipcMain.on('settings:discord-extension', (e) => { if (fromSettings(e) && discordGuard?.extensionDir) shell.openPath(discordGuard.extensionDir); });
     livingService = createLivingService({ userData, companion, store, items: readJSON('assets/catalog/living-interactions.json').itens, log,
       refreshContext: () => sampleEnvironment(true), hasAnimation: name => !!assets.animations.animations[name],
       rendererReady: () => overlay.alive && overlay.ready, confirmAnimation: name => overlay.confirmAnimation(name) });
@@ -564,6 +575,7 @@ function main() {
         startFullscreenWatch();
         companion.setFullscreenDisplays(companion.fullscreenIds || []);
       }
+      if (changed.includes('discordBloqueio')) discordGuard?.apply();
       if (['discordCloseOnFocus', 'discordForceClose'].some(k => changed.includes(k))) {
         focusApps.stop(); if (companion.work || companion.focus) focusApps.start();
       }
@@ -591,6 +603,7 @@ function main() {
         autostart: { supported: IS_WIN, packaged: app.isPackaged },
         fullscreen: { available: !!fullscreen?.available, reason: fullscreen?.reason || null },
         focusApps: focusApps?.snapshot() || null,
+        discord: discordGuard?.snapshot() || null,
         foreground: { available: !!fullscreen?.available, platform: process.platform },
         dialogue: dialogue.describe(),
         version: app.getVersion(),

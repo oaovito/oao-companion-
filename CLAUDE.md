@@ -138,6 +138,13 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    detecção do **League of Legends** em primeiro plano (título/executável → sim/não; JoJo fica de mau humor e some).
    Percepção de tela (opcional, desligada por padrão): só a CATEGORIA do app em primeiro plano pelo nome do executável
    (`categoriaApp` no worker). Nunca captura de tela.
+   **Bloqueio do Discord** (opcional, **desligado por padrão**, só liga com confirmação nas Configurações): com a chave
+   ligada, o worker confere os processos e só devolve os nomes Discord/PTB/Canary; o app lê as três chaves de
+   desinstalação do Discord no registro, encerra o processo e roda **somente o desinstalador oficial registrado**
+   (`Update.exe --uninstall`); nunca apaga pasta, nunca toca em conta, outros programas ou arquivos. Abas: extensão
+   própria (Chrome/Edge/Brave, instalação manual) com permissão só para endereços do Discord; para o JoJo saem apenas
+   quantidade de abas e navegador, por canal local. Histórico local visível. Chave desligada: nada disso roda.
+   Detalhes e limites: `jojo-companion/docs/DISCORD.md`.
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
    conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.

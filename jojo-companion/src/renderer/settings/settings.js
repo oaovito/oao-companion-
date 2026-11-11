@@ -45,6 +45,7 @@ function render(i) {
   for (const o of document.querySelectorAll('output[data-for]')) {
     o.textContent = FMT[o.dataset.fmt](s[o.dataset.for]);
   }
+  renderDiscord(i);
   const hk = document.getElementById('hotkeyStatus');
   hk.textContent = i.hotkey.ok
     ? `Atalho ativo: ${prettyHotkey(i.hotkey.accelerator)}. Também disponível pela bandeja.`
@@ -62,6 +63,26 @@ function render(i) {
   if (i.loadIssues && i.loadIssues.length) {
     notice.textContent = `Algumas configurações salvas eram inválidas e foram corrigidas: ${i.loadIssues.join(', ')}.`;
     notice.classList.remove('hidden');
+  }
+}
+
+// ---------------- Bloqueio do Discord: estado, extensão e histórico
+function renderDiscord(i) {
+  const d = i.discord;
+  const box = document.getElementById('discordBlock');
+  box.hidden = !d;
+  if (!d) return;
+  document.getElementById('discordStatus').textContent = d.ativo
+    ? (d.ponte ? 'Ligado. Aplicativo e abas (com a extensão instalada).' : 'Ligado para o aplicativo. A ponte com o navegador não foi registrada; as abas não serão fechadas.')
+    : 'Desligado. Nenhuma detecção e nenhuma ação.';
+  document.getElementById('discordExtension').hidden = !d.ativo || !d.pastaExtensao;
+  const list = document.getElementById('discordHistory');
+  list.textContent = '';
+  const itens = d.historico.length ? d.historico : [{ quando: '', texto: 'Nenhum registro.' }];
+  for (const h of itens) {
+    const li = document.createElement('li');
+    li.textContent = h.quando ? `${h.quando}: ${h.texto}` : h.texto;
+    list.append(li);
   }
 }
 
@@ -130,6 +151,11 @@ form.addEventListener('input', (e) => {
 form.addEventListener('change', (e) => {
   const el = e.target;
   if (!el.name || el.id === 'hotkeyInput' || el.dataset.p) return;
+  // Bloqueio do Discord: só liga depois de mostrar de novo o que ele faz.
+  if (el.name === 'discordBloqueio' && el.checked && !confirm(`${document.getElementById('discordOQueFaz').innerText.trim()}\n\nLigar o bloqueio do Discord?`)) {
+    el.checked = false;
+    return;
+  }
   send({ [el.name]: valueOf(el) });
 });
 
@@ -179,6 +205,7 @@ document.getElementById('reset').addEventListener('click', async () => {
   if (confirm('Restaurar todas as configurações para o padrão?')) render(await api.reset());
 });
 document.getElementById('openFolder').addEventListener('click', () => api.openFolder());
+document.getElementById('discordExtensionFolder').addEventListener('click', () => api.openDiscordExtension());
 document.getElementById('petToggle').addEventListener('click', async () => render(await api.togglePet()));
 api.onChanged(render);
 api.load().then(render);

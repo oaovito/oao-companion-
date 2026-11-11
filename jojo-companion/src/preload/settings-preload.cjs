@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('settingsApi', {
   set: (patch) => ipcRenderer.invoke('settings:set', patch),
   reset: () => ipcRenderer.invoke('settings:reset'),
   openFolder: () => ipcRenderer.send('settings:open-folder'),
+  openDiscordExtension: () => ipcRenderer.send('settings:discord-extension'),
   togglePet: () => ipcRenderer.invoke('settings:pet'),
   setPersonality: (patch) => ipcRenderer.invoke('personality:set', patch),
   resetPersonality: () => ipcRenderer.invoke('personality:reset'),

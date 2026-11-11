@@ -168,6 +168,28 @@
       <label class="check"><input type="checkbox" name="lolBronca"> Ficar de mau humor e sumir quando o League of Legends abrir</label>
     </fieldset>
 
+    <fieldset id="discordBlock">
+      <legend>Bloqueio do Discord</legend>
+      <div id="discordOQueFaz">
+        <p class="hint">Leia antes de ligar. Com esta chave ligada, eu:</p>
+        <ul class="hint">
+          <li>confiro se o Discord (Discord, Discord PTB ou Discord Canary) está aberto ou instalado neste PC;</li>
+          <li>dou uma bronca, encerro o processo e <strong>desinstalo o aplicativo</strong> pelo desinstalador do próprio Discord, o mesmo que o Windows usa em "Aplicativos instalados";</li>
+          <li>no Chrome, no Edge e no Brave, com a minha extensão instalada, fecho <strong>só a aba do Discord</strong>;</li>
+          <li>confirmo o que fiz numa segunda fala e anoto tudo no histórico abaixo, com data e hora.</li>
+        </ul>
+        <p class="hint">Eu não apago pastas na mão e não toco na conta do Discord, em outros programas nem nos seus arquivos. Se o Windows pedir permissão de administrador, o pedido aparece normalmente; se for recusado, eu só encerro o processo e aviso. Com a chave desligada, eu não detecto nem faço nada.</p>
+      </div>
+      <label class="check"><input type="checkbox" name="discordBloqueio"> Ligar o bloqueio do Discord (desligado por padrão)</label>
+      <p class="hint" id="discordStatus"></p>
+      <div id="discordExtension" hidden>
+        <p class="hint">Abas do navegador: instale a extensão uma vez em cada navegador. Abra a página de extensões (chrome://extensions, edge://extensions ou brave://extensions), ligue o "Modo do desenvolvedor", clique em "Carregar sem compactação" e escolha a pasta abaixo. A extensão só enxerga endereços do Discord. Firefox não é atendido.</p>
+        <div class="buttons"><button type="button" id="discordExtensionFolder">Abrir a pasta da extensão</button></div>
+      </div>
+      <p class="hint"><strong>Histórico</strong></p>
+      <ul class="hint" id="discordHistory"></ul>
+    </fieldset>
+
     <fieldset>
       <legend>Modo Trabalho</legend>
       <label class="check"><input type="checkbox" name="trabalhoAtivo"> Ligado (o JoJo medita quieto no canto: sem falas, sons, animações, broncas ou lembretes)</label>

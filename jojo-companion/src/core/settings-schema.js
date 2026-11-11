@@ -46,6 +46,7 @@ export const DEFAULTS = Object.freeze({
   darkestAtivo: true,           // detector local Steam DD1 e XP por tempo ativo
   discordCloseOnFocus: true,   // fechamento normal com conferência dos processos
   discordForceClose: false,    // força somente após opção explícita
+  discordBloqueio: false,      // bloqueio do Discord: encerra, desinstala o app e fecha a aba; só liga por escolha explícita
   darkestSugestao: true,        // sugestão diária em momento permitido
   climaAtivo: true,
   climaCidade: '',              // cidade/estado escolhidos; sem geolocalizacao
@@ -138,7 +139,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
+const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
