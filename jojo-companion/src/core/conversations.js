@@ -152,7 +152,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/calma', label: 'Calma', hint: 'Padrão calmante por 2 min (cardume, cores suaves)' },
     { cmd: '/ritmo', label: 'Ritmo', hint: 'Sequência rítmica previsível por 30 s' },
     { cmd: '/bolhas', label: 'Bolhas', hint: 'Bolhas para estourar com clique, sem placar' },
-    { cmd: '/resumo', label: 'Resumo do dia', hint: 'O que rolou hoje' },
+    { cmd: '/resumo', label: 'Resumo do dia', hint: 'O que rolou hoje. /resumo manha: o que há para fazer; /resumo noite: o que foi feito e o que ficou' },
     { cmd: '/reacao', label: 'Reação', hint: 'Memes, anime, comida, namorado e João: /reacao side eye, /reacao bankai…' },
     { cmd: '/trabalho', label: 'Modo Trabalho', hint: 'JoJo medita quieto no canto: /trabalho, /trabalho 50, /trabalho deep, /trabalho invisivel, /trabalho sair' },
     { cmd: '/vestir', label: 'Guarda-roupa', hint: 'Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar' },

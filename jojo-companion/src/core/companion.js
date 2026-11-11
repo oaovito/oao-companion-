@@ -33,6 +33,8 @@ import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
 import { Workout, parseWorkoutRequest, parseWorkoutCommand } from './workout.js';
+import { parseDaySummaryRequest, parseDaySummaryCommand, morningLines, nightLines } from './day-summary.js';
+import { shiftDay } from './civil-time.js';
 import { StudySession, parseStudyRequest, parseStudyCommand, buildQuizPrompt, parseQuiz, fallbackQuiz, buildSummaryPrompt, parseSummary, fallbackSummary } from './study.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
@@ -1385,6 +1387,9 @@ export class Companion {
     if (!safety) {
       const lembrete = this._reminderChat(text);
       if (lembrete) return this._quickReply(conv, lembrete, 'lembretes');
+      // Resumo do dia pedido na conversa ("meu dia", "fechamento do dia").
+      const resumoDia = parseDaySummaryRequest(text);
+      if (resumoDia) return this._quickReply(conv, this.daySummary(resumoDia.tipo, new Date()), 'resumoDia');
       // Treino: ficha, treino do dia, cargas e histórico.
       const treino = parseWorkoutRequest(text, { exercicios: this.workout.exercicios });
       if (treino) return this._quickReply(conv, this._reminderReply(this.workout.apply(treino, dayKey(new Date()))), 'treino');
@@ -1966,6 +1971,9 @@ export class Companion {
       return { text: 'Bolhas por 30 s. Estoura à vontade, sem placar.', command: cmd, conversationId };
     }
     if (cmd === 'resumo') {
+      // /resumo manha e /resumo noite: plano e fechamento do dia; sem argumento, o resumo de sempre.
+      const parte = parseDaySummaryCommand(arg);
+      if (parte) return { text: this.daySummary(parte.tipo, new Date()), command: cmd, conversationId };
       this.fireEvent('parabens', { speak: false });
       return { text: this.progress.resumoDia(new Date()), command: cmd, conversationId };
     }
@@ -3551,7 +3559,7 @@ export class Companion {
       this._checkWorkTimer();
       this._musicGroove();
       // Um lembrete por minuto: refeição/treino primeiro; senão água, pausa ou remédio.
-      if (!this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date())) this.checkRoutine(new Date());
+      if (!this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date()) && !this.checkRoutine(new Date())) this.checkDaySummary(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
@@ -3617,6 +3625,67 @@ export class Companion {
       save: (s) => { this.progress.st.habitos = s; this.progress.save(this.progress.st); },
     });
     return this._habits;
+  }
+
+  /**
+   * Resumo do dia. 'manha': o que há para fazer (tarefas, o que ficou de ontem,
+   * rotina, treino, remédios). 'noite': o que foi feito (tarefas, hábitos, rotina,
+   * foco). Devolve as linhas de dados; vazio quando não há nada para mostrar.
+   */
+  _daySummaryLines(tipo, date = new Date()) {
+    const day = dayKey(date);
+    let tarefas = null;
+    let ontem = [];
+    if (this.todoChat) {
+      try {
+        const model = this.todoChat.model;
+        const hoje = model.sync();
+        tarefas = model.snapshot({ day: hoje, filter: 'all', pageSize: 100 });
+        ontem = model.snapshot({ day: shiftDay(hoje, -1), filter: 'pending', pageSize: 100 }).tasks.filter((t) => !t.completed && !['daily', 'weekly'].includes(t.frequency) && !tarefas.tasks.some((x) => x.id === t.id)).map((t) => t.title);
+      } catch { tarefas = null; }
+    }
+    if (tipo === 'manha') return morningLines({ tarefas, ontem, rotina: this.routine.lines(day), treino: this.workout.doDia(day), remedios: this.reminders.st.remedios });
+    const blocos = Object.keys(this.routine.st.blocos);
+    const diario = this.progress.st.diario && this.progress.st.diario.dia === day ? this.progress.st.diario.c : {};
+    return nightLines({
+      tarefas,
+      habitos: { treino: this.habits.has('treino', day), estudo: this.habits.has('estudo', day), sono: this.habits.has('sono', day) },
+      rotina: { feitos: blocos.filter((id) => this.routine.feito(id, day)).length, total: blocos.length },
+      foco: diario.foco || 0,
+    });
+  }
+
+  /** Texto do resumo (fala do perfil + linhas). Sem dados, a fala de "nada para mostrar". */
+  daySummary(tipo, date = new Date()) {
+    const linhas = this._daySummaryLines(tipo, date);
+    const nome = tipo === 'manha' ? 'resumoManha' : 'resumoNoite';
+    return linhas.length ? `${this._fala(nome)}\n${linhas.join('\n')}` : this._fala(`${nome}Vazio`);
+  }
+
+  /**
+   * Resumos automáticos, uma vez por dia cada: manhã (6h–12h) e noite (a partir
+   * das 21h). Só aparecem se houver o que mostrar e nunca em Trabalho, foco ou jogo.
+   */
+  checkDaySummary(date = new Date()) {
+    if (!(this._canNag() && !this.interaction && !this.focus && !this.game)) return null;
+    const h = date.getHours();
+    const tipo = h >= 6 && h < 12 ? 'manha' : h >= 21 ? 'noite' : null;
+    if (!tipo) return null;
+    const day = dayKey(date);
+    const feitos = this.progress.st.resumos || {};
+    if (feitos[tipo] === day) return null;
+    const linhas = this._daySummaryLines(tipo, date);
+    if (!linhas.length) return null; // nada ainda: se ela montar o dia mais tarde, o resumo ainda sai
+    this.progress.st.resumos = { ...feitos, [tipo]: day };
+    this.progress.save(this.progress.st);
+    const texto = `${this._fala(tipo === 'manha' ? 'resumoManha' : 'resumoNoite')}\n${linhas.join('\n')}`;
+    this.hideBubble();
+    this.say(texto, 'speech');
+    const c = this.conversations.create({ id: 'resumo-dia', title: tipo === 'manha' ? 'Seu dia' : 'Fechamento do dia', kind: 'reminder' });
+    this.conversations.addMessage(c.id, 'jojo', texto);
+    this.conversations.setStatus(c.id, 'ready', linhas[0].slice(0, 200));
+    this.fireEvent(tipo === 'manha' ? 'lembrete' : 'parabens', { speak: false });
+    return tipo;
   }
 
   /** Sessão de estudo (material e revisão em andamento; só em memória). */
