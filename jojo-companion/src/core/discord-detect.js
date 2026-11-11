@@ -115,7 +115,8 @@ export function hostManifest(batPath) {
 export function hostBat({ exe, script, pipe }) {
   for (const p of [exe, script, pipe]) if (!p || /["\r\n]/.test(p)) throw new Error('Caminho inválido para a ponte do navegador.');
   const q = (p) => `"${p.replace(/%/g, '%%')}"`;
-  return `@echo off\r\nset ELECTRON_RUN_AS_NODE=1\r\n${q(exe)} ${q(script)} ${q(pipe)}\r\n`;
+  // chcp 65001: caminhos com acento (nome de usuário) são lidos como UTF-8.
+  return `@echo off\r\nchcp 65001 >nul\r\nset ELECTRON_RUN_AS_NODE=1\r\n${q(exe)} ${q(script)} ${q(pipe)}\r\n`;
 }
 
 const int = (v, max) => (Number.isInteger(v) && v >= 0 && v <= max ? v : null);

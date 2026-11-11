@@ -2724,6 +2724,18 @@
    "t": 5,
    "r": 18,
    "b": 5
+  },
+  "cat_broncaDiscord": {
+   "l": 0,
+   "t": 7,
+   "r": 26,
+   "b": 5
+  },
+  "cat_discordResolvido": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
   }
  },
  "effects": {

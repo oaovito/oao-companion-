@@ -36,6 +36,9 @@ import { Workout, parseWorkoutRequest, parseWorkoutCommand } from './workout.js'
 import { parseDaySummaryRequest, parseDaySummaryCommand, morningLines, nightLines } from './day-summary.js';
 import { shiftDay } from './civil-time.js';
 import { CHECKIN, paceFor, paceFactor, parseCheckinAnswer, parseCheckinCommand, sanitizeCheckin } from './checkin.js';
+import { buildScoldPrompt, acceptScold } from './discord-blocker.js';
+import { variantById, BROWSERS } from './discord-detect.js';
+import { buildSystemPrompt, parseLlmReply, outOfCharacter } from './dialogue/llm-provider.js';
 import { StudySession, parseStudyRequest, parseStudyCommand, buildQuizPrompt, parseQuiz, fallbackQuiz, buildSummaryPrompt, parseSummary, fallbackSummary } from './study.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
@@ -1956,6 +1959,7 @@ export class Companion {
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
+    if (cmd === 'discord') return { text: this._discordCommand(), command: cmd, conversationId };
     if (cmd === 'checkin') {
       const c = parseCheckinCommand(arg);
       const text = c.tipo === 'perguntar' ? this.askCheckin(new Date()) : c.tipo === 'responder' ? this.setEnergy(c.energia, new Date()) : this._fala('checkinAjuda');
@@ -3697,6 +3701,107 @@ export class Companion {
     this.conversations.setStatus(c.id, 'ready', linhas[0].slice(0, 200));
     this.fireEvent(tipo === 'manha' ? 'lembrete' : 'parabens', { speak: false });
     return tipo;
+  }
+
+  // ------------------------------------------------------ bloqueio do Discord
+
+  /**
+   * Fala do bloqueio do Discord: sempre fica na conversa; balão e animação só
+   * quando ele pode aparecer (Modo Trabalho, tela cheia, silêncio e pausa: age calado).
+   */
+  _discordSay(text, anim, reaction) {
+    const conv = this.conversations.create({ id: 'discord', title: 'Discord', kind: 'reminder' });
+    this.conversations.addMessage(conv.id, 'jojo', text);
+    this.conversations.setStatus(conv.id, 'ready');
+    if (!this._canNag()) return false;
+    const now = this.clock.now();
+    this.hideBubble();
+    const ok = this.say(text, 'speech', { category: 'discord' });
+    const item = anim ? this.catalogById.get(anim) : null;
+    // Pedido direto ao catálogo: a bronca vale também durante o foco. Movimento
+    // reduzido usa a intensidade suave e o quadro estático da animação.
+    const played = !!item && this._requestCatalog('act', this._catalogData(item, this.reducedMotion ? 'suave' : undefined), now, 'comando');
+    if (!played && reaction) this.react(reaction);
+    this._applyLayout(true);
+    this._schedule(0);
+    return ok;
+  }
+
+  /** Bronca escrita pelo modelo local, validada; null quando não dá (aí vale a fala do arquivo). */
+  async _discordModelScold(origem, cat) {
+    const llm = this.dialogue && this.dialogue.llm;
+    if (!llm || typeof llm.tarefa !== 'function' || !this.store.get().iaAtivo) return null;
+    try {
+      const profile = this.personality.get();
+      const lines = (this.phrases.has(cat) ? this.phrases.categories[cat].lines : []).map((l) => (typeof l === 'string' ? l : l.t));
+      const angulos = ['estudo', 'treino', 'ser a melhor', 'o que ela combinou para hoje'];
+      const raw = await llm.tarefa({
+        system: buildSystemPrompt(profile, {}, lines),
+        user: buildScoldPrompt({ origem, nome: profile.nomeSerio || 'Emanuele', ultima: this.discordLastScold || '', angulo: angulos[Math.floor(this.rng() * angulos.length) % angulos.length] }),
+        json: true, timeoutMs: 4000, maxTokens: 90,
+      });
+      const parsed = parseLlmReply(raw, { name: profile.nomeCompanion || 'JoJo' });
+      if (!parsed || outOfCharacter(parsed.text, { max: 180 })) return null;
+      return acceptScold(parsed.text, { ultima: this.discordLastScold || '' });
+    } catch {
+      return null;
+    }
+  }
+
+  /** Primeira fala: a bronca, com a animação de bronca. Devolve o texto (ou null se acabou de dar uma). */
+  async discordScold({ origem = 'app' } = {}) {
+    const now = this.clock.now();
+    if (now - (this.discordScoldAt ?? -Infinity) < 20e3) return null;
+    this.discordScoldAt = now;
+    const cat = origem === 'aba' ? 'discordBroncaAba' : 'discordBronca';
+    let text = this._canNag() ? await this._discordModelScold(origem, cat) : null;
+    if (!text) {
+      text = this._fala(cat);
+      if (text === this.discordLastScold) text = this._fala(cat) || text;
+    }
+    this.discordLastScold = text;
+    this.discordScoldAt = this.clock.now();
+    this._discordSay(text, 'broncaDiscord', 'angry');
+    return text;
+  }
+
+  _discordResultText(res) {
+    const nomes = (ids) => [...new Set(ids)].map((id) => variantById(id)?.nome).filter(Boolean).join(' e ') || 'Discord';
+    if (res.origem === 'aba') {
+      const vars = { navegador: BROWSERS[res.nav] || BROWSERS.outro, n: String(res.fechadas || res.falhas || 1) };
+      return { text: this._fala(res.fechadas ? 'discordAbaFechada' : 'discordAbaFalha', vars), ok: !!res.fechadas };
+    }
+    const semDesinstalar = res.falhas.filter((f) => f.acao === 'falha_desinstalar');
+    if (semDesinstalar.length) return { text: this._fala('discordFalha', { app: nomes(semDesinstalar.map((f) => f.alvo)) }), ok: false };
+    if (res.desinstaladas.length) return { text: this._fala('discordRemovido', { app: nomes(res.desinstaladas) }), ok: true };
+    if (res.falhas.length) return { text: this._fala('discordFalhaEncerrar', { app: nomes(res.falhas.map((f) => f.alvo)) }), ok: false };
+    return { text: this._fala('discordEncerrado', { app: nomes(res.encerradas) }), ok: true };
+  }
+
+  /** Segunda fala: confirma o que foi feito ou avisa da falha. Espera a bronca ser lida. */
+  discordResult(res) {
+    const { text, ok } = this._discordResultText(res);
+    if (!text) return '';
+    const show = () => this._discordSay(text, ok ? 'discordResolvido' : null, ok ? 'nod' : 'judge');
+    const wait = (this.discordScoldAt ?? -Infinity) + 4500 - this.clock.now();
+    if (wait > 0) this.clock.setTimeout(show, wait);
+    else show();
+    return text;
+  }
+
+  /** /discord: estado da chave e os últimos registros. Ligar e desligar é só nas Configurações. */
+  _discordCommand() {
+    const info = typeof this.discordInfo === 'function' ? this.discordInfo() : { ativo: false, historico: [] };
+    const linhas = info.historico.length ? info.historico.map((h) => `${h.quando}: ${h.texto}`) : [this._fala('discordHistoricoVazio')];
+    return [this._fala(info.ativo ? 'discordStatusLigado' : 'discordStatusDesligado'), ...linhas].join('\n');
+  }
+
+  /** Histórico do bloqueio em texto: data, hora, o que foi visto e o que foi feito. */
+  discordHistoryLines(entries) {
+    return (entries || []).map((e) => {
+      const vars = { app: variantById(e.alvo)?.nome || 'Discord', navegador: BROWSERS[e.alvo] || BROWSERS.outro, n: String(e.n || 1), erro: e.erro ? this._fala(`discordErro_${e.erro}`) : '' };
+      return { em: e.em, quando: new Date(e.em).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }), texto: this._fala(`discordLog_${e.acao}`, vars), ok: !/^falha/.test(e.acao) };
+    });
   }
 
   /** Estado do check-in do dia (salvo junto do progresso). */

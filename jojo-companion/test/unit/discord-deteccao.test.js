@@ -167,7 +167,7 @@ test('mensagens da ponte: só quantidade e navegador passam; quadros com tamanho
   assert.equal(r2.broken, true);
   assert.deepEqual(r2.push(a), [], 'depois de um tamanho inválido não lê mais nada');
 
-  assert.equal(hostBat({ exe: 'C:\\App 100%\\JoJo.exe', script: 'C:\\d\\ponte.cjs', pipe: '\\\\.\\pipe\\x' }), '@echo off\r\nset ELECTRON_RUN_AS_NODE=1\r\n"C:\\App 100%%\\JoJo.exe" "C:\\d\\ponte.cjs" "\\\\.\\pipe\\x"\r\n');
+  assert.equal(hostBat({ exe: 'C:\\App 100%\\JoJo.exe', script: 'C:\\d\\ponte.cjs', pipe: '\\\\.\\pipe\\x' }), '@echo off\r\nchcp 65001 >nul\r\nset ELECTRON_RUN_AS_NODE=1\r\n"C:\\App 100%%\\JoJo.exe" "C:\\d\\ponte.cjs" "\\\\.\\pipe\\x"\r\n');
   assert.throws(() => hostBat({ exe: 'C:\\a".exe', script: 'b', pipe: 'c' }));
   assert.match(bridgePipe('C:\\Users\\a'), /^\\\\\.\\pipe\\jojo-discord-[0-9a-f]{16}$/);
   assert.notEqual(bridgePipe('C:\\Users\\a'), bridgePipe('C:\\Users\\b'));
@@ -205,7 +205,7 @@ test('sistema simulado: processos pelo detector, instalação pelo registro, pon
   const base = path.join(dir, 'discord-ponte');
   const manifest = JSON.parse(fs.readFileSync(path.join(base, `${NATIVE_HOST}.json`), 'utf8'));
   assert.equal(manifest.path, path.join(base, 'ponte.bat'));
-  assert.ok(fs.readFileSync(path.join(base, 'ponte.bat'), 'latin1').includes('"C:\\JoJo\\JoJo Companion.exe"'));
+  assert.ok(fs.readFileSync(path.join(base, 'ponte.bat'), 'utf8').includes('"C:\\JoJo\\JoJo Companion.exe"'));
   assert.equal(fs.readFileSync(path.join(base, 'ponte.cjs'), 'utf8'), fs.readFileSync(path.join(ROOT, 'src', 'main', 'discord-host.cjs'), 'utf8'));
   assert.deepEqual(calls.map((c) => [c.file, c.args[0], c.args[1]]), NATIVE_HOST_KEYS.map((k) => ['reg.exe', 'add', k]));
   assert.ok(calls.every((c) => c.args[1].startsWith('HKCU\\')), 'só o registro do próprio usuário');

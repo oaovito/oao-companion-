@@ -7,7 +7,7 @@ import net from 'node:net';
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFile as nodeExecFile } from 'node:child_process';
-import { runningVariants, parseInstalled, sanitizeBridgeMessage, bridgePipe, hostManifest, hostBat, NATIVE_HOST, NATIVE_HOST_KEYS } from '../core/discord-detect.js';
+import { runningVariants, parseInstalled, uninstallCommand, sanitizeBridgeMessage, bridgePipe, hostManifest, hostBat, NATIVE_HOST, NATIVE_HOST_KEYS } from '../core/discord-detect.js';
 
 // Só .NET embutido do PowerShell 5.1: lê as três chaves de desinstalação do
 // Discord nos dois lugares em que o Windows registra programas.
@@ -25,7 +25,7 @@ const REGISTRY_SCRIPT = [
 
 const EXTENSION_FILES = ['manifest.json', 'fundo.js'];
 
-export function createDiscordSystem({ userData, root, exe = process.execPath, getDetector = () => null, execFile = nodeExecFile, log = () => {} }) {
+export function createDiscordSystem({ userData, root, exe = process.execPath, getDetector = () => null, execFile = nodeExecFile, log = () => {}, allowUninstall = process.env.JOJO_TEST !== '1', wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
   const dir = path.join(userData, 'discord-ponte');
   const pipe = bridgePipe(userData);
   const run = (file, args, opts = {}) => new Promise((resolve) => {
@@ -49,6 +49,41 @@ export function createDiscordSystem({ userData, root, exe = process.execPath, ge
     return parseInstalled(stdout);
   }
 
+  /** Encerra o Discord: pede o fechamento normal e, se não bastar, encerra o processo. */
+  async function kill() {
+    const detector = getDetector();
+    if (!detector?.available || !detector.closeDiscord) throw new Error('detector_unavailable');
+    return detector.closeDiscord({ force: true });
+  }
+
+  /**
+   * Roda o desinstalador oficial (validado de novo por uninstallCommand). Nenhuma
+   * pasta é apagada aqui. Instalação para todos os usuários: o pedido de
+   * administrador é o do próprio Windows (UAC), visível; recusado, vira falha.
+   * Em ambiente de teste (JOJO_TEST=1) nunca executa.
+   */
+  async function uninstall(cmd) {
+    if (!allowUninstall) return { ok: false, erro: 'erro_do_desinstalador' };
+    const again = cmd && uninstallCommand({ variante: cmd.variante, hive: cmd.admin ? 'HKLM' : 'HKCU', uninstall: `"${cmd.file}" ${(cmd.args || []).join(' ')}` });
+    if (!again) return { ok: false, erro: 'desinstalador_desconhecido' };
+    const r = again.admin
+      ? await run('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '$p = Start-Process -FilePath $env:JOJO_DISCORD_FILE -ArgumentList $env:JOJO_DISCORD_ARGS -Verb RunAs -Wait -PassThru; exit $p.ExitCode'],
+        { timeout: 180000, env: { ...process.env, JOJO_DISCORD_FILE: again.file, JOJO_DISCORD_ARGS: again.args.join(' ') } })
+      : await run(again.file, again.args, { timeout: 120000 });
+    if (r.error) {
+      const code = r.error.code;
+      return { ok: false, erro: r.error.killed ? 'tempo_esgotado' : again.admin || code === 'EACCES' || code === 'EPERM' ? 'permissao_negada' : 'erro_do_desinstalador' };
+    }
+    // O desinstalador pode terminar de limpar o registro alguns segundos depois de sair.
+    for (let i = 0; i < 6; i++) {
+      let still = true;
+      try { still = (await installed()).some((e) => e.variante === again.variante); } catch { break; }
+      if (!still) break;
+      await wait(2000);
+    }
+    return { ok: true };
+  }
+
   /**
    * Prepara a ponte com o navegador: copia a extensão e a ponte para a pasta de
    * dados do JoJo e registra a ponte para Chrome, Edge e Brave (registro do
@@ -61,7 +96,7 @@ export function createDiscordSystem({ userData, root, exe = process.execPath, ge
     const script = path.join(dir, 'ponte.cjs');
     fs.writeFileSync(script, fs.readFileSync(path.join(root, 'src', 'main', 'discord-host.cjs')));
     const bat = path.join(dir, 'ponte.bat');
-    fs.writeFileSync(bat, hostBat({ exe, script, pipe }), 'latin1');
+    fs.writeFileSync(bat, hostBat({ exe, script, pipe }), 'utf8');
     const manifest = path.join(dir, `${NATIVE_HOST}.json`);
     fs.writeFileSync(manifest, JSON.stringify(hostManifest(bat), null, 2));
     let ok = 0;
@@ -115,5 +150,5 @@ export function createDiscordSystem({ userData, root, exe = process.execPath, ge
     if (server) { try { server.close(); } catch { /* já fechado */ } server = null; }
   }
 
-  return { running, installed, installBridge, removeBridge, listen, close, pipe, extensionDir: path.join(dir, 'extensao') };
+  return { running, installed, kill, uninstall, installBridge, removeBridge, listen, close, pipe, extensionDir: path.join(dir, 'extensao') };
 }
