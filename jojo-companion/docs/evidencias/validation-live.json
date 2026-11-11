@@ -110,6 +110,54 @@
         "fixtureFound": true,
         "known": true
       }
+    },
+    {
+      "id": "portable",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 16239,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "presence",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 34050,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "windows",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 132241,
+      "optional": false,
+      "status": "passed",
+      "validation": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "e2e",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 413482,
+      "optional": false,
+      "status": "passed",
+      "validation": {
+        "tests": 43,
+        "pass": 43,
+        "fail": 0,
+        "skipped": 0
+      }
     }
   ],
   "files": [],
