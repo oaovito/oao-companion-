@@ -1,6 +1,14 @@
 # JoJo Companion — instruções permanentes do Codex
 
-## Entrega atual — 0.45.1 publicada em 10/11/2026
+## Entrega atual — 0.46.0 publicada em 11/11/2026
+
+Tag/fonte **f0899e1f7b2bc0880b35b78890b2ffd1d8e13dae**, `codex/living-companion`.
+Actions **43084257627** aprovou todos os gates e publicou a v0.46.0 (utilidades,
+animações do foco, bloqueio opcional do Discord e tutorial); arquivos conferidos
+na API pública. 0.46.0 e anteriores são imutáveis: não repetir build/publicação.
+Detalhes, hashes e pendências em `jojo-companion/HANDOFF.md`.
+
+## Entrega anterior — 0.45.1 publicada em 10/11/2026
 
 Tag/fonte **eedac8f6e330d2e072ac20fd668cc1bb529becba**, `codex/living-companion`.
 Actions **42895990176** aprovou os 16 gates e publicou a v0.45.1; downloads e

@@ -1,6 +1,37 @@
 # HANDOFF — JoJo Companion
 
-## Entrega atual — 0.45.1 publicada em 10/11/2026
+## Entrega atual — 0.46.0 publicada em 11/11/2026
+
+Tag/fonte **f0899e1f7b2bc0880b35b78890b2ffd1d8e13dae**, branch `codex/living-companion`
+(trabalho feito em `claude/utilidades-tutorial`, mesma ponta). Run
+[43084257627](https://github.com/oaovito/oao-companion-/actions/runs/43084257627)
+aprovou todos os gates no mesmo job e publicou
+[v0.46.0](https://github.com/oaovito/jojo-companion-releases/releases/tag/v0.46.0):
+586 unitários, conversa real com revisão das 44 falas, build, NSIS, portátil,
+16 integrações, 43 E2E, auditoria de animações, artefatos, atualizador e notas.
+API pública `/releases/latest` conferida sem token: v0.46.0 com os três arquivos.
+
+| Arquivo | Bytes | SHA-256 |
+|---|---:|---|
+| `JoJoCompanion-Setup-0.46.0.exe` | 111974532 | `6c61833c6276d70f3f46797aa8a8091bf510dea33375616d44c9e0d02fabfc35` |
+| `JoJoCompanion-0.46.0-win-x64.zip` | 143017958 | `9bde2ef315e576bca70cfa4b40eaa3d67cb065e8bfe37084206ae09d029527b0` |
+| `JoJoCompanion.exe` | 102455290 | `17c9712d5fd18ce0fd5cec928b31cce35f1950c6aec1adda638430a5a784e454` |
+
+O que entrou: doze utilidades de rotina (lembretes, notas, quebra de tarefas,
+hábitos, rotina, treino, estudo, resumo do dia, check-in, foco em ciclos), vinte
+animações do foco (`docs/FOCO.md`), bloqueio opcional do Discord, desligado por
+padrão (`docs/DISCORD.md`), e tutorial com cobertura obrigatória (`docs/TUTORIAL.md`).
+
+Pendências reais, nada disto foi observado em uso: desinstalação com Discord
+instalado; extensão carregada em Chrome/Edge/Brave; bronca e funções de estudo
+com o modelo local; tutorial e Configurações no app aberto; atualização no PC
+da Emanuele. Decisões em aberto com o João: lembrete de água e check-in ligados
+por padrão; "me ajuda a começar X" acionando a quebra de tarefas; rótulos em
+inglês do `/pet`; painéis na Central para as utilidades novas. Na revisão das
+falas o modelo tratou a usuária no masculino em uma fala ("meu caro").
+Não repetir build/publicação desta versão.
+
+## Entrega anterior — 0.45.1 publicada em 10/11/2026
 
 Tag/fonte **eedac8f6e330d2e072ac20fd668cc1bb529becba**, branch `codex/living-companion`.
 Run [42895990176](https://github.com/oaovito/oao-companion-/actions/runs/42895990176)
