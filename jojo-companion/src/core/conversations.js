@@ -158,6 +158,7 @@ export function commandMenu({ petVisible }) {
     { cmd: '/vestir', label: 'Guarda-roupa', hint: 'Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar' },
     { cmd: '/rotina', label: 'Rotina fixa', hint: 'Rotina do dia: /rotina montar manha 7:00 estudo 14:00 treino 18:00 sono 22:30, /rotina ver, /rotina feito treino, /rotina limpar. Frase fixa: /rotina bom dia: texto' },
     { cmd: '/pausa', label: 'Pausa', hint: 'Pausa/retoma o JoJo na hora' },
+    { cmd: '/estudo', label: 'Estudo', hint: 'Revisão e resumo: /revisar tema (3 perguntas, uma por vez), /resumir texto, /estudo material (passa o conteúdo em várias mensagens e termina com "pronto"), /resumir material, /resumir notas tema, /estudo limpar' },
     { cmd: '/treino', label: 'Ficha de treino', hint: 'Treino do dia e cargas: /treino (hoje), /treino ficha A: supino 4x10 40kg; remada 3x12, /treino carga supino 42,5, /treino historico supino, /treino feito, /treino apagar A' },
     { cmd: '/habitos', label: 'Hábitos', hint: 'Sequências de treino, estudo e sono: /habitos (progresso), /habito treino, /habito estudo, /habito sono, /habito treino desfazer' },
     { cmd: '/quebrar', label: 'Quebrar tarefa', hint: 'Transforma uma tarefa grande em passos pequenos: /quebrar estudar bioquímica (depois diga "adiciona" para ir à lista)' },
@@ -176,7 +177,7 @@ export function parseCommand(text) {
   if (name === '/nova') return 'new';
   if (name === '/config' || name === '/configuracoes') return 'settings';
   if (name === '/anim' || name === '/animacao' || name === '/animação') return 'anim';
-  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/lembrete': 'lembrete', '/lembretes': 'lembrete', '/nota': 'nota', '/notas': 'nota', '/treino': 'treino', '/ficha': 'treino', '/habito': 'habito', '/habitos': 'habito', '/hábito': 'habito', '/hábitos': 'habito', '/quebrar': 'quebrar', '/quebra': 'quebrar', '/passos': 'quebrar', '/colecao': 'colecao', '/coleção': 'colecao', '/reacao': 'reacao', '/reação': 'reacao', '/meme': 'reacao', '/anime': 'reacao', '/trabalho': 'trabalho', '/trabalhar': 'trabalho', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
+  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/lembrete': 'lembrete', '/lembretes': 'lembrete', '/nota': 'nota', '/notas': 'nota', '/estudo': 'estudo', '/estudar': 'estudo', '/revisar': 'revisar', '/revisao': 'revisar', '/revisão': 'revisar', '/resumir': 'resumir', '/treino': 'treino', '/ficha': 'treino', '/habito': 'habito', '/habitos': 'habito', '/hábito': 'habito', '/hábitos': 'habito', '/quebrar': 'quebrar', '/quebra': 'quebrar', '/passos': 'quebrar', '/colecao': 'colecao', '/coleção': 'colecao', '/reacao': 'reacao', '/reação': 'reacao', '/meme': 'reacao', '/anime': 'reacao', '/trabalho': 'trabalho', '/trabalhar': 'trabalho', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
   if (MAP[name]) return MAP[name];
   return 'unknown';
 }

@@ -33,6 +33,7 @@ import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
 import { Workout, parseWorkoutRequest, parseWorkoutCommand } from './workout.js';
+import { StudySession, parseStudyRequest, parseStudyCommand, buildQuizPrompt, parseQuiz, fallbackQuiz, buildSummaryPrompt, parseSummary, fallbackSummary } from './study.js';
 import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, parseSteps, fallbackSteps, stepTitles, breakdownAnswer } from './task-breakdown.js';
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
@@ -1276,6 +1277,10 @@ export class Companion {
       const pedido = parseBreakdownCommand(String(text).replace(/^\s*\/\S+\s*/, ''));
       return { text: pedido ? await this._breakdown(pedido.titulo) : this._fala('quebraAjuda'), command: cmd, conversationId: conv.id };
     }
+    // /estudo, /revisar e /resumir também podem consultar o modelo local.
+    if (cmd === 'estudo' || cmd === 'revisar' || cmd === 'resumir') {
+      return { text: await this._studyAction(parseStudyCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, ''))), command: cmd, conversationId: conv.id };
+    }
     if (cmd) return this.runCommand(cmd, conv.id, text);
     if (!this.dialogue) return null;
     // Segurança não entra na fila atrás de uma geração lenta.
@@ -1358,6 +1363,12 @@ export class Companion {
       const reply = await this.livingChat(text, { expectedGeneration: sceneGeneration });
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       if (reply) return { ...this._quickReply(conv, reply.message, 'encenacao'), scene: { status: reply.status, reason: reply.reason || null, queued: !!reply.queued, itemId: reply.itemId } };
+    }
+    // Estudo: revisão em andamento, material sendo passado, ou pedido novo de revisão/resumo.
+    if (!safety) {
+      const estudo = await this._studyChat(text);
+      if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
+      if (estudo) return this._quickReply(conv, estudo, 'estudo');
     }
     // Quebra de tarefas: resposta a uma quebra pendente ("adiciona") ou pedido novo.
     if (!safety) {
@@ -3606,6 +3617,70 @@ export class Companion {
       save: (s) => { this.progress.st.habitos = s; this.progress.save(this.progress.st); },
     });
     return this._habits;
+  }
+
+  /** Sessão de estudo (material e revisão em andamento; só em memória). */
+  get study() {
+    this._study ||= new StudySession();
+    return this._study;
+  }
+
+  /** Chamada estruturada ao modelo local; null quando não há modelo ou ele falha. */
+  async _modelTask(prompt) {
+    const llm = this.dialogue && this.dialogue.llm;
+    if (!llm || typeof llm.tarefa !== 'function') return null;
+    try { return await llm.tarefa({ ...prompt, json: true }); } catch { return null; }
+  }
+
+  /** Conversa de estudo: resposta da revisão, material sendo passado ou pedido novo. Texto ou null. */
+  async _studyChat(text) {
+    const s = this.study;
+    if (s.quiz) {
+      const r = s.answer(text);
+      // Revisão completa conta para o hábito de estudo do dia.
+      if (r.fim && !r.cancelada) this.habits.log('estudo', dayKey(new Date()));
+      return this._reminderReply(r);
+    }
+    if (s.coletando) {
+      if (/^(pronto|acabou|fim|so isso|é isso|e isso|terminei)[.!]*$/i.test(String(text).trim())) return this._studyAction({ tipo: 'materialPronto' });
+      const r = s.addMaterial(text);
+      return this._fala(r.ok ? 'estudoMaterialMais' : 'estudoMaterialCheio', { n: r.n });
+    }
+    const pedido = parseStudyRequest(text);
+    return pedido ? this._studyAction(pedido) : null;
+  }
+
+  /** Executa uma ação de estudo (pedido da conversa ou comando). Devolve o texto. */
+  async _studyAction(a) {
+    const s = this.study;
+    if (a.tipo === 'material') {
+      s.startCollect();
+      return this._fala('estudoMaterialInicio', { n: s.material.length });
+    }
+    if (a.tipo === 'materialPronto') return this._fala(s.stopCollect() ? 'estudoMaterialPronto' : 'estudoSemMaterial', { n: s.material.length });
+    if (a.tipo === 'materialLimpar') {
+      s.clear();
+      return this._fala('estudoMaterialLimpo');
+    }
+    if (a.tipo === 'revisar') {
+      const material = s.materialText;
+      if (!a.tema && !material) return this._fala('estudoSemMaterial', { n: 0 });
+      const perguntas = parseQuiz(await this._modelTask(buildQuizPrompt({ tema: a.tema, material }))) || fallbackQuiz(a.tema);
+      const primeira = s.startQuiz(a.tema, perguntas);
+      return `${this._fala('estudoRevisaInicio', { tema: a.tema || 'seu material', total: perguntas.length })}\n${primeira}`;
+    }
+    if (a.tipo === 'resumir' || a.tipo === 'resumirMaterial' || a.tipo === 'resumirNotas') {
+      let texto = a.texto || '';
+      if (a.tipo === 'resumirMaterial') texto = s.materialText;
+      if (a.tipo === 'resumirNotas') {
+        const termos = normalizeText(a.busca || '').split(' ').filter((t) => t.length >= 2);
+        texto = this.notes.st.filter((n) => termos.every((t) => normalizeText(n.texto).includes(t))).map((n) => (/[.!?]$/.test(n.texto) ? n.texto : `${n.texto}.`)).join(' ');
+      }
+      if (texto.trim().length < 20) return this._fala('estudoResumoVazio');
+      const pontos = parseSummary(await this._modelTask(buildSummaryPrompt(texto))) || fallbackSummary(texto);
+      return `${this._fala('estudoResumo', { total: pontos.length })}\n${pontos.map((p) => `• ${p}`).join('\n')}`;
+    }
+    return this._fala('estudoAjuda');
   }
 
   /** Fichas de treino e cargas (salvas junto do progresso). */
