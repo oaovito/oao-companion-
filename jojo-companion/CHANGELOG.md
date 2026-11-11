@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## Não publicado
+
+### Novidades
+- Doze utilidades de rotina: lembretes de água, pausa e remédio; notas rápidas;
+  quebra de tarefas em passos; hábitos com sequência; rotina diária em blocos;
+  ficha de treino com histórico de carga; revisão e resumo de estudo; resumo do
+  dia de manhã e à noite; check-in de energia que ajusta o ritmo das cobranças;
+  foco em ciclos com pausa (Pomodoro).
+- Vinte animações novas no modo foco (estudo, treino, ritmo e incentivo), com
+  troca sem repetição e versão de movimento reduzido.
+- Bloqueio do Discord, opcional e desligado por padrão: bronca, encerramento,
+  desinstalação pelo desinstalador oficial, fechamento só da aba no Chrome, Edge
+  e Brave (extensão instalada à mão) e histórico visível. Ver `docs/DISCORD.md`.
+- Tutorial conduzido pelo JoJo, cobrindo todas as funções, comandos e
+  configurações, com progresso salvo. Ver `docs/TUTORIAL.md`.
+
 ## 0.45.1 — 2026-11-10
 
 ### Correções
