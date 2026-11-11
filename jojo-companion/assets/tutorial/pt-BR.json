@@ -1,0 +1,811 @@
+{
+  "_notas": "Fonte única do tutorial. Cada função lista os comandos ('comandos') e as chaves de configuração ('configuracoes') que ensina; test/unit/tutorial.test.js falha se um comando do menu, um comando reconhecido ou uma configuração visível ficar sem função aqui. Cada passo tem 'texto' (na voz do JoJo, até 280 caracteres) e, quando há o que testar, 'tente' (exemplo real para digitar ou fazer) e 'espera' (o que faz o passo avançar sozinho: {comando}, {intent}, {config} ou {qualquer}). Sem 'espera', avança com \"próximo\". Sem som.",
+  "textos": {
+    "boasVindas": "Primeira vez aqui. Eu sou o {companion}: tubarão, fisiculturista e seu parceiro de estudo e treino. Vou te mostrar tudo em passos curtos, e você testa cada um. Escreve \"próximo\" pra começar. \"pular\", \"voltar\" e \"pausar\" também funcionam.",
+    "convite": "Tem tutorial novo, {nome}. Eu mostro cada função em passos curtos e você testa na hora. Quando quiser: /tutorial. Sem pressa, eu não saio daqui.",
+    "cabecalho": "{titulo} ({funcao} de {funcoes}), passo {passo} de {passos}.",
+    "tente": "Tente: {tente}",
+    "acertou": [
+      "Isso.",
+      "Boa.",
+      "Assim mesmo.",
+      "Viu? Fácil.",
+      "Feito."
+    ],
+    "pausado": "Tutorial pausado em \"{titulo}\". Seu progresso está salvo. Pra voltar: /tutorial.",
+    "retomado": "Voltando de onde paramos.",
+    "pulado": "Pulei \"{titulo}\". Dá pra ver depois com /tutorial {id}.",
+    "inicioDaLista": "Já estamos no começo. Não tem passo antes deste.",
+    "fimAvulso": "Era isso sobre \"{titulo}\". Pra seguir o tutorial inteiro: /tutorial. Pra ver a lista: /tutorial lista.",
+    "concluido": "Fim do tutorial. Você viu {vistas} de {funcoes} funções. Agora é com você: estudo, treino e nada de corpo mole. Pra rever qualquer uma: /tutorial lista.",
+    "concluidoComPuladas": "Fim do tutorial. Você viu {vistas} de {funcoes} funções e pulou: {puladas}. Pra ver uma delas: /tutorial e o nome. Agora, ao trabalho.",
+    "encerrado": "Tutorial encerrado. O que você já viu fica salvo. Pra voltar: /tutorial.",
+    "semTutorial": "Não tem tutorial em andamento. Pra começar: /tutorial. Pra ver uma função só: /tutorial lista.",
+    "naoAchei": "Não achei essa função. Olha os nomes em /tutorial lista.",
+    "lista": "Funções do tutorial (✓ = já vista). Pra abrir uma: /tutorial e o nome.",
+    "ajuda": "Comandos do tutorial: /tutorial (começa ou continua), /tutorial lista, /tutorial foco (uma função só), próximo, voltar, pular, pausar, /tutorial sair, /tutorial recomeçar.",
+    "recomecado": "Do zero, então. Sem problema, repetição é treino."
+  },
+  "funcoes": [
+    {
+      "id": "conversa",
+      "titulo": "Conversar comigo",
+      "grupo": "Começo",
+      "comandos": [
+        "/nova"
+      ],
+      "configuracoes": [
+        "interactionHotkey"
+      ],
+      "passos": [
+        {
+          "texto": "Pra falar comigo, aperte {atalho} ou use o ícone da bandeja, em \"Modo de interação\". Abre a caixa de conversa do meu lado. Escreve qualquer coisa e manda.",
+          "tente": "oi",
+          "espera": {
+            "qualquer": true
+          }
+        },
+        {
+          "texto": "Comando começa com barra. Digite só \"/\" e aparece a lista inteira. A conversa é uma só e fica guardada só enquanto eu estiver aberto. O atalho você troca em Configurações, em \"Modo de interação\"."
+        }
+      ]
+    },
+    {
+      "id": "pet",
+      "titulo": "Me mostrar e me esconder",
+      "grupo": "Começo",
+      "comandos": [
+        "/pet"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu fico por cima das janelas, sem atrapalhar clique. Se precisar da tela limpa, me esconde com /pet. Pela bandeja também dá: \"Ocultar\".",
+          "tente": "/pet",
+          "espera": {
+            "comando": "pet"
+          }
+        },
+        {
+          "texto": "Sumi. A conversa continua funcionando. Me chama de volta com o mesmo comando.",
+          "tente": "/pet",
+          "espera": {
+            "comando": "pet"
+          }
+        }
+      ]
+    },
+    {
+      "id": "balao",
+      "titulo": "Balão de status",
+      "grupo": "Começo",
+      "comandos": [],
+      "configuracoes": [
+        "bubbleScale"
+      ],
+      "passos": [
+        {
+          "texto": "O balão em cima de mim mostra o que eu estou fazendo: falando, lembrando, focando, esperando você. Pensamento tem balão diferente de fala. Manda uma mensagem e olha o balão.",
+          "tente": "como você tá?",
+          "espera": {
+            "qualquer": true
+          }
+        },
+        {
+          "texto": "Balão some sozinho depois do tempo de leitura e nunca abre em cima do seu cursor. Letra pequena? Configurações, Aparência, \"Tamanho dos balões\". O que estiver pendente aparece também na bandeja, em \"Atividades\"."
+        }
+      ]
+    },
+    {
+      "id": "movimentoReduzido",
+      "titulo": "Movimento reduzido",
+      "grupo": "Começo",
+      "comandos": [],
+      "configuracoes": [
+        "reduceMotion"
+      ],
+      "passos": [
+        {
+          "texto": "Se animação te cansa, eu fico quase parado: poses fixas no lugar de movimento, sem giros nem tremidas, e mudo de lugar sem correr. Eu sigo o Windows: Configurações do Windows, Acessibilidade, Efeitos visuais, \"Efeitos de animação\".",
+          "tente": "desligue \"Efeitos de animação\" no Windows (ou escreva \"próximo\")",
+          "espera": {
+            "evento": "movimentoReduzido"
+          }
+        },
+        {
+          "texto": "Com ou sem movimento, tudo funciona igual, inclusive este tutorial: balão, lembretes, foco. Só o movimento diminui. Deixa do jeito que for melhor pra você."
+        }
+      ]
+    },
+    {
+      "id": "silencio",
+      "titulo": "Silêncio e pausa",
+      "grupo": "Começo",
+      "comandos": [
+        "/silencio",
+        "/pausa"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu nunca faço som: tudo em mim é balão e movimento. \"Modo silencioso\" é outra coisa: eu paro de falar sozinho e de dar bronca. Liga e desliga com /silencio.",
+          "tente": "/silencio",
+          "espera": {
+            "comando": "quiet"
+          }
+        },
+        {
+          "texto": "Agora desliga, senão você fica sem meus lembretes.",
+          "tente": "/silencio",
+          "espera": {
+            "comando": "quiet"
+          }
+        },
+        {
+          "texto": "/pausa me congela na hora e o mesmo comando me solta. Os dois também estão na bandeja.",
+          "tente": "/pausa",
+          "espera": {
+            "comando": "pausa"
+          }
+        },
+        {
+          "texto": "Congelei. Agora me solta com o mesmo comando, que eu tenho série pra terminar.",
+          "tente": "/pausa",
+          "espera": {
+            "comando": "pausa"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lembretes",
+      "titulo": "Lembretes e avisos",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/lembrete"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu lembro de água, de pausa e de remédio no horário. Só lembro: dose e remédio quem decide é médico. Veja o que está ligado.",
+          "tente": "/lembrete",
+          "espera": {
+            "comando": "lembrete"
+          }
+        },
+        {
+          "texto": "Agora ajusta a água pra cada 60 minutos. Também existe /lembrete pausa 45 e /lembrete remedio Nome 08:00.",
+          "tente": "/lembrete agua 60",
+          "espera": {
+            "comando": "lembrete"
+          }
+        },
+        {
+          "texto": "Em conversa normal também vale: \"me lembra de beber água a cada 90 minutos\". No Modo Trabalho, no foco e em tela cheia eu seguro o lembrete."
+        }
+      ]
+    },
+    {
+      "id": "tarefas",
+      "titulo": "Lista de tarefas",
+      "grupo": "Utilidades",
+      "comandos": [],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Sua lista fica comigo. Adiciona falando normal.",
+          "tente": "adiciona revisar anatomia na lista",
+          "espera": {
+            "intent": "tarefas"
+          }
+        },
+        {
+          "texto": "Terminou? Marca como concluída. Tarefa feita conta no seu progresso comigo.",
+          "tente": "marca revisar anatomia como concluída",
+          "espera": {
+            "intent": "tarefas"
+          }
+        },
+        {
+          "texto": "A lista inteira abre na Central (bandeja, \"Abrir\"), com prioridade e repetição diária. O que ficar pendente eu te mostro no resumo da manhã seguinte. As opções da lista ficam em Configurações, \"Lista de Tarefas\"."
+        }
+      ]
+    },
+    {
+      "id": "rotina",
+      "titulo": "Rotina diária",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/rotina"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Rotina são quatro blocos com horário: manhã, estudo, treino e sono. Eu aviso na hora de cada um. Monta a sua.",
+          "tente": "/rotina montar manha 7:00 estudo 14:00 treino 18:00 sono 22:30",
+          "espera": {
+            "comando": "rotina"
+          }
+        },
+        {
+          "texto": "Cumpriu um bloco? Marca, e ele conta nos hábitos.",
+          "tente": "/rotina feito estudo",
+          "espera": {
+            "comando": "rotina"
+          }
+        },
+        {
+          "texto": "/rotina ver mostra o dia e /rotina limpar apaga. Sono eu só cobro entre 21h e 6h. Quer um bom-dia sempre igual? /rotina bom dia: e o texto."
+        }
+      ]
+    },
+    {
+      "id": "foco",
+      "titulo": "Timer de foco",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/foco"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Bloco de foco: você trabalha e eu fico do lado, quieto, contando o tempo. Com ciclos e pausa, estilo Pomodoro. Começa um curto.",
+          "tente": "/foco 5",
+          "espera": {
+            "comando": "foco"
+          }
+        },
+        {
+          "texto": "Durante o bloco eu não falo sozinho nem deixo lembrete passar. No fim eu aviso e conto no seu progresso. Pode parar este de teste.",
+          "tente": "/foco parar",
+          "espera": {
+            "comando": "foco"
+          }
+        },
+        {
+          "texto": "Pra valer: /foco 25, /foco pomodoro (4 ciclos de 25 com pausa de 5) ou do seu jeito, tipo /foco 30 x3 pausa 10."
+        }
+      ]
+    },
+    {
+      "id": "focoAnimacoes",
+      "titulo": "Eu no modo foco",
+      "grupo": "Utilidades",
+      "comandos": [],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "No foco de estudo eu leio, escrevo, digito e marco texto. No de treino eu faço flexão, prancha e agachamento. Troco de atividade de tempos em tempos e nunca repito a mesma em seguida. Abre um de treino pra ver.",
+          "tente": "/foco treino",
+          "espera": {
+            "comando": "foco"
+          }
+        },
+        {
+          "texto": "O balão diz o que eu estou fazendo. Incentivo só na metade, na pausa e na conclusão do bloco. Com movimento reduzido eu fico em pose fixa. Pode parar.",
+          "tente": "/foco parar",
+          "espera": {
+            "comando": "foco"
+          }
+        }
+      ]
+    },
+    {
+      "id": "quebrar",
+      "titulo": "Quebra de tarefas",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/quebrar"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Tarefa grande assusta. Eu corto em passos pequenos. Me dá uma.",
+          "tente": "/quebrar estudar para a prova de bioquímica",
+          "espera": {
+            "comando": "quebrar"
+          }
+        },
+        {
+          "texto": "Gostou dos passos? Diz \"adiciona\" e eles vão pra sua lista. Não quer? Diz \"não\". Em conversa também funciona: \"quebra a tarefa fazer o relatório\".",
+          "tente": "não",
+          "espera": {
+            "qualquer": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "habitos",
+      "titulo": "Hábitos",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/habitos"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu conto sequências de três hábitos: treino, estudo e sono. Cada dia cumprido aumenta a sequência; falhou, zera. Registra o estudo de hoje.",
+          "tente": "/habito estudo",
+          "espera": {
+            "comando": "habito"
+          }
+        },
+        {
+          "texto": "Agora vê o progresso. Marcou errado? /habito estudo desfazer. Falar \"treinei hoje\" também registra.",
+          "tente": "/habitos",
+          "espera": {
+            "comando": "habito"
+          }
+        }
+      ]
+    },
+    {
+      "id": "estudo",
+      "titulo": "Apoio ao estudo",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/estudo",
+        "/revisar",
+        "/resumir"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu faço três perguntas sobre um tema, uma por vez. Você responde, eu mostro o gabarito e você diz se acertou. Abre uma revisão.",
+          "tente": "/revisar fotossíntese",
+          "espera": {
+            "comando": "revisar"
+          }
+        },
+        {
+          "texto": "Responde do seu jeito ou sai com /estudo limpar. Depois testa o resumo: eu devolvo de 2 a 4 pontos.",
+          "tente": "/resumir A fotossíntese transforma luz, água e gás carbônico em glicose e libera oxigênio.",
+          "espera": {
+            "comando": "resumir"
+          }
+        },
+        {
+          "texto": "Texto grande: /estudo material, cola em várias mensagens e termina com \"pronto\". Aí vale /resumir material e /revisar. O material some quando eu fecho."
+        }
+      ]
+    },
+    {
+      "id": "treino",
+      "titulo": "Apoio ao treino",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/treino"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu guardo suas fichas e a carga de cada exercício. Cria a ficha A.",
+          "tente": "/treino ficha A: supino 4x10 40kg; remada 3x12 30kg",
+          "espera": {
+            "comando": "treino"
+          }
+        },
+        {
+          "texto": "Subiu a carga? Registra. Eu guardo o histórico.",
+          "tente": "/treino carga supino 42,5",
+          "espera": {
+            "comando": "treino"
+          }
+        },
+        {
+          "texto": "/treino mostra o treino de hoje, /treino feito conta no hábito, /treino historico supino mostra a evolução. Eu não prescrevo treino nem dieta: a ficha é a do seu profissional."
+        }
+      ]
+    },
+    {
+      "id": "notas",
+      "titulo": "Notas rápidas",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/nota"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Ideia aparece no meio do estudo e some. Joga em mim.",
+          "tente": "/nota perguntar ao professor sobre enzimas",
+          "espera": {
+            "comando": "nota"
+          }
+        },
+        {
+          "texto": "Agora acha de volta. /notas lista tudo e /notas apagar 2 remove a segunda.",
+          "tente": "/notas buscar enzimas",
+          "espera": {
+            "comando": "nota"
+          }
+        }
+      ]
+    },
+    {
+      "id": "resumoDia",
+      "titulo": "Resumo do dia",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/resumo"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "De manhã eu digo o que tem pra fazer: tarefas, rotina, treino e remédios. À noite, o que foi feito e o que ficou. Só aparece se houver algo pra mostrar. Pede o da manhã.",
+          "tente": "/resumo manha",
+          "espera": {
+            "comando": "resumo"
+          }
+        },
+        {
+          "texto": "E o da noite. /resumo sozinho mostra o que rolou hoje comigo.",
+          "tente": "/resumo noite",
+          "espera": {
+            "comando": "resumo"
+          }
+        }
+      ]
+    },
+    {
+      "id": "checkin",
+      "titulo": "Check-in de humor e energia",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/checkin"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Uma vez por dia eu pergunto sua energia, de 1 a 5. Com 1 ou 2 eu cobro menos e fico mais calmo. Com 4 ou 5 eu cobro mais. Responde agora.",
+          "tente": "/checkin 3",
+          "espera": {
+            "comando": "checkin"
+          }
+        },
+        {
+          "texto": "Se o dia estiver pesado de verdade, me fala. Tristeza eu acolho e te mando procurar o {apoio}. Eu sou parceiro de rotina, não médico."
+        }
+      ]
+    },
+    {
+      "id": "duvidas",
+      "titulo": "Respostas a dúvidas",
+      "grupo": "Utilidades",
+      "comandos": [],
+      "configuracoes": [
+        "iaAtivo",
+        "webSearch"
+      ],
+      "passos": [
+        {
+          "texto": "Pergunta de estudo, de treino ou de ciência: manda. Eu respondo do meu jeito e digo quando não sei. Saúde: explico, mas não dou diagnóstico nem dose.",
+          "tente": "o que é mitocôndria?",
+          "espera": {
+            "qualquer": true
+          }
+        },
+        {
+          "texto": "A conversa roda neste PC. Se eu não souber, pesquiso em fontes públicas e só a pergunta sai daqui. As duas coisas desligam em Configurações, Privacidade."
+        }
+      ]
+    },
+    {
+      "id": "trabalho",
+      "titulo": "Modo Trabalho",
+      "grupo": "Mais",
+      "comandos": [
+        "/trabalho"
+      ],
+      "configuracoes": [
+        "trabalhoAtivo",
+        "trabalhoPerfil",
+        "trabalhoCanto",
+        "trabalhoTamanho",
+        "trabalhoOpacidade",
+        "trabalhoMargem",
+        "trabalhoRestaurar"
+      ],
+      "passos": [
+        {
+          "texto": "Modo Trabalho: eu encolho num canto e medito. Zero fala, zero animação, zero lembrete. Nada passa por cima dele. Entra.",
+          "tente": "/trabalho",
+          "espera": {
+            "comando": "trabalho"
+          }
+        },
+        {
+          "texto": "Estou no canto, calado; só a conversa responde. Sai pra gente continuar.",
+          "tente": "/trabalho sair",
+          "espera": {
+            "comando": "trabalho"
+          }
+        },
+        {
+          "texto": "Com tempo: /trabalho 50. Mais discreto: /trabalho deep ou /trabalho invisivel. Canto, tamanho, opacidade, distância da borda e \"continuar ao reabrir\" ficam em Configurações, Modo Trabalho."
+        }
+      ]
+    },
+    {
+      "id": "animacoes",
+      "titulo": "Animações e reações",
+      "grupo": "Mais",
+      "comandos": [
+        "/anim",
+        "/estimulo",
+        "/reacao",
+        "/colecao"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Tenho centenas de animações. Pede uma pelo nome.",
+          "tente": "/anim acenar",
+          "espera": {
+            "comando": "anim"
+          }
+        },
+        {
+          "texto": "Não sabe o que pedir? Eu escolho uma animação surpresa pra você.",
+          "tente": "/estimulo",
+          "espera": {
+            "comando": "estimulo"
+          }
+        },
+        {
+          "texto": "/reacao é pra meme, anime, comida e afins: /reacao side eye. /colecao abre na Central tudo que você já viu e o que falta descobrir.",
+          "tente": "/reacao side eye",
+          "espera": {
+            "comando": "reacao"
+          }
+        }
+      ]
+    },
+    {
+      "id": "calma",
+      "titulo": "Calma, ritmo e bolhas",
+      "grupo": "Mais",
+      "comandos": [
+        "/calma",
+        "/ritmo",
+        "/bolhas"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Cabeça cheia? /calma são dois minutos de padrão lento e cores suaves. Sem som, como tudo aqui.",
+          "tente": "/calma",
+          "espera": {
+            "comando": "calma"
+          }
+        },
+        {
+          "texto": "/ritmo é uma sequência previsível de 30 segundos, e /bolhas solta bolhas pra estourar com clique, sem placar.",
+          "tente": "/bolhas",
+          "espera": {
+            "comando": "bolhas"
+          }
+        }
+      ]
+    },
+    {
+      "id": "jogos",
+      "titulo": "Mini-jogos",
+      "grupo": "Mais",
+      "comandos": [
+        "/jogo"
+      ],
+      "configuracoes": [
+        "darkestAtivo",
+        "darkestSugestao"
+      ],
+      "passos": [
+        {
+          "texto": "Pausa também é parte do treino. Eu tenho mini-jogos rápidos: quiz, bolhas e outros. Abre um.",
+          "tente": "/jogo",
+          "espera": {
+            "comando": "jogo"
+          }
+        },
+        {
+          "texto": "Pra escolher: /jogo quiz. Se você tem Darkest Dungeon na Steam, eu conto seu tempo de jogo e sugiro uma partida por dia; as duas opções ficam em Configurações, Darkest Dungeon."
+        }
+      ]
+    },
+    {
+      "id": "vestir",
+      "titulo": "Guarda-roupa",
+      "grupo": "Mais",
+      "comandos": [
+        "/vestir"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Pode me vestir. Acessório novo libera conforme você sobe de nível comigo. Deixa eu escolher um.",
+          "tente": "/vestir surpresa",
+          "espera": {
+            "comando": "vestir"
+          }
+        },
+        {
+          "texto": "/vestir abre o guarda-roupa na Central, /vestir coroa põe uma peça e /vestir tirar me deixa só de sunga, que é como eu prefiro.",
+          "tente": "/vestir tirar",
+          "espera": {
+            "comando": "vestir"
+          }
+        }
+      ]
+    },
+    {
+      "id": "discord",
+      "titulo": "Bloqueio do Discord",
+      "grupo": "Mais",
+      "comandos": [
+        "/discord"
+      ],
+      "configuracoes": [
+        "discordBloqueio",
+        "discordCloseOnFocus",
+        "discordForceClose"
+      ],
+      "passos": [
+        {
+          "texto": "Isto vem desligado e só liga se você quiser. Ligado, se eu vir o Discord eu dou bronca, fecho e desinstalo o aplicativo; no navegador, fecho só a aba dele. Tudo vai pro histórico. Veja o estado.",
+          "tente": "/discord",
+          "espera": {
+            "comando": "discord"
+          }
+        },
+        {
+          "texto": "A chave fica em Configurações, Bloqueio do Discord, com a explicação completa antes dela. Leia antes de ligar. Outra coisa, separada: eu posso pedir pro Discord fechar quando você entra em Foco ou Trabalho; fica em Monitores."
+        }
+      ]
+    },
+    {
+      "id": "aparencia",
+      "titulo": "Minha aparência e meu movimento",
+      "grupo": "Configurações",
+      "comandos": [
+        "/config"
+      ],
+      "configuracoes": [
+        "size",
+        "activity",
+        "moveSpeed",
+        "safetyMargin",
+        "avoidFallback"
+      ],
+      "passos": [
+        {
+          "texto": "Abre as Configurações. Tudo que muda lá vale na hora.",
+          "tente": "/config",
+          "espera": {
+            "comando": "settings"
+          }
+        },
+        {
+          "texto": "Em Aparência você muda meu tamanho. Em \"Movimento e mouse\": velocidade, o quanto eu me mexo, a distância que eu mantenho do cursor e o que eu faço sem espaço (ficar transparente ou sumir). Eu sempre desvio do seu mouse."
+        }
+      ]
+    },
+    {
+      "id": "monitores",
+      "titulo": "Monitores e tela cheia",
+      "grupo": "Configurações",
+      "comandos": [],
+      "configuracoes": [
+        "preferredDisplay",
+        "allowDisplaySwitch",
+        "fullscreenBehavior",
+        "percepcaoTela"
+      ],
+      "passos": [
+        {
+          "texto": "Em Monitores você escolhe onde eu fico e se posso passear pelos outros. App em tela cheia: eu sumo desse monitor, ou de todos; nunca cubro tela cheia. \"Percepção de tela\" vem desligada: só o tipo do app aberto, nunca captura.",
+          "tente": "/config",
+          "espera": {
+            "comando": "settings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "privacidade",
+      "titulo": "Privacidade",
+      "grupo": "Configurações",
+      "comandos": [],
+      "configuracoes": [
+        "spotifyReacoes",
+        "lolBronca",
+        "autoUpdate"
+      ],
+      "passos": [
+        {
+          "texto": "Em Privacidade: reagir ao que toca no Spotify (só o nome da música, neste PC), ficar de mau humor com League of Legends e atualizar sozinho. Sem telemetria, sem microfone, sem captura de tela. Tudo desligável.",
+          "tente": "/config",
+          "espera": {
+            "comando": "settings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "agenda",
+      "titulo": "Agenda",
+      "grupo": "Configurações",
+      "comandos": [],
+      "configuracoes": [
+        "agendaUrl",
+        "agendaAtiva",
+        "agendaAvisoMin"
+      ],
+      "passos": [
+        {
+          "texto": "Cola em Configurações, Agenda, o endereço iCal do Google ou o link público do iCloud. Eu só leio: aviso antes de cada compromisso e você escolhe com quantos minutos. Pergunta pra mim.",
+          "tente": "o que tenho hoje na agenda?",
+          "espera": {
+            "qualquer": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "clima",
+      "titulo": "Clima",
+      "grupo": "Configurações",
+      "comandos": [],
+      "configuracoes": [
+        "climaAtivo",
+        "climaCidade"
+      ],
+      "passos": [
+        {
+          "texto": "Eu consulto a previsão só quando você pergunta. A cidade padrão fica em Configurações, Clima; sem localização automática. Pergunta.",
+          "tente": "como está o tempo hoje?",
+          "espera": {
+            "qualquer": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "sistema",
+      "titulo": "Sistema",
+      "grupo": "Configurações",
+      "comandos": [],
+      "configuracoes": [
+        "startWithWindows",
+        "desktopShortcut"
+      ],
+      "passos": [
+        {
+          "texto": "Eu abro junto com o Windows e fico na bandeja, perto do relógio. O atalho na área de trabalho você controla em Configurações, Aparência. Pra me fechar de vez: bandeja, \"Encerrar\". Fechou sem querer? É só me abrir de novo.",
+          "tente": "/config",
+          "espera": {
+            "comando": "settings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tutorial",
+      "titulo": "Este tutorial",
+      "grupo": "Configurações",
+      "comandos": [
+        "/tutorial"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Este tutorial fica sempre disponível: /tutorial continua de onde parou, /tutorial lista mostra as funções e /tutorial foco abre uma só. Também está na bandeja, em \"Tutorial\". Veja a lista.",
+          "tente": "/tutorial lista",
+          "espera": {
+            "comando": "tutorial"
+          }
+        }
+      ]
+    }
+  ]
+}

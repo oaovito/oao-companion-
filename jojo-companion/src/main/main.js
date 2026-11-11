@@ -300,7 +300,8 @@ function main() {
     const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm, pesquisa });
 
     companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), catalog, ambientLines, variety: varietyState,
-      antitedio: { rotinas: readJSON('assets/catalog/rotinas.json'), minijogos: readJSON('assets/catalog/minijogos.json'), progressao: readJSON('assets/catalog/progressao.json') }, phrases, dialogue, log });
+      antitedio: { rotinas: readJSON('assets/catalog/rotinas.json'), minijogos: readJSON('assets/catalog/minijogos.json'), progressao: readJSON('assets/catalog/progressao.json') }, phrases, dialogue, log,
+      tutorial: readJSON('assets/tutorial/pt-BR.json'), tutorialAuto: !TEST });
 
     // Esc global SOMENTE enquanto o modo de interação está ativo: o Windows nem
     // sempre entrega o foco do teclado à janela ativada por atalho. Fora do modo
@@ -763,6 +764,7 @@ function main() {
           trayCtl && trayCtl.refresh();
         },
         openSettings,
+        tutorial: () => companion.openTutorial(),
         openApp: (id) => companion.openApp(id || null),
         about: () =>
           dialog.showMessageBox({

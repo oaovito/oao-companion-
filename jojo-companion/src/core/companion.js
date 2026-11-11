@@ -37,6 +37,7 @@ import { parseDaySummaryRequest, parseDaySummaryCommand, morningLines, nightLine
 import { shiftDay } from './civil-time.js';
 import { CHECKIN, paceFor, paceFactor, parseCheckinAnswer, parseCheckinCommand, sanitizeCheckin } from './checkin.js';
 import { buildScoldPrompt, acceptScold } from './discord-blocker.js';
+import { Tutorial, parseTutorialNav, parseTutorialCommand } from './tutorial.js';
 import { variantById, BROWSERS } from './discord-detect.js';
 import { buildSystemPrompt, parseLlmReply, outOfCharacter } from './dialogue/llm-provider.js';
 import { StudySession, parseStudyRequest, parseStudyCommand, buildQuizPrompt, parseQuiz, fallbackQuiz, buildSummaryPrompt, parseSummary, fallbackSummary } from './study.js';
@@ -131,7 +132,10 @@ export function focusPlan(arg) {
 const NOD_AFTER = new Set(['foco_parar', 'jogo_parar', 'parar_atividade', 'retomar', 'mostrar', 'silencio_ligar', 'silencio_desligar', 'configuracoes', 'nova_conversa', 'resumo']);
 
 export class Companion {
-  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, antitedio = null, phrases = null, dialogue = null, rng = Math.random, log = () => {}, dateNow = () => new Date() }) {
+  constructor({ platform, overlay, clock, store, personality = null, rig = null, room = null, catalog = null, ambientLines = null, variety = null, antitedio = null, phrases = null, dialogue = null, rng = Math.random, log = () => {}, dateNow = () => new Date(), tutorial = null, tutorialAuto = false }) {
+    // Tutorial: conteúdo único; tutorialAuto liga a abertura no primeiro uso e o convite.
+    this.tutorialData = tutorial;
+    this.tutorialAuto = tutorialAuto === true;
     // Quanto cada animação/efeito passa da caixa (assets/animations/jojo.room.json).
     this.room = room || { anims: {}, effects: {} };
     this.roomPrev = null; // espaço da animação anterior durante a transição
@@ -280,6 +284,8 @@ export class Companion {
   // ---------------------------------------------------------------- ciclo de vida
 
   start() {
+    // Instalação nova ou alguém que já usava? Decidido antes de qualquer XP desta sessão.
+    if (this.tutorialExistente == null) this.tutorialExistente = (this.progress.st.xp || 0) > 0;
     const now = this.clock.now();
     this.startedAt = now;
     this.lastUserActionAt = now;
@@ -319,6 +325,8 @@ export class Companion {
       else if (per === 'noite') this.fireEvent('boaNoite', { speak: false });
       this._checkStreak(new Date());
     }, 1500);
+    // Primeiro uso: o tutorial abre depois da saudação (ou o convite, para quem já usava).
+    if (this.tutorialAuto) this.clock.setTimeout(() => this.checkTutorial(), 9000);
   }
 
   /** Sequência de dias seguidos com o JoJo (constância, sem cobrança). */
@@ -517,6 +525,7 @@ export class Companion {
   // ---------------------------------------------------------------- configurações
 
   applySettings(settings, changed = []) {
+    if (this.tutorialData && changed.length) this._tutorialEvent({ config: changed });
     this.avoid.setConfig({ margin: settings.safetyMargin });
     this.behavior.activity = settings.activity;
     this.hotkeyLabel = settings.interactionHotkey;
@@ -1273,7 +1282,20 @@ export class Companion {
     this.hideBubble(); this.onConversationGuard?.(); this._applyLayout(true);
   }
 
+  /** Conversa: o tutorial, quando ativo, ouve a navegação antes e confere o resultado depois. */
   async chat(text, conversationId = null) {
+    const nav = this.tutorialData && !parseCommand(text) ? this._tutorialNav(text) : null;
+    if (nav) {
+      const conv = this.conversations.current();
+      this.conversations.addMessage(conv.id, 'user', String(text));
+      return this._quickReply(conv, nav, 'tutorial');
+    }
+    const r = await this._chatTurn(text, conversationId);
+    if (this.tutorialData && r && r.command !== 'tutorial') this._tutorialEvent({ comando: r.command || null, intent: r.intent || null, mensagem: !r.command });
+    return r;
+  }
+
+  async _chatTurn(text, conversationId = null) {
     this.visualContext = (this.visualContext || 0) + 1;
     const sceneGeneration = this.onSceneChat?.(text);
     const conv = this.conversations.current();
@@ -1960,6 +1982,7 @@ export class Companion {
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
     if (cmd === 'discord') return { text: this._discordCommand(), command: cmd, conversationId };
+    if (cmd === 'tutorial') return { text: this._tutorialCommand(arg), command: cmd, conversationId };
     if (cmd === 'checkin') {
       const c = parseCheckinCommand(arg);
       const text = c.tipo === 'perguntar' ? this.askCheckin(new Date()) : c.tipo === 'responder' ? this.setEnergy(c.energia, new Date()) : this._fala('checkinAjuda');
@@ -2082,6 +2105,7 @@ export class Companion {
   }
 
   setReducedMotion(on) {
+    if (this.tutorialData && this.started && !!on !== this.reducedMotion) this._tutorialEvent({ evento: 'movimentoReduzido' });
     this.reducedMotion = !!on;
     if (on && this.mover.active && this.mover.kind === 'walk') {
       this.mover.stop();
@@ -3574,7 +3598,7 @@ export class Companion {
       this._checkWorkTimer();
       this._musicGroove();
       // Um lembrete por minuto: refeição/treino primeiro; senão água, pausa ou remédio.
-      if (!this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date()) && !this.checkRoutine(new Date()) && !this.checkDaySummary(new Date())) this.checkCheckin(new Date());
+      if (!this.checkTutorial() && !this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date()) && !this.checkRoutine(new Date()) && !this.checkDaySummary(new Date())) this.checkCheckin(new Date());
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
@@ -3802,6 +3826,115 @@ export class Companion {
       const vars = { app: variantById(e.alvo)?.nome || 'Discord', navegador: BROWSERS[e.alvo] || BROWSERS.outro, n: String(e.n || 1), erro: e.erro ? this._fala(`discordErro_${e.erro}`) : '' };
       return { em: e.em, quando: new Date(e.em).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }), texto: this._fala(`discordLog_${e.acao}`, vars), ok: !/^falha/.test(e.acao) };
     });
+  }
+
+  // ---------------------------------------------------------------- tutorial
+
+  /** Tutorial (conteúdo único em assets/tutorial/pt-BR.json; progresso salvo com o progresso dela). */
+  get tutorial() {
+    if (!this.tutorialData) return null;
+    if (!this._tutorial) {
+      const st = this.progress.st;
+      this._tutorial = new Tutorial({
+        data: this.tutorialData, state: st.tutorial, existente: this.tutorialExistente ?? (st.xp || 0) > 0,
+        save: (t) => { this.progress.st.tutorial = t; this.progress.save(this.progress.st); },
+        vars: () => ({ ...profileVars(this.personality.get(), 'serio'), atalho: this.hotkeyLabel.replace(/Control/g, 'Ctrl').replace(/\+/g, ' + ') }),
+      });
+    }
+    return this._tutorial;
+  }
+
+  _tutorialStatus() {
+    const conv = this.conversations.create({ id: 'tutorial', title: 'Tutorial', kind: 'reminder' });
+    if (this.tutorial.ativo) this.conversations.setStatus(conv.id, 'needsInput', 'Escreva "próximo" para seguir.');
+    else this.conversations.setStatus(conv.id, 'idle');
+    return conv;
+  }
+
+  /** Balão e aceno do tutorial. Sem som; com movimento reduzido o aceno vira pose. Calado no Modo Trabalho e em tela cheia. */
+  _tutorialBalloon(text) {
+    if (!text || !this.started || this.work || this.userHidden || this.fullscreenHidden || this.paused) return false;
+    this.hideBubble();
+    const ok = this.say(text, 'speech', { category: 'tutorial' });
+    if (ok && !this.focus) this.react('nod');
+    return ok;
+  }
+
+  /** Passo do tutorial dito por ele mesmo (sem ela ter pedido): entra na conversa e no balão. */
+  _tutorialShow(text) {
+    if (!text) return;
+    const conv = this._tutorialStatus();
+    this.conversations.addMessage(conv.id, 'jojo', text);
+    this._tutorialStatus();
+    this._tutorialBalloon(text);
+  }
+
+  /** Menu da bandeja, "Tutorial": abre a conversa e começa ou continua. */
+  openTutorial() {
+    const t = this.tutorial;
+    if (!t) return false;
+    if (!this.interaction) this.enterInteraction('tutorial');
+    this._tutorialShow(t.start());
+    return true;
+  }
+
+  /** /tutorial e seus subcomandos. */
+  _tutorialCommand(arg) {
+    const t = this.tutorial;
+    if (!t) return 'Comando desconhecido. Use / para ver a lista.';
+    const c = parseTutorialCommand(arg);
+    // "/tutorial lista" dentro do passo que pede exatamente isso conta como teste feito.
+    const cumpre = t.matches({ comando: 'tutorial' }) && c.tipo === 'lista';
+    const text = c.tipo === 'iniciar' ? t.start() : c.tipo === 'lista' ? t.list() : c.tipo === 'sair' ? t.stop() : c.tipo === 'recomecar' ? t.restart()
+      : c.tipo === 'ajuda' ? t.t('ajuda') : c.tipo === 'proximo' ? t.next() : c.tipo === 'voltar' ? t.back() : c.tipo === 'pular' ? t.skip()
+        : c.tipo === 'pausar' ? t.pause() : t.startOne(c.busca);
+    if (cumpre) this.clock.setTimeout(() => { if (t.matches({ comando: 'tutorial' })) this._tutorialShow(t.advance()); }, 1200);
+    this._tutorialStatus();
+    if (c.tipo !== 'lista') this._tutorialBalloon(text);
+    return text;
+  }
+
+  /** "próximo", "voltar", "pular", "pausar" na conversa, só com o tutorial ativo. */
+  _tutorialNav(text) {
+    const t = this.tutorial;
+    const nav = t && t.ativo ? parseTutorialNav(text) : null;
+    if (!nav) return null;
+    const out = nav === 'proximo' ? t.next() : nav === 'voltar' ? t.back() : nav === 'pular' ? t.skip() : t.pause();
+    this._tutorialStatus();
+    this._tutorialBalloon(out);
+    return out;
+  }
+
+  /** Ela fez algo: se era o que o passo pedia, o tutorial segue sozinho logo depois da resposta. */
+  _tutorialEvent(evento) {
+    const t = this.tutorial;
+    if (!t || !t.matches(evento)) return false;
+    const passo = `${t.st.funcao}:${t.st.passo}`;
+    this.clock.setTimeout(() => {
+      if (!t.ativo || `${t.st.funcao}:${t.st.passo}` !== passo) return; // ela já andou por conta própria
+      this._tutorialShow(t.advance());
+    }, 1200);
+    return true;
+  }
+
+  /**
+   * Primeiro uso. Instalação nova: abre sozinho, com a conversa aberta. Quem já
+   * usava: só um convite, uma vez. Nunca no Modo Trabalho, no foco, em jogo,
+   * em tela cheia, em pausa ou no modo silencioso: espera a próxima chance.
+   */
+  checkTutorial() {
+    const t = this.tutorialAuto ? this.tutorial : null;
+    if (!t || (t.st.estado !== 'novo' && t.st.estado !== 'antigo')) return false;
+    if (!this._canNag() || this.focus || this.focusBreak || this.game || this.dragging) return false;
+    if (t.st.estado === 'antigo') {
+      if (this.interaction) return false;
+      this._tutorialShow(t.invite());
+      return true;
+    }
+    const text = t.open();
+    if (!this.interaction) this.enterInteraction('tutorial');
+    this._tutorialShow(text);
+    return true;
   }
 
   /** Estado do check-in do dia (salvo junto do progresso). */

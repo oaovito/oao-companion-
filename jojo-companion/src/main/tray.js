@@ -32,6 +32,7 @@ export function createTray({ iconPath, getState, actions }) {
       { label: 'Modo Trabalho', type: 'checkbox', checked: s.work, click: () => actions.toggleWork() },
       { type: 'separator' },
       { label: 'Configurações…', click: () => actions.openSettings() },
+      { label: 'Tutorial', click: () => actions.tutorial() },
       { label: 'Sobre', click: () => actions.about() },
       { type: 'separator' },
       { label: 'Encerrar', click: () => actions.quit() },
