@@ -1,5 +1,6 @@
 {
-  "_notas": "Fonte única do tutorial. Cada função lista os comandos ('comandos') e as chaves de configuração ('configuracoes') que ensina; test/unit/tutorial.test.js falha se um comando do menu, um comando reconhecido ou uma configuração visível ficar sem função aqui. Cada passo tem 'texto' (na voz do JoJo, até 280 caracteres) e, quando há o que testar, 'tente' (exemplo real para digitar ou fazer) e 'espera' (o que faz o passo avançar sozinho: {comando}, {intent}, {config} ou {qualquer}). Sem 'espera', avança com \"próximo\". Sem som.",
+  "_notas": "Fonte única do tutorial. Cada função lista os comandos ('comandos') e as chaves de configuração ('configuracoes') que ensina; test/unit/tutorial.test.js falha se um comando do menu, um comando reconhecido ou uma configuração visível ficar sem função aqui. Cada passo tem 'texto' (na voz do JoJo, até 280 caracteres) e, quando há o que testar, 'tente' (exemplo real para digitar ou fazer) e 'espera' (o que faz o passo avançar sozinho: {comando}, {intent}, {config} ou {qualquer}). Sem 'espera', avança com \"próximo\". Sem som. 'versao' sobe a cada atualização que traz conteúdo novo: quem já usava recebe o convite de novo na primeira interação.",
+  "versao": 1,
   "textos": {
     "boasVindas": "Primeira vez aqui. Eu sou o {companion}: tubarão, fisiculturista e seu parceiro de estudo e treino. Vou te mostrar tudo em passos curtos, e você testa cada um. Escreve \"próximo\" pra começar. \"pular\", \"voltar\" e \"pausar\" também funcionam.",
     "convite": "Tem tutorial novo, {nome}. Eu mostro cada função em passos curtos e você testa na hora. Quando quiser: /tutorial. Sem pressa, eu não saio daqui.",
@@ -24,7 +25,8 @@
     "naoAchei": "Não achei essa função. Olha os nomes em /tutorial lista.",
     "lista": "Funções do tutorial (✓ = já vista). Pra abrir uma: /tutorial e o nome.",
     "ajuda": "Comandos do tutorial: /tutorial (começa ou continua), /tutorial lista, /tutorial foco (uma função só), próximo, voltar, pular, pausar, /tutorial sair, /tutorial recomeçar.",
-    "recomecado": "Do zero, então. Sem problema, repetição é treino."
+    "recomecado": "Do zero, então. Sem problema, repetição é treino.",
+    "conviteNovidades": "Tem coisa nova no tutorial, {nome}: {novas}. Eu mostro em passos curtos e você testa na hora. Pra ver: /tutorial {id}."
   },
   "funcoes": [
     {

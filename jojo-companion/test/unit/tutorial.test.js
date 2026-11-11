@@ -138,7 +138,7 @@ test('motor: abrir direto uma função não bagunça o tutorial inteiro; busca p
   assert.match(t.list(), /Utilidades:\n/);
 
   assert.deepEqual(sanitizeTutorial({ estado: 'voando', funcao: 'nada', passo: -3, vistas: ['foco', 'foco', 'x'], puladas: ['foco', 'pet'] }, { ids: COB.ids, existente: true }),
-    { estado: 'antigo', funcao: null, passo: 0, vistas: ['foco'], puladas: ['pet'], avulso: false, intro: false, retorno: null });
+    { estado: 'antigo', funcao: null, passo: 0, vistas: ['foco'], puladas: ['pet'], avulso: false, intro: false, retorno: null, versaoVista: 0, conhecidas: [] });
   assert.equal(sanitizeTutorial(null, { ids: COB.ids }).estado, 'novo');
   for (const [txt, nav] of [['próximo', 'proximo'], ['Próxima!', 'proximo'], ['voltar', 'voltar'], ['pula', 'pular'], ['pausar', 'pausar'], ['pronto', null], ['não', null], ['adiciona', null], ['próximo exercício é qual?', null], ['3', null]]) assert.equal(parseTutorialNav(txt), nav, txt);
   assert.deepEqual(parseTutorialCommand(''), { tipo: 'iniciar' });
@@ -172,6 +172,8 @@ test('primeiro uso: instalação nova abre sozinho, com a conversa aberta e o ba
   e.clock.advance(5000);
   assert.equal(e.tut().st.estado, 'ativo');
   assert.equal(e.companion.interaction, true, 'abre a conversa');
+  assert.equal(e.companion.chatOpen, true, 'com o painel de conversa aberto na tela');
+  assert.equal(e.companion.progress.st.tutorial.versaoVista, DATA.versao, 'só marca depois de abrir na tela');
   assert.ok(e.said.some((t) => /Primeira vez aqui/.test(t)), 'fala no balão');
   assert.ok(conversa(e).some((t) => /Primeira vez aqui/.test(t)));
   assert.equal(e.companion.conversations.get('tutorial').status, 'needsInput');
@@ -182,17 +184,66 @@ test('primeiro uso: instalação nova abre sozinho, com a conversa aberta e o ba
   assert.ok(antes >= 1);
 });
 
-test('primeiro uso: quem já usava recebe só um convite, uma vez, sem abrir nada', () => {
+test('convite (correção): quem já usava NÃO recebe nada sozinho; o convite vem na primeira interação e só então conta como visto', async () => {
   const e = env({ xp: 120 });
-  e.clock.advance(10e3);
-  assert.equal(e.tut().st.estado, 'convidado');
-  assert.equal(e.companion.interaction, false);
-  assert.equal(e.said.filter((t) => /Tem tutorial novo, Emanuele/.test(t)).length, 1);
   e.clock.advance(5 * 60e3);
-  assert.equal(e.said.filter((t) => /Tem tutorial novo/.test(t)).length, 1);
-  assert.equal(e.tut().ativo, false);
+  assert.equal(e.said.filter((t) => /Tem tutorial novo/.test(t)).length, 0, 'nada de convite solto com ninguém olhando');
+  assert.equal(e.tut().st.versaoVista, 0, 'ainda não visto');
+  assert.ok(e.tut().pendingInvite());
+  // Ela abre a conversa: o convite aparece no painel aberto (e no balão) e só agora é marcado.
+  e.companion.enterInteraction('hotkey');
+  assert.equal(e.tut().st.versaoVista, 0, 'entrar no modo de interação ainda não mostra a conversa');
+  e.companion.setChatOpen(true);
+  assert.ok(conversa(e).some((t) => /Tem tutorial novo, Emanuele/.test(t)));
+  assert.ok(e.said.some((t) => /Tem tutorial novo/.test(t)));
+  assert.equal(e.tut().st.versaoVista, DATA.versao);
+  assert.equal(e.tut().st.estado, 'convidado');
+  assert.equal(e.tut().ativo, false, 'convite não abre o tutorial');
+  // Uma vez só.
+  e.companion.setChatOpen(false);
+  e.companion.setChatOpen(true);
+  assert.equal(conversa(e).filter((t) => /Tem tutorial novo/.test(t)).length, 1);
+  // Reabriu o app: continua visto.
+  const disco = JSON.parse(JSON.stringify(e.companion.progress.st.tutorial));
+  const t2 = new Tutorial({ data: DATA, state: disco, existente: true, vars: () => VARS });
+  assert.equal(t2.pendingInvite(), null);
 });
 
+test('convite (correção): pela Central, a primeira mensagem também traz o convite, depois da resposta', async () => {
+  const e = env({ xp: 50 });
+  e.clock.advance(60e3);
+  const r = await chatAdv(e, '/resumo');
+  assert.equal(r.command, 'resumo');
+  const msgs = conversa(e);
+  assert.match(msgs.at(-1), /Tem tutorial novo/);
+  assert.equal(e.tut().st.versaoVista, DATA.versao);
+  await chatAdv(e, '/resumo');
+  assert.equal(conversa(e).filter((t) => /Tem tutorial novo/.test(t)).length, 1);
+  // Mensagem de crise não recebe convite.
+  const c = env({ xp: 50 });
+  await chatAdv(c, 'quero morrer');
+  assert.ok(!conversa(c).some((t) => /Tem tutorial novo/.test(t)));
+  assert.equal(c.tut().st.versaoVista, 0);
+});
+
+test('convite (correção): atualização com conteúdo novo convida de novo, citando o que é novo; sem conteúdo novo, nada', () => {
+  const dados = { ...DATA, versao: DATA.versao + 1, funcoes: [...DATA.funcoes, { id: 'novidade', titulo: 'Função nova', grupo: 'Mais', comandos: [], configuracoes: [], passos: [{ texto: 'Passo da função nova, com texto comprido o bastante.' }] }] };
+  const antes = { estado: 'concluido', funcao: null, passo: 0, vistas: DATA.funcoes.map((f) => f.id), puladas: [], versaoVista: DATA.versao, conhecidas: DATA.funcoes.map((f) => f.id) };
+  const t = new Tutorial({ data: dados, state: antes, existente: true, vars: () => VARS });
+  assert.deepEqual(t.pendingInvite().novas.map((f) => f.id), ['novidade']);
+  assert.ok(t.invite().startsWith('Tem coisa nova no tutorial, Emanuele: Função nova.'));
+  assert.ok(t.invite().includes('/tutorial novidade'));
+  t.markInviteSeen();
+  assert.equal(t.pendingInvite(), null);
+  assert.equal(t.st.estado, 'concluido', 'o convite não mexe no tutorial já concluído');
+  assert.match(t.start(), /^Função nova/, '/tutorial continua pela função nova');
+  const igual = new Tutorial({ data: DATA, state: { ...antes }, existente: true, vars: () => VARS });
+  assert.equal(igual.pendingInvite(), null);
+  // Quem rodou /tutorial por conta própria já conhece o conteúdo.
+  const sozinha = new Tutorial({ data: DATA, state: null, existente: true, vars: () => VARS });
+  sozinha.start();
+  assert.equal(sozinha.pendingInvite(), null);
+});
 test('primeiro uso: nunca no Modo Trabalho, no foco ou no modo silencioso; abre na primeira chance; desligado em teste do app', () => {
   const t = env({ settings: { trabalhoAtivo: true, trabalhoRestaurar: true } });
   t.clock.advance(5 * 60e3);

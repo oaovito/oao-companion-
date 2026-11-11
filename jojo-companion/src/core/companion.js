@@ -1262,6 +1262,7 @@ export class Companion {
 
   setChatOpen(open) {
     if (!this.interaction) return;
+    const abriu = !!open && !this.chatOpen;
     this.chatOpen = !!open;
     this.conversations.setViewing(this.conversations.current().id, this.chatOpen);
     this.noteActivity();
@@ -1270,6 +1271,8 @@ export class Companion {
       this.fireEvent('conversaAberta');
     }
     this._applyLayout(true);
+    // Primeira interação depois de atualizar: o convite do tutorial aparece na conversa aberta.
+    if (abriu && this.tutorialData) this._tutorialInviteOnInteraction('conversa');
   }
 
   /**
@@ -1293,6 +1296,8 @@ export class Companion {
     }
     const r = await this._chatTurn(text, conversationId);
     if (this.tutorialData && r && r.command !== 'tutorial') this._tutorialEvent({ comando: r.command || null, intent: r.intent || null, mensagem: !r.command });
+    // Mandou mensagem (pelo pet ou pela Central) sem ter visto o convite: ele vem logo depois da resposta.
+    if (this.tutorialData && r && !r.cancelled && !['emergencia', 'saude', 'cuidado'].includes(r.intent) && !['crisis', 'distress', 'sad'].includes(detectIntent(text))) this._tutorialInviteOnInteraction('mensagem');
     return r;
   }
 
@@ -3929,23 +3934,47 @@ export class Companion {
   }
 
   /**
-   * Primeiro uso. Instalação nova: abre sozinho, com a conversa aberta. Quem já
-   * usava: só um convite, uma vez. Nunca no Modo Trabalho, no foco, em jogo,
-   * em tela cheia, em pausa ou no modo silencioso: espera a próxima chance.
+   * Primeiro uso (instalação nova): abre sozinho, com a conversa aberta na tela.
+   * Nunca no Modo Trabalho, no foco, em jogo, em tela cheia, em pausa ou no modo
+   * silencioso: espera a próxima chance. Quem já usava não recebe nada aqui: o
+   * convite vai na primeira interação (ver _tutorialInviteOnInteraction).
    */
   checkTutorial() {
     const t = this.tutorialAuto ? this.tutorial : null;
-    if (!t || (t.st.estado !== 'novo' && t.st.estado !== 'antigo')) return false;
+    const p = t && t.pendingInvite();
+    if (!p || p.tipo !== 'abrir') return false;
     if (!this._canNag() || this.focus || this.focusBreak || this.game || this.dragging) return false;
-    if (t.st.estado === 'antigo') {
-      if (this.interaction) return false;
-      this._tutorialShow(t.invite());
-      return true;
-    }
-    const text = t.open();
     if (!this.interaction) this.enterInteraction('tutorial');
+    if (!this.interaction) return false; // não deu para abrir (tela cheia…): tenta depois
+    const text = t.open();
+    this.setChatOpen(true);
     this._tutorialShow(text);
+    // A conversa está aberta e mostra a boas-vindas: só agora conta como visto.
+    if (this.chatOpen) t.markInviteSeen();
     return true;
+  }
+
+  /**
+   * Convite na primeira interação depois de uma atualização com conteúdo novo no
+   * tutorial (ou na primeira vez do app). Entra na conversa que está aberta na
+   * tela e só então é marcado como visto. `via`: 'conversa' (painel aberto) ou
+   * 'mensagem' (ela mandou mensagem, pelo pet ou pela Central).
+   */
+  _tutorialInviteOnInteraction(via) {
+    const t = this.tutorialAuto ? this.tutorial : null;
+    const p = t && t.pendingInvite();
+    if (!p) return null;
+    if (p.tipo === 'abrir') {
+      const text = t.open();
+      this._tutorialShow(text);
+      t.markInviteSeen();
+      return text;
+    }
+    const text = t.invite();
+    this.conversations.addMessage(this.conversations.current().id, 'jojo', text);
+    if (via === 'conversa') this._tutorialBalloon(text);
+    t.markInviteSeen();
+    return text;
   }
 
   /** Estado do check-in do dia (salvo junto do progresso). */

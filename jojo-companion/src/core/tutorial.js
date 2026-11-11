@@ -38,7 +38,9 @@ export function sanitizeTutorial(st, { ids = [], existente = false } = {}) {
   const lista = (v) => [...new Set((Array.isArray(v) ? v : []).filter((id) => ids.includes(id)))];
   const estado = ESTADOS.includes(s.estado) ? s.estado : existente ? 'antigo' : 'novo';
   const funcao = ids.includes(s.funcao) ? s.funcao : null;
-  const out = { estado, funcao, passo: Number.isInteger(s.passo) && s.passo >= 0 ? s.passo : 0, vistas: lista(s.vistas), puladas: lista(s.puladas), avulso: s.avulso === true, intro: s.intro === true, retorno: null };
+  const out = { estado, funcao, passo: Number.isInteger(s.passo) && s.passo >= 0 ? s.passo : 0, vistas: lista(s.vistas), puladas: lista(s.puladas), avulso: s.avulso === true, intro: s.intro === true, retorno: null,
+    // Versão do conteúdo cujo convite (ou abertura) ela de fato viu, e as funções que existiam então.
+    versaoVista: Number.isInteger(s.versaoVista) && s.versaoVista >= 0 ? s.versaoVista : 0, conhecidas: lista(s.conhecidas) };
   if (s.retorno && typeof s.retorno === 'object' && (s.retorno.funcao === null || ids.includes(s.retorno.funcao))) {
     out.retorno = { estado: ESTADOS.includes(s.retorno.estado) ? s.retorno.estado : 'pausado', funcao: s.retorno.funcao || null, passo: Number.isInteger(s.retorno.passo) ? s.retorno.passo : 0, intro: s.retorno.intro === true };
   }
@@ -96,16 +98,39 @@ export class Tutorial {
     return this.render();
   }
 
-  /** Convite para quem já usava o JoJo (uma vez só). */
+  /**
+   * Convite pendente: instalação nova (abre o tutorial) ou conteúdo novo desde a
+   * última vez que ela viu um convite. null quando não há nada a mostrar.
+   */
+  pendingInvite() {
+    const versao = Number.isInteger(this.data.versao) ? this.data.versao : 1;
+    if (this.st.versaoVista >= versao) return null;
+    if (this.st.estado === 'novo') return { tipo: 'abrir' };
+    if (this.st.estado === 'ativo') return null; // já está no tutorial agora
+    const novas = this.st.conhecidas.length ? this.funcs.filter((f) => !this.st.conhecidas.includes(f.id)) : [];
+    return { tipo: 'convite', novas };
+  }
+
+  /** Texto do convite pendente (quem já usava). */
   invite() {
-    this.st.estado = 'convidado';
-    this.save();
+    const p = this.pendingInvite();
+    if (p && p.novas && p.novas.length) return this.t('conviteNovidades', { novas: p.novas.map((f) => f.titulo).join(', '), id: p.novas[0].id });
     return this.t('convite');
+  }
+
+  /** Só depois de o convite (ou a abertura) aparecer de verdade na tela. */
+  markInviteSeen() {
+    this.st.versaoVista = Number.isInteger(this.data.versao) ? this.data.versao : 1;
+    this.st.conhecidas = [...this.ids];
+    if (this.st.estado === 'novo' || this.st.estado === 'antigo') this.st.estado = this.st.estado === 'novo' ? 'ativo' : 'convidado';
+    this.save();
   }
 
   /** /tutorial: começa ou continua de onde parou. */
   start() {
     const s = this.st;
+    s.versaoVista = Number.isInteger(this.data.versao) ? this.data.versao : 1;
+    s.conhecidas = [...this.ids];
     if (s.estado === 'ativo') return this.render();
     if (s.estado === 'pausado' && (s.funcao || s.intro)) { s.estado = 'ativo'; this.save(); return `${this.t('retomado')}\n${this.render()}`; }
     const prox = this.pendentes()[0];
