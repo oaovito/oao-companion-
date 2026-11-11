@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "JoJo: sem Discord",
+  "description": "Avisa o JoJo Companion quando uma aba do Discord abre e fecha só essa aba. Só enxerga endereços do Discord; não lê nenhum outro site.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "116",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3jklDVAB6vGZQzaLuX2hrrNen/rQg+LEGIEv71pkCy/iMDpwusZ56ioHFCLCBw8mkT5W3fgLPEAwGmVtvbzaT+cUBWjzA4zUJTP4TesdcHxypq15OvWDpKK/FWTDG/lRk704UjlbUuHRJ2H7IluqWK6RI2hjuAHA59PAzuMDEwgq1ebIU8dqclQ6priABPYf8tGEolJ6apt5afFbeSAS5aimZ6Ia5yFiCb8HbZXtcYtrDOGNqnrOnBeBqACI78dk2d+sY0N2obACf+aIDJ2xOPI74V/wvXObXAnwAfVD/owDqYj6zeLhBqtbJXfH6Bxq7+zewoipEb9ef/aq9vvOBQIDAQAB",
+  "permissions": ["nativeMessaging", "alarms"],
+  "host_permissions": ["*://discord.com/*", "*://*.discord.com/*", "*://discordapp.com/*", "*://*.discordapp.com/*"],
+  "background": { "service_worker": "fundo.js" }
+}

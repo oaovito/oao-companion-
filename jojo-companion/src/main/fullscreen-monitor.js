@@ -98,6 +98,7 @@ export function createFullscreenDetector(log = () => {}) {
       return state.reason;
     },
     closeDiscord: ({ force = false, signal = null } = {}) => request('closeDiscord', { force: force === true }, 6000, signal),
+    discordRunning: () => request('discordRunning', {}, 4000),
     brandIcons: () => request('brandIcons', {}, 6000),
     steamRoots: () => request('steamRoots', {}, 4000),
     setGameInventory(inventory) {

@@ -354,6 +354,10 @@ if (process.parentPort) process.parentPort.on('message', async (e) => {
     } else if (msg.type === 'cancelDiscord') {
       if (cancelledDiscord.size >= 64) cancelledDiscord.delete(cancelledDiscord.values().next().value);
       cancelledDiscord.add(msg.id);
+    } else if (msg.type === 'discordRunning') {
+      // Só os nomes dos executáveis do Discord abertos (Discord, PTB, Canary); nada mais sai daqui.
+      const names = knownProcesses().filter(p => isDiscord(p.name)).map(p => processInfo(p.pid)).filter(p => p && isDiscord(p.image)).map(p => winPath.basename(p.image));
+      process.parentPort.postMessage({ type: 'result', id: msg.id, result: [...new Set(names)] });
     } else if (msg.type === 'brandIcons') {
       process.parentPort.postMessage({ type: 'result', id: msg.id, result: brandIcons() });
     }
