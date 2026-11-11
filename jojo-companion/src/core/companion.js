@@ -29,6 +29,7 @@ import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
+import { situacaoSaude } from './saude.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
@@ -1367,14 +1368,24 @@ export class Companion {
       this.react('comfort');
       return this._quickReply(conv, t, 'cuidado');
     }
-    // Emergência médica: segurança antes de tudo (192), sem óculos nem piada.
+    // Emergência médica: segurança antes de tudo (192 e o João, médico), sem óculos nem piada.
     const ciencia = intent0 === 'avcReal' ? null : modoCiencia(text);
-    if (ciencia === 'emergencia') {
+    const saude = ['avcReal', 'crisis'].includes(intent0) ? null : situacaoSaude(text);
+    if (ciencia === 'emergencia' || saude === 'emergencia') {
       this._protectConversation();
       this.nerdUntil = 0;
       this.nerdAbertura = null;
       this.react('comfort');
-      return this._quickReply(conv, RESPOSTA_EMERGENCIA, 'emergencia');
+      return this._quickReply(conv, this._fala('saudeEmergencia') || RESPOSTA_EMERGENCIA, 'emergencia');
+    }
+    // Sintoma, dor, machucado ou remédio: quem cuida é o João, médico de verdade.
+    // Pedido de lembrete ("me lembra do remédio às 8") continua sendo lembrete.
+    if (saude === 'medico' && !safety && !parseReminderRequest(text)) {
+      this._protectConversation();
+      this.nerdUntil = 0;
+      this.nerdAbertura = null;
+      this.react('comfort');
+      return this._quickReply(conv, this._fala('saudeJoao'), 'saude');
     }
     if (!safety && this.todoChat) {
       const reply = this.todoChat.reply(text);

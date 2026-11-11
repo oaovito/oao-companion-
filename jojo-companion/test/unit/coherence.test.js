@@ -365,6 +365,13 @@ test('perguntas e sintomas não são engolidos por palavras de ações ou de tri
     app.companion.dialogue.llm = model({ text });
     app.companion.dialogue.searchEnabled = () => false;
     const delivered = await chatAdv(app, input);
+    // Regra de saúde: dor no peito é sinal de emergência (SAMU 192 e o João, médico), não conversa com o modelo.
+    if (/dor no peito/i.test(input)) {
+      assert.equal(delivered.intent, 'emergencia', `Companion: ${input}`);
+      assert.match(delivered.text, /192/);
+      assert.match(delivered.text, /João/);
+      continue;
+    }
     assert.equal(delivered.intent, 'ia', `Companion: ${input}`);
   }
   assert.equal(detectIntent('faz supino'), 'bench');
