@@ -1,7 +1,7 @@
 {
   "_notas": "Animações do bloqueio do Discord. Mesmo formato do catálogo geral. 'broncaDiscord' toca junto da bronca (primeira fala); 'discordResolvido' junto da confirmação (segunda fala). 'estatico' é o quadro da versão de movimento reduzido. Sem som.",
   "itens": [
-    { "id": "broncaDiscord", "nome": "Bronca do Discord (dedo apontado e cabeça negando)", "categoria": "bronca", "listas": {}, "gatilho": { "estado": "discord" }, "duracao": 2800, "loop": false, "entrada": 220, "frequencia": "comum", "estatico": 0.4, "receita": { "bracos": "aponta", "cabeca": "nega", "rosto": "bravo" } },
-    { "id": "discordResolvido", "nome": "Discord resolvido (braços cruzados e aceno de cabeça)", "categoria": "bronca", "listas": {}, "gatilho": { "estado": "discord" }, "duracao": 2400, "loop": false, "entrada": 220, "frequencia": "comum", "estatico": 0.5, "receita": { "bracos": "cruzados", "cabeca": "assente", "rosto": "canto" } }
+    { "id": "broncaDiscord", "nome": "Bronca do Discord (avança apontando, negando com a cabeça)", "categoria": "bronca", "listas": {}, "gatilho": { "estado": "discord" }, "duracao": 2800, "loop": false, "entrada": 220, "frequencia": "comum", "estatico": 0.4, "receita": { "corpo": "avanca", "bracos": "aponta", "cabeca": "nega", "rosto": "bravo" } },
+    { "id": "discordResolvido", "nome": "Discord resolvido (braços cruzados e aceno de cabeça)", "categoria": "bronca", "listas": {}, "gatilho": { "estado": "discord" }, "duracao": 2400, "loop": false, "entrada": 220, "frequencia": "comum", "estatico": 0.5, "receita": { "bracos": "focoCruzados", "cabeca": "assente", "rosto": "canto" } }
   ]
 }
