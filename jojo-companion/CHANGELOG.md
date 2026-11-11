@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Não publicado
+## 0.46.0 — 2026-11-11
 
 ### Novidades
 - Doze utilidades de rotina: lembretes de água, pausa e remédio; notas rápidas;
@@ -15,6 +15,14 @@
   e Brave (extensão instalada à mão) e histórico visível. Ver `docs/DISCORD.md`.
 - Tutorial conduzido pelo JoJo, cobrindo todas as funções, comandos e
   configurações, com progresso salvo. Ver `docs/TUTORIAL.md`.
+
+### Como testar
+- Digite `/tutorial` na conversa (ou bandeja → "Tutorial") e siga os passos; "próximo", "voltar",
+  "pular" e "pausar" funcionam na conversa.
+- `/lembrete`, `/nota`, `/quebrar`, `/habitos`, `/rotina`, `/treino`, `/revisar`, `/resumo manha`,
+  `/checkin` e `/foco pomodoro` mostram as utilidades novas.
+- O bloqueio do Discord vem desligado: Configurações → Bloqueio do Discord explica o que ele faz
+  antes da chave. `/discord` mostra o estado e o histórico.
 
 ## 0.45.1 — 2026-11-10
 
