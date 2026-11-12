@@ -118,6 +118,21 @@ test('resposta do modelo: emoji sai, o texto fica', () => {
   assert.equal(parseLlmReply('{"texto":"Sem emoji aqui."}').text, 'Sem emoji aqui.');
 });
 
+test('correção dela: a frase ambígua "Você tem certeza, Manu." sai; pergunta de dúvida continua barrada', async () => {
+  const { semComentarioDeCerteza } = await import('../../src/core/dialogue/llm-provider.js');
+  const { erroDeCoerencia } = await import('../../src/core/dialogue/coherence.js');
+  assert.equal(semComentarioDeCerteza('Manga, certo. Você tem certeza, Manu. Sem confusão!'), 'Manga, certo. Sem confusão!');
+  assert.equal(semComentarioDeCerteza('Manga, certo. Você tem certeza, Manu.'), 'Manga, certo.');
+  assert.equal(semComentarioDeCerteza('Confirmado, manga.'), 'Confirmado, manga.');
+  assert.equal(semComentarioDeCerteza('Você tem certeza, Manu.'), 'Você tem certeza, Manu.', 'sem sobrar nada, não mexe (a guarda decide)');
+  const pergunta = semComentarioDeCerteza('Você tem certeza? Achei que era maçã.');
+  assert.equal(erroDeCoerencia('Eu disse manga, não maçã.', pergunta), 'contestação da correção pessoal');
+  const calls = [];
+  const p = provider(calls, 'Manga, certo. Você tem certeza, Manu. Sem confusão!');
+  const r = await p.reply({ text: 'Eu disse manga, não maçã.', history: [{ role: 'user', text: 'Minha fruta preferida é maçã.' }, { role: 'jojo', text: 'Maçã. Anotado.' }] });
+  assert.equal(r.text, 'Manga, certo. Sem confusão!');
+});
+
 test('guarda de tom: "não se desculpe" e "sem desculpas" são bronca do JoJo; desculpa de atendente continua barrada', () => {
   for (const ok of ['Que droga, Manu! Não se desculpe, foco no que precisa ser feito agora.', 'Sem desculpas: amanhã você termina.', 'Nada de desculpa, levanta e vai.']) assert.equal(outOfCharacter(ok), null, ok);
   for (const ruim of ['Desculpe, não posso ajudar com isso.', 'Peço desculpas pelo erro.', 'Sinto muito, Manu.', 'Como uma IA, eu não tenho opinião.']) assert.equal(outOfCharacter(ruim), 'tom de assistente', ruim);

@@ -152,6 +152,17 @@ export function cabeNoContexto(system, historico, atual, opts = OLLAMA_OPTS.curt
   return out;
 }
 
+/**
+ * Depois de uma correção dela, "Você tem certeza, Manu." é ambíguo (afirmação ou
+ * dúvida?) e confunde. Sai a frase afirmativa; o resto da resposta fica. Pergunta
+ * de verdade ("tem certeza?") não é tocada: a guarda de coerência barra.
+ */
+export function semComentarioDeCerteza(text) {
+  const t = String(text || '');
+  const limpo = t.replace(/(^|[.!]\s+)(?:e\s+)?(?:voc[eê]|vc)\s+tem\s+certeza[^.!?]*[.!](?=\s|$)/gi, '$1').replace(/\s{2,}/g, ' ').trim();
+  return limpo && limpo !== t.trim() ? limpo : t;
+}
+
 // Sinais de que a resposta saiu do personagem (cara de assistente).
 const ASSISTANT = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!)/i;
 
@@ -429,6 +440,7 @@ export class LlmProvider extends DialogueProvider {
     if (preset.native) {
       const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal }), { name: this.getProfile().nomeCompanion || 'JoJo' });
       if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
+      if (correcaoPessoal(text)) parsed.text = semComentarioDeCerteza(parsed.text);
       const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280, input: text });
       if (why) { const e = new Error(`fora do personagem (${why})`); e.respostaInvalida = true; throw e; }
       return { ...parsed, kind: 'speech', intent: 'ia' };
