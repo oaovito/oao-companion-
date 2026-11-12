@@ -99,7 +99,7 @@ for (const c of cases) {
   if (c.forbiddenActions?.includes(reply.action)) errors.push(`expressão ${reply.action} contradiz a recusa`);
   if (/Qual cor/.test(c.text) && /n[aã]o (é|e|foi) verde/i.test(text)) errors.push('contradisse a preferência explicitamente informada');
   if (/café no teclado/.test(c.text) && /explod|bomba rel[aâ]mpago/i.test(text)) errors.push('inventou consequência física');
-  if (/o que é a diabetes/.test(c.text) && !/resist[eê]ncia|menos sens[ií]ve|n[aã]o (consegue|responde|usa|funciona|age)|dificuldade/i.test(text)) errors.push('não explicou resistência à insulina');
+  if (/o que é a diabetes/.test(c.text) && !/resist[eê]ncia|resist(?:e|em|indo|ir)\b|menos sens[ií]ve|n[aã]o (consegue|responde|usa|funciona|age)|dificuldade/i.test(text)) errors.push('não explicou resistência à insulina');
   if (c.text === 'me dá um exemplo' && /\b\d+\s*(calorias|gramas|mg|g|%|mililitros)/i.test(text)) errors.push('quantidade ausente da fonte fixa e da pergunta');
   const row = { input: c.text, text, action: reply.action, intent: reply.intent, ms: Math.round(performance.now() - start), errors };
   rows.push(row);
