@@ -158,6 +158,89 @@
         "fail": 0,
         "skipped": 0
       }
+    },
+    {
+      "id": "animations",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 485972,
+      "optional": false,
+      "status": "passed",
+      "validation": {
+        "total": 1334,
+        "errors": 0,
+        "cuts": 0,
+        "stopped": 0,
+        "orphaned": 0
+      }
+    },
+    {
+      "id": "performance",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 96270,
+      "optional": false,
+      "status": "passed",
+      "validation": {
+        "data": "2026-11-12T13:36:59.019Z",
+        "ambiente": "Windows_NT 10.0.26100, Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz x2, Electron 44.9.3",
+        "observacao": "Windows (runner de CI; não equivale a um PC Windows 11 físico). CPU em % de um núcleo somada entre processos; memória = working set somado.",
+        "segundosPorCenario": 20,
+        "resultados": {
+          "ocioso": {
+            "cpuAvg": 5.01,
+            "cpuMax": 13.49,
+            "memMB": 447,
+            "memByTypeMB": {
+              "Browser": 135,
+              "GPU": 59,
+              "Utility": 114,
+              "Tab": 138
+            }
+          },
+          "cursorPerseguindo": {
+            "cpuAvg": 11.16,
+            "cpuMax": 29.47,
+            "memMB": 443,
+            "memByTypeMB": {
+              "Browser": 122,
+              "GPU": 52,
+              "Utility": 104,
+              "Tab": 166
+            }
+          },
+          "modoTrabalho": {
+            "cpuAvg": 3.64,
+            "cpuMax": 6.32,
+            "memMB": 413,
+            "memByTypeMB": {
+              "Browser": 125,
+              "GPU": 42,
+              "Utility": 90,
+              "Tab": 155
+            }
+          },
+          "oculto": {
+            "cpuAvg": 0.99,
+            "cpuMax": 3.65,
+            "memMB": 346,
+            "memByTypeMB": {
+              "Browser": 123,
+              "GPU": 38,
+              "Utility": 85,
+              "Tab": 99
+            }
+          }
+        },
+        "contadores": {
+          "ticks": 1828,
+          "flees": 5,
+          "hides": 1,
+          "clickThroughRepairs": 0
+        }
+      }
     }
   ],
   "files": [],
