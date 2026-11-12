@@ -11,7 +11,7 @@
   "executor": "github-hosted",
   "runId": "43235150092",
   "startedAt": "2026-11-12T14:15:06.113Z",
-  "status": "running",
+  "status": "passed",
   "steps": [
     {
       "id": "preflight",
@@ -241,13 +241,75 @@
           "clickThroughRepairs": 0
         }
       }
+    },
+    {
+      "id": "performance-gpu",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 96468,
+      "optional": true,
+      "status": "passed"
+    },
+    {
+      "id": "web-search",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 983,
+      "optional": true,
+      "status": "passed"
+    },
+    {
+      "id": "artifacts",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 892,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "updater",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 442,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "notes",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 84,
+      "optional": false,
+      "status": "passed"
     }
   ],
-  "files": [],
+  "files": [
+    {
+      "name": "JoJoCompanion.exe",
+      "size": 104679877,
+      "digest": "sha256:dad22a5f379b1abd9331bf479d2e7c1940f55d022a98d2e3eba253079b1d319d"
+    },
+    {
+      "name": "JoJoCompanion-Setup-0.47.0.exe",
+      "size": 114245504,
+      "digest": "sha256:cb76aa91704bd4479769ea8ab18c34a24b075f8a6490e135bf0f656fc0c402e7"
+    },
+    {
+      "name": "JoJoCompanion-0.47.0-win-x64.zip",
+      "size": 146925549,
+      "digest": "sha256:d937bceb7778dc6e6595cf4801651b2cc168de7a3fef0b090a7ff116a05de682"
+    }
+  ],
   "evidence": {
     "branch": "codex/ci-evidence-43235150092-1",
     "conversationPath": "jojo-companion/docs/evidencias/conversation-live.json",
     "validationPath": "jojo-companion/docs/evidencias/validation-live.json",
     "reviewPath": "jojo-companion/docs/evidencias/semantic-review.json"
-  }
+  },
+  "finishedAt": "2026-11-12T14:50:59.317Z"
 }
