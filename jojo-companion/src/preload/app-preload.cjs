@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('appApi', {
   newChat: () => ipcRenderer.invoke('app:new'),
   togglePet: () => ipcRenderer.invoke('app:pet'),
   openSettings: () => ipcRenderer.send('app:settings'),
+  openWhatsapp: () => ipcRenderer.send('app:whatsapp'),
   todo: (request) => ipcRenderer.invoke('todo:request', request),
   openTodoSettings: () => ipcRenderer.send('todo:open-settings'),
   openTodoCentral: () => ipcRenderer.send('todo:open-central'),

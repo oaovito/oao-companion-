@@ -23,13 +23,14 @@ import { seguimento } from './dialogue/professor.js';
 import { pedidoNegado } from './dialogue/coherence.js';
 import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
-import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey } from './personality.js';
+import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey, personaJoJo } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
 import { situacaoSaude } from './saude.js';
+import { parseAgendarNatural, parseAgendarComando, parseQuando, descreverQuando, buscarContatos, numeroParaJid } from './whatsapp.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
@@ -1311,6 +1312,9 @@ export class Companion {
       const pedido = parseBreakdownCommand(String(text).replace(/^\s*\/\S+\s*/, ''));
       return { text: pedido ? await this._breakdown(pedido.titulo) : this._fala('quebraAjuda'), command: cmd, conversationId: conv.id };
     }
+    if (['agendar', 'agendados', 'cancelar', 'whatsapp'].includes(cmd)) {
+      return { text: await this._waCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, '')), command: cmd, conversationId: conv.id };
+    }
     // /estudo, /revisar e /resumir também podem consultar o modelo local.
     if (cmd === 'estudo' || cmd === 'revisar' || cmd === 'resumir') {
       return { text: await this._studyAction(parseStudyCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, ''))), command: cmd, conversationId: conv.id };
@@ -1385,12 +1389,16 @@ export class Companion {
     }
     // Sintoma, dor, machucado ou remédio: quem cuida é o João, médico de verdade.
     // Pedido de lembrete ("me lembra do remédio às 8") continua sendo lembrete.
-    if (saude === 'medico' && !safety && !parseReminderRequest(text)) {
+    if (saude === 'medico' && !safety && !parseReminderRequest(text) && !parseAgendarNatural(text)) {
       this._protectConversation();
       this.nerdUntil = 0;
       this.nerdAbertura = null;
       this.react('comfort');
       return this._quickReply(conv, this._fala('saudeJoao'), 'saude');
+    }
+    if (!safety && this.whatsapp) {
+      const wa = await this._waChat(text);
+      if (wa) return this._quickReply(conv, wa, 'whatsapp');
     }
     if (!safety && this.todoChat) {
       const reply = this.todoChat.reply(text);
@@ -3975,6 +3983,202 @@ export class Companion {
     if (via === 'conversa') this._tutorialBalloon(text);
     t.markInviteSeen();
     return text;
+  }
+
+  // ------------------------------------------------- mensagens no WhatsApp
+
+  /** Fala sobre o WhatsApp: sempre na conversa; balão quando ele pode aparecer. */
+  _waSay(text, { precisa = false } = {}) {
+    if (!text) return '';
+    const conv = this.conversations.create({ id: 'whatsapp', title: 'WhatsApp', kind: 'reminder' });
+    this.conversations.addMessage(conv.id, 'jojo', text);
+    this.conversations.setStatus(conv.id, precisa ? 'needsInput' : 'ready', precisa ? 'Responda na conversa ou abra /agendados.' : null);
+    if (this.started && !this.work && !this.fullscreenHidden && !this.userHidden) {
+      this.hideBubble();
+      this.say(text, 'speech', { category: 'whatsapp' });
+    }
+    return text;
+  }
+
+  _waMotivo(codigo) { return this._fala(`wa_motivo_${codigo}`) || this._fala('wa_motivo_falha_envio'); }
+
+  _waLinha(item, i) {
+    const extra = item.estado === 'atrasada' ? ' (atrasada)' : item.estado === 'falhou' ? ` (falhou: ${this._waMotivo(item.ultimoErro)})` : '';
+    return `${i + 1}. ${item.destino.nome} · ${descreverQuando(item, new Date())} · “${item.texto.length > 60 ? `${item.texto.slice(0, 57)}…` : item.texto}”${extra}`;
+  }
+
+  /** Avisos do relógio de envios (vindos do serviço do WhatsApp). */
+  whatsappEvento(ev) {
+    if (!ev || !this.whatsapp) return '';
+    const agenda = this.whatsapp.agenda;
+    const n = (item) => agenda.ativas().findIndex((x) => x.id === item.id) + 1;
+    const vars = (item) => ({ destino: item.destino.nome, texto: item.texto, n: String(n(item) || 1) });
+    if (ev.tipo === 'aviso') {
+      this.waAviso = { id: ev.item.id, ate: this.clock.now() + 6 * 60e3 };
+      return this._waSay(this._fala('wa_aviso', { ...vars(ev.item), min: String(Math.max(1, Math.round((ev.item.proximo - Date.now()) / 60e3))) }));
+    }
+    if (ev.tipo === 'enviada') return this._waSay(this._fala('wa_enviada', vars(ev.item)));
+    if (ev.tipo === 'erro') {
+      const v = { ...vars(ev.item), motivo: this._waMotivo(ev.motivo), tentativa: String(ev.tentativa) };
+      return ev.deNovo ? this._waSay(this._fala('wa_erroDeNovo', v)) : this._waSay(this._fala('wa_erroFinal', v), { precisa: true });
+    }
+    if (ev.tipo === 'atrasadas') {
+      const itens = agenda.atrasadas();
+      if (!itens.length) return '';
+      this.waPendente = { etapa: 'atrasadas', ids: itens.map((i) => i.id), ate: this.clock.now() + 60 * 60e3 };
+      const lista = itens.map((i, k) => `${k + 1}. ${i.destino.nome} · era ${descreverQuando(i, new Date())} · “${i.texto}”`).join('\n');
+      return this._waSay(this._fala('wa_atrasadas', { n: String(itens.length), lista }), { precisa: true });
+    }
+    if (ev.tipo === 'conectado') return this._waSay(this._fala('wa_conectado'));
+    if (ev.tipo === 'desconectado') return this._waSay(this._fala('wa_desconectado', { motivo: this._waMotivo(ev.motivo || 'sessao_desconectada') }), { precisa: true });
+    return '';
+  }
+
+  /** Destino a partir do que ela disse: número com DDD, nome de contato ou grupo. */
+  _waDestinos(busca) {
+    const jid = /\d{8,}/.test(String(busca).replace(/\D/g, '')) && !/[a-z]{3,}/i.test(busca) ? numeroParaJid(busca) : null;
+    if (jid) return [{ jid, nome: String(busca).replace(/[^\d+ ()-]/g, '').trim(), tipo: 'contato', numero: true }];
+    return buscarContatos(this.whatsapp.contatos(), busca);
+  }
+
+  /** Monta o rascunho e pergunta o que falta (destino, hora) ou pede confirmação. */
+  _waRascunho(p) {
+    const r = { busca: p.destinoBusca, texto: p.texto, original: p.texto, quando: p.quando, destino: p.destino || null };
+    if (!r.destino) {
+      const achados = this._waDestinos(r.busca);
+      if (!achados.length) { this.waPendente = { etapa: 'destino', r, ate: this.clock.now() + 10 * 60e3 }; return this._fala('wa_semContato', { destino: r.busca }); }
+      if (achados.length > 1) {
+        this.waPendente = { etapa: 'escolha', r, opcoes: achados, ate: this.clock.now() + 10 * 60e3 };
+        return this._fala('wa_escolha', { destino: r.busca, opcoes: achados.map((c, i) => `${i + 1}. ${c.nome}${c.tipo === 'grupo' ? ' (grupo)' : ''}`).join('\n') });
+      }
+      r.destino = achados[0];
+    }
+    if (!r.quando || r.quando.erro === 'sem_hora' || r.quando.erro === 'data_invalida') { this.waPendente = { etapa: 'quando', r, ate: this.clock.now() + 10 * 60e3 }; return this._fala('wa_semHora', { destino: r.destino.nome }); }
+    if (r.quando.erro === 'passado') { this.waPendente = { etapa: 'quando', r, ate: this.clock.now() + 10 * 60e3 }; return this._fala('wa_passado', { quando: descreverQuando(r.quando, new Date()) }); }
+    this.waPendente = { etapa: 'confirmar', r, ate: this.clock.now() + 10 * 60e3 };
+    return this._fala('wa_confirmar', { destino: r.destino.nome, quando: descreverQuando(r.quando, new Date()), texto: r.texto });
+  }
+
+  async _waSalvar(r, texto) {
+    const wa = this.whatsapp;
+    this.waPendente = null;
+    if (r.destino.numero && wa.conexao().estado === 'conectado') {
+      const ok = await wa.checarNumero(r.destino.jid).catch(() => ({ ok: true }));
+      if (ok && ok.ok === false && ok.erro === 'contato_nao_encontrado') return this._fala('wa_numeroSemWhats', { destino: r.destino.nome });
+    }
+    try {
+      const item = wa.agenda.add({ destino: { jid: r.destino.jid, nome: r.destino.nome, tipo: r.destino.tipo }, texto, data: r.quando.data, hora: r.quando.hora, repeticao: r.quando.repeticao });
+      wa.mudou?.();
+      const v = { destino: item.destino.nome, quando: descreverQuando(item, new Date()), texto: item.texto };
+      return wa.conexao().estado === 'conectado' ? this._fala('wa_agendado', v) : this._fala('wa_agendadoSemConexao', v);
+    } catch (e) {
+      return e.message === 'passado' ? this._fala('wa_passado', { quando: descreverQuando(r.quando, new Date()) }) : this._fala('wa_cheio');
+    }
+  }
+
+  /** Reescreve o texto dela com o modelo local. Sem pedir, o texto continua dela, sem o jeito do JoJo. */
+  async waReescrever(texto, { destino = '', jeitoJoJo = false } = {}) {
+    const profile = this.personality.get();
+    const ela = profile.nomeSerio || 'Emanuele';
+    const system = jeitoJoJo
+      ? `${personaJoJo(profile, { curto: true })}\nReescreva a mensagem de WhatsApp que a ${ela} vai mandar${destino ? ` para ${destino}` : ''}, do seu jeito, mas é ela quem envia: primeira pessoa dela, curta, sem mudar o sentido nem inventar fatos. Responda só JSON {"texto":"..."}.`
+      : `Você reescreve uma mensagem de WhatsApp que a ${ela} vai mandar${destino ? ` para ${destino}` : ''}. Português do Brasil, primeira pessoa, do jeito dela: natural, curta, sem mudar o sentido, sem inventar fatos, sem emoji novo. Não é você falando: é ela. Responda só JSON {"texto":"..."}.`;
+    const bruto = await this._modelTask({ system, user: JSON.stringify({ texto }), maxTokens: 200 });
+    try {
+      const j = JSON.parse(String(bruto || '').match(/\{[\s\S]*\}/)?.[0] || 'null');
+      const t = typeof j?.texto === 'string' ? j.texto.trim().slice(0, 1000) : '';
+      return t && t !== texto ? t : null;
+    } catch { return null; }
+  }
+
+  /** Conversa sobre o WhatsApp: respostas pendentes, "cancela" no aviso e pedidos em linguagem natural. */
+  async _waChat(text) {
+    if (!this.whatsapp) return null;
+    const n = normalizeText(text).replace(/[.!]+$/, '');
+    const p = this.waPendente && this.waPendente.ate > this.clock.now() ? this.waPendente : (this.waPendente = null);
+    const sim = /^(sim|s|pode|pode sim|isso|confirmo|confirma|manda|manda assim|ok|beleza|fechado|salva)$/.test(n);
+    const nao = /^(nao|n|cancela|cancelar|deixa|esquece|desiste)$/.test(n);
+    if (p) {
+      if (p.etapa === 'atrasadas') {
+        const m = n.match(/^(manda|envia|pode mandar|descarta|descartar|apaga|nao)(?:\s+(?:a\s+)?(\d+))?$/);
+        if (m) {
+          const ids = m[2] ? [p.ids[Number(m[2]) - 1]].filter(Boolean) : p.ids;
+          const acao = /^(manda|envia|pode mandar)$/.test(m[1]) ? 'enviar' : 'descartar';
+          for (const id of ids) this.whatsapp.agenda.resolverAtrasada(id, acao);
+          p.ids = p.ids.filter((id) => !ids.includes(id));
+          if (!p.ids.length) this.waPendente = null;
+          this.conversations.setStatus('whatsapp', 'ready');
+          this.whatsapp.mudou?.();
+          return this._fala(acao === 'enviar' ? 'wa_atrasadasEnviar' : 'wa_atrasadasDescartar', { n: String(ids.length) });
+        }
+      } else if (p.etapa === 'escolha') {
+        const k = Number(n);
+        const c = Number.isInteger(k) && k >= 1 ? p.opcoes[k - 1] : buscarContatos(p.opcoes, text)[0];
+        if (c) return this._waRascunho({ destinoBusca: p.r.busca, texto: p.r.texto, quando: p.r.quando, destino: c });
+        if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
+      } else if (p.etapa === 'destino') {
+        if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
+        return this._waRascunho({ destinoBusca: text, texto: p.r.texto, quando: p.r.quando });
+      } else if (p.etapa === 'quando') {
+        if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
+        return this._waRascunho({ destinoBusca: p.r.busca, texto: p.r.texto, quando: parseQuando(text, new Date()), destino: p.r.destino });
+      } else if (p.etapa === 'confirmar' || p.etapa === 'aprovar') {
+        if (sim) return this._waSalvar(p.r, p.r.texto);
+        if (p.etapa === 'aprovar' && /^(original|a original|a minha|o meu|o original|do meu jeito)$/.test(n)) return this._waSalvar(p.r, p.r.original);
+        if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
+        if (/\b(reescreve|reescreva|melhora|melhore|arruma|ajeita|outra versao)\b/.test(n)) {
+          const jeitoJoJo = /\b(seu jeito|sua cara|jeito do jojo|com personalidade|do teu jeito)\b/.test(n);
+          const novo = await this.waReescrever(p.r.original, { destino: p.r.destino.nome, jeitoJoJo });
+          if (!novo) return this._fala('wa_semModelo', { texto: p.r.original });
+          p.r.texto = novo;
+          p.etapa = 'aprovar';
+          p.ate = this.clock.now() + 10 * 60e3;
+          return this._fala('wa_reescrita', { texto: novo, original: p.r.original });
+        }
+      }
+    }
+    // "cancela" logo depois do aviso de envio: pula só esta vez.
+    if (this.waAviso && this.waAviso.ate > this.clock.now() && /^(cancela|cancelar|nao manda|nao envia|para|segura)$/.test(n)) {
+      const item = this.whatsapp.agenda.pular(this.waAviso.id);
+      this.waAviso = null;
+      this.whatsapp.mudou?.();
+      if (item) return this._fala('wa_canceladoAviso', { destino: item.destino.nome });
+    }
+    const pedido = parseAgendarNatural(text, new Date());
+    if (pedido) return this._waRascunho(pedido);
+    return null;
+  }
+
+  /** /agendar, /agendados, /cancelar e /whatsapp. */
+  async _waCommand(cmd, arg) {
+    if (cmd === 'whatsapp') {
+      this.onOpenWhatsapp?.();
+      if (!this.whatsapp) return this._fala('wa_indisponivel');
+      const c = this.whatsapp.conexao();
+      return this._fala(c.estado === 'conectado' ? 'wa_statusConectado' : 'wa_statusDesconectado', { numero: c.numero || '' });
+    }
+    if (!this.whatsapp) return this._fala('wa_indisponivel');
+    const agenda = this.whatsapp.agenda;
+    if (cmd === 'agendados') {
+      const ativas = agenda.ativas();
+      if (!ativas.length) return this._fala('wa_listaVazia');
+      return `${this._fala('wa_lista', { n: String(ativas.length) })}\n${ativas.map((i, k) => this._waLinha(i, k)).join('\n')}`;
+    }
+    if (cmd === 'cancelar') {
+      const ref = String(arg || '').trim();
+      if (!ref) return this._fala('wa_cancelarAjuda');
+      const item = agenda.porNumero(ref);
+      if (!item) return this._fala('wa_naoAchei', { n: ref });
+      agenda.remove(item.id);
+      this.whatsapp.mudou?.();
+      return this._fala('wa_cancelado', { destino: item.destino.nome, texto: item.texto });
+    }
+    if (cmd === 'agendar') {
+      const p = parseAgendarComando(arg, new Date());
+      if (!p) return this._fala('wa_ajuda');
+      return this._waRascunho(p);
+    }
+    return null;
   }
 
   /** Estado do check-in do dia (salvo junto do progresso). */

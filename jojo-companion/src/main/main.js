@@ -4,7 +4,8 @@ import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
-import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net, safeStorage } from 'electron';
+import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net, safeStorage, utilityProcess } from 'electron';
+import QRCode from 'qrcode';
 import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 import os from 'node:os';
@@ -39,6 +40,8 @@ import { createLivingService } from './living-service.js';
 import { createSteamService } from './steam-service.js';
 import { createFocusApps } from './focus-apps.js';
 import { createDiscordGuard } from './discord-guard.js';
+import { createWhatsAppService } from './whatsapp-service.js';
+import { WhatsAppWindow } from './whatsapp-window.js';
 import { createNeedsService } from './needs-service.js';
 import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
@@ -511,6 +514,29 @@ function main() {
       discordGuard.apply();
     }
     ipcMain.on('settings:discord-extension', (e) => { if (fromSettings(e) && discordGuard?.extensionDir) shell.openPath(discordGuard.extensionDir); });
+    // Mensagens programadas no WhatsApp: processo isolado, sessão e agenda só neste PC.
+    const whatsappWin = new WhatsAppWindow({
+      preloadPath: path.join(ROOT, 'src', 'preload', 'whatsapp-preload.cjs'),
+      htmlPath: path.join(ROOT, 'src', 'renderer', 'whatsapp', 'index.html'),
+      iconPath: appIcon,
+    });
+    const whatsapp = createWhatsAppService({ userData, companion, log,
+      spawn: (file) => utilityProcess.fork(file, [], { serviceName: 'JoJo WhatsApp', stdio: 'ignore' }),
+      toDataURL: (texto) => QRCode.toDataURL(texto, { margin: 1, width: 280 }),
+      notify: () => whatsappWin.send('whatsapp:update', whatsapp.state()) });
+    companion.onOpenWhatsapp = () => whatsappWin.open();
+    const fromWhatsapp = (e) => whatsappWin.isOpen && e.sender === whatsappWin.win.webContents;
+    ipcMain.handle('whatsapp:state', (e) => (fromWhatsapp(e) ? whatsapp.state() : null));
+    ipcMain.handle('whatsapp:connect', (e) => (fromWhatsapp(e) ? whatsapp.connect() : null));
+    ipcMain.handle('whatsapp:disconnect', (e) => (fromWhatsapp(e) ? whatsapp.disconnect() : null));
+    ipcMain.handle('whatsapp:save', (e, dados) => (fromWhatsapp(e) ? whatsapp.save(dados) : { ok: false }));
+    ipcMain.handle('whatsapp:remove', (e, id) => (fromWhatsapp(e) ? whatsapp.remove(id) : { ok: false }));
+    ipcMain.handle('whatsapp:resolver', (e, id, acao) => (fromWhatsapp(e) ? whatsapp.resolver(id, acao) : { ok: false }));
+    ipcMain.handle('whatsapp:pular', (e, id) => (fromWhatsapp(e) ? whatsapp.pular(id) : { ok: false }));
+    ipcMain.handle('whatsapp:reescrever', (e, texto, opcoes) => (fromWhatsapp(e) ? whatsapp.reescrever(texto, opcoes && typeof opcoes === 'object' ? opcoes : {}) : { ok: false }));
+    ipcMain.on('app:whatsapp', (e) => fromApp(e) && whatsappWin.open());
+    whatsapp.start();
+    app.on('before-quit', () => { whatsapp.close(); whatsappWin.close(); });
     livingService = createLivingService({ userData, companion, store, items: readJSON('assets/catalog/living-interactions.json').itens, log,
       refreshContext: () => sampleEnvironment(true), hasAnimation: name => !!assets.animations.animations[name],
       rendererReady: () => overlay.alive && overlay.ready, confirmAnimation: name => overlay.confirmAnimation(name) });

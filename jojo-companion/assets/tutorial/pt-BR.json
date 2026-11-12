@@ -1,6 +1,6 @@
 {
   "_notas": "Fonte única do tutorial. Cada função lista os comandos ('comandos') e as chaves de configuração ('configuracoes') que ensina; test/unit/tutorial.test.js falha se um comando do menu, um comando reconhecido ou uma configuração visível ficar sem função aqui. Cada passo tem 'texto' (na voz do JoJo, até 280 caracteres) e, quando há o que testar, 'tente' (exemplo real para digitar ou fazer) e 'espera' (o que faz o passo avançar sozinho: {comando}, {intent}, {config} ou {qualquer}). Sem 'espera', avança com \"próximo\". Sem som. 'versao' sobe a cada atualização que traz conteúdo novo: quem já usava recebe o convite de novo na primeira interação.",
-  "versao": 1,
+  "versao": 2,
   "textos": {
     "boasVindas": "Primeira vez aqui. Eu sou o {companion}: tubarão, fisiculturista e seu parceiro de estudo e treino. Vou te mostrar tudo em passos curtos, e você testa cada um. Escreve \"próximo\" pra começar. \"pular\", \"voltar\" e \"pausar\" também funcionam.",
     "convite": "Tem tutorial novo, {nome}. Eu mostro cada função em passos curtos e você testa na hora. Quando quiser: /tutorial. Sem pressa, eu não saio daqui.",
@@ -662,6 +662,41 @@
         },
         {
           "texto": "A chave fica em Configurações, Bloqueio do Discord, com a explicação completa antes dela. Leia antes de ligar. Outra coisa, separada: eu posso pedir pro Discord fechar quando você entra em Foco ou Trabalho; fica em Monitores."
+        }
+      ]
+    },
+    {
+      "id": "whatsapp",
+      "titulo": "Mensagens no WhatsApp",
+      "grupo": "Mais",
+      "comandos": [
+        "/whatsapp",
+        "/agendar",
+        "/agendados",
+        "/cancelar"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Eu mando mensagem no seu WhatsApp na hora marcada, em seu nome. Primeiro conecta: /whatsapp abre a janela, e lá você lê o QR code com o celular em Aparelhos conectados. Uma vez só.",
+          "tente": "/whatsapp",
+          "espera": {
+            "comando": "whatsapp"
+          }
+        },
+        {
+          "texto": "Pra agendar, fala normal: \"manda 'bom dia' pra minha mãe amanhã às 8h\". Eu confiro tudo com você antes de salvar, e você escolhe se vai como escreveu ou se eu reescrevo. Também vale /agendar Mãe | amanhã às 8h | bom dia.",
+          "tente": "/agendar",
+          "espera": {
+            "comando": "agendar"
+          }
+        },
+        {
+          "texto": "/agendados mostra a lista numerada e /cancelar 2 apaga a segunda. Cinco minutos antes eu aviso no balão; \"cancela\" segura o envio. Se eu estiver fechado na hora, eu pergunto depois se mando ou descarto. Nunca mando atrasado sozinho.",
+          "tente": "/agendados",
+          "espera": {
+            "comando": "agendados"
+          }
         }
       ]
     },

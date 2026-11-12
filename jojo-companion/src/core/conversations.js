@@ -175,7 +175,11 @@ export const COMMANDS = Object.freeze([
   { "id":"revisar","cmd":"/revisar","aliases":["/revisao","/revisão"],"label":"Revisão","hint":"Três perguntas sobre um tema, uma por vez: /revisar fotossíntese, /revisar material (usa o que você passou em /estudo material)","desc":"Três perguntas sobre um tema" },
   { "id":"resumir","cmd":"/resumir","aliases":[],"label":"Resumir","hint":"Resume em 2 a 4 pontos: /resumir texto, /resumir material, /resumir notas tema","desc":"Resume um texto em pontos" },
   { "id":"colecao","cmd":"/colecao","aliases":["/coleção"],"label":"Coleção","hint":"Abre na Central tudo que você já viu comigo e o que falta descobrir","desc":"Coleção na Central" },
-  { "id":"new","cmd":"/nova","aliases":[],"label":"Nova conversa","hint":"A conversa é uma só: este comando só confirma que ela continua","desc":"Continua a mesma conversa","oculto":true }
+  { "id":"new","cmd":"/nova","aliases":[],"label":"Nova conversa","hint":"A conversa é uma só: este comando só confirma que ela continua","desc":"Continua a mesma conversa","oculto":true },
+  { id: "agendar", cmd: "/agendar", aliases: ["/programar"], label: "Agendar no WhatsApp", desc: "Mensagem no WhatsApp com hora marcada", hint: "Eu mando no seu WhatsApp na hora marcada: /agendar Mãe | amanhã às 8h | bom dia. Também: \"manda 'bom dia' pra minha mãe amanhã às 8h\"" },
+  { id: "agendados", cmd: "/agendados", aliases: ["/agendadas"], label: "Mensagens agendadas", desc: "Lista as mensagens programadas", hint: "Lista numerada das mensagens programadas no WhatsApp, com dia, hora e texto" },
+  { id: "cancelar", cmd: "/cancelar", aliases: [], label: "Cancelar mensagem", desc: "Apaga uma mensagem programada", hint: "Apaga uma mensagem programada pelo número da lista: /cancelar 2 (veja os números em /agendados)" },
+  { id: "whatsapp", cmd: "/whatsapp", aliases: ["/zap"], label: "WhatsApp", desc: "Conecta e mostra o WhatsApp", hint: "Abre a janela do WhatsApp: conectar pelo QR code, desconectar e ver, criar, editar ou apagar mensagens programadas" }
 ].map((c) => Object.freeze({ ...c, aliases: Object.freeze([...c.aliases]) })));
 
 /** Comandos do menu "/" (todos os visíveis, na ordem do registro). */

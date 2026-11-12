@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>JoJo Companion — WhatsApp</title>
+  <link rel="stylesheet" href="whatsapp.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../../../assets/icons/app.png" alt="" width="48" height="48">
+    <div>
+      <h1>Mensagens no WhatsApp</h1>
+      <p class="sub">Eu mando no seu WhatsApp, na hora marcada, o que você agendar. Tudo fica só neste PC.</p>
+    </div>
+  </header>
+
+  <section class="card" id="conexao" aria-live="polite">
+    <div class="linha">
+      <span id="estado" class="chip">Desconectado</span>
+      <span class="espaco"></span>
+      <button type="button" id="conectar">Conectar</button>
+      <button type="button" id="desconectar" class="ghost" hidden>Desconectar</button>
+    </div>
+    <div id="qrBox" hidden>
+      <img id="qr" alt="QR code para conectar o WhatsApp" width="240" height="240">
+      <ol class="passos">
+        <li>No celular, abra o WhatsApp.</li>
+        <li>Toque em Configurações (ou nos três pontos) e em <strong>Aparelhos conectados</strong>.</li>
+        <li>Toque em <strong>Conectar um aparelho</strong> e aponte para este código.</li>
+      </ol>
+    </div>
+    <p class="aviso">Atenção: a conexão usa uma biblioteca não oficial do WhatsApp. O WhatsApp não aprova esse tipo de uso e existe risco de bloqueio do número. Para reduzir o risco eu só mando o que você agendou, com intervalo entre envios e no máximo <span id="porDia">40</span> por dia. Eu não leio nem guardo suas conversas.</p>
+  </section>
+
+  <section class="card" id="atrasadasBox" hidden>
+    <h2>Passou da hora enquanto eu estava fechado</h2>
+    <p class="sub">Eu não mando mensagem atrasada sozinho. Decida cada uma.</p>
+    <ul id="atrasadas" class="lista"></ul>
+  </section>
+
+  <section class="card">
+    <h2 id="formTitulo">Nova mensagem</h2>
+    <form id="form" autocomplete="off">
+      <label class="campo">Para quem
+        <input id="destinoBusca" type="text" list="contatosLista" placeholder="Nome do contato, grupo ou número com DDD" maxlength="80">
+        <datalist id="contatosLista"></datalist>
+      </label>
+      <p class="dica" id="destinoDica">Os nomes aparecem depois de conectar. Número com DDD sempre funciona.</p>
+      <label class="campo">Mensagem
+        <textarea id="texto" rows="3" maxlength="1000" placeholder="O texto que vai sair do seu WhatsApp"></textarea>
+      </label>
+      <div class="duas">
+        <label class="campo">Dia <input id="data" type="date"></label>
+        <label class="campo">Hora <input id="hora" type="time"></label>
+      </div>
+      <label class="campo">Repetir
+        <select id="repeticao">
+          <option value="uma">Uma vez</option>
+          <option value="diaria">Todo dia</option>
+          <option value="semanal">Toda semana (no mesmo dia)</option>
+          <option value="dias">Dias específicos</option>
+        </select>
+      </label>
+      <div id="diasBox" class="dias" hidden></div>
+      <fieldset class="modo">
+        <legend>Texto</legend>
+        <label><input type="radio" id="modoExato" checked> Enviar exatamente como escrevi</label>
+        <label><input type="radio" id="modoReescrever"> Quero que o JoJo reescreva (eu aprovo antes)</label>
+        <label id="jeitoBox" hidden><input type="checkbox" id="jeitoJoJo"> Com o jeito do JoJo</label>
+      </fieldset>
+      <div id="proposta" class="proposta" hidden>
+        <p class="sub">Versão do JoJo:</p>
+        <blockquote id="propostaTexto"></blockquote>
+        <div class="linha">
+          <button type="button" id="usarProposta">Usar esta</button>
+          <button type="button" id="manterMinha" class="ghost">Manter a minha</button>
+        </div>
+      </div>
+      <p id="erro" class="erro" role="alert"></p>
+      <div class="linha">
+        <button type="submit" id="salvar">Agendar</button>
+        <button type="button" id="cancelarEdicao" class="ghost" hidden>Cancelar edição</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Programadas</h2>
+    <ul id="itens" class="lista"></ul>
+  </section>
+
+  <section class="card">
+    <h2>Últimas</h2>
+    <ul id="historico" class="lista curta"></ul>
+  </section>
+
+  <script type="module" src="whatsapp.js"></script>
+</body>
+</html>

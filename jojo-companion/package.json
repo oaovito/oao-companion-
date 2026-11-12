@@ -22,8 +22,10 @@
     "lint": "node scripts/lint.mjs"
   },
   "dependencies": {
+    "@whiskeysockets/baileys": "7.0.0-rc14",
     "ical.js": "2.2.1",
     "koffi": "3.3.3",
+    "qrcode": "1.5.4",
     "saxes": "6.0.0"
   },
   "devDependencies": {

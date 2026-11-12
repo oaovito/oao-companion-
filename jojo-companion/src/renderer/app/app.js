@@ -271,6 +271,8 @@ async function select(id) {
   input.focus();
 }
 
+// Mensagens programadas no WhatsApp: janela própria.
+$('whatsappBtn').addEventListener('click', () => api.openWhatsapp());
 $('tarefasBtn').addEventListener('click', async () => {
   showingCuidados = false;
   showingDarkest = false;
