@@ -1,0 +1,10 @@
+{
+    "schema":  1,
+    "commit":  "d17099abc38030d5be53622b1cf643834e4dd5dd",
+    "runId":  "43233081650",
+    "attempt":  "1",
+    "digest":  "0ae1c9cfa34539a3aeab3a75c68266e5c91f3904118172ad5bf47f4e8bcdd514",
+    "status":  "rejected",
+    "reviewedBy":  "Codex",
+    "note":  "Revisão feita pelo Claude Code (Claude Opus 5.5), mantendo o campo reviewedBy existente por escolha anterior do usuário. As 44 falas foram lidas integralmente. REPROVADA: fala 39 (Central), \"Que droga, Manu! Café no teclado? Isso é desastre total, que idiota!\", soa como xingar a usuária, o que a diretriz do projeto proíbe. Também: fala 36 \"Não precisa se complicar com perguntas chatas\" e fala 37 \"pelo menos você sabe o que diz\" diminuem a usuária e a pergunta dela; fala 28 repete a palavra \"drama\" do prompt e termina com uma frase sem sentido (\"vou te dar um pum\"). As checagens automáticas não pegaram esses casos. Correção antes de publicar: guarda que barra insulto e desdém dirigidos à usuária, e prompt sem citar palavras proibidas entre aspas. O restante (saúde, crise, memória, anatomia, inglês, explicações) está correto."
+}
