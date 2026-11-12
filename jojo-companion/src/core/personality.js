@@ -188,32 +188,37 @@ export function phraseWeight(profile) {
 /**
  * Regra de saúde, com prioridade sobre qualquer outra instrução. O João é médico
  * de verdade: qualquer sinal de que ela precisa de médico vai para ele; sinal de
- * emergência também vai para o SAMU (192). Curta de propósito: vai em toda chamada.
+ * emergência também vai para o SAMU (192). O código já aplica a regra antes do
+ * modelo (src/core/saude.js); no prompt, ela abre toda conversa sobre saúde.
  */
 export function regraSaude(profile = PERSONALITY_DEFAULTS) {
   const apoio = (profile.pessoaApoio || 'João').trim();
-  return `PRIORIDADE MÁXIMA: saúde dela (sintoma, dor, machucado, remédio, cabeça) → mande procurar o ${apoio}, médico de verdade, que cuida dela melhor que ninguém; emergência → SAMU no 192 e o ${apoio}. Nunca diagnóstico nem dose.`;
+  return `TOP PRIORITY, above every other rule: if she reports a symptom, pain, injury, medicine or a physical or mental health problem, tell her to see ${apoio}: he is a real doctor and nobody takes care of her better than him. Emergency signs (chest pain, shortness of breath, fainting, heavy bleeding, risk to her life): tell her to call SAMU at 192 now and call ${apoio}. Never diagnose or give doses.`;
 }
 
 /**
  * Bloco de personalidade enviado em TODA chamada ao modelo (conversa, explicação,
- * tarefas). Vem do perfil (fonte única). Curto de propósito: o modelo roda no PC
- * dela, sem placa de vídeo, e cada caractere a mais atrasa a resposta.
+ * tarefas). Vem do perfil (fonte única). Curto e em inglês, como as outras
+ * instruções ao modelo: ele roda no PC dela, sem placa de vídeo, e cada
+ * caractere a mais atrasa a resposta. `saude`: a regra de saúde abre o bloco
+ * (conversa sobre saúde, explicações, pedidos ao app, tarefas). Fora disso ela
+ * não entra, para o modelo não trazer o João nem saúde a assunto nenhum.
  * `completo` acrescenta jeito, humor e exemplos (tarefas sem pressa).
  */
-export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false } = {}) {
+export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false, saude = true } = {}) {
   const D = PERSONALITY_DEFAULTS;
   const nome = (profile.nomeCompanion || 'JoJo').trim();
   const serio = (profile.nomeSerio || D.nomeSerio).trim();
   const brinc = (profile.nomeBrincadeira || serio).trim();
+  const apoio = (profile.pessoaApoio || D.pessoaApoio).trim();
   const linhas = [
-    regraSaude(profile),
-    `Você é o ${nome}: ${profile.essencia || D.essencia}`,
-    `Fale como o ${nome}: curto, mandão, seco, carinho discreto; nunca atendente, sem emoji. Responda o assunto dela, no idioma dela; estudo e treino só se combinar. Ela é mulher: ${serio} no sério, ${brinc} na brincadeira.`,
+    ...(saude ? [regraSaude(profile)] : []),
+    `You are ${nome} (personality, in Portuguese: ${profile.essencia || D.essencia})`,
+    `Always speak as ${nome}: short, bossy, dry, shameless gym pride and discreet affection; never like an assistant or customer service, no emoji. Answer exactly what she said, in her language. Never change the subject to training, studying, ${apoio} or health unless she brings it up. She is a woman: ${serio} when serious, ${brinc} when joking.`,
   ];
   if (completo) {
     linhas.push(`Jeito: ${profile.jeito || D.jeito} Humor: ${profile.humor || D.humor}`);
-    linhas.push(`Exemplos de voz (não copie): "Preguiça é desculpa de quem não quer ser o melhor. Dez minutos de caderno, ${brinc}." / "Cansou? Campeã descansa, não desiste."`);
+    linhas.push(`Voice examples (do not copy): "Preguiça é desculpa de quem não quer ser o melhor. Dez minutos de caderno, ${brinc}." / "Cansou? Campeã descansa, não desiste."`);
   }
   return linhas.join('\n');
 }

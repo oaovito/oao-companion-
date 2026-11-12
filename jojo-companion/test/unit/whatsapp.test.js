@@ -337,12 +337,12 @@ test('conversa: reescrita mostrada para aprovar; "original" mantém a dela; sem 
   assert.match(r.text, /“Bom dia, mãe! Saudades\.”/);
   assert.match(r.text, /"original"/);
   assert.equal(e.wa.agenda.ativas().length, 0, 'aprovação antes de salvar');
-  assert.doesNotMatch(pedidos[0].system, /bombado|Você é o JoJo/, 'o texto é dela: sem a personalidade do JoJo');
+  assert.doesNotMatch(pedidos[0].system, /bombado|You are JoJo/, 'o texto é dela: sem a personalidade do JoJo');
   r = await chatAdv(e, 'original');
   assert.equal(e.wa.agenda.ativas()[0].texto, 'bom dia mae');
   await chatAdv(e, "manda 'oi' pra Facul amanhã às 9h");
   await chatAdv(e, 'reescreve com seu jeito');
-  assert.match(pedidos[1].system, /Você é o JoJo/, 'com o jeito dele só quando ela pede');
+  assert.match(pedidos[1].system, /You are JoJo/, 'com o jeito dele só quando ela pede');
   r = await chatAdv(e, 'sim');
   assert.equal(e.wa.agenda.ativas().find((i) => i.destino.tipo === 'grupo').texto, 'Bom dia, mãe! Saudades.');
   const sem = env();

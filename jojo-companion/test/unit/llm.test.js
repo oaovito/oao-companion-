@@ -40,9 +40,10 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(local, /with arms and legs, and no tail/);
   assert.doesNotMatch(local, /without human arms|fins and a tail/);
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Fatos do seu desenho/);
-  assert.match(local, /Fale como o JoJo: curto, mandão, seco, carinho discreto; nunca atendente, sem emoji/);
+  assert.match(local, /Always speak as JoJo: short, bossy, dry, shameless gym pride and discreet affection/);
   // A personalidade do perfil (fonte única) vai em toda conversa, com a regra de saúde primeiro.
-  assert.match(local.split(String.fromCharCode(10))[0], /^PRIORIDADE MÁXIMA.*médico de verdade.*SAMU no 192/);
+  assert.match(local.split(String.fromCharCode(10))[0], /^You are JoJo/);
+  assert.match(buildLocalPrompt(profile, {}, 'tô com febre').split(String.fromCharCode(10))[0], /^TOP PRIORITY.*real doctor.*SAMU at 192/);
   assert.match(local, /Tubarão bombado e fisiculturista, sem pudor nenhum/);
   assert.match(local, /estudar, treinar/);
   assert.match(local, /Respect her corrections, refusals and achievements/);

@@ -27,36 +27,42 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.equal(sanitizePersonality({ ...P, essencia: 'Tubarão novo.' }).settings.essencia, 'Tubarão novo.');
   assert.equal(sanitizePersonality({ ...P, essencia: 42 }).settings.essencia, P.essencia);
   const bloco = personaJoJo({ ...P, essencia: 'Tubarão de teste.' });
-  assert.match(bloco, /Você é o JoJo: Tubarão de teste\./, 'vem do perfil, não de texto fixo');
-  assert.match(bloco, /nunca atendente, sem emoji/);
-  assert.match(bloco, /Responda o assunto dela, no idioma dela; estudo e treino só se combinar/);
-  assert.match(bloco, /Ela é mulher/);
+  assert.match(bloco, /You are JoJo \(personality, in Portuguese: Tubarão de teste\.\)/, 'vem do perfil, não de texto fixo');
+  assert.match(bloco, /never like an assistant or customer service, no emoji/);
+  assert.match(bloco, /Answer exactly what she said, in her language/);
+  assert.match(bloco, /Never change the subject to training, studying, João or health unless she brings it up/);
+  assert.match(bloco, /She is a woman/);
   assert.doesNotMatch(bloco, /\p{Extended_Pictographic}/u);
-  assert.doesNotMatch(personaJoJo(P), /Exemplos/);
-  assert.match(personaJoJo(P, { completo: true }), /Exemplos de voz/);
-  assert.ok(personaJoJo(P).length <= 650, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P).length})`);
+  assert.doesNotMatch(personaJoJo(P), /examples/i);
+  assert.match(personaJoJo(P, { completo: true }), /Voice examples/);
+  assert.ok(personaJoJo(P, { saude: false }).length <= 520, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P, { saude: false }).length})`);
 });
 
-test('regra de saúde: primeira linha de todos os prompts, com João médico e SAMU 192', () => {
+test('regra de saúde: abre o prompt sempre que o assunto é saúde, as explicações e os pedidos ao app', () => {
   const regra = regraSaude(P);
-  assert.match(regra, /^PRIORIDADE MÁXIMA/);
-  assert.match(regra, /procurar o João, médico de verdade/);
-  assert.match(regra, /cuida dela melhor que ninguém/);
-  assert.match(regra, /SAMU no 192/);
-  assert.match(regra, /dose/);
-  for (const prompt of [buildLocalPrompt(P, {}, 'oi'), buildLocalPrompt(P, {}, 'o que é insulina?', { tecnico: true }), buildSystemPrompt(P, {})]) {
+  assert.match(regra, /^TOP PRIORITY, above every other rule/);
+  assert.match(regra, /tell her to see João: he is a real doctor and nobody takes care of her better than him/);
+  assert.match(regra, /call SAMU at 192 now and call João/);
+  assert.match(regra, /Never diagnose or give doses/);
+  for (const prompt of [buildLocalPrompt(P, {}, 'tô com dor de cabeça'), buildLocalPrompt(P, {}, 'posso tomar remédio pra dormir?'), buildLocalPrompt(P, {}, 'o que é insulina?', { tecnico: true }), buildSystemPrompt(P, {})]) {
     assert.equal(prompt.split('\n')[0], regra);
     assert.match(prompt, /Tubarão bombado e fisiculturista, sem pudor nenhum/);
   }
-  assert.match(regraSaude({ ...P, pessoaApoio: 'Carlos' }), /o Carlos, médico de verdade/);
+  // Conversa sem relação com saúde: a regra sai, para o modelo não puxar o João nem saúde do nada.
+  for (const t of ['oi', 'Minha cor preferida é verde.', 'Não quero brincar agora.']) {
+    const prompt = buildLocalPrompt(P, {}, t);
+    assert.doesNotMatch(prompt, /TOP PRIORITY/, t);
+    assert.match(prompt.split('\n')[0], /^You are JoJo/, t);
+  }
+  assert.match(regraSaude({ ...P, pessoaApoio: 'Carlos' }), /see Carlos: he is a real doctor/);
 });
 
-test('conversa comum: o modelo recebe a personalidade, os exemplos de voz e a tarefa por último', async () => {
+test('conversa comum: o modelo recebe a personalidade primeiro e a tarefa por último', async () => {
   const calls = [];
   await provider(calls).reply({ text: 'tô com preguiça de estudar', history: [] });
   const system = calls[0].messages[0];
   assert.equal(system.role, 'system');
-  assert.ok(system.content.startsWith(personaJoJo(P)), 'a personalidade completa abre o prompt');
+  assert.ok(system.content.startsWith(personaJoJo(P, { saude: false })), 'a personalidade abre o prompt');
   assert.match(system.content.split('\n').at(-1), /^Current reply:/);
   assert.equal(calls[0].messages.at(-1).content, 'tô com preguiça de estudar');
 });
@@ -70,7 +76,7 @@ test('histórico longo: saem as trocas mais antigas, nunca a personalidade; tudo
   const calls = [];
   await provider(calls).reply({ text: 'e o treino de hoje, como fica o supino?', history });
   const { messages, options } = calls[0];
-  assert.ok(messages[0].content.startsWith(personaJoJo(P)), 'a personalidade continua inteira');
+  assert.ok(messages[0].content.startsWith(personaJoJo(P, { saude: false })), 'a personalidade continua inteira');
   const total = messages.reduce((n, m) => n + tokens(m.content), 0);
   assert.ok(total <= options.num_ctx - options.num_predict, `cabe no contexto: ${total} tokens`);
   assert.ok(messages.length > 2, 'histórico relevante continua indo');

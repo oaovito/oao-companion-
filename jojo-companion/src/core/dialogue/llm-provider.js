@@ -6,6 +6,7 @@
 // Puro: `fetch` é injetado.
 import { blocoPesquisa } from './pesquisa.js';
 import { PERSONALITY_DEFAULTS, personaJoJo } from '../personality.js';
+import { situacaoSaude } from '../saude.js';
 import { historicoRelevante, pedidoAoApp, correcaoPessoal, termosDaCorrecao, conversaPessoal } from './coherence.js';
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
@@ -72,6 +73,11 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
 /** Redigir a fala e inventar metadados ao mesmo tempo prejudica ambos.
  * Conversa livre gera texto; a expressão é selecionada pelo engine. O protocolo
  * estruturado permanece disponível para pedidos explícitos de ações do app. */
+/** A mensagem toca em saúde (dela ou em geral)? Aí a regra de saúde abre o prompt. */
+export function falaDeSaude(text) {
+  return !!situacaoSaude(text) || /\b(sa[uú]de|m[eé]dic\w*|rem[eé]dio\w*|doen[cç]\w*|dor(es)?|sintoma\w*|machuc\w*|machuq\w*|ansiedade|depress\w*|hospital|exame)\b/i.test(String(text || ''));
+}
+
 export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
@@ -82,7 +88,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
-    personaJoJo(profile),
+    personaJoJo(profile, { saude: falaDeSaude(text) }),
     'Use literal user facts and preferences; preserve names and corrections. Unknown user details stay unknown. Assistant history is conversation, not user evidence.',
     identidade,
     'Her real-life reports establish what she stated; present additional outcomes as uncertain possibilities. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
