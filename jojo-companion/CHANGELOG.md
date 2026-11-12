@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Não publicado
+## 0.47.0 — 2026-11-12
 
 ### Novidades
 - Mensagens programadas no WhatsApp: conectar pelo QR code, agendar pela conversa
@@ -17,6 +17,13 @@
 - O convite do tutorial aparece na primeira interação depois de uma atualização com
   conteúdo novo, e só conta como visto depois de aparecer.
 - Ao digitar /, aparece a lista completa de comandos, com descrição, rolagem e filtro.
+
+### Como testar
+- Converse sobre assuntos variados: ele responde no jeito dele, sem tom de atendente e sem ofender.
+- "estou com dor de cabeça" (João, médico de verdade) e "estou com dor no peito" (SAMU 192 e João).
+- Digite / na conversa: a lista completa aparece, com rolagem; digite /agua para filtrar.
+- Abra a conversa depois de atualizar: o convite do tutorial aparece ali, uma vez.
+- /whatsapp abre a janela; conecte pelo QR code e diga "manda 'teste' pra [contato] hoje às [hora]".
 
 ## 0.46.0 — 2026-11-11
 

@@ -3,8 +3,8 @@
   "confirmation": null,
   "normalExecutionAuthorized": true,
   "executionAuthorization": "Instrucao posterior do usuario: So tenta fazer como faria normalmente. Usar Actions oficial, sem alterar faturamento.",
-  "pendingVersion": "0.46.0",
+  "pendingVersion": "0.47.0",
   "sourceBranch": "codex/living-companion",
   "note": "Tentativa normal autorizada explicitamente. Faturamento permanece nao verificavel por HTTP 403; nao afirmar limite zero confirmado nem alterar planos, cartoes ou limites. Preservar todos os gates Windows.",
-  "releaseAuthorization": "Pedido explícito do usuário em 11/11/2026 (\"Sim, 0.46.0\"): publicar as doze utilidades, as animações do foco, o bloqueio opcional do Discord e o tutorial somente após todos os gates Windows. 0.45.1 e releases anteriores imutáveis."
+  "releaseAuthorization": "Pedido explícito do usuário em 12/11/2026 (\"Sim, 0.47.0\"): publicar as correções de personalidade, saúde (João médico, SAMU 192), convite do tutorial e lista de comandos, e as mensagens programadas no WhatsApp, somente após todos os gates Windows. 0.46.0 e releases anteriores imutáveis."
 }
