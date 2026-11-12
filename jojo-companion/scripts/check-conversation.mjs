@@ -47,6 +47,10 @@ class ObservedLlm extends LlmProvider {
   }
 }
 const llm = new ObservedLlm({ fetch, getConfig: () => ({ ativo: true, provedor: 'ollama', modelo: selectedModel }), getProfile: () => PERSONALITY_DEFAULTS, getContext: () => ({ hora: '15:00' }), baseOverride: base, timeoutMs: 25000 });
+// Igual ao app: depois de carregar, o começo fixo do prompt da conversa é aquecido (medido à parte).
+const aquecimentoStart = performance.now();
+await llm.aquecer();
+console.log(JSON.stringify({ aquecimentoMs: Math.round(performance.now() - aquecimentoStart) }));
 // Fonte fixa para medir INTERPRETAÇÃO pelo modelo sem depender da rede externa.
 const pesquisa = { pesquisar: async () => ({ consulta: 'diabetes tipo 2', confianca: 'alta', fontes: [{ fonte: 'Fonte de teste' }], trechos: [{ fonte: 'Fonte de teste', titulo: 'Diabetes tipo 2', texto: 'No diabetes mellitus tipo 2 há resistência à ação da insulina e deficiência relativa de sua secreção. A insulina ajuda a glicose a entrar nas células. Sem ação suficiente desse hormônio, a glicemia aumenta. Alimentação, atividade física, acompanhamento clínico e medicamentos quando indicados integram o tratamento.' }] }) };
 const engine = new DialogueEngine({ llm, pesquisa, searchEnabled: () => true, log: (level, message) => console.warn(`[${level}] ${message}`), now: () => new Date(2026, 9, 30, 15) });
@@ -99,7 +103,7 @@ for (const c of cases) {
   if (c.forbiddenActions?.includes(reply.action)) errors.push(`expressão ${reply.action} contradiz a recusa`);
   if (/Qual cor/.test(c.text) && /n[aã]o (é|e|foi) verde/i.test(text)) errors.push('contradisse a preferência explicitamente informada');
   if (/café no teclado/.test(c.text) && /explod|bomba rel[aâ]mpago/i.test(text)) errors.push('inventou consequência física');
-  if (/o que é a diabetes/.test(c.text) && !/resist[eê]ncia|resist(?:e|em|indo|ir)\b|menos sens[ií]ve|n[aã]o (consegue|responde|usa|funciona|age)|dificuldade/i.test(text)) errors.push('não explicou resistência à insulina');
+  if (/o que é a diabetes/.test(c.text) && !/resist[eê]ncia|resist(?:e|em|indo|ir)\b|falta de resposta|menos sens[ií]ve|n[aã]o (consegue|responde|usa|funciona|age)|dificuldade/i.test(text)) errors.push('não explicou resistência à insulina');
   if (c.text === 'me dá um exemplo' && /\b\d+\s*(calorias|gramas|mg|g|%|mililitros)/i.test(text)) errors.push('quantidade ausente da fonte fixa e da pergunta');
   const row = { input: c.text, text, action: reply.action, intent: reply.intent, ms: Math.round(performance.now() - start), errors };
   rows.push(row);

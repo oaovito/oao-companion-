@@ -252,6 +252,30 @@ export class LlmProvider extends DialogueProvider {
     return `IA · ${this.preset.label.replace(/ \(.*\)$/, '')}`;
   }
 
+  /**
+   * Aquecimento: manda ao modelo o começo fixo do prompt da conversa (a
+   * personalidade), com resposta de 1 token. O modelo guarda isso processado e a
+   * primeira mensagem dela não espera ele ler tudo do zero. Só no motor local.
+   */
+  async aquecer({ signal = null } = {}) {
+    const cfg = this.getConfig() || {};
+    if (!this.preset.native) return false;
+    let base = this.baseOverride;
+    let modelo = cfg.modelo || OLLAMA_MODEL;
+    if (!base) {
+      const p = await this.brain.preparar();
+      base = p.base;
+      modelo = p.modelo;
+    }
+    const system = buildLocalPrompt(this.getProfile(), this.getContext(), 'oi');
+    const res = await this.fetch(`${base}/api/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
+      body: JSON.stringify({ model: modelo, messages: [{ role: 'system', content: system }, { role: 'user', content: 'oi' }], stream: false,
+        keep_alive: OLLAMA_OPTS.keepAlive, options: { ...OLLAMA_OPTS.curto, num_predict: 1, temperature: 0.3 } }),
+    });
+    return !!res.ok;
+  }
+
   async isAvailable() {
     const cfg = this.getConfig() || {};
     if (!cfg.ativo || !this.fetch) return false;

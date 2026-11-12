@@ -137,3 +137,16 @@ test('guarda de tom: "não se desculpe" e "sem desculpas" são bronca do JoJo; d
   for (const ok of ['Que droga, Manu! Não se desculpe, foco no que precisa ser feito agora.', 'Sem desculpas: amanhã você termina.', 'Nada de desculpa, levanta e vai.']) assert.equal(outOfCharacter(ok), null, ok);
   for (const ruim of ['Desculpe, não posso ajudar com isso.', 'Peço desculpas pelo erro.', 'Sinto muito, Manu.', 'Como uma IA, eu não tenho opinião.']) assert.equal(outOfCharacter(ruim), 'tom de assistente', ruim);
 });
+
+test('aquecimento: o começo fixo do prompt vai ao modelo uma vez, com resposta de 1 token e o mesmo contexto da conversa', async () => {
+  const calls = [];
+  const p = provider(calls, 'ok');
+  assert.equal(await p.aquecer(), true);
+  const body = calls[0];
+  assert.equal(body.messages[0].content, buildLocalPrompt(P, {}, 'oi'));
+  assert.equal(body.options.num_predict, 1);
+  assert.equal(body.options.num_ctx, OLLAMA_OPTS.curto.num_ctx, 'mesmo contexto: o modelo reaproveita o que leu');
+  const conversa = buildLocalPrompt(P, {}, 'Minha cor preferida é verde.');
+  const comum = conversa.split('\n').slice(0, 4).join('\n');
+  assert.ok(body.messages[0].content.startsWith(comum), 'o começo aquecido é o mesmo da conversa');
+});

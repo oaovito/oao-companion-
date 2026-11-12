@@ -451,7 +451,7 @@ function main() {
       } else companion.reportSystem('conversa', 'Sistema: conversa online', null);
     };
     // Conversa ligada: prepara em segundo plano (download na primeira vez, sem esperar a primeira mensagem).
-    if (!TEST && store.get().iaAtivo && store.get().iaProvedor === 'ollama') setTimeout(() => cerebro.preparar().then(() => cerebro.usar()).catch(() => {}), 30000);
+    if (!TEST && store.get().iaAtivo && store.get().iaProvedor === 'ollama') setTimeout(() => cerebro.preparar().then(() => { cerebro.usar(); return dialogue.llm?.aquecer?.(); }).catch(() => {}), 30000);
     const calTimer = setInterval(syncCalendar, 10 * 60e3);
     app.on('will-quit', () => clearInterval(calTimer));
     companion.onOpenSettings = () => openSettings();
