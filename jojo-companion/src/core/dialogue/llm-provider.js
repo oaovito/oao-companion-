@@ -119,7 +119,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     || /\b(?:meu|minha|my)\b.*\b(?:preferid[ao]|favorit[ao]|favou?rite|preferred)\b|\b(?:eu (?:prefiro|gosto)|i (?:prefer|like))\b/.test(greeting));
   // A tarefa fica depois dos dados e do perfil: o modelo curto deve responder ao
   // assunto atual antes de imitar uma reação genérica do histórico.
-  if (correcaoPessoal(text)) linhas.push(`She is correcting her own wording. ${correction ? 'Acknowledge only the affirmed wording briefly, then stop. Use this corrected wording in subsequent turns.' : 'Briefly acknowledge her clarified wording.'} Acknowledging her words does not confirm the truth of medical claims.`);
+  if (correcaoPessoal(text)) linhas.push(`She is correcting her own wording. ${correction ? 'Acknowledge only the affirmed wording briefly, then stop. Use this corrected wording in subsequent turns. Do not comment on her certainty or memory.' : 'Briefly acknowledge her clarified wording.'} Acknowledging her words does not confirm the truth of medical claims.`);
   else if (!tecnico) linhas.push(ownBody
     ? 'Current reply: answer the body feature she asked about directly in one factual sentence, including its presence or absence.'
     : wellbeing
