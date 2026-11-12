@@ -28,11 +28,11 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.equal(sanitizePersonality({ ...P, essencia: 42 }).settings.essencia, P.essencia);
   const bloco = personaJoJo({ ...P, essencia: 'Tubarão de teste.' });
   assert.match(bloco, /You are JoJo \(personality, in Portuguese: Tubarão de teste\.\)/, 'vem do perfil, não de texto fixo');
-  assert.match(bloco, /No assistant or customer-service talk, no emoji/);
+  assert.match(bloco, /No assistant talk, no emoji/);
   assert.match(bloco, /real affection for her/);
-  assert.match(bloco, /Never insult, mock or belittle her, her questions or her choices, and never accuse her of making excuses/);
-  assert.match(bloco, /Answer exactly what she said, in her language/);
-  assert.match(bloco, /Never change the subject to training, studying, João or health unless she brings it up/);
+  assert.match(bloco, /Never insult, mock or belittle her or her questions; never say she makes excuses/);
+  assert.match(bloco, /Answer what she said, in her language/);
+  assert.match(bloco, /do not bring up training, studying, João or health unless she does/);
   assert.match(bloco, /She is a woman/);
   assert.doesNotMatch(bloco, /\p{Extended_Pictographic}/u);
   assert.doesNotMatch(personaJoJo(P), /examples/i);
@@ -46,10 +46,15 @@ test('regra de saúde: abre o prompt sempre que o assunto é saúde, as explica�
   assert.match(regra, /tell her to see João: he is a real doctor and nobody takes care of her better than him/);
   assert.match(regra, /call SAMU at 192 now and call João/);
   assert.match(regra, /Never diagnose or give doses/);
-  for (const prompt of [buildLocalPrompt(P, {}, 'tô com dor de cabeça'), buildLocalPrompt(P, {}, 'posso tomar remédio pra dormir?'), buildLocalPrompt(P, {}, 'por que minha cabeça dói?', { tecnico: true }), buildSystemPrompt(P, {})]) {
-    assert.equal(prompt.split('\n')[0], regra);
-    assert.match(prompt, /You are JoJo/);
+  // Conversa e explicação sobre saúde: a regra entra no fim (o começo do prompt fica igual e o
+  // modelo reaproveita o que já leu). Pedido ao app: abre o prompt.
+  for (const prompt of [buildLocalPrompt(P, {}, 'tô com dor de cabeça'), buildLocalPrompt(P, {}, 'posso tomar remédio pra dormir?'), buildLocalPrompt(P, {}, 'por que minha cabeça dói?', { tecnico: true })]) {
+    assert.ok(prompt.split('\n').includes(regra));
+    assert.match(prompt.split('\n')[0], /^You are JoJo/);
+    assert.match(prompt.split('\n')[1] || '', /^(Always speak as JoJo|Reply in)/, 'começo igual ao do prompt sem saúde');
   }
+  assert.equal(buildLocalPrompt(P, {}, 'tô com dor de cabeça').split('\n').slice(0, 2).join(), buildLocalPrompt(P, {}, 'Minha cor preferida é verde.').split('\n').slice(0, 2).join(), 'mesmo começo: o modelo reaproveita o que já leu');
+  assert.equal(buildSystemPrompt(P, {}).split('\n')[0], regra);
   // Explicação sem relação com a saúde dela: identidade curta, resposta rápida.
   const tec = buildLocalPrompt(P, {}, 'o que é a diabetes mellitus 2?', { tecnico: true });
   assert.match(tec.split('\n')[0], /^You are JoJo, a bodybuilder shark who explains like a strict coach who cares about her/);
