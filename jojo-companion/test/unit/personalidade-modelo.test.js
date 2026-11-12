@@ -3,7 +3,7 @@
 // longo nunca empurra a personalidade para fora do contexto.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LlmProvider, buildSystemPrompt, buildLocalPrompt, cabeNoContexto, parseLlmReply, OLLAMA_OPTS } from '../../src/core/dialogue/llm-provider.js';
+import { LlmProvider, buildSystemPrompt, buildLocalPrompt, cabeNoContexto, parseLlmReply, outOfCharacter, OLLAMA_OPTS } from '../../src/core/dialogue/llm-provider.js';
 import { PERSONALITY_DEFAULTS, personaJoJo, regraSaude, sanitizePersonality } from '../../src/core/personality.js';
 
 const P = { ...PERSONALITY_DEFAULTS };
@@ -116,4 +116,9 @@ test('tarefas do modelo (bronca do Discord, estudo): a personalidade completa n�
 test('resposta do modelo: emoji sai, o texto fica', () => {
   assert.equal(parseLlmReply('{"texto":"Parabéns, Manu 🎉! Agora descansa 💪."}').text, 'Parabéns, Manu! Agora descansa.');
   assert.equal(parseLlmReply('{"texto":"Sem emoji aqui."}').text, 'Sem emoji aqui.');
+});
+
+test('guarda de tom: "não se desculpe" e "sem desculpas" são bronca do JoJo; desculpa de atendente continua barrada', () => {
+  for (const ok of ['Que droga, Manu! Não se desculpe, foco no que precisa ser feito agora.', 'Sem desculpas: amanhã você termina.', 'Nada de desculpa, levanta e vai.']) assert.equal(outOfCharacter(ok), null, ok);
+  for (const ruim of ['Desculpe, não posso ajudar com isso.', 'Peço desculpas pelo erro.', 'Sinto muito, Manu.', 'Como uma IA, eu não tenho opinião.']) assert.equal(outOfCharacter(ruim), 'tom de assistente', ruim);
 });

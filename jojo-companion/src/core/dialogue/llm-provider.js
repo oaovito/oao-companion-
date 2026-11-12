@@ -85,7 +85,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Speak with the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).`;
   const linhas = tecnico ? [
     personaJoJo(profile, { tecnico: true, saude: false }),
-    `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.`,
+    `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation. Name the subject of her question in the first sentence.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
     personaJoJo(profile, { saude: false }),
@@ -161,6 +161,8 @@ export function outOfCharacter(text, { max = 280, input = '' } = {}) {
   // Uma correção pode receber uma desculpa curta de gente. Isso não libera
   // identidade de IA nem o restante do tom genérico de atendimento.
   if (/\b(eu disse|eu falei|n[aã]o foi isso|entendeu errado|i said|i meant)\b/i.test(input)) t = t.replace(/^(?:(?:ah|oh)[,!\s]*)?(?:desculp[ae]|sorry|i'?m sorry)[,!\s]*/i, '');
+  // "Não se desculpe" e "sem desculpas" são o JoJo dando bronca, não pedindo desculpa de atendente.
+  t = t.replace(/\b(?:n[aã]o (?:se |te )?desculp[ae]s?|sem desculpas?|nada de desculpas?)\b/gi, '');
   if (ASSISTANT.test(t)) return 'tom de assistente';
   if (String(text || '').length > max) return 'longa demais';
   return null;
