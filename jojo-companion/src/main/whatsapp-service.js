@@ -69,7 +69,7 @@ export function createWhatsAppService({ userData, companion, spawn, toDataURL, l
       const validade = Number.isFinite(m.validadeMs) && m.validadeMs > 0 ? m.validadeMs : WA_QR.primeiroMs;
       const renovacao = qrSeq++;
       Promise.resolve(toDataURL(m.qr))
-        .then((qr) => { renovandoQr = false; setConexao({ estado: 'qr', qr, qrExpiraEm: now() + validade, qrRenovacao: renovacao, motivo: null, codigo: null }); })
+        .then((qr) => { renovandoQr = false; setConexao({ estado: 'qr', qr, qrExpiraEm: now() + validade, qrValidadeMs: validade, qrRenovacao: renovacao, motivo: null, codigo: null }); })
         .catch((e) => { log('warn', `QR code não desenhado: ${e.message}`); setConexao({ estado: 'erro', qr: null, motivo: 'qr_falhou' }); });
     } else if (m.type === 'conta') {
       setConexao({ nome: m.nome || conexao.nome, numero: m.numero || conexao.numero });
