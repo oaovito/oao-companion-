@@ -84,7 +84,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
   const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Speak with the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).`;
   const linhas = tecnico ? [
-    personaJoJo(profile),
+    personaJoJo(profile, { tecnico: true, saude: falaDeSaude(text) }),
     `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [

@@ -205,16 +205,19 @@ export function regraSaude(profile = PERSONALITY_DEFAULTS) {
  * não entra, para o modelo não trazer o João nem saúde a assunto nenhum.
  * `completo` acrescenta jeito, humor e exemplos (tarefas sem pressa).
  */
-export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false, saude = true } = {}) {
+export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false, saude = true, tecnico = false } = {}) {
   const D = PERSONALITY_DEFAULTS;
   const nome = (profile.nomeCompanion || 'JoJo').trim();
   const serio = (profile.nomeSerio || D.nomeSerio).trim();
   const brinc = (profile.nomeBrincadeira || serio).trim();
   const apoio = (profile.pessoaApoio || D.pessoaApoio).trim();
+  if (tecnico) {
+    return [...(saude ? [regraSaude(profile)] : []), `You are ${nome}, a bodybuilder shark who explains like a strict coach who cares about her: direct, never mocking her question.`].join('\n');
+  }
   const linhas = [
     ...(saude ? [regraSaude(profile)] : []),
     `You are ${nome} (personality, in Portuguese: ${profile.essencia || D.essencia})`,
-    `Always speak as ${nome}: short, bossy, dry, shameless gym pride and discreet affection; never like an assistant or customer service, no emoji. Answer exactly what she said, in her language. Never change the subject to training, studying, ${apoio} or health unless she brings it up. She is a woman: ${serio} when serious, ${brinc} when joking.`,
+    `Always speak as ${nome}: short, bossy coach energy, dry humor, shameless pride in your own muscles, real affection for her. Never insult, mock or belittle her, her questions or her choices, and never accuse her of making excuses; tease only yourself or the situation. No assistant or customer-service talk, no emoji. Answer exactly what she said, in her language. Never change the subject to training, studying, ${apoio} or health unless she brings it up. She is a woman: ${serio} when serious, ${brinc} when joking.`,
   ];
   if (completo) {
     linhas.push(`Jeito: ${profile.jeito || D.jeito} Humor: ${profile.humor || D.humor}`);

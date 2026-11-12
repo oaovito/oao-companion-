@@ -28,14 +28,16 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.equal(sanitizePersonality({ ...P, essencia: 42 }).settings.essencia, P.essencia);
   const bloco = personaJoJo({ ...P, essencia: 'Tubarão de teste.' });
   assert.match(bloco, /You are JoJo \(personality, in Portuguese: Tubarão de teste\.\)/, 'vem do perfil, não de texto fixo');
-  assert.match(bloco, /never like an assistant or customer service, no emoji/);
+  assert.match(bloco, /No assistant or customer-service talk, no emoji/);
+  assert.match(bloco, /real affection for her/);
+  assert.match(bloco, /Never insult, mock or belittle her, her questions or her choices, and never accuse her of making excuses/);
   assert.match(bloco, /Answer exactly what she said, in her language/);
   assert.match(bloco, /Never change the subject to training, studying, João or health unless she brings it up/);
   assert.match(bloco, /She is a woman/);
   assert.doesNotMatch(bloco, /\p{Extended_Pictographic}/u);
   assert.doesNotMatch(personaJoJo(P), /examples/i);
   assert.match(personaJoJo(P, { completo: true }), /Voice examples/);
-  assert.ok(personaJoJo(P, { saude: false }).length <= 520, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P, { saude: false }).length})`);
+  assert.ok(personaJoJo(P, { saude: false }).length <= 720, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P, { saude: false }).length})`);
 });
 
 test('regra de saúde: abre o prompt sempre que o assunto é saúde, as explicações e os pedidos ao app', () => {
@@ -44,10 +46,14 @@ test('regra de saúde: abre o prompt sempre que o assunto é saúde, as explica�
   assert.match(regra, /tell her to see João: he is a real doctor and nobody takes care of her better than him/);
   assert.match(regra, /call SAMU at 192 now and call João/);
   assert.match(regra, /Never diagnose or give doses/);
-  for (const prompt of [buildLocalPrompt(P, {}, 'tô com dor de cabeça'), buildLocalPrompt(P, {}, 'posso tomar remédio pra dormir?'), buildLocalPrompt(P, {}, 'o que é insulina?', { tecnico: true }), buildSystemPrompt(P, {})]) {
+  for (const prompt of [buildLocalPrompt(P, {}, 'tô com dor de cabeça'), buildLocalPrompt(P, {}, 'posso tomar remédio pra dormir?'), buildLocalPrompt(P, {}, 'por que minha cabeça dói?', { tecnico: true }), buildSystemPrompt(P, {})]) {
     assert.equal(prompt.split('\n')[0], regra);
-    assert.match(prompt, /Tubarão bombado e fisiculturista, sem pudor nenhum/);
+    assert.match(prompt, /You are JoJo/);
   }
+  // Explicação sem relação com a saúde dela: identidade curta, resposta rápida.
+  const tec = buildLocalPrompt(P, {}, 'o que é a diabetes mellitus 2?', { tecnico: true });
+  assert.match(tec.split('\n')[0], /^You are JoJo, a bodybuilder shark who explains like a strict coach who cares about her/);
+  assert.ok(tec.length < 600, `explicação curta (${tec.length})`);
   // Conversa sem relação com saúde: a regra sai, para o modelo não puxar o João nem saúde do nada.
   for (const t of ['oi', 'Minha cor preferida é verde.', 'Não quero brincar agora.']) {
     const prompt = buildLocalPrompt(P, {}, t);
