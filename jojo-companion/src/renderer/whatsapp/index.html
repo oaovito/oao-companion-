@@ -22,6 +22,7 @@
   <nav class="abas" aria-label="Telas do WhatsApp">
     <button type="button" class="aba" data-tela="conexao">Conexão</button>
     <button type="button" class="aba" data-tela="mensagens">Mensagens</button>
+    <button type="button" class="aba" data-tela="contatos">Contatos</button>
   </nav>
 
   <main>
@@ -110,11 +111,14 @@
     <section id="tela-nova" class="tela card" aria-label="Nova mensagem" hidden>
       <h2 id="formTitulo">Nova mensagem</h2>
       <form id="form" autocomplete="off">
-        <label class="campo">Para quem
-          <input id="destinoBusca" type="text" list="contatosLista" placeholder="Nome do contato, grupo ou número com DDD" maxlength="80">
-          <datalist id="contatosLista"></datalist>
-        </label>
-        <p class="dica" id="destinoDica">Os nomes aparecem depois de conectar. Número com DDD sempre funciona.</p>
+        <fieldset class="destino">
+          <legend>Para quem</legend>
+          <div id="destinoEscolhido" class="pessoa" hidden></div>
+          <button type="button" class="primario" id="escolherContato">Escolher contato</button>
+          <label class="campo">ou digite um número com DDD
+            <input id="destinoNumero" type="tel" inputmode="tel" placeholder="42 99999-1234" maxlength="25">
+          </label>
+        </fieldset>
         <label class="campo">Mensagem
           <textarea id="texto" rows="3" maxlength="1000" placeholder="O texto que vai sair do seu WhatsApp"></textarea>
         </label>
@@ -151,6 +155,38 @@
           <button type="button" id="cancelarEdicao" class="ghost">Voltar</button>
         </div>
       </form>
+    </section>
+
+    <!-- ============================== CONTATOS ============================== -->
+    <section id="tela-contatos" class="tela" aria-label="Contatos" hidden>
+      <div class="linha cabecalho">
+        <h2 id="contatosTitulo">Contatos</h2>
+        <span class="espaco"></span>
+        <button type="button" class="ghost" id="voltarEscolha" hidden>Voltar</button>
+      </div>
+      <p class="sub" id="contatosSub">Nome como está salvo no seu celular; embaixo, sempre o número.</p>
+      <input id="buscaContato" class="busca" type="search" placeholder="Buscar por nome ou número" aria-label="Buscar contato por nome ou número" maxlength="60">
+      <div class="filtro" role="group" aria-label="Mostrar">
+        <button type="button" id="filtroPessoas" aria-pressed="true">Pessoas</button>
+        <button type="button" id="filtroGrupos" aria-pressed="false">Grupos</button>
+      </div>
+      <p class="sub" id="contatosContagem" aria-live="polite"></p>
+      <ul id="listaContatos" class="contatos"></ul>
+    </section>
+
+    <!-- ============================ CONFIRMAÇÃO ============================ -->
+    <section id="tela-confirmar" class="tela" aria-label="Confirmar mensagem" hidden>
+      <div class="estado-bloco confirmar">
+        <h2>Confere antes de agendar</h2>
+        <div id="confirmarPara" class="pessoa grande"></div>
+        <dl class="conta">
+          <dt>Mensagem</dt><dd id="confirmarTexto" class="msg"></dd>
+          <dt>Quando</dt><dd id="confirmarQuando"></dd>
+        </dl>
+        <p id="erroConfirmar" class="erro" role="alert"></p>
+        <button type="button" class="primario" id="confirmarSalvar">Confirmar e agendar</button>
+        <button type="button" class="ghost" id="confirmarVoltar">Voltar e corrigir</button>
+      </div>
     </section>
   </main>
 

@@ -32,7 +32,7 @@ import { Reminders, parseReminderRequest, parseReminderCommand } from './reminde
 import { situacaoSaude } from './saude.js';
 import { parseAgendarNatural, parseAgendarComando, parseQuando, descreverQuando, buscarContatos, numeroParaJid } from './whatsapp.js';
 import { WA_MOTIVOS_CONEXAO } from './whatsapp-conexao.js';
-import { formatarNumero, numeroDoJid } from './whatsapp-contatos.js';
+import { formatarNumero, numeroDoJid, descreverDestino } from './whatsapp-contatos.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
@@ -4072,14 +4072,17 @@ export class Companion {
       if (!achados.length) { this.waPendente = { etapa: 'destino', r, ate: this.clock.now() + 10 * 60e3 }; return this._fala('wa_semContato', { destino: r.busca }); }
       if (achados.length > 1) {
         this.waPendente = { etapa: 'escolha', r, opcoes: achados, ate: this.clock.now() + 10 * 60e3 };
-        return this._fala('wa_escolha', { destino: r.busca, opcoes: achados.map((c, i) => `${i + 1}. ${c.nome}${c.tipo === 'grupo' ? ' (grupo)' : ''}`).join('\n') });
+        // Mesmo nome: o número diferencia (grupo diz que é grupo).
+        const igual = (c) => achados.filter((x) => normalizeText(x.nome) === normalizeText(c.nome)).length > 1;
+        const opcao = (c, i) => `${i + 1}. ${c.nome}${c.tipo === 'grupo' ? ' (grupo)' : ''}${igual(c) && c.tipo !== 'grupo' ? ` · ${formatarNumero(numeroDoJid(c.jid))}` : ''}`;
+        return this._fala('wa_escolha', { destino: r.busca, opcoes: achados.map(opcao).join('\n') });
       }
       r.destino = achados[0];
     }
     if (!r.quando || r.quando.erro === 'sem_hora' || r.quando.erro === 'data_invalida') { this.waPendente = { etapa: 'quando', r, ate: this.clock.now() + 10 * 60e3 }; return this._fala('wa_semHora', { destino: r.destino.nome }); }
     if (r.quando.erro === 'passado') { this.waPendente = { etapa: 'quando', r, ate: this.clock.now() + 10 * 60e3 }; return this._fala('wa_passado', { quando: descreverQuando(r.quando, new Date()) }); }
     this.waPendente = { etapa: 'confirmar', r, ate: this.clock.now() + 10 * 60e3 };
-    return this._fala('wa_confirmar', { destino: r.destino.nome, quando: descreverQuando(r.quando, new Date()), texto: r.texto });
+    return this._fala('wa_confirmar', { destino: r.destino.nome, quando: descreverQuando(r.quando, new Date()), texto: r.texto, numero: descreverDestino(r.destino) || 'número não informado' });
   }
 
   async _waSalvar(r, texto) {

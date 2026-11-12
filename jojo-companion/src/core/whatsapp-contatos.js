@@ -26,6 +26,10 @@ export function jidPessoa(jid) {
   return n && numeroValido(n) ? `${n}@s.whatsapp.net` : null;
 }
 
+// Códigos de país (ITU E.164): 1 e 7 têm um dígito, estes têm dois e o resto tem três.
+const DDI_DOIS = new Set('20 27 30 31 32 33 34 36 39 40 41 43 44 45 46 47 48 49 51 52 53 54 55 56 57 58 60 61 62 63 64 65 66 81 82 84 86 90 91 92 93 94 95 98'.split(' '));
+const ddiDe = (d) => (d[0] === '1' || d[0] === '7' ? d[0] : DDI_DOIS.has(d.slice(0, 2)) ? d.slice(0, 2) : d.slice(0, 3));
+
 /**
  * "5542999991234" → "+55 (42) 99999-1234"; fixo "+55 (42) 3333-1234";
  * outros países: "+1 415 555 0101" (DDI separado do resto).
@@ -38,7 +42,7 @@ export function formatarNumero(numero) {
     return `+55 (${ddd}) ${resto.slice(0, resto.length - 4)}-${resto.slice(-4)}`;
   }
   if (d.length <= 6) return `+${d}`;
-  const ddi = d.length > 10 ? d.slice(0, d.length - 10) : d.slice(0, 1);
+  const ddi = ddiDe(d);
   const r = d.slice(ddi.length);
   const partes = r.length > 7 ? [r.slice(0, r.length - 7), r.slice(-7, -4), r.slice(-4)] : [r.slice(0, r.length - 4), r.slice(-4)];
   return `+${ddi} ${partes.filter(Boolean).join(' ')}`;
