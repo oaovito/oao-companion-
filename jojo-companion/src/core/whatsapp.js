@@ -314,6 +314,15 @@ export class WhatsAppAgenda {
 
   atrasadas() { return this.itens.filter((i) => i.estado === 'atrasada'); }
 
+  /** Envio que falhou de vez: ela mandou tentar de novo agora (conta como pedido dela, não como atrasada). */
+  tentarDeNovo(id, agora = this.now()) {
+    const item = this.get(id);
+    if (!item || item.estado !== 'falhou') return null;
+    Object.assign(item, { estado: 'agendada', proximo: agora, avisado: agora, tentativas: 0, retryEm: null, ultimoErro: null, envioManual: true });
+    this.save();
+    return item;
+  }
+
   /** 'enviar' agora ou 'descartar' (repetição segue para a próxima vez). */
   resolverAtrasada(id, acao, agora = this.now()) {
     const item = this.get(id);

@@ -86,6 +86,13 @@ expressões regulares e ignora o **código** que o WhatsApp manda
    log; a queda do processo vira "Sem conexão · o WhatsApp está desconectado"
    (`whatsapp-service.js`, linha 76) sem motivo em lugar nenhum.
 
+6. **Envio confirmado que vira falha** (achado ao testar o worker com o
+   Baileys simulado): o resultado de um envio bem-sucedido traz o `id` da
+   mensagem do WhatsApp, e `post({ type: 'result', id: msg.id, ...resultado })`
+   (linhas 97 e 127) troca o `id` do pedido por ele. O serviço nunca reconhece a
+   resposta, espera 30 s, registra "sem internet" e tenta de novo: a mesma
+   mensagem pode chegar **até três vezes** ao contato.
+
 O rótulo do estado `erro` na janela é "Sem conexão"
 (`src/renderer/whatsapp/whatsapp.js`, linha 9) e o motivo exibido vem da
 tabela `MOTIVOS`, pensada para falhas de envio, não de conexão.

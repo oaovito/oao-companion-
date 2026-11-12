@@ -4,10 +4,7 @@
 const api = window.waApi;
 const $ = (id) => document.getElementById(id);
 const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-const ESTADOS = {
-  desligado: ['Desconectado', ''], conectando: ['Conectando…', 'warn'], qr: ['Escaneie o QR code', 'warn'],
-  conectado: ['Conectado', 'ok'], reconectando: ['Reconectando…', 'warn'], erro: ['Sem conexão', 'bad'],
-};
+const CORES = { desconectado: '', qr: 'warn', conectando: 'warn', conectado: 'ok', erro: 'bad' };
 // Erros na voz do JoJo.
 const ERROS = {
   numero_invalido: 'Esse número não tem cara de número. Coloca com DDD: 42 99999-1234.',
@@ -41,14 +38,18 @@ function el(tag, cls, text) {
 }
 
 function render(s) {
+  s.contatos = [...(s.pessoas || []), ...(s.grupos || [])];
   st = s;
-  const [rotulo, cor] = ESTADOS[s.conexao.estado] || ESTADOS.desligado;
-  $('estado').textContent = s.conexao.estado === 'conectado' && s.conexao.numero ? `${rotulo} · ${s.conexao.numero}` : s.conexao.motivo && s.conexao.estado !== 'conectado' ? `${rotulo} · ${MOTIVOS[s.conexao.motivo] || s.conexao.motivo}` : rotulo;
-  $('estado').className = `chip ${cor}`;
-  const ligado = ['conectado', 'conectando', 'qr', 'reconectando'].includes(s.conexao.estado);
-  $('conectar').hidden = ligado;
-  $('desconectar').hidden = !ligado;
-  $('qrBox').hidden = !(s.conexao.estado === 'qr' && s.conexao.qr);
+  const v = s.visivel;
+  const conta = v.chave === 'conectado' ? [v.conta?.nome, v.conta?.numero ? `+${v.conta.numero}` : null].filter(Boolean).join(' · ') : '';
+  $('estado').textContent = conta ? `${v.titulo} · ${conta}` : v.titulo;
+  $('estado').className = `chip ${CORES[v.chave] || ''}`;
+  $('estadoFrase').textContent = v.frase;
+  $('jojoFala').textContent = s.jojo ? `JoJo: ${s.jojo}` : '';
+  $('conectar').hidden = !v.acao;
+  if (v.acao) $('conectar').textContent = v.acao.rotulo;
+  $('desconectar').hidden = !['conectado', 'qr', 'conectando'].includes(v.chave);
+  $('qrBox').hidden = !(v.chave === 'qr' && s.conexao.qr);
   if (s.conexao.qr) $('qr').src = s.conexao.qr;
   $('porDia').textContent = String(s.limites?.porDia || 40);
   const dl = $('contatosLista');
@@ -182,7 +183,7 @@ $('form').addEventListener('submit', async (e) => {
 });
 $('usarProposta').addEventListener('click', () => proposta && salvar(proposta));
 $('manterMinha').addEventListener('click', () => salvar($('texto').value.trim()));
-$('conectar').addEventListener('click', async () => { render({ ...st, conexao: await api.connect() }); });
+$('conectar').addEventListener('click', async () => { await api.connect(); await atualizar(); });
 $('desconectar').addEventListener('click', async () => {
   if (!confirm('Desconectar o WhatsApp deste PC? A sessão e a lista de contatos salvas aqui são apagadas. As mensagens programadas continuam, mas não saem até conectar de novo.')) return;
   await api.disconnect();

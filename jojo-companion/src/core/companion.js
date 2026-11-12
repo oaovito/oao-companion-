@@ -31,6 +31,8 @@ import { weatherRequest } from './weather.js';
 import { Reminders, parseReminderRequest, parseReminderCommand } from './reminders.js';
 import { situacaoSaude } from './saude.js';
 import { parseAgendarNatural, parseAgendarComando, parseQuando, descreverQuando, buscarContatos, numeroParaJid } from './whatsapp.js';
+import { WA_MOTIVOS_CONEXAO } from './whatsapp-conexao.js';
+import { formatarNumero, numeroDoJid } from './whatsapp-contatos.js';
 import { Notes, parseNoteRequest, parseNoteCommand } from './notes.js';
 import { Habits, parseHabitRequest, parseHabitCommand } from './habits.js';
 import { Routine, parseRoutineRequest, parseRoutineCommand } from './routine.js';
@@ -4000,6 +4002,17 @@ export class Companion {
     return text;
   }
 
+  /**
+   * Comentário do JoJo na janela do WhatsApp para cada estado da conexão, do
+   * arquivo de falas (a mesma fonte da personalidade). Fica igual enquanto o
+   * estado não muda, para a tela não trocar de frase a cada atualização.
+   */
+  waFalaTela(chave, motivo = null) {
+    const k = `${chave}|${motivo || ''}`;
+    if (this._waTela?.k !== k) this._waTela = { k, texto: this._fala(`wa_tela_${chave}`) };
+    return this._waTela.texto;
+  }
+
   _waMotivo(codigo) { return this._fala(`wa_motivo_${codigo}`) || this._fala('wa_motivo_falha_envio'); }
 
   _waLinha(item, i) {
@@ -4029,7 +4042,17 @@ export class Companion {
       const lista = itens.map((i, k) => `${k + 1}. ${i.destino.nome} · era ${descreverQuando(i, new Date())} · “${i.texto}”`).join('\n');
       return this._waSay(this._fala('wa_atrasadas', { n: String(itens.length), lista }), { precisa: true });
     }
-    if (ev.tipo === 'conectado') return this._waSay(this._fala('wa_conectado'));
+    if (ev.tipo === 'conectado') {
+      const numero = formatarNumero(ev.numero || '');
+      // A conta vai numa linha objetiva, separada da fala dele.
+      const conta = [ev.nome, numero].filter(Boolean).join(' · ');
+      const fala = this._fala('wa_conectado');
+      return this._waSay(conta ? `${fala}\nConta conectada: ${conta}.` : fala);
+    }
+    if (ev.tipo === 'erroConexao') {
+      const motivo = (WA_MOTIVOS_CONEXAO[ev.motivo] || WA_MOTIVOS_CONEXAO.processo_parou).frase.replace(' (código {codigo})', '');
+      return this._waSay(this._fala('wa_erroConexao', { motivo }), { precisa: true });
+    }
     if (ev.tipo === 'desconectado') return this._waSay(this._fala('wa_desconectado', { motivo: this._waMotivo(ev.motivo || 'sessao_desconectada') }), { precisa: true });
     return '';
   }
