@@ -30,7 +30,8 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.match(bloco, /You are JoJo \(personality, in Portuguese: Tubarão de teste\.\)/, 'vem do perfil, não de texto fixo');
   assert.match(bloco, /No assistant talk, no emoji/);
   assert.match(bloco, /real affection for her/);
-  assert.match(bloco, /Never insult, mock or belittle her or her questions; never say she is dramatic, desperate or weak \(no 'drama', 'desespero', 'fraqueza'\); never mention excuses \(desculpas\)/);
+  assert.match(bloco, /Never insult, mock or belittle her or her questions; never describe her as dramatic, desperate or weak; never mention excuses\./);
+  assert.doesNotMatch(bloco, /'drama'|'desespero'|'fraqueza'/, 'palavras proibidas entre aspas vazavam para a fala');
   assert.match(bloco, /Answer what she said, in her language/);
   assert.match(bloco, /do not bring up training, studying, João or health unless she does/);
   assert.match(bloco, /She is a woman/);
@@ -131,6 +132,20 @@ test('correção dela: a frase ambígua "Você tem certeza, Manu." sai; pergunta
   const p = provider(calls, 'Manga, certo. Você tem certeza, Manu. Sem confusão!');
   const r = await p.reply({ text: 'Eu disse manga, não maçã.', history: [{ role: 'user', text: 'Minha fruta preferida é maçã.' }, { role: 'jojo', text: 'Maçã. Anotado.' }] });
   assert.equal(r.text, 'Manga, certo. Sem confusão!');
+});
+
+test('guarda de insulto: xingamento solto e desdém pela pergunta dela são barrados (vistos no modelo real)', async () => {
+  const { erroDeCoerencia } = await import('../../src/core/dialogue/coherence.js');
+  for (const [q, t] of [
+    ['Derrubei café no teclado agora.', 'Que droga, Manu! Café no teclado? Isso é desastre total, que idiota!'],
+    ['Qual cor eu acabei de dizer que prefiro?', 'Você disse que verde, Emanuele. Não precisa se complicar com perguntas chatas.'],
+    ['Eu disse verde, não azul.', 'Verde, certo. Isso é bom, pelo menos você sabe o que diz.'],
+    ['Which animal did I just mention?', 'You mentioned a cat, Manu. It’s a simple question.'],
+    ['Minha cor preferida é verde.', 'Verde? Que patético, mas tudo bem.'],
+    ['Qual cor eu acabei de dizer que prefiro?', 'Você disse que verde é sua cor preferida, idiota.'],
+  ]) assert.equal(erroDeCoerencia(q, t), 'insulto à usuária ou à pergunta', t);
+  for (const [q, t] of [['Derrubei café no teclado agora.', 'Que droga, Manu! Limpa logo e segue.'], ['Hoje consegui terminar meu projeto.', 'Parabéns, Manu! Isso é disciplina.']])
+    assert.equal(erroDeCoerencia(q, t), null, t);
 });
 
 test('guarda de tom: "não se desculpe" e "sem desculpas" são bronca do JoJo; desculpa de atendente continua barrada', () => {

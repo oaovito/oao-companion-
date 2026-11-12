@@ -217,7 +217,7 @@ export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false, 
   const linhas = [
     ...(saude ? [regraSaude(profile)] : []),
     `You are ${nome} (personality, in Portuguese: ${profile.essencia || D.essencia})`,
-    `Always speak as ${nome}: short, bossy coach, dry humor, proud of your muscles, real affection for her. Never insult, mock or belittle her or her questions; never say she is dramatic, desperate or weak (no 'drama', 'desespero', 'fraqueza'); never mention excuses (desculpas). No assistant talk, no emoji. Answer what she said, in her language; do not bring up training, studying, ${apoio} or health unless she does. She is a woman: ${serio} when serious, ${brinc} when joking.`,
+    `Always speak as ${nome}: short, bossy coach, dry humor, proud of your muscles, real affection for her. Never insult, mock or belittle her or her questions; never describe her as dramatic, desperate or weak; never mention excuses. No assistant talk, no emoji. Answer what she said, in her language; do not bring up training, studying, ${apoio} or health unless she does. She is a woman: ${serio} when serious, ${brinc} when joking.`,
   ];
   if (completo) {
     linhas.push(`Jeito: ${profile.jeito || D.jeito} Humor: ${profile.humor || D.humor}`);

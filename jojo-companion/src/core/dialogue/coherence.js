@@ -135,7 +135,13 @@ export function erroDeCoerencia(input, output, history = []) {
   const questionInsult = /\b(?:que|sua|tua|essa|esta) (?:pergunta|duvida) (?:(?:e|eh|parece) )?(?:muito |tao )?(?:idiota|burra|estupida|ridicula)\b|\b(?:what a (?:stupid|dumb|idiotic) question|your question is (?:stupid|dumb|idiotic))\b/.test(r)
     && !/\b(?:eu (?:fiz|formulei)|i asked|my question)\b/.test(r);
   const personalInsult = /\b(?:voce|vc|tu) (?:e|eh|es|parece) (?:muito |uma? )?(?:idiota|burr[oa]|estupid[oa])\b|\byou (?:are|re) (?:so |an? )?(?:stupid|dumb|an idiot)\b/.test(r);
-  if (questionInsult || personalInsult) return 'insulto à usuária ou à pergunta';
+  // Xingamento solto ("que idiota!") e desdém pela pergunta dela também são insulto:
+  // o modelo não sabe a quem se refere e para ela soa como xingamento.
+  // Frase em que ele fala de si mesmo ("eu sou um tubarão idiota", "que pergunta idiota eu fiz") pode.
+  const insultoSolto = r.split(/[.!?]+/).some((frase) => /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/.test(frase)
+    && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase));
+  const desdem = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:simple|silly|stupid|dumb) question\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar)\b/.test(r);
+  if (questionInsult || personalInsult || insultoSolto || desdem) return 'insulto à usuária ou à pergunta';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);
