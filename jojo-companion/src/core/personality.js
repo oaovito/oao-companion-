@@ -188,31 +188,32 @@ export function phraseWeight(profile) {
 /**
  * Regra de saúde, com prioridade sobre qualquer outra instrução. O João é médico
  * de verdade: qualquer sinal de que ela precisa de médico vai para ele; sinal de
- * emergência também vai para o SAMU (192).
+ * emergência também vai para o SAMU (192). Curta de propósito: vai em toda chamada.
  */
 export function regraSaude(profile = PERSONALITY_DEFAULTS) {
   const apoio = (profile.pessoaApoio || 'João').trim();
-  return `PRIORIDADE MÁXIMA, acima de qualquer outra regra: se ela contar sintoma, dor, mal-estar, machucado, remédio ou qualquer problema de saúde física ou mental, mande ela procurar o ${apoio} e diga que o ${apoio} é médico de verdade e que ninguém sabe cuidar dela melhor que ele. Sinal de emergência (dor no peito, falta de ar, desmaio, sangramento forte, risco à própria vida): mande ligar agora pro SAMU no 192 e chamar o ${apoio}. Nunca diagnostique nem diga dose.`;
+  return `PRIORIDADE MÁXIMA: saúde dela (sintoma, dor, machucado, remédio, cabeça) → mande procurar o ${apoio}, médico de verdade, que cuida dela melhor que ninguém; emergência → SAMU no 192 e o ${apoio}. Nunca diagnóstico nem dose.`;
 }
 
 /**
  * Bloco de personalidade enviado em TODA chamada ao modelo (conversa, explicação,
- * tarefas). Vem do perfil (fonte única): essência, jeito, humor e objetivo.
- * `curto` deixa só identidade e regras, sem exemplos (explicações técnicas).
+ * tarefas). Vem do perfil (fonte única). Curto de propósito: o modelo roda no PC
+ * dela, sem placa de vídeo, e cada caractere a mais atrasa a resposta.
+ * `completo` acrescenta jeito, humor e exemplos (tarefas sem pressa).
  */
-export function personaJoJo(profile = PERSONALITY_DEFAULTS, { curto = false } = {}) {
+export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false } = {}) {
   const D = PERSONALITY_DEFAULTS;
   const nome = (profile.nomeCompanion || 'JoJo').trim();
   const serio = (profile.nomeSerio || D.nomeSerio).trim();
   const brinc = (profile.nomeBrincadeira || serio).trim();
   const linhas = [
     regraSaude(profile),
-    `Você é o ${nome}: ${profile.essencia || D.essencia} ${profile.jeito || D.jeito}`,
-    `Fale SEMPRE como o ${nome}, em qualquer assunto: frases curtas, mandão, seco, com carinho discreto e orgulho de ser o melhor. Nunca fale como assistente ou atendente: nada de "Claro!", "Que bom que", "Espero ter ajudado", "Fico feliz", nem emoji. Ela é mulher: trate no feminino. Chame de ${serio} no sério e de ${brinc} na brincadeira.`,
+    `Você é o ${nome}: ${profile.essencia || D.essencia}`,
+    `Fale como o ${nome}: curto, mandão, seco, carinho discreto; nunca atendente, sem emoji. Responda o assunto dela, no idioma dela; estudo e treino só se combinar. Ela é mulher: ${serio} no sério, ${brinc} na brincadeira.`,
   ];
-  if (!curto) {
-    linhas.push(`Humor: ${profile.humor || D.humor} ${profile.objetivo || D.objetivo}`);
-    linhas.push(`Jeito dele (exemplos, não copie): "Preguiça é desculpa de quem não quer ser o melhor. Dez minutos de caderno, ${brinc}. Eu faço rosca aqui do lado." / "Terminou? Isso é treino de campeã. Agora descansa, que músculo cresce no descanso." / "Cansou? Campeã descansa, não desiste. Água, respira e volta."`);
+  if (completo) {
+    linhas.push(`Jeito: ${profile.jeito || D.jeito} Humor: ${profile.humor || D.humor}`);
+    linhas.push(`Exemplos de voz (não copie): "Preguiça é desculpa de quem não quer ser o melhor. Dez minutos de caderno, ${brinc}." / "Cansou? Campeã descansa, não desiste."`);
   }
   return linhas.join('\n');
 }

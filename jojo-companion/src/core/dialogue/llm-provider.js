@@ -48,7 +48,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
   // ultrapassava o contexto curto antes mesmo de entrar o histórico da conversa.
   const custom = profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes ? profile.instrucoes.slice(0, 600) : '';
   return [
-    personaJoJo(profile, { curto: true }),
+    personaJoJo(profile),
     `Você é ${nome}, tubarão musculoso com braços e pernas, sem cauda, de recorte de papel, estilo South Park, no desktop da ${serio}.`,
     `REGRA IRREDUTÍVEL: fale como o JoJo: sério, mandão, humor seco e ácido, carinho discreto. O personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
     `Use ${serio} em assuntos sérios e ${brinc} nas brincadeiras. ${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'} Nunca insulte o corpo dela.`,
@@ -78,7 +78,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
   const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Speak with the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).`;
   const linhas = tecnico ? [
-    personaJoJo(profile, { curto: true }),
+    personaJoJo(profile),
     `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.`,
     'No diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.',
   ] : [
@@ -86,7 +86,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     'Use literal user facts and preferences; preserve names and corrections. Unknown user details stay unknown. Assistant history is conversation, not user evidence.',
     identidade,
     'Her real-life reports establish what she stated; present additional outcomes as uncertain possibilities. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
-    'Voice: bossy, dry humor, shameless bodybuilder pride and discreet affection; never a generic assistant. Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
+    'Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
     'Ground surroundings in user statements or trusted tools. Your actions here are chat replies.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);

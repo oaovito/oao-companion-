@@ -28,24 +28,27 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.equal(sanitizePersonality({ ...P, essencia: 42 }).settings.essencia, P.essencia);
   const bloco = personaJoJo({ ...P, essencia: 'Tubarão de teste.' });
   assert.match(bloco, /Você é o JoJo: Tubarão de teste\./, 'vem do perfil, não de texto fixo');
-  assert.match(bloco, /Nunca fale como assistente/);
-  assert.match(bloco, /trate no feminino/);
+  assert.match(bloco, /nunca atendente, sem emoji/);
+  assert.match(bloco, /Responda o assunto dela, no idioma dela; estudo e treino só se combinar/);
+  assert.match(bloco, /Ela é mulher/);
   assert.doesNotMatch(bloco, /\p{Extended_Pictographic}/u);
-  assert.doesNotMatch(personaJoJo(P, { curto: true }), /exemplos/);
+  assert.doesNotMatch(personaJoJo(P), /Exemplos/);
+  assert.match(personaJoJo(P, { completo: true }), /Exemplos de voz/);
+  assert.ok(personaJoJo(P).length <= 650, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P).length})`);
 });
 
 test('regra de saúde: primeira linha de todos os prompts, com João médico e SAMU 192', () => {
   const regra = regraSaude(P);
   assert.match(regra, /^PRIORIDADE MÁXIMA/);
-  assert.match(regra, /João é médico de verdade/);
-  assert.match(regra, /ninguém sabe cuidar dela melhor que ele/);
+  assert.match(regra, /procurar o João, médico de verdade/);
+  assert.match(regra, /cuida dela melhor que ninguém/);
   assert.match(regra, /SAMU no 192/);
   assert.match(regra, /dose/);
   for (const prompt of [buildLocalPrompt(P, {}, 'oi'), buildLocalPrompt(P, {}, 'o que é insulina?', { tecnico: true }), buildSystemPrompt(P, {})]) {
     assert.equal(prompt.split('\n')[0], regra);
     assert.match(prompt, /Tubarão bombado e fisiculturista, sem pudor nenhum/);
   }
-  assert.match(regraSaude({ ...P, pessoaApoio: 'Carlos' }), /o Carlos é médico de verdade/);
+  assert.match(regraSaude({ ...P, pessoaApoio: 'Carlos' }), /o Carlos, médico de verdade/);
 });
 
 test('conversa comum: o modelo recebe a personalidade, os exemplos de voz e a tarefa por último', async () => {

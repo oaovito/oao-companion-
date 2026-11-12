@@ -4081,7 +4081,7 @@ export class Companion {
     const profile = this.personality.get();
     const ela = profile.nomeSerio || 'Emanuele';
     const system = jeitoJoJo
-      ? `${personaJoJo(profile, { curto: true })}\nReescreva a mensagem de WhatsApp que a ${ela} vai mandar${destino ? ` para ${destino}` : ''}, do seu jeito, mas é ela quem envia: primeira pessoa dela, curta, sem mudar o sentido nem inventar fatos. Responda só JSON {"texto":"..."}.`
+      ? `${personaJoJo(profile)}\nReescreva a mensagem de WhatsApp que a ${ela} vai mandar${destino ? ` para ${destino}` : ''}, do seu jeito, mas é ela quem envia: primeira pessoa dela, curta, sem mudar o sentido nem inventar fatos. Responda só JSON {"texto":"..."}.`
       : `Você reescreve uma mensagem de WhatsApp que a ${ela} vai mandar${destino ? ` para ${destino}` : ''}. Português do Brasil, primeira pessoa, do jeito dela: natural, curta, sem mudar o sentido, sem inventar fatos, sem emoji novo. Não é você falando: é ela. Responda só JSON {"texto":"..."}.`;
     const bruto = await this._modelTask({ system, user: JSON.stringify({ texto }), maxTokens: 200 });
     try {

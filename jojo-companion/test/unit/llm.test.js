@@ -40,7 +40,7 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(local, /with arms and legs, and no tail/);
   assert.doesNotMatch(local, /without human arms|fins and a tail/);
   assert.match(buildLocalPrompt(profile, {}, 'Você tem pernas ou cauda?'), /Fatos do seu desenho/);
-  assert.match(local, /Voice: bossy, dry humor, shameless bodybuilder pride and discreet affection; never a generic assistant/);
+  assert.match(local, /Fale como o JoJo: curto, mandão, seco, carinho discreto; nunca atendente, sem emoji/);
   // A personalidade do perfil (fonte única) vai em toda conversa, com a regra de saúde primeiro.
   assert.match(local.split(String.fromCharCode(10))[0], /^PRIORIDADE MÁXIMA.*médico de verdade.*SAMU no 192/);
   assert.match(local, /Tubarão bombado e fisiculturista, sem pudor nenhum/);
@@ -134,7 +134,7 @@ test('payload distingue a usuária real da ficção do personagem sem promover f
   assert.match(system, /Use literal user facts and preferences; preserve names and corrections/);
   assert.doesNotMatch(system, /Aurora|restaurante|aquário/, 'nenhuma fala foi elevada a fato ou instrução do sistema');
   assert.equal(buildLocalPrompt(profile, {}, 'Como funciona a insulina?', { tecnico: true }),
-    `${personaJoJo(profile, { curto: true })}\nReply in Brazilian Portuguese. Explain accurately in JoJo's voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.\nNo diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.`);
+    `${personaJoJo(profile)}\nReply in Brazilian Portuguese. Explain accurately in JoJo's voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.\nNo diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.`);
 });
 
 test('orçamento casual fica abaixo da guarda e prevalece após perfil nas tarefas adaptativas', () => {
@@ -211,7 +211,7 @@ test('retomadas pedem o fato literal enquanto humor e perguntas gerais mantêm s
   assert.match(buildLocalPrompt(profile, {}, 'Você tem braços?').split('\n').at(-1), /body feature/);
   assert.match(buildLocalPrompt(profile, {}, 'Eu disse linho, não seda.').split('\n').at(-1), /Acknowledge only the affirmed wording briefly/);
   assert.equal(buildLocalPrompt(profile, {}, 'Como funciona a insulina?', { tecnico: true }),
-    `${personaJoJo(profile, { curto: true })}\nReply in Brazilian Portuguese. Explain accurately in JoJo's voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.\nNo diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.`);
+    `${personaJoJo(profile)}\nReply in Brazilian Portuguese. Explain accurately in JoJo's voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation.\nNo diagnoses, prescriptions or invented numbers/references. State uncertainty when needed. Examples are hypothetical.`);
 });
 
 test('consulta factual chega ao modelo com a correção e seus papéis, sem valor pessoal inserido pelo sistema', async () => {
