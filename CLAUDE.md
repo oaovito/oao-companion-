@@ -145,6 +145,11 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    própria (Chrome/Edge/Brave, instalação manual) com permissão só para endereços do Discord; para o JoJo saem apenas
    quantidade de abas e navegador, por canal local. Histórico local visível. Chave desligada: nada disso roda.
    Detalhes e limites: `jojo-companion/docs/DISCORD.md`.
+   **Mensagens programadas no WhatsApp** (só depois que ela conecta pelo QR code): processo isolado com a
+   biblioteca Baileys (não oficial, risco de bloqueio do número, avisado na janela). Envia somente o que ela
+   agendou e confirmou; mensagem atrasada nunca sai sozinha; não lê nem guarda conversas. Sessão, agenda e
+   contatos (só nomes e números) ficam em `<userData>/whatsapp`; desconectar apaga sessão e contatos. A única
+   saída é para o próprio WhatsApp. Detalhes: `jojo-companion/docs/WHATSAPP.md`.
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
    conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.

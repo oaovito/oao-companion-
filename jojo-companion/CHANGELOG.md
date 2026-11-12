@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## Não publicado
+
+### Novidades
+- Mensagens programadas no WhatsApp: conectar pelo QR code, agendar pela conversa
+  ("manda 'bom dia' pra minha mãe amanhã às 8h"), por /agendar ou pela janela, com
+  repetição, confirmação antes de salvar, reescrita opcional, aviso no balão 5 min antes,
+  nova tentativa em falha e pergunta antes de enviar mensagens atrasadas. Biblioteca não
+  oficial, com risco de bloqueio do número. Ver `docs/WHATSAPP.md`.
+
+### Correções
+- O JoJo segue a personalidade dele em toda conversa com o modelo: o perfil completo vai
+  em todas as chamadas e o histórico longo não empurra mais a personalidade para fora.
+- Sintoma, dor, machucado ou remédio: ele manda procurar o João, médico de verdade;
+  sinal de emergência também manda ligar para o SAMU (192).
+- O convite do tutorial aparece na primeira interação depois de uma atualização com
+  conteúdo novo, e só conta como visto depois de aparecer.
+- Ao digitar /, aparece a lista completa de comandos, com descrição, rolagem e filtro.
+
 ## 0.46.0 — 2026-11-11
 
 ### Novidades
