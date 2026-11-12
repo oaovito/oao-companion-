@@ -5,6 +5,7 @@ import { Animator } from '../shared/animator.js';
 import { RigRenderer } from '../shared/rig-renderer.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
+import { filterCommands } from '../shared/command-filter.js';
 
 const api = window.jojo;
 const canvas = document.getElementById('stage');
@@ -321,9 +322,9 @@ function renderChat(s, prev) {
 // Menu de comandos "/" (Wake Pet / Tuck Away Pet etc.).
 function matchingCommands() {
   const cmds = (state && state.chat && state.chat.commands) || [];
-  const typed = chatInput.value.trim().toLowerCase();
-  if (!typed.startsWith('/') || typed.includes(' ')) return [];
-  return cmds.filter((c) => c.cmd.startsWith(typed));
+  // Lista completa ao digitar "/"; filtra pelo nome, título ou descrição enquanto ela digita.
+  if (chatInput.value.trim().includes(' ')) return [];
+  return filterCommands(cmds, chatInput.value);
 }
 
 function renderCmdMenu() {
@@ -339,14 +340,17 @@ function renderCmdMenu() {
     li.setAttribute('role', 'option');
     li.dataset.cmd = c.cmd;
     if (i === cmdSel) li.className = 'sel';
-    const b = document.createElement('b');
-    b.textContent = c.label;
+    li.title = c.hint;
+    const code = document.createElement('code');
+    code.textContent = c.cmd;
     const sp = document.createElement('span');
-    sp.textContent = `${c.cmd} · ${c.hint}`;
-    li.append(b, sp);
+    sp.textContent = c.desc || c.label;
+    li.append(code, sp);
     cmdMenuEl.appendChild(li);
   });
   cmdMenuEl.classList.remove('hidden');
+  // Com rolagem: o item escolhido pelas setas fica sempre à vista.
+  cmdMenuEl.children[cmdSel]?.scrollIntoView({ block: 'nearest' });
 }
 
 async function sendChat(text) {

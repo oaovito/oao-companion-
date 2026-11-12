@@ -3,6 +3,7 @@
 import { TodoView } from '../shared/todo-view.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { CareView } from '../shared/care-view.js';
+import { filterCommands } from '../shared/command-filter.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
 const listEl = $('list');
@@ -356,8 +357,8 @@ function addMsg(who, text) {
 
 // ---------------- menu de comandos "/"
 function commands() {
-  const q = input.value.trim().toLowerCase();
-  return (st?.commands || []).filter((c) => c.cmd.startsWith(q.split(/\s+/)[0] || '/'));
+  // Lista completa ao digitar "/"; filtra pelo nome, título ou descrição enquanto ela digita.
+  return filterCommands(st?.commands || [], input.value);
 }
 
 function renderMenu() {
@@ -374,13 +375,15 @@ function renderMenu() {
     b.innerHTML = '<code></code><b></b><span></span>';
     b.querySelector('code').textContent = c.cmd;
     b.querySelector('b').textContent = c.label;
-    b.querySelector('span').textContent = c.hint;
+    b.querySelector('span').textContent = c.desc || c.hint;
+    b.title = c.hint;
     b.addEventListener('mousedown', (e) => {
       e.preventDefault();
       run(c.cmd);
     });
     menuEl.appendChild(b);
   });
+  menuEl.children[menuIndex]?.scrollIntoView({ block: 'nearest' });
 }
 
 async function run(text) {

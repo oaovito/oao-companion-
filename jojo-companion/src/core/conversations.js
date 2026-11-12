@@ -139,48 +139,58 @@ export class ConversationManager {
 
 // ---------------------------------------------------------------- comandos
 
-/** Comandos digitados no chat (começam com "/"). */
+/**
+ * Registro central dos comandos digitados no chat (começam com "/"). Fonte
+ * única: o menu "/" das duas telas, o reconhecimento (parseCommand) e o teste
+ * de cobertura do tutorial saem daqui. Comando novo entra só nesta lista.
+ * `desc`: descrição curta mostrada no menu; `hint`: uso completo; `oculto`:
+ * reconhecido, mas fora do menu (compatibilidade).
+ */
+export const COMMANDS = Object.freeze([
+  { "id":"pet","cmd":"/pet","aliases":[],"label":"Tuck Away Pet","desc":"Mostra ou esconde o pet","hint":"Esconde o pet" },
+  { "id":"quiet","cmd":"/silencio","aliases":["/silêncio"],"label":"Modo silencioso","desc":"Sem falas sozinho e sem bronca","hint":"Liga/desliga as falas espontâneas e broncas" },
+  { "id":"settings","cmd":"/config","aliases":["/configuracoes"],"label":"Configurações","desc":"Abre as configurações","hint":"Abre as configurações" },
+  { "id":"anim","cmd":"/anim","aliases":["/animacao","/animação"],"label":"Animação","desc":"Toca uma animação pelo nome","hint":"Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)" },
+  { "id":"jogo","cmd":"/jogo","aliases":["/jogar"],"label":"Mini-jogo","desc":"Abre um mini-jogo","hint":"Joga com o JoJo: /jogo, /jogo quiz, /jogo bolhas…" },
+  { "id":"foco","cmd":"/foco","aliases":[],"label":"Foco junto","desc":"Bloco de foco, ciclos e Pomodoro","hint":"Bloco de foco com o JoJo: /foco 25, /foco treino, /foco pomodoro (4 ciclos com pausa), /foco 30 x3 pausa 10" },
+  { "id":"estimulo","cmd":"/estimulo","aliases":["/estímulo"],"label":"Me dá estímulo","desc":"Uma animação surpresa","hint":"Uma animação surpresa" },
+  { "id":"calma","cmd":"/calma","aliases":[],"label":"Calma","desc":"Dois minutos de calma","hint":"Padrão calmante por 2 min (cardume, cores suaves)" },
+  { "id":"ritmo","cmd":"/ritmo","aliases":[],"label":"Ritmo","desc":"Sequência rítmica de 30 s","hint":"Sequência rítmica previsível por 30 s" },
+  { "id":"bolhas","cmd":"/bolhas","aliases":[],"label":"Bolhas","desc":"Bolhas para estourar","hint":"Bolhas para estourar com clique, sem placar" },
+  { "id":"resumo","cmd":"/resumo","aliases":[],"label":"Resumo do dia","desc":"Resumo do dia, manhã ou noite","hint":"O que rolou hoje. /resumo manha: o que há para fazer; /resumo noite: o que foi feito e o que ficou" },
+  { "id":"reacao","cmd":"/reacao","aliases":["/reação","/meme","/anime"],"label":"Reação","desc":"Reação de meme, anime e afins","hint":"Memes, anime, comida, namorado e João: /reacao side eye, /reacao bankai…" },
+  { "id":"trabalho","cmd":"/trabalho","aliases":["/trabalhar"],"label":"Modo Trabalho","desc":"JoJo quieto no canto","hint":"JoJo medita quieto no canto: /trabalho, /trabalho 50, /trabalho deep, /trabalho invisivel, /trabalho sair" },
+  { "id":"vestir","cmd":"/vestir","aliases":["/roupa","/guardaroupa","/guarda-roupa"],"label":"Guarda-roupa","desc":"Guarda-roupa do JoJo","hint":"Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar" },
+  { "id":"rotina","cmd":"/rotina","aliases":[],"label":"Rotina fixa","desc":"Rotina do dia em blocos","hint":"Rotina do dia: /rotina montar manha 7:00 estudo 14:00 treino 18:00 sono 22:30, /rotina ver, /rotina feito treino, /rotina limpar. Frase fixa: /rotina bom dia: texto" },
+  { "id":"pausa","cmd":"/pausa","aliases":[],"label":"Pausa","desc":"Congela e solta o JoJo","hint":"Pausa/retoma o JoJo na hora" },
+  { "id":"checkin","cmd":"/checkin","aliases":["/check-in","/energia"],"label":"Check-in","desc":"Energia do dia, de 1 a 5","hint":"Como você está hoje: /checkin (ele pergunta) ou /checkin 3 (energia de 1 a 5). Pouca energia: ele cobra menos; muita: ele cobra mais" },
+  { "id":"estudo","cmd":"/estudo","aliases":["/estudar"],"label":"Estudo","desc":"Material de estudo","hint":"Revisão e resumo: /revisar tema (3 perguntas, uma por vez), /resumir texto, /estudo material (passa o conteúdo em várias mensagens e termina com \"pronto\"), /resumir material, /resumir notas tema, /estudo limpar" },
+  { "id":"treino","cmd":"/treino","aliases":["/ficha"],"label":"Ficha de treino","desc":"Fichas e cargas do treino","hint":"Treino do dia e cargas: /treino (hoje), /treino ficha A: supino 4x10 40kg; remada 3x12, /treino carga supino 42,5, /treino historico supino, /treino feito, /treino apagar A" },
+  { "id":"habito","cmd":"/habitos","aliases":["/habito","/hábito","/hábitos"],"label":"Hábitos","desc":"Sequências de treino, estudo e sono","hint":"Sequências de treino, estudo e sono: /habitos (progresso), /habito treino, /habito estudo, /habito sono, /habito treino desfazer" },
+  { "id":"quebrar","cmd":"/quebrar","aliases":["/quebra","/passos"],"label":"Quebrar tarefa","desc":"Tarefa grande em passos","hint":"Transforma uma tarefa grande em passos pequenos: /quebrar estudar bioquímica (depois diga \"adiciona\" para ir à lista)" },
+  { "id":"nota","cmd":"/nota","aliases":["/notas"],"label":"Notas rápidas","desc":"Guarda e acha ideias","hint":"Guarda e consulta ideias: /nota texto, /notas (lista), /notas buscar palavra, /notas apagar 2" },
+  { "id":"tutorial","cmd":"/tutorial","aliases":["/ajuda"],"label":"Tutorial","desc":"Tutorial passo a passo","hint":"Eu te mostro cada função em passos curtos: /tutorial (começa ou continua), /tutorial lista, /tutorial foco (uma função só). Na conversa: próximo, voltar, pular, pausar" },
+  { "id":"discord","cmd":"/discord","aliases":[],"label":"Bloqueio do Discord","desc":"Estado e histórico do bloqueio","hint":"Mostra se o bloqueio está ligado e o histórico do que ele viu e fez. Liga e desliga só nas Configurações" },
+  { "id":"lembrete","cmd":"/lembrete","aliases":["/lembretes"],"label":"Lembretes","desc":"Água, pausa e remédio","hint":"Água, pausas e remédios: /lembrete (lista), /lembrete agua 60, /lembrete pausa 45, /lembrete remedio Nome 08:00, /lembrete remover Nome" },
+  { "id":"revisar","cmd":"/revisar","aliases":["/revisao","/revisão"],"label":"Revisão","hint":"Três perguntas sobre um tema, uma por vez: /revisar fotossíntese, /revisar material (usa o que você passou em /estudo material)","desc":"Três perguntas sobre um tema" },
+  { "id":"resumir","cmd":"/resumir","aliases":[],"label":"Resumir","hint":"Resume em 2 a 4 pontos: /resumir texto, /resumir material, /resumir notas tema","desc":"Resume um texto em pontos" },
+  { "id":"colecao","cmd":"/colecao","aliases":["/coleção"],"label":"Coleção","hint":"Abre na Central tudo que você já viu comigo e o que falta descobrir","desc":"Coleção na Central" },
+  { "id":"new","cmd":"/nova","aliases":[],"label":"Nova conversa","hint":"A conversa é uma só: este comando só confirma que ela continua","desc":"Continua a mesma conversa","oculto":true }
+].map((c) => Object.freeze({ ...c, aliases: Object.freeze([...c.aliases]) })));
+
+/** Comandos do menu "/" (todos os visíveis, na ordem do registro). */
 export function commandMenu({ petVisible }) {
-  return [
-    { cmd: '/pet', label: petVisible ? 'Tuck Away Pet' : 'Wake Pet', hint: petVisible ? 'Esconde o pet' : 'Mostra o pet' },
-    { cmd: '/silencio', label: 'Modo silencioso', hint: 'Liga/desliga as falas espontâneas e broncas' },
-    { cmd: '/config', label: 'Configurações', hint: 'Abre as configurações' },
-    { cmd: '/anim', label: 'Animação', hint: 'Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)' },
-    { cmd: '/jogo', label: 'Mini-jogo', hint: 'Joga com o JoJo: /jogo, /jogo quiz, /jogo bolhas…' },
-    { cmd: '/foco', label: 'Foco junto', hint: 'Bloco de foco com o JoJo: /foco 25, /foco treino, /foco pomodoro (4 ciclos com pausa), /foco 30 x3 pausa 10' },
-    { cmd: '/estimulo', label: 'Me dá estímulo', hint: 'Uma animação surpresa' },
-    { cmd: '/calma', label: 'Calma', hint: 'Padrão calmante por 2 min (cardume, cores suaves)' },
-    { cmd: '/ritmo', label: 'Ritmo', hint: 'Sequência rítmica previsível por 30 s' },
-    { cmd: '/bolhas', label: 'Bolhas', hint: 'Bolhas para estourar com clique, sem placar' },
-    { cmd: '/resumo', label: 'Resumo do dia', hint: 'O que rolou hoje. /resumo manha: o que há para fazer; /resumo noite: o que foi feito e o que ficou' },
-    { cmd: '/reacao', label: 'Reação', hint: 'Memes, anime, comida, namorado e João: /reacao side eye, /reacao bankai…' },
-    { cmd: '/trabalho', label: 'Modo Trabalho', hint: 'JoJo medita quieto no canto: /trabalho, /trabalho 50, /trabalho deep, /trabalho invisivel, /trabalho sair' },
-    { cmd: '/vestir', label: 'Guarda-roupa', hint: 'Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar' },
-    { cmd: '/rotina', label: 'Rotina fixa', hint: 'Rotina do dia: /rotina montar manha 7:00 estudo 14:00 treino 18:00 sono 22:30, /rotina ver, /rotina feito treino, /rotina limpar. Frase fixa: /rotina bom dia: texto' },
-    { cmd: '/pausa', label: 'Pausa', hint: 'Pausa/retoma o JoJo na hora' },
-    { cmd: '/checkin', label: 'Check-in', hint: 'Como você está hoje: /checkin (ele pergunta) ou /checkin 3 (energia de 1 a 5). Pouca energia: ele cobra menos; muita: ele cobra mais' },
-    { cmd: '/estudo', label: 'Estudo', hint: 'Revisão e resumo: /revisar tema (3 perguntas, uma por vez), /resumir texto, /estudo material (passa o conteúdo em várias mensagens e termina com "pronto"), /resumir material, /resumir notas tema, /estudo limpar' },
-    { cmd: '/treino', label: 'Ficha de treino', hint: 'Treino do dia e cargas: /treino (hoje), /treino ficha A: supino 4x10 40kg; remada 3x12, /treino carga supino 42,5, /treino historico supino, /treino feito, /treino apagar A' },
-    { cmd: '/habitos', label: 'Hábitos', hint: 'Sequências de treino, estudo e sono: /habitos (progresso), /habito treino, /habito estudo, /habito sono, /habito treino desfazer' },
-    { cmd: '/quebrar', label: 'Quebrar tarefa', hint: 'Transforma uma tarefa grande em passos pequenos: /quebrar estudar bioquímica (depois diga "adiciona" para ir à lista)' },
-    { cmd: '/nota', label: 'Notas rápidas', hint: 'Guarda e consulta ideias: /nota texto, /notas (lista), /notas buscar palavra, /notas apagar 2' },
-    { cmd: '/tutorial', label: 'Tutorial', hint: 'Eu te mostro cada função em passos curtos: /tutorial (começa ou continua), /tutorial lista, /tutorial foco (uma função só). Na conversa: próximo, voltar, pular, pausar' },
-    { cmd: '/discord', label: 'Bloqueio do Discord', hint: 'Mostra se o bloqueio está ligado e o histórico do que ele viu e fez. Liga e desliga só nas Configurações' },
-    { cmd: '/lembrete', label: 'Lembretes', hint: 'Água, pausas e remédios: /lembrete (lista), /lembrete agua 60, /lembrete pausa 45, /lembrete remedio Nome 08:00, /lembrete remover Nome' },
-  ];
+  return COMMANDS.filter((c) => !c.oculto).map((c) => {
+    const pet = c.id === 'pet' ? { label: petVisible ? 'Tuck Away Pet' : 'Wake Pet', hint: petVisible ? 'Esconde o pet' : 'Mostra o pet' } : {};
+    return { cmd: c.cmd, aliases: [...c.aliases], label: c.label, desc: c.desc, hint: c.hint, ...pet };
+  });
 }
+
+const BY_NAME = new Map(COMMANDS.flatMap((c) => [c.cmd, ...c.aliases].map((n) => [n, c.id])));
 
 /** Interpreta um comando. Retorna o id do comando ou null se não for comando. */
 export function parseCommand(text) {
   const t = String(text || '').trim().toLowerCase();
   if (!t.startsWith('/')) return null;
-  const name = t.split(/\s+/)[0];
-  if (name === '/pet') return 'pet';
-  if (name === '/silencio' || name === '/silêncio') return 'quiet';
-  if (name === '/nova') return 'new';
-  if (name === '/config' || name === '/configuracoes') return 'settings';
-  if (name === '/anim' || name === '/animacao' || name === '/animação') return 'anim';
-  const MAP = { '/jogo': 'jogo', '/jogar': 'jogo', '/foco': 'foco', '/estimulo': 'estimulo', '/estímulo': 'estimulo', '/calma': 'calma', '/ritmo': 'ritmo', '/bolhas': 'bolhas', '/resumo': 'resumo', '/rotina': 'rotina', '/pausa': 'pausa', '/tutorial': 'tutorial', '/ajuda': 'tutorial', '/discord': 'discord', '/lembrete': 'lembrete', '/lembretes': 'lembrete', '/nota': 'nota', '/notas': 'nota', '/checkin': 'checkin', '/check-in': 'checkin', '/energia': 'checkin', '/estudo': 'estudo', '/estudar': 'estudo', '/revisar': 'revisar', '/revisao': 'revisar', '/revisão': 'revisar', '/resumir': 'resumir', '/treino': 'treino', '/ficha': 'treino', '/habito': 'habito', '/habitos': 'habito', '/hábito': 'habito', '/hábitos': 'habito', '/quebrar': 'quebrar', '/quebra': 'quebrar', '/passos': 'quebrar', '/colecao': 'colecao', '/coleção': 'colecao', '/reacao': 'reacao', '/reação': 'reacao', '/meme': 'reacao', '/anime': 'reacao', '/trabalho': 'trabalho', '/trabalhar': 'trabalho', '/vestir': 'vestir', '/roupa': 'vestir', '/guardaroupa': 'vestir', '/guarda-roupa': 'vestir' };
-  if (MAP[name]) return MAP[name];
-  return 'unknown';
+  return BY_NAME.get(t.split(/\s+/)[0]) || 'unknown';
 }

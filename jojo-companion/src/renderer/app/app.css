@@ -67,7 +67,7 @@ button.ghost { background: transparent; }
 #input:focus { outline: none; border-color: var(--accent); }
 #form button { background: var(--accent); color: white; border: 0; width: 44px; }
 
-.cmd-menu { position: absolute; left: 16px; right: 76px; bottom: 62px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 18px rgba(27, 38, 71, 0.15); padding: 4px; }
+.cmd-menu { position: absolute; left: 16px; right: 76px; bottom: 62px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 18px rgba(27, 38, 71, 0.15); padding: 4px; max-height: min(60vh, 420px); overflow-y: auto; overscroll-behavior: contain; }
 .cmd { display: flex; gap: 10px; align-items: baseline; width: 100%; border: 0; background: transparent; padding: 7px 9px; border-radius: 7px; text-align: left; }
 .cmd.sel, .cmd:hover { background: #e3edfb; }
 .cmd code { font-weight: 700; }

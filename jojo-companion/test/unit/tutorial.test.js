@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { makeEnv, chatAdv } from './helpers.js';
 import { DEFAULTS } from '../../src/core/settings-schema.js';
-import { commandMenu, parseCommand } from '../../src/core/conversations.js';
+import { commandMenu, parseCommand, COMMANDS } from '../../src/core/conversations.js';
 import { Tutorial, tutorialCoverage, parseTutorialNav, parseTutorialCommand, sanitizeTutorial } from '../../src/core/tutorial.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -27,11 +27,10 @@ test('cobertura: toda função obrigatória, todo comando e toda configuração 
 
   // Comandos do menu "/" (o que ela vê ao digitar a barra).
   for (const c of commandMenu({ petVisible: true })) assert.ok(COB.comandos.has(c.cmd), `comando do menu sem passo no tutorial: ${c.cmd}`);
-  // Todo comando que o app reconhece (lido do próprio registro de comandos), mesmo fora do menu.
-  const src = read('src/core/conversations.js');
-  const reconhecidos = new Set([...src.matchAll(/'\/[\wà-ú-]+': '(\w+)'/g)].map((m) => m[1]).concat([...src.matchAll(/return '(\w+)';/g)].map((m) => m[1])));
-  reconhecidos.delete('unknown');
-  assert.ok(reconhecidos.size >= 29, `registro de comandos lido de forma incompleta (${reconhecidos.size})`);
+  // Todo comando que o app reconhece (registro central), mesmo fora do menu.
+  const reconhecidos = new Set(COMMANDS.map((c) => c.id));
+  assert.ok(reconhecidos.size >= 29, `registro de comandos incompleto (${reconhecidos.size})`);
+  for (const c of COMMANDS) for (const nome of [c.cmd, ...c.aliases]) assert.equal(parseCommand(nome), c.id, nome);
   const ensinados = new Set([...COB.comandos].map((c) => parseCommand(c)));
   for (const id of reconhecidos) assert.ok(ensinados.has(id), `comando reconhecido sem passo no tutorial: ${id}`);
   for (const c of COB.comandos) assert.notEqual(parseCommand(c), 'unknown', `o tutorial ensina um comando que não existe: ${c}`);
