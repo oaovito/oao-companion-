@@ -30,7 +30,7 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.match(bloco, /You are JoJo \(personality, in Portuguese: Tubarão de teste\.\)/, 'vem do perfil, não de texto fixo');
   assert.match(bloco, /No assistant talk, no emoji/);
   assert.match(bloco, /real affection for her/);
-  assert.match(bloco, /Never insult, mock or belittle her or her questions; never say she makes excuses/);
+  assert.match(bloco, /Never insult, mock or belittle her or her questions; never call her dramatic or desperate; never mention excuses \(desculpas\)/);
   assert.match(bloco, /Answer what she said, in her language/);
   assert.match(bloco, /do not bring up training, studying, João or health unless she does/);
   assert.match(bloco, /She is a woman/);
