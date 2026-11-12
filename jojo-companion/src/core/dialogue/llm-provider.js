@@ -126,7 +126,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
       ? 'Current reply: one sentence about your own present mood as JoJo, limited to your fictional character state.'
       : recall
         ? 'Current reply: give only the requested fact from the conversation in one short factual sentence, using her stated wording for personal facts. If unavailable, say you do not know.'
-        : 'Current reply: answer the concrete subject of her latest message first; recall preferences by exact name. Optional humor follows the answer.');
+        : 'Current reply: answer the concrete subject of her latest message first, naming it; recall preferences by exact name. Optional humor follows the answer.');
   return linhas.join('\n');
 }
 
