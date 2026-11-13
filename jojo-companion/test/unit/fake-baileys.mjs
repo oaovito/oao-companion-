@@ -15,7 +15,7 @@ export async function fetchLatestWaWebVersion() {
 
 export async function useMultiFileAuthState(dir) {
   const arq = path.join(dir, 'creds.json');
-  let creds = { registered: false, me: null };
+  let creds = { registered: false, me: null, advSecretKey: 'ADV0' };
   try { creds = JSON.parse(fs.readFileSync(arq, 'utf8')); } catch { /* sessão nova */ }
   const state = { creds, keys: {} };
   return { state, saveCreds: async () => { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(arq, JSON.stringify(state.creds)); } };
@@ -23,8 +23,10 @@ export async function useMultiFileAuthState(dir) {
 
 export default function makeWASocket(config) {
   const ev = new EventEmitter();
+  const ws = new EventEmitter();
   const s = {
-    config, ev, encerrado: false, saiu: false,
+    config, ev, ws, encerrado: false, saiu: false, nos: [],
+    async sendNode(no) { s.nos.push(no); },
     authState: config.auth,
     get user() { return config.auth.creds.me; },
     end() { s.encerrado = true; },
@@ -50,6 +52,10 @@ export default function makeWASocket(config) {
       config.auth.creds.registered = true;
       config.auth.creds.me = me;
       ev.emit('connection.update', { connection: 'open' });
+    },
+    /** Teste: QR como o Baileys desenha (segredo capturado no início do fluxo). */
+    qr(ref, segredo = 'ADV0') {
+      ev.emit('connection.update', { qr: `https://wa.me/settings/linked_devices#${ref},NK,IK,${segredo},1` });
     },
     fechar(codigo, mensagem = 'Connection Closed') {
       const error = new Error(mensagem);

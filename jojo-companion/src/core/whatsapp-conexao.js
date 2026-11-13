@@ -106,3 +106,19 @@ export function estadoVisivel(c = {}, agora = Date.now()) {
   if (WA_MOTIVOS_CONEXAO[c.motivo]) return v('desconectado', fraseDe(c.motivo, c.codigo), acaoDe(c.motivo));
   return v('desconectado', 'Conecte o WhatsApp deste PC para eu mandar as mensagens programadas.', { id: 'conectar', rotulo: 'Conectar WhatsApp' });
 }
+
+/**
+ * Conteúdo do QR com o segredo de pareamento atual. O QR é
+ * "https://wa.me/settings/linked_devices#ref,ruído,identidade,segredo,plataforma";
+ * quando o WhatsApp manda trocar o segredo (companion_reg_refresh), o Baileys
+ * 7.0.0-rc14 continua desenhando o antigo e o celular recusa a leitura.
+ */
+export function qrComSegredo(qr, segredo) {
+  const texto = String(qr || '');
+  const i = texto.indexOf('#');
+  if (i < 0 || typeof segredo !== 'string' || !segredo) return texto;
+  const partes = texto.slice(i + 1).split(',');
+  if (partes.length !== 5) return texto;
+  partes[3] = segredo;
+  return `${texto.slice(0, i + 1)}${partes.join(',')}`;
+}

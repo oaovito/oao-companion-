@@ -218,11 +218,32 @@ test('processo isolado: QR com validade, lido, reinício, conta confirmada, cont
   await esperar(() => ultimo((m) => m.type === 'status').estado === 'erro');
   assert.equal(ultimo((m) => m.type === 'status').motivo, 'versao');
 
-  // Sair: logout no WhatsApp e sessão apagada.
+  // Depois da leitura o WhatsApp aposenta o segredo do QR: troca, salva, responde e redesenha.
   enviar({ type: 'start', dir: sessao });
   await esperar(() => fake.sockets.length === 9);
-  fake.sockets[8].abrir();
+  const sq = fake.sockets[8];
+  assert.deepEqual(sq.config.browser.slice(0, 2), ['Windows', 'Chrome'], 'identidade padrão: o QR diz Chrome, como o registro');
+  sq.qr('2@R1');
+  assert.match(ultimo((m) => m.type === 'qr').qr, /#2@R1,NK,IK,ADV0,1$/);
+  const qrsAntes = msgs.filter((m) => m.type === 'qr').length;
+  sq.ws.emit('CB:notification,type:companion_reg_refresh', { tag: 'notification', attrs: { id: 'n1', from: 's.whatsapp.net', type: 'companion_reg_refresh' }, content: [{ tag: 'companion_reg_refresh', attrs: {} }] });
+  const novo = sq.authState.creds.advSecretKey;
+  assert.notEqual(novo, 'ADV0');
+  assert.equal(Buffer.from(novo, 'base64').length, 32);
+  assert.deepEqual(sq.nos.at(-1), { tag: 'ack', attrs: { id: 'n1', to: 's.whatsapp.net', class: 'notification', type: 'companion_reg_refresh' } }, 'responde o aviso antes do pareamento');
+  assert.equal(msgs.filter((m) => m.type === 'qr').length, qrsAntes + 1);
+  assert.equal(ultimo((m) => m.type === 'qr').qr, `https://wa.me/settings/linked_devices#2@R1,NK,IK,${novo},1`, 'mesmo código, segredo novo');
+  await esperar(() => JSON.parse(fs.readFileSync(path.join(sessao, 'creds.json'), 'utf8')).advSecretKey === novo);
+  sq.qr('2@R2');
+  assert.match(ultimo((m) => m.type === 'qr').qr, new RegExp(`#2@R2,NK,IK,${novo.replace(/[+/=]/g, '\\$&')},1$`), 'renovação do Baileys com o segredo antigo sai corrigida');
+  sq.ws.emit('CB:notification,type:companion_reg_refresh', { tag: 'notification', attrs: { id: 'n2', from: 's.whatsapp.net' }, content: [{ tag: 'outra', attrs: {} }] });
+  assert.equal(sq.authState.creds.advSecretKey, novo, 'aviso sem o conteúdo esperado é ignorado');
+  sq.abrir();
   await esperar(() => ultimo((m) => m.type === 'status').estado === 'conectado');
+  sq.ws.emit('CB:notification,type:companion_reg_refresh', { tag: 'notification', attrs: { id: 'n3', from: 's.whatsapp.net' }, content: [{ tag: 'companion_reg_refresh', attrs: {} }] });
+  assert.equal(sq.authState.creds.advSecretKey, novo, 'já pareado: o segredo não muda');
+
+  // Sair: logout no WhatsApp e sessão apagada.
   enviar({ type: 'logout', id: 9 });
   await esperar(() => ultimo((m) => m.id === 9));
   assert.ok(fake.sockets[8].saiu);

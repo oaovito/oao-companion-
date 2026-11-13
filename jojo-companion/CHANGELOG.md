@@ -24,6 +24,9 @@
   para sempre, "Tentar agora" funciona depois de travar e cada erro diz o que houve e o
   que fazer, com o botão certo. Versão do WhatsApp Web atualizada sozinha.
 - Envio confirmado era tratado como falha e podia mandar a mesma mensagem até três vezes.
+- Ao ler o QR code o celular mostrava "Verifique sua conexão e tente novamente": o JoJo
+  agora se apresenta como Chrome no Windows (identidade que o WhatsApp aceita) e troca o
+  segredo do código quando o WhatsApp pede, em vez de mostrar um código vencido.
 - O nome do perfil não apaga mais o nome salvo na agenda; contatos só com identificador
   novo do WhatsApp (LID) ganham o número; a própria conta não aparece como contato.
 - Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.

@@ -25,6 +25,13 @@ não verificável pela API). Build, NSIS, integração e os 44 E2E (inclui
 QR verificada contra o servidor do WhatsApp; leitura do QR com celular real e envio
 real não verificados. Nenhuma versão nova, tag ou release.
 
+Atualização 13/11: diagnóstico de interfaces 43443034819 (Windows real) passou 15/15
+E2E, incluindo `whatsapp.windows.mjs`. O pipeline integral segue parando no ensaio de
+conversa real por variação do modelo (frase de desdém recusada pela guarda de
+`coherence.js`, fora do WhatsApp; a usuária pediu para não alterar a conversa). Novo
+relato: o celular recusava o QR ("Verifique sua conexão"); causa e correção no adendo
+de `docs/WHATSAPP_DIAGNOSTICO.md` (identidade Chrome e `companion_reg_refresh`).
+
 Próximo passo: com runner disponível, reexecutar o run (ou novo push), revisar as 44
 falas em `codex/ci-evidence-<run>-<tentativa>/…/semantic-review.json` dentro de 5 min
 e conferir os 44 E2E.

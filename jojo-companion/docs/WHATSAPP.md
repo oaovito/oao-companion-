@@ -54,6 +54,11 @@ Cada queda é decidida pelo **código** que o WhatsApp manda (`classificarFecham
 | 408 "QR refs" | QR não lido (~3 min) | Com a janela aberta renova até 3 ciclos; depois "Gerar novo QR code" |
 | rede, 408, 428, 503 | Sem internet, queda, serviço fora | Tenta sozinho: 3 s, 6 s, 12 s… até 60 s |
 
+O JoJo aparece no celular como **Chrome (Windows)** em Aparelhos conectados: é a
+identidade padrão que o WhatsApp aceita na leitura do QR. Quando o WhatsApp pede um
+segredo novo para o código (`companion_reg_refresh`), o worker troca, salva, responde e
+redesenha o mesmo QR (o Baileys 7.0.0-rc14 não faz isso sozinho).
+
 A sessão fica em `<userData>/whatsapp/sessao` e é restaurada ao abrir o JoJo. Se o
 processo isolado cair, ele volta sozinho até duas vezes antes de pedir ação. O
 registro do app guarda só estado, motivo e código (nunca nomes ou números).

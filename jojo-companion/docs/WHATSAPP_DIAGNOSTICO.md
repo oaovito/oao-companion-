@@ -141,3 +141,23 @@ tabela `MOTIVOS`, pensada para falhas de envio, não de conexão.
    conexão; status visível de cada programada; motivo da falha e "Tentar de
    novo"; tutorial e ajuda atualizados.
 6. Registro de diagnóstico sem dados pessoais e testes com WhatsApp simulado.
+
+## Adendo de 13/11/2026 — celular recusa ao ler o QR
+
+Relato com foto: ao ler o QR do JoJo (versão 0.47.0) o celular mostra "Verifique sua
+conexão e tente novamente" e não conecta. Duas causas, ambas dentro do WhatsApp:
+
+1. **Identidade fora do padrão.** O worker usava `Browsers.windows('JoJo Companion')`.
+   No Baileys 7 o QR leva o tipo de cliente: com um nome próprio vira `9` ("outro
+   cliente web"), enquanto o registro do aparelho declara Chrome. QR real conferido:
+   terminava em `,9`. Agora `Browsers.windows('Chrome')`: o QR termina em `,1`,
+   coerente com o registro (o celular lista "Chrome (Windows)").
+2. **Segredo do QR aposentado.** Depois da leitura o servidor pode mandar
+   `companion_reg_refresh`; o Baileys 7.0.0-rc14 ignora o aviso e nem consegue
+   respondê-lo antes do pareamento, então o celular lê um código com segredo vencido
+   (Baileys issues #2737 e #2679; correção ainda não publicada no npm). O worker
+   agora troca o segredo, salva, responde o aviso e redesenha o mesmo código; as
+   renovações do Baileys passam a usar sempre o segredo atual.
+
+A versão desatualizada do WhatsApp Web (outra causa conhecida do mesmo sintoma) já
+estava corrigida: o worker busca a versão atual antes de conectar.

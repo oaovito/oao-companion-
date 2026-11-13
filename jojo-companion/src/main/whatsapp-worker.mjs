@@ -12,14 +12,15 @@
 // servidor com a conta já aberta.
 import fs from 'node:fs';
 import path from 'node:path';
-import { classificarFechamento, WA_QR } from '../core/whatsapp-conexao.js';
+import { randomBytes } from 'node:crypto';
+import { classificarFechamento, qrComSegredo, WA_QR } from '../core/whatsapp-conexao.js';
 import { ContatosWA, jidPessoa, numeroDoJid } from '../core/whatsapp-contatos.js';
 
 const port = process.parentPort;
 const CONFIRMAR_MS = 20e3;
 const FOTO_MAX = 300e3;
 let baileys = null, sock = null, dir = null, parando = false, tentativas = 0, timerReconexao = null;
-let versao = null, versaoAtualizada = false, qrRenovacao = 0, aberta = false;
+let versao = null, versaoAtualizada = false, qrRenovacao = 0, aberta = false, qrAtual = null;
 let contatos = new ContatosWA();
 
 const post = (msg) => port?.postMessage(msg);
@@ -125,8 +126,11 @@ async function conectar() {
   const version = await versaoWeb();
   if (parando) return;
   qrRenovacao = 0;
+  qrAtual = null;
   const s = makeWASocket({
-    auth: state, logger: silencioso, browser: Browsers.windows('JoJo Companion'),
+    // Identidade padrão (Chrome no Windows): com um nome próprio o Baileys 7 grava
+    // "outro cliente web" no QR e "Chrome" no registro, e o celular recusa a leitura.
+    auth: state, logger: silencioso, browser: Browsers.windows('Chrome'),
     markOnlineOnConnect: false, syncFullHistory: false, generateHighQualityLinkPreview: false,
     getMessage: async () => undefined, ...(version ? { version } : {}),
   });
@@ -134,6 +138,25 @@ async function conectar() {
   s.ev.on('creds.update', async (u) => {
     await saveCreds();
     if (aberta && u?.me?.name && s === sock) post({ type: 'conta', ...contaAtual(s) });
+  });
+  // Depois da leitura o WhatsApp pode aposentar o segredo do QR (companion_reg_refresh).
+  // O Baileys 7.0.0-rc14 ignora o aviso e não consegue responder antes do pareamento:
+  // o celular mostra "Verifique sua conexão". Aqui o segredo é trocado, salvo, o aviso é
+  // respondido e o mesmo código volta para a tela com o segredo novo.
+  s.ws?.on?.('CB:notification,type:companion_reg_refresh', (node) => {
+    if (s !== sock) return;
+    const filhos = Array.isArray(node?.content) ? node.content.map((c) => c?.tag) : [];
+    if (!filhos.some((t) => t === 'companion_reg_refresh' || t === 'pair-device-rotate-qr')) { log('warn', 'Aviso de troca do QR sem conteúdo esperado; ignorado'); return; }
+    if (state.creds.me) return; // já pareado: o segredo atual é o que vale
+    state.creds.advSecretKey = randomBytes(32).toString('base64');
+    saveCreds().catch((e) => log('warn', `Segredo novo do QR não salvo: ${e.message}`));
+    s.sendNode?.({ tag: 'ack', attrs: { id: node.attrs.id, to: node.attrs.from, class: 'notification', ...(node.attrs.type ? { type: node.attrs.type } : {}) } })
+      .catch((e) => log('warn', `Resposta ao aviso do QR falhou: ${e.message}`));
+    log('info', 'WhatsApp pediu segredo novo para o QR; código redesenhado');
+    if (qrAtual) {
+      const restante = Math.max(1e3, qrAtual.fim - Date.now());
+      post({ type: 'qr', qr: qrComSegredo(qrAtual.qr, state.creds.advSecretKey), validadeMs: restante, renovacao: qrAtual.renovacao });
+    }
   });
   const receber = (lista) => { let mudou = false; for (const c of lista || []) mudou = contatos.aplicar(c) || mudou; if (mudou) avisarContatos(); if (contatos.lidsSemNumero().length) resolverLids(); };
   s.ev.on('contacts.upsert', receber);
@@ -148,7 +171,10 @@ async function conectar() {
     if (s !== sock) return;
     if (u.qr) {
       const validade = qrRenovacao === 0 ? WA_QR.primeiroMs : WA_QR.renovacaoMs;
-      post({ type: 'qr', qr: u.qr, validadeMs: validade, renovacao: qrRenovacao });
+      // As renovações do Baileys reaproveitam o segredo antigo: sempre o atual.
+      const qr = qrComSegredo(u.qr, state.creds.advSecretKey);
+      qrAtual = { qr: u.qr, fim: Date.now() + validade, renovacao: qrRenovacao };
+      post({ type: 'qr', qr, validadeMs: validade, renovacao: qrRenovacao });
       qrRenovacao++;
     }
     if (u.isNewLogin) post({ type: 'status', estado: 'pareando' });
