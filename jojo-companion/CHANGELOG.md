@@ -1,5 +1,40 @@
 # CHANGELOG
 
+## Não lançado — WhatsApp revisado
+
+### Melhorias
+- Janela do WhatsApp em telas, uma por vez (Conexão, Mensagens, Contatos), com o estado
+  da conexão sempre visível no topo: Desconectado, Aguardando QR code, Conectando,
+  Conectado ou Erro. Conectado mostra o nome e o número da conta, depois de confirmar com
+  o servidor do WhatsApp.
+- Tela própria do QR code: código grande, quatro passos numerados, contagem até expirar,
+  renovação automática com aviso e troca sozinha para a confirmação de sucesso.
+- Contatos com nome em destaque e número logo abaixo, foto de perfil ou iniciais, selo
+  "mesmo nome" para homônimos, pessoas e grupos separados e busca por nome ou número.
+  Nome pela prioridade: agenda do celular, depois perfil, depois número.
+- Antes de agendar, uma confirmação com foto, nome, número, texto e quando; na conversa,
+  a confirmação diz o número. Sem WhatsApp conectado, o JoJo abre a tela de conexão e
+  continua o pedido depois de conectar.
+- Cada mensagem programada mostra contato, texto, quando e status (Agendada, Tentando de
+  novo, Atrasada, Falhou, Enviada); falha com o motivo e o botão Tentar de novo.
+
+### Correções
+- "Erro de conexão" sem explicação: a queda agora é decidida pelo código do WhatsApp.
+  Ler o QR code não mostra mais "o WhatsApp recusou", QR expirado não fica gerando código
+  para sempre, "Tentar agora" funciona depois de travar e cada erro diz o que houve e o
+  que fazer, com o botão certo. Versão do WhatsApp Web atualizada sozinha.
+- Envio confirmado era tratado como falha e podia mandar a mesma mensagem até três vezes.
+- O nome do perfil não apaga mais o nome salvo na agenda; contatos só com identificador
+  novo do WhatsApp (LID) ganham o número; a própria conta não aparece como contato.
+- Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.
+
+### Como testar
+- /whatsapp: conecte pelo QR code e confira o nome e o número em "Conectado".
+- Feche e abra o JoJo: a conexão volta sem QR. Desligue o Wi-Fi: aparece "Conectando" com
+  a próxima tentativa; ligue de novo: volta para "Conectado".
+- Aba Contatos: busque por nome e por número; veja Pessoas e Grupos separados.
+- Nova mensagem → Escolher contato → confira a tela de confirmação e agende.
+
 ## 0.47.0 — 2026-11-12
 
 ### Novidades

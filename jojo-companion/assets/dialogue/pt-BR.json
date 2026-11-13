@@ -1626,7 +1626,6 @@
   "wa_semHora": { "kind": "speech", "tone": "serio", "reaction": "curious", "lines": ["Pra {destino}, beleza. Mas que horas? Ex.: \"amanhã às 8h\" ou \"toda segunda às 7h\"."] },
   "wa_passado": { "kind": "speech", "tone": "serio", "reaction": "judge", "lines": ["{quando} já passou. Eu sou rápido, mas não volto no tempo. Me dá outro horário."] },
   "wa_agendado": { "kind": "speech", "tone": "serio", "reaction": "nod", "lines": ["Agendado: {destino}, {quando}: “{texto}”. Cinco minutos antes eu te aviso.", "Fechado. {destino}, {quando}. Eu aviso antes e mando na hora."] },
-  "wa_agendadoSemConexao": { "kind": "speech", "tone": "serio", "reaction": "judge", "lines": ["Agendei pra {destino}, {quando}. Mas o WhatsApp não está conectado: conecta em /whatsapp antes da hora, senão não sai."] },
   "wa_numeroSemWhats": { "kind": "speech", "tone": "serio", "reaction": "judge", "lines": ["O número {destino} não tem WhatsApp. Confere o número e me manda de novo."] },
   "wa_cheio": { "kind": "speech", "tone": "serio", "reaction": "judge", "lines": ["Já tem mensagem agendada demais. Apaga alguma em /agendados antes."] },
   "wa_desistiu": { "kind": "speech", "tone": "serio", "reaction": "nod", "lines": ["Esqueci. Nada agendado.", "Cancelado. Não mando nada."] },

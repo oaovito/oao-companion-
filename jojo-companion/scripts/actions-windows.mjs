@@ -109,7 +109,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 639));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 644));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));

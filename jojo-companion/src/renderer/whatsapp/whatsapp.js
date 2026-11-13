@@ -4,7 +4,7 @@
 // atributo "name" de propósito: nada daqui vira configuração do app.
 import { barra, qrInfo, quandoFoi, telaInicial, contaTexto } from '../shared/whatsapp-view.js';
 import { formatarNumero, filtrarContatos, iniciais } from '../../core/whatsapp-contatos.js';
-import { descreverQuando, numeroParaJid } from '../../core/whatsapp.js';
+import { descreverQuando, numeroParaJid, statusItem } from '../../core/whatsapp.js';
 
 const api = window.waApi;
 const $ = (id) => document.getElementById(id);
@@ -22,7 +22,6 @@ const ERROS = {
   sem_destino: 'Falta para quem. Toque em Escolher contato ou digite o número com DDD.',
   desconectado: 'O WhatsApp não está conectado. Conecte primeiro.',
 };
-const MOTIVOS = { sessao_desconectada: 'o WhatsApp está desconectado', sem_internet: 'sem internet', contato_nao_encontrado: 'número sem WhatsApp', falha_envio: 'o WhatsApp recusou', limite_diario: 'limite diário atingido' };
 
 let st = null, editando = null, proposta = null, tela = null, qrVisto = null, avisoQr = null;
 let destino = null, escolhendo = false, filtro = 'pessoas', textoFinal = '';
@@ -64,6 +63,7 @@ function mostrar(nome) {
     else a.removeAttribute('aria-current');
   }
   if (nome === 'contatos') renderContatos();
+  if (nome === 'mensagens' && st) renderMensagens(st);
 }
 
 /** Ações que usam o WhatsApp: se a conexão não está confirmada, leva direto à tela de conexão. */
@@ -340,13 +340,42 @@ async function salvarConfirmado() {
 
 // -------------------------------------------------------------- mensagens
 
-function linha(i) {
-  const li = el('li');
-  const info = el('div', 'info');
-  const status = i.estado === 'falhou' ? ` · falhou: ${MOTIVOS[i.ultimoErro] || 'erro'}` : i.estado === 'atrasada' ? ' · atrasada' : i.tentativas ? ` · tentativa ${i.tentativas} de 3` : '';
-  info.append(el('div', 'quem', `${i.destino.nome}${i.destino.tipo === 'grupo' ? ' (grupo)' : ''}`), el('div', 'quando', `${i.quandoTexto}${status}`), el('div', 'msg', i.texto));
-  li.append(info);
+/** Contato da mensagem com foto, nome e número (grupo: participantes), pelo que se sabe hoje. */
+function destinoDoItem(i) {
+  const atual = [...st.pessoas, ...st.grupos].find((c) => c.jid === i.destino.jid);
+  return atual || { ...i.destino, numero: i.destino.jid.split('@')[0] };
+}
+
+/** Uma mensagem: quem recebe, texto, quando, status e o botão certo. */
+function cartaoMensagem(i, { historico = false } = {}) {
+  const li = el('li', 'mensagem');
+  const sti = statusItem(i);
+  const topo = el('div', 'linha');
+  topo.append(cartaoPessoa(destinoDoItem(i)), el('span', 'espaco'), el('span', `status ${sti.classe}`, sti.rotulo));
+  li.append(topo, el('div', 'msg', i.texto));
+  const quando = historico
+    ? (i.enviadaEm ? `Enviada ${quandoFoi(i.enviadaEm)}` : 'Cancelada antes de sair')
+    : `${i.estado === 'atrasada' ? 'Era para' : 'Quando'}: ${i.quandoTexto}`;
+  li.append(el('div', 'quando', quando));
+  if (sti.frase) li.append(el('p', `motivo ${sti.classe}`, sti.frase));
+  if (historico) return li;
+  const acoes = el('div', 'linha acoes');
+  if (i.estado === 'atrasada') {
+    acoes.append(botao('Enviar agora', 'primario', () => { if (exigirConexao()) api.resolver(i.id, 'enviar').then(atualizar); }), botao('Descartar', 'ghost', () => api.resolver(i.id, 'descartar').then(atualizar)));
+  } else {
+    if (sti.acao === 'tentar') acoes.append(botao('Tentar de novo', 'primario', () => tentarDeNovo(i)));
+    acoes.append(botao('Editar', sti.acao === 'editar' ? 'primario' : 'ghost', () => editar(i)));
+    acoes.append(botao('Apagar', 'perigo', () => { if (confirm(`Apagar a mensagem para ${i.destino.nome} (${destinoDoItem(i).numeroFormatado || 'grupo'})?`)) api.remove(i.id).then(atualizar); }));
+  }
+  li.append(acoes);
   return li;
+}
+
+async function tentarDeNovo(i) {
+  if (!exigirConexao()) return;
+  const r = await api.tentarDeNovo(i.id);
+  if (!r.ok && r.erro === 'desconectado') mostrar('conexao');
+  await atualizar();
 }
 
 function renderMensagens(s) {
@@ -354,24 +383,17 @@ function renderMensagens(s) {
   const atrasadas = s.itens.filter((i) => i.estado === 'atrasada');
   $('atrasadasBox').hidden = !atrasadas.length;
   $('atrasadas').textContent = '';
-  for (const i of atrasadas) {
-    const li = linha(i);
-    li.append(botao('Enviar agora', '', () => api.resolver(i.id, 'enviar').then(atualizar)), botao('Descartar', 'ghost', () => api.resolver(i.id, 'descartar').then(atualizar)));
-    $('atrasadas').append(li);
-  }
+  for (const i of atrasadas) $('atrasadas').append(cartaoMensagem(i));
   const lista = $('itens');
   lista.textContent = '';
   const ativas = s.itens.filter((i) => i.estado !== 'atrasada');
   if (!ativas.length) lista.append(el('li', 'vazio', 'Nada programado. Toque em Nova mensagem.'));
-  for (const i of ativas) {
-    const li = linha(i);
-    li.append(botao('Editar', 'ghost', () => editar(i)), botao('Apagar', 'perigo', () => { if (confirm(`Apagar a mensagem para ${i.destino.nome}?`)) api.remove(i.id).then(atualizar); }));
-    lista.append(li);
-  }
+  for (const i of ativas) lista.append(cartaoMensagem(i));
   const hist = $('historico');
   hist.textContent = '';
   if (!s.historico.length) hist.append(el('li', 'vazio', 'Nenhum envio ainda.'));
-  for (const i of s.historico) hist.append(el('li', null, `${i.estado === 'enviada' ? 'Enviada' : 'Cancelada'} · ${i.destino.nome} · “${i.texto.slice(0, 80)}”${i.enviadaEm ? ` · ${new Date(i.enviadaEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}`));
+  for (const i of s.historico) hist.append(cartaoMensagem(i, { historico: true }));
+  if (tela === 'mensagens') pedirFotos([...s.itens, ...s.historico].map((i) => i.destino.jid).slice(0, 60));
 }
 
 // ------------------------------------------------------------------ geral

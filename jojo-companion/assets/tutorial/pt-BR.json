@@ -678,21 +678,21 @@
       "configuracoes": [],
       "passos": [
         {
-          "texto": "Eu mando mensagem no seu WhatsApp na hora marcada, em seu nome. Primeiro conecta: /whatsapp abre a janela, e lá você lê o QR code com o celular em Aparelhos conectados. Uma vez só.",
+          "texto": "Eu mando mensagem no seu WhatsApp na hora marcada, em seu nome. Primeiro conecta: /whatsapp abre a tela de conexão com o QR code e os passos. Lê com o celular em Aparelhos conectados; quando aparecer \"Conectado\" com seu nome e número, está pronto.",
           "tente": "/whatsapp",
           "espera": {
             "comando": "whatsapp"
           }
         },
         {
-          "texto": "Pra agendar, fala normal: \"manda 'bom dia' pra minha mãe amanhã às 8h\". Eu confiro tudo com você antes de salvar, e você escolhe se vai como escreveu ou se eu reescrevo. Também vale /agendar Mãe | amanhã às 8h | bom dia.",
+          "texto": "Pra agendar, fala normal: \"manda 'bom dia' pra minha mãe amanhã às 8h\". Eu mostro o contato com o número, o texto e a hora, e só salvo com o seu \"sim\". Na janela, a aba Contatos mostra nome e número de cada um. Também vale /agendar.",
           "tente": "/agendar",
           "espera": {
             "comando": "agendar"
           }
         },
         {
-          "texto": "/agendados mostra a lista numerada e /cancelar 2 apaga a segunda. Cinco minutos antes eu aviso no balão; \"cancela\" segura o envio. Se eu estiver fechado na hora, eu pergunto depois se mando ou descarto. Nunca mando atrasado sozinho.",
+          "texto": "/agendados mostra a lista e /cancelar 2 apaga a segunda. Na janela, cada mensagem diz se está Agendada, Enviada ou Falhou, com o motivo e o botão Tentar de novo. Cinco minutos antes eu aviso; \"cancela\" segura o envio. Atrasada eu nunca mando sozinho.",
           "tente": "/agendados",
           "espera": {
             "comando": "agendados"

@@ -4047,7 +4047,11 @@ export class Companion {
       // A conta vai numa linha objetiva, separada da fala dele.
       const conta = [ev.nome, numero].filter(Boolean).join(' · ');
       const fala = this._fala('wa_conectado');
-      return this._waSay(conta ? `${fala}\nConta conectada: ${conta}.` : fala);
+      const texto = conta ? `${fala}\nConta conectada: ${conta}.` : fala;
+      // Pedido que esperava a conexão: continua sozinho, já com a confirmação.
+      const p = this.waPendente;
+      if (p && p.etapa === 'conectar' && p.ate > this.clock.now()) return this._waSay(`${texto}\n${this._waRascunho(p.p)}`, { precisa: true });
+      return this._waSay(texto);
     }
     if (ev.tipo === 'erroConexao') {
       const motivo = (WA_MOTIVOS_CONEXAO[ev.motivo] || WA_MOTIVOS_CONEXAO.processo_parou).frase.replace(' (código {codigo})', '');
@@ -4065,7 +4069,15 @@ export class Companion {
   }
 
   /** Monta o rascunho e pergunta o que falta (destino, hora) ou pede confirmação. */
+  /** Sem WhatsApp conectado nada é agendado: abre a tela de conexão e guarda o pedido para continuar depois. */
+  _waPrecisaConectar(p) {
+    this.waPendente = { etapa: 'conectar', p, ate: this.clock.now() + 30 * 60e3 };
+    this.onOpenWhatsapp?.('conexao');
+    return this._fala('wa_precisaConectar');
+  }
+
   _waRascunho(p) {
+    if (this.whatsapp.conexao().estado !== 'conectado') return this._waPrecisaConectar(p);
     const r = { busca: p.destinoBusca, texto: p.texto, original: p.texto, quando: p.quando, destino: p.destino || null };
     if (!r.destino) {
       const achados = this._waDestinos(r.busca);
@@ -4088,6 +4100,8 @@ export class Companion {
   async _waSalvar(r, texto) {
     const wa = this.whatsapp;
     this.waPendente = null;
+    // A conexão caiu entre a confirmação e o "sim": nada salvo, volta depois de conectar.
+    if (wa.conexao().estado !== 'conectado') return this._waPrecisaConectar({ destinoBusca: r.busca, texto, quando: r.quando, destino: r.destino });
     if (r.destino.numero && wa.conexao().estado === 'conectado') {
       const ok = await wa.checarNumero(r.destino.jid).catch(() => ({ ok: true }));
       if (ok && ok.ok === false && ok.erro === 'contato_nao_encontrado') return this._fala('wa_numeroSemWhats', { destino: r.destino.nome });
@@ -4096,7 +4110,7 @@ export class Companion {
       const item = wa.agenda.add({ destino: { jid: r.destino.jid, nome: r.destino.nome, tipo: r.destino.tipo }, texto, data: r.quando.data, hora: r.quando.hora, repeticao: r.quando.repeticao });
       wa.mudou?.();
       const v = { destino: item.destino.nome, quando: descreverQuando(item, new Date()), texto: item.texto };
-      return wa.conexao().estado === 'conectado' ? this._fala('wa_agendado', v) : this._fala('wa_agendadoSemConexao', v);
+      return this._fala('wa_agendado', v);
     } catch (e) {
       return e.message === 'passado' ? this._fala('wa_passado', { quando: descreverQuando(r.quando, new Date()) }) : this._fala('wa_cheio');
     }
@@ -4142,6 +4156,9 @@ export class Companion {
         const c = Number.isInteger(k) && k >= 1 ? p.opcoes[k - 1] : buscarContatos(p.opcoes, text)[0];
         if (c) return this._waRascunho({ destinoBusca: p.r.busca, texto: p.r.texto, quando: p.r.quando, destino: c });
         if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
+      } else if (p.etapa === 'conectar') {
+        if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
+        if (sim || /^(pronto|conectei|conectado|ja conectei|ja esta conectado|feito|foi)$/.test(n)) return this._waRascunho(p.p);
       } else if (p.etapa === 'destino') {
         if (nao) { this.waPendente = null; return this._fala('wa_desistiu'); }
         return this._waRascunho({ destinoBusca: text, texto: p.r.texto, quando: p.r.quando });
@@ -4181,7 +4198,8 @@ export class Companion {
       this.onOpenWhatsapp?.();
       if (!this.whatsapp) return this._fala('wa_indisponivel');
       const c = this.whatsapp.conexao();
-      return this._fala(c.estado === 'conectado' ? 'wa_statusConectado' : 'wa_statusDesconectado', { numero: c.numero || '' });
+      const conta = [c.nome, formatarNumero(c.numero || '')].filter(Boolean).join(' · ');
+      return this._fala(c.estado === 'conectado' ? 'wa_statusConectado' : 'wa_statusDesconectado', { numero: conta || 'conta confirmada' });
     }
     if (!this.whatsapp) return this._fala('wa_indisponivel');
     const agenda = this.whatsapp.agenda;
