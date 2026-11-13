@@ -17,8 +17,8 @@ ESTADO
 - O pipeline integral do Windows (jojo-windows.yml) costuma parar no ensaio de
   conversa real com o modelo local: o modelo varia (ora acrescenta uma frase de
   desdém recusada pela guarda de src/core/dialogue/coherence.js, ora não cita o
-  assunto, ora demora). Isso é fora do WhatsApp e NÃO deve ser alterado: a usuária
-  pediu que a conversa não seja afetada.
+  assunto, ora demora). Isso é fora do WhatsApp: só pode ser alterado conforme a
+  decisão da usuária marcada abaixo; nada além disso na conversa.
 - Quando a conversa passa, o CI espera em até 5 minutos a revisão das 44 falas em
   codex/ci-evidence-<run>-<tentativa>/jojo-companion/docs/evidencias/semantic-review.json
   (formato e exemplos nas branches codex/ci-evidence-43235150092-1 e -43223128036-1).
@@ -51,7 +51,7 @@ O QUE VOCÊ (SESSÃO) DEVE FAZER
    disparar jojo-windows.yml em codex/living-companion (workflow_dispatch), vigiar a
    branch de evidência e revisar as 44 falas dentro de 5 minutos; reexecutar só os
    jobs com falha quando a conversa reprovar por variação do modelo. Não alterar a
-   conversa, não desativar testes, não mover tags nem editar releases existentes.
+   conversa além do item 0, não desativar testes, não mover tags nem editar releases existentes.
    Publicação só pelo passo oficial do mesmo run.
 2. Se eu informei que o QR conectou: registrar no HANDOFF e encerrar o assunto.
 3. Se eu informei erro ao ler o QR: comparar o texto do erro com
