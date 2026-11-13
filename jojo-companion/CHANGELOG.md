@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Não lançado — WhatsApp revisado
+## 0.47.1 — 2026-11-13
 
 ### Melhorias
 - Janela do WhatsApp em telas, uma por vez (Conexão, Mensagens, Contatos), com o estado

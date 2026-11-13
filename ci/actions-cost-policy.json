@@ -3,8 +3,8 @@
   "confirmation": null,
   "normalExecutionAuthorized": true,
   "executionAuthorization": "Instrucao posterior do usuario: So tenta fazer como faria normalmente. Usar Actions oficial, sem alterar faturamento.",
-  "pendingVersion": "0.47.0",
+  "pendingVersion": "0.47.1",
   "sourceBranch": "codex/living-companion",
   "note": "Tentativa normal autorizada explicitamente. Faturamento permanece nao verificavel por HTTP 403; nao afirmar limite zero confirmado nem alterar planos, cartoes ou limites. Preservar todos os gates Windows.",
-  "releaseAuthorization": "Pedido explícito do usuário em 12/11/2026 (\"Sim, 0.47.0\"): publicar as correções de personalidade, saúde (João médico, SAMU 192), convite do tutorial e lista de comandos, e as mensagens programadas no WhatsApp, somente após todos os gates Windows. 0.46.0 e releases anteriores imutáveis."
+  "releaseAuthorization": "Pedido explícito do usuário em 13/11/2026 (\"Aplica e publica a atualização de tudo que é possível\"): publicar a 0.47.1 com a revisão do WhatsApp (conexão, QR, contatos, mensagens programadas, QR aceito pelo celular), somente após todos os gates Windows. 0.47.0 e releases anteriores imutáveis."
 }
