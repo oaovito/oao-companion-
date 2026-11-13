@@ -1,0 +1,47 @@
+# Prompt para a próxima sessão — WhatsApp do JoJo
+
+Cole o bloco abaixo numa sessão nova. Ele separa o que já foi feito do que depende
+de você (Emanuele/João) e diz exatamente o que a sessão deve fazer em cada caso.
+
+```
+Você está no projeto JoJo Companion (repositório oaovito/oao-companion-, código em
+jojo-companion/). Leia AGENTS.md, CLAUDE.md, jojo-companion/HANDOFF.md (seção
+"revisão do WhatsApp"), jojo-companion/docs/WHATSAPP.md e
+jojo-companion/docs/WHATSAPP_DIAGNOSTICO.md antes de qualquer coisa.
+
+ESTADO
+- A revisão completa do WhatsApp (conexão, QR, contatos, mensagens programadas e o
+  QR recusado pelo celular) está em codex/living-companion e claude/dreamy-allen-4mtm7j,
+  versão 0.47.1. Testes: 644 unitários; 15 E2E de interface no Windows real passaram,
+  incluindo test/e2e/whatsapp.windows.mjs (WhatsApp simulado).
+- O pipeline integral do Windows (jojo-windows.yml) costuma parar no ensaio de
+  conversa real com o modelo local: o modelo varia (ora acrescenta uma frase de
+  desdém recusada pela guarda de src/core/dialogue/coherence.js, ora não cita o
+  assunto, ora demora). Isso é fora do WhatsApp e NÃO deve ser alterado: a usuária
+  pediu que a conversa não seja afetada.
+- Quando a conversa passa, o CI espera em até 5 minutos a revisão das 44 falas em
+  codex/ci-evidence-<run>-<tentativa>/jojo-companion/docs/evidencias/semantic-review.json
+  (formato e exemplos nas branches codex/ci-evidence-43235150092-1 e -43223128036-1).
+
+O QUE EU (USUÁRIA) JÁ FIZ OU VOU FAZER
+[ ] Instalei a 0.47.1 (ou mais nova) no PC e li o QR com o celular.
+    Resultado: ____________________ (ex.: "Conectado com meu nome e número" ou o
+    texto exato do erro no celular + foto).
+[ ] Mandei uma mensagem agendada de teste para mim mesma ou para alguém de confiança.
+    Resultado: ____________________
+
+O QUE VOCÊ (SESSÃO) DEVE FAZER
+1. Se a 0.47.1 ainda não estiver publicada em oaovito/jojo-companion-releases:
+   disparar jojo-windows.yml em codex/living-companion (workflow_dispatch), vigiar a
+   branch de evidência e revisar as 44 falas dentro de 5 minutos; reexecutar só os
+   jobs com falha quando a conversa reprovar por variação do modelo. Não alterar a
+   conversa, não desativar testes, não mover tags nem editar releases existentes.
+   Publicação só pelo passo oficial do mesmo run.
+2. Se eu informei que o QR conectou: registrar no HANDOFF e encerrar o assunto.
+3. Se eu informei erro ao ler o QR: comparar o texto do erro com
+   docs/WHATSAPP_DIAGNOSTICO.md (adendo de 13/11), reproduzir a conexão real até o QR
+   (sem vincular conta) e verificar se o Baileys publicou versão nova que trate
+   companion_reg_refresh (issues #2737 e #2679); corrigir só dentro do WhatsApp, com
+   testes, e repetir o fluxo de publicação.
+4. Nunca enviar mensagens de verdade nos testes; nunca pedir senha ou login.
+```
