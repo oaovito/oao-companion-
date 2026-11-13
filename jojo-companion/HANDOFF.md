@@ -1,5 +1,34 @@
 # HANDOFF — JoJo Companion
 
+## Em andamento — revisão do WhatsApp (não lançada), 13/11/2026
+
+Branch `claude/dreamy-allen-4mtm7j`, baseada em `codex/living-companion` (`8abfe20`,
+0.47.0 publicada) por merge que mantém a árvore do app. Commits: `5174d7a`
+(diagnóstico), `61ba36a` (conexão), `d30e325` (QR), `a2f8343` (contatos), `8e6b84e`
+(serviços), `76fe2ae` (E2E). Diagnóstico em `docs/WHATSAPP_DIAGNOSTICO.md`; uso e
+estados em `docs/WHATSAPP.md`; CHANGELOG em "Não lançado — WhatsApp revisado".
+
+Causa do "erro de conexão": o worker classificava cada queda pelo texto do erro e
+ignorava o código do WhatsApp (QR expirado e o reinício normal 515 viravam
+"o WhatsApp recusou", com reconexão em laço e travamento). Achado extra: envio
+confirmado era tratado como falha (id do pedido sobrescrito) e podia repetir a
+mensagem até três vezes. Ambos corrigidos e cobertos por testes.
+
+Validação: 644/644 unitários locais (linha de base 620: 619 + 1 pulado só fora do
+Windows) e 644/644 no Windows (run 43343803676, tentativas 1 e 2). Conversa real:
+tentativa 1 reprovou 1/32 ("Which animal…", variação do modelo, motor de conversa não
+alterado); tentativa 2 passou 32/32 + 12/12, mas a revisão semântica não foi gravada
+nos 5 min. Tentativa 3 ficou na fila sem runner desde 02:26 UTC; a verificação horária
+também parou de rodar depois de 01:51 (indício de bloqueio de minutos/faturamento,
+não verificável pela API). Build, NSIS, integração e os 44 E2E (inclui
+`test/e2e/whatsapp.windows.mjs`) ainda NÃO rodaram no Windows. Conexão real até o
+QR verificada contra o servidor do WhatsApp; leitura do QR com celular real e envio
+real não verificados. Nenhuma versão nova, tag ou release.
+
+Próximo passo: com runner disponível, reexecutar o run (ou novo push), revisar as 44
+falas em `codex/ci-evidence-<run>-<tentativa>/…/semantic-review.json` dentro de 5 min
+e conferir os 44 E2E.
+
 ## Entrega atual — 0.46.0 publicada em 11/11/2026
 
 Tag/fonte **f0899e1f7b2bc0880b35b78890b2ffd1d8e13dae**, branch `codex/living-companion`
