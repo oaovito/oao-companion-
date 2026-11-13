@@ -23,6 +23,20 @@ ESTADO
   codex/ci-evidence-<run>-<tentativa>/jojo-companion/docs/evidencias/semantic-review.json
   (formato e exemplos nas branches codex/ci-evidence-43235150092-1 e -43223128036-1).
 
+- 13/11: a 0.47.1 NÃO foi publicada. O run 43471126958 reprovou 5 vezes só no ensaio
+  de conversa. Em quase todas as falhas o modelo acertou ("Você disse que sua cor
+  preferida é verde", "Sua fruta preferida é manga", "You mentioned a cat") mas
+  acrescentou "Não precisa perguntar de novo" / "It's a simple question", e a guarda
+  de desdém (coherence.js:143, commit 8abfe20) descartou a resposta inteira.
+
+MINHA DECISÃO SOBRE A CONVERSA (marque uma)
+[ ] A) Pode ajustar a guarda: em vez de descartar a resposta inteira, tirar só a frase
+       de desdém e manter o resto (mesmo jeito usado antes para "Você tem certeza").
+       Assim a resposta certa chega sem a provocação. Mexe só nessa guarda, com teste.
+[ ] B) Não mexer na conversa: só reexecutar o pipeline até o modelo responder sem a
+       frase (já foram 5 tentativas sem sucesso; pode levar muitas mais).
+[ ] C) Pode deixar a frase de desdém passar (remover essa parte da guarda).
+
 O QUE EU (USUÁRIA) JÁ FIZ OU VOU FAZER
 [ ] Instalei a 0.47.1 (ou mais nova) no PC e li o QR com o celular.
     Resultado: ____________________ (ex.: "Conectado com meu nome e número" ou o
@@ -31,6 +45,8 @@ O QUE EU (USUÁRIA) JÁ FIZ OU VOU FAZER
     Resultado: ____________________
 
 O QUE VOCÊ (SESSÃO) DEVE FAZER
+0. Aplicar a minha decisão sobre a conversa (A, B ou C acima), com teste, sem mexer
+   em mais nada da conversa; rodar a suíte inteira e comparar com a anterior.
 1. Se a 0.47.1 ainda não estiver publicada em oaovito/jojo-companion-releases:
    disparar jojo-windows.yml em codex/living-companion (workflow_dispatch), vigiar a
    branch de evidência e revisar as 44 falas dentro de 5 minutos; reexecutar só os

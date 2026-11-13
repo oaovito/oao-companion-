@@ -32,6 +32,15 @@ conversa real por variação do modelo (frase de desdém recusada pela guarda de
 relato: o celular recusava o QR ("Verifique sua conexão"); causa e correção no adendo
 de `docs/WHATSAPP_DIAGNOSTICO.md` (identidade Chrome e `companion_reg_refresh`).
 
+Publicação 0.47.1 (13/11, autorizada pela usuária): versão, CHANGELOG e política
+preparados em `dd50b99`, `codex/living-companion` avançada por fast-forward. Run oficial
+43471126958, tentativas 1–5: preflight, lint, instalação e 644/644 unitários passaram em
+todas; o ensaio de conversa real reprovou em todas. Padrão: o modelo acerta a memória
+(verde, manga, cat) mas acrescenta "Não precisa perguntar de novo" / "It's a simple
+question", e a guarda de desdém (`src/core/dialogue/coherence.js:143`, commit `8abfe20`)
+descarta a resposta inteira; às vezes também omite o prazo do chefe. Nada publicado,
+nenhuma tag criada. Decisão pendente da usuária em `docs/PROXIMA_SESSAO_WHATSAPP.md`.
+
 Próximo passo: com runner disponível, reexecutar o run (ou novo push), revisar as 44
 falas em `codex/ci-evidence-<run>-<tentativa>/…/semantic-review.json` dentro de 5 min
 e conferir os 44 E2E.
