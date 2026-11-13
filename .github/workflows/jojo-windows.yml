@@ -168,7 +168,7 @@ jobs:
         timeout-minutes: 12
         working-directory: jojo-companion
         run: |
-          $tests = @('test/e2e/todo.windows.mjs', 'test/e2e/darkest.windows.mjs', 'test/e2e/needs.windows.mjs', 'test/e2e/focus-apps.windows.mjs', 'test/e2e/shortcuts.windows.mjs', 'test/e2e/living.windows.mjs', 'test/e2e/calendar-link.windows.mjs', 'test/e2e/critical.windows.mjs', 'test/e2e/steam.windows.mjs')
+          $tests = @('test/e2e/todo.windows.mjs', 'test/e2e/darkest.windows.mjs', 'test/e2e/needs.windows.mjs', 'test/e2e/focus-apps.windows.mjs', 'test/e2e/shortcuts.windows.mjs', 'test/e2e/living.windows.mjs', 'test/e2e/calendar-link.windows.mjs', 'test/e2e/critical.windows.mjs', 'test/e2e/steam.windows.mjs', 'test/e2e/whatsapp.windows.mjs')
           if ($env:JOJO_STEAM_ONLY -eq 'true') { $tests = @('test/e2e/steam.windows.mjs') }
           node --test --test-concurrency=1 --test-reporter=tap @tests
         env:
