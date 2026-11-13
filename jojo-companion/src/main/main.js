@@ -896,6 +896,8 @@ function main() {
       globalThis.__jojo = {
         companion,
         overlay,
+        whatsapp,
+        whatsappWin,
         store,
         settingsInfo,
         openSettings,
