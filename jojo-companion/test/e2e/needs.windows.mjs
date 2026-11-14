@@ -64,7 +64,7 @@ test('interface Windows: painel do aquário inteiro (sem quebra nem corte) e se�
     const antes = await app.evaluate(() => ({ discord: globalThis.__jojo.store.get().discordBloqueio, todo: JSON.stringify(globalThis.__jojo.store.get().todo ?? null) }));
     const aberta = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.openSettings());
     const sw = await aberta; sw.on('pageerror', (e) => errors.push(e.message));
-    await sw.waitForSelector('#todoSettingsFields');
+    await sw.waitForSelector('#todoSettingsFields', { state: 'attached' }); // a seção existe, mas fica oculta
     await new Promise((r) => setTimeout(r, 800));
     assert.deepEqual(await sw.evaluate(() => ['#todoSettings', '#discordBlock'].map((q) => getComputedStyle(document.querySelector(q)).display)), ['none', 'none']);
     assert.deepEqual(await app.evaluate(() => ({ discord: globalThis.__jojo.store.get().discordBloqueio, todo: JSON.stringify(globalThis.__jojo.store.get().todo ?? null) })), antes, 'esconder não muda a configuração');
