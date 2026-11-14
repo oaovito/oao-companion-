@@ -6,5 +6,5 @@
   "pendingVersion": "0.47.1",
   "sourceBranch": "codex/living-companion",
   "note": "Tentativa normal autorizada explicitamente. Faturamento permanece nao verificavel por HTTP 403; nao afirmar limite zero confirmado nem alterar planos, cartoes ou limites. Preservar todos os gates Windows.",
-  "releaseAuthorization": "Pedido explícito do usuário em 13/11/2026 (\"Aplica e publica a atualização de tudo que é possível\"): publicar a 0.47.1 com a revisão do WhatsApp (conexão, QR, contatos, mensagens programadas, QR aceito pelo celular), somente após todos os gates Windows. 0.47.0 e releases anteriores imutáveis."
+  "releaseAuthorization": "Pedido explícito do usuário em 14/11/2026 (\"Publica tudo menos o que envolve WhatsApp\"): publicar a 0.47.1 com a progressão ×10 (100 títulos, bônus de XP), o painel do aquário sem corte e as seções de Tarefas e Discord ocultas nas Configurações. O WhatsApp fica como na 0.47.0. Somente após todos os gates Windows. 0.47.0 e releases anteriores imutáveis."
 }

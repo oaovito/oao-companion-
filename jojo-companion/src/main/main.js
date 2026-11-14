@@ -522,13 +522,9 @@ function main() {
     });
     const whatsapp = createWhatsAppService({ userData, companion, log,
       spawn: (file) => utilityProcess.fork(file, [], { serviceName: 'JoJo WhatsApp', stdio: 'ignore' }),
-      // Testes do app: WhatsApp simulado no lugar do Baileys (nunca conecta nem envia de verdade).
-      workerPath: TEST && process.env.JOJO_TEST_WA_WORKER ? process.env.JOJO_TEST_WA_WORKER : undefined,
-      toDataURL: (texto) => QRCode.toDataURL(texto, { margin: 2, width: 560, errorCorrectionLevel: 'M' }),
-      querQr: () => whatsappWin.isOpen && whatsappWin.win.isVisible(),
-      notify: () => whatsappWin.send('whatsapp:update', whatsapp.state()),
-      notifyFotos: (fotos) => whatsappWin.send('whatsapp:fotos', fotos) });
-    companion.onOpenWhatsapp = (tela) => whatsappWin.open(tela);
+      toDataURL: (texto) => QRCode.toDataURL(texto, { margin: 1, width: 280 }),
+      notify: () => whatsappWin.send('whatsapp:update', whatsapp.state()) });
+    companion.onOpenWhatsapp = () => whatsappWin.open();
     const fromWhatsapp = (e) => whatsappWin.isOpen && e.sender === whatsappWin.win.webContents;
     ipcMain.handle('whatsapp:state', (e) => (fromWhatsapp(e) ? whatsapp.state() : null));
     ipcMain.handle('whatsapp:connect', (e) => (fromWhatsapp(e) ? whatsapp.connect() : null));
@@ -537,8 +533,6 @@ function main() {
     ipcMain.handle('whatsapp:remove', (e, id) => (fromWhatsapp(e) ? whatsapp.remove(id) : { ok: false }));
     ipcMain.handle('whatsapp:resolver', (e, id, acao) => (fromWhatsapp(e) ? whatsapp.resolver(id, acao) : { ok: false }));
     ipcMain.handle('whatsapp:pular', (e, id) => (fromWhatsapp(e) ? whatsapp.pular(id) : { ok: false }));
-    ipcMain.handle('whatsapp:fotos', (e, jids) => (fromWhatsapp(e) ? whatsapp.fotos(Array.isArray(jids) ? jids : []) : {}));
-    ipcMain.handle('whatsapp:tentar-de-novo', (e, id) => (fromWhatsapp(e) ? whatsapp.tentarDeNovo(id) : { ok: false }));
     ipcMain.handle('whatsapp:reescrever', (e, texto, opcoes) => (fromWhatsapp(e) ? whatsapp.reescrever(texto, opcoes && typeof opcoes === 'object' ? opcoes : {}) : { ok: false }));
     ipcMain.on('app:whatsapp', (e) => fromApp(e) && whatsappWin.open());
     whatsapp.start();
@@ -896,8 +890,6 @@ function main() {
       globalThis.__jojo = {
         companion,
         overlay,
-        whatsapp,
-        whatsappWin,
         store,
         settingsInfo,
         openSettings,

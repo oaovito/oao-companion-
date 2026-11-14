@@ -1,5 +1,15 @@
 # HANDOFF — JoJo Companion
 
+## Publicação 0.47.1 sem WhatsApp — 14/11/2026
+
+Pedido da usuária: "Publica tudo menos o que envolve WhatsApp". A árvore de
+`codex/living-companion` passa a ser a 0.47.0 publicada (`8abfe20`) + progressão ×10
+(100 títulos, 238 bônus, `src/core/xp-escala.js`), painel do aquário sem corte e seções
+"Lista de Tarefas"/"Bloqueio do Discord" ocultas. Todo o código do WhatsApp volta ao da
+0.47.0. A revisão completa do WhatsApp continua intacta em `claude/dreamy-allen-4mtm7j`
+(até `4ff91e8`) para uma versão futura; trazer de volta é aplicar aquela branch por cima.
+Unitários: 632 (620 da linha de base + 12 novos). E2E esperados: 44.
+
 ## Em andamento — revisão do WhatsApp (não lançada), 13/11/2026
 
 Branch `claude/dreamy-allen-4mtm7j`, baseada em `codex/living-companion` (`8abfe20`,

@@ -7,18 +7,15 @@ export class WhatsAppWindow {
     this.win = null;
   }
 
-  /** `tela`: 'conexao' leva direto à tela de conexão (ex.: pedido sem WhatsApp conectado). */
-  open(tela = null) {
-    const alvo = ['conexao', 'mensagens', 'contatos'].includes(tela) ? tela : null;
+  open() {
     if (this.isOpen) {
       if (this.win.isMinimized()) this.win.restore();
       this.win.show();
       this.win.focus();
-      if (alvo) this.send('whatsapp:tela', alvo);
       return;
     }
     this.win = new BrowserWindow({
-      width: 640, height: 820, minWidth: 460, minHeight: 560,
+      width: 620, height: 780, minWidth: 460, minHeight: 520,
       title: 'JoJo Companion — WhatsApp', icon: this.iconPath, autoHideMenuBar: true, show: false, backgroundColor: '#f4f7fb',
       webPreferences: { preload: this.preloadPath, contextIsolation: true, sandbox: true, nodeIntegration: false, spellcheck: true },
     });
@@ -27,7 +24,7 @@ export class WhatsAppWindow {
     this.win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     this.win.once('ready-to-show', () => this.win.show());
     this.win.on('closed', () => { this.win = null; });
-    this.win.loadFile(this.htmlPath, alvo ? { query: { tela: alvo } } : undefined);
+    this.win.loadFile(this.htmlPath);
   }
 
   send(ch, payload) {

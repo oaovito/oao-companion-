@@ -11,31 +11,6 @@ export const WA_LIMITES = Object.freeze({
 export const DIAS = Object.freeze(['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado']);
 export const WA_ERROS = Object.freeze(['sessao_desconectada', 'contato_nao_encontrado', 'sem_internet', 'falha_envio', 'limite_diario']);
 
-/** Falha de envio: o que aconteceu e o que fazer, com a ação certa ('tentar' ou 'editar'). */
-export const WA_MOTIVOS_ENVIO = Object.freeze({
-  sessao_desconectada: { frase: 'O WhatsApp estava desconectado na hora do envio. Conecte e toque em Tentar de novo.', acao: 'tentar' },
-  sem_internet: { frase: 'O PC estava sem internet na hora do envio. Confira a internet e toque em Tentar de novo.', acao: 'tentar' },
-  contato_nao_encontrado: { frase: 'Esse número não tem WhatsApp. Toque em Editar e escolha outro contato.', acao: 'editar' },
-  falha_envio: { frase: 'O WhatsApp recusou o envio. Toque em Tentar de novo; se repetir, abra o WhatsApp no celular.', acao: 'tentar' },
-  limite_diario: { frase: 'Já saíram 40 mensagens nas últimas 24 horas, o limite para proteger seu número. Tente de novo mais tarde.', acao: 'tentar' },
-});
-
-/**
- * Status de uma mensagem programada para a tela: Agendada, Tentando de novo,
- * Atrasada, Falhou, Enviada ou Cancelada, com a frase do motivo quando falhou.
- */
-export function statusItem(i) {
-  const motivo = WA_MOTIVOS_ENVIO[i.ultimoErro] || WA_MOTIVOS_ENVIO.falha_envio;
-  if (i.estado === 'falhou') return { chave: 'falhou', rotulo: 'Falhou', classe: 'bad', frase: motivo.frase, acao: motivo.acao };
-  if (i.estado === 'atrasada') return { chave: 'atrasada', rotulo: 'Atrasada', classe: 'warn', frase: 'Passou da hora enquanto o JoJo estava fechado. Escolha enviar agora ou descartar.', acao: null };
-  if (i.estado === 'enviada') return { chave: 'enviada', rotulo: 'Enviada', classe: 'ok', frase: '', acao: null };
-  if (i.estado === 'cancelada') return { chave: 'cancelada', rotulo: 'Cancelada', classe: '', frase: '', acao: null };
-  if (i.tentativas > 0) return { chave: 'tentando', rotulo: `Tentando de novo (${i.tentativas} de ${WA_LIMITES.tentativas})`, classe: 'warn', frase: motivo.frase.split('. ')[0] + '. Nova tentativa em 1 minuto.', acao: null };
-  // Repetição em que a última vez falhou: continua agendada, mas o motivo fica à vista.
-  if (i.ultimoErro) return { chave: 'agendada', rotulo: 'Agendada', classe: 'info', frase: `A última vez não saiu: ${motivo.frase}`, acao: null };
-  return { chave: 'agendada', rotulo: 'Agendada', classe: 'info', frase: '', acao: null };
-}
-
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
 const pad = (n) => String(n).padStart(2, '0');
 export const dataKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -338,15 +313,6 @@ export class WhatsAppAgenda {
   }
 
   atrasadas() { return this.itens.filter((i) => i.estado === 'atrasada'); }
-
-  /** Envio que falhou de vez: ela mandou tentar de novo agora (conta como pedido dela, não como atrasada). */
-  tentarDeNovo(id, agora = this.now()) {
-    const item = this.get(id);
-    if (!item || item.estado !== 'falhou') return null;
-    Object.assign(item, { estado: 'agendada', proximo: agora, avisado: agora, tentativas: 0, retryEm: null, ultimoErro: null, envioManual: true });
-    this.save();
-    return item;
-  }
 
   /** 'enviar' agora ou 'descartar' (repetição segue para a próxima vez). */
   resolverAtrasada(id, acao, agora = this.now()) {

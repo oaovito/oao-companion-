@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.47.1 — 2026-11-13
+## 0.47.1 — 2026-11-14
 
 ### Novidades
 - 100 níveis, cada um com título próprio: de Sardinha a Megalodon, depois pré-históricos,
@@ -13,34 +13,7 @@
   nível é o mesmo, e o XP já ganho foi convertido, então ninguém perde o nível. Do nível
   30 em diante cada nível pede o mesmo tanto, sem escalada sem fim.
 
-### Melhorias
-- Janela do WhatsApp em telas, uma por vez (Conexão, Mensagens, Contatos), com o estado
-  da conexão sempre visível no topo: Desconectado, Aguardando QR code, Conectando,
-  Conectado ou Erro. Conectado mostra o nome e o número da conta, depois de confirmar com
-  o servidor do WhatsApp.
-- Tela própria do QR code: código grande, quatro passos numerados, contagem até expirar,
-  renovação automática com aviso e troca sozinha para a confirmação de sucesso.
-- Contatos com nome em destaque e número logo abaixo, foto de perfil ou iniciais, selo
-  "mesmo nome" para homônimos, pessoas e grupos separados e busca por nome ou número.
-  Nome pela prioridade: agenda do celular, depois perfil, depois número.
-- Antes de agendar, uma confirmação com foto, nome, número, texto e quando; na conversa,
-  a confirmação diz o número. Sem WhatsApp conectado, o JoJo abre a tela de conexão e
-  continua o pedido depois de conectar.
-- Cada mensagem programada mostra contato, texto, quando e status (Agendada, Tentando de
-  novo, Atrasada, Falhou, Enviada); falha com o motivo e o botão Tentar de novo.
-
 ### Correções
-- "Erro de conexão" sem explicação: a queda agora é decidida pelo código do WhatsApp.
-  Ler o QR code não mostra mais "o WhatsApp recusou", QR expirado não fica gerando código
-  para sempre, "Tentar agora" funciona depois de travar e cada erro diz o que houve e o
-  que fazer, com o botão certo. Versão do WhatsApp Web atualizada sozinha.
-- Envio confirmado era tratado como falha e podia mandar a mesma mensagem até três vezes.
-- Ao ler o QR code o celular mostrava "Verifique sua conexão e tente novamente": o JoJo
-  agora se apresenta como Chrome no Windows (identidade que o WhatsApp aceita) e troca o
-  segredo do código quando o WhatsApp pede, em vez de mostrar um código vencido.
-- O nome do perfil não apaga mais o nome salvo na agenda; contatos só com identificador
-  novo do WhatsApp (LID) ganham o número; a própria conta não aparece como contato.
-- Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.
 - O painel ao lado do JoJo (Saciedade, Saúde, Higiene, nível e Cuidados) não sai mais
   cortado nem quebrado: duas linhas fixas, com espaço para tudo.
 
@@ -49,11 +22,10 @@
   Configurações; os valores já escolhidos continuam valendo.
 
 ### Como testar
-- /whatsapp: conecte pelo QR code e confira o nome e o número em "Conectado".
-- Feche e abra o JoJo: a conexão volta sem QR. Desligue o Wi-Fi: aparece "Conectando" com
-  a próxima tentativa; ligue de novo: volta para "Conectado".
-- Aba Contatos: busque por nome e por número; veja Pessoas e Grupos separados.
-- Nova mensagem → Escolher contato → confira a tela de confirmação e agende.
+- Abra a Central, em Coleção: o nível continua o mesmo, agora com título próprio e XP ×10.
+- Converse e faça carinho no JoJo: aparecem bônus com nome (no máximo seis por dia).
+- Veja o painel ao lado do JoJo: Saciedade, Saúde, Higiene, nível e Cuidados inteiros.
+- Abra as Configurações: não aparecem "Lista de Tarefas" nem "Bloqueio do Discord".
 
 ## 0.47.0 — 2026-11-12
 

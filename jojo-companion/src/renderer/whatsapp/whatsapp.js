@@ -1,32 +1,28 @@
-// Janela do WhatsApp: uma tela por vez (Conexão, Mensagens, Contatos, Nova
-// mensagem e Confirmação), com o estado da conexão sempre visível no topo.
-// Validação final no processo principal; aqui só montamos a tela. Campos sem
-// atributo "name" de propósito: nada daqui vira configuração do app.
-import { barra, qrInfo, quandoFoi, telaInicial, contaTexto } from '../shared/whatsapp-view.js';
-import { formatarNumero, filtrarContatos, iniciais } from '../../core/whatsapp-contatos.js';
-import { descreverQuando, numeroParaJid, statusItem } from '../../core/whatsapp.js';
-
+// Janela das mensagens programadas no WhatsApp. Validação final no processo
+// principal; aqui só montamos a tela. Campos sem atributo "name" de propósito:
+// nada daqui vira configuração do app.
 const api = window.waApi;
 const $ = (id) => document.getElementById(id);
 const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-const MAX_LISTA = 200;
-const ERROS = {
-  numero_invalido: 'Número inválido. Digite com DDD, por exemplo 42 99999-1234.',
-  contato_nao_encontrado: 'Esse número não tem WhatsApp. Escolha um contato da lista ou confira o número.',
-  texto_vazio: 'A mensagem está vazia. Escreva o texto.',
-  passado: 'Esse dia e hora já passaram. Escolha um horário no futuro.',
-  cheio: 'A agenda está cheia (200). Apague alguma mensagem antes.',
-  invalido: 'Falta alguma informação. Confira dia, hora e repetição.',
-  sem_modelo: 'O JoJo não consegue reescrever agora (motor local desligado). Use o seu texto.',
-  sem_hora: 'Falta o dia ou a hora. Preencha os dois.',
-  sem_destino: 'Falta para quem. Toque em Escolher contato ou digite o número com DDD.',
-  desconectado: 'O WhatsApp não está conectado. Conecte primeiro.',
+const ESTADOS = {
+  desligado: ['Desconectado', ''], conectando: ['Conectando…', 'warn'], qr: ['Escaneie o QR code', 'warn'],
+  conectado: ['Conectado', 'ok'], reconectando: ['Reconectando…', 'warn'], erro: ['Sem conexão', 'bad'],
 };
+// Erros na voz do JoJo.
+const ERROS = {
+  numero_invalido: 'Esse número não tem cara de número. Coloca com DDD: 42 99999-1234.',
+  contato_nao_encontrado: 'Não achei esse contato com WhatsApp. Escolhe da lista ou usa o número com DDD.',
+  texto_vazio: 'Mensagem vazia eu não mando. Escreve alguma coisa.',
+  passado: 'Esse horário já passou. Eu sou rápido, mas não volto no tempo.',
+  cheio: 'Agenda cheia. Apaga alguma antes.',
+  invalido: 'Faltou alguma coisa: confere dia, hora e repetição.',
+  sem_modelo: 'Meu motor de conversa não está disponível pra reescrever agora. Manda a sua mesmo.',
+  sem_hora: 'Me diz o dia e a hora.',
+  sem_destino: 'Pra quem? Escolhe um contato ou coloca o número com DDD.',
+};
+const MOTIVOS = { sessao_desconectada: 'o WhatsApp está desconectado', sem_internet: 'sem internet', contato_nao_encontrado: 'número sem WhatsApp', falha_envio: 'o WhatsApp recusou', limite_diario: 'limite diário atingido' };
 
-let st = null, editando = null, proposta = null, tela = null, qrVisto = null, avisoQr = null;
-let destino = null, escolhendo = false, filtro = 'pessoas', textoFinal = '';
-const fotos = new Map(); // jid → data URL | null (sem foto)
-const pedida = new URLSearchParams(location.search).get('tela');
+let st = null, editando = null, proposta = null;
 
 for (const [i, nome] of DIAS.entries()) {
   const l = document.createElement('label');
@@ -44,6 +40,54 @@ function el(tag, cls, text) {
   return e;
 }
 
+function render(s) {
+  st = s;
+  const [rotulo, cor] = ESTADOS[s.conexao.estado] || ESTADOS.desligado;
+  $('estado').textContent = s.conexao.estado === 'conectado' && s.conexao.numero ? `${rotulo} · ${s.conexao.numero}` : s.conexao.motivo && s.conexao.estado !== 'conectado' ? `${rotulo} · ${MOTIVOS[s.conexao.motivo] || s.conexao.motivo}` : rotulo;
+  $('estado').className = `chip ${cor}`;
+  const ligado = ['conectado', 'conectando', 'qr', 'reconectando'].includes(s.conexao.estado);
+  $('conectar').hidden = ligado;
+  $('desconectar').hidden = !ligado;
+  $('qrBox').hidden = !(s.conexao.estado === 'qr' && s.conexao.qr);
+  if (s.conexao.qr) $('qr').src = s.conexao.qr;
+  $('porDia').textContent = String(s.limites?.porDia || 40);
+  const dl = $('contatosLista');
+  dl.textContent = '';
+  for (const c of s.contatos) dl.append(Object.assign(document.createElement('option'), { value: c.tipo === 'grupo' ? `${c.nome} (grupo)` : c.nome }));
+  $('destinoDica').textContent = s.contatos.length ? `${s.contatos.length} ${s.contatos.length === 1 ? 'contato ou grupo' : 'contatos e grupos'} do seu WhatsApp. Número com DDD também funciona.` : 'Os nomes aparecem depois de conectar. Número com DDD sempre funciona.';
+
+  const atrasadas = s.itens.filter((i) => i.estado === 'atrasada');
+  $('atrasadasBox').hidden = !atrasadas.length;
+  $('atrasadas').textContent = '';
+  for (const i of atrasadas) {
+    const li = linha(i);
+    li.append(botao('Enviar agora', '', () => api.resolver(i.id, 'enviar').then(atualizar)), botao('Descartar', 'ghost', () => api.resolver(i.id, 'descartar').then(atualizar)));
+    $('atrasadas').append(li);
+  }
+  const lista = $('itens');
+  lista.textContent = '';
+  const ativas = s.itens.filter((i) => i.estado !== 'atrasada');
+  if (!ativas.length) lista.append(el('li', 'vazio', 'Nada programado. Agenda uma aí em cima.'));
+  for (const i of ativas) {
+    const li = linha(i);
+    li.append(botao('Editar', 'ghost', () => editar(i)), botao('Apagar', 'perigo', () => { if (confirm(`Apagar a mensagem para ${i.destino.nome}?`)) api.remove(i.id).then(atualizar); }));
+    lista.append(li);
+  }
+  const hist = $('historico');
+  hist.textContent = '';
+  if (!s.historico.length) hist.append(el('li', 'vazio', 'Nenhum envio ainda.'));
+  for (const i of s.historico) hist.append(el('li', null, `${i.estado === 'enviada' ? 'Enviada' : 'Cancelada'} · ${i.destino.nome} · “${i.texto.slice(0, 80)}”${i.enviadaEm ? ` · ${new Date(i.enviadaEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}`));
+}
+
+function linha(i) {
+  const li = el('li');
+  const info = el('div', 'info');
+  const status = i.estado === 'falhou' ? ` · falhou: ${MOTIVOS[i.ultimoErro] || 'erro'}` : i.estado === 'atrasada' ? ' · atrasada' : i.tentativas ? ` · tentativa ${i.tentativas} de 3` : '';
+  info.append(el('div', 'quem', `${i.destino.nome}${i.destino.tipo === 'grupo' ? ' (grupo)' : ''}`), el('div', 'quando', `${i.quandoTexto}${status}`), el('div', 'msg', i.texto));
+  li.append(info);
+  return li;
+}
+
 function botao(texto, cls, fn) {
   const b = el('button', cls, texto);
   b.type = 'button';
@@ -51,207 +95,16 @@ function botao(texto, cls, fn) {
   return b;
 }
 
-// ------------------------------------------------------------- navegação
+async function atualizar() { render(await api.state()); }
 
-const TELAS = ['conexao', 'mensagens', 'contatos', 'nova', 'confirmar'];
-function mostrar(nome) {
-  tela = nome;
-  for (const t of TELAS) $(`tela-${t}`).hidden = t !== nome;
-  const aba = nome === 'nova' || nome === 'confirmar' ? 'mensagens' : nome === 'contatos' && escolhendo ? 'mensagens' : nome;
-  for (const a of document.querySelectorAll('.aba')) {
-    if (a.dataset.tela === aba) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (nome === 'contatos') renderContatos();
-  if (nome === 'mensagens' && st) renderMensagens(st);
-}
-
-/** Ações que usam o WhatsApp: se a conexão não está confirmada, leva direto à tela de conexão. */
-function exigirConexao() {
-  if (st?.visivel.chave === 'conectado') return true;
-  escolhendo = false;
-  mostrar('conexao');
-  return false;
-}
-
-// ------------------------------------------------------------ foto/avatar
-
-/** Foto de perfil quando houver; sem foto, as iniciais (grupo com cantos quadrados). */
-function avatar(c) {
-  const a = el('span', `avatar${c.tipo === 'grupo' ? ' grupo' : ''}`);
-  a.dataset.jid = c.jid || '';
-  const f = c.jid ? fotos.get(c.jid) : null;
-  if (f) { const img = el('img'); img.alt = ''; img.src = f; a.append(img); } else a.textContent = c.iniciais || iniciais(c.nome);
-  return a;
-}
-
-/** Linha de quem recebe: nome em destaque e, logo abaixo, sempre o número (ou que é grupo). */
-function cartaoPessoa(c, { grande = false } = {}) {
-  const box = el('div', `pessoa${grande ? ' grande' : ''}`);
-  const dados = el('div', 'dados');
-  const nome = el('span', 'nome', c.nome);
-  if (c.tipo === 'grupo') nome.append(el('span', 'selo-tipo', 'Grupo'));
-  if (c.homonimo) nome.append(el('span', 'selo-igual', 'mesmo nome'));
-  dados.append(nome);
-  if (c.tipo === 'grupo') dados.append(el('span', 'numero', c.participantes ? `Grupo com ${c.participantes} participantes` : 'Grupo do WhatsApp'));
-  else dados.append(el('span', 'numero', c.numeroFormatado || formatarNumero(c.numero) || 'Número desconhecido'));
-  if (c.nomeAgenda && c.nomePerfil && c.nomePerfil !== c.nomeAgenda) dados.append(el('span', 'extra', `No perfil: ${c.nomePerfil}`));
-  else if (c.semNome) dados.append(el('span', 'extra', 'Sem nome salvo no celular'));
-  box.append(avatar(c), dados);
-  return box;
-}
-
-function pedirFotos(jids) {
-  const faltam = jids.filter((j) => !fotos.has(j)).slice(0, 60);
-  if (!faltam.length) return;
-  for (const j of faltam) fotos.set(j, null);
-  api.fotos(faltam).then(receberFotos).catch(() => {});
-}
-
-function receberFotos(mapa) {
-  for (const [jid, f] of Object.entries(mapa || {})) {
-    fotos.set(jid, f || null);
-    if (!f) continue;
-    for (const a of document.querySelectorAll('.avatar')) {
-      if (a.dataset.jid !== jid) continue;
-      const img = el('img');
-      img.alt = '';
-      img.src = f;
-      a.textContent = '';
-      a.append(img);
-    }
-  }
-}
-
-// --------------------------------------------------------------- conexão
-
-function renderConexao(s) {
-  const v = s.visivel;
-  const b = barra(v);
-  $('barra').className = `barra ${b.classe}`;
-  $('barraTitulo').textContent = b.titulo;
-  $('barraConta').textContent = b.conta;
-  for (const k of ['desconectado', 'qr', 'conectando', 'conectado', 'erro']) $(`c-${k}`).hidden = k !== v.chave;
-  $('jojoFala').textContent = s.jojo ? `JoJo: ${s.jojo}` : '';
-  $('porDia').textContent = String(s.limites?.porDia || 40);
-  if (v.chave === 'desconectado') {
-    $('fraseDesconectado').textContent = v.frase;
-    $('acaoDesconectado').textContent = v.acao?.rotulo || 'Conectar WhatsApp';
-  } else if (v.chave === 'qr') {
-    if (s.conexao.qr && $('qr').src !== s.conexao.qr) $('qr').src = s.conexao.qr;
-    // Código novo enquanto ela olha: aviso por alguns segundos.
-    if (qrVisto != null && s.conexao.qrRenovacao !== qrVisto) {
-      $('qrAviso').hidden = false;
-      clearTimeout(avisoQr);
-      avisoQr = setTimeout(() => { $('qrAviso').hidden = true; }, 6000);
-    }
-    qrVisto = s.conexao.qrRenovacao;
-    contarQr();
-  } else if (v.chave === 'conectando') {
-    $('fraseConectando').textContent = v.frase;
-    $('acaoConectando').hidden = !v.acao;
-    if (v.acao) $('acaoConectando').textContent = v.acao.rotulo;
-  } else if (v.chave === 'conectado') {
-    $('fraseConectado').textContent = v.frase;
-    $('contaNome').textContent = v.conta?.nome || 'O WhatsApp ainda não informou o nome';
-    $('contaNumero').textContent = v.conta?.numero ? formatarNumero(v.conta.numero) : '—';
-    $('contaConfirmado').textContent = v.confirmadoEm ? quandoFoi(v.confirmadoEm) : '—';
-  } else if (v.chave === 'erro') {
-    $('fraseErro').textContent = v.frase;
-    $('acaoErro').textContent = v.acao?.rotulo || 'Tentar de novo';
-  }
-  if (v.chave !== 'qr') { qrVisto = null; $('qrAviso').hidden = true; }
-}
-
-/** Contagem do QR, a cada segundo, pelo relógio do PC. */
-function contarQr() {
-  if (!st || st.visivel.chave !== 'qr') return;
-  const q = qrInfo(st.conexao, Date.now());
-  $('qrTempo').textContent = q.texto;
-  $('qrRenovando').hidden = !q.expirou;
-  $('qrBarra').style.width = `${Math.round(q.fracao * 100)}%`;
-}
-
-function contarReconexao() {
-  if (!st || !st.visivel.reconectando || !st.conexao.proximaEm) return;
-  const seg = Math.max(0, Math.ceil((st.conexao.proximaEm - Date.now()) / 1000));
-  $('fraseConectando').textContent = st.visivel.frase.replace(/Nova tentativa em \d+ s\./, seg ? `Nova tentativa em ${seg} s.` : 'Tentando agora.');
-}
-
-setInterval(() => { contarQr(); contarReconexao(); }, 1000);
-
-async function conectar() {
-  await api.connect();
-  await atualizar();
-}
-
-// --------------------------------------------------------------- contatos
-
-function renderContatos() {
-  if (!st) return;
-  const base = filtro === 'grupos' ? st.grupos : st.pessoas;
-  $('filtroPessoas').textContent = `Pessoas (${st.pessoas.length})`;
-  $('filtroGrupos').textContent = `Grupos (${st.grupos.length})`;
-  $('filtroPessoas').setAttribute('aria-pressed', String(filtro === 'pessoas'));
-  $('filtroGrupos').setAttribute('aria-pressed', String(filtro === 'grupos'));
-  $('contatosTitulo').textContent = escolhendo ? 'Escolha para quem vai' : 'Contatos';
-  $('voltarEscolha').hidden = !escolhendo;
-  const achados = filtrarContatos(base, $('buscaContato').value);
-  const lista = $('listaContatos');
-  lista.textContent = '';
-  const mostrados = achados.slice(0, MAX_LISTA);
-  for (const c of mostrados) {
-    const li = el('li');
-    const b = el('button', 'contato');
-    b.type = 'button';
-    b.setAttribute('aria-label', `${c.nome}, ${c.tipo === 'grupo' ? 'grupo' : c.numeroFormatado}`);
-    b.append(cartaoPessoa(c));
-    b.addEventListener('click', () => escolher(c));
-    li.append(b);
-    lista.append(li);
-  }
-  const vazio = !base.length
-    ? (st.visivel.chave === 'conectado' ? 'Os contatos chegam do celular nos primeiros minutos depois de conectar. Volte daqui a pouco.' : 'Conecte o WhatsApp para ver seus contatos.')
-    : !achados.length ? 'Ninguém com esse nome ou número.' : '';
-  $('contatosContagem').textContent = vazio || (achados.length > MAX_LISTA ? `Mostrando ${MAX_LISTA} de ${achados.length}. Busque pelo nome ou número para achar os outros.` : `${achados.length} ${filtro === 'grupos' ? (achados.length === 1 ? 'grupo' : 'grupos') : (achados.length === 1 ? 'pessoa' : 'pessoas')}`);
-  pedirFotos(mostrados.slice(0, 60).map((c) => c.jid));
-}
-
-/** Tocar num contato: escolhe o destino da mensagem (ou começa uma mensagem nova para ele). */
-function escolher(c) {
-  if (!exigirConexao()) return;
-  if (!escolhendo) { novaMensagem(); }
-  escolhendo = false;
-  destino = { ...c };
-  $('destinoNumero').value = '';
-  renderDestino();
-  mostrar('nova');
-  $('texto').focus();
-}
-
-// ---------------------------------------------------------- nova mensagem
-
-function renderDestino() {
-  const box = $('destinoEscolhido');
-  box.textContent = '';
-  box.hidden = !destino;
-  if (destino) box.append(cartaoPessoa(destino));
-  $('escolherContato').textContent = destino ? 'Trocar contato' : 'Escolher contato';
-}
-
-/** Destino do formulário: o contato escolhido ou o número digitado (com o nome, se for de um contato). */
-function destinoDoFormulario() {
-  const digitado = $('destinoNumero').value.trim();
-  if (digitado) {
-    const jid = numeroParaJid(digitado);
-    if (!jid) return { erro: 'numero_invalido' };
-    const conhecido = st.pessoas.find((p) => p.jid === jid);
-    if (conhecido) return { contato: conhecido, envio: { jid } };
-    const numero = jid.split('@')[0];
-    return { contato: { jid, tipo: 'contato', nome: 'Número digitado', numero, numeroFormatado: formatarNumero(numero), iniciais: '#' }, envio: { numero: digitado } };
-  }
-  if (destino) return { contato: destino, envio: { jid: destino.jid } };
-  return { erro: 'sem_destino' };
+function destinoDoCampo() {
+  const v = $('destinoBusca').value.trim();
+  if (!v) return null;
+  const nome = v.replace(/ \(grupo\)$/, '');
+  const c = st.contatos.find((x) => x.nome === nome && (x.tipo === 'grupo') === / \(grupo\)$/.test(v)) || st.contatos.find((x) => x.nome === nome);
+  if (c) return { jid: c.jid };
+  if (/\d{8,}/.test(v.replace(/\D/g, ''))) return { numero: v, nome: v };
+  return { jid: null };
 }
 
 function repeticaoDoCampo() {
@@ -264,8 +117,6 @@ function repeticaoDoCampo() {
 function limpar() {
   editando = null;
   proposta = null;
-  destino = null;
-  textoFinal = '';
   $('form').reset();
   $('modoExato').checked = true;
   $('modoReescrever').checked = false;
@@ -273,187 +124,70 @@ function limpar() {
   $('proposta').hidden = true;
   $('diasBox').hidden = true;
   $('formTitulo').textContent = 'Nova mensagem';
-  $('salvar').textContent = 'Continuar';
+  $('salvar').textContent = 'Agendar';
+  $('cancelarEdicao').hidden = true;
   $('erro').textContent = '';
   const agora = new Date(Date.now() + 10 * 60e3);
   $('data').value = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
   $('hora').value = `${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`;
-  renderDestino();
-}
-
-function novaMensagem() {
-  if (!exigirConexao()) return;
-  limpar();
-  mostrar('nova');
-  $('escolherContato').focus();
 }
 
 function editar(i) {
-  if (!exigirConexao()) return;
   limpar();
   editando = i.id;
   $('formTitulo').textContent = 'Editar mensagem';
-  destino = [...st.pessoas, ...st.grupos].find((c) => c.jid === i.destino.jid) || { ...i.destino, numero: i.destino.jid.split('@')[0] };
-  renderDestino();
+  $('salvar').textContent = 'Salvar';
+  $('cancelarEdicao').hidden = false;
+  $('destinoBusca').value = i.destino.tipo === 'grupo' ? `${i.destino.nome} (grupo)` : i.destino.nome;
+  if (!st.contatos.some((c) => c.jid === i.destino.jid)) $('destinoBusca').value = i.destino.jid.split('@')[0];
   $('texto').value = i.texto;
   $('data').value = i.data;
   $('hora').value = i.hora;
   $('repeticao').value = i.repeticao.tipo;
   $('diasBox').hidden = i.repeticao.tipo !== 'dias';
   for (const c of $('diasBox').querySelectorAll('input')) c.checked = i.repeticao.dias.includes(Number(c.dataset.dia));
-  mostrar('nova');
   $('texto').focus();
 }
 
-/** Antes de salvar: tela com foto, nome, número, texto e quando. Nada é salvo sem "Confirmar". */
-function confirmar(texto) {
+async function salvar(textoFinal) {
   $('erro').textContent = '';
-  if (!exigirConexao()) return;
-  const d = destinoDoFormulario();
-  if (d.erro) { $('erro').textContent = ERROS[d.erro]; return; }
+  const destino = destinoDoCampo();
+  if (!destino || (!destino.jid && !destino.numero)) { $('erro').textContent = destino ? ERROS.contato_nao_encontrado : ERROS.sem_destino; return; }
   if (!$('data').value || !$('hora').value) { $('erro').textContent = ERROS.sem_hora; return; }
-  textoFinal = texto;
-  const quando = { data: $('data').value, hora: $('hora').value, repeticao: repeticaoDoCampo() };
-  $('confirmarPara').textContent = '';
-  $('confirmarPara').append(cartaoPessoa(d.contato, { grande: true }));
-  $('confirmarTexto').textContent = texto;
-  $('confirmarQuando').textContent = descreverQuando(quando, new Date());
-  $('erroConfirmar').textContent = '';
-  $('confirmarSalvar').textContent = editando ? 'Confirmar e salvar' : 'Confirmar e agendar';
-  mostrar('confirmar');
-  $('confirmarSalvar').focus();
-}
-
-async function salvarConfirmado() {
-  $('erroConfirmar').textContent = '';
-  if (!exigirConexao()) return;
-  const d = destinoDoFormulario();
-  if (d.erro) { mostrar('nova'); $('erro').textContent = ERROS[d.erro]; return; }
-  $('confirmarSalvar').disabled = true;
-  const r = await api.save({ id: editando, destino: d.envio, texto: textoFinal, data: $('data').value, hora: $('hora').value, repeticao: repeticaoDoCampo() });
-  $('confirmarSalvar').disabled = false;
-  if (!r.ok) { $('erroConfirmar').textContent = ERROS[r.erro] || ERROS.invalido; return; }
+  const r = await api.save({ id: editando, destino, texto: textoFinal, data: $('data').value, hora: $('hora').value, repeticao: repeticaoDoCampo() });
+  if (!r.ok) { $('erro').textContent = ERROS[r.erro] || ERROS.invalido; return; }
   limpar();
-  mostrar('mensagens');
   await atualizar();
 }
 
-// -------------------------------------------------------------- mensagens
-
-/** Contato da mensagem com foto, nome e número (grupo: participantes), pelo que se sabe hoje. */
-function destinoDoItem(i) {
-  const atual = [...st.pessoas, ...st.grupos].find((c) => c.jid === i.destino.jid);
-  return atual || { ...i.destino, numero: i.destino.jid.split('@')[0] };
-}
-
-/** Uma mensagem: quem recebe, texto, quando, status e o botão certo. */
-function cartaoMensagem(i, { historico = false } = {}) {
-  const li = el('li', 'mensagem');
-  const sti = statusItem(i);
-  const topo = el('div', 'linha');
-  topo.append(cartaoPessoa(destinoDoItem(i)), el('span', 'espaco'), el('span', `status ${sti.classe}`, sti.rotulo));
-  li.append(topo, el('div', 'msg', i.texto));
-  const quando = historico
-    ? (i.enviadaEm ? `Enviada ${quandoFoi(i.enviadaEm)}` : 'Cancelada antes de sair')
-    : `${i.estado === 'atrasada' ? 'Era para' : 'Quando'}: ${i.quandoTexto}`;
-  li.append(el('div', 'quando', quando));
-  if (sti.frase) li.append(el('p', `motivo ${sti.classe}`, sti.frase));
-  if (historico) return li;
-  const acoes = el('div', 'linha acoes');
-  if (i.estado === 'atrasada') {
-    acoes.append(botao('Enviar agora', 'primario', () => { if (exigirConexao()) api.resolver(i.id, 'enviar').then(atualizar); }), botao('Descartar', 'ghost', () => api.resolver(i.id, 'descartar').then(atualizar)));
-  } else {
-    if (sti.acao === 'tentar') acoes.append(botao('Tentar de novo', 'primario', () => tentarDeNovo(i)));
-    acoes.append(botao('Editar', sti.acao === 'editar' ? 'primario' : 'ghost', () => editar(i)));
-    acoes.append(botao('Apagar', 'perigo', () => { if (confirm(`Apagar a mensagem para ${i.destino.nome} (${destinoDoItem(i).numeroFormatado || 'grupo'})?`)) api.remove(i.id).then(atualizar); }));
-  }
-  li.append(acoes);
-  return li;
-}
-
-async function tentarDeNovo(i) {
-  if (!exigirConexao()) return;
-  const r = await api.tentarDeNovo(i.id);
-  if (!r.ok && r.erro === 'desconectado') mostrar('conexao');
-  await atualizar();
-}
-
-function renderMensagens(s) {
-  $('semConexaoAviso').hidden = s.visivel.chave === 'conectado';
-  const atrasadas = s.itens.filter((i) => i.estado === 'atrasada');
-  $('atrasadasBox').hidden = !atrasadas.length;
-  $('atrasadas').textContent = '';
-  for (const i of atrasadas) $('atrasadas').append(cartaoMensagem(i));
-  const lista = $('itens');
-  lista.textContent = '';
-  const ativas = s.itens.filter((i) => i.estado !== 'atrasada');
-  if (!ativas.length) lista.append(el('li', 'vazio', 'Nada programado. Toque em Nova mensagem.'));
-  for (const i of ativas) lista.append(cartaoMensagem(i));
-  const hist = $('historico');
-  hist.textContent = '';
-  if (!s.historico.length) hist.append(el('li', 'vazio', 'Nenhum envio ainda.'));
-  for (const i of s.historico) hist.append(cartaoMensagem(i, { historico: true }));
-  if (tela === 'mensagens') pedirFotos([...s.itens, ...s.historico].map((i) => i.destino.jid).slice(0, 60));
-}
-
-// ------------------------------------------------------------------ geral
-
-function render(s) {
-  st = s;
-  if (!tela) mostrar(telaInicial(s.visivel.chave, pedida));
-  renderConexao(s);
-  renderMensagens(s);
-  if (tela === 'contatos') renderContatos();
-  // Ação de mensagem em andamento e a conexão caiu: volta para a conexão.
-  if ((tela === 'nova' || tela === 'confirmar') && s.visivel.chave !== 'conectado') mostrar('conexao');
-}
-
-async function atualizar() { render(await api.state()); }
-
-for (const a of document.querySelectorAll('.aba')) a.addEventListener('click', () => { escolhendo = false; mostrar(a.dataset.tela); });
-$('acaoDesconectado').addEventListener('click', conectar);
-$('acaoConectando').addEventListener('click', conectar);
-$('acaoErro').addEventListener('click', conectar);
-$('irMensagens').addEventListener('click', () => mostrar('mensagens'));
-$('irConexao').addEventListener('click', () => mostrar('conexao'));
-$('novaMensagem').addEventListener('click', novaMensagem);
-$('cancelarQr').addEventListener('click', async () => { await api.disconnect(); await atualizar(); });
-$('desconectar').addEventListener('click', async () => {
-  if (!confirm(`Desconectar o WhatsApp ${contaTexto(st?.visivel.conta) || ''} deste PC? A conexão e a lista de contatos salvas aqui são apagadas. As mensagens programadas continuam, mas não saem até conectar de novo.`)) return;
-  await api.disconnect();
-  await atualizar();
-});
-$('escolherContato').addEventListener('click', () => { if (!exigirConexao()) return; escolhendo = true; $('buscaContato').value = ''; mostrar('contatos'); $('buscaContato').focus(); });
-$('voltarEscolha').addEventListener('click', () => { escolhendo = false; mostrar('nova'); });
-$('destinoNumero').addEventListener('input', () => { if ($('destinoNumero').value.trim() && destino) { destino = null; renderDestino(); } });
-$('buscaContato').addEventListener('input', renderContatos);
-$('filtroPessoas').addEventListener('click', () => { filtro = 'pessoas'; renderContatos(); });
-$('filtroGrupos').addEventListener('click', () => { filtro = 'grupos'; renderContatos(); });
 $('repeticao').addEventListener('change', () => { $('diasBox').hidden = $('repeticao').value !== 'dias'; });
-$('modoExato').addEventListener('change', () => { $('modoReescrever').checked = false; $('jeitoBox').hidden = true; $('salvar').textContent = 'Continuar'; });
+$('modoExato').addEventListener('change', () => { $('modoReescrever').checked = false; $('jeitoBox').hidden = true; $('salvar').textContent = editando ? 'Salvar' : 'Agendar'; });
 $('modoReescrever').addEventListener('change', () => { $('modoExato').checked = false; $('jeitoBox').hidden = false; $('salvar').textContent = 'Reescrever'; });
-$('cancelarEdicao').addEventListener('click', () => { limpar(); mostrar('mensagens'); });
+$('cancelarEdicao').addEventListener('click', limpar);
 $('form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const texto = $('texto').value.trim();
   if (!texto) { $('erro').textContent = ERROS.texto_vazio; return; }
-  if (!$('modoReescrever').checked) return confirmar(texto);
-  // Reescrever: mostra a versão do JoJo e ela aprova antes de seguir.
+  if (!$('modoReescrever').checked) return salvar(texto);
+  // Reescrever: mostra a versão do JoJo e ela aprova antes de salvar.
   $('salvar').disabled = true;
   $('erro').textContent = '';
-  const r = await api.reescrever(texto, { destino: destinoDoFormulario().contato?.nome || '', jeitoJoJo: $('jeitoJoJo').checked });
+  const nome = $('destinoBusca').value.replace(/ \(grupo\)$/, '');
+  const r = await api.reescrever(texto, { destino: nome, jeitoJoJo: $('jeitoJoJo').checked });
   $('salvar').disabled = false;
   if (!r.ok) { $('erro').textContent = ERROS[r.erro] || ERROS.sem_modelo; return; }
   proposta = r.texto;
   $('propostaTexto').textContent = proposta;
   $('proposta').hidden = false;
 });
-$('usarProposta').addEventListener('click', () => proposta && confirmar(proposta));
-$('manterMinha').addEventListener('click', () => confirmar($('texto').value.trim()));
-$('confirmarSalvar').addEventListener('click', salvarConfirmado);
-$('confirmarVoltar').addEventListener('click', () => mostrar('nova'));
+$('usarProposta').addEventListener('click', () => proposta && salvar(proposta));
+$('manterMinha').addEventListener('click', () => salvar($('texto').value.trim()));
+$('conectar').addEventListener('click', async () => { render({ ...st, conexao: await api.connect() }); });
+$('desconectar').addEventListener('click', async () => {
+  if (!confirm('Desconectar o WhatsApp deste PC? A sessão e a lista de contatos salvas aqui são apagadas. As mensagens programadas continuam, mas não saem até conectar de novo.')) return;
+  await api.disconnect();
+  await atualizar();
+});
 api.onUpdate(render);
-api.onFotos(receberFotos);
-api.onTela((t) => { escolhendo = false; mostrar(t === 'conexao' || !st ? 'conexao' : telaInicial(st.visivel.chave, t)); });
 limpar();
 atualizar();

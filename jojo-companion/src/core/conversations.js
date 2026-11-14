@@ -179,7 +179,7 @@ export const COMMANDS = Object.freeze([
   { id: "agendar", cmd: "/agendar", aliases: ["/programar"], label: "Agendar no WhatsApp", desc: "Mensagem no WhatsApp com hora marcada", hint: "Eu mando no seu WhatsApp na hora marcada: /agendar Mãe | amanhã às 8h | bom dia. Também: \"manda 'bom dia' pra minha mãe amanhã às 8h\"" },
   { id: "agendados", cmd: "/agendados", aliases: ["/agendadas"], label: "Mensagens agendadas", desc: "Lista as mensagens programadas", hint: "Lista numerada das mensagens programadas no WhatsApp, com dia, hora e texto" },
   { id: "cancelar", cmd: "/cancelar", aliases: [], label: "Cancelar mensagem", desc: "Apaga uma mensagem programada", hint: "Apaga uma mensagem programada pelo número da lista: /cancelar 2 (veja os números em /agendados)" },
-  { id: "whatsapp", cmd: "/whatsapp", aliases: ["/zap"], label: "WhatsApp", desc: "Conecta e mostra o WhatsApp", hint: "Abre a janela do WhatsApp: estado da conexão, QR code com os passos, contatos com nome e número, e as mensagens programadas com status" }
+  { id: "whatsapp", cmd: "/whatsapp", aliases: ["/zap"], label: "WhatsApp", desc: "Conecta e mostra o WhatsApp", hint: "Abre a janela do WhatsApp: conectar pelo QR code, desconectar e ver, criar, editar ou apagar mensagens programadas" }
 ].map((c) => Object.freeze({ ...c, aliases: Object.freeze([...c.aliases]) })));
 
 /** Comandos do menu "/" (todos os visíveis, na ordem do registro). */

@@ -8,187 +8,92 @@
 </head>
 <body>
   <header class="top">
-    <img src="../../../assets/icons/app.png" alt="" width="40" height="40">
-    <h1>WhatsApp do JoJo</h1>
+    <img src="../../../assets/icons/app.png" alt="" width="48" height="48">
+    <div>
+      <h1>Mensagens no WhatsApp</h1>
+      <p class="sub">Eu mando no seu WhatsApp, na hora marcada, o que você agendar. Tudo fica só neste PC.</p>
+    </div>
   </header>
 
-  <!-- Estado da conexão: sempre visível, em todas as telas. -->
-  <div id="barra" class="barra" role="status" aria-live="polite">
-    <span class="ponto" aria-hidden="true"></span>
-    <strong id="barraTitulo">Desconectado</strong>
-    <span id="barraConta" class="barra-conta"></span>
-  </div>
+  <section class="card" id="conexao" aria-live="polite">
+    <div class="linha">
+      <span id="estado" class="chip">Desconectado</span>
+      <span class="espaco"></span>
+      <button type="button" id="conectar">Conectar</button>
+      <button type="button" id="desconectar" class="ghost" hidden>Desconectar</button>
+    </div>
+    <div id="qrBox" hidden>
+      <img id="qr" alt="QR code para conectar o WhatsApp" width="240" height="240">
+      <ol class="passos">
+        <li>No celular, abra o WhatsApp.</li>
+        <li>Toque em Configurações (ou nos três pontos) e em <strong>Aparelhos conectados</strong>.</li>
+        <li>Toque em <strong>Conectar um aparelho</strong> e aponte para este código.</li>
+      </ol>
+    </div>
+    <p class="aviso">Atenção: a conexão usa uma biblioteca não oficial do WhatsApp. O WhatsApp não aprova esse tipo de uso e existe risco de bloqueio do número. Para reduzir o risco eu só mando o que você agendou, com intervalo entre envios e no máximo <span id="porDia">40</span> por dia. Eu não leio nem guardo suas conversas.</p>
+  </section>
 
-  <nav class="abas" aria-label="Telas do WhatsApp">
-    <button type="button" class="aba" data-tela="conexao">Conexão</button>
-    <button type="button" class="aba" data-tela="mensagens">Mensagens</button>
-    <button type="button" class="aba" data-tela="contatos">Contatos</button>
-  </nav>
+  <section class="card" id="atrasadasBox" hidden>
+    <h2>Passou da hora enquanto eu estava fechado</h2>
+    <p class="sub">Eu não mando mensagem atrasada sozinho. Decida cada uma.</p>
+    <ul id="atrasadas" class="lista"></ul>
+  </section>
 
-  <main>
-    <!-- ======================= CONEXÃO: um bloco por estado ======================= -->
-    <section id="tela-conexao" class="tela" aria-label="Conexão">
-      <div id="c-desconectado" class="estado-bloco" hidden>
-        <h2>WhatsApp desconectado</h2>
-        <p class="frase" id="fraseDesconectado"></p>
-        <button type="button" class="primario" id="acaoDesconectado">Conectar WhatsApp</button>
-        <p class="aviso">Atenção: a conexão usa uma biblioteca não oficial do WhatsApp. O WhatsApp não aprova esse tipo de uso e existe risco de bloqueio do número. Para reduzir o risco eu só mando o que você agendou, com intervalo entre envios e no máximo <span id="porDia">40</span> por dia. Eu não leio nem guardo suas conversas.</p>
+  <section class="card">
+    <h2 id="formTitulo">Nova mensagem</h2>
+    <form id="form" autocomplete="off">
+      <label class="campo">Para quem
+        <input id="destinoBusca" type="text" list="contatosLista" placeholder="Nome do contato, grupo ou número com DDD" maxlength="80">
+        <datalist id="contatosLista"></datalist>
+      </label>
+      <p class="dica" id="destinoDica">Os nomes aparecem depois de conectar. Número com DDD sempre funciona.</p>
+      <label class="campo">Mensagem
+        <textarea id="texto" rows="3" maxlength="1000" placeholder="O texto que vai sair do seu WhatsApp"></textarea>
+      </label>
+      <div class="duas">
+        <label class="campo">Dia <input id="data" type="date"></label>
+        <label class="campo">Hora <input id="hora" type="time"></label>
       </div>
-
-      <div id="c-qr" class="estado-bloco qr-tela" hidden>
-        <h2>Escaneie o QR code</h2>
-        <figure class="qr-moldura">
-          <img id="qr" alt="QR code para conectar o WhatsApp deste PC" width="320" height="320">
-          <figcaption id="qrRenovando" class="qr-renovando" hidden>Gerando um código novo…</figcaption>
-        </figure>
-        <p class="qr-tempo" id="qrTempo"></p>
-        <div class="barra-tempo" aria-hidden="true"><span id="qrBarra"></span></div>
-        <p class="qr-aviso" id="qrAviso" role="status" hidden>Código renovado. O anterior expirou; use este.</p>
-        <ol class="passos" aria-label="Como escanear">
-          <li>No celular, abra o <strong>WhatsApp</strong>.</li>
-          <li>Toque em <strong>Configurações</strong> (iPhone) ou nos <strong>três pontos ⋮</strong> (Android) e depois em <strong>Aparelhos conectados</strong>.</li>
-          <li>Toque em <strong>Conectar um aparelho</strong>.</li>
-          <li>Aponte a câmera do celular para este código.</li>
-        </ol>
-        <button type="button" class="ghost" id="cancelarQr">Cancelar</button>
-      </div>
-
-      <div id="c-conectando" class="estado-bloco" hidden>
-        <h2>Conectando</h2>
-        <div class="girando" aria-hidden="true"></div>
-        <p class="frase" id="fraseConectando"></p>
-        <button type="button" class="primario" id="acaoConectando" hidden>Tentar agora</button>
-      </div>
-
-      <div id="c-conectado" class="estado-bloco sucesso" hidden>
-        <div class="selo" aria-hidden="true">✓</div>
-        <h2>Conectado</h2>
-        <p class="frase" id="fraseConectado"></p>
-        <dl class="conta">
-          <dt>Conta</dt><dd id="contaNome"></dd>
-          <dt>Número</dt><dd id="contaNumero"></dd>
-          <dt>Confirmado</dt><dd id="contaConfirmado"></dd>
-        </dl>
-        <button type="button" class="primario" id="irMensagens">Ver mensagens programadas</button>
-        <button type="button" class="perigo" id="desconectar">Desconectar este PC</button>
-      </div>
-
-      <div id="c-erro" class="estado-bloco erro-bloco" hidden>
-        <h2>Erro na conexão</h2>
-        <p class="frase" id="fraseErro"></p>
-        <button type="button" class="primario" id="acaoErro">Tentar de novo</button>
-      </div>
-
-      <p id="jojoFala" class="jojo"></p>
-    </section>
-
-    <!-- ============================== MENSAGENS ============================== -->
-    <section id="tela-mensagens" class="tela" aria-label="Mensagens programadas" hidden>
-      <div id="semConexaoAviso" class="faixa" hidden>
-        <span>O WhatsApp não está conectado. Nada sai até conectar.</span>
-        <button type="button" id="irConexao">Ir para a conexão</button>
-      </div>
-
-      <div class="linha cabecalho">
-        <h2>Programadas</h2>
-        <span class="espaco"></span>
-        <button type="button" class="primario" id="novaMensagem">Nova mensagem</button>
-      </div>
-
-      <section class="card" id="atrasadasBox" hidden>
-        <h3>Passou da hora enquanto eu estava fechado</h3>
-        <p class="sub">Eu não mando mensagem atrasada sozinho. Decida cada uma.</p>
-        <ul id="atrasadas" class="mensagens"></ul>
-      </section>
-
-      <ul id="itens" class="mensagens"></ul>
-
-      <h2>Últimas enviadas</h2>
-      <ul id="historico" class="mensagens historico"></ul>
-    </section>
-
-    <!-- ============================ NOVA MENSAGEM ============================ -->
-    <section id="tela-nova" class="tela card" aria-label="Nova mensagem" hidden>
-      <h2 id="formTitulo">Nova mensagem</h2>
-      <form id="form" autocomplete="off">
-        <fieldset class="destino">
-          <legend>Para quem</legend>
-          <div id="destinoEscolhido" class="pessoa" hidden></div>
-          <button type="button" class="primario" id="escolherContato">Escolher contato</button>
-          <label class="campo">ou digite um número com DDD
-            <input id="destinoNumero" type="tel" inputmode="tel" placeholder="42 99999-1234" maxlength="25">
-          </label>
-        </fieldset>
-        <label class="campo">Mensagem
-          <textarea id="texto" rows="3" maxlength="1000" placeholder="O texto que vai sair do seu WhatsApp"></textarea>
-        </label>
-        <div class="duas">
-          <label class="campo">Dia <input id="data" type="date"></label>
-          <label class="campo">Hora <input id="hora" type="time"></label>
-        </div>
-        <label class="campo">Repetir
-          <select id="repeticao">
-            <option value="uma">Uma vez</option>
-            <option value="diaria">Todo dia</option>
-            <option value="semanal">Toda semana (no mesmo dia)</option>
-            <option value="dias">Dias específicos</option>
-          </select>
-        </label>
-        <div id="diasBox" class="dias" hidden></div>
-        <fieldset class="modo">
-          <legend>Texto</legend>
-          <label><input type="radio" id="modoExato" checked> Enviar exatamente como escrevi</label>
-          <label><input type="radio" id="modoReescrever"> Quero que o JoJo reescreva (eu aprovo antes)</label>
-          <label id="jeitoBox" hidden><input type="checkbox" id="jeitoJoJo"> Com o jeito do JoJo</label>
-        </fieldset>
-        <div id="proposta" class="proposta" hidden>
-          <p class="sub">Versão do JoJo:</p>
-          <blockquote id="propostaTexto"></blockquote>
-          <div class="linha">
-            <button type="button" id="usarProposta">Usar esta</button>
-            <button type="button" id="manterMinha" class="ghost">Manter a minha</button>
-          </div>
-        </div>
-        <p id="erro" class="erro" role="alert"></p>
+      <label class="campo">Repetir
+        <select id="repeticao">
+          <option value="uma">Uma vez</option>
+          <option value="diaria">Todo dia</option>
+          <option value="semanal">Toda semana (no mesmo dia)</option>
+          <option value="dias">Dias específicos</option>
+        </select>
+      </label>
+      <div id="diasBox" class="dias" hidden></div>
+      <fieldset class="modo">
+        <legend>Texto</legend>
+        <label><input type="radio" id="modoExato" checked> Enviar exatamente como escrevi</label>
+        <label><input type="radio" id="modoReescrever"> Quero que o JoJo reescreva (eu aprovo antes)</label>
+        <label id="jeitoBox" hidden><input type="checkbox" id="jeitoJoJo"> Com o jeito do JoJo</label>
+      </fieldset>
+      <div id="proposta" class="proposta" hidden>
+        <p class="sub">Versão do JoJo:</p>
+        <blockquote id="propostaTexto"></blockquote>
         <div class="linha">
-          <button type="submit" class="primario" id="salvar">Agendar</button>
-          <button type="button" id="cancelarEdicao" class="ghost">Voltar</button>
+          <button type="button" id="usarProposta">Usar esta</button>
+          <button type="button" id="manterMinha" class="ghost">Manter a minha</button>
         </div>
-      </form>
-    </section>
+      </div>
+      <p id="erro" class="erro" role="alert"></p>
+      <div class="linha">
+        <button type="submit" id="salvar">Agendar</button>
+        <button type="button" id="cancelarEdicao" class="ghost" hidden>Cancelar edição</button>
+      </div>
+    </form>
+  </section>
 
-    <!-- ============================== CONTATOS ============================== -->
-    <section id="tela-contatos" class="tela" aria-label="Contatos" hidden>
-      <div class="linha cabecalho">
-        <h2 id="contatosTitulo">Contatos</h2>
-        <span class="espaco"></span>
-        <button type="button" class="ghost" id="voltarEscolha" hidden>Voltar</button>
-      </div>
-      <p class="sub" id="contatosSub">Nome como está salvo no seu celular; embaixo, sempre o número.</p>
-      <input id="buscaContato" class="busca" type="search" placeholder="Buscar por nome ou número" aria-label="Buscar contato por nome ou número" maxlength="60">
-      <div class="filtro" role="group" aria-label="Mostrar">
-        <button type="button" id="filtroPessoas" aria-pressed="true">Pessoas</button>
-        <button type="button" id="filtroGrupos" aria-pressed="false">Grupos</button>
-      </div>
-      <p class="sub" id="contatosContagem" aria-live="polite"></p>
-      <ul id="listaContatos" class="contatos"></ul>
-    </section>
+  <section class="card">
+    <h2>Programadas</h2>
+    <ul id="itens" class="lista"></ul>
+  </section>
 
-    <!-- ============================ CONFIRMAÇÃO ============================ -->
-    <section id="tela-confirmar" class="tela" aria-label="Confirmar mensagem" hidden>
-      <div class="estado-bloco confirmar">
-        <h2>Confere antes de agendar</h2>
-        <div id="confirmarPara" class="pessoa grande"></div>
-        <dl class="conta">
-          <dt>Mensagem</dt><dd id="confirmarTexto" class="msg"></dd>
-          <dt>Quando</dt><dd id="confirmarQuando"></dd>
-        </dl>
-        <p id="erroConfirmar" class="erro" role="alert"></p>
-        <button type="button" class="primario" id="confirmarSalvar">Confirmar e agendar</button>
-        <button type="button" class="ghost" id="confirmarVoltar">Voltar e corrigir</button>
-      </div>
-    </section>
-  </main>
+  <section class="card">
+    <h2>Últimas</h2>
+    <ul id="historico" class="lista curta"></ul>
+  </section>
 
   <script type="module" src="whatsapp.js"></script>
 </body>
