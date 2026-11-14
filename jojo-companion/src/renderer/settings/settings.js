@@ -69,8 +69,7 @@ function render(i) {
 // ---------------- Bloqueio do Discord: estado, extensão e histórico
 function renderDiscord(i) {
   const d = i.discord;
-  const box = document.getElementById('discordBlock');
-  box.hidden = !d;
+  // A seção fica sempre oculta da usuária; o estado continua sendo preenchido.
   if (!d) return;
   document.getElementById('discordStatus').textContent = d.ativo
     ? (d.ponte ? 'Ligado. Aplicativo e abas (com a extensão instalada).' : 'Ligado para o aplicativo. A ponte com o navegador não foi registrada; as abas não serão fechadas.')

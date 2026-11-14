@@ -1,7 +1,13 @@
-#needsHud { position: absolute; border-radius: 10px; border: 1px solid #b7cbd688; background: #edf5f9ed; color: #234151; padding: 5px 7px; font: 10px "Segoe UI", sans-serif; overflow: visible; }
-#needsHud #openCare { float: right; border: 0; background: transparent; color: #256c84; cursor: pointer; padding: 0; font: inherit; }
-#needsNumbers { display: block; font-variant-numeric: tabular-nums; }
-#needsHud .jojo-progress { background: none; border: 0; padding: 3px 0 0; font-size: 9px; }
+#needsHud { position: absolute; box-sizing: border-box; border-radius: 10px; border: 1px solid #b7cbd688; background: #edf5f9f2; color: #234151; padding: 6px 9px; font: 10.5px "Segoe UI", sans-serif; overflow: visible; }
+/* Duas linhas fixas, sem quebra: indicadores; nível + botão. Nada sai do quadro. */
+#needsHud .needs-linha { display: flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap; }
+#needsNumbers { justify-content: space-between; font-variant-numeric: tabular-nums; }
+#needsNumbers .needs-item { overflow: hidden; text-overflow: ellipsis; }
+#needsNumbers b { font-weight: 700; }
+#needsHud #openCare { flex: none; border: 1px solid #9cc3d2; border-radius: 6px; background: #ffffffcc; color: #256c84; cursor: pointer; padding: 1px 7px; font: inherit; font-weight: 600; }
+#needsHud #needsXp { flex: 1; min-width: 0; }
+#needsHud .jojo-progress { background: none; border: 0; padding: 4px 0 0; font-size: 10px; }
+#needsHud .jojo-progress > span:first-child { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #needsHud .jojo-xp-feedback { position: absolute; left: 0; right: 0; bottom: -20px; text-align: center; background: #ecf8ef; color: #28623e; border-radius: 5px; }
 #litter { height: 43px; margin-top: 4px; border-bottom: 2px solid #9bb9bf88; position: relative; }
 #litter:empty { display: none; }

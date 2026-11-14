@@ -37,10 +37,16 @@ MINHA DECISÃO SOBRE A CONVERSA (marque uma)
        frase (já foram 5 tentativas sem sucesso; pode levar muitas mais).
 [ ] C) Pode deixar a frase de desdém passar (remover essa parte da guarda).
 
+- 14/11: também entram na 0.47.1 o painel ao lado do JoJo sem corte e as seções
+  "Lista de Tarefas" e "Bloqueio do Discord" ocultas nas Configurações (valores mantidos).
+
 O QUE EU (USUÁRIA) JÁ FIZ OU VOU FAZER
 [ ] Instalei a 0.47.1 (ou mais nova) no PC e li o QR com o celular.
     Resultado: ____________________ (ex.: "Conectado com meu nome e número" ou o
     texto exato do erro no celular + foto).
+[ ] Conferi o painel ao lado do JoJo (inteiro, sem corte) e que Configurações não
+    mostra mais "Lista de Tarefas" nem "Bloqueio do Discord".
+    Resultado: ____________________
 [ ] Mandei uma mensagem agendada de teste para mim mesma ou para alguém de confiança.
     Resultado: ____________________
 

@@ -41,6 +41,13 @@ question", e a guarda de desdém (`src/core/dialogue/coherence.js:143`, commit `
 descarta a resposta inteira; às vezes também omite o prazo do chefe. Nada publicado,
 nenhuma tag criada. Decisão pendente da usuária em `docs/PROXIMA_SESSAO_WHATSAPP.md`.
 
+14/11: a pedido da usuária, painel do aquário ao lado do JoJo refeito (largura 250,
+duas linhas sem quebra; antes o texto quebrava e "Cuidados" saía cortado) e seções
+"Lista de Tarefas" e "Bloqueio do Discord" ocultas nas Configurações (`hidden`, como
+Personalidade e Sistema; valores salvos mantidos). Tutorial e fala do /discord deixam
+de mandar para essas seções. Testes: `test/unit/interface-oculta.test.js` e novo E2E em
+`test/e2e/needs.windows.mjs` (medidas reais do painel no Windows). Entra na 0.47.1.
+
 Próximo passo: com runner disponível, reexecutar o run (ou novo push), revisar as 44
 falas em `codex/ci-evidence-<run>-<tentativa>/…/semantic-review.json` dentro de 5 min
 e conferir os 44 E2E.

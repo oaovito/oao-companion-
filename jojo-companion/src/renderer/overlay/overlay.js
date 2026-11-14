@@ -133,7 +133,13 @@ function renderNeeds(s) {
   const panel = s.needsPanel;
   needsHud.classList.toggle('hidden', !panel); if (!panel) return;
   Object.assign(needsHud.style, { left: `${panel.rect.x}px`, top: `${panel.rect.y}px`, width: `${panel.rect.width}px`, height: `${panel.rect.height}px` });
-  document.getElementById('needsNumbers').textContent = `Saciedade ${panel.hunger} · Saúde ${panel.health} · Higiene ${panel.hygiene}`;
+  // Uma linha só, sem quebra: cada indicador num bloco próprio.
+  const numeros = document.getElementById('needsNumbers');
+  numeros.replaceChildren(...[['Saciedade', panel.hunger], ['Saúde', panel.health], ['Higiene', panel.hygiene]].map(([nome, valor]) => {
+    const item = document.createElement('span'); item.className = 'needs-item';
+    const forte = document.createElement('b'); forte.textContent = String(valor);
+    item.append(`${nome} `, forte); return item;
+  }));
   needsXp.render(panel.progress, { quiet: !!s.work || !!s.feedbackQuiet, animations: !s.reducedMotion });
   const current = new Set(panel.objects.map(o => o.id));
   for (const child of [...litterEl.children]) if (!current.has(child.dataset.id)) child.remove();

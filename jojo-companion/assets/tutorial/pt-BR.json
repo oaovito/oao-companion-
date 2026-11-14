@@ -209,7 +209,7 @@
           }
         },
         {
-          "texto": "A lista inteira abre na Central (bandeja, \"Abrir\"), com prioridade e repetição diária. O que ficar pendente eu te mostro no resumo da manhã seguinte. As opções da lista ficam em Configurações, \"Lista de Tarefas\"."
+          "texto": "A lista inteira abre na Central (bandeja, \"Abrir\"), com prioridade e repetição diária. O que ficar pendente eu te mostro no resumo da manhã seguinte."
         }
       ]
     },
@@ -654,14 +654,14 @@
       ],
       "passos": [
         {
-          "texto": "Isto vem desligado e só liga se você quiser. Ligado, se eu vir o Discord eu dou bronca, fecho e desinstalo o aplicativo; no navegador, fecho só a aba dele. Tudo vai pro histórico. Veja o estado.",
+          "texto": "Com o bloqueio ligado, se eu vir o Discord eu dou bronca, fecho e desinstalo o aplicativo; no navegador, fecho só a aba dele. Tudo vai pro histórico. Veja o estado.",
           "tente": "/discord",
           "espera": {
             "comando": "discord"
           }
         },
         {
-          "texto": "A chave fica em Configurações, Bloqueio do Discord, com a explicação completa antes dela. Leia antes de ligar. Outra coisa, separada: eu posso pedir pro Discord fechar quando você entra em Foco ou Trabalho; fica em Monitores."
+          "texto": "/discord mostra se o bloqueio está ligado e tudo que eu já vi e fiz. Outra coisa, separada: eu posso pedir pro Discord fechar quando você entra em Foco ou Trabalho; fica em Configurações, Monitores."
         }
       ]
     },

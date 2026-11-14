@@ -30,6 +30,12 @@
 - O nome do perfil não apaga mais o nome salvo na agenda; contatos só com identificador
   novo do WhatsApp (LID) ganham o número; a própria conta não aparece como contato.
 - Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.
+- O painel ao lado do JoJo (Saciedade, Saúde, Higiene, nível e Cuidados) não sai mais
+  cortado nem quebrado: duas linhas fixas, com espaço para tudo.
+
+### Remoções
+- As seções "Lista de Tarefas" e "Bloqueio do Discord" não aparecem mais nas
+  Configurações; os valores já escolhidos continuam valendo.
 
 ### Como testar
 - /whatsapp: conecte pelo QR code e confira o nome e o número em "Conectado".

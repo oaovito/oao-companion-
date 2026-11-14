@@ -3839,7 +3839,7 @@ export class Companion {
     return text;
   }
 
-  /** /discord: estado da chave e os últimos registros. Ligar e desligar é só nas Configurações. */
+  /** /discord: estado da chave e os últimos registros. A chave não muda pela conversa (seção oculta nas Configurações). */
   _discordCommand() {
     const info = typeof this.discordInfo === 'function' ? this.discordInfo() : { ativo: false, historico: [] };
     const linhas = info.historico.length ? info.historico.map((h) => `${h.quando}: ${h.texto}`) : [this._fala('discordHistoricoVazio')];
@@ -4591,7 +4591,7 @@ export class Companion {
     } else this.bubbleRect = null;
 
     if (this.needs && !this.work && !this.focus && !this.fullscreenHidden && !this.lolHidden && !this.suspended) {
-      needsPanel = placeAround(r.visual, { width: 210, height: this.needs.objects.length ? 112 : 58 }, wa,
+      needsPanel = placeAround(r.visual, { width: 250, height: this.needs.objects.length ? 120 : 66 }, wa,
         { order: ['bottom', 'left', 'right', 'top'], avoid: [toolbar?.rect, chat?.rect, bubble?.rect].filter(Boolean), gap: 8 });
       if (!needsPanel.forced) attachments.push(needsPanel); else needsPanel = null;
     }

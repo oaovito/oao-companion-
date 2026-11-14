@@ -36,3 +36,33 @@ test('cuidados Windows: 56 alimentos reais, saciedade, limpeza persistente e XP 
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });
+
+test('interface Windows: painel do aquário inteiro (sem quebra nem corte) e seções ocultas nas Configurações', { timeout: 120000 }, async () => {
+  const { app, win, errors } = await launch();
+  try {
+    await win.waitForFunction(() => !!window.__jojoRenderer.state.needsPanel, null, { timeout: 15000 });
+    await app.evaluate(() => { const n = globalThis.__jojo.needsService.model; n.mutate(() => { n.st.hunger = 100; n.st.health = 100; n.st.hygiene = 100; }); });
+    await win.waitForSelector('#needsHud:not(.hidden) #needsNumbers .needs-item');
+    const medida = await win.evaluate(() => {
+      const hud = document.getElementById('needsHud');
+      const linhas = [...hud.querySelectorAll('.needs-linha')].map((l) => ({ h: l.getBoundingClientRect().height, sw: l.scrollWidth, cw: l.clientWidth }));
+      const caixa = hud.getBoundingClientRect();
+      const filhos = [...hud.querySelectorAll('.needs-item, #openCare, #needsXp')].map((e) => e.getBoundingClientRect());
+      return { linhas, dentro: filhos.every((r) => r.left >= caixa.left - 0.5 && r.right <= caixa.right + 0.5 && r.bottom <= caixa.bottom + 0.5), textos: [...hud.querySelectorAll('.needs-item')].map((e) => e.textContent), sobra: hud.scrollHeight - hud.clientHeight };
+    });
+    assert.deepEqual(medida.textos, ['Saciedade 100', 'Saúde 100', 'Higiene 100']);
+    for (const l of medida.linhas) { assert.ok(l.h < 24, `linha quebrou: ${l.h}px`); assert.ok(l.sw <= l.cw + 1, `linha transborda: ${l.sw} > ${l.cw}`); }
+    assert.ok(medida.dentro, 'indicadores, nível e botão Cuidados dentro do quadro');
+    assert.ok(medida.sobra <= 1, `conteúdo maior que o quadro: ${medida.sobra}px`);
+
+    // Configurações: Lista de Tarefas e Bloqueio do Discord não aparecem; os valores salvos continuam.
+    const antes = await app.evaluate(() => ({ discord: globalThis.__jojo.store.get().discordBloqueio, todo: JSON.stringify(globalThis.__jojo.store.get().todo ?? null) }));
+    const aberta = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.openSettings());
+    const sw = await aberta; sw.on('pageerror', (e) => errors.push(e.message));
+    await sw.waitForSelector('#todoSettingsFields');
+    await new Promise((r) => setTimeout(r, 800));
+    assert.deepEqual(await sw.evaluate(() => ['#todoSettings', '#discordBlock'].map((q) => getComputedStyle(document.querySelector(q)).display)), ['none', 'none']);
+    assert.deepEqual(await app.evaluate(() => ({ discord: globalThis.__jojo.store.get().discordBloqueio, todo: JSON.stringify(globalThis.__jojo.store.get().todo ?? null) })), antes, 'esconder não muda a configuração');
+    assert.deepEqual(errors, []);
+  } finally { await quit(app); }
+});
