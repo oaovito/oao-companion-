@@ -45,13 +45,18 @@ test('interface Windows: painel do aquário inteiro (sem quebra nem corte) e se�
     await win.waitForSelector('#needsHud:not(.hidden) #needsNumbers .needs-item');
     const medida = await win.evaluate(() => {
       const hud = document.getElementById('needsHud');
-      const linhas = [...hud.querySelectorAll('.needs-linha')].map((l) => ({ h: l.getBoundingClientRect().height, sw: l.scrollWidth, cw: l.clientWidth }));
+      // Quebra de verdade: quantas linhas cada texto ocupa (a 2ª linha tem texto + barra por desenho).
+      const linhasDeTexto = (el) => { const r = document.createRange(); r.selectNodeContents(el); return new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size; };
+      const textos = [...hud.querySelectorAll('.needs-item, #openCare, #needsXp > span:first-child')];
+      const linhas = [...hud.querySelectorAll('.needs-linha')].map((l) => ({ sw: l.scrollWidth, cw: l.clientWidth }));
+      const quebras = textos.map((e) => [e.textContent, linhasDeTexto(e)]).filter(([, n]) => n !== 1);
       const caixa = hud.getBoundingClientRect();
       const filhos = [...hud.querySelectorAll('.needs-item, #openCare, #needsXp')].map((e) => e.getBoundingClientRect());
-      return { linhas, dentro: filhos.every((r) => r.left >= caixa.left - 0.5 && r.right <= caixa.right + 0.5 && r.bottom <= caixa.bottom + 0.5), textos: [...hud.querySelectorAll('.needs-item')].map((e) => e.textContent), sobra: hud.scrollHeight - hud.clientHeight };
+      return { linhas, quebras, dentro: filhos.every((r) => r.left >= caixa.left - 0.5 && r.right <= caixa.right + 0.5 && r.bottom <= caixa.bottom + 0.5), textos: [...hud.querySelectorAll('.needs-item')].map((e) => e.textContent), sobra: hud.scrollHeight - hud.clientHeight };
     });
     assert.deepEqual(medida.textos, ['Saciedade 100', 'Saúde 100', 'Higiene 100']);
-    for (const l of medida.linhas) { assert.ok(l.h < 24, `linha quebrou: ${l.h}px`); assert.ok(l.sw <= l.cw + 1, `linha transborda: ${l.sw} > ${l.cw}`); }
+    assert.deepEqual(medida.quebras, [], 'nenhum texto quebra em duas linhas');
+    for (const l of medida.linhas) assert.ok(l.sw <= l.cw + 1, `linha transborda: ${l.sw} > ${l.cw}`);
     assert.ok(medida.dentro, 'indicadores, nível e botão Cuidados dentro do quadro');
     assert.ok(medida.sobra <= 1, `conteúdo maior que o quadro: ${medida.sobra}px`);
 

@@ -163,3 +163,28 @@ test('janela: cada mensagem com contato, texto, quando, status, motivo e o botã
   const falas = JSON.parse(ler('assets/dialogue/pt-BR.json')).categories;
   for (const c of ['wa_tela_desconectado', 'wa_tela_qr', 'wa_tela_conectando', 'wa_tela_conectado', 'wa_tela_erro', 'wa_precisaConectar', 'wa_erroConexao']) assert.ok(falas[c]?.lines.length >= 1, c);
 });
+
+test('serviço: ao desconectar, contatos e sessão somem antes do aviso ao WhatsApp (sem janela com dados velhos)', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-wa-desc-'));
+  const filhos = [];
+  const s = createWhatsAppService({
+    userData: dir, companion: {}, spawn: () => { const c = fakeChild(); filhos.push(c); return c; }, toDataURL: async (t) => t,
+    setTimer: () => 1, clearTimer: () => {}, later: (fn, ms) => setTimeout(fn, Math.min(ms, 20)), requestTimeoutMs: 2e3,
+  });
+  s.connect();
+  const c = filhos[0];
+  c.emit('message', { type: 'status', estado: 'conectado', numero: '5542999990000' });
+  c.emit('message', { type: 'contatos', lista: [{ jid: MAE.jid, nomeAgenda: 'Mãe' }] });
+  fs.mkdirSync(path.join(dir, 'whatsapp', 'sessao'), { recursive: true });
+  fs.writeFileSync(path.join(dir, 'whatsapp', 'sessao', 'creds.json'), '{}');
+  const saindo = s.disconnect();
+  assert.deepEqual([s.state().conexao.estado, s.state().pessoas.length], ['desligado', 0], 'já na hora em que a tela mostra Desconectado');
+  assert.equal(fs.existsSync(path.join(dir, 'whatsapp', 'sessao')), false);
+  c.emit('message', { type: 'status', estado: 'desligado' }); // o processo antigo avisa depois: ignorado
+  c.emit('message', { type: 'contatos', lista: [{ jid: MAE.jid, nomeAgenda: 'Mãe' }] });
+  assert.equal(s.state().pessoas.length, 0, 'nada do processo antigo volta para a tela');
+  c.emit('message', { type: 'result', id: c.posted.find((m) => m.type === 'logout').id, ok: true });
+  await saindo;
+  assert.equal(c.posted.at(-1).type, 'stop');
+  fs.rmSync(dir, { recursive: true, force: true });
+});

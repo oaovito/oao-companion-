@@ -62,7 +62,9 @@ export function createWhatsAppService({ userData, companion, spawn, toDataURL, l
   };
 
   function onMessage(c, m) {
-    if (c !== child || !m || typeof m !== 'object') return;
+    if (!m || typeof m !== 'object') return;
+    // De um processo antigo só vale a resposta de um pedido (ex.: logout ao desconectar).
+    if (c !== child && m.type !== 'result') return;
     if (m.type === 'ready') c.postMessage({ type: 'start', dir: sessao });
     else if (m.type === 'log') log(['info', 'warn', 'error'].includes(m.nivel) ? m.nivel : 'info', `WhatsApp: ${String(m.texto || '').slice(0, 300)}`);
     else if (m.type === 'qr' && typeof m.qr === 'string') {
@@ -145,10 +147,9 @@ export function createWhatsAppService({ userData, companion, spawn, toDataURL, l
     });
   }
 
-  function request(type, payload = {}) {
-    if (!child) return Promise.resolve({ ok: false, erro: 'sessao_desconectada' });
+  function request(type, payload = {}, c = child) {
+    if (!c) return Promise.resolve({ ok: false, erro: 'sessao_desconectada' });
     const id = ++seq;
-    const c = child;
     return new Promise((resolve) => {
       const t = later(() => { if (pendentes.delete(id)) resolve({ ok: false, erro: 'sem_internet' }); }, requestTimeoutMs);
       pendentes.set(id, (r) => { clearTimeout(t); resolve(r); });
@@ -280,13 +281,16 @@ export function createWhatsAppService({ userData, companion, spawn, toDataURL, l
     },
     async disconnect() {
       pediuConexao = false;
-      if (child) await request('logout');
-      fs.rmSync(sessao, { recursive: true, force: true });
-      apagarLocais();
+      // Primeiro some tudo deste PC e a tela mostra "Desconectado"; depois o aviso ao WhatsApp.
       const c = child;
       child = null;
-      c?.postMessage({ type: 'stop' });
+      fs.rmSync(sessao, { recursive: true, force: true });
+      apagarLocais();
       setConexao({ estado: 'desligado', qr: null, numero: null, nome: null, motivo: null, codigo: null, confirmadoEm: null });
+      if (c) {
+        await request('logout', {}, c);
+        c.postMessage({ type: 'stop' });
+      }
       return { ...conexao };
     },
     state() {
