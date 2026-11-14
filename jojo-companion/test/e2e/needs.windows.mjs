@@ -19,7 +19,7 @@ test('cuidados Windows: 56 alimentos reais, saciedade, limpeza persistente e XP 
     await page.locator('.care-object[data-id="native-litter-fixture"]').click();
     await waitFor(app, () => globalThis.__jojo.needsService.model.st.objects.length === 0);
     const rewards = await app.evaluate(() => globalThis.__jojo.companion.progress.st.rewards.history.filter(r => r.source === 'cleanup'));
-    assert.equal(rewards.length, 1); assert.equal(rewards[0].amount, 250);
+    assert.equal(rewards.length, 1); assert.equal(rewards[0].amount, 2500); // XP ×10 desde 14/11/2026
     const second = await page.evaluate(() => window.appApi.needs({ action: 'clean', id: 'native-litter-fixture' }));
     assert.equal(second.result.duplicate, true);
     await app.evaluate(() => { const n = globalThis.__jojo.needsService.model; n.mutate(() => { n.st.hunger = 50; }); });

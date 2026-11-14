@@ -81,7 +81,7 @@ Na coluna "Peso / não repetir": "memória 30" quer dizer que o item entra no so
 | 62 | Poses desbloqueáveis | primeira vez que cada animação toca | — | — |
 | 63 | Acessórios | nível 2–7 | — | aparecem como camada às vezes (25 %) |
 | 64 | Álbum de momentos | animações raras e easter | — | últimas 60 |
-| 65 | Níveis do shape | XP (60 por nível) | — | 10 níveis, de Sardinha a Megalodon |
+| 65 | Níveis do shape | XP ×10 (600 por nível até o 10; curva até o 30; depois fixo) | — | 100 níveis com título próprio, de Sardinha a Megalodon Supremo; 238 bônus de XP com nome (máx. 1 por ação e 6 por dia) |
 | 66 | Medalhas por constância | 3, 7 e 30 dias seguidos | — | uma vez |
 | 67 | Missões diárias | 3 sorteadas por dia | o dia | opcionais, sem cobrança |
 | 68 | Mapa do aquário | temporadas visitadas | — | 7 áreas |

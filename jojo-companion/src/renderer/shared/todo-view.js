@@ -1,3 +1,4 @@
+import { xpVisivel, XP_ESCALA } from '../../core/xp-escala.js';
 // A mesma lista real na Central e no painel opcional; nenhum dado sai deste PC.
 export function node(tag, className, content) {
   const e = document.createElement(tag); if (className) e.className = className;
@@ -12,7 +13,7 @@ function select(options, value) {
 }
 function field(label, control) { const e = node('label', 'todo-field'); e.append(node('span', '', label), control); return e; }
 const frequencies = [['daily', 'Todos os dias'], ['weekdays', 'Dias da semana'], ['weekly', 'Semanal'], ['once', 'Uma vez'], ['never', 'Sem reinício']];
-const priorities = [['simple', 'Simples · 5 XP'], ['normal', 'Normal · 10 XP'], ['important', 'Importante · 20 XP']];
+const priorities = [['simple', `Simples · ${xpVisivel(5)} XP`], ['normal', `Normal · ${xpVisivel(10)} XP`], ['important', `Importante · ${xpVisivel(20)} XP`]];
 
 export class TodoView {
   constructor(root, api, { openSettings = () => {}, onProgress = () => {} } = {}) {
@@ -60,7 +61,7 @@ export class TodoView {
   render(s) {
     this.state = s; this.root.dataset.theme = s.settings.theme; this.root.classList.toggle('no-animation', !s.settings.animations);
     this.date.value = s.day;
-    this.summary.textContent = `${s.completed}/${s.total} concluídas · ${s.pending} pendentes${s.settings.showPercent ? ` · ${s.percent}%` : ''}${s.settings.xpEnabled ? ` · +${s.xpToday} XP hoje` : ''}`;
+    this.summary.textContent = `${s.completed}/${s.total} concluídas · ${s.pending} pendentes${s.settings.showPercent ? ` · ${s.percent}%` : ''}${s.settings.xpEnabled ? ` · +${xpVisivel(s.xpToday)} XP hoje` : ''}`;
     this.progress.value = s.percent;
     const selected = this.category.value; this.category.replaceChildren(new Option('Todas as categorias', ''));
     for (const c of s.categories) this.category.add(new Option(c.name, c.id)); this.category.value = selected;
@@ -109,7 +110,7 @@ export class TodoView {
     const category = select([['', 'Sem categoria'], ...this.state.categories.map(c => [c.id, c.name])], t?.category || '');
     const frequency = select(frequencies, t?.frequency || this.state.settings.defaultFrequency);
     const due = input('date', t?.due || ''); const time = input('time', t?.time || '');
-    const xp = input('number', t?.xp ?? ''); xp.min = 0; xp.max = 50; xp.placeholder = 'Usar categoria / prioridade';
+    const xp = input('number', t?.xp == null ? '' : xpVisivel(t.xp)); xp.min = 0; xp.max = xpVisivel(50); xp.step = XP_ESCALA; xp.placeholder = 'Usar categoria / prioridade';
     const reminder = input('checkbox'); reminder.checked = t?.reminder !== false;
     const weekdays = node('div', 'todo-weekdays'); const dayInputs = [];
     for (const [day, label] of ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].entries()) {
@@ -118,7 +119,7 @@ export class TodoView {
     const dayVisibility = () => { weekdays.hidden = frequency.value !== 'weekdays'; };
     frequency.addEventListener('change', dayVisibility); dayVisibility();
     form.append(field('Título', title), field('Descrição', description), field('Prioridade', priority), field('Categoria', category), field('Repetir', frequency), weekdays,
-      field('Data / prazo opcional', due), field('Horário opcional', time), field('Lembrete silencioso', reminder), field('XP personalizado (0–50)', xp));
+      field('Data / prazo opcional', due), field('Horário opcional', time), field('Lembrete silencioso', reminder), field(`XP personalizado (0–${xpVisivel(50)})`, xp));
     const message = node('p', 'todo-error'); message.setAttribute('role', 'alert'); form.append(message);
     const actions = node('div', 'todo-actions');
     const save = node('button', 'todo-primary', 'Salvar'); save.type = 'submit'; actions.append(save, button('Cancelar', close));
@@ -136,7 +137,7 @@ export class TodoView {
     form.addEventListener('submit', async e => {
       e.preventDefault(); save.disabled = true;
       const data = { title: title.value, description: description.value, priority: priority.value, category: category.value, frequency: frequency.value,
-        due: due.value, time: time.value, reminder: reminder.checked, xp: xp.value === '' ? null : Number(xp.value), weekdays: dayInputs.flatMap((x, i) => x.checked ? [i] : []) };
+        due: due.value, time: time.value, reminder: reminder.checked, xp: xp.value === '' ? null : Math.round(Number(xp.value) / XP_ESCALA), weekdays: dayInputs.flatMap((x, i) => x.checked ? [i] : []) };
       const r = await this.request(t ? 'edit' : 'add', data, t?.id); save.disabled = false;
       if (r?.error) message.textContent = r.error; else close();
     });
@@ -146,8 +147,8 @@ export class TodoView {
     const { dialog, form, close } = this.modal('Categorias'); const list = node('div');
     for (const c of this.state.categories) {
       const name = input('text', c.name); name.setAttribute('aria-label', 'Nome da categoria'); name.maxLength = 80;
-      const xp = input('number', c.xp ?? ''); xp.min = 0; xp.max = 50; xp.setAttribute('aria-label', 'XP da categoria');
-      const row = node('div', 'todo-actions'); row.append(name, xp, button('Salvar', () => this.request('category', { name: name.value, xp: xp.value === '' ? null : Number(xp.value) }, c.id)), button('Excluir', async () => {
+      const xp = input('number', c.xp == null ? '' : xpVisivel(c.xp)); xp.min = 0; xp.max = xpVisivel(50); xp.step = XP_ESCALA; xp.setAttribute('aria-label', 'XP da categoria');
+      const row = node('div', 'todo-actions'); row.append(name, xp, button('Salvar', () => this.request('category', { name: name.value, xp: xp.value === '' ? null : Math.round(Number(xp.value) / XP_ESCALA) }, c.id)), button('Excluir', async () => {
         if (this.state.settings.confirmDelete && !confirm(`Excluir a categoria “${c.name}”? As tarefas serão mantidas.`)) return;
         await this.request('remove-category', true, c.id); close();
       })); list.append(row);
@@ -199,6 +200,6 @@ export class TodoSettings {
         if (r?.snapshot) { const v = r.snapshot.settings[key]; if (type === 'checkbox') control.checked = v; else control.value = v; }
       }); this.root.append(field(label, control));
     }
-    this.root.append(node('p', 'hint', 'XP: 5 / 10 / 20 por prioridade; +50 pela rotina completa e +150 por sete dias distintos. Limite: 500 XP/dia. Personalize categorias e tarefas na lista (até 50 XP por tarefa). Desmarcar não retira XP e remarcar não premia novamente.'), error);
+    this.root.append(node('p', 'hint', `XP: ${xpVisivel(5)} / ${xpVisivel(10)} / ${xpVisivel(20)} por prioridade; +${xpVisivel(50)} pela rotina completa e +${xpVisivel(150)} por sete dias distintos. Limite: ${xpVisivel(500)} XP/dia. Personalize categorias e tarefas na lista (até ${xpVisivel(50)} XP por tarefa). Desmarcar não retira XP e remarcar não premia novamente.`), error);
   }
 }

@@ -26,7 +26,25 @@ export class Progress {
     this.now = now;
     this.getQuiet = getQuiet;
     this.wallNow = wallNow; this.monotonicNow = monotonicNow; this.resetRewardClock();
+    this._migrarEscala(!!state);
   }
+
+  /**
+   * Escala de XP (pedido de 14/11/2026: números ×10, mesmo ritmo). O XP já guardado
+   * e o histórico de recompensas passam para a escala nova uma única vez, então o
+   * nível de quem já usava não muda.
+   */
+  _migrarEscala(salvar) {
+    const nova = this.data?.escalaXp || 1, antiga = this.st.escalaXp || 1;
+    if (nova === antiga) return;
+    const f = nova / antiga;
+    this.st.xp = Math.round((this.st.xp || 0) * f);
+    if (this.st.rewards?.history) this.st.rewards.history = this.st.rewards.history.map((e) => ({ ...e, amount: Math.round((e.amount || 0) * f) }));
+    this.st.escalaXp = nova;
+    if (salvar) { try { this.save(this.st); } catch { /* fica para o próximo salvamento */ } }
+  }
+
+  get escala() { return this.data?.escalaXp || 1; }
 
   resetRewardClock() { this.rewardClock = { wall: this.wallNow(), mono: this.monotonicNow() }; }
   clockHealthy() { return Math.abs((this.wallNow() - this.rewardClock.wall) - (this.monotonicNow() - this.rewardClock.mono)) < 5 * 60000; }
@@ -44,7 +62,11 @@ export class Progress {
     const curve = this.data.curve;
     if (!curve || level <= curve.legacyLevels) return (level - 1) * this.data.xpPorNivel;
     const k = level - curve.legacyLevels;
-    return (curve.legacyLevels - 1) * this.data.xpPorNivel + curve.increment * k * (k + 3) / 2;
+    // Até capFromLevel cada nível pede um pouco mais; depois, o mesmo tanto (sem escalada sem fim).
+    const teto = curve.capFromLevel ? curve.capFromLevel - curve.legacyLevels : Infinity;
+    const kc = Math.min(k, teto);
+    const base = (curve.legacyLevels - 1) * this.data.xpPorNivel + curve.increment * kc * (kc + 3) / 2;
+    return k <= teto ? base : base + (k - teto) * curve.increment * (teto + 1);
   }
 
   get nomeNivel() {
@@ -79,28 +101,90 @@ export class Progress {
     }
     const sequence = this.st.legacyRewardSeq = (this.st.legacyRewardSeq || 0) + 1;
     const labels = { gesto: 'Carinho e interação', chat: 'Conversa', estimulo: 'Interação', poseNova: 'Nova animação descoberta', jogoVitoria: 'Mini-jogo concluído', jogoParticipacao: 'Participação no mini-jogo', foco: 'Bloco de foco', missao: 'Missão cumprida', diaNovo: 'Novo dia de atividade' };
-    try { this.award({ id: `legacy:${day}:${sequence}`, amount, source: 'interaction', day, label: labels[kind] || 'Atividade do JoJo' }); }
+    try { this.award({ id: `legacy:${day}:${sequence}`, amount, source: 'interaction', day, label: labels[kind] || 'Atividade do JoJo', atividade: kind }); }
     catch (e) { this.st = previous; throw e; }
     return this.nivel > beforeLevel ? { subiu: true, nivel: this.nivel, nome: this.nomeNivel } : null;
   }
 
   /** Recompensa externa identificada: confirmação durável antes de notificar a UI. */
-  award({ id, amount, source, day, label = '' }) {
+  award({ id, amount, source, day, label = '', atividade = null }) {
     if (typeof id !== 'string' || id.length > 500 || !id || !Number.isInteger(amount) || amount < 0 || amount > 500 || !/^\d{4}-\d{2}-\d{2}$/.test(day)) throw new Error('Recompensa inválida.');
     if (this.st.rewards?.ids?.[id]) return { duplicate: true, amount: 0 };
     if (!this.clockHealthy()) throw new Error('O relógio mudou; não confirmei XP com um intervalo inválido.');
     const before = this.st; const level = this.nivel;
     this.st = structuredClone(before);
     this.st.rewards ||= { ids: {}, history: [], sequence: 0 };
-    this.st.xp += amount;
-    const event = { id, amount, source, day, label: String(label).slice(0, 200), at: this.now(), sequence: ++this.st.rewards.sequence, level: this.nivel, levelUp: this.nivel > level };
+    // Valor nominal da fonte × escala: o crédito e o histórico já saem na escala nova.
+    const credito = amount * this.escala;
+    this.st.xp += credito;
+    const event = { id, amount: credito, source, day, label: String(label).slice(0, 200), at: this.now(), sequence: ++this.st.rewards.sequence, level: this.nivel, levelUp: this.nivel > level };
     this.st.rewards.ids[id] = true;
     this.st.rewards.history.push(event);
     this.st.rewards.history = this.st.rewards.history.slice(-500);
     try { this.save(this.st, { immediate: true }); }
     catch (e) { this.st = before; throw e; }
     this.onAward?.(event);
+    if (source !== 'bonus') this._bonusDepois(atividade || source, day);
     return event;
+  }
+
+  // ------------------------------------------------------------ bônus de XP
+
+  /** Todos os bônus com nome próprio: cada regra do catálogo para cada atividade. */
+  get bonusCatalogo() {
+    const b = this.data?.bonus;
+    if (!b) return [];
+    return this._bonusCat ||= b.regras.flatMap((r) => Object.entries(b.atividades).map(([a, nome]) => ({ id: `${r.id}:${a}`, regra: r, atividade: a, nome: r.nome.replace('{A}', nome), xp: r.xp })));
+  }
+
+  /**
+   * Conta a atividade e escolhe no máximo um bônus para ela: o de maior valor
+   * entre os que casam e ainda cabem no teto do dia. Muda só this.st.bonus.
+   */
+  _escolherBonus(atividade, day) {
+    const b = this.data.bonus;
+    const agora = new Date(this.wallNow());
+    const st = this.st.bonus ||= { dia: null, n: {}, qtd: 0, xp: 0, feitos: {}, vistos: {}, total: {}, ultimoDia: {}, seq: {}, ultimo: null };
+    if (st.dia !== day) Object.assign(st, { dia: day, n: {}, qtd: 0, xp: 0, feitos: {} });
+    const nHoje = st.n[atividade] = (st.n[atividade] || 0) + 1;
+    const total = st.total[atividade] = (st.total[atividade] || 0) + 1;
+    if (nHoje === 1) {
+      const ontem = dayKey(new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() - 1));
+      st.seq[atividade] = st.ultimoDia[atividade] === ontem ? (st.seq[atividade] || 0) + 1 : 1;
+      st.ultimoDia[atividade] = day;
+    }
+    const combo = !!st.ultimo && st.ultimo.atividade !== atividade && this.wallNow() - st.ultimo.at <= b.limites.comboMin * 60e3;
+    st.ultimo = { atividade, at: this.wallNow() };
+    const h = agora.getHours(), dow = agora.getDay();
+    const casa = (q) => (q.nDoDia == null || q.nDoDia === nHoje)
+      && (q.janela == null || (h >= q.janela[0] && h < q.janela[1]))
+      && (q.diasSemana == null || q.diasSemana.includes(dow))
+      && (q.sequencia == null || (nHoje === 1 && st.seq[atividade] === q.sequencia))
+      && (q.marco == null || total === q.marco)
+      && (!q.combo || combo);
+    if (st.qtd >= b.limites.porDia) return null;
+    const cabe = b.limites.xpPorDia - st.xp;
+    const opcoes = this.bonusCatalogo.filter((c) => c.atividade === atividade && c.xp <= cabe && !st.feitos[c.id] && !(c.regra.quando.marco && st.vistos[c.id]) && casa(c.regra.quando));
+    if (!opcoes.length) return null;
+    const escolhido = opcoes.reduce((m, c) => (c.xp > m.xp ? c : m));
+    st.feitos[escolhido.id] = true;
+    st.vistos[escolhido.id] ||= day;
+    st.qtd += 1;
+    st.xp += escolhido.xp;
+    return escolhido;
+  }
+
+  /** Depois de uma recompensa: conta a atividade e, se couber, credita um bônus. Nunca derruba a recompensa original. */
+  _bonusDepois(atividade, day) {
+    if (!this.data?.bonus?.atividades?.[atividade]) return;
+    const antes = this.st;
+    let escolhido;
+    try { this.st = structuredClone(antes); escolhido = this._escolherBonus(atividade, day); } catch { this.st = antes; return; }
+    try {
+      if (!escolhido) { this.save(this.st); return; }
+      const id = escolhido.regra.quando.marco ? `bonus:marco:${escolhido.id}` : `bonus:${day}:${escolhido.id}`;
+      this.award({ id, amount: escolhido.xp, source: 'bonus', day, label: `Bônus: ${escolhido.nome}` });
+    } catch { this.st = antes; }
   }
 
   /** Conta um evento e devolve as conquistas novas. */
@@ -237,6 +321,13 @@ export class Progress {
       reward: this.st.rewards?.history?.at(-1) || null,
       rewardHistory: this.st.rewards?.history?.slice(-30).reverse() || [],
       xpPorNivel: this.data.xpPorNivel,
+      niveisTotal: this.data.niveis.length,
+      bonus: this.data.bonus ? {
+        descobertos: Object.keys(this.st.bonus?.vistos || {}).length,
+        total: this.bonusCatalogo.length,
+        hoje: this.st.bonus?.dia === dayKey(date) ? this.st.bonus.qtd : 0,
+        porDia: this.data.bonus.limites.porDia,
+      } : null,
     };
   }
 }

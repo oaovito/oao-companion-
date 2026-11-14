@@ -1,6 +1,7 @@
 // Central do JoJo: conversas com status (Running / Needs input / Ready / Blocked),
 // chat e menu de comandos "/" (inclui Wake Pet / Tuck Away Pet).
 import { TodoView } from '../shared/todo-view.js';
+import { xpVisivel } from '../../core/xp-escala.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { CareView } from '../shared/care-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -113,6 +114,7 @@ function renderColecao() {
   fill.style.width = `${c.percentXP ?? Math.min(100, Math.round(((c.xp % (c.xpPorNivel || 60)) / (c.xpPorNivel || 60)) * 100))}%`;
   bar.append(fill);
   nivel.append(bar, el('p', null, c.resumo));
+  if (c.bonus) nivel.append(el('p', 'muted', `Bônus de XP descobertos: ${c.bonus.descobertos} de ${c.bonus.total} · hoje ${c.bonus.hoje} de ${c.bonus.porDia}`));
   const acoes = el('div', 'card');
   acoes.append(el('h3', null, 'Agora'));
   const row = el('div', 'buttons');
@@ -288,10 +290,10 @@ function renderDarkest() {
   status.append(el('p', 'muted', `Instalação Steam: ${d.detection?.installed == null ? 'não verificada' : d.detection.installed ? 'encontrada' : 'não encontrada'} · Executável: ${d.detection?.executable ? 'identificado' : 'não confirmado'} · Sessão: ${d.active ? 'ativa' : 'pausada'}.`));
   if (d.detection?.reason === 'installation_not_verified') status.append(el('p', 'muted', 'Darkest.exe encontrado, mas a instalação do AppID 262060 não pôde ser validada. Atualize as bibliotecas Steam.'));
   const numbers = el('div', 'card'); numbers.append(el('h3', null, 'Seu registro real'));
-  for (const line of [`${d.sessions} sessões válidas · ${d.days} dias distintos · sequência de ${d.streak} dias`, `${Math.floor(d.todayMs / 60000)} min ativos hoje · ${Math.floor(d.activeMs / 60000)} min no total`, `+${d.xpToday}/${d.cap} XP hoje · ${d.xpTotal} XP no total`]) numbers.append(el('p', null, line));
-  if (d.pendingXp) numbers.append(el('p', 'muted', `${d.pendingXp} XP aguardam confirmação no disco.`));
+  for (const line of [`${d.sessions} sessões válidas · ${d.days} dias distintos · sequência de ${d.streak} dias`, `${Math.floor(d.todayMs / 60000)} min ativos hoje · ${Math.floor(d.activeMs / 60000)} min no total`, `+${xpVisivel(d.xpToday)}/${xpVisivel(d.cap)} XP hoje · ${xpVisivel(d.xpTotal)} XP no total`]) numbers.append(el('p', null, line));
+  if (d.pendingXp) numbers.append(el('p', 'muted', `${xpVisivel(d.pendingXp)} XP aguardam confirmação no disco.`));
   const achievement = el('div', 'card'); achievement.append(el('h3', null, d.achievement ? '◆ O Herdeiro da Ruína' : '◇ O Herdeiro da Ruína'), el('p', null, `${Math.min(7, d.days)}/7 dias distintos com sessão válida.`));
-  const rules = el('div', 'card'); rules.append(el('h3', null, 'Tocha acesa, registro honesto.'), el('p', 'muted', 'Darkest Dungeon original da Steam. Sessão válida após 1 minuto ativo; +15 XP, primeira do dia +50, marcos de 15/30/60 min +25/+40/+80. Só primeiro plano, sem inatividade prolongada. Menus e pausas internas não podem ser distinguidos sem ler o jogo. Não conto tempo com o JoJo fechado.'));
+  const rules = el('div', 'card'); rules.append(el('h3', null, 'Tocha acesa, registro honesto.'), el('p', 'muted', 'Darkest Dungeon original da Steam. Sessão válida após 1 minuto ativo; +150 XP, primeira do dia +500, marcos de 15/30/60 min +250/+400/+800. Só primeiro plano, sem inatividade prolongada. Menus e pausas internas não podem ser distinguidos sem ler o jogo. Não conto tempo com o JoJo fechado.'));
   const steam = el('div', 'card'); steam.id = 'steamStatus'; const s = st.steam;
   const states = { scanning: 'verificando', unavailable: 'indisponível', open: 'aberta', closed: 'fechada' };
   steam.append(el('h2', null, `Steam: ${s?.installed === false && s?.status !== 'unavailable' ? 'não encontrada' : states[s?.status] || 'indisponível'}`));

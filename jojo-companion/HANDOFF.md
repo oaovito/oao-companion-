@@ -48,6 +48,15 @@ Personalidade e Sistema; valores salvos mantidos). Tutorial e fala do /discord d
 de mandar para essas seções. Testes: `test/unit/interface-oculta.test.js` e novo E2E em
 `test/e2e/needs.windows.mjs` (medidas reais do painel no Windows). Entra na 0.47.1.
 
+14/11: progressão ×10 a pedido da usuária (plano escolhido: números ×10, ritmo igual).
+100 níveis com título próprio (`assets/catalog/progressao.json`), escala `escalaXp: 10`
+aplicada só no crédito (`Progress.award`); fontes (tarefas, cuidados, Darkest) seguem com
+valores e tetos nominais e as telas mostram ×10 via `src/core/xp-escala.js`. XP guardado
+e histórico convertidos uma vez (`st.escalaXp`). Limiares até o nível 30 = antigos ×10;
+depois 25.200 por nível. 238 bônus (17 regras × 14 atividades), máx. 1 por ação, 6 e 60
+nominais (600 na tela) por dia. Testes: `test/unit/progressao-xp10.test.js`; três testes
+antigos tiveram só o número esperado ×10 (needs, darkest-dungeon, E2E de tarefas/cuidados).
+
 Próximo passo: com runner disponível, reexecutar o run (ou novo push), revisar as 44
 falas em `codex/ci-evidence-<run>-<tentativa>/…/semantic-review.json` dentro de 5 min
 e conferir os 44 E2E.

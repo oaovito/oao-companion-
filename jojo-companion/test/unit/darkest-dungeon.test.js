@@ -69,7 +69,7 @@ test('Darkest: sugestão uma vez por dia 06–21, persistente, frases variadas e
 });
 test('Darkest: dados de chat refletem registro real e distinguem o segundo jogo', () => {
   const e = env(); assert.match(e.dd.chat('Já joguei hoje?'), /Ainda não/); assert.match(e.dd.chat('Quanto tempo joguei?'), /0 minuto/);
-  e.play(61000); assert.match(e.dd.chat('Já joguei hoje?'), /Sim, há/); assert.match(e.dd.chat('Quanto XP ganhei jogando?'), /65 XP/);
+  e.play(61000); assert.match(e.dd.chat('Já joguei hoje?'), /Sim, há/); assert.match(e.dd.chat('Quanto XP ganhei jogando?'), /650 XP/);
   assert.match(e.dd.chat('Quero jogar Darkest Dungeon II'), /não entra/); assert.equal(e.dd.chat('Qual é minha agenda?'), null);
 });
 test('Darkest: outbox reenvia crédito idempotente após falha e não confirma disco quebrado', () => {

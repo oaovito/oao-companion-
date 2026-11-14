@@ -37,9 +37,9 @@ test('tarefas Windows: interface real cria/edita/reordena/conclui e anima XP sem
     await rows.nth(1).dragTo(rows.nth(0));
     await page.waitForFunction(() => document.querySelector('#tarefas .todo-task-title')?.textContent === 'Treinar');
     await page.getByRole('checkbox', { name: 'Concluir Estudar física', exact: true }).check();
-    await page.waitForFunction(() => document.querySelector('.jojo-xp-feedback')?.textContent.includes('+10 XP'));
+    await page.waitForFunction(() => document.querySelector('.jojo-xp-feedback')?.textContent.includes('+100 XP')); // XP ×10 desde 14/11/2026
     const taskXp = () => app.evaluate(() => globalThis.__jojo.companion.progress.st.rewards.history.filter(r => r.source === 'todo').reduce((sum, r) => sum + r.amount, 0));
-    const xp = await taskXp(); assert.equal(xp, 10);
+    const xp = await taskXp(); assert.equal(xp, 100);
     await page.getByRole('checkbox', { name: 'Concluir Estudar física', exact: true }).uncheck();
     await page.getByRole('checkbox', { name: 'Concluir Estudar física', exact: true }).check();
     assert.equal(await taskXp(), xp, 'remarcar não duplica XP de tarefas; descobertas de animação são outra fonte legítima');

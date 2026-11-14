@@ -2,6 +2,17 @@
 
 ## 0.47.1 — 2026-11-13
 
+### Novidades
+- 100 níveis, cada um com título próprio: de Sardinha a Megalodon, depois pré-históricos,
+  répteis do mar antigo, abismo, shape de tubarão, elementais, lendas do mar, cósmicos,
+  soberanos e o ápice, até Megalodon Supremo.
+- 238 bônus de XP com nome próprio (estreia do dia, trinca, coruja do recife, semana de aço,
+  combo de barbatana, centenário…), para conversa, carinho, foco, tarefas, cuidados,
+  mini-jogos, missões e Darkest Dungeon. No máximo um bônus por ação e seis por dia.
+- Todo XP vale dez vezes mais (+20 em vez de +2) e as metas também: o ritmo de subir de
+  nível é o mesmo, e o XP já ganho foi convertido, então ninguém perde o nível. Do nível
+  30 em diante cada nível pede o mesmo tanto, sem escalada sem fim.
+
 ### Melhorias
 - Janela do WhatsApp em telas, uma por vez (Conexão, Mensagens, Contatos), com o estado
   da conexão sempre visível no topo: Desconectado, Aguardando QR code, Conectando,

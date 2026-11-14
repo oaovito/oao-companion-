@@ -1,4 +1,5 @@
 import { civilParts, shiftDay, validDay } from './civil-time.js';
+import { xpVisivel } from './xp-escala.js';
 
 const clone = x => structuredClone(x);
 export const DD_BALANCE = Object.freeze({ start: 15, firstDay: 50, milestones: [[15, 25], [30, 40], [60, 80]], dailyCap: 300, validSeconds: 60, maxStartsPerDay: 3, idleSeconds: 120 });
@@ -126,7 +127,7 @@ export class DarkestDungeon {
     const game = /darkest(?: dungeon)?\b/.test(n); const s = this.snapshot();
     if (!game && !/ja joguei hoje|quanto xp (?:eu )?ganhei jogando|quanto tempo (?:eu )?joguei/.test(n)) return null;
     if (/darkest dungeon (?:ii|2)\b/.test(n)) return 'O meu registro de atividade acompanha Darkest Dungeon original (Steam 262060). Darkest Dungeon II não entra nessa contagem.';
-    if (/\b(xp|experiencia)\b/.test(n)) return `Registrei ${s.xpToday} XP de Darkest Dungeon hoje e ${s.xpTotal} XP no total${s.pendingXp ? `; ${s.pendingXp} XP aguardam confirmação no disco` : ''}. Limite: ${s.cap} XP por dia.`;
+    if (/\b(xp|experiencia)\b/.test(n)) return `Registrei ${xpVisivel(s.xpToday)} XP de Darkest Dungeon hoje e ${xpVisivel(s.xpTotal)} XP no total${s.pendingXp ? `; ${xpVisivel(s.pendingXp)} XP aguardam confirmação no disco` : ''}. Limite: ${s.cap} XP por dia.`;
     if (/quanto tempo|tempo jogado/.test(n)) return `Registrei ${Math.floor(s.todayMs / 60000)} minuto(s) ativo(s) hoje e ${Math.floor(s.activeMs / 60000)} no total. Só conto o jogo verificado em primeiro plano, sem inatividade prolongada.`;
     if (/ja joguei|joguei hoje|sessoes|sequencia/.test(n)) return `${s.playedToday ? 'Sim, há uma sessão válida registrada hoje.' : 'Ainda não há sessão válida registrada hoje.'} ${s.sessions} sessão(ões) no total; sequência atual de ${s.streak} dia(s). Abrir o jogo ou dizer que jogou não gera XP.`;
     if (/\b(vou|quero|vamos|bora|jogar)\b/.test(n)) return 'Pode ir, Manu. Eu verifico o Darkest Dungeon original da Steam em primeiro plano e conto o tempo ativo. A sessão vale depois de um minuto; clicar aqui não concede XP. Leva uma tocha.';

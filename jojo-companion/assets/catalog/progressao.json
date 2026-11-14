@@ -1,5 +1,5 @@
 {
- "_notas": "Coleções e progressão (antitédio 61–70) e missões diárias. Níveis do shape por XP; acessórios liberados por nível; conquistas por contadores; missões diárias opcionais (3 sorteadas por dia, sem cobrança).",
+ "_notas": "Coleções e progressão (antitédio 61–70) e missões diárias. Níveis do shape por XP; acessórios liberados por nível; conquistas por contadores; missões diárias opcionais (3 sorteadas por dia, sem cobrança). Escala de XP ×10 (pedido de 14/11/2026): todo XP creditado vale dez vezes o valor nominal das fontes; limiares e XP já guardado convertidos na mesma proporção. 100 níveis com título próprio; bônus de XP com nome próprio por atividade, com teto diário.",
  "niveis": [
   "Sardinha",
   "Lambari",
@@ -11,48 +11,99 @@
   "Tubarão-martelo",
   "Tubarão-branco",
   "Megalodon",
-  "Megalodon — Patamar 2",
-  "Megalodon — Patamar 3",
-  "Megalodon — Patamar 4",
-  "Megalodon — Patamar 5",
-  "Megalodon — Patamar 6",
-  "Megalodon — Patamar 7",
-  "Megalodon — Patamar 8",
-  "Megalodon — Patamar 9",
-  "Megalodon — Patamar 10",
-  "Megalodon — Patamar 11",
-  "Megalodon — Patamar 12",
-  "Megalodon — Patamar 13",
-  "Megalodon — Patamar 14",
-  "Megalodon — Patamar 15",
-  "Megalodon — Patamar 16",
-  "Megalodon — Patamar 17",
-  "Megalodon — Patamar 18",
-  "Megalodon — Patamar 19",
-  "Megalodon — Patamar 20",
-  "Megalodon — Patamar 21",
-  "Megalodon — Patamar 22",
-  "Megalodon — Patamar 23",
-  "Megalodon — Patamar 24",
-  "Megalodon — Patamar 25",
-  "Megalodon — Patamar 26",
-  "Megalodon — Patamar 27",
-  "Megalodon — Patamar 28",
-  "Megalodon — Patamar 29",
-  "Megalodon — Patamar 30",
-  "Megalodon — Patamar 31",
-  "Megalodon — Patamar 32",
-  "Megalodon — Patamar 33",
-  "Megalodon — Patamar 34",
-  "Megalodon — Patamar 35",
-  "Megalodon — Patamar 36",
-  "Megalodon — Patamar 37",
-  "Megalodon — Patamar 38",
-  "Megalodon — Patamar 39",
-  "Megalodon — Patamar 40",
-  "Megalodon — Patamar 41"
+  "Megalodon Alfa",
+  "Otodus",
+  "Cretoxyrhina",
+  "Helicoprion",
+  "Edestus",
+  "Dunkleosteus",
+  "Xiphactinus",
+  "Leedsichthys",
+  "Livyatan",
+  "Basilossauro",
+  "Ictiossauro",
+  "Elasmossauro",
+  "Liopleurodonte",
+  "Kronossauro",
+  "Pliossauro",
+  "Shonissauro",
+  "Prognathodon",
+  "Tylossauro",
+  "Mosassauro",
+  "Mosassauro Rei",
+  "Tubarão-duende",
+  "Tubarão-cobra",
+  "Tubarão-boca-grande",
+  "Tubarão-da-Groenlândia",
+  "Peixe-dragão",
+  "Tamboril abissal",
+  "Lula-vampiro",
+  "Lula-colossal",
+  "Senhor da Fossa",
+  "Rei do Abismo",
+  "Barbatana de Aço",
+  "Bíceps de Coral",
+  "Dorsal em V",
+  "Trapézio de Recife",
+  "Supino Abissal",
+  "Agachamento Oceânico",
+  "Mandíbula de Titânio",
+  "Shape de Maré Alta",
+  "Mister Oceano",
+  "Mister Megalodon",
+  "Megalodon de Lava",
+  "Tubarão Glacial",
+  "Tubarão Tempestade",
+  "Tubarão Relâmpago",
+  "Tubarão de Cristal",
+  "Tubarão de Obsidiana",
+  "Tubarão Tsunami",
+  "Tubarão Vulcânico",
+  "Tubarão Aurora",
+  "Tubarão Eclipse",
+  "Isonade",
+  "Lusca",
+  "Makara",
+  "Umibōzu",
+  "Bakunawa",
+  "Hafgufa",
+  "Aspidoquelone",
+  "Ceto",
+  "Kraken",
+  "Leviatã",
+  "Tubarão Estelar",
+  "Cometa das Profundezas",
+  "Megalodon Lunar",
+  "Nebulosa Abissal",
+  "Maré Cósmica",
+  "Tubarão de Saturno",
+  "Supernova das Águas",
+  "Buraco Negro Marinho",
+  "Galáxia de Barbatanas",
+  "Tubarão Quasar",
+  "Guardião do Recife",
+  "Senhor das Marés",
+  "Imperador dos Corais",
+  "Rei dos Sete Mares",
+  "Titã das Fossas",
+  "Devorador de Marés",
+  "Arquiteto do Abismo",
+  "Coração do Oceano",
+  "Lenda Viva do Recife",
+  "Último Megalodon",
+  "Megalodon Ancestral",
+  "Megalodon Imortal",
+  "Megalodon Lendário",
+  "Megalodon Mítico",
+  "Megalodon Divino",
+  "Megalodon Eterno",
+  "Megalodon Absoluto",
+  "Megalodon Cósmico",
+  "Megalodon Infinito",
+  "Megalodon Supremo"
  ],
- "xpPorNivel": 60,
+ "escalaXp": 10,
+ "xpPorNivel": 600,
  "xp": {
   "gesto": 2,
   "chat": 1,
@@ -332,7 +383,187 @@
  ],
  "curve": {
   "legacyLevels": 10,
-  "increment": 120,
-  "notes": "Os 10 níveis e limiares anteriores são preservados. Os novos patamares exigem XP crescente."
+  "increment": 1200,
+  "capFromLevel": 30,
+  "notes": "Os 10 níveis iniciais e os limiares até o nível 30 são os anteriores ×10. Do nível 30 em diante cada nível pede o mesmo XP (o do nível 30), para os 100 níveis não virarem uma escalada sem fim."
+ },
+ "bonus": {
+  "_notas": "Bônus de XP com nome próprio: cada regra vale para cada atividade (regras × atividades). Valores nominais (×escalaXp ao creditar). No máximo um bônus por ação e teto diário, para o level up não virar enxurrada de avisos.",
+  "limites": {
+   "porDia": 6,
+   "xpPorDia": 60,
+   "comboMin": 30
+  },
+  "atividades": {
+   "chat": "Conversa",
+   "gesto": "Carinho",
+   "estimulo": "Estímulo",
+   "poseNova": "Pose nova",
+   "jogoVitoria": "Vitória no mini-jogo",
+   "jogoParticipacao": "Mini-jogo",
+   "foco": "Bloco de foco",
+   "missao": "Missão do dia",
+   "diaNovo": "Dia de treino",
+   "todo": "Tarefa",
+   "feeding": "Refeição",
+   "cleanup": "Faxina do aquário",
+   "care": "Cuidado",
+   "darkest": "Expedição no Darkest"
+  },
+  "regras": [
+   {
+    "id": "estreia",
+    "nome": "Estreia do dia: {A}",
+    "xp": 3,
+    "quando": {
+     "nDoDia": 1
+    }
+   },
+   {
+    "id": "trinca",
+    "nome": "Trinca do dia: {A}",
+    "xp": 3,
+    "quando": {
+     "nDoDia": 3
+    }
+   },
+   {
+    "id": "maoCheia",
+    "nome": "Mão cheia: {A}",
+    "xp": 4,
+    "quando": {
+     "nDoDia": 5
+    }
+   },
+   {
+    "id": "dezena",
+    "nome": "Dezena do dia: {A}",
+    "xp": 5,
+    "quando": {
+     "nDoDia": 10
+    }
+   },
+   {
+    "id": "coruja",
+    "nome": "Coruja do recife: {A}",
+    "xp": 2,
+    "quando": {
+     "janela": [
+      0,
+      6
+     ]
+    }
+   },
+   {
+    "id": "manha",
+    "nome": "Maré da manhã: {A}",
+    "xp": 2,
+    "quando": {
+     "janela": [
+      6,
+      12
+     ]
+    }
+   },
+   {
+    "id": "tarde",
+    "nome": "Corrente da tarde: {A}",
+    "xp": 2,
+    "quando": {
+     "janela": [
+      12,
+      18
+     ]
+    }
+   },
+   {
+    "id": "noite",
+    "nome": "Lua cheia: {A}",
+    "xp": 2,
+    "quando": {
+     "janela": [
+      18,
+      24
+     ]
+    }
+   },
+   {
+    "id": "fimDeSemana",
+    "nome": "Fim de semana sem preguiça: {A}",
+    "xp": 3,
+    "quando": {
+     "diasSemana": [
+      0,
+      6
+     ]
+    }
+   },
+   {
+    "id": "segunda",
+    "nome": "Segunda sem desculpa: {A}",
+    "xp": 3,
+    "quando": {
+     "diasSemana": [
+      1
+     ]
+    }
+   },
+   {
+    "id": "seq3",
+    "nome": "Três marés seguidas: {A}",
+    "xp": 5,
+    "quando": {
+     "sequencia": 3
+    }
+   },
+   {
+    "id": "seq7",
+    "nome": "Semana de aço: {A}",
+    "xp": 10,
+    "quando": {
+     "sequencia": 7
+    }
+   },
+   {
+    "id": "seq30",
+    "nome": "Mês de megalodon: {A}",
+    "xp": 20,
+    "quando": {
+     "sequencia": 30
+    }
+   },
+   {
+    "id": "marco10",
+    "nome": "Dez na conta: {A}",
+    "xp": 5,
+    "quando": {
+     "marco": 10
+    }
+   },
+   {
+    "id": "marco100",
+    "nome": "Centenário: {A}",
+    "xp": 15,
+    "quando": {
+     "marco": 100
+    }
+   },
+   {
+    "id": "marco1000",
+    "nome": "Lenda do milhar: {A}",
+    "xp": 30,
+    "quando": {
+     "marco": 1000
+    }
+   },
+   {
+    "id": "combo",
+    "nome": "Combo de barbatana: {A}",
+    "xp": 4,
+    "quando": {
+     "combo": true
+    }
+   }
+  ]
  }
 }

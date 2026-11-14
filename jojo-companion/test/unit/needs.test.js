@@ -91,20 +91,23 @@ test('necessidades: 20 animações novas distintas têm adereços desenhados, se
   assert.equal(signatures.size, items.length);
 });
 test('progressão: níveis antigos preservados, novos patamares crescem e barra usa limiares reais', () => {
+  // XP ×10 (14/11/2026): o estado antigo (540) é convertido para 5400 e continua no nível 10.
   const data = json('catalog/progressao.json'); const p = new Progress({ data, state: { xp: 540 } });
-  assert.equal(p.nivel, 10); assert.equal(p.nomeNivel, 'Megalodon'); assert.equal(p.threshold(2), 60);
-  assert.equal(p.threshold(11), 780); assert.equal(p.threshold(12), 1140);
-  p.st.xp = 800; assert.equal(p.nivel, 11); assert.ok(p.snapshot().percentXP > 0 && p.snapshot().percentXP < 100);
+  assert.equal(p.nivel, 10); assert.equal(p.nomeNivel, 'Megalodon'); assert.equal(p.threshold(2), 600);
+  assert.equal(p.threshold(11), 7800); assert.equal(p.threshold(12), 11400);
+  p.st.xp = 8000; assert.equal(p.nivel, 11); assert.ok(p.snapshot().percentXP > 0 && p.snapshot().percentXP < 100);
 });
 test('progressão: spam de gesto e salto de relógio não geram XP ilimitado', () => {
   let wall = Date.parse('2026-11-01T12:00Z'), mono = 1000;
-  const p = new Progress({ data: json('catalog/progressao.json'), now: () => mono, wallNow: () => wall, monotonicNow: () => mono });
-  for (let i = 0; i < 100; i++) p.xp('gesto'); assert.equal(p.st.xp, 2);
-  mono += 3000; wall += 3000; p.xp('gesto'); assert.equal(p.st.xp, 4);
+  // Sem o catálogo de bônus (testado à parte): aqui só o limite anti-spam, na escala ×10.
+  const { bonus: _semBonus, ...semBonus } = json('catalog/progressao.json');
+  const p = new Progress({ data: semBonus, now: () => mono, wallNow: () => wall, monotonicNow: () => mono });
+  for (let i = 0; i < 100; i++) p.xp('gesto'); assert.equal(p.st.xp, 20);
+  mono += 3000; wall += 3000; p.xp('gesto'); assert.equal(p.st.xp, 40);
   wall += 86400000; assert.equal(p.clockHealthy(), false);
-  assert.throws(() => p.award({ id: 'bad-clock', amount: 50, source: 'test', day: '2026-11-02' })); assert.equal(p.st.xp, 4);
+  assert.throws(() => p.award({ id: 'bad-clock', amount: 50, source: 'test', day: '2026-11-02' })); assert.equal(p.st.xp, 40);
   wall -= 86400000; assert.equal(p.clockHealthy(), true);
-  p.award({ id: 'good-clock', amount: 50, source: 'test', day: '2026-11-01' }); assert.equal(p.st.xp, 54);
+  p.award({ id: 'good-clock', amount: 50, source: 'test', day: '2026-11-01' }); assert.equal(p.st.xp, 540);
 });
 
 test('easter eggs: sem logo embutido; badge raro só existe com ícone obtido localmente', () => {

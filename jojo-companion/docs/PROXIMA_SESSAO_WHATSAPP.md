@@ -40,12 +40,18 @@ MINHA DECISÃO SOBRE A CONVERSA (marque uma)
 - 14/11: também entram na 0.47.1 o painel ao lado do JoJo sem corte e as seções
   "Lista de Tarefas" e "Bloqueio do Discord" ocultas nas Configurações (valores mantidos).
 
+- 14/11: a 0.47.1 também traz a progressão ×10: 100 títulos próprios, 238 bônus de XP
+  e números ×10 com o mesmo ritmo (o XP já ganho foi convertido).
+
 O QUE EU (USUÁRIA) JÁ FIZ OU VOU FAZER
 [ ] Instalei a 0.47.1 (ou mais nova) no PC e li o QR com o celular.
     Resultado: ____________________ (ex.: "Conectado com meu nome e número" ou o
     texto exato do erro no celular + foto).
 [ ] Conferi o painel ao lado do JoJo (inteiro, sem corte) e que Configurações não
     mostra mais "Lista de Tarefas" nem "Bloqueio do Discord".
+    Resultado: ____________________
+[ ] Conferi que meu nível continuou o mesmo, agora com título próprio e XP ×10, e que
+    os bônus aparecem sem virar enxurrada (no máximo 6 por dia).
     Resultado: ____________________
 [ ] Mandei uma mensagem agendada de teste para mim mesma ou para alguém de confiança.
     Resultado: ____________________

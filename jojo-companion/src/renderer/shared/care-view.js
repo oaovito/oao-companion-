@@ -1,3 +1,4 @@
+import { xpVisivel } from '../../core/xp-escala.js';
 import { node } from './todo-view.js';
 export class CareView {
   constructor(root, api, onProgress = () => {}) {
@@ -29,7 +30,7 @@ export class CareView {
       const type = s.types.find(t => t.id === item.type); const button = node('button', 'care-object'); button.type = 'button'; button.dataset.id = item.id;
       const image = node('img'); image.src = `../../../assets/litter/${item.type}.svg`; image.alt = ''; image.width = 50; image.height = 50;
       if (item.badge && /^data:image\/png;base64,[a-z0-9+/]+=*$/i.test(item.badge)) { const badge = node('img', 'local-app-badge'); badge.src = item.badge; badge.alt = ''; badge.width = 16; badge.height = 16; button.append(badge); }
-      button.append(image, node('span', '', `${type?.name || item.type} · ${type?.rarity || ''}`), node('small', '', `Limpar · até +${type?.xp || 0} XP`));
+      button.append(image, node('span', '', `${type?.name || item.type} · ${type?.rarity || ''}`), node('small', '', `Limpar · até +${xpVisivel(type?.xp || 0)} XP`));
       button.addEventListener('click', () => this.request('clean', item.id)); this.objects.append(button);
     }
     this.renderFoods();
@@ -44,7 +45,7 @@ export class CareView {
       const image = node('img'); image.src = `../../../${food.image}`; image.alt = ''; image.width = 56; image.height = 56; image.loading = 'lazy';
       const pref = food.preference === 'favorite' ? 'Favorita' : food.preference === 'dislike' ? 'Ele torce o nariz' : 'Aceita';
       button.append(image, node('b', '', food.name), node('small', '', `${pref} · saciedade +${food.hunger}`));
-      button.title = `Saúde ${food.health >= 0 ? '+' : ''}${food.health} · humor ${food.mood >= 0 ? '+' : ''}${food.mood} · até ${food.xp} XP`;
+      button.title = `Saúde ${food.health >= 0 ? '+' : ''}${food.health} · humor ${food.mood >= 0 ? '+' : ''}${food.mood} · até ${xpVisivel(food.xp)} XP`;
       button.addEventListener('click', () => this.request('feed', food.id)); this.foods.append(button);
     }
   }
