@@ -52,13 +52,13 @@ test('interface Windows: painel do aquário inteiro (sem quebra nem corte) e se�
       const quebras = textos.map((e) => [e.textContent, linhasDeTexto(e)]).filter(([, n]) => n !== 1);
       const caixa = hud.getBoundingClientRect();
       const filhos = [...hud.querySelectorAll('.needs-item, #openCare, #needsXp')].map((e) => e.getBoundingClientRect());
-      return { linhas, quebras, dentro: filhos.every((r) => r.left >= caixa.left - 0.5 && r.right <= caixa.right + 0.5 && r.bottom <= caixa.bottom + 0.5), textos: [...hud.querySelectorAll('.needs-item')].map((e) => e.textContent), sobra: hud.scrollHeight - hud.clientHeight };
+      return { linhas, quebras, dentro: filhos.every((r) => r.left >= caixa.left - 0.5 && r.right <= caixa.right + 0.5 && r.bottom <= caixa.bottom + 0.5), textos: [...hud.querySelectorAll('.needs-item')].map((e) => e.textContent), sobra: Math.max(...[...hud.querySelectorAll('.needs-linha, #litter')].filter((e) => getComputedStyle(e).display !== 'none').map((e) => e.getBoundingClientRect().bottom)) - caixa.bottom }; // o aviso "+XP" fica de propósito logo abaixo do quadro
     });
     assert.deepEqual(medida.textos, ['Saciedade 100', 'Saúde 100', 'Higiene 100']);
     assert.deepEqual(medida.quebras, [], 'nenhum texto quebra em duas linhas');
     for (const l of medida.linhas) assert.ok(l.sw <= l.cw + 1, `linha transborda: ${l.sw} > ${l.cw}`);
     assert.ok(medida.dentro, 'indicadores, nível e botão Cuidados dentro do quadro');
-    assert.ok(medida.sobra <= 1, `conteúdo maior que o quadro: ${medida.sobra}px`);
+    assert.ok(medida.sobra <= 0.5, `conteúdo maior que o quadro: ${medida.sobra}px`);
 
     // Configurações: Lista de Tarefas e Bloqueio do Discord não aparecem; os valores salvos continuam.
     const antes = await app.evaluate(() => ({ discord: globalThis.__jojo.store.get().discordBloqueio, todo: JSON.stringify(globalThis.__jojo.store.get().todo ?? null) }));
