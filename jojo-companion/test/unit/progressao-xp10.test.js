@@ -1,6 +1,6 @@
-// Progressão ×10 (pedido de 14/11/2026): números de XP ×10 com o mesmo ritmo,
-// 100 níveis com título próprio e ~10× mais jeitos de ganhar XP (bônus com nome),
-// sem enxurrada de avisos nem escalada sem fim.
+// Progressão ×10 (pedidos de 14 e 17/11/2026): números de XP ×10, 200 níveis com
+// título próprio e ~10× mais jeitos de ganhar XP (bônus com nome), com o tempo de
+// progressão idêntico ao da 0.47.0 (bônus não aceleram o nível).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -27,29 +27,27 @@ function prog({ state = null, inicio = '2026-11-16T10:00:00', data = DATA } = {}
   return { p, passar, dia, ganhar, bonus, salvos };
 }
 
-test('títulos: 100 níveis, cada um com nome próprio; os 10 primeiros e o Megalodon preservados', () => {
-  assert.equal(DATA.niveis.length, 100);
-  assert.equal(new Set(DATA.niveis).size, 100, 'nenhum título repetido');
+test('títulos: 200 níveis, cada um com nome próprio; os 10 primeiros e o Megalodon preservados', () => {
+  assert.ok(DATA.niveis.length >= 200);
+  assert.equal(new Set(DATA.niveis).size, DATA.niveis.length, 'nenhum título repetido');
+  assert.ok(DATA.niveis.every((n) => typeof n === 'string' && n.trim() === n && n.length > 0 && n.length <= 40));
   assert.ok(DATA.niveis.every((n) => !/Patamar/.test(n)), 'acabou o "Megalodon — Patamar N"');
   assert.deepEqual(DATA.niveis.slice(0, 10), ['Sardinha', 'Lambari', 'Baiacu', 'Moreia', 'Barracuda', 'Tubarão-lixa', 'Tubarão-tigre', 'Tubarão-martelo', 'Tubarão-branco', 'Megalodon']);
   assert.ok(DATA.niveis.filter((n) => /Megalodon/.test(n)).length >= 10, 'títulos tipo megalodon');
   assert.equal(DATA.niveis.at(-1), 'Megalodon Supremo');
 });
 
-test('escala ×10: mesma constante nas telas e na progressão; números ×10 e ritmo igual até o nível 30', () => {
+test('escala ×10: mesma constante nas telas e na progressão; limiares da 0.47.0 ×10 em todos os níveis', () => {
   assert.equal(XP_ESCALA, 10);
   assert.equal(DATA.escalaXp, XP_ESCALA);
   assert.equal(xpVisivel(25), 250);
   const { p } = prog();
-  // Limiares antigos (60 por nível até o 10; depois 120·k(k+3)/2) ×10: o ritmo não muda.
+  // Limiares da 0.47.0 (60 por nível até o 10; depois 120·k(k+3)/2) ×10: o ritmo não muda.
   const antigo = (l) => (l <= 10 ? (l - 1) * 60 : 540 + 120 * (l - 10) * (l - 10 + 3) / 2);
-  for (let l = 1; l <= 30; l++) assert.equal(p.threshold(l), antigo(l) * 10, `nível ${l}`);
-  // Do 30 em diante: o mesmo XP por nível (sem escalada sem fim).
-  const passo = p.threshold(31) - p.threshold(30);
-  for (let l = 31; l <= 100; l++) assert.equal(p.threshold(l) - p.threshold(l - 1), passo, `nível ${l}`);
-  assert.equal(passo, 25200);
-  assert.ok(p.threshold(50) < antigo(50) * 10, 'o nível 50 fica mais perto do que antes');
-  assert.equal(p.threshold(100), 2045400);
+  for (let l = 1; l <= DATA.niveis.length; l++) assert.equal(p.threshold(l), antigo(l) * 10, `nível ${l}`);
+  assert.equal(DATA.curve.capFromLevel, undefined, 'sem teto que mude a curva');
+  assert.equal(p.threshold(50), 1037400, 'o nível 50 da 0.47.0 (103.740) ×10');
+  assert.equal(p.threshold(200), 22007400);
 });
 
 test('migração: o XP já ganho vira ×10 uma vez só e ela continua no mesmo nível', () => {
@@ -139,15 +137,17 @@ test('bônus: falha ao gravar o bônus não derruba a recompensa original', () =
   assert.equal(p.st.xp, xp, 'sem gravar, nada muda');
 });
 
-test('ritmo: um dia muito ativo no nível 14 sobe no máximo 2 níveis; no 30, menos de 1', () => {
-  // Dia cheio nas fontes: tarefas no teto (500), cuidados, foco, mini-jogos, conversa e carinho no teto, missões e todos os bônus.
-  const nominal = 500 + 250 + 4 * 15 + 150 + 30 + 40 + 20 + 50 + 3 * 10 + 5 + DATA.bonus.limites.xpPorDia;
-  const { p } = prog();
-  const dia = nominal * DATA.escalaXp;
-  const subir = (de) => { let l = de; while (p.threshold(l + 1) <= p.threshold(de) + dia) l++; return l - de; };
-  assert.ok(subir(14) <= 2, `nível 14: ${subir(14)}`);
-  assert.ok(subir(30) <= 1, `nível 30: ${subir(30)}`);
-  assert.ok(p.threshold(15) - p.threshold(14) < dia * 3, 'e nunca fica parado por semanas');
+test('ritmo: o tempo de progressão é o da 0.47.0; bônus vão para a coleção e não aceleram o nível', () => {
+  const { p, ganhar, bonus } = prog({ inicio: '2026-11-16T10:00:00' });
+  // Mesmo XP nominal de antes → mesmo nível de antes, com ou sem bônus no caminho.
+  for (let i = 0; i < 40; i++) ganhar('todo', 20);
+  assert.ok(bonus().length > 0, 'houve bônus');
+  assert.equal(p.st.xp, 40 * 20 * 10, 'só o XP das atividades conta para o nível');
+  assert.equal(p.st.xpBonus, bonus().reduce((t, e) => t + e.amount, 0));
+  assert.ok(bonus().every((e) => !e.levelUp), 'bônus nunca sobe nível');
+  const v047 = (xp) => { let l = 1; while (l < 50 && (l + 1 <= 10 ? l * 60 : 540 + 120 * (l + 1 - 10) * (l + 1 - 10 + 3) / 2) <= xp) l++; return l; };
+  assert.equal(p.nivel, v047(40 * 20), 'mesmo nível que a 0.47.0 teria com o mesmo XP');
+  assert.equal(p.snapshot().bonus.xp, p.st.xpBonus);
 });
 
 test('telas: números de XP das fontes aparecem na escala ×10', () => {
@@ -164,4 +164,5 @@ test('telas: números de XP das fontes aparecem na escala ×10', () => {
   const marcos = DD_BALANCE.milestones.map(([, x]) => `+${xpVisivel(x)}`).join('/');
   assert.ok(app.includes(`+${inicio} XP, primeira do dia +${primeira}, marcos de 15/30/60 min ${marcos}`), 'regras do Darkest na Central batem com o balanço real');
   assert.match(app, /Bônus de XP descobertos: \$\{c\.bonus\.descobertos\} de \$\{c\.bonus\.total\}/);
+  assert.match(app, /o ritmo de nível não muda/);
 });

@@ -40,7 +40,7 @@ MINHA DECISÃO SOBRE A CONVERSA (marque uma)
 - 14/11: também entram na 0.47.1 o painel ao lado do JoJo sem corte e as seções
   "Lista de Tarefas" e "Bloqueio do Discord" ocultas nas Configurações (valores mantidos).
 
-- 14/11: a 0.47.1 também traz a progressão ×10: 100 títulos próprios, 238 bônus de XP
+- 14/11: a 0.47.1 também traz a progressão ×10: 200 títulos próprios, 238 bônus de XP
   e números ×10 com o mesmo ritmo (o XP já ganho foi convertido).
 
 O QUE EU (USUÁRIA) JÁ FIZ OU VOU FAZER

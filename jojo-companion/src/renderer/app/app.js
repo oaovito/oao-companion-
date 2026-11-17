@@ -114,7 +114,7 @@ function renderColecao() {
   fill.style.width = `${c.percentXP ?? Math.min(100, Math.round(((c.xp % (c.xpPorNivel || 60)) / (c.xpPorNivel || 60)) * 100))}%`;
   bar.append(fill);
   nivel.append(bar, el('p', null, c.resumo));
-  if (c.bonus) nivel.append(el('p', 'muted', `Bônus de XP descobertos: ${c.bonus.descobertos} de ${c.bonus.total} · hoje ${c.bonus.hoje} de ${c.bonus.porDia}`));
+  if (c.bonus) nivel.append(el('p', 'muted', `Bônus de XP descobertos: ${c.bonus.descobertos} de ${c.bonus.total} · hoje ${c.bonus.hoje} de ${c.bonus.porDia} · ${c.bonus.xp} XP de bônus (coleção; o ritmo de nível não muda)`));
   const acoes = el('div', 'card');
   acoes.append(el('h3', null, 'Agora'));
   const row = el('div', 'buttons');

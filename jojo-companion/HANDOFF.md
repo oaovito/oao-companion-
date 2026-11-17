@@ -49,12 +49,13 @@ de mandar para essas seções. Testes: `test/unit/interface-oculta.test.js` e no
 `test/e2e/needs.windows.mjs` (medidas reais do painel no Windows). Entra na 0.47.1.
 
 14/11: progressão ×10 a pedido da usuária (plano escolhido: números ×10, ritmo igual).
-100 níveis com título próprio (`assets/catalog/progressao.json`), escala `escalaXp: 10`
+200 níveis com título próprio (`assets/catalog/progressao.json`; 17/11: de 100 para 200), escala `escalaXp: 10`
 aplicada só no crédito (`Progress.award`); fontes (tarefas, cuidados, Darkest) seguem com
 valores e tetos nominais e as telas mostram ×10 via `src/core/xp-escala.js`. XP guardado
-e histórico convertidos uma vez (`st.escalaXp`). Limiares até o nível 30 = antigos ×10;
-depois 25.200 por nível. 238 bônus (17 regras × 14 atividades), máx. 1 por ação, 6 e 60
-nominais (600 na tela) por dia. Testes: `test/unit/progressao-xp10.test.js`; três testes
+e histórico convertidos uma vez (`st.escalaXp`). Limiares = curva da 0.47.0 ×10 em todos
+os níveis (17/11: tirado o teto do nível 30; o tempo de progressão é o da 0.47.0). 238 bônus
+(17 regras × 14 atividades), máx. 1 por ação, 6 e 60 nominais (600 na tela) por dia; o XP
+de bônus vai para `st.xpBonus` (coleção) e não conta para o nível. Testes: `test/unit/progressao-xp10.test.js`; três testes
 antigos tiveram só o número esperado ×10 (needs, darkest-dungeon, E2E de tarefas/cuidados).
 
 Próximo passo: com runner disponível, reexecutar o run (ou novo push), revisar as 44
