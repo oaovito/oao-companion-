@@ -61,12 +61,9 @@ export class Progress {
   threshold(level) {
     const curve = this.data.curve;
     if (!curve || level <= curve.legacyLevels) return (level - 1) * this.data.xpPorNivel;
+    // Mesma curva da 0.47.0 (×escala): o tempo para subir de nível não muda.
     const k = level - curve.legacyLevels;
-    // Até capFromLevel cada nível pede um pouco mais; depois, o mesmo tanto (sem escalada sem fim).
-    const teto = curve.capFromLevel ? curve.capFromLevel - curve.legacyLevels : Infinity;
-    const kc = Math.min(k, teto);
-    const base = (curve.legacyLevels - 1) * this.data.xpPorNivel + curve.increment * kc * (kc + 3) / 2;
-    return k <= teto ? base : base + (k - teto) * curve.increment * (teto + 1);
+    return (curve.legacyLevels - 1) * this.data.xpPorNivel + curve.increment * k * (k + 3) / 2;
   }
 
   get nomeNivel() {
@@ -115,8 +112,10 @@ export class Progress {
     this.st = structuredClone(before);
     this.st.rewards ||= { ids: {}, history: [], sequence: 0 };
     // Valor nominal da fonte × escala: o crédito e o histórico já saem na escala nova.
+    // Bônus vão para a coleção (xpBonus) e não aceleram o nível: o ritmo é o da 0.47.0.
     const credito = amount * this.escala;
-    this.st.xp += credito;
+    if (source === 'bonus') this.st.xpBonus = (this.st.xpBonus || 0) + credito;
+    else this.st.xp += credito;
     const event = { id, amount: credito, source, day, label: String(label).slice(0, 200), at: this.now(), sequence: ++this.st.rewards.sequence, level: this.nivel, levelUp: this.nivel > level };
     this.st.rewards.ids[id] = true;
     this.st.rewards.history.push(event);
@@ -327,6 +326,7 @@ export class Progress {
         total: this.bonusCatalogo.length,
         hoje: this.st.bonus?.dia === dayKey(date) ? this.st.bonus.qtd : 0,
         porDia: this.data.bonus.limites.porDia,
+        xp: this.st.xpBonus || 0,
       } : null,
     };
   }
