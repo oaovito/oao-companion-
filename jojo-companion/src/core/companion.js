@@ -2077,7 +2077,7 @@ export class Companion {
       if (/^(surpresa|aleat[oó]rio|sorteia|sortear)$/i.test(arg)) return { text: this.lookSurpresa(), command: cmd, conversationId };
       if (/^(melhor|o melhor|visual do n[ií]vel|n[ií]vel)$/i.test(arg)) return { text: this.visualMelhor(), command: cmd, conversationId };
       // Visual liberado por nível primeiro (bloqueado nem é encontrado), depois o guarda-roupa.
-      const nv = acharVisual(this.progress.data.niveis, this.progress.nivel, arg);
+      const nv = this._refs ? acharVisual(this._refs, this.progress.nivel, arg) : null;
       if (nv) return { text: this.vestirNivel(nv.id), command: cmd, conversationId };
       const peca = findWardrobeItem(arg);
       return { text: peca ? this.vestir(peca.id) : 'Não tenho essa peça. Abre o guarda-roupa com /vestir.', command: cmd, conversationId };
@@ -2616,31 +2616,39 @@ export class Companion {
 
   // ---------------------------------------------------------------- visuais por nível
 
+  /** Referências dos níveis (título, obra, peça, fala e reação de cada nível). */
+  get _refs() {
+    const r = this.progress.data.referencias;
+    return Array.isArray(r) && r.length >= 2 ? r : null;
+  }
+
   /** Canais das peças de nível vestidas (null se nenhuma). */
   _visualCanais(vestido = Object.keys(this.outfit).length > 0) {
-    return canaisVisual(this.store.get().visualNivel, this.progress.data.niveis, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume });
+    if (!this._refs) return null;
+    return canaisVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume, maoLivre: this._handFree() });
   }
 
   /**
-   * Aplica os visuais do nível atual: na primeira vez veste o melhor de cada
-   * parte; a cada nível novo veste a peça liberada na parte dela e avisa.
+   * Aplica os visuais do nível atual: na primeira vez veste a peça mais recente
+   * de cada parte; a cada nível novo veste a peça liberada e reage COM A
+   * REFERÊNCIA daquele nível (fala da obra + reação/animação ligada a ela).
    */
   _syncVisual({ anunciar = true } = {}) {
-    const niveis = this.progress.data.niveis;
-    if (!Array.isArray(niveis) || niveis.length < 2) return null;
-    const { estado, novas } = aplicarNivel(this.store.get().visualNivel, niveis, this.progress.nivel);
+    const refs = this._refs;
+    if (!refs) return null;
+    const { estado, novas } = aplicarNivel(this.store.get().visualNivel, refs, this.progress.nivel);
     if (!novas.length) return null;
     this.store.update({ visualNivel: estado }, { silent: true });
     if (anunciar && this.started) {
       const ultima = novas[novas.length - 1];
-      const linhas = novas.length > 1 ? FALAS_VISUAL.varias : FALAS_VISUAL.nova;
-      const t = linhas[Math.floor(this.rng() * linhas.length) % linhas.length].replace('{P}', ultima.nome).replace('{N}', String(novas.length));
+      const extra = novas.length > 1 ? ` ${FALAS_VISUAL.varias[0].replace('{N}', String(novas.length))}` : '';
+      const t = `${ultima.fala}${extra}`;
       // Depois do aviso de nível; não atropela fala com categoria (bronca, lembrete).
       let tries = 0;
       const show = () => {
         if (this.bubble && this.bubble.category && tries++ < 10) return this.clock.setTimeout(show, 1500);
         this.say(t, 'speech');
-        this.playCatalog('seAcharMaximo', { source: 'evento', speak: false });
+        this._reagirReferencia(ultima);
         this._applyLayout(true);
       };
       this.clock.setTimeout(show, 4200);
@@ -2650,26 +2658,39 @@ export class Companion {
     return novas;
   }
 
-  /** Veste (ou tira) um visual liberado. */
-  vestirNivel(id) {
-    const r = vestirVisual(this.store.get().visualNivel, this.progress.data.niveis, this.progress.nivel, id);
-    if (!r.peca) return 'Não tenho essa peça.';
-    return this._saveVisual(r.estado, r.tirou ? 'tira' : 'veste');
+  /** Reação da referência: o pacote dela (se as reações estão ligadas) ou a animação dela. */
+  _reagirReferencia(p) {
+    const s = this.store.get();
+    const pk = p.reacao ? this.catalogById.get(p.reacao) : null;
+    if (pk && pk.pacote && !this.reacoesPausadas && s[PACOTE_CONFIG[pk.pacote]] && this.playPack(p.reacao, { source: 'chat', falar: false }) !== null) return true;
+    if (p.anim && this.playCatalog(p.anim, { source: 'evento', speak: false })) return true;
+    return !!this.playCatalog('seAcharMaximo', { source: 'evento', speak: false });
   }
 
-  /** O melhor de cada parte já liberado. */
+  /** Veste (ou tira) um visual liberado; vestir fala a frase da referência. */
+  vestirNivel(id) {
+    if (!this._refs) return 'Não tenho essa peça.';
+    const r = vestirVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, id);
+    if (!r.peca) return 'Não tenho essa peça.';
+    return this._saveVisual(r.estado, r.tirou ? 'tira' : r.peca);
+  }
+
+  /** A peça mais recente de cada parte já liberada. */
   visualMelhor() {
+    if (!this._refs) return 'Ainda não liberei nenhum visual.';
     const s = sanitizeVisual(this.store.get().visualNivel);
-    return this._saveVisual({ ...s, pecas: melhorConjunto(this.progress.data.niveis, this.progress.nivel) }, 'melhor');
+    return this._saveVisual({ ...s, pecas: melhorConjunto(this._refs, this.progress.nivel) }, 'melhor');
   }
 
   _saveVisual(estado, kind) {
     this.store.update({ visualNivel: estado }, { silent: true });
-    const lines = FALAS_VISUAL[kind];
+    const peca = typeof kind === 'object' ? kind : null;
+    const lines = peca ? [peca.fala] : FALAS_VISUAL[kind];
     const t = lines[Math.floor(this.rng() * lines.length) % lines.length];
     if (this.started) {
       this.say(t, 'speech');
-      this.playCatalog(kind === 'tira' ? 'ajeitarPostura' : 'seAcharMaximo', { source: 'comando', speak: false });
+      if (peca) this._reagirReferencia(peca);
+      else this.playCatalog(kind === 'tira' ? 'ajeitarPostura' : 'seAcharMaximo', { source: 'comando', speak: false });
       this._applyLayout(true);
     }
     if (this.onConversationsChange) this.onConversationsChange();
@@ -2991,8 +3012,9 @@ export class Companion {
     for (const q of novas) msgs.push(`Conquista: ${q.nome}!`);
     if (lvl) msgs.push(`Subi pro nível ${lvl.nivel}: ${lvl.nome}. Shape evoluindo.`);
     if (!msgs.length) return;
-    // Pacotes: nível novo → haki/bankai; várias conquistas → arise; conquista → aura farming.
-    this.clock.setTimeout(() => this.packEvent(lvl ? 'nivel' : novas.length >= 2 ? 'sequenciaConquistas' : 'conquista', { falar: false }), 2600);
+    // Pacotes: várias conquistas → arise; conquista → aura farming. Nível novo reage com a
+    // referência do próprio nível (_syncVisual), não com um pacote genérico.
+    if (!lvl || !this._refs) this.clock.setTimeout(() => this.packEvent(lvl ? 'nivel' : novas.length >= 2 ? 'sequenciaConquistas' : 'conquista', { falar: false }), 2600);
     // Não passa por cima de uma fala com categoria (bronca, lembrete): espera ela acabar.
     let tries = 0;
     const show = () => {

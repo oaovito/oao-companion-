@@ -2,6 +2,13 @@
 
 ## Visuais por nível (não lançado), 18/11/2026
 
+REGRA IRREDUTÍVEL (pedido de 18/11): títulos = referências de filme, anime, série e cultura
+pop, todas as clássicas de tubarão presentes; peça, fala e reação de cada nível vêm da
+referência. Dados em `progressao.json` → `referencias` (titulo, obra, tipo, parte, forma,
+peca, cores, fala, anim, reacao?), alinhado com `niveis`. Formas desenhadas em
+`visual-nivel.js` (FORMAS, PINTURA, AURA, MAO); brilhos de acabamento no grupo
+`nivelBrilho`. A seção abaixo descreve a primeira versão (títulos marinhos), substituída.
+
 Pedido: a cada nível uma melhoria de aparência coerente com o título, o nível N+1
 melhor que o N, tudo liberado equipável à vontade e nada bloqueado visível.
 `src/core/visual-nivel.js` gera 199 peças (níveis 2–200) a partir dos títulos de

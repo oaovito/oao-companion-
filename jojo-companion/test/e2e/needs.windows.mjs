@@ -94,7 +94,7 @@ test('visuais por nível Windows: peça nova ao subir, desenho com os canais e C
     assert.equal(ids.length, 14, 'níveis 2 a 15');
     assert.ok(ids.every((id) => Number(id.slice(2)) <= 15), 'nada bloqueado na tela');
     const texto = await page.locator('#guardaRoupa').textContent();
-    assert.ok(!/Xiphactinus|Megalodon Supremo|🔒/.test(texto), 'nenhum nome de nível futuro nem cadeado');
+    assert.ok(!/Kiribachi|Chapéu de palha|Plus Ultra|Tubarão \(1975\)|🔒/.test(texto), 'nenhum nome de nível futuro nem cadeado');
     await page.locator('#guardaRoupa [data-visual="nv004"]').click();
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv004');
     await win.waitForFunction(() => window.__jojoRenderer.state.visualNivel?.nv_nv004 === 1, null, { timeout: 10000 });

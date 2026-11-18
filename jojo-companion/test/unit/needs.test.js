@@ -93,7 +93,7 @@ test('necessidades: 20 animações novas distintas têm adereços desenhados, se
 test('progressão: níveis antigos preservados, novos patamares crescem e barra usa limiares reais', () => {
   // XP ×10 (14/11/2026): o estado antigo (540) é convertido para 5400 e continua no nível 10.
   const data = json('catalog/progressao.json'); const p = new Progress({ data, state: { xp: 540 } });
-  assert.equal(p.nivel, 10); assert.equal(p.nomeNivel, 'Megalodon'); assert.equal(p.threshold(2), 600);
+  assert.equal(p.nivel, 10); assert.equal(p.nomeNivel, 'Megatubarão'); assert.equal(p.threshold(2), 600);
   assert.equal(p.threshold(11), 7800); assert.equal(p.threshold(12), 11400);
   p.st.xp = 8000; assert.equal(p.nivel, 11); assert.ok(p.snapshot().percentXP > 0 && p.snapshot().percentXP < 100);
 });

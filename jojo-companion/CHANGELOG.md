@@ -3,11 +3,15 @@
 ## 0.47.2 — em preparo
 
 ### Novidades
-- Visual novo a cada nível: do nível 2 ao 200, cada nível libera uma peça para o JoJo
-  (faixa, tiara e coroas; colares e medalhões; munhequeiras e manoplas; cinturão de
-  campeão; bermudas; pintura de guerra; aura), com as cores e o tema do título daquele
-  nível. Cada peça nova é mais caprichada que a anterior da mesma parte, e o JoJo já
-  aparece com ela ao subir de nível e comenta.
+- Os 200 títulos de nível agora são referências a filmes, animes, séries e cultura pop,
+  com todos os clássicos de tubarão: de Isca de Tubarão (Procurando Nemo) a Tubarão (1975),
+  passando por Megatubarão, Sharknado, Do Fundo do Mar, O Espanta Tubarões, Kisame, Arlong,
+  Baby Shark, Left Shark, King Shark, Jabberjaw e muitos outros.
+- Visual novo a cada nível, tirado da referência daquele nível: fones do Baby Shark, Blåhaj
+  na mão, barril amarelo de Tubarão, luvas do Rocky, chapéu de palha, sabre de luz, manopla
+  das joias, Sharingan, aura de Super Saiyajin, tridente de Atlântida e outros. Ao subir de
+  nível o JoJo já aparece com a peça, fala uma frase da obra e reage com a animação dela.
+  Do meio do caminho em diante as peças ganham brilhos, então o conjunto sempre melhora.
 - Guarda-roupa da Central com a seção "Visuais do shape": tudo o que já foi liberado
   pode ser vestido ou tirado à vontade, e "O melhor de cada parte" volta o conjunto
   mais forte. Também funciona pelo chat com /vestir e o nome da peça.
