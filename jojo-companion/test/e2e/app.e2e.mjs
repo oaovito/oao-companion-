@@ -892,7 +892,7 @@ test('Modo Trabalho: medita no canto (clique atravessa), nada de reação ao Ins
   }
 });
 
-test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" reage', async () => {
+test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" abre o funeral do shape', async () => {
   const { app, win } = await launch();
   try {
     await app.evaluate(() => globalThis.__jojo.companion.enterInteraction('test'));
@@ -908,8 +908,9 @@ test('pacotes: /reacao toca no renderer com efeitos e fala; "vou pedir pizza" re
     assert.match(anim, /^cat_pk_bankai/);
     assert.ok(Array.isArray(fx) && fx.includes('auraNegra'), JSON.stringify(fx));
     await sleep(9000);
+    // Desde 18/11/2026 comida fora da dieta abre o funeral do shape (no lugar do pacote de comida).
     const p = await app.evaluate(() => globalThis.__jojo.companion.chat('vou pedir pizza'));
-    assert.equal(p.intent, 'pacote:pk_traicao');
+    assert.equal(p.intent, 'docinho');
   } finally {
     await quit(app);
   }
