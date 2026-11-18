@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('appApi', {
   send: (id, text) => ipcRenderer.invoke('app:send', String(id), String(text).slice(0, 500)),
   newChat: () => ipcRenderer.invoke('app:new'),
   togglePet: () => ipcRenderer.invoke('app:pet'),
+  visuaisVistos: () => ipcRenderer.invoke('app:visuais-vistos'),
   openSettings: () => ipcRenderer.send('app:settings'),
   openWhatsapp: () => ipcRenderer.send('app:whatsapp'),
   todo: (request) => ipcRenderer.invoke('todo:request', request),

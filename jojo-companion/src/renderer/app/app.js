@@ -59,6 +59,9 @@ function render(s) {
   $('petToggle').textContent = s.petVisible ? 'Tuck Away Pet' : 'Wake Pet';
   $('discordFocusStatus').textContent = s.focusApps?.message || '';
   $('trabalhoBtn').textContent = s.trabalho ? '🧘 Sair do Modo Trabalho' : '🧘 Modo Trabalho';
+  // Aviso de visuais novos do nível no botão do Guarda-roupa.
+  const novosVisuais = s.visuais?.novos || 0;
+  $('guardaBtn').textContent = novosVisuais ? `👗 Guarda-roupa · ✨ ${novosVisuais} ${novosVisuais === 1 ? 'novo' : 'novos'}` : '👗 Guarda-roupa';
   $('petToggle').title = s.petVisible ? `Esconder o ${s.companionName}` : `Mostrar o ${s.companionName}`;
   listEl.innerHTML = '';
   for (const c of s.conversations) {
@@ -189,34 +192,55 @@ function renderGuarda() {
   }
   topo.append(row);
   box.append(topo);
-  // Visuais do shape: só aparece o que os níveis já liberaram.
+  // Visuais do shape: o que o nível liberou (com a fala da referência como descrição)
+  // e, depois, só cadeados com o nível — nada do que é chega até esta tela.
   const v = st.visuais;
-  if (v && v.total) {
-    const card = el('div', 'card');
-    card.append(el('h3', null, `Visuais do shape (${v.total})`));
-    card.append(el('p', 'muted', 'Liberados pelos níveis. Clique para vestir; clicar de novo tira.'));
-    const melhor = el('button', 'chipbtn', '✨ O melhor de cada parte');
-    melhor.addEventListener('click', () => vestir('/vestir melhor'));
-    const linha = el('div', 'buttons');
-    linha.append(melhor);
-    card.append(linha);
+  if (v && (v.total || v.bloqueados?.length)) {
+    const card = el('div', 'card visuais-card');
+    card.append(el('h3', null, `Visuais dos níveis (${v.total} de ${v.total + v.bloqueados.length})`));
+    if (v.novos) card.append(el('p', 'aviso-novo', `✨ ${v.novos === 1 ? '1 visual novo liberado' : `${v.novos} visuais novos liberados`} pelo seu nível.`));
+    if (v.total) {
+      card.append(el('p', 'muted', 'Clique para vestir; clicar de novo tira.'));
+      const melhor = el('button', 'chipbtn', '✨ O mais recente de cada parte');
+      melhor.addEventListener('click', () => vestir('/vestir melhor'));
+      const linha = el('div', 'buttons');
+      linha.append(melhor);
+      card.append(linha);
+    }
     for (const parte of v.partes) {
       card.append(el('h4', null, parte.nome));
-      const r = el('div', 'buttons visuais');
+      const lista = el('div', 'visuais');
       for (const it of parte.itens) {
         const on = v.vestido[parte.id] === it.id;
-        const b = el('button', `chipbtn${on ? ' on' : ''}`);
+        const b = el('button', `visual-item${on ? ' on' : ''}`);
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
         b.dataset.visual = it.id;
+        const topo = el('span', 'visual-topo');
         const sw = el('span', 'swatch');
         sw.style.background = it.cor;
-        b.append(sw, document.createTextNode(`${it.nome} · nível ${it.nivel}`));
+        topo.append(sw, el('b', null, it.nome));
+        if (it.novo) topo.append(el('span', 'selo-novo', 'Novo'));
+        b.append(topo, el('small', 'visual-obra', `Nível ${it.nivel} · ${it.titulo} · ${it.obra}`), el('span', 'visual-desc', `“${it.descricao}”`));
         b.addEventListener('click', () => vestir(`/vestir ${it.id}`));
-        r.append(b);
+        lista.append(b);
       }
-      card.append(r);
+      card.append(lista);
+    }
+    if (v.bloqueados.length) {
+      card.append(el('h4', null, 'Ainda trancados'));
+      const grade = el('div', 'cadeados');
+      for (const bq of v.bloqueados) {
+        const c = el('span', 'cadeado');
+        c.dataset.trancado = String(bq.nivel);
+        c.setAttribute('aria-label', `Trancado até o nível ${bq.nivel}`);
+        c.append(el('span', null, '🔒'), el('small', null, `nível ${bq.nivel}`));
+        grade.append(c);
+      }
+      card.append(grade);
     }
     box.append(card);
+    // Ela viu: o selo de "novo" sai na próxima vez (a tela atual continua mostrando).
+    if (v.novos && api.visuaisVistos) api.visuaisVistos();
   }
   for (const parte of g.partes) {
     const card = el('div', 'card');

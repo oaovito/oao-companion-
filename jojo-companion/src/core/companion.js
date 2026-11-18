@@ -48,7 +48,7 @@ import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
-import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, FALAS_VISUAL } from './visual-nivel.js';
+import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, FALAS_VISUAL } from './visual-nivel.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -304,6 +304,8 @@ export class Companion {
     this.holiday = festa;
     this.costume = festa ? HOLIDAYS[festa].fantasia : null;
     this._scheduleReminderCheck(20000);
+    // Visuais que o nível acumulado já liberou: avisa logo depois da chegada.
+    this.clock.setTimeout(() => this._avisarVisuais(), 9000);
     if (this.userHidden) {
       this.overlay.hide();
       return;
@@ -2637,23 +2639,42 @@ export class Companion {
     const { estado, novas } = aplicarNivel(this.store.get().visualNivel, refs, this.progress.nivel);
     if (!novas.length) return null;
     this.store.update({ visualNivel: estado }, { silent: true });
-    if (anunciar && this.started) {
-      const ultima = novas[novas.length - 1];
-      const extra = novas.length > 1 ? ` ${FALAS_VISUAL.varias[0].replace('{N}', String(novas.length))}` : '';
-      const t = `${ultima.fala}${extra}`;
-      // Depois do aviso de nível; não atropela fala com categoria (bronca, lembrete).
-      let tries = 0;
-      const show = () => {
-        if (this.bubble && this.bubble.category && tries++ < 10) return this.clock.setTimeout(show, 1500);
-        this.say(t, 'speech');
-        this._reagirReferencia(ultima);
-        this._applyLayout(true);
-      };
-      this.clock.setTimeout(show, 4200);
-    }
+    // O aviso fica guardado (avisar) até o JoJo conseguir falar; aqui só tenta logo depois do nível.
+    if (anunciar && this.started) this.clock.setTimeout(() => this._avisarVisuais(), 4200);
     if (this.started) this._applyLayout(true);
     if (this.onConversationsChange) this.onConversationsChange();
     return novas;
+  }
+
+  /**
+   * Anuncia os visuais liberados que ainda não foram anunciados (subida de nível ou
+   * o que o nível acumulado já tinha liberado). Se não dá para falar agora (Modo
+   * Trabalho, tela cheia, escondido, outra fala importante), tenta de novo depois.
+   */
+  _avisarVisuais(tentativa = 0) {
+    const refs = this._refs;
+    if (!refs || !this.started) return false;
+    const aviso = avisoVisual(this.store.get().visualNivel, refs, this.progress.nivel);
+    if (!aviso) return false;
+    // Não atropela outra fala (bronca, resposta, aviso de nível): espera ela acabar.
+    if (this.bubble) {
+      if (tentativa < 10 && !this._avisoTimer) this._avisoTimer = this.clock.setTimeout(() => { this._avisoTimer = null; this._avisarVisuais(tentativa + 1); }, 3000);
+      return false;
+    }
+    if (!this.say(aviso.texto, 'speech')) return false;
+    const s = sanitizeVisual(this.store.get().visualNivel, refs);
+    this.store.update({ visualNivel: { ...s, avisar: [] } }, { silent: true });
+    this._reagirReferencia(aviso.ultima);
+    this._applyLayout(true);
+    if (this.onConversationsChange) this.onConversationsChange();
+    return true;
+  }
+
+  /** A Central mostrou os visuais novos: tira o selo de "novo". */
+  marcarVisuaisVistos() {
+    if (!this._refs) return;
+    this.store.update({ visualNivel: marcarVistos(this.store.get().visualNivel, this._refs) }, { silent: true });
+    if (this.onConversationsChange) this.onConversationsChange();
   }
 
   /** Reação da referência: o pacote dela (se as reações estão ligadas) ou a animação dela. */
@@ -3718,6 +3739,7 @@ export class Companion {
       this.checkWeeklyLegends(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
+      this._avisarVisuais(); // visual liberado que ainda não foi anunciado
       this.onRoutineTick?.();
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);

@@ -72,7 +72,7 @@ test('interface Windows: painel do aquário inteiro (sem quebra nem corte) e se�
   } finally { await quit(app); }
 });
 
-test('visuais por nível Windows: peça nova ao subir, desenho com os canais e Central só com o que foi liberado', { timeout: 120000 }, async () => {
+test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os canais e Central com descrição e cadeados', { timeout: 120000 }, async () => {
   const { app, win, errors } = await launch();
   try {
     await win.waitForFunction(() => !!window.__jojoRenderer.state, null, { timeout: 15000 });
@@ -84,20 +84,30 @@ test('visuais por nível Windows: peça nova ao subir, desenho com os canais e C
     });
     assert.equal(l15.nivel, 15);
     assert.equal(l15.vn.visto, 15);
+    assert.equal(l15.vn.novas.length, 14, 'tudo o que o nível liberou fica marcado como novo');
     assert.ok(Object.keys(l15.vn.pecas).length >= 6, JSON.stringify(l15.vn));
     await win.waitForFunction(() => Object.keys(window.__jojoRenderer.state.visualNivel || {}).length >= 6, null, { timeout: 10000 });
+    // O JoJo avisa (balão) e o aviso não fica pendente.
+    await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.avisar.length === 0, 70000);
     await new Promise((r) => setTimeout(r, 600)); // alguns quadros com as peças desenhadas
     const opened = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.companion.openApp('guardaRoupa'));
     const page = await opened; page.on('pageerror', (e) => errors.push(e.message));
     await page.waitForSelector('#guardaRoupa [data-visual]');
-    const ids = await page.$$eval('#guardaRoupa [data-visual]', (bs) => bs.map((b) => b.dataset.visual));
-    assert.equal(ids.length, 14, 'níveis 2 a 15');
-    assert.ok(ids.every((id) => Number(id.slice(2)) <= 15), 'nada bloqueado na tela');
+    assert.match(await page.locator('#guardaBtn').textContent(), /14 novos/);
+    const itens = await page.$$eval('#guardaRoupa [data-visual]', (bs) => bs.map((b) => ({ id: b.dataset.visual, desc: b.querySelector('.visual-desc')?.textContent || '', novo: !!b.querySelector('.selo-novo') })));
+    assert.equal(itens.length, 14, 'níveis 2 a 15');
+    assert.ok(itens.every((i) => Number(i.id.slice(2)) <= 15), 'só liberados como itens');
+    assert.ok(itens.every((i) => i.desc.length > 10 && i.novo), 'cada item com a fala da referência e o selo de novo');
+    // Trancados: só cadeado e nível, nada do que é.
+    const cadeados = await page.$$eval('#guardaRoupa .cadeado', (cs) => cs.map((c) => c.textContent.trim()));
+    assert.equal(cadeados.length, 185);
+    assert.ok(cadeados.every((t) => /^🔒nível \d+$/.test(t)), cadeados.slice(0, 3).join(' | '));
     const texto = await page.locator('#guardaRoupa').textContent();
-    assert.ok(!/Kiribachi|Chapéu de palha|Plus Ultra|Tubarão \(1975\)|🔒/.test(texto), 'nenhum nome de nível futuro nem cadeado');
-    await page.locator('#guardaRoupa [data-visual="nv004"]').click();
-    await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv004');
-    await win.waitForFunction(() => window.__jojoRenderer.state.visualNivel?.nv_nv004 === 1, null, { timeout: 10000 });
+    assert.ok(!/Kiribachi|Chapéu de palha|Plus Ultra|Sabre de luz|Aura dourada/.test(texto), 'nenhum item futuro revelado');
+    await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.novas.length === 0); // viu na Central
+    await page.locator('#guardaRoupa [data-visual="nv003"]').click();
+    await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv003');
+    await win.waitForFunction(() => window.__jojoRenderer.state.visualNivel?.nv_nv003 === 1, null, { timeout: 10000 });
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });

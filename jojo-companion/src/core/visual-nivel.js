@@ -632,12 +632,19 @@ export function melhorConjunto(referencias, nivel) {
   return o;
 }
 
-/** Estado salvo válido: {pecas: {parte: id}, visto: nível}. */
+const ids = (v) => (Array.isArray(v) ? [...new Set(v.filter((x) => typeof x === 'string' && /^nv\d{3}$/.test(x)))].slice(0, 400) : []);
+
+/**
+ * Estado salvo válido: {pecas: {parte: id}, visto: nível, novas: [ids ainda não
+ * vistos na Central], avisar: [ids que o JoJo ainda não anunciou]}.
+ */
 export function sanitizeVisual(v, referencias = null) {
-  const out = { pecas: {}, visto: 0 };
+  const out = { pecas: {}, visto: 0, novas: [], avisar: [] };
   if (!v || typeof v !== 'object' || Array.isArray(v)) return out;
   const n = Number(v.visto);
   out.visto = Number.isInteger(n) && n >= 0 && n <= 10000 ? n : 0;
+  out.novas = ids(v.novas);
+  out.avisar = ids(v.avisar);
   const pecas = v.pecas && typeof v.pecas === 'object' && !Array.isArray(v.pecas) ? v.pecas : {};
   for (const [parte, id] of Object.entries(pecas)) {
     if (!PARTES.has(parte) || typeof id !== 'string' || !/^nv\d{3}$/.test(id)) continue;
@@ -661,7 +668,9 @@ export function aplicarNivel(estado, referencias, nivel) {
   const novas = catalogo(referencias).filter((p) => p.nivel > s.visto && p.nivel <= nivel);
   const pecas = s.visto === 0 ? melhorConjunto(referencias, nivel) : { ...s.pecas };
   if (s.visto !== 0) for (const p of novas) pecas[p.parte] = p.id;
-  return { estado: { pecas, visto: nivel }, novas };
+  // Tudo o que foi liberado agora fica marcado como novo (Central) e a anunciar (JoJo).
+  const novos = novas.map((p) => p.id);
+  return { estado: { pecas, visto: nivel, novas: ids([...s.novas, ...novos]), avisar: ids([...s.avisar, ...novos]) }, novas };
 }
 
 /** Veste (ou tira, se já estava) uma peça liberada. Bloqueada → nada muda. */
@@ -710,16 +719,42 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
   return Object.keys(ch).length ? ch : null;
 }
 
-/** Resumo para a Central: SÓ o que já foi liberado, por parte, e o que está vestido. */
+/**
+ * Resumo para a Central. Liberados: nome, obra, título do nível e a fala da
+ * referência como descrição. Bloqueados: SÓ o número do nível que libera (nada
+ * de nome, parte, cor, obra ou id), para virar um cadeado na tela.
+ */
 export function visualSnapshot(estado, referencias, nivel) {
   const s = sanitizeVisual(estado, referencias);
   const lib = visuaisLiberados(referencias, nivel);
+  const novas = new Set(s.novas);
   const vestido = {};
   for (const [parte, id] of Object.entries(s.pecas)) if (lib.some((p) => p.id === id)) vestido[parte] = id;
   const partes = VISUAL_PARTES
-    .map((pt) => ({ ...pt, itens: lib.filter((p) => p.parte === pt.id).reverse().map((p) => ({ id: p.id, nome: p.nome, nivel: p.nivel, titulo: p.titulo, obra: p.obra, cor: p.cores.a })) }))
+    .map((pt) => ({ ...pt, itens: lib.filter((p) => p.parte === pt.id).reverse().map((p) => ({ id: p.id, nome: p.nome, nivel: p.nivel, titulo: p.titulo, obra: p.obra, descricao: p.fala, cor: p.cores.a, novo: novas.has(p.id) })) }))
     .filter((pt) => pt.itens.length);
-  return { vestido, partes, total: lib.length };
+  const bloqueados = catalogo(referencias).filter((p) => p.nivel > nivel).map((p) => ({ nivel: p.nivel }));
+  return { vestido, partes, total: lib.length, novos: lib.filter((p) => novas.has(p.id)).length, bloqueados };
+}
+
+/** Marca todos os liberados como vistos na Central. */
+export function marcarVistos(estado, referencias) {
+  return { ...sanitizeVisual(estado, referencias), novas: [] };
+}
+
+/**
+ * Aviso pendente (JoJo ainda não falou): uma peça → a fala da referência; várias →
+ * quantas e as mais recentes. null se não há nada a anunciar.
+ */
+export function avisoVisual(estado, referencias, nivel) {
+  const s = sanitizeVisual(estado, referencias);
+  const pend = visuaisLiberados(referencias, nivel).filter((p) => s.avisar.includes(p.id));
+  if (!pend.length) return null;
+  const ultima = pend[pend.length - 1];
+  if (pend.length === 1) return { pecas: pend, ultima, texto: `Nível ${ultima.nivel}: ${ultima.titulo}. ${ultima.fala} Peça nova no Guarda-roupa.` };
+  const nomes = pend.slice(-3).reverse().map((p) => p.nome);
+  const resto = pend.length - nomes.length;
+  return { pecas: pend, ultima, texto: `Seu nível já liberou ${pend.length} visuais: ${nomes.join(', ')}${resto > 0 ? ` e mais ${resto}` : ''}. Já estou com o mais recente de cada parte; o resto está no Guarda-roupa da Central.` };
 }
 
 /** Acha uma peça LIBERADA pelo nome, título ou id ("chapéu de palha", "nv017"). */
@@ -737,7 +772,6 @@ function norm(s) {
 // Falas genéricas só para tirar e para "o mais recente de cada parte"; vestir e
 // subir de nível usam a fala da própria referência.
 export const FALAS_VISUAL = {
-  varias: ['Liberei {N} visuais novos. O mais recente de cada parte já está em mim.'],
   tira: ['Tirou? Tá. Continuo lindo do mesmo jeito.'],
   melhor: ['O mais recente de cada parte. Do jeito que eu mereço.'],
 };
