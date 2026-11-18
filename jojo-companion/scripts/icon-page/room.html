@@ -78,12 +78,11 @@ window.measure = async (rigJson, animJson, foodJson = { foods: [] }, niveis = nu
     for (const [name, anim] of Object.entries(animJson.animations)) {
       if (name === 'hidden') continue;
       const ctx = canvas();
-      for (const mov of MOVIMENTO) {
-        const a = new Animator(animJson, { rng: () => 0.5 });
-        a.play(name, 0, { variant: name });
-        const dur = anim.duration || 1000;
-        for (let t = 0; t <= dur + 400; t += 1000 / 12) { const s = a.sample(t); rig.draw(ctx, { ...s.pose, ...todos, ...mov }, { origin: { x: O, y: O }, scale: 1, facing: 1 }); }
-      }
+      // 13 quadros espalhados pela animação bastam para o envelope (todos os visuais juntos são pesados).
+      const a = new Animator(animJson, { rng: () => 0.5 });
+      a.play(name, 0, { variant: name });
+      const dur = anim.duration || 1000;
+      for (let i = 0; i <= 12; i++) { const s = a.sample((dur * i) / 12); rig.draw(ctx, { ...s.pose, ...todos, ...MOVIMENTO[i % 2] }, { origin: { x: O, y: O }, scale: 1, facing: 1 }); }
       const base = (anim.variantOf || name).replace(/~.*$/, '');
       const r = bbox(ctx, box), prev = out.animsVisual[base];
       out.animsVisual[base] = prev ? { l: Math.max(prev.l, r.l), t: Math.max(prev.t, r.t), r: Math.max(prev.r, r.r), b: Math.max(prev.b, r.b) } : r;
