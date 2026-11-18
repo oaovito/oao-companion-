@@ -1,8 +1,13 @@
 # CHANGELOG
 
-## Não lançado — 100 visuais de anime
+## Não lançado — 100 visuais de anime e rebolado no foco
 
 ### Novidades
+- Rebolado do meme: no modo foco, de vez em quando, o JoJo vira de costas, põe as mãos nos
+  joelhos e rebola 3 segundos, as nádegas subindo e descendo alternadas (amassa e estica), o
+  corpo quicando e balançando, e volta ao foco sozinho. Fora do foco ele também rebola às vezes
+  no repouso. Nunca no Modo Trabalho, com tela cheia, no modo de interação ou com movimento
+  reduzido.
 - 100 visuais extras de anime, um a cada 2 níveis, cada um de uma obra que ainda não aparecia
   em nenhum título nem extra: Hokuto no Ken, Doraemon, Inuyasha, Samurai X, Trigun, Code Geass,
   Tokyo Ghoul, Fairy Tail, KonoSuba, Overlord, Slime, A Viagem de Chihiro, Princesa Mononoke,
@@ -15,7 +20,12 @@
   Sakamoto de barrigão e papada, zumbi do Zom 100 com baba e moscas, porco do Porco Rosso).
   Trancados continuam só como cadeado.
 
+### Melhorias
+- Configurações → Movimento e mouse → "Rebolar de vez em quando no modo foco": desmarcar tira o
+  rebolado só do foco; no repouso ele continua.
+
 ### Como testar
+- /foco 25 e esperar alguns minutos: em algum momento ele rebola 3 s e volta a estudar.
 - Subir para o nível 2: além da peça do nível, chegam as munhequeiras do Hokuto Shinken.
 - Central → Guarda-roupa → Visuais dos níveis: os de anime aparecem como "Extra de animes".
 

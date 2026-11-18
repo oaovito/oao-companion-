@@ -1,5 +1,13 @@
 # HANDOFF — JoJo Companion
 
+## Rebolado no foco (não lançado) — 18/11/2026
+
+Pedido do usuário (com o GIF do Among Us rebolando): no modo foco o JoJo rebola 3 s de vez em
+quando; opção nas Configurações tira só do foco; no repouso continua às vezes. Estado `twerk`,
+animação `twerk` alinhada aos 12 fps, peças por `src/core/rebolado.js` (rig intacto; o teste de
+anatomia continua valendo). Doc em `docs/FOCO.md`; testes em `test/unit/rebolado.test.js`.
+Unitários: 685.
+
 ## 100 visuais de anime (não lançado) — 18/11/2026
 
 Pedido do usuário: mais 100 visuais "com os temas que já dei", sem repetir e focados em anime.

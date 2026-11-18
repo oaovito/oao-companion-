@@ -125,6 +125,10 @@ const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
 // Animações do modo foco: as duas de sempre e as do catálogo de foco (ids "foco…").
 const FOCUS_ANIM = /^cat_(estudarJunto|treinarJunto|foco[A-Z])/;
+// Rebolado: intervalo mínimo no repouso e no foco, e chance a cada minuto do foco.
+const TWERK_IDLE_GAP_MS = 20 * 60e3;
+const TWERK_FOCO_GAP_MS = 6 * 60e3;
+const TWERK_FOCO_CHANCE = 0.2;
 
 // Partes do pedido de foco que descrevem o plano de ciclos (não são a duração do bloco).
 const FOCUS_PLAN_PARTS = /pausa(?:\s+de)?\s+\d{1,2}(?:\s*min\w*)?|\bx\s*\d{1,2}\b|\b\d{1,2}\s*(?:ciclos?|blocos?|vezes)\b/gi;
@@ -169,6 +173,7 @@ export class Companion {
     this.onOpenApp = null; // (conversationId|null) => void — traz a Central do JoJo para frente
     this.onOpenSettings = null; // () => void
     this.reducedMotion = false;
+    this.lastTwerkAt = -Infinity; // último rebolado (repouso ou foco)
     this.costume = null; // fantasia da data festiva (natal, pascoa…)
     this.dateNow = dateNow; // relógio de parede (regra de sono 6h–21h); injetável nos testes
     this.powderKind = null; // 'snort' | 'chug' enquanto senta no chão (PC parado)
@@ -831,7 +836,14 @@ export class Companion {
       ambientWeight: (AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] ?? 0) * (this.reducedMotion ? 0.5 : 1) * this.progress.hourBoost() * (this.progress.st.diasQuietos === dayKey(new Date()) ? 0.4 : 1),
       pickAmbient: () => this._pickAmbient(),
       hasQueue: this.ambientQueue.length > 0,
+      // Rebolado no repouso: de vez em quando, nunca em sequência, fora do foco e do Modo Trabalho.
+      twerkOk: this._podeRebolar(this.clock.now()) && !this.focus && this.clock.now() - this.lastTwerkAt >= TWERK_IDLE_GAP_MS,
     };
+  }
+
+  /** Pode rebolar agora (Modo Trabalho, movimento reduzido, interação e tela cheia não). */
+  _podeRebolar() {
+    return !this.work && !this.reducedMotion && !this.interaction && !this.fullscreenHidden && !this.paused;
   }
 
   // ---------------------------------------------------------------- PC parado → "ligadão"
@@ -946,6 +958,7 @@ export class Companion {
     }
     // Foco junto: voltou ao repouso → continua estudando/treinando do lado dela.
     if (ev.state === 'idle' && this.focus && !this.interaction) this.clock.setTimeout(() => this.focus && this.behavior.state === 'idle' && this._focusAnim(this.clock.now()), 0);
+    if (ev.state === 'twerk') this.lastTwerkAt = now;
     if (ev.state === 'walk') this._startWalk(now);
     if (ev.state === 'sleep' && ev.prev !== 'sleep') this.clock.setTimeout(() => this._sleepTalk(), 3000);
     if (ev.state === 'curious' && this.rng() < 0.35) this.sayCategory('curious', { spontaneous: true });
@@ -3288,8 +3301,21 @@ export class Companion {
       f.metade = true;
       this._focusIncentive('metade', now);
     } else if (now >= f.trocaEm) this._focusSwap(now);
-    if (!FOCUS_ANIM.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT) this._focusAnim(now);
+    else this._focusTwerk(now);
+    if (!FOCUS_ANIM.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT && this.behavior.state !== 'twerk') this._focusAnim(now);
     this.clock.setTimeout(() => this._focusTick(), 60e3);
+  }
+
+  /**
+   * Rebolado no foco (pedido de 18/11/2026): de vez em quando, 3 s como no meme, e volta
+   * ao foco sozinho. Desligável em Configurações (reboladoFoco); no repouso continua.
+   */
+  _focusTwerk(now) {
+    const f = this.focus;
+    if (!f || this.store.get().reboladoFoco === false || !this._podeRebolar()) return false;
+    if (now - f.inicio < 2 * 60e3 || now - this.lastTwerkAt < TWERK_FOCO_GAP_MS) return false;
+    if (this.rng() >= TWERK_FOCO_CHANCE) return false;
+    return this.behavior.request('twerk', { now, force: true }) !== false;
   }
 
   _endFocus(done) {

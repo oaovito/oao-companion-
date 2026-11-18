@@ -135,3 +135,20 @@ test('funeral do shape Windows: comida fora da dieta mostra o slide com as fotos
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });
+
+test('rebolado Windows: o desenho toca o rebolado de costas sem erro e a opção do foco aparece nas Configurações', { timeout: 120000 }, async () => {
+  const { app, win, errors } = await launch();
+  try {
+    await win.waitForFunction(() => !!window.__jojoRenderer.state, null, { timeout: 15000 });
+    await app.evaluate(() => { const c = globalThis.__jojo.companion; return c.behavior.request('twerk', { now: c.clock.now(), force: true }); });
+    await win.waitForFunction(() => window.__jojoRenderer.anim === 'twerk', null, { timeout: 10000 });
+    await new Promise((r) => setTimeout(r, 1500)); // meio do rebolado, alguns quadros desenhados
+    const aberta = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.openSettings());
+    const sw = await aberta; sw.on('pageerror', (e) => errors.push(e.message));
+    await sw.waitForSelector('input[name="reboladoFoco"]', { state: 'attached' });
+    assert.equal(await sw.locator('input[name="reboladoFoco"]').isChecked(), true, 'ligado por padrão');
+    await sw.locator('input[name="reboladoFoco"]').click();
+    await waitFor(app, () => globalThis.__jojo.store.get().reboladoFoco === false);
+    assert.deepEqual(errors, []);
+  } finally { await quit(app); }
+});
