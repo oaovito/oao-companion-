@@ -55,8 +55,9 @@ mudança de opacidade.
 
 De vez em quando (a partir do 2º minuto do bloco, chance de 20 % por minuto, no máximo
 um a cada 6 min) o JoJo rebola 3 s como no meme: estado `twerk`, animação `twerk`
-(vista de costas, mãos nos joelhos, canais `twerkL`/`twerkR`, `twerkSqL`/`twerkSqR`,
-`twerkBig`, sem prolapso) e volta ao foco sozinho. As peças do rebolado entram em
+(refeita do GIF: modelo próprio de costas em 3/4, corpo em feijão que amassa até cobrir as
+pernas e estica de novo, 6 quadros de 40 ms, `stepFps` 25; canais `rebolando`, `rbSx`,
+`rbSy`, `rbDown`, `rbHead`) e volta ao foco sozinho. O modelo entra em
 tempo de execução por `src/core/rebolado.js` (o rig do personagem não muda).
 Configuração `reboladoFoco` (Movimento e mouse) tira só o do foco; no repouso ele
 continua rebolando às vezes (5 % das escolhas autônomas, no máximo um a cada 20 min).

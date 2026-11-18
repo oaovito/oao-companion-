@@ -1,5 +1,5 @@
-// Rebolado do meme (pedido de 18/11/2026): de costas, 3 s, nádegas alternando com
-// amassa-estica, mãos nos joelhos. No foco de vez em quando (desligável em
+// Rebolado do meme (pedido de 18/11/2026, refeito a partir do GIF): modelo próprio de
+// costas em 3/4, o corpo em feijão amassando e esticando em 6 quadros de 40 ms. No foco de vez em quando (desligável em
 // Configurações); no repouso continua acontecendo às vezes, com a opção ligada ou não.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import { makeEnv, loadJSON } from './helpers.js';
 import { Animator } from '../../src/renderer/shared/animator.js';
 import { BehaviorMachine, TWERK_IDLE_CHANCE } from '../../src/core/behavior.js';
-import { rigComRebolado } from '../../src/core/rebolado.js';
+import { rigComRebolado, GRUPOS_REBOLADO, CICLO } from '../../src/core/rebolado.js';
 import { DEFAULTS, sanitize } from '../../src/core/settings-schema.js';
 
 const ANIMS = loadJSON('assets/animations/jojo.animations.json');
@@ -20,48 +20,52 @@ function at(t) {
   return an.sample(ANIMS.animations.twerk.duration * t).pose;
 }
 
-test('animação: 3 s de costas, sem prolapso, nádegas alternando com amassa-estica, corpo quicando e balançando', () => {
+test('animação refeita do GIF: 3 s, 25 quadros por segundo, ciclo de 6 quadros de 40 ms amassando o corpo até cobrir as pernas', () => {
   const A = ANIMS.animations.twerk;
   assert.equal(A.duration, 3000);
+  assert.equal(A.stepFps, 25, 'mesmo ritmo do GIF (40 ms por quadro)');
   assert.ok(ROOM.anims.twerk, 'espaço da janela para o rebolado');
-  assert.equal(at(0).mooning, 0, 'começa de frente');
-  assert.equal(at(0.5).mooning, 1, 'de costas');
-  assert.equal(at(0.5).twerking, 1, 'mãos nos joelhos');
-  assert.equal(at(0.995).mooning, 0, 'desvira no fim');
-  assert.ok(at(0.035).squashX < 0.6, 'vira no estilo recorte de papel');
-  // Quadro a quadro (12 fps): as nádegas trocam de lado a cada quadro, sem prolapso nenhum.
-  const F = 1000 / 12 / 3000;
-  const quadros = Array.from({ length: 24 }, (_, i) => at((6 + i) * F + 0.0001));
-  assert.ok(quadros.every((p) => (p.gagSize || 0) === 0 && (p.spread || 0) === 0), 'sem prolapso nem mãos abrindo');
-  const altos = quadros.filter((p) => p.twerkL > 5 && p.twerkR < -3).length;
-  const baixos = quadros.filter((p) => p.twerkR > 5 && p.twerkL < -3).length;
-  assert.ok(altos >= 5 && baixos >= 5, `alterna os lados (${altos}/${baixos})`);
-  assert.ok(quadros.some((p) => p.twerkSqL < 0.85) && quadros.some((p) => p.twerkSqL > 1.1), 'amassa e estica');
-  assert.ok(quadros.some((p) => p.rootY >= 6) && quadros.some((p) => p.rootY <= 4), 'o corpo quica');
-  const lados = new Set(quadros.map((p) => Math.sign(Math.round(p.rootRot))));
-  assert.ok(lados.has(1) && lados.has(-1), 'balança de um lado pro outro');
-  assert.ok(quadros.every((p) => p.twerkBig > 1.1), 'nádegas maiores durante o rebolado');
+  assert.equal(at(0).rebolando, 0, 'começa de frente');
+  assert.equal(at(0.5).rebolando, 1, 'modelo do rebolado');
+  assert.equal(at(0.999).rebolando, 0, 'desvira no fim');
+  // Nada da vista de costas do "vai tomar no cu".
+  for (const ch of ['mooning', 'gagSize', 'spread']) assert.equal(A.tracks[ch], undefined, ch);
+  // Quadro a quadro: o ciclo do GIF.
+  const q = (n) => at((n * 40 + 1) / 3000);
+  const ciclo = [3, 4, 5, 6, 7, 8].map((n) => [q(n).rbSy, q(n).rbSx, q(n).rbDown]);
+  assert.deepEqual(ciclo.map(([y]) => +y.toFixed(2)), CICLO.map((c) => c[0]));
+  assert.ok(ciclo[3][0] < 0.75 && ciclo[3][1] > 1.2, 'amassa e alarga no fundo do ciclo');
+  assert.ok(ciclo[3][2] >= 10, 'o corpo desce por cima das pernas');
+  assert.deepEqual([q(9).rbSy, q(15).rbSy], [q(3).rbSy, q(3).rbSy], 'repete a cada 6 quadros');
 });
 
-test('desenho: rig original intacto; cópia com nádegas animadas, rego e mãos nos joelhos', () => {
+test('desenho: modelo próprio (não reaproveita a vista de costas) e o resto some enquanto ele rebola', () => {
   const antes = JSON.stringify(RIG);
   const r = rigComRebolado(RIG);
   assert.equal(JSON.stringify(RIG), antes, 'não altera o rig do personagem');
   assert.equal(rigComRebolado(r), r, 'aplicar duas vezes não duplica');
-  const partes = r.groups.flatMap((g) => g.parts);
-  const p = (id) => partes.find((x) => x.id === id);
-  assert.equal(p('moonCheekL').dy, 'twerkL');
-  assert.equal(p('moonCheekR').dy, 'twerkR');
-  assert.equal(p('moonCheekL').scaleYBy, 'twerkSqL');
-  for (const id of ['moonHandL', 'moonHandR', 'moonForeL', 'moonForeR']) assert.ok([].concat(p(id).hideIf).includes('twerking'), id);
-  const joelhos = r.groups.find((g) => g.id === 'twerkHands');
-  assert.equal(joelhos.showIf, 'twerking');
-  for (const id of ['twerkHandL', 'twerkHandR', 'twerkCrack', 'twerkShineL', 'twerkShineR']) assert.ok(p(id), id);
-  assert.equal(new Set(partes.map((x) => x.id)).size, partes.length, 'ids únicos');
+  const novos = r.groups.filter((g) => g.showIf === 'rebolando');
+  assert.deepEqual(novos.map((g) => g.id), GRUPOS_REBOLADO.map((g) => g.id));
+  const ids = novos.flatMap((g) => g.parts.map((p) => p.id));
+  for (const id of ['rbFeijao', 'rbPernaE', 'rbPernaD', 'rbDorsal', 'rbRego', 'rbCranio', 'rbOlho']) assert.ok(ids.includes(id), id);
+  assert.ok(ids.every((id) => /^rb/.test(id)), 'nenhuma peça reaproveitada');
+  assert.ok(r.groups.filter((g) => g.showIf !== 'rebolando').every((g) => [].concat(g.hideIf).includes('rebolando')), 'todo o resto some');
+  const feijao = novos.flatMap((g) => g.parts).find((p) => p.id === 'rbFeijao');
+  assert.deepEqual([feijao.scaleXBy, feijao.scaleYBy, feijao.dy], ['rbSx', 'rbSy', 'rbDown']);
+  const todas = r.groups.flatMap((g) => g.parts);
+  assert.equal(new Set(todas.map((x) => x.id)).size, todas.length, 'ids únicos');
   const cores = new Set(Object.keys(RIG.palette));
-  assert.ok(r.groups.filter((g) => /^twerk/.test(g.id)).flatMap((g) => g.parts).every((x) => cores.has(x.fill)), 'cores da paleta');
-  const iMaos = r.groups.findIndex((g) => g.id === 'moonHandsGroup');
-  assert.equal(r.groups[iMaos + 1].id, 'twerkHands', 'mãos dos joelhos no lugar das que seguram as nádegas');
+  assert.ok(novos.flatMap((g) => g.parts).every((x) => cores.has(x.fill)), 'cores da paleta');
+  // Pernas plantadas no chão e nada passa da caixa da janela.
+  for (const p of novos.flatMap((g) => g.parts)) {
+    for (const seg of p.path.split(/(?=[MLCZQ])/)) {
+      const nums = seg.slice(1).split(/[\s,]+/).filter(Boolean).map(Number);
+      for (let i = 0; i + 1 < nums.length; i += 2) {
+        assert.ok(nums[i] >= 0 && nums[i] <= 184, `${p.id} x=${nums[i]}`);
+        assert.ok(nums[i + 1] >= -16 && nums[i + 1] <= 167, `${p.id} y=${nums[i + 1]}`);
+      }
+    }
+  }
 });
 
 test('repouso: com liberação do companion, às vezes escolhe rebolar; sem liberação, nunca', () => {

@@ -107,8 +107,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (estado `moon`, 7,4 s; canais `mooning`, `spread`, `gagSize`, `drip`). De costas ele continua
   fisiculturista (costas em V, trapézio, dorsais, tríceps) em qualquer meme. Sozinho no repouso:
   1 chance em 1 bilhão a cada escolha autônoma (`MOON_IDLE_CHANCE` em `behavior.js`).
-- Rebolado do meme (estado `twerk`, 3 s, de costas com mãos nos joelhos, sem prolapso; `src/core/rebolado.js` injeta as
-  peças sem mudar o rig): de vez em quando no modo foco (opção `reboladoFoco`, desligável) e às vezes no repouso (sempre).
+- Rebolado do meme (estado `twerk`, 3 s; refeito do GIF do Among Us: modelo próprio de costas em 3/4, corpo em feijão
+  amassando e esticando em 6 quadros de 40 ms a 25 fps; `src/core/rebolado.js` injeta o modelo sem mudar o rig): de vez em quando no modo foco (opção `reboladoFoco`, desligável) e às vezes no repouso (sempre).
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços e inclina a cabeça, preservando o modelo original com pernas e sem cauda.

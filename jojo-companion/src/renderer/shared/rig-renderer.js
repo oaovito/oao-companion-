@@ -207,12 +207,13 @@ export class RigRenderer {
       ctx.scale(k, k);
       ctx.translate(-part.scalePivot[0], -part.scalePivot[1]);
     }
-    // Escala só vertical por canal (ex.: nádega amassando no chão do rebolado).
-    if (part.scaleYBy && part.scaleYPivot) {
-      const k = Math.max(0.2, pose[part.scaleYBy] ?? 1);
-      ctx.translate(part.scaleYPivot[0], part.scaleYPivot[1]);
-      ctx.scale(1, k);
-      ctx.translate(-part.scaleYPivot[0], -part.scaleYPivot[1]);
+    // Escala só horizontal/vertical por canal (ex.: corpo amassando e alargando no rebolado).
+    if ((part.scaleXBy || part.scaleYBy) && part.squashPivot) {
+      const kx = Math.max(0.2, part.scaleXBy ? pose[part.scaleXBy] ?? 1 : 1);
+      const ky = Math.max(0.2, part.scaleYBy ? pose[part.scaleYBy] ?? 1 : 1);
+      ctx.translate(part.squashPivot[0], part.squashPivot[1]);
+      ctx.scale(kx, ky);
+      ctx.translate(-part.squashPivot[0], -part.squashPivot[1]);
     }
   }
 

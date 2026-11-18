@@ -1,61 +1,78 @@
-// Rebolado do meme (pedido de 18/11/2026): de costas, mãos nos joelhos, as duas nádegas
-// subindo e descendo alternadas com amassa-estica, o corpo quicando e balançando.
-// Reaproveita a vista de costas do rig (grupos `mooning`) sem alterar o arquivo do rig:
-// esta função devolve uma CÓPIA com os canais do rebolado nas nádegas e as mãos nos
-// joelhos (só aparecem com o canal `twerking`). Sem o canal, o desenho é o de sempre.
+// Rebolado do meme (pedido de 18/11/2026, refeito a partir do GIF do Among Us): modelo
+// PRÓPRIO do JoJo de costas em 3/4, desenhado só para isto (nada da vista de costas do
+// "vai tomar no cu"). Como no GIF, o corpo inteiro (costas + nádega, em forma de feijão)
+// amassa até cobrir as pernas, alarga, a dorsal desce junto e ele estica de novo, num ciclo
+// de 6 quadros de 40 ms. A cabeça espia por cima do ombro esquerdo, no lugar do visor.
+// Esta função devolve uma CÓPIA do rig com o modelo (canal `rebolando`) e esconde todo o
+// resto enquanto ele rebola; o arquivo do rig não muda.
 
-// Nádegas e linhas do glúteo: cada lado com o seu canal (sobe/desce), amassa-estica
-// vertical em torno do topo e cresce um pouco durante o rebolado.
-const LADOS = {
-  moonCheekL: { dy: 'twerkL', scaleYBy: 'twerkSqL', scaleYPivot: [70, 86], scaleBy: 'twerkBig', scalePivot: [70, 108] },
-  moonGluteLine: { dy: 'twerkL', scaleYBy: 'twerkSqL', scaleYPivot: [70, 86], scaleBy: 'twerkBig', scalePivot: [70, 108] },
-  moonCheekR: { dy: 'twerkR', scaleYBy: 'twerkSqR', scaleYPivot: [110, 86], scaleBy: 'twerkBig', scalePivot: [110, 108] },
-  moonGluteLineR: { dy: 'twerkR', scaleYBy: 'twerkSqR', scaleYPivot: [110, 86], scaleBy: 'twerkBig', scalePivot: [110, 108] },
-};
-// Mãos que seguram as nádegas (meme "vai tomar no cu") saem; no rebolado elas vão aos joelhos.
-const MAOS_NAS_NADEGAS = new Set(['moonForeL', 'moonForeR', 'moonHandL', 'moonHandR', 'moonClawL', 'moonClawR']);
+/** Pivô do amassa-estica: o pé do corpo, entre as pernas. */
+export const PIVO = [102, 146];
+const CORPO = { scaleXBy: 'rbSx', scaleYBy: 'rbSy', squashPivot: PIVO, dy: 'rbDown' };
 
-const brilho = (cx, lado) => ({ fill: 'sclera', alpha: 0.35, ...LADOS[lado], path: `M${cx - 7},98 a7,4 0 1,0 14,0 a7,4 0 1,0 -14,0 Z` });
+const P = (id, fill, path, extra = {}) => ({ id, fill, path, ...extra });
 
-export const MAOS_JOELHOS = {
-  id: 'twerkHands',
-  outline: true,
-  showIf: 'twerking',
-  parts: [
-    { id: 'twerkForeL', fill: 'body', path: 'M22,92 C18,104 30,128 48,144 C54,148 62,144 60,138 C46,124 36,106 34,94 C32,88 24,86 22,92 Z' },
-    { id: 'twerkForeR', fill: 'body', path: 'M158,92 C162,104 150,128 132,144 C126,148 118,144 120,138 C134,124 144,106 146,94 C148,88 156,86 158,92 Z' },
-    { id: 'twerkHandL', fill: 'body', path: 'M46,140 C44,132 52,128 60,130 C68,132 70,140 68,148 C66,154 56,156 50,152 C47,149 46,145 46,140 Z' },
-    { id: 'twerkHandR', fill: 'body', path: 'M134,140 C136,132 128,128 120,130 C112,132 110,140 112,148 C114,154 124,156 130,152 C133,149 134,145 134,140 Z' },
-  ],
-};
+export const GRUPOS_REBOLADO = [
+  // Atrás do corpo: dorsal e os braços dobrados aparecendo dos lados (seguem o corpo).
+  { id: 'rbAtras', outline: true, showIf: 'rebolando', parts: [
+    P('rbDorsal', 'body', 'M90,24 C96,4 110,-8 128,-14 C121,0 121,12 126,24 Z', CORPO),
+    P('rbBracoE', 'body', 'M42,62 C28,66 22,90 32,104 C40,110 48,100 48,90 Z', CORPO),
+    P('rbBracoD', 'body', 'M164,62 C178,66 182,90 172,104 C164,110 156,100 156,90 Z', CORPO),
+  ] },
+  // Pernas curtas e grossas, plantadas no chão (não amassam: o corpo desce por cima delas).
+  { id: 'rbPernas', outline: true, showIf: 'rebolando', parts: [
+    P('rbPernaE', 'body', 'M68,128 L66,156 C66,163 70,167 77,167 L90,167 C95,167 96,161 93,156 L92,128 Z'),
+    P('rbPernaD', 'body', 'M114,128 L113,156 C112,163 117,167 124,167 L138,167 C143,167 143,160 140,155 L136,126 Z'),
+  ] },
+  // Bermuda arriada nas coxas.
+  { id: 'rbBermuda', outline: true, showIf: 'rebolando', parts: [
+    P('rbBermudaE', 'shorts', 'M64,140 L94,140 L93,151 L65,151 Z'),
+    P('rbBermudaD', 'shorts', 'M112,140 L139,139 L141,150 L113,151 Z'),
+  ] },
+  { id: 'rbCorpo', outline: true, showIf: 'rebolando', parts: [
+    // Costas + nádega numa peça só, como o feijão do meme visto de trás.
+    P('rbFeijao', 'body', 'M40,78 C34,44 58,18 96,16 C136,14 166,38 166,80 C166,110 156,132 138,142 C128,147 114,146 106,140 C100,146 84,148 70,144 C50,138 44,110 40,78 Z', CORPO),
+  ] },
+  { id: 'rbDetalhe', showIf: 'rebolando', parts: [
+    // Metade de baixo mais escura (o volume da nádega) e o rego puxado pra direita (3/4).
+    P('rbSombra', 'bodyShade', 'M46,104 C60,118 86,122 106,116 C126,124 150,120 164,102 C162,122 152,138 138,142 C128,147 114,146 106,140 C100,146 84,148 70,144 C56,140 48,124 46,104 Z', CORPO),
+    P('rbBrilho', 'sclera', 'M58,40 C74,28 104,24 126,30 C108,30 82,34 62,46 Z', { ...CORPO, alpha: 0.28 }),
+    P('rbRego', 'outline', 'M104,140 C102,126 100,114 98,102 L101,102 C103,114 105,126 107,138 Z', CORPO),
+    // Costas de fisiculturista: coluna, dorsais em V e escápulas.
+    P('rbColuna', 'muscle', 'M96,22 L99,22 L101,88 L98,88 Z', CORPO),
+    P('rbDorsais', 'muscle', 'M54,56 Q72,84 96,92 Q74,80 58,54 Z M152,56 Q132,86 104,92 Q128,80 148,54 Z', CORPO),
+    P('rbEscapulas', 'muscle', 'M66,40 Q78,52 92,46 Q78,48 68,38 Z M136,40 Q124,52 108,46 Q122,48 134,38 Z', CORPO),
+    P('rbGarras', 'cream', 'M66,162 L62,167 L68,167 Z M72,163 L69,167 L75,167 Z M140,161 L144,167 L138,167 Z M134,162 L137,167 L131,167 Z'),
+  ] },
+  // Cabeça espiando por cima do ombro esquerdo, rindo.
+  { id: 'rbCabeca', outline: true, showIf: 'rebolando', parts: [
+    P('rbCranio', 'body', 'M14,54 C12,36 26,26 42,28 C56,30 62,42 60,56 C58,70 46,78 32,76 C20,74 16,66 14,54 Z', { dy: 'rbHead' }),
+  ] },
+  { id: 'rbRosto', showIf: 'rebolando', parts: [
+    P('rbOlho', 'sclera', 'M22,46 C22,40 27,36 32,36 C37,36 40,40 40,46 C40,51 36,54 31,54 C26,54 22,51 22,46 Z', { dy: 'rbHead' }),
+    P('rbPupila', 'eye', 'M25,46 C25,43 27,41 29,41 C31,41 33,43 33,46 C33,48 31,50 29,50 C27,50 25,48 25,46 Z', { dy: 'rbHead' }),
+    P('rbSobrancelha', 'outline', 'M20,34 L42,38 L41,41 L19,37 Z', { dy: 'rbHead' }),
+    P('rbDentes', 'teeth', 'M16,62 L44,66 L40,72 L36,66 L32,72 L28,66 L24,71 L20,66 Z', { dy: 'rbHead' }),
+    P('rbGuelras', 'muscle', 'M50,44 L52,44 L50,58 L48,58 Z M55,46 L57,46 L55,58 L53,58 Z', { dy: 'rbHead' }),
+  ] },
+];
 
-export const DETALHE_REBOLADO = {
-  id: 'twerkHandsDetail',
-  showIf: 'twerking',
-  parts: [
-    // Rego entre as nádegas (o prolapso fica escondido: gagSize 0).
-    { id: 'twerkCrack', fill: 'outline', path: 'M89,90 C87,102 87,116 88,129 L92,129 C93,116 93,102 91,90 Z' },
-    { id: 'twerkShineL', ...brilho(64, 'moonCheekL') },
-    { id: 'twerkShineR', ...brilho(104, 'moonCheekR') },
-    { id: 'twerkClawL', fill: 'cream', path: 'M64,148 L67,155 L61,152 Z M58,152 L60,159 L54,155 Z' },
-    { id: 'twerkClawR', fill: 'cream', path: 'M116,148 L113,155 L119,152 Z M122,152 L120,159 L126,155 Z' },
-    { id: 'twerkForeLine', fill: 'muscle', path: 'M30,100 Q36,116 46,128 Q38,114 32,102 Z M150,100 Q144,116 134,128 Q142,114 148,102 Z' },
-  ],
-};
-
-/** Rig com o rebolado (cópia; o rig recebido não muda). Sem vista de costas, devolve o mesmo rig. */
+/** Rig com o modelo do rebolado (cópia). Enquanto `rebolando` está ligado, todo o resto some. */
 export function rigComRebolado(rig) {
-  if (!rig || !Array.isArray(rig.groups)) return rig;
-  const iMaos = rig.groups.findIndex((g) => g.id === 'moonHandsGroup');
-  if (iMaos < 0 || rig.groups.some((g) => g.id === MAOS_JOELHOS.id)) return rig;
-  const groups = rig.groups.map((g) => ({
-    ...g,
-    parts: g.parts.map((p) => {
-      if (LADOS[p.id]) return { ...p, ...LADOS[p.id] };
-      if (MAOS_NAS_NADEGAS.has(p.id)) return { ...p, hideIf: [...[].concat(p.hideIf || []), 'twerking'] };
-      return p;
-    }),
-  }));
-  groups.splice(iMaos + 1, 0, structuredClone(MAOS_JOELHOS), structuredClone(DETALHE_REBOLADO));
-  return { ...rig, groups };
+  if (!rig || !Array.isArray(rig.groups) || rig.groups.some((g) => g.id === 'rbCorpo')) return rig;
+  const groups = rig.groups.map((g) => ({ ...g, hideIf: [...new Set([...[].concat(g.hideIf || []), 'rebolando'])] }));
+  return { ...rig, groups: [...groups, ...structuredClone(GRUPOS_REBOLADO)] };
 }
+
+/**
+ * Ciclo do GIF (6 quadros de 40 ms): [amassa vertical, alarga, desce, cabeça].
+ * Quadro 0 em pé; 1–3 amassando até cobrir as pernas; 4–5 esticando de volta.
+ */
+export const CICLO = [
+  [1.0, 1.0, 0, 0],
+  [0.9, 1.07, 4, 2],
+  [0.8, 1.15, 8, 4],
+  [0.72, 1.22, 11, 6],
+  [0.76, 1.19, 10, 5],
+  [0.92, 1.05, 3, 2],
+];

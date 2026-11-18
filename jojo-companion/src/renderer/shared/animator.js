@@ -88,7 +88,9 @@ export class Animator {
       this.play(cur.name, realNow, { restart: true });
     }
     // Escalonamento: o tempo anda em degraus (ex.: 12 quadros por segundo).
-    const now = this.stepMs ? this.current.start + Math.floor((realNow - this.current.start) / this.stepMs) * this.stepMs : realNow;
+    // Uma animação pode pedir o próprio ritmo (ex.: rebolado do meme a 25 quadros por segundo).
+    const passo = this.current.anim.stepFps ? 1000 / this.current.anim.stepFps : this.stepMs;
+    const now = passo ? this.current.start + Math.floor((realNow - this.current.start) / passo) * passo : realNow;
     const { anim, start, blendIn } = this.current;
     const dur = Math.max(1, anim.duration || 1000);
     let t = (now - start) / dur;
