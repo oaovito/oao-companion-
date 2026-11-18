@@ -41,6 +41,11 @@
   Homer, Cartman, Totoro, Kirby, Pac-Man e a capivara ficam gordos de barrigona e papada;
   Shrek e o tubarão zumbi ficam nojentos, com sujeira e moscas; Sextou e Hungry Shark com
   suor e baba.
+- Todos os 269 visuais com o capricho do panda: o JoJo ganha as cores do personagem (corpo,
+  braços, pernas e cabeça separados: uniforme do Superman, do Homem-Aranha, do Goku, do Crash,
+  do Link, do Stan e do Kyle…) e os traços dele presos na cabeça, sem arquinho: orelhas de ogro
+  do Shrek, de coelho do Big Chungus, de gato, de cachorro, de elfo da Frieren e do Link, juba
+  do Rei Leão, chifres do Hollow Knight, motosserra do Chainsaw Man, tênis do Tralalero.
 - Visuais animados: a barrigona e a papada balançam (bem mais quando ele anda, pula ou
   dança), as moscas voam em volta, o suor escorre, a baba estica, a aura pulsa, as bolhas
   sobem e os brilhos piscam. Com um visual vestido, o JoJo às vezes faz sozinho a animação

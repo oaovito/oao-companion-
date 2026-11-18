@@ -19,6 +19,10 @@ pescoço, partes `headRot` e rosto), `nvCorpo` (partes marcadas `corpoX`; braço
 A peça mais recente vence cada transformação. Exagero (18/11): `barrigona` (fator),
 `papada`, `manchasOlhos`/`orelhasRedondas` (cor), `suor`, `baba`, `sujeira`, `moscas` viram
 partes (`partesDoCorpo`, grupo `nivelCorpo`); `pele.membros` pinta braços e pernas (`nvMembros`).
+Detalhe do panda em todos (18/11): `pele.bracos`/`pele.pernas` (`nvBracos`/`nvPernas`; `membros`
+pinta os dois), traços `orelhas` (ogro, gato, cachorro, coelho, elfo, totoro, pequenas; cor =
+pele da cabeça ou `corOrelhas`), `chifres` (inseto, diabo), `juba`, `antenas`, `serraCabeca`,
+`tenis`, `pintas`; forma `transformacao` = só o corpo, sem objeto. Arquinho de orelha removido.
 Movimento: partes usam `scaleBy`/`dx`/`dy` com canais `nvBarriga`, `nvPapada`, `nvMoscaX/Y`,
 `nvSuor`, `nvBaba`, `nvAura`, `nvBolhas`, `nvBrilho/2`, calculados por quadro em
 `movimentoVisual` (overlay; desligado no movimento reduzido). `Companion._animDoVisual`:

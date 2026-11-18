@@ -156,7 +156,6 @@ const FORMAS = {
     ['costumes', 'perola', g, circ(90, 14, 2.6), H()],
   ],
   antenas: ({ a, b }) => [
-    ['costumes', 'arco', a, 'M52,22 C68,10 112,10 128,22 L127,26 C110,15 70,15 53,26 Z', H()],
     ['costumes', 'hasteE', a, poly([[76, 12], [66, -14], [69, -15], [79, 11]]), H()],
     ['costumes', 'hasteD', a, poly([[104, 12], [114, -14], [111, -15], [101, 11]]), H()],
     ['costumes', 'bolaE', b, circ(67, -16, 4.5), H()],
@@ -177,8 +176,9 @@ const FORMAS = {
     ['costumes', 'barra', b, poly([[48, 18], [132, 18], [132, 27], [48, 27]]), H()],
     ['costumes', 'pompom', b, circ(90, -12, 7), H()],
   ],
+  // Só transformação (orelhas, chifres, cores): sem objeto em cima.
+  transformacao: () => [],
   orelhas: ({ a, b }) => [
-    ['costumes', 'arco', b, 'M52,22 C68,10 112,10 128,22 L127,26 C110,15 70,15 53,26 Z', H()],
     ['costumes', 'orelhaE', a, 'M56,16 L40,-6 C36,-10 32,-8 34,-2 L50,22 Z', H()],
     ['costumes', 'orelhaD', a, 'M124,16 L140,-6 C144,-10 148,-8 146,-2 L130,22 Z', H()],
   ],
@@ -700,8 +700,10 @@ export function paletaPele(t) {
   const p = t?.pele;
   if (!p) return null;
   const out = {};
-  if (p.corpo) { out.body = p.corpo; out.bodyShade = escurece(p.corpo, 0.15); out.muscle = p.musculo || escurece(p.corpo); out.nvCabecaPele = p.cabeca || p.corpo; out.nvMembros = p.membros || p.corpo; }
-  if (p.membros) out.nvMembros = p.membros;
+  if (p.corpo) { out.body = p.corpo; out.bodyShade = escurece(p.corpo, 0.15); out.muscle = p.musculo || escurece(p.corpo); out.nvCabecaPele = p.cabeca || p.corpo; out.nvBracos = p.corpo; out.nvPernas = p.corpo; }
+  if (p.membros) { out.nvBracos = p.membros; out.nvPernas = p.membros; }
+  if (p.bracos) out.nvBracos = p.bracos;
+  if (p.pernas) out.nvPernas = p.pernas;
   if (p.cabeca) out.nvCabecaPele = p.cabeca;
   if (p.musculo) out.muscle = p.musculo;
   if (p.barriga) out.cream = p.barriga;
@@ -732,6 +734,30 @@ function partesDoCorpo(t) {
   if (t.suor) out.push(['costumes', 'suor', '#81d4fa', ['M56,26 C52,34 54,40 58,40 C62,40 63,34 56,26 Z', 'M122,30 C118,38 120,44 124,44 C128,44 129,38 122,30 Z', 'M64,12 C61,18 62,22 65,22 C68,22 69,18 64,12 Z'].join(' '), H({ alpha: 0.9, dy: 'nvSuor' })]);
   if (t.baba) out.push(['costumes', 'baba', '#c5e1a5', 'M118,66 C120,74 117,86 121,92 C124,96 128,92 125,86 C123,80 124,72 122,64 Z', H({ alpha: 0.9, scaleBy: 'nvBaba', scalePivot: [121, 64] })]);
   if (t.sujeira) out.push(['nivelPintura', 'sujeira', '#6d4c41', `${elip(70, 108, 6, 4)} ${elip(108, 122, 7, 4.5)} ${elip(96, 98, 3.5, 2.5)} ${elip(62, 128, 4, 3)}`, { alpha: 0.75 }]);
+  // Orelhas, chifres, juba e antenas presos na cabeça (sem arquinho), na cor da pele.
+  const cor = (c) => (c === 'cabeca' || !c ? 'nvCabecaPele' : c);
+  const interno = '#f8bbd0';
+  const orelhas = {
+    ogro: ['M44,40 C30,38 24,30 26,22 C32,26 38,28 46,30 Z M136,40 C150,38 156,30 154,22 C148,26 142,28 134,30 Z', 'M34,30 C30,28 30,25 31,24 C34,26 37,27 40,28 Z M146,30 C150,28 150,25 149,24 C146,26 143,27 140,28 Z'],
+    gato: ['M50,22 L54,-6 L74,12 Z M130,22 L126,-6 L106,12 Z', 'M55,14 L57,2 L66,11 Z M125,14 L123,2 L114,11 Z'],
+    cachorro: ['M48,16 C34,18 30,40 38,52 C46,48 50,34 56,22 Z M132,16 C146,18 150,40 142,52 C134,48 130,34 124,22 Z', null],
+    coelho: ['M66,14 C54,-10 56,-34 66,-36 C76,-34 78,-10 76,12 Z M114,14 C126,-10 124,-34 114,-36 C104,-34 102,-10 104,12 Z', 'M67,6 C61,-10 62,-26 66,-28 C70,-26 72,-10 71,6 Z M113,6 C119,-10 118,-26 114,-28 C110,-26 108,-10 109,6 Z'],
+    elfo: ['M44,38 L18,20 L46,48 Z M136,38 L162,20 L134,48 Z', null],
+    totoro: ['M60,16 L64,-12 L76,10 Z M120,16 L116,-12 L104,10 Z', null],
+    pequenas: [`${circ(56, 12, 7)} ${circ(124, 12, 7)}`, `${circ(56, 12, 3.5)} ${circ(124, 12, 3.5)}`],
+  };
+  if (t.orelhas && orelhas[t.orelhas]) {
+    const [fora, dentro] = orelhas[t.orelhas];
+    out.push(['costumeBack', 'orelhasPele', cor(t.corOrelhas), fora, H()]);
+    if (dentro) out.push(['costumeBack', 'orelhasDentro', t.corOrelhasDentro || interno, dentro, H()]);
+  }
+  if (t.chifres === 'inseto') out.push(['costumeBack', 'chifres', cor(t.corChifres || '#f5f5f5'), 'M58,16 C50,4 46,-12 52,-24 C56,-14 62,-4 70,8 Z M122,16 C130,4 134,-12 128,-24 C124,-14 118,-4 110,8 Z', H()]);
+  if (t.chifres === 'diabo') out.push(['costumeBack', 'chifres', cor(t.corChifres || '#f5e6c8'), 'M60,14 C52,6 50,-6 56,-16 C58,-6 64,2 72,6 Z M120,14 C128,6 130,-6 124,-16 C122,-6 116,2 108,6 Z', H()]);
+  if (t.juba) out.push(['costumeBack', 'juba', t.juba, estrela(90, 46, 66, 18, 0.78), H()]);
+  if (t.antenas) out.push(['costumes', 'antenas', t.antenas, 'M78,12 C72,0 66,-12 60,-20 L63,-22 C70,-14 76,-2 82,10 Z M102,12 C108,0 114,-12 120,-20 L117,-22 C110,-14 104,-2 98,10 Z', H()], ['costumes', 'pontas', t.antenas, `${circ(61, -21, 3.4)} ${circ(119, -21, 3.4)}`, H()]);
+  if (t.serraCabeca) out.push(['costumeBack', 'serraCabeca', '#9e9e9e', 'M82,14 L82,-30 L98,-30 L98,14 Z', H()], ['costumes', 'serraDentes', '#eceff1', Array.from({ length: 7 }, (_, i) => poly([[98, -28 + i * 6], [103, -25 + i * 6], [98, -22 + i * 6]])).join(' '), H()]);
+  if (t.tenis) out.push(['nivelCorpo', 'tenis', t.tenis, `${elip(68, 164, 18, 6)} ${elip(112, 164, 18, 6)}`], ['nivelCorpo', 'sola', '#ffffff', `${rect(50, 166, 36, 2.6)} ${rect(94, 166, 36, 2.6)}`]);
+  if (t.pintas) out.push(['nivelPintura', 'pintas', t.pintas, `${circ(66, 104, 3.6)} ${circ(110, 112, 4.4)} ${circ(84, 124, 2.8)} ${circ(118, 96, 2.4)} ${circ(58, 120, 2.6)}`, { alpha: 0.9 }], ['nivelPintura', 'pintasCabeca', t.pintas, `${circ(60, 24, 3)} ${circ(122, 30, 3.6)} ${circ(110, 14, 2.4)}`, H({ alpha: 0.9 })]);
   if (t.moscas) {
     const mosca = ([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`;
     out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [160, 80], [140, 120]].map(mosca).join(' '), { alpha: 0.95, dx: 'nvMoscaX', dy: 'nvMoscaY' }]);
@@ -772,7 +798,8 @@ export function partesDaPeca(p) {
 // Grupos do tronco (esticam com o corpo mais largo) e o dos braços (afastam para os lados).
 const GRUPOS_CORPO = new Set(['costumeBack', 'legs', 'legDetail', 'sexyNet', 'body', 'bodyDetail', 'catalogChest', 'shorts', 'shortsDetail', 'sexyLayer', 'costumes', 'nivelAura', 'nivelPintura', 'nivelBrilho', 'nivelCorpo']);
 const GRUPOS_CABECA_PELE = new Set(['head', 'headDetail']);
-const GRUPOS_MEMBROS = new Set(['arms', 'legs']);
+const GRUPOS_BRACOS = new Set(['arms']);
+const GRUPOS_PERNAS = new Set(['legs']);
 
 export function rigComVisuais(rig, dados) {
   const { referencias } = fonte(dados);
@@ -782,7 +809,8 @@ export function rigComVisuais(rig, dados) {
   const groups = rig.groups.map((g) => ({ ...g, parts: g.parts.map((pt) => {
     const out = { ...pt };
     if (GRUPOS_CABECA_PELE.has(g.id) && pt.fill === 'body') out.fill = 'nvCabecaPele';
-    if (GRUPOS_MEMBROS.has(g.id) && pt.fill === 'body') out.fill = 'nvMembros';
+    if (GRUPOS_BRACOS.has(g.id) && pt.fill === 'body') out.fill = 'nvBracos';
+    if (GRUPOS_PERNAS.has(g.id) && pt.fill === 'body') out.fill = 'nvPernas';
     if (g.id === 'arms' && !pt.parent && pt.pivot) out.ladoX = pt.pivot[0] < 90 ? -1 : 1;
     else if (GRUPOS_CORPO.has(g.id) && !pt.parent && pt.rot !== 'headRot') out.corpoX = true;
     return out;
@@ -812,7 +840,7 @@ export function rigComVisuais(rig, dados) {
       alvo.parts.push(marcado);
     }
   }
-  return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body, nvMembros: rig.palette.body } };
+  return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body, nvBracos: rig.palette.body, nvPernas: rig.palette.body } };
 }
 
 // ---------------------------------------------------------------- estado e uso
