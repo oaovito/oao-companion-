@@ -1,7 +1,7 @@
 {
  "_notas": "Coleções e progressão (antitédio 61–70) e missões diárias. Níveis do shape por XP; acessórios liberados por nível; conquistas por contadores; missões diárias opcionais (3 sorteadas por dia, sem cobrança). Escala de XP ×10 (pedido de 14/11/2026): todo XP creditado vale dez vezes o valor nominal das fontes; limiares e XP já guardado convertidos na mesma proporção. 100 níveis com título próprio; bônus de XP com nome próprio por atividade, com teto diário.",
  "niveis": [
-  "Isca de Tubarão",
+  "Mundo 1-1",
   "Peixe É Amigo, Não Comida",
   "Baby Shark",
   "Blåhaj",
@@ -11,20 +11,14 @@
   "Left Shark",
   "Semana do Tubarão",
   "Megatubarão",
-  "Xerife de Amity",
-  "Barril Amarelo",
   "Olho do Tigre",
   "Pede Pra Sair",
-  "Jinbe, Cavaleiro do Mar",
-  "Arlong",
-  "Chapéu de Palha",
+  "Homens-Peixe",
   "Kisame",
-  "Samehada",
-  "Bruce",
-  "Pumping Iron",
-  "Mister Olympia",
-  "Light Weight, Baby",
   "Rambo",
+  "Pumping Iron",
+  "Autodestruição em Cinco Segundos",
+  "Light Weight, Baby",
   "Comando para Matar",
   "Eu Voltarei",
   "Predador",
@@ -38,11 +32,8 @@
   "Águas Rasas",
   "Medo Profundo",
   "Mar Aberto",
-  "O Espanta Tubarões",
   "Don Lino",
-  "Precisamos de um Barco Maior",
-  "Kamehameha",
-  "Mais de 8000",
+  "Hadouken",
   "Plus Ultra",
   "Herói por Hobby",
   "Bankai",
@@ -50,9 +41,7 @@
   "Expansão de Domínio",
   "Titã Colossal",
   "Ora Ora",
-  "Ultra Instinto",
   "Sharknado",
-  "Sharknado 2",
   "Sharktopus",
   "Mega Tubarão vs. Polvo Gigante",
   "Tubarão de Duas Cabeças",
@@ -62,8 +51,6 @@
   "Shark Tank",
   "Pular o Tubarão",
   "Que a Força Esteja",
-  "Lado Sombrio",
-  "Este É o Caminho",
   "O Escolhido",
   "O Tempero Deve Fluir",
   "Eu Sou Inevitável",
@@ -78,21 +65,12 @@
   "Jeff, o Tubarão Terrestre",
   "Braceletes de Amazona",
   "Homem de Aço",
-  "Por Que Tão Sério?",
   "Lanterna Verde",
-  "Eu Sou a Noite",
   "Meu Precioso",
-  "Você Não Vai Passar",
-  "O Inverno Está Chegando",
-  "Mãe dos Dragões",
   "Trono de Ferro",
   "O Menino Que Sobreviveu",
-  "Dez Pontos para a Grifinória",
-  "Varinha das Varinhas",
-  "Cachecol da Casa",
   "Coração Valente",
   "Capitão Jack",
-  "Holandês Voador",
   "Solte o Kraken",
   "Me Chamem de Ishmael",
   "Coração do Oceano",
@@ -110,12 +88,7 @@
   "Batatinha Frita 1, 2, 3",
   "Bella Ciao",
   "A Dança da Gola Branca",
-  "Recortado em South Park",
   "Arise",
-  "Monarca das Sombras",
-  "Sharingan",
-  "Hokage",
-  "Nen",
   "Costas de Demônio",
   "Músculo Total",
   "Dempsey Roll",
@@ -150,56 +123,83 @@
   "Nyan Cat",
   "Está Tudo Bem",
   "Tubarão de Terra",
-  "Megatubarão 2: A Fossa",
   "Gawr Gura",
   "Sharpedo",
-  "Garchomp",
   "Hungry Shark",
   "Ilha de Mako",
-  "Tubarão Mecânico",
   "Kaiju Nº 8",
   "Motosserra no Braço",
   "Mil Anos de Treino",
-  "Rei dos Piratas",
   "Garoto!",
   "Glorioso Propósito",
   "O Melhor no Que Faço",
-  "Olhar de Rubi",
   "Aguento o Dia Todo",
   "Dormammu, Vim Negociar",
   "Nós Somos Venom",
   "Quarta Parede",
   "Grandes Poderes",
   "Senhor das Estrelas",
-  "Coroa do Rei dos Monstros",
-  "Sharknado 6: A Última",
   "O Livro de 1974",
-  "Quint",
-  "Sorria!",
-  "Dun-dun",
-  "A Barbatana do Cartaz",
-  "Prefeito de Amity",
-  "Lenny Vegetariano",
-  "Mestre Jedi",
+  "É Perigoso Ir Sozinho",
+  "Gotta Go Fast",
+  "Waka Waka",
+  "Linha Completa",
+  "Bloco por Bloco",
+  "Finish Him!",
+  "Master Chief",
+  "Kept You Waiting",
+  "Você Morreu",
+  "A Tocha Está Acabando",
+  "Buster Sword",
+  "Mergulho Raptura",
+  "Mar de Ladrões",
+  "Aku Aku",
+  "Polegar pra Cima",
+  "Flecha no Joelho",
+  "Rasgar e Destroçar",
+  "Isso É Sus",
+  "Loot Shark",
+  "Booyah!",
+  "Lorde Prístino",
+  "Cavaleiro Oco",
+  "Nada É Verdade",
+  "Antes do GTA 6",
+  "Determinação",
+  "O Bolo É Mentira",
+  "Keyblade",
+  "Medalhão do Lobo",
+  "Fora da Lei",
+  "Equipe S.T.A.R.S.",
+  "Invasores do Espaço",
+  "Gravata do DK",
+  "Sugada Cósmica",
+  "Antena V",
+  "Entra no Robô",
+  "Caderno da Morte",
+  "Nen",
+  "Até Mais, Cowboy do Espaço",
+  "Olho do Jagan",
+  "Kaneda!",
+  "Vizinho Totoro",
   "Super Saiyajin",
-  "Saiyajin Blue",
-  "Gear 5",
-  "O Mais Forte",
-  "Rei das Maldições",
-  "Imperador do Mar",
-  "Máscara de Hollow",
-  "Modo Kurama",
-  "Titã de Ataque",
-  "Grande Demais Pra Ser Espada",
-  "Mister Universo",
-  "Rei de Asgard",
+  "Braço de Automail",
+  "Espadachim Negro",
+  "Não Tenho Inimigos",
+  "???%",
+  "Ego",
+  "Voa!",
+  "Okarun",
+  "Waku Waku",
+  "D'oh!",
+  "Dragão Guerreiro",
   "Livre Estou",
-  "O Olho Que Tudo Vê",
   "Excalibur",
   "Tridente de Poseidon",
-  "Trono de Atlântida",
-  "Ultra Ego",
-  "Bruce, o Original",
+  "Não Entre Gentilmente",
+  "Destruidor de Calorias",
+  "Eu Sou Só o Ken",
+  "Último Mestre do Ar",
+  "Salto Livre",
   "Tubarão (1975)"
  ],
  "escalaXp": 10,
@@ -667,9 +667,9 @@
  },
  "referencias": [
   {
-   "titulo": "Isca de Tubarão",
-   "obra": "Procurando Nemo",
-   "tipo": "filme",
+   "titulo": "Mundo 1-1",
+   "obra": "Super Mario Bros.",
+   "tipo": "jogo",
    "parte": null,
    "forma": null,
    "peca": null,
@@ -683,13 +683,13 @@
    "tipo": "filme",
    "parte": "pescoco",
    "forma": "medalhao",
-   "peca": "Crachá do clube Peixe É Amigo",
+   "peca": "Crachá do clube do Bruce",
    "cores": [
     "#f2c94c",
     "#5f76a8",
     "#ffffff"
    ],
-   "fala": "Crachá do clube: peixe é amigo, não comida. A sardinha que lute.",
+   "fala": "Peixe é amigo, não comida. Oi, eu sou o Bruce. A sardinha que lute.",
    "anim": "assentir"
   },
   {
@@ -813,36 +813,6 @@
    "anim": "modoPoder"
   },
   {
-   "titulo": "Xerife de Amity",
-   "obra": "Tubarão (1975)",
-   "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "quepe",
-   "peca": "Quepe do xerife de Amity",
-   "cores": [
-    "#2d3e57",
-    "#d4a72c",
-    "#ffffff"
-   ],
-   "fala": "Quepe de xerife. Fecha a praia. O prefeito que se vire.",
-   "anim": "encarar"
-  },
-  {
-   "titulo": "Barril Amarelo",
-   "obra": "Tubarão (1975)",
-   "tipo": "filme",
-   "parte": "mao",
-   "forma": "barril",
-   "peca": "Barril amarelo do Quint",
-   "cores": [
-    "#ffd400",
-    "#8d6e63",
-    "#212121"
-   ],
-   "fala": "Barril amarelo. Pode prender três em mim que eu continuo nadando.",
-   "anim": "orgulhoso"
-  },
-  {
    "titulo": "Olho do Tigre",
    "obra": "Rocky III",
    "tipo": "filme",
@@ -873,22 +843,7 @@
    "anim": "modoFera"
   },
   {
-   "titulo": "Jinbe, Cavaleiro do Mar",
-   "obra": "One Piece",
-   "tipo": "anime",
-   "parte": "cinto",
-   "forma": "faixaKarate",
-   "peca": "Faixa de caratê dos homens-peixe",
-   "cores": [
-    "#1b5e20",
-    "#ffd54f",
-    "#4fc3f7"
-   ],
-   "fala": "Faixa do Cavaleiro do Mar. Caratê de homem-peixe, sem perder a calma.",
-   "anim": "ajeitarPostura"
-  },
-  {
-   "titulo": "Arlong",
+   "titulo": "Homens-Peixe",
    "obra": "One Piece",
    "tipo": "anime",
    "parte": "mao",
@@ -899,68 +854,39 @@
     "#5d4037",
     "#e53935"
    ],
-   "fala": "Kiribachi na mão. Homem-peixe superior; o resto, inferior. Menos você.",
-   "anim": "poseVilao"
-  },
-  {
-   "titulo": "Chapéu de Palha",
-   "obra": "One Piece",
-   "tipo": "anime",
-   "parte": "cabeca",
-   "forma": "chapeuPalha",
-   "peca": "Chapéu de palha",
-   "cores": [
-    "#f2c94c",
-    "#c62828",
-    "#ffffff"
-   ],
-   "fala": "Chapéu de palha. Vou ser o Rei dos Piratas do aquário.",
-   "anim": "comemorar"
+   "fala": "Arlong de serrote, Jinbe de caratê: homem-peixe tubarão manda no mar.",
+   "anim": "poseVilao",
+   "reacao": "pk_haki"
   },
   {
    "titulo": "Kisame",
    "obra": "Naruto",
    "tipo": "anime",
-   "parte": "cabeca",
-   "forma": "bandana",
-   "peca": "Bandana de ninja renegado",
-   "cores": [
-    "#37474f",
-    "#c0c6cf",
-    "#212121"
-   ],
-   "fala": "Bandana de ninja renegado. O Kisame aprovaria esses dentes.",
-   "anim": "sorrisoCanto"
-  },
-  {
-   "titulo": "Samehada",
-   "obra": "Naruto",
-   "tipo": "anime",
    "parte": "mao",
    "forma": "espadaEnfaixada",
-   "peca": "Samehada enfaixada",
+   "peca": "Samehada do Kisame",
    "cores": [
     "#3f51b5",
     "#eceff1",
     "#90caf9"
    ],
-   "fala": "Samehada. A espada que come chakra. Eu como frango.",
-   "anim": "poseVilao"
+   "fala": "Samehada nas costas, bandana de renegado. O Kisame aprovaria esses dentes.",
+   "anim": "sorrisoCanto"
   },
   {
-   "titulo": "Bruce",
-   "obra": "Procurando Nemo",
+   "titulo": "Rambo",
+   "obra": "Rambo",
    "tipo": "filme",
-   "parte": "pescoco",
-   "forma": "colarDentes",
-   "peca": "Colar de dentes do Bruce",
+   "parte": "cabeca",
+   "forma": "faixa",
+   "peca": "Faixa do Rambo",
    "cores": [
-    "#f7f5ee",
-    "#5f76a8",
-    "#e53935"
+    "#c62828",
+    "#8d1c1c",
+    "#ffffff"
    ],
-   "fala": "Colar do Bruce. Oi, eu sou o Bruce. Faz três semanas que não como peixe.",
-   "anim": "sorrisoCanto"
+   "fala": "Faixa do Rambo. Eu não comecei a guerra; comecei o treino.",
+   "anim": "modoFera"
   },
   {
    "titulo": "Pumping Iron",
@@ -978,19 +904,19 @@
    "anim": "duploBiceps"
   },
   {
-   "titulo": "Mister Olympia",
-   "obra": "concurso Mister Olympia",
-   "tipo": "cultura pop",
+   "titulo": "Autodestruição em Cinco Segundos",
+   "obra": "Missão: Impossível",
+   "tipo": "filme",
    "parte": "pescoco",
    "forma": "medalhao",
-   "peca": "Medalha do Mister Olympia",
+   "peca": "Medalha de agente",
    "cores": [
-    "#d4a72c",
-    "#ffd54f",
+    "#c0c6cf",
+    "#212121",
     "#e53935"
    ],
-   "fala": "Medalha do Mister Olympia. Do lado do meu bíceps, ela fica pequena.",
-   "anim": "aplausosImaginarios"
+   "fala": "Esta mensagem vai se autodestruir em cinco segundos. O supino, não.",
+   "anim": "encarar"
   },
   {
    "titulo": "Light Weight, Baby",
@@ -1006,21 +932,6 @@
    ],
    "fala": "Yeah, buddy! Leve, leve, tudo leve.",
    "anim": "halteres"
-  },
-  {
-   "titulo": "Rambo",
-   "obra": "Rambo",
-   "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "faixa",
-   "peca": "Faixa do Rambo",
-   "cores": [
-    "#c62828",
-    "#8d1c1c",
-    "#ffffff"
-   ],
-   "fala": "Faixa do Rambo. Eu não comecei a guerra; comecei o treino.",
-   "anim": "modoFera"
   },
   {
    "titulo": "Comando para Matar",
@@ -1124,7 +1035,7 @@
     "#e57373",
     "#ffffff"
    ],
-   "fala": "Cicatriz de Tubarão 2. Justo quando você achou que era seguro voltar ao aquário.",
+   "fala": "Justo quando você achou que era seguro voltar ao aquário.",
    "anim": "sorrisoCanto"
   },
   {
@@ -1214,23 +1125,8 @@
     "#ffffff",
     "#ffd54f"
    ],
-   "fala": "Bermuda de mar aberto. Ninguém voltou pra te buscar? Eu volto.",
+   "fala": "Ninguém voltou pra te buscar? Eu volto.",
    "anim": "nadarCirculos"
-  },
-  {
-   "titulo": "O Espanta Tubarões",
-   "obra": "O Espanta Tubarões",
-   "tipo": "filme",
-   "parte": "pescoco",
-   "forma": "correnteOuro",
-   "peca": "Corrente de ouro do recife",
-   "cores": [
-    "#d4a72c",
-    "#ffd54f",
-    "#00bcd4"
-   ],
-   "fala": "Corrente de ouro do recife. Rei do aquário, e o Lenny é vegetariano.",
-   "anim": "brilharDentes"
   },
   {
    "titulo": "Don Lino",
@@ -1244,53 +1140,23 @@
     "#ffffff",
     "#d4a72c"
    ],
-   "fala": "Gravata do Don Lino. Família de tubarão não perdoa.",
+   "fala": "Gravata do Don Lino. Família de tubarão não perdoa. E o Lenny é vegetariano.",
    "anim": "poseVilao"
   },
   {
-   "titulo": "Precisamos de um Barco Maior",
-   "obra": "Tubarão (1975)",
-   "tipo": "filme",
-   "parte": "mao",
-   "forma": "arpao",
-   "peca": "Arpão do barco maior",
+   "titulo": "Hadouken",
+   "obra": "Street Fighter II",
+   "tipo": "jogo",
+   "parte": "cinto",
+   "forma": "faixaKarate",
+   "peca": "Faixa preta de lutador de rua",
    "cores": [
-    "#8d6e63",
-    "#c0c6cf",
-    "#ffd400"
-   ],
-   "fala": "Vamos precisar de um barco maior. E de um arpão maior também.",
-   "anim": "apontar"
-  },
-  {
-   "titulo": "Kamehameha",
-   "obra": "Dragon Ball",
-   "tipo": "anime",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura do Kamehameha",
-   "cores": [
-    "#64b5f6",
-    "#ffffff",
-    "#e3f2fd"
-   ],
-   "fala": "Ka... me... ha... me... HÁ! Aura azul pra combinar com a pele.",
-   "anim": "aura"
-  },
-  {
-   "titulo": "Mais de 8000",
-   "obra": "Dragon Ball Z",
-   "tipo": "anime",
-   "parte": "rosto",
-   "forma": "viseira",
-   "peca": "Rastreador de poder",
-   "cores": [
-    "#66bb6a",
     "#212121",
-    "#e53935"
+    "#c62828",
+    "#ffffff"
    ],
-   "fala": "Rastreador ligado. Nível de shape: mais de oito mil.",
-   "anim": "surpreso"
+   "fala": "Hadouken! O aquário é o meu dojo.",
+   "anim": "modoPoder"
   },
   {
    "titulo": "Plus Ultra",
@@ -1359,7 +1225,7 @@
    "tipo": "anime",
    "parte": "rosto",
    "forma": "venda",
-   "peca": "Venda nos olhos",
+   "peca": "Venda do mais forte",
    "cores": [
     "#212121",
     "#ffffff",
@@ -1402,22 +1268,6 @@
    "reacao": "pk_menacing"
   },
   {
-   "titulo": "Ultra Instinto",
-   "obra": "Dragon Ball Super",
-   "tipo": "anime",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura do Ultra Instinto",
-   "cores": [
-    "#b0bec5",
-    "#ffffff",
-    "#82b1ff"
-   ],
-   "fala": "Ultra Instinto. O corpo desvia sozinho. Do cursor, inclusive.",
-   "anim": "aura",
-   "reacao": "pk_ultraInstinto"
-  },
-  {
    "titulo": "Sharknado",
    "obra": "Sharknado",
    "tipo": "filme",
@@ -1429,23 +1279,8 @@
     "#9e9e9e",
     "#ffd400"
    ],
-   "fala": "Motosserra do Sharknado. Choveu tubarão? Eu choveria junto.",
+   "fala": "Choveu tubarão? Eu choveria junto. Com motosserra.",
    "anim": "modoFera"
-  },
-  {
-   "titulo": "Sharknado 2",
-   "obra": "Sharknado 2",
-   "tipo": "filme",
-   "parte": "aura",
-   "forma": "raios",
-   "peca": "Aura de tornado",
-   "cores": [
-    "#607d8b",
-    "#e0e0e0",
-    "#ffeb3b"
-   ],
-   "fala": "Tornado de tubarão em Nova York. O tornado sou eu.",
-   "anim": "girar"
   },
   {
    "titulo": "Sharktopus",
@@ -1512,7 +1347,7 @@
    "obra": "Sand Sharks",
    "tipo": "filme",
    "parte": "bermuda",
-   "forma": "listras",
+   "forma": "rasgada",
    "peca": "Bermuda de areia",
    "cores": [
     "#c2a26b",
@@ -1579,38 +1414,8 @@
     "#ffffff",
     "#e3f2fd"
    ],
-   "fala": "Sabre de luz azul. Que o shape esteja com você.",
+   "fala": "Que o shape esteja com você. Faça ou não faça; tentativa não existe.",
    "anim": "poseEpica"
-  },
-  {
-   "titulo": "Lado Sombrio",
-   "obra": "Star Wars",
-   "tipo": "filme",
-   "parte": "costas",
-   "forma": "capa",
-   "peca": "Capa do lado sombrio",
-   "cores": [
-    "#212121",
-    "#b71c1c",
-    "#e53935"
-   ],
-   "fala": "Capa do lado sombrio. Eu sou o seu treinador.",
-   "anim": "poseVilao"
-  },
-  {
-   "titulo": "Este É o Caminho",
-   "obra": "The Mandalorian",
-   "tipo": "série",
-   "parte": "pescoco",
-   "forma": "medalhao",
-   "peca": "Sinete do Mudhorn",
-   "cores": [
-    "#9e9e9e",
-    "#c0c6cf",
-    "#212121"
-   ],
-   "fala": "Este é o caminho. O caminho da academia.",
-   "anim": "assentir"
   },
   {
    "titulo": "O Escolhido",
@@ -1631,13 +1436,13 @@
    "titulo": "O Tempero Deve Fluir",
    "obra": "Duna",
    "tipo": "filme",
-   "parte": "costas",
-   "forma": "capa",
-   "peca": "Manto do deserto",
+   "parte": "rosto",
+   "forma": "lentes",
+   "peca": "Olhos azuis da especiaria",
    "cores": [
-    "#8d6e63",
-    "#d7ccc8",
-    "#4fc3f7"
+    "#1e88e5",
+    "#0d47a1",
+    "#ffffff"
    ],
    "fala": "O tempero deve fluir. O whey também.",
    "anim": "flutuar"
@@ -1654,7 +1459,7 @@
     "#ffd54f",
     "#e53935"
    ],
-   "fala": "Manopla com seis joias. Estalo os dedos e metade das calorias some.",
+   "fala": "Estalo os dedos e metade das calorias some.",
    "anim": "estalar"
   },
   {
@@ -1674,7 +1479,7 @@
   },
   {
    "titulo": "Hulk Esmaga",
-   "obra": "Hulk",
+   "obra": "O Incrível Hulk",
    "tipo": "filme",
    "parte": "bermuda",
    "forma": "rasgada",
@@ -1699,7 +1504,7 @@
     "#6d4c41",
     "#42a5f5"
    ],
-   "fala": "Martelo do trovão. Se eu levanto, eu sou digno. Eu levanto.",
+   "fala": "Se eu levanto, eu sou digno. Eu levanto.",
    "anim": "halteres"
   },
   {
@@ -1714,7 +1519,7 @@
     "#ffffff",
     "#e53935"
    ],
-   "fala": "Reator no peito. Gênio, bilionário, fisiculturista.",
+   "fala": "Gênio, bilionário, fisiculturista.",
    "anim": "poseEpica"
   },
   {
@@ -1744,7 +1549,7 @@
     "#ff9800",
     "#4caf50"
    ],
-   "fala": "Tridente do rei dos mares. Os tubarões obedecem. Menos eu.",
+   "fala": "Os tubarões obedecem ao rei dos mares. Menos eu.",
    "anim": "poseEpica"
   },
   {
@@ -1774,12 +1579,12 @@
     "#d4a72c",
     "#ffffff"
    ],
-   "fala": "Emblema do Profundo. Diferente dele, eu sou levado a sério.",
+   "fala": "Diferente do Profundo, eu sou levado a sério.",
    "anim": "encarar"
   },
   {
    "titulo": "Jeff, o Tubarão Terrestre",
-   "obra": "Marvel (Jeff the Land Shark)",
+   "obra": "Jeff the Land Shark (Marvel)",
    "tipo": "cultura pop",
    "parte": "aura",
    "forma": "bolhas",
@@ -1819,23 +1624,8 @@
     "#ffd54f",
     "#1e63c6"
    ],
-   "fala": "Capa vermelha. Mais rápido que uma bala, mais forte que uma locomotiva.",
+   "fala": "Mais rápido que uma bala, mais forte que uma locomotiva.",
    "anim": "poseEpica"
-  },
-  {
-   "titulo": "Por Que Tão Sério?",
-   "obra": "Batman: O Cavaleiro das Trevas",
-   "tipo": "filme",
-   "parte": "pintura",
-   "forma": "sorriso",
-   "peca": "Pintura do sorriso",
-   "cores": [
-    "#c62828",
-    "#4caf50",
-    "#ffffff"
-   ],
-   "fala": "Por que tão sério? Ah, é verdade: eu sou sério.",
-   "anim": "risada"
   },
   {
    "titulo": "Lanterna Verde",
@@ -1853,21 +1643,6 @@
    "anim": "aura"
   },
   {
-   "titulo": "Eu Sou a Noite",
-   "obra": "Batman",
-   "tipo": "filme",
-   "parte": "rosto",
-   "forma": "mascara",
-   "peca": "Máscara de morcego",
-   "cores": [
-    "#212121",
-    "#424242",
-    "#ffd54f"
-   ],
-   "fala": "Máscara de morcego. Eu sou a noite. E o leg day.",
-   "anim": "poseVilao"
-  },
-  {
    "titulo": "Meu Precioso",
    "obra": "O Senhor dos Anéis",
    "tipo": "filme",
@@ -1883,51 +1658,6 @@
    "anim": "esconderAtras"
   },
   {
-   "titulo": "Você Não Vai Passar",
-   "obra": "O Senhor dos Anéis",
-   "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "chapeuMago",
-   "peca": "Chapéu de mago cinzento",
-   "cores": [
-    "#9e9e9e",
-    "#607d8b",
-    "#ffffff"
-   ],
-   "fala": "Você não vai passar... sem treinar perna.",
-   "anim": "apontar"
-  },
-  {
-   "titulo": "O Inverno Está Chegando",
-   "obra": "Game of Thrones",
-   "tipo": "série",
-   "parte": "costas",
-   "forma": "capa",
-   "peca": "Capa de pele do Norte",
-   "cores": [
-    "#3e2723",
-    "#bdbdbd",
-    "#eceff1"
-   ],
-   "fala": "O inverno está chegando. O bulking também.",
-   "anim": "frio"
-  },
-  {
-   "titulo": "Mãe dos Dragões",
-   "obra": "Game of Thrones",
-   "tipo": "série",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura de dragão",
-   "cores": [
-    "#e53935",
-    "#ffb300",
-    "#ffffff"
-   ],
-   "fala": "Aura de dragão. Dracarys no cardápio.",
-   "anim": "modoFera"
-  },
-  {
    "titulo": "Trono de Ferro",
    "obra": "Game of Thrones",
    "tipo": "série",
@@ -1939,7 +1669,7 @@
     "#9e9e9e",
     "#e53935"
    ],
-   "fala": "No jogo dos tronos, ou você ganha, ou você treina.",
+   "fala": "O inverno está chegando. Quem senta no Trono de Ferro sou eu.",
    "anim": "superioridade"
   },
   {
@@ -1954,53 +1684,8 @@
     "#e57373",
     "#ffffff"
    ],
-   "fala": "Cicatriz em forma de raio. O menino que sobreviveu ao leg day.",
+   "fala": "O menino que sobreviveu ao leg day. Dez pontos para mim.",
    "anim": "sobrancelha"
-  },
-  {
-   "titulo": "Dez Pontos para a Grifinória",
-   "obra": "Harry Potter",
-   "tipo": "filme",
-   "parte": "rosto",
-   "forma": "oculosRedondos",
-   "peca": "Óculos redondos de bruxo",
-   "cores": [
-    "#212121",
-    "#d4a72c",
-    "#e3f2fd"
-   ],
-   "fala": "Óculos redondos. Dez pontos para a Grifinória.",
-   "anim": "lendo"
-  },
-  {
-   "titulo": "Varinha das Varinhas",
-   "obra": "Harry Potter",
-   "tipo": "filme",
-   "parte": "mao",
-   "forma": "varinha",
-   "peca": "Varinha das varinhas",
-   "cores": [
-    "#6d4c41",
-    "#f5e6c8",
-    "#ffffff"
-   ],
-   "fala": "Varinha das varinhas. Expecto patronum: aparece um tubarão.",
-   "anim": "poseEpica"
-  },
-  {
-   "titulo": "Cachecol da Casa",
-   "obra": "Harry Potter",
-   "tipo": "filme",
-   "parte": "pescoco",
-   "forma": "cachecol",
-   "peca": "Cachecol da Grifinória",
-   "cores": [
-    "#8d1c1c",
-    "#d4a72c",
-    "#ffffff"
-   ],
-   "fala": "Cachecol da casa. O Chapéu Seletor nem pensou.",
-   "anim": "sorrisoSuave"
   },
   {
    "titulo": "Coração Valente",
@@ -2029,23 +1714,8 @@
     "#d4a72c",
     "#e53935"
    ],
-   "fala": "Chapéu de capitão. Por que o rum acabou? Eu bebo whey.",
+   "fala": "Por que o rum acabou? Eu bebo whey.",
    "anim": "olharLado"
-  },
-  {
-   "titulo": "Holandês Voador",
-   "obra": "Piratas do Caribe",
-   "tipo": "filme",
-   "parte": "pintura",
-   "forma": "ventosas",
-   "peca": "Marcas do Holandês Voador",
-   "cores": [
-    "#2e7d32",
-    "#81c784",
-    "#ffffff"
-   ],
-   "fala": "Tem medo da morte? Eu tenho medo de pular treino.",
-   "anim": "poseVilao"
   },
   {
    "titulo": "Solte o Kraken",
@@ -2164,7 +1834,7 @@
     "#b3e5fc",
     "#ffffff"
    ],
-   "fala": "Bafo atômico. Rei dos monstros na casa dos cem.",
+   "fala": "Bafo atômico. Rei dos monstros na área.",
    "anim": "modoPoder"
   },
   {
@@ -2303,21 +1973,6 @@
    "anim": "dancinhaViral"
   },
   {
-   "titulo": "Recortado em South Park",
-   "obra": "South Park",
-   "tipo": "desenho",
-   "parte": "cabeca",
-   "forma": "gorro",
-   "peca": "Gorro de pompom",
-   "cores": [
-    "#1e63c6",
-    "#e53935",
-    "#ffffff"
-   ],
-   "fala": "Gorro de South Park. Sou recorte de papel com orgulho.",
-   "anim": "acenar"
-  },
-  {
    "titulo": "Arise",
    "obra": "Solo Leveling",
    "tipo": "anime",
@@ -2334,67 +1989,6 @@
    "reacao": "pk_arise"
   },
   {
-   "titulo": "Monarca das Sombras",
-   "obra": "Solo Leveling",
-   "tipo": "anime",
-   "parte": "costas",
-   "forma": "capa",
-   "peca": "Capa do Monarca das Sombras",
-   "cores": [
-    "#212121",
-    "#7c4dff",
-    "#b388ff"
-   ],
-   "fala": "Capa do Monarca das Sombras. Subir de nível é comigo mesmo.",
-   "anim": "poseVilao"
-  },
-  {
-   "titulo": "Sharingan",
-   "obra": "Naruto",
-   "tipo": "anime",
-   "parte": "rosto",
-   "forma": "lentes",
-   "peca": "Sharingan",
-   "cores": [
-    "#d32f2f",
-    "#212121",
-    "#ffffff"
-   ],
-   "fala": "Sharingan ativado. Copiei seu treino e melhorei.",
-   "anim": "encarar",
-   "reacao": "pk_sharingan"
-  },
-  {
-   "titulo": "Hokage",
-   "obra": "Naruto",
-   "tipo": "anime",
-   "parte": "costas",
-   "forma": "capa",
-   "peca": "Capa de Hokage",
-   "cores": [
-    "#ffffff",
-    "#e53935",
-    "#ffb300"
-   ],
-   "fala": "Capa de Hokage. Meu jeito ninja é não pular treino.",
-   "anim": "poseEpica"
-  },
-  {
-   "titulo": "Nen",
-   "obra": "Hunter x Hunter",
-   "tipo": "anime",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura de Nen",
-   "cores": [
-    "#43a047",
-    "#b9f6ca",
-    "#ffffff"
-   ],
-   "fala": "Aura de Nen, tipo intensificação. Óbvio.",
-   "anim": "aura"
-  },
-  {
    "titulo": "Costas de Demônio",
    "obra": "Baki, o Campeão",
    "tipo": "anime",
@@ -2406,7 +2000,7 @@
     "#ff8a80",
     "#ffffff"
    ],
-   "fala": "Costas de demônio. O rosto do ogro aparece quando eu flexiono.",
+   "fala": "O rosto do ogro aparece nas costas quando eu flexiono.",
    "anim": "duploBiceps",
    "reacao": "pk_berserker"
   },
@@ -2437,7 +2031,7 @@
     "#ffffff",
     "#ffd54f"
    ],
-   "fala": "Luvas de boxe. Dempsey Roll de barbatana!",
+   "fala": "Dempsey Roll de barbatana!",
    "anim": "quedaBraco"
   },
   {
@@ -2497,7 +2091,7 @@
     "#3e2723",
     "#ffd54f"
    ],
-   "fala": "Chapéu de aventureiro. Cobras? Odeio cobras. Tubarão, tudo bem.",
+   "fala": "Cobras? Odeio cobras. Tubarão, tudo bem.",
    "anim": "olharRedor"
   },
   {
@@ -2692,12 +2286,12 @@
     "#e0f7fa",
     "#ffffff"
    ],
-   "fala": "Viseira de piloto. Hoje a gente cancela o apocalipse.",
+   "fala": "Hoje a gente cancela o apocalipse.",
    "anim": "poseEpica"
   },
   {
    "titulo": "Eu Vejo Você",
-   "obra": "Avatar",
+   "obra": "Avatar (2009)",
    "tipo": "filme",
    "parte": "pintura",
    "forma": "neon",
@@ -2822,7 +2416,7 @@
    "tipo": "meme",
    "parte": "cabeca",
    "forma": "chapeuChef",
-   "peca": "Chapéu de chef",
+   "peca": "Chapéu de chef do let him cook",
    "cores": [
     "#ffffff",
     "#e0e0e0",
@@ -2909,21 +2503,6 @@
    "anim": "sustoBorda"
   },
   {
-   "titulo": "Megatubarão 2: A Fossa",
-   "obra": "Megatubarão 2",
-   "tipo": "filme",
-   "parte": "aura",
-   "forma": "raios",
-   "peca": "Aura da fossa",
-   "cores": [
-    "#0d47a1",
-    "#64b5f6",
-    "#ffffff"
-   ],
-   "fala": "Mais fundo, mais forte, mais Megatubarão.",
-   "anim": "modoPoder"
-  },
-  {
    "titulo": "Gawr Gura",
    "obra": "Hololive (VTuber)",
    "tipo": "cultura pop",
@@ -2941,7 +2520,7 @@
   {
    "titulo": "Sharpedo",
    "obra": "Pokémon",
-   "tipo": "anime",
+   "tipo": "jogo",
    "parte": "pintura",
    "forma": "listras",
    "peca": "Marcas de Sharpedo",
@@ -2952,21 +2531,6 @@
    ],
    "fala": "Sharpedo usou Mordida. É superefetivo no frango.",
    "anim": "encararDentes"
-  },
-  {
-   "titulo": "Garchomp",
-   "obra": "Pokémon",
-   "tipo": "anime",
-   "parte": "pulsos",
-   "forma": "garras",
-   "peca": "Garras de Garchomp",
-   "cores": [
-    "#e53935",
-    "#ffffff",
-    "#ffd54f"
-   ],
-   "fala": "Garras de dragão. Tubarão terrestre, versão lendária.",
-   "anim": "modoFera"
   },
   {
    "titulo": "Hungry Shark",
@@ -2999,26 +2563,11 @@
    "anim": "sorrisoSuave"
   },
   {
-   "titulo": "Tubarão Mecânico",
-   "obra": "bastidores de Tubarão (1975)",
-   "tipo": "cultura pop",
-   "parte": "pintura",
-   "forma": "cromado",
-   "peca": "Placas do tubarão mecânico",
-   "cores": [
-    "#9e9e9e",
-    "#c0c6cf",
-    "#ffd54f"
-   ],
-   "fala": "Placas do tubarão mecânico. Eu, ao contrário dele, nunca quebro no set.",
-   "anim": "ajeitarPostura"
-  },
-  {
    "titulo": "Kaiju Nº 8",
    "obra": "Kaiju Nº 8",
    "tipo": "anime",
    "parte": "pintura",
-   "forma": "listras",
+   "forma": "marcasTita",
    "peca": "Marcas de kaiju",
    "cores": [
     "#1b5e20",
@@ -3040,7 +2589,7 @@
     "#9e9e9e",
     "#ffd400"
    ],
-   "fala": "Motosserra no braço. Sonho simples: pão com geleia e um treino bom.",
+   "fala": "Sonho simples: pão com geleia e um treino bom.",
    "anim": "modoFera"
   },
   {
@@ -3057,22 +2606,6 @@
    ],
    "fala": "Mil anos de treino e eu ainda faço perna.",
    "anim": "pensando"
-  },
-  {
-   "titulo": "Rei dos Piratas",
-   "obra": "One Piece",
-   "tipo": "anime",
-   "parte": "cabeca",
-   "forma": "chapeuPalha",
-   "peca": "Chapéu do Rei dos Piratas",
-   "cores": [
-    "#f2c94c",
-    "#d4a72c",
-    "#e53935"
-   ],
-   "fala": "O tesouro existe. É o meu shape.",
-   "anim": "comemorar",
-   "reacao": "pk_haki"
   },
   {
    "titulo": "Garoto!",
@@ -3101,7 +2634,7 @@
     "#2e7d32",
     "#ffffff"
    ],
-   "fala": "Capacete de chifres. Glorioso propósito: academia.",
+   "fala": "Glorioso propósito: academia.",
    "anim": "sorrisoCanto"
   },
   {
@@ -3120,21 +2653,6 @@
    "anim": "modoFera"
   },
   {
-   "titulo": "Olhar de Rubi",
-   "obra": "X-Men",
-   "tipo": "filme",
-   "parte": "rosto",
-   "forma": "viseira",
-   "peca": "Viseira de rubi",
-   "cores": [
-    "#e53935",
-    "#ffd54f",
-    "#ffffff"
-   ],
-   "fala": "Viseira de rubi. Olhar laser no espelho.",
-   "anim": "encarar"
-  },
-  {
    "titulo": "Aguento o Dia Todo",
    "obra": "Capitão América",
    "tipo": "filme",
@@ -3146,7 +2664,7 @@
     "#e53935",
     "#ffffff"
    ],
-   "fala": "Escudo com estrela. Eu aguento isso o dia todo.",
+   "fala": "Eu aguento isso o dia todo.",
    "anim": "orgulhoso"
   },
   {
@@ -3191,7 +2709,7 @@
     "#212121",
     "#ffffff"
    ],
-   "fala": "Máscara vermelha. Quebrando a quarta parede do aquário.",
+   "fala": "Quebrando a quarta parede do aquário.",
    "anim": "piscadinha"
   },
   {
@@ -3225,36 +2743,6 @@
    "anim": "dancinha"
   },
   {
-   "titulo": "Coroa do Rei dos Monstros",
-   "obra": "Godzilla II: Rei dos Monstros",
-   "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "coroa",
-   "peca": "Coroa do Rei dos Monstros",
-   "cores": [
-    "#1e88e5",
-    "#e0f7fa",
-    "#ffffff"
-   ],
-   "fala": "Coroa do Rei dos Monstros. O Godzilla me chama de chefe.",
-   "anim": "superioridade"
-  },
-  {
-   "titulo": "Sharknado 6: A Última",
-   "obra": "Sharknado 6",
-   "tipo": "filme",
-   "parte": "aura",
-   "forma": "raios",
-   "peca": "Aura da viagem no tempo",
-   "cores": [
-    "#6a1b9a",
-    "#ffeb3b",
-    "#ffffff"
-   ],
-   "fala": "Viajei no tempo dentro de um sharknado. Voltei mais forte.",
-   "anim": "teleporte"
-  },
-  {
    "titulo": "O Livro de 1974",
    "obra": "livro Tubarão, de Peter Benchley",
    "tipo": "cultura pop",
@@ -3270,109 +2758,620 @@
    "anim": "lendo"
   },
   {
-   "titulo": "Quint",
-   "obra": "Tubarão (1975)",
-   "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "chapeu",
-   "peca": "Chapéu do Quint",
+   "titulo": "É Perigoso Ir Sozinho",
+   "obra": "The Legend of Zelda",
+   "tipo": "jogo",
+   "parte": "mao",
+   "forma": "espadaRei",
+   "peca": "Espada mestra",
    "cores": [
-    "#424242",
-    "#616161",
+    "#1e63c6",
+    "#e0e0e0",
     "#ffd54f"
    ],
-   "fala": "Chapéu de pescador. Três mil pra pegar ele; pra mim, de graça.",
+   "fala": "É perigoso ir sozinha. Leva o JoJo.",
+   "anim": "poseEpica"
+  },
+  {
+   "titulo": "Gotta Go Fast",
+   "obra": "Sonic the Hedgehog",
+   "tipo": "jogo",
+   "parte": "aura",
+   "forma": "bolhas",
+   "peca": "Anéis dourados",
+   "cores": [
+    "#ffd400",
+    "#fff59d",
+    "#ffffff"
+   ],
+   "fala": "Rápido demais. Só que no supino.",
+   "anim": "girar"
+  },
+  {
+   "titulo": "Waka Waka",
+   "obra": "Pac-Man",
+   "tipo": "jogo",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Munhequeiras de fliperama",
+   "cores": [
+    "#ffd400",
+    "#212121",
+    "#e53935"
+   ],
+   "fala": "Waka waka. Comi os fantasminhas e o frango também.",
+   "anim": "devorar"
+  },
+  {
+   "titulo": "Linha Completa",
+   "obra": "Tetris",
+   "tipo": "jogo",
+   "parte": "bermuda",
+   "forma": "listras",
+   "peca": "Bermuda de blocos",
+   "cores": [
+    "#7e57c2",
+    "#00e5ff",
+    "#ffd400"
+   ],
+   "fala": "Encaixei a peça comprida. Linha completa de abdômen.",
+   "anim": "comemorar"
+  },
+  {
+   "titulo": "Bloco por Bloco",
+   "obra": "Minecraft",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "capacete",
+   "peca": "Capacete de diamante",
+   "cores": [
+    "#4dd0e1",
+    "#00838f",
+    "#ffffff"
+   ],
+   "fala": "Capacete de diamante. Minerei o shape bloco por bloco.",
+   "anim": "orgulhoso"
+  },
+  {
+   "titulo": "Finish Him!",
+   "obra": "Mortal Kombat",
+   "tipo": "jogo",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara de ninja amarela",
+   "cores": [
+    "#ffd400",
+    "#212121",
+    "#e53935"
+   ],
+   "fala": "Vem aqui! Finish him... com supino.",
+   "anim": "modoFera"
+  },
+  {
+   "titulo": "Master Chief",
+   "obra": "Halo",
+   "tipo": "jogo",
+   "parte": "rosto",
+   "forma": "viseira",
+   "peca": "Viseira dourada de espartano",
+   "cores": [
+    "#ffb300",
+    "#4e5b31",
+    "#ffffff"
+   ],
+   "fala": "Termine a luta? Eu termino a série.",
+   "anim": "poseEpica"
+  },
+  {
+   "titulo": "Kept You Waiting",
+   "obra": "Metal Gear Solid",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "bandana",
+   "peca": "Bandana infinita",
+   "cores": [
+    "#263238",
+    "#90a4ae",
+    "#ffffff"
+   ],
+   "fala": "Te deixei esperando, né? Escondido numa caixa de papelão.",
+   "anim": "esconder"
+  },
+  {
+   "titulo": "Você Morreu",
+   "obra": "Dark Souls",
+   "tipo": "jogo",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Aura de fogueira",
+   "cores": [
+    "#ff6f00",
+    "#ffcc80",
+    "#ffffff"
+   ],
+   "fala": "Você morreu. Eu não: descansei na fogueira e voltei pro treino.",
+   "anim": "ressuscitar"
+  },
+  {
+   "titulo": "A Tocha Está Acabando",
+   "obra": "Darkest Dungeon",
+   "tipo": "jogo",
+   "parte": "mao",
+   "forma": "cajado",
+   "peca": "Tocha da expedição",
+   "cores": [
+    "#6d4c41",
+    "#ff6f00",
+    "#ffd54f"
+   ],
+   "fala": "A tocha está acabando, mas o shape continua aceso.",
+   "anim": "modoFera"
+  },
+  {
+   "titulo": "Buster Sword",
+   "obra": "Final Fantasy VII",
+   "tipo": "jogo",
+   "parte": "mao",
+   "forma": "espadaGigante",
+   "peca": "Espada destruidora",
+   "cores": [
+    "#9e9e9e",
+    "#424242",
+    "#4fc3f7"
+   ],
+   "fala": "Espada do tamanho do meu ego. Os dois de respeito.",
+   "anim": "halteres"
+  },
+  {
+   "titulo": "Mergulho Raptura",
+   "obra": "BioShock",
+   "tipo": "jogo",
+   "parte": "rosto",
+   "forma": "oculosRedondos",
+   "peca": "Escafandro de mergulho",
+   "cores": [
+    "#b87333",
+    "#ffd54f",
+    "#e3f2fd"
+   ],
+   "fala": "Escafandro de Rapture. Uma cidade no fundo do mar, igual eu gosto.",
+   "anim": "flutuar"
+  },
+  {
+   "titulo": "Mar de Ladrões",
+   "obra": "Sea of Thieves",
+   "tipo": "jogo",
+   "parte": "mao",
+   "forma": "arpao",
+   "peca": "Arpão de pirata",
+   "cores": [
+    "#8d6e63",
+    "#c0c6cf",
+    "#ffd400"
+   ],
+   "fala": "Arpão de pirata. Megalodon à vista!",
+   "anim": "apontar"
+  },
+  {
+   "titulo": "Aku Aku",
+   "obra": "Crash Bandicoot",
+   "tipo": "jogo",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara Aku Aku",
+   "cores": [
+    "#8d6e63",
+    "#ffd54f",
+    "#4caf50"
+   ],
+   "fala": "Máscara Aku Aku. Três dessas e eu fico invencível.",
+   "anim": "girar"
+  },
+  {
+   "titulo": "Polegar pra Cima",
+   "obra": "Fallout",
+   "tipo": "jogo",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Bermuda do abrigo nuclear",
+   "cores": [
+    "#1e63c6",
+    "#ffd400",
+    "#ffffff"
+   ],
+   "fala": "Polegar pra cima! Sobrevivi ao apocalipse com o shape inteiro.",
+   "anim": "assentir"
+  },
+  {
+   "titulo": "Flecha no Joelho",
+   "obra": "Skyrim",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "chifres",
+   "peca": "Elmo de ferro com chifres",
+   "cores": [
+    "#9e9e9e",
+    "#5d4037",
+    "#ffffff"
+   ],
+   "fala": "Eu era um aventureiro, até levar uma flecha no joelho. Agora faço leg press.",
+   "anim": "ombros"
+  },
+  {
+   "titulo": "Rasgar e Destroçar",
+   "obra": "Doom",
+   "tipo": "jogo",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Braçadeiras do caçador de demônios",
+   "cores": [
+    "#4e5b31",
+    "#9e9e9e",
+    "#e53935"
+   ],
+   "fala": "Rasgar e destroçar. Os demônios e o treino de perna.",
+   "anim": "modoFera"
+  },
+  {
+   "titulo": "Isso É Sus",
+   "obra": "Among Us",
+   "tipo": "jogo",
+   "parte": "rosto",
+   "forma": "viseira",
+   "peca": "Visor de tripulante",
+   "cores": [
+    "#80deea",
+    "#c62828",
+    "#ffffff"
+   ],
+   "fala": "Visor de tripulante. Quem pulou o treino é sus.",
+   "anim": "sobrancelha"
+  },
+  {
+   "titulo": "Loot Shark",
+   "obra": "Fortnite",
+   "tipo": "jogo",
+   "parte": "pescoco",
+   "forma": "colarDentes",
+   "peca": "Colar do Loot Shark",
+   "cores": [
+    "#f7f5ee",
+    "#7e57c2",
+    "#ffd400"
+   ],
+   "fala": "Colar do Loot Shark. Até no Battle Royale tem tubarão marombeiro.",
+   "anim": "dancinhaViral"
+  },
+  {
+   "titulo": "Booyah!",
+   "obra": "Free Fire",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "bandana",
+   "peca": "Bandana do Booyah",
+   "cores": [
+    "#ff6f00",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Booyah! Último de pé na arena e no treino.",
+   "anim": "comemorar"
+  },
+  {
+   "titulo": "Lorde Prístino",
+   "obra": "Elden Ring",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "coroa",
+   "peca": "Coroa do Círculo Prístino",
+   "cores": [
+    "#d4a72c",
+    "#fff3c4",
+    "#ffd54f"
+   ],
+   "fala": "Levanta, Maculado. Vira Lorde Prístino do supino.",
+   "anim": "superioridade"
+  },
+  {
+   "titulo": "Cavaleiro Oco",
+   "obra": "Hollow Knight",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "orelhas",
+   "peca": "Chifres de cavaleiro inseto",
+   "cores": [
+    "#ffffff",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Pequeno cavaleiro, grandes chifres, bíceps maiores.",
+   "anim": "encarar"
+  },
+  {
+   "titulo": "Nada É Verdade",
+   "obra": "Assassin's Creed",
+   "tipo": "jogo",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Manto de assassino",
+   "cores": [
+    "#eceff1",
+    "#c62828",
+    "#212121"
+   ],
+   "fala": "Nada é verdade, tudo é permitido. Menos pular treino.",
+   "anim": "esconder"
+  },
+  {
+   "titulo": "Antes do GTA 6",
+   "obra": "Grand Theft Auto",
+   "tipo": "jogo",
+   "parte": "rosto",
+   "forma": "oculosEscuros",
+   "peca": "Óculos de Vice City",
+   "cores": [
+    "#ff4081",
+    "#00e5ff",
+    "#ffffff"
+   ],
+   "fala": "Conseguimos isso antes do GTA 6.",
+   "anim": "poseEpica",
+   "reacao": "pk_gta6"
+  },
+  {
+   "titulo": "Determinação",
+   "obra": "Undertale",
+   "tipo": "jogo",
+   "parte": "aura",
+   "forma": "estrelas",
+   "peca": "Aura de determinação",
+   "cores": [
+    "#e53935",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "Você está cheia de determinação. Eu, de whey.",
+   "anim": "brilhoOlhos"
+  },
+  {
+   "titulo": "O Bolo É Mentira",
+   "obra": "Portal",
+   "tipo": "jogo",
+   "parte": "mao",
+   "forma": "cilindro",
+   "peca": "Arma de portais",
+   "cores": [
+    "#ffffff",
+    "#ff6f00",
+    "#1e88e5"
+   ],
+   "fala": "O bolo é mentira. O frango é verdade.",
+   "anim": "teleporte"
+  },
+  {
+   "titulo": "Keyblade",
+   "obra": "Kingdom Hearts",
+   "tipo": "jogo",
+   "parte": "mao",
+   "forma": "espada",
+   "peca": "Keyblade dourada",
+   "cores": [
+    "#d4a72c",
+    "#9e9e9e",
+    "#e53935"
+   ],
+   "fala": "Keyblade na mão. Meu coração é minha força. E o bíceps também.",
+   "anim": "poseEpica"
+  },
+  {
+   "titulo": "Medalhão do Lobo",
+   "obra": "The Witcher",
+   "tipo": "jogo",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Medalhão do lobo",
+   "cores": [
+    "#9e9e9e",
+    "#424242",
+    "#e53935"
+   ],
+   "fala": "Medalhão do lobo. Joga uma moeda pro seu bruxo.",
+   "anim": "encarar"
+  },
+  {
+   "titulo": "Fora da Lei",
+   "obra": "Red Dead Redemption",
+   "tipo": "jogo",
+   "parte": "cabeca",
+   "forma": "chapeu",
+   "peca": "Chapéu de fora da lei",
+   "cores": [
+    "#8d6e63",
+    "#5d4037",
+    "#ffd54f"
+   ],
+   "fala": "Fora da lei do velho oeste. Laço no frango.",
    "anim": "sorrisoCanto"
   },
   {
-   "titulo": "Sorria!",
-   "obra": "Tubarão (1975)",
-   "tipo": "filme",
-   "parte": "mao",
-   "forma": "cilindro",
-   "peca": "Cilindro dourado do final",
+   "titulo": "Equipe S.T.A.R.S.",
+   "obra": "Resident Evil",
+   "tipo": "jogo",
+   "parte": "cinto",
+   "forma": "cintoUtilidades",
+   "peca": "Cinturão do esquadrão",
    "cores": [
-    "#d4a72c",
-    "#ffffff",
+    "#455a64",
+    "#c0c6cf",
     "#e53935"
    ],
-   "fala": "Sorria! O resto da frase eu deixo com você.",
-   "anim": "brilharDentes"
+   "fala": "Mestre do desbloqueio. Sobrevivi à mansão e ao leg day.",
+   "anim": "olharRedor"
   },
   {
-   "titulo": "Dun-dun",
-   "obra": "trilha sonora de Tubarão (1975)",
-   "tipo": "música",
+   "titulo": "Invasores do Espaço",
+   "obra": "Space Invaders",
+   "tipo": "jogo",
    "parte": "aura",
-   "forma": "notas",
-   "peca": "Aura das duas notas",
+   "forma": "estrelas",
+   "peca": "Aura de invasores",
    "cores": [
-    "#0d1b2a",
-    "#1e88e5",
+    "#43a047",
+    "#b9f6ca",
     "#ffffff"
    ],
-   "fala": "Dun-dun... dun-dun... dun-dun-dun-dun. Pronto, você já está nervosa.",
-   "anim": "dorsalTela"
+   "fala": "Os invasores descem. Eu atiro supino pra cima.",
+   "anim": "estrelas"
   },
   {
-   "titulo": "A Barbatana do Cartaz",
-   "obra": "cartaz de Tubarão (1975)",
-   "tipo": "filme",
-   "parte": "costas",
-   "forma": "capa",
-   "peca": "Capa do cartaz de 75",
-   "cores": [
-    "#0d47a1",
-    "#e53935",
-    "#ffffff"
-   ],
-   "fala": "A barbatana mais famosa do cinema. Spoiler: é a minha.",
-   "anim": "dorsalTela"
-  },
-  {
-   "titulo": "Prefeito de Amity",
-   "obra": "Tubarão (1975)",
-   "tipo": "filme",
+   "titulo": "Gravata do DK",
+   "obra": "Donkey Kong",
+   "tipo": "jogo",
    "parte": "pescoco",
    "forma": "gravata",
-   "peca": "Gravata de âncoras do prefeito",
+   "peca": "Gravata vermelha do DK",
+   "cores": [
+    "#e53935",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "Gravata vermelha. Rei da selva e dos barris.",
+   "anim": "tapinhaAbdomen"
+  },
+  {
+   "titulo": "Sugada Cósmica",
+   "obra": "Kirby",
+   "tipo": "jogo",
+   "parte": "aura",
+   "forma": "bolhas",
+   "peca": "Bolhas cor-de-rosa",
+   "cores": [
+    "#ff80ab",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Eu engulo tudo e copio o poder. Hoje copiei o supino.",
+   "anim": "engolirTudo"
+  },
+  {
+   "titulo": "Antena V",
+   "obra": "Mobile Suit Gundam",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "capaceteAsas",
+   "peca": "Antena de robô gigante",
+   "cores": [
+    "#eceff1",
+    "#ffd400",
+    "#e53935"
+   ],
+   "fala": "Antena em V. Robô gigante, shape gigante.",
+   "anim": "poseEpica"
+  },
+  {
+   "titulo": "Entra no Robô",
+   "obra": "Neon Genesis Evangelion",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "neon",
+   "peca": "Linhas de unidade 01",
+   "cores": [
+    "#7e57c2",
+    "#76ff03",
+    "#ffffff"
+   ],
+   "fala": "Entra no robô? Eu sou o robô.",
+   "anim": "seAcharMaximo"
+  },
+  {
+   "titulo": "Caderno da Morte",
+   "obra": "Death Note",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "livro",
+   "peca": "Caderno preto",
+   "cores": [
+    "#212121",
+    "#eceff1",
+    "#c62828"
+   ],
+   "fala": "Escrevi 'leg day' no caderno. Morreu de dor.",
+   "anim": "sorrisoCanto"
+  },
+  {
+   "titulo": "Nen",
+   "obra": "Hunter x Hunter",
+   "tipo": "anime",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Aura de Nen",
+   "cores": [
+    "#43a047",
+    "#b9f6ca",
+    "#ffffff"
+   ],
+   "fala": "Aura de Nen, tipo intensificação. Óbvio.",
+   "anim": "aura"
+  },
+  {
+   "titulo": "Até Mais, Cowboy do Espaço",
+   "obra": "Cowboy Bebop",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "gravata",
+   "peca": "Gravata fina de caçador de recompensas",
    "cores": [
     "#1e63c6",
-    "#ffffff",
-    "#d4a72c"
+    "#212121",
+    "#ffd54f"
    ],
-   "fala": "A praia está aberta! E eu sou o motivo pra fechar.",
-   "anim": "rirPropriaPiada"
+   "fala": "Até mais, cowboy do espaço. Volto no próximo treino.",
+   "anim": "tchau"
   },
   {
-   "titulo": "Lenny Vegetariano",
-   "obra": "O Espanta Tubarões",
-   "tipo": "filme",
-   "parte": "rosto",
-   "forma": "oculosRedondos",
-   "peca": "Óculos do disfarce de golfinho",
+   "titulo": "Olho do Jagan",
+   "obra": "Yu Yu Hakusho",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "faixa",
+   "peca": "Bandana do Jagan",
    "cores": [
-    "#ff8a65",
     "#ffffff",
-    "#4fc3f7"
+    "#7e57c2",
+    "#7e57c2"
    ],
-   "fala": "Sou vegetariano. Mentira, mas fiz a cara.",
-   "anim": "fingirModestia"
+   "fala": "Bandana do terceiro olho. Ele só enxerga bíceps.",
+   "anim": "encarar"
   },
   {
-   "titulo": "Mestre Jedi",
-   "obra": "Star Wars",
-   "tipo": "filme",
-   "parte": "mao",
-   "forma": "sabreLuz",
-   "peca": "Sabre de luz verde",
+   "titulo": "Kaneda!",
+   "obra": "Akira",
+   "tipo": "anime",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Jaqueta vermelha de Neo-Tóquio",
    "cores": [
-    "#66bb6a",
-    "#ffffff",
-    "#e8f5e9"
+    "#c62828",
+    "#212121",
+    "#ffffff"
    ],
-   "fala": "Faça ou não faça. Tentativa não existe.",
-   "anim": "pensando"
+   "fala": "Kaneda! Tetsuo! JoJo!",
+   "anim": "poseEpica"
+  },
+  {
+   "titulo": "Vizinho Totoro",
+   "obra": "Meu Amigo Totoro",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "orelhas",
+   "peca": "Orelhas de Totoro",
+   "cores": [
+    "#78909c",
+    "#eceff1",
+    "#ffffff"
+   ],
+   "fala": "Esperando o ônibus-gato com orelhas de Totoro.",
+   "anim": "sorrisoSuave"
   },
   {
    "titulo": "Super Saiyajin",
@@ -3387,177 +3386,159 @@
     "#ffffff"
    ],
    "fala": "Super Saiyajin! Cabelo eu não tenho, mas a aura dourada veio.",
-   "anim": "evolucao"
+   "anim": "evolucao",
+   "reacao": "pk_ultraInstinto"
   },
   {
-   "titulo": "Saiyajin Blue",
-   "obra": "Dragon Ball Super",
+   "titulo": "Braço de Automail",
+   "obra": "Fullmetal Alchemist",
    "tipo": "anime",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura Saiyajin Blue",
+   "parte": "pulsos",
+   "forma": "braceletes",
+   "peca": "Braço de automail",
    "cores": [
-    "#1e88e5",
-    "#80d8ff",
-    "#ffffff"
+    "#9e9e9e",
+    "#e0e0e0",
+    "#c62828"
    ],
-   "fala": "Saiyajin Blue. Finalmente combina com a minha pele.",
-   "anim": "evolucao"
+   "fala": "Troca equivalente: um treino por um bíceps.",
+   "anim": "flexionarBiceps"
   },
   {
-   "titulo": "Gear 5",
-   "obra": "One Piece",
-   "tipo": "anime",
-   "parte": "aura",
-   "forma": "bolhas",
-   "peca": "Nuvens do Gear 5",
-   "cores": [
-    "#ffffff",
-    "#f5f5f5",
-    "#ffd54f"
-   ],
-   "fala": "Gear 5. O guerreiro da libertação ri e treina.",
-   "anim": "risada"
-  },
-  {
-   "titulo": "O Mais Forte",
-   "obra": "Jujutsu Kaisen",
-   "tipo": "anime",
-   "parte": "rosto",
-   "forma": "oculosRedondos",
-   "peca": "Óculos escuros do mais forte",
-   "cores": [
-    "#111111",
-    "#4fc3f7",
-    "#ffffff"
-   ],
-   "fala": "Entre o céu e a terra, só eu levanto isso.",
-   "anim": "seAcharMaximo",
-   "reacao": "pk_dominio"
-  },
-  {
-   "titulo": "Rei das Maldições",
-   "obra": "Jujutsu Kaisen",
-   "tipo": "anime",
-   "parte": "pintura",
-   "forma": "marcasMaldicao",
-   "peca": "Marcas do rei das maldições",
-   "cores": [
-    "#212121",
-    "#c62828",
-    "#ffffff"
-   ],
-   "fala": "Santuário malevolente de frango.",
-   "anim": "poseVilao"
-  },
-  {
-   "titulo": "Imperador do Mar",
-   "obra": "One Piece",
+   "titulo": "Espadachim Negro",
+   "obra": "Berserk",
    "tipo": "anime",
    "parte": "costas",
    "forma": "capa",
-   "peca": "Capa de imperador",
+   "peca": "Capa do Espadachim Negro",
    "cores": [
     "#212121",
-    "#c62828",
-    "#ffd54f"
+    "#424242",
+    "#c62828"
    ],
-   "fala": "Haki do rei: todo mundo cai, menos o shape.",
-   "anim": "superioridade",
-   "reacao": "pk_haki"
-  },
-  {
-   "titulo": "Máscara de Hollow",
-   "obra": "Bleach",
-   "tipo": "anime",
-   "parte": "pintura",
-   "forma": "marcasHollow",
-   "peca": "Marcas de hollow",
-   "cores": [
-    "#ffffff",
-    "#c62828",
-    "#212121"
-   ],
-   "fala": "Marcas de hollow no rosto. Bankai com moral.",
+   "fala": "Capa do espadachim negro. Luta até o fim, treina até o fim.",
    "anim": "modoFera",
-   "reacao": "pk_bankai"
-  },
-  {
-   "titulo": "Modo Kurama",
-   "obra": "Naruto",
-   "tipo": "anime",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Manto de chakra laranja",
-   "cores": [
-    "#ff6f00",
-    "#ffb74d",
-    "#ffffff"
-   ],
-   "fala": "Modo Kurama. Chakra laranja, shape azul.",
-   "anim": "modoPoder"
-  },
-  {
-   "titulo": "Titã de Ataque",
-   "obra": "Attack on Titan",
-   "tipo": "anime",
-   "parte": "pintura",
-   "forma": "marcasTita",
-   "peca": "Marcas de titã",
-   "cores": [
-    "#8d3b2b",
-    "#e57373",
-    "#ffffff"
-   ],
-   "fala": "Vou continuar avançando. Pro supino.",
-   "anim": "encarar",
-   "reacao": "pk_rumbling"
-  },
-  {
-   "titulo": "Grande Demais Pra Ser Espada",
-   "obra": "Berserk",
-   "tipo": "anime",
-   "parte": "mao",
-   "forma": "espadaGigante",
-   "peca": "Espada matadora de dragões",
-   "cores": [
-    "#616161",
-    "#212121",
-    "#e53935"
-   ],
-   "fala": "Grande demais pra ser chamado de espada. Eu chamo de halter.",
-   "anim": "halteres",
    "reacao": "pk_berserker"
   },
   {
-   "titulo": "Mister Universo",
-   "obra": "concurso Mister Universo",
-   "tipo": "cultura pop",
-   "parte": "bermuda",
-   "forma": "liso",
-   "peca": "Sunga dourada de campeão",
+   "titulo": "Não Tenho Inimigos",
+   "obra": "Vinland Saga",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Faixas de guerreiro do norte",
    "cores": [
-    "#d4a72c",
+    "#8d6e63",
+    "#d7ccc8",
+    "#ffffff"
+   ],
+   "fala": "Eu não tenho inimigos. Só séries por fazer.",
+   "anim": "ajeitarPostura"
+  },
+  {
+   "titulo": "???%",
+   "obra": "Mob Psycho 100",
+   "tipo": "anime",
+   "parte": "aura",
+   "forma": "raios",
+   "peca": "Aura de cem por cento",
+   "cores": [
+    "#7e57c2",
+    "#e1bee7",
+    "#ffffff"
+   ],
+   "fala": "Cem por cento de raiva... de quem pulou o treino.",
+   "anim": "modoPoder"
+  },
+  {
+   "titulo": "Ego",
+   "obra": "Blue Lock",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "listras",
+   "peca": "Bermuda do Blue Lock",
+   "cores": [
+    "#0d47a1",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Ego! O artilheiro do aquário sou eu.",
+   "anim": "comemorar"
+  },
+  {
+   "titulo": "Voa!",
+   "obra": "Haikyuu!!",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Munhequeiras de vôlei",
+   "cores": [
+    "#ff6f00",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Voa! Salto de ataque com barbatana.",
+   "anim": "pular"
+  },
+  {
+   "titulo": "Okarun",
+   "obra": "Dandadan",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "oculosRedondos",
+   "peca": "Óculos do Okarun",
+   "cores": [
+    "#212121",
+    "#e3f2fd",
+    "#ffd54f"
+   ],
+   "fala": "Óculos de quem acredita em alienígena e em supino.",
+   "anim": "surpreso"
+  },
+  {
+   "titulo": "Waku Waku",
+   "obra": "Spy x Family",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "antenas",
+   "peca": "Presilhas da Anya",
+   "cores": [
+    "#f48fb1",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Waku waku! Eu leio mentes: você está pensando no meu bíceps.",
+   "anim": "piscadinha"
+  },
+  {
+   "titulo": "D'oh!",
+   "obra": "Os Simpsons",
+   "tipo": "desenho",
+   "parte": "mao",
+   "forma": "prancha",
+   "peca": "Skate de Springfield",
+   "cores": [
+    "#e53935",
+    "#ffd400",
+    "#1e63c6"
+   ],
+   "fala": "D'oh! Errei o skate, acertei o shape.",
+   "anim": "rirPropriaPiada"
+  },
+  {
+   "titulo": "Dragão Guerreiro",
+   "obra": "Kung Fu Panda",
+   "tipo": "filme",
+   "parte": "cinto",
+   "forma": "faixaKarate",
+   "peca": "Faixa do Dragão Guerreiro",
+   "cores": [
+    "#c62828",
     "#ffd54f",
     "#ffffff"
    ],
-   "fala": "Sunga dourada. O universo inteiro ficou pequeno.",
-   "anim": "duploBiceps"
-  },
-  {
-   "titulo": "Rei de Asgard",
-   "obra": "Thor: Ragnarok",
-   "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "capaceteAsas",
-   "peca": "Capacete alado de Asgard",
-   "cores": [
-    "#c0c6cf",
-    "#42a5f5",
-    "#ffd54f"
-   ],
-   "fala": "Capacete alado. Rei de Asgard, rei do aquário.",
-   "anim": "poseEpica"
+   "fala": "Não existe ingrediente secreto. É só treino.",
+   "anim": "modoFoco"
   },
   {
    "titulo": "Livre Estou",
@@ -3575,23 +3556,8 @@
    "anim": "girar"
   },
   {
-   "titulo": "O Olho Que Tudo Vê",
-   "obra": "O Senhor dos Anéis",
-   "tipo": "filme",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura do olho flamejante",
-   "cores": [
-    "#d84315",
-    "#ffab40",
-    "#ffffff"
-   ],
-   "fala": "Um olho que tudo vê. E ele só vê o meu bíceps.",
-   "anim": "encararDentes"
-  },
-  {
    "titulo": "Excalibur",
-   "obra": "lenda do Rei Arthur",
+   "obra": "Excalibur (1981)",
    "tipo": "filme",
    "parte": "mao",
    "forma": "espadaRei",
@@ -3620,49 +3586,79 @@
    "anim": "poseEpica"
   },
   {
-   "titulo": "Trono de Atlântida",
-   "obra": "Aquaman 2",
+   "titulo": "Não Entre Gentilmente",
+   "obra": "Interestelar",
    "tipo": "filme",
-   "parte": "cabeca",
-   "forma": "coroa",
-   "peca": "Coroa de Atlântida",
+   "parte": "rosto",
+   "forma": "viseira",
+   "peca": "Visor de astronauta",
    "cores": [
-    "#d4a72c",
-    "#26a69a",
-    "#e53935"
-   ],
-   "fala": "Trono de Atlântida. O reino inteiro faz série comigo.",
-   "anim": "superioridade"
-  },
-  {
-   "titulo": "Ultra Ego",
-   "obra": "Dragon Ball Super",
-   "tipo": "anime",
-   "parte": "aura",
-   "forma": "chamas",
-   "peca": "Aura do Ultra Ego",
-   "cores": [
-    "#6a1b9a",
-    "#ce93d8",
+    "#cfd8dc",
+    "#455a64",
     "#ffffff"
    ],
-   "fala": "Ultra Ego. Quanto mais eu apanho, mais forte eu fico. Igual academia.",
-   "anim": "evolucao"
+   "fala": "Não entre gentilmente nessa noite. Entre no treino.",
+   "anim": "estrelas"
   },
   {
-   "titulo": "Bruce, o Original",
-   "obra": "apelido do tubarão mecânico de Tubarão (1975)",
-   "tipo": "cultura pop",
+   "titulo": "Destruidor de Calorias",
+   "obra": "Oppenheimer",
+   "tipo": "filme",
    "parte": "cabeca",
-   "forma": "aureola",
-   "peca": "Auréola de Bruce, o original",
+   "forma": "chapeu",
+   "peca": "Chapéu de físico",
    "cores": [
-    "#d4a72c",
-    "#fff3c4",
-    "#e53935"
+    "#78909c",
+    "#37474f",
+    "#ffffff"
    ],
-   "fala": "Bruce, o original. Todo tubarão do cinema veio depois de mim.",
-   "anim": "poseEpica"
+   "fala": "Agora eu me tornei o destruidor de calorias.",
+   "anim": "pensando"
+  },
+  {
+   "titulo": "Eu Sou Só o Ken",
+   "obra": "Barbie",
+   "tipo": "filme",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Sunga do Ken",
+   "cores": [
+    "#ff4081",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Eu sou só o Ken. E o Ken treina perna.",
+   "anim": "seAcharMaximo"
+  },
+  {
+   "titulo": "Último Mestre do Ar",
+   "obra": "Avatar: A Lenda de Aang",
+   "tipo": "desenho",
+   "parte": "pintura",
+   "forma": "setaTesta",
+   "peca": "Seta de mestre do ar",
+   "cores": [
+    "#29b6f6",
+    "#e1f5fe",
+    "#ffffff"
+   ],
+   "fala": "Água, terra, fogo, ar. E agora supino.",
+   "anim": "girar"
+  },
+  {
+   "titulo": "Salto Livre",
+   "obra": "Free Willy",
+   "tipo": "filme",
+   "parte": "aura",
+   "forma": "bolhas",
+   "peca": "Respingos do salto livre",
+   "cores": [
+    "#0277bd",
+    "#e1f5fe",
+    "#ffffff"
+   ],
+   "fala": "Pulei o quebra-mar igual ao Willy. Só que sou tubarão.",
+   "anim": "puloOndas"
   },
   {
    "titulo": "Tubarão (1975)",
@@ -3676,9 +3672,331 @@
     "#ffd54f",
     "#ffffff"
    ],
-   "fala": "Tubarão. O clássico. Ninguém mais entra na água sem pensar em mim.",
+   "fala": "Vamos precisar de um barco maior. Tubarão, o clássico: ninguém entra na água sem pensar em mim.",
    "anim": "dorsalTela"
   }
  ],
- "_regraTitulos": "REGRA IRREDUTÍVEL: todo título é referência a filme, anime, série ou cultura pop (todas as clássicas de tubarão presentes); a peça, a fala e a reação de cada nível são dessa referência (referencias[i] corresponde a niveis[i])."
+ "_regraTitulos": "REGRA IRREDUTÍVEL: todo título é referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas as clássicas de tubarão presentes); a peça, a fala e a reação de cada nível são dessa referência (referencias[i] corresponde a niveis[i]). extras: 20 visuais de South Park, um a cada 10 níveis.",
+ "extras": [
+  {
+   "nivel": 10,
+   "titulo": "Gorro do Stan",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "gorro",
+   "peca": "Gorro de pompom do Stan",
+   "cores": [
+    "#1e63c6",
+    "#e53935",
+    "#ffffff"
+   ],
+   "fala": "Sabe, eu aprendi uma coisa hoje: gorro de pompom combina com bíceps.",
+   "anim": "acenar"
+  },
+  {
+   "nivel": 20,
+   "titulo": "Ushanka do Kyle",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "ushanka",
+   "peca": "Ushanka verde do Kyle",
+   "cores": [
+    "#2e7d32",
+    "#1b5e20",
+    "#ffffff"
+   ],
+   "fala": "Ushanka verde. O Kyle tinha razão de novo.",
+   "anim": "assentir"
+  },
+  {
+   "nivel": 30,
+   "titulo": "Toalhinha",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "mao",
+   "forma": "toalha",
+   "peca": "Toalha do Toalhinha",
+   "cores": [
+    "#4fc3f7",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Não esquece de levar uma toalha. E de treinar.",
+   "anim": "toalha"
+  },
+  {
+   "nivel": 40,
+   "titulo": "Pressão Demais!",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "mao",
+   "forma": "caneca",
+   "peca": "Caneca do Tweek",
+   "cores": [
+    "#6d4c41",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Pressão demais! Café demais! Treino de menos? Nunca.",
+   "anim": "nervoso"
+  },
+  {
+   "nivel": 50,
+   "titulo": "M'kay",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "pescoco",
+   "forma": "gravata",
+   "peca": "Gravata do Sr. Mackey",
+   "cores": [
+    "#e53935",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Treinar é bom, m'kay? Pular treino é ruim, m'kay?",
+   "anim": "assentir"
+  },
+  {
+   "nivel": 60,
+   "titulo": "Gnomos de Cueca",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "chapeuMago",
+   "peca": "Chapéu dos gnomos de cueca",
+   "cores": [
+    "#c62828",
+    "#2e7d32",
+    "#ffffff"
+   ],
+   "fala": "Fase 1: roubar cuecas. Fase 2: ? Fase 3: shape.",
+   "anim": "pensando"
+  },
+  {
+   "nivel": 70,
+   "titulo": "Gente-Caranguejo",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "pulsos",
+   "forma": "pincas",
+   "peca": "Pinças da gente-caranguejo",
+   "cores": [
+    "#e53935",
+    "#ffccbc",
+    "#ffffff"
+   ],
+   "fala": "Gente-caranguejo, gente-caranguejo! Bíceps de caranguejo.",
+   "anim": "dancinha"
+  },
+  {
+   "nivel": 80,
+   "titulo": "Member Berries",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "pescoco",
+   "forma": "colarFlores",
+   "peca": "Colar de member berries",
+   "cores": [
+    "#7b1fa2",
+    "#4caf50",
+    "#e1bee7"
+   ],
+   "fala": "Lembra? Lembra do treino de perna? Eu lembro.",
+   "anim": "sorrisoSuave"
+  },
+  {
+   "nivel": 90,
+   "titulo": "Sr. Chapéu",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "mao",
+   "forma": "fantoche",
+   "peca": "Fantoche do Sr. Chapéu",
+   "cores": [
+    "#43a047",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "O Sr. Chapéu disse que meu shape é bom demais pra ser legal.",
+   "anim": "sussurrar"
+  },
+  {
+   "nivel": 100,
+   "titulo": "Respeitem Minha Autoridade",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "quepe",
+   "peca": "Quepe de autoridade do Cartman",
+   "cores": [
+    "#263238",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "Respeitem minha autoridade!",
+   "anim": "superioridade"
+  },
+  {
+   "nivel": 110,
+   "titulo": "Chullo do Craig",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "chullo",
+   "peca": "Chullo azul do Craig",
+   "cores": [
+    "#1e63c6",
+    "#ffd400",
+    "#ffffff"
+   ],
+   "fala": "O Craig manda recado com o dedo do meio. Eu mando com o bíceps.",
+   "anim": "hmpf"
+  },
+  {
+   "nivel": 120,
+   "titulo": "Tegridy",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "quepe",
+   "peca": "Boné da Fazenda Tegridy",
+   "cores": [
+    "#2e7d32",
+    "#d7ccc8",
+    "#ffffff"
+   ],
+   "fala": "Fazenda Tegridy. Treino com tegridade.",
+   "anim": "assentir"
+  },
+  {
+   "nivel": 130,
+   "titulo": "Sr. Hankey",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "mao",
+   "forma": "hankey",
+   "peca": "Sr. Hankey, o cocô de Natal",
+   "cores": [
+    "#795548",
+    "#c62828",
+    "#ffffff"
+   ],
+   "fala": "Hidi-ho! O Sr. Hankey, o cocô de Natal, veio me ver.",
+   "anim": "rirPropriaPiada"
+  },
+  {
+   "nivel": 140,
+   "titulo": "AWESOM-O",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "rosto",
+   "forma": "caixaRobo",
+   "peca": "Cabeça de papelão do AWESOM-O",
+   "cores": [
+    "#bcaaa4",
+    "#212121",
+    "#e53935"
+   ],
+   "fala": "Eu sou AWESOM-O 4000. Bip boop. Supino.",
+   "anim": "fingirTrabalhar"
+  },
+  {
+   "nivel": 150,
+   "titulo": "Professor Caos",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "capacete",
+   "peca": "Capacete de alumínio do Professor Caos",
+   "cores": [
+    "#cfd8dc",
+    "#90a4ae",
+    "#ffffff"
+   ],
+   "fala": "Professor Caos! O mundo vai tremer. Ou só o aquário.",
+   "anim": "poseVilao"
+  },
+  {
+   "nivel": 160,
+   "titulo": "O Guaxinim",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara do Guaxinim",
+   "cores": [
+    "#616161",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "O Guaxinim chegou. O herói que essa cidade merece.",
+   "anim": "poseEpica"
+  },
+  {
+   "nivel": 170,
+   "titulo": "Mysterion",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara do Mysterion",
+   "cores": [
+    "#6a1b9a",
+    "#212121",
+    "#76ff03"
+   ],
+   "fala": "Mysterion. Quem sou eu? Um tubarão muito forte.",
+   "anim": "sobrancelha"
+  },
+  {
+   "nivel": 180,
+   "titulo": "Chef",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "cabeca",
+   "forma": "chapeuChef",
+   "peca": "Chapéu do Chef",
+   "cores": [
+    "#ffffff",
+    "#e0e0e0",
+    "#ffb300"
+   ],
+   "fala": "Chef recomenda: frango, arroz e um pouco de soul.",
+   "anim": "cantarDesafinado"
+  },
+  {
+   "nivel": 190,
+   "titulo": "O Graveto da Verdade",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "mao",
+   "forma": "varinha",
+   "peca": "O Graveto da Verdade",
+   "cores": [
+    "#8d6e63",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "Quem tem o Graveto da Verdade manda no universo. Agora ele é meu.",
+   "anim": "poseEpica"
+  },
+  {
+   "nivel": 200,
+   "titulo": "Mataram o Kenny!",
+   "obra": "South Park",
+   "tipo": "desenho",
+   "parte": "aura",
+   "forma": "sombras",
+   "peca": "Aura do Kenny",
+   "cores": [
+    "#ff6f00",
+    "#ffb74d",
+    "#ffffff"
+   ],
+   "fala": "Oh meu Deus, mataram o Kenny! Seus desgraçados!",
+   "anim": "falsaMorte"
+  }
+ ]
 }

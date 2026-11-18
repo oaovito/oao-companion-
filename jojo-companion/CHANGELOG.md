@@ -3,10 +3,14 @@
 ## 0.47.2 — em preparo
 
 ### Novidades
-- Os 200 títulos de nível agora são referências a filmes, animes, séries e cultura pop,
-  com todos os clássicos de tubarão: de Isca de Tubarão (Procurando Nemo) a Tubarão (1975),
-  passando por Megatubarão, Sharknado, Do Fundo do Mar, O Espanta Tubarões, Kisame, Arlong,
-  Baby Shark, Left Shark, King Shark, Jabberjaw e muitos outros.
+- Os 200 títulos de nível agora são referências a filmes, animes, séries, jogos e cultura
+  pop, cada um de uma obra diferente, com todos os clássicos de tubarão: de Mundo 1-1 (Super
+  Mario Bros.) a Tubarão (1975), passando por Procurando Nemo, Megatubarão, Sharknado, Do
+  Fundo do Mar, O Espanta Tubarões, Kisame, Arlong, Baby Shark, Left Shark, King Shark,
+  Jabberjaw, Zelda, Sonic, Minecraft, Dark Souls e muitos outros.
+- 20 visuais extras de South Park, um a cada 10 níveis: gorro do Stan, ushanka do Kyle,
+  toalha do Toalhinha, caneca do Tweek, Sr. Hankey, AWESOM-O, Professor Caos, Mysterion,
+  e no nível 200 a aura de "mataram o Kenny".
 - Visual novo a cada nível, tirado da referência daquele nível: fones do Baby Shark, Blåhaj
   na mão, barril amarelo de Tubarão, luvas do Rocky, chapéu de palha, sabre de luz, manopla
   das joias, Sharingan, aura de Super Saiyajin, tridente de Atlântida e outros. Ao subir de
