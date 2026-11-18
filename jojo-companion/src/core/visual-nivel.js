@@ -1,6 +1,7 @@
 // Visuais por nível. REGRA IRREDUTÍVEL (pedido de 18/11/2026): todo título de nível
 // é uma referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas
-// as clássicas de tubarão estão presentes), mais 20 extras de South Park (`extras`), e a peça, a fala e a reação de cada nível são dessa
+// as clássicas de tubarão estão presentes), mais 20 extras de South Park e 50 de memes do
+// Twitter (`extras`, sem pudor), e a peça, a fala e a reação de cada nível são dessa
 // referência. Os dados ficam em `progressao.json` → `referencias` (um por nível).
 // Cada nível a partir do 2 libera uma peça desenhada por cima do JoJo (o corpo, a
 // silhueta e o estilo de recorte de papel não mudam). Quanto mais alto o nível,
@@ -46,7 +47,9 @@ const topo = (x) => 20 - 8 * (1 - ((x - 90) / 36) ** 2);
  */
 /** Aceita só as referências (lista) ou {referencias, extras}. */
 const fonte = (d) => (Array.isArray(d) ? { referencias: d, extras: [] } : { referencias: d?.referencias || [], extras: d?.extras || [] });
-const ID_VALIDO = /^(nv\d{3}|sp\d{2})$/;
+const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2})$/;
+// Prefixo do id de cada coleção de extras.
+const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw' };
 
 export function gerarVisuais(dados) {
   const { referencias, extras } = fonte(dados);
@@ -59,12 +62,17 @@ export function gerarVisuais(dados) {
     const [a, b, g] = r.cores;
     out.push({ id: `nv${id3(nivel)}`, nivel, parte: r.parte, forma: r.forma, t, titulo: r.titulo, obra: r.obra, tipo: r.tipo, nome: r.peca, fala: r.fala, anim: r.anim || null, reacao: r.reacao || null, cores: { a, b, g } });
   }
-  // Extras (20 de South Park): liberados junto com o nível indicado, depois da peça do nível.
-  extras.forEach((x, i) => {
-    if (!x || !PARTES.has(x.parte) || !(x.nivel >= 2 && x.nivel <= total)) return;
+  // Extras (20 de South Park, 50 de memes do Twitter): liberados junto com o nível
+  // indicado, depois da peça do nível. Id pelo prefixo e pela ordem dentro da coleção.
+  const contagem = {};
+  for (const x of extras) {
+    const pre = PREFIXO[x?.colecao || x?.obra];
+    if (!pre) continue;
+    const n = contagem[pre] = (contagem[pre] || 0) + 1;
+    if (!PARTES.has(x.parte) || !(x.nivel >= 2 && x.nivel <= total)) continue;
     const [a, b, g] = x.cores;
-    out.push({ id: `sp${String(i + 1).padStart(2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, extra: true });
-  });
+    out.push({ id: `${pre}${String(n).padStart(2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, extra: true });
+  }
   return out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
 }
 
@@ -188,6 +196,10 @@ const FORMAS = {
     ['costumes', 'pompons', b, `${circ(90, -12, 6)} ${circ(53, 52, 4)} ${circ(127, 52, 4)}`, H()],
     ['costumes', 'faixa', b, poly([[50, 14], [130, 14], [130, 19], [50, 19]]), H()],
   ],
+  fruta: ({ a, b }) => [
+    ['costumes', 'laranja', a, circ(90, -2, 12), H()],
+    ['costumes', 'folha', b, 'M90,-14 C96,-24 106,-22 108,-18 C100,-14 94,-12 90,-14 Z', H()],
+  ],
   aureola: ({ a, b, g }) => [
     ['costumes', 'halo', a, `${elip(90, -14, 26, 6)} ${furo(90, -14, 21, 3)}`, H()],
     ['costumes', 'coroa', a, `${poly([[56, 20], [58, 2], [68, 12], [78, -6], [90, 8], [102, -6], [112, 12], [122, 2], [124, 20]]).slice(0, -2)} C110,12 70,12 56,20 Z`, H()],
@@ -231,6 +243,10 @@ const FORMAS = {
   mascaraHollow: ({ a, b }) => [
     ['costumes', 'mascara', a, `M58,26 C70,20 110,20 122,26 L122,52 C110,58 70,58 58,52 Z ${furo(79, 38, 7, 6)} ${furo(101, 38, 7, 6)}`, H()],
     ['costumes', 'listras', b, `${poly([[62, 28], [66, 28], [70, 54], [66, 54]])} ${poly([[118, 28], [114, 28], [110, 54], [114, 54]])}`, H()],
+  ],
+  oculosPixel: ({ a, b }) => [
+    ['costumes', 'armacao', a, `${rect(58, 31, 64, 4)} ${rect(66, 35, 24, 4)} ${rect(68, 39, 20, 4)} ${rect(70, 43, 16, 3)} ${rect(92, 35, 24, 4)} ${rect(94, 39, 20, 4)} ${rect(96, 43, 16, 3)}`, H()],
+    ['costumes', 'pixels', b, `${rect(70, 36, 3, 3)} ${rect(73, 39, 3, 3)} ${rect(96, 36, 3, 3)} ${rect(99, 39, 3, 3)}`, H()],
   ],
   caixaRobo: ({ a, b, g }) => [
     ['costumes', 'caixa', a, `${rect(56, 26, 68, 26)} ${furo(79, 38, 6, 5)} ${furo(101, 38, 6, 5)}`, H()],
@@ -297,6 +313,11 @@ const FORMAS = {
     ['costumes', 'volta', a, 'M48,82 C70,96 110,96 132,82 L132,94 C110,108 70,108 48,94 Z'],
     ['costumes', 'ponta', a, poly([[106, 96], [122, 94], [124, 128], [110, 130]])],
     ['costumes', 'listras', b, `${poly([[107, 108], [123, 106], [123, 110], [107, 112]])} ${poly([[108, 118], [124, 116], [124, 120], [108, 122]])} ${poly([[60, 92], [64, 94], [64, 102], [60, 100]])}`],
+  ],
+  sino: ({ a, b }) => [
+    ['costumes', 'corda', b, corda(3.4)],
+    ['costumes', 'sino', a, 'M80,118 C80,102 100,102 100,118 L103,123 L77,123 Z'],
+    ['costumes', 'badalo', b, circ(90, 124, 2.6)],
   ],
   colarFlores: ({ a, b, g }) => [
     ['costumes', 'corda', a, corda(3)],
@@ -420,6 +441,10 @@ const PINTURA = {
     ['nivelPintura', 'chifre', b, poly([[124, 20], [138, 4], [132, 22]]), H({ alpha: 0.9 })],
   ],
   setaTesta: ({ a }) => [['nivelPintura', 'seta', a, 'M86,30 L86,12 L80,12 L90,0 L100,12 L94,12 L94,30 Z', H({ alpha: 0.95 })]],
+  narizPalhaco: ({ a, b }) => [
+    ['nivelPintura', 'nariz', a, circ(90, 51, 7), H({ alpha: 1 })],
+    ['nivelPintura', 'brilho', b, circ(87, 48, 1.8), H({ alpha: 1 })],
+  ],
   marcasTita: ({ a }) => [['nivelPintura', 'marcas', a, `${poly([[64, 46], [76, 46], [74, 52], [70, 58], [66, 52]])} ${poly([[116, 46], [104, 46], [106, 52], [110, 58], [114, 52]])}`, H({ alpha: 0.85 })]],
 };
 
@@ -551,6 +576,45 @@ const MAO = {
     ['mao', 'gorro', b, poly([[142, 130], [158, 128], [146, 114]])],
     ['mao', 'pompom', g, `${circ(146, 113, 2.4)} ${rect(141, 128, 18, 3)}`],
     ['mao', 'rosto', '#212121', `${circ(146, 138, 1.6)} ${circ(154, 138, 1.6)} M144,145 C148,150 152,150 156,145 L156,147 C152,152 148,152 144,147 Z`],
+  ],
+  prato: ({ a, b, g }) => [
+    ['mao', 'prato', a, elip(152, 148, 15, 5)],
+    ['mao', 'salada', b, 'M140,146 C140,136 150,134 154,140 C158,134 166,138 164,146 Z'],
+    ['mao', 'tomate', g, `${circ(148, 142, 2.4)} ${circ(158, 142, 2.2)}`],
+  ],
+  cartaz: ({ a, b, g }) => [
+    ['mao', 'cabo', b, rect(147, 110, 4, 56)],
+    ['mao', 'placa', a, rect(128, 84, 44, 28)],
+    ['mao', 'texto', g, `${rect(133, 90, 34, 3)} ${rect(133, 97, 28, 3)} ${rect(133, 104, 31, 3)}`],
+  ],
+  balde: ({ a, b, g }) => [
+    ['mao', 'balde', a, poly([[138, 130], [164, 130], [160, 162], [142, 162]])],
+    ['mao', 'borda', b, `${rect(136, 128, 30, 4)} M138,130 C140,114 162,114 164,130 L161,130 C159,118 143,118 141,130 Z`],
+    ['mao', 'gelo', g, `${rect(142, 122, 6, 6)} ${rect(150, 120, 6, 6)} ${rect(157, 123, 5, 5)}`],
+  ],
+  spinner: ({ a, b, g }) => [
+    ['mao', 'bracos', a, [0, 1, 2].map((i) => { const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 3; return circ(152 + Math.cos(ang) * 9, 138 + Math.sin(ang) * 9, 6.5); }).join(' ') + ` ${circ(152, 138, 6)}`],
+    ['mao', 'rolamentos', b, [0, 1, 2].map((i) => { const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 3; return circ(152 + Math.cos(ang) * 9, 138 + Math.sin(ang) * 9, 3); }).join(' ')],
+    ['mao', 'centro', g, circ(152, 138, 3)],
+  ],
+  celular: ({ a, b, g }) => [
+    ['mao', 'corpo', a, rect(142, 126, 17, 30)],
+    ['mao', 'tela', b, rect(144, 130, 13, 22)],
+    ['mao', 'camera', g, circ(150.5, 128, 1.1)],
+  ],
+  biscoito: ({ a, b }) => [
+    ['mao', 'biscoito', a, circ(152, 142, 11)],
+    ['mao', 'gotas', b, `${circ(148, 138, 1.8)} ${circ(156, 140, 1.6)} ${circ(150, 146, 1.7)} ${circ(157, 147, 1.4)}`],
+  ],
+  baseado: ({ a, b, g }) => [
+    ['mao', 'baseado', a, poly([[148, 152], [151, 154], [168, 130], [165, 128]])],
+    ['mao', 'brasa', g, circ(166.5, 129, 2.2)],
+    ['mao', 'fumaca', b, 'M166,124 C160,116 172,112 166,104 L168,103 C175,112 163,116 168,124 Z M171,120 C167,114 177,110 173,102 L175,101 C181,110 170,114 173,120 Z', { alpha: 0.7 }],
+  ],
+  leque: ({ a, b, g }) => [
+    ['mao', 'leque', a, 'M150,152 L128,124 C136,110 164,110 172,124 Z'],
+    ['mao', 'varetas', b, [128, 136, 144, 152, 160, 168].map((x) => poly([[150, 152], [x, 118], [x + 1.6, 118.6]])).join(' ')],
+    ['mao', 'pino', g, circ(150, 150, 2)],
   ],
   livro: ({ a, b, g }) => [
     ['mao', 'capa', a, poly([[136, 132], [149, 136], [162, 132], [162, 156], [149, 160], [136, 156]])],
@@ -805,7 +869,7 @@ export function avisoVisual(estado, referencias, nivel) {
   const pend = visuaisLiberados(referencias, nivel).filter((p) => s.avisar.includes(p.id));
   if (!pend.length) return null;
   const ultima = pend[pend.length - 1];
-  const rotulo = (p) => (p.extra ? `Extra de ${p.obra} do nível ${p.nivel}: ${p.titulo}.` : `Nível ${p.nivel}: ${p.titulo}.`);
+  const rotulo = (p) => (p.extra ? `Extra de ${p.colecao} do nível ${p.nivel}: ${p.titulo}.` : `Nível ${p.nivel}: ${p.titulo}.`);
   if (pend.length === 1) return { pecas: pend, ultima, texto: `${rotulo(ultima)} ${ultima.fala} Peça nova no Guarda-roupa.` };
   const nomes = pend.slice(-3).reverse().map((p) => p.nome);
   const resto = pend.length - nomes.length;
