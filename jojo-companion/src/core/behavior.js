@@ -86,6 +86,8 @@ export const STATES = {
   twerk: { priority: P.INTERACT, phases: [{ anim: 'twerk', ms: 3000 }], next: 'idle' },
   // "Tigresa, tire sua roupa": vira tigresa, rebola, a bermuda voa e ele fica pelado sem pudor.
   tigresa: { priority: P.INTERACT, phases: [{ anim: 'tigresa', ms: 6500 }], next: 'idle' },
+  // Pegadinha semanal: consolo gigante cai na cabeça (traumatismo craniano de desenho).
+  dildo: { priority: P.INTERACT, phases: [{ anim: 'dildo', ms: 6500 }], next: 'idle' },
   angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },
   sad: { priority: P.INTERACT, phases: [{ anim: 'sad', ms: 3200 }], next: 'idle' },
   // Animações do catálogo: `act` (pedido, evento, chat) e `ambient` (sorteio enquanto ela trabalha).

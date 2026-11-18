@@ -117,6 +117,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - "Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!" (Kung Fu Panda; também "Tigresa, tire sua roupa"; estado
   `tigresa`, 6,5 s): JoJo de Mestre Tigresa na pose do Po, a roupa voa e ele fica pelado sem pudor (canal `pelado` esconde
   bermuda/sunga e mostra tudo); visuais `br01` (Tigresa vestida, nível 3) e `br02` (pelada, nível 5), memes BR.
+- Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
+  desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços e inclina a cabeça, preservando o modelo original com pernas e sem cauda.

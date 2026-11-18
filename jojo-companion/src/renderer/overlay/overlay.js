@@ -5,6 +5,7 @@ import { Animator } from '../shared/animator.js';
 import { RigRenderer } from '../shared/rig-renderer.js';
 import { rigComVisuais } from '../../core/visual-nivel.js';
 import { rigComRebolado } from '../../core/rebolado.js';
+import { rigComDildo } from '../../core/dildo.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -75,7 +76,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)));
+  rig = new RigRenderer(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
