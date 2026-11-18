@@ -19,7 +19,7 @@
 
 import { COMANDOS } from './intencoes.js';
 
-export const ALLOWED_ACTIONS = new Set(['nojo', 'boaNoite', 'sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon', 'smitten', 'poop', 'dressDown', 'dressUp', 'avc']);
+export const ALLOWED_ACTIONS = new Set(['nojo', 'boaNoite', 'sleep', 'eat', 'play', 'pet', 'wake', 'lookAround', 'happy', 'curious', 'sit', 'quiet', 'flex', 'scare', 'judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad', 'bench', 'squat', 'moon', 'smitten', 'poop', 'dressDown', 'dressUp', 'avc', 'tigresa']);
 
 export class DialogueProvider {
   constructor({ id, label, kind }) {

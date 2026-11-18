@@ -1,8 +1,12 @@
 # CHANGELOG
 
-## Não lançado — 100 visuais de anime e rebolado no foco
+## Não lançado — 100 visuais de anime, rebolado no foco e Tigresa
 
 ### Novidades
+- "Tigresa, tire sua roupa": falando a frase no chat, o JoJo vira tigresa (listras, orelhas de
+  tigre e pele laranja), rebola de bermuda, a bermuda voa longe e ele fica pelado sem pudor
+  nenhum, balançando tudo. Também é um visual extra (memes BR, nível 3) para vestir à vontade:
+  vestido, ele fica pelado o tempo todo.
 - Rebolado do meme, desenhado do zero a partir do GIF: no modo foco, de vez em quando, o JoJo
   vira de costas em 3/4 e rebola 3 segundos como o boneco do Among Us, o corpo inteiro em
   forma de feijão amassando até cobrir as pernas, alargando e esticando de volta, no mesmo

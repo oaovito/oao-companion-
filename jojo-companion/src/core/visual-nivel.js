@@ -49,9 +49,9 @@ const topo = (x) => 20 - 8 * (1 - ((x - 90) / 36) ** 2);
  */
 /** Aceita só as referências (lista) ou {referencias, extras}. */
 const fonte = (d) => (Array.isArray(d) ? { referencias: d, extras: [] } : { referencias: d?.referencias || [], extras: d?.extras || [] });
-const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3})$/;
+const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$/;
 // Prefixo do id de cada coleção de extras.
-const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an' };
+const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an', 'memes BR': 'br' };
 // Casas do número no id (100 animes pedem três).
 const CASAS = { an: 3 };
 
@@ -760,6 +760,20 @@ function partesDoCorpo(t) {
   if (t.serraCabeca) out.push(['costumeBack', 'serraCabeca', '#9e9e9e', 'M82,14 L82,-30 L98,-30 L98,14 Z', H()], ['costumes', 'serraDentes', '#eceff1', Array.from({ length: 7 }, (_, i) => poly([[98, -28 + i * 6], [103, -25 + i * 6], [98, -22 + i * 6]])).join(' '), H()]);
   if (t.tenis) out.push(['nivelCorpo', 'tenis', t.tenis, `${elip(68, 164, 18, 6)} ${elip(112, 164, 18, 6)}`], ['nivelCorpo', 'sola', '#ffffff', `${rect(50, 166, 36, 2.6)} ${rect(94, 166, 36, 2.6)}`]);
   if (t.pintas) out.push(['nivelPintura', 'pintas', t.pintas, `${circ(66, 104, 3.6)} ${circ(110, 112, 4.4)} ${circ(84, 124, 2.8)} ${circ(118, 96, 2.4)} ${circ(58, 120, 2.6)}`, { alpha: 0.9 }], ['nivelPintura', 'pintasCabeca', t.pintas, `${circ(60, 24, 3)} ${circ(122, 30, 3.6)} ${circ(110, 14, 2.4)}`, H({ alpha: 0.9 })]);
+  // Pelado sem pudor ("Tigresa, tire sua roupa"): quadril, virilha em V, pelos e tudo à mostra.
+  // A bermuda some pelo canal `pelado`; o pinto balança pelo canal `tgPinto`.
+  if (t.pelado) {
+    // Só com o canal `pelado` (visual vestido ou depois que a bermuda voa na animação do meme).
+    const nu = { showIf: 'pelado' };
+    // Quadril sem contorno atravessado (emenda tronco e pernas) e só as laterais contornadas.
+    out.push(['nivelPintura', 'quadril', 'body', 'M63,128 L117,128 L125,150 L55,150 Z', nu]);
+    out.push(['nivelPintura', 'quadrilLados', '#17171f', 'M62,128 L65,128 L57,150 L53,150 Z M118,128 L115,128 L123,150 L127,150 Z', nu]);
+    out.push(['nivelPintura', 'virilha', '#4a2a10', 'M64,128 Q78,140 86,146 Q76,138 67,128 Z M116,128 Q102,140 94,146 Q104,138 113,128 Z', { ...nu, alpha: 0.9 }]);
+    out.push(['nivelCorpo', 'saco', 'body', `${circ(84, 151, 7.5)} ${circ(96, 151, 7.5)}`, { ...nu, dy: 'tgSaco' }]);
+    out.push(['nivelCorpo', 'pinto', 'body', 'M85,136 C84,148 83,158 86,165 C88,170 93,170 95,165 C97,158 96,148 95,136 Z', { ...nu, pivot: [90, 137], rot: 'tgPinto' }]);
+    out.push(['nivelPintura', 'cabecinha', '#e57373', 'M86,162 C87,167 93,168 94,162 C93,164 87,164 86,162 Z', { ...nu, pivot: [90, 137], rot: 'tgPinto' }]);
+    out.push(['nivelPintura', 'pelos', '#2b1d14', 'M74,135 L77,128 L80,134 L84,127 L87,133 L90,126 L93,133 L96,127 L100,134 L103,128 L106,135 C96,140 84,140 74,135 Z', { ...nu, alpha: 0.95 }]);
+  }
   if (t.moscas) {
     const mosca = ([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`;
     out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [160, 80], [140, 120]].map(mosca).join(' '), { alpha: 0.95, dx: 'nvMoscaX', dy: 'nvMoscaY' }]);
@@ -783,6 +797,8 @@ export function partesDoLuto() {
   ];
 }
 export const LUTO = { nome: 'Luto do Shape' };
+/** Visual do meme "Tigresa, tire sua roupa" (coleção memes BR). */
+export const TIGRESA_ID = 'br01';
 
 /** Canal de pose que liga a peça no desenho. */
 export const canalDaPeca = (p) => `nv_${p.id}`;
@@ -833,6 +849,8 @@ export function rigComVisuais(rig, dados) {
     else if (GRUPOS_CORPO.has(g.id) && !pt.parent && pt.rot !== 'headRot') out.corpoX = true;
     return out;
   }) }));
+  // Pelado (visual da Tigresa ou a animação do meme): a bermuda e a sunga somem.
+  for (const g of groups) if (['shorts', 'shortsDetail', 'sexyLayer'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'pelado'])];
   const aura = { id: 'nivelAura', hideIf: 'mooning', parts: [] };
   const pintura = { id: 'nivelPintura', hideIf: 'mooning', parts: [] };
   const brilhos = { id: 'nivelBrilho', hideIf: 'mooning', parts: [] };
@@ -856,8 +874,12 @@ export function rigComVisuais(rig, dados) {
       const marcado = { ...part };
       if (GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot') marcado.corpoX = true;
       alvo.parts.push(marcado);
+      // A animação do meme veste a Tigresa por alguns segundos (canal próprio, sem tocar no Guarda-roupa).
+      if (p.id === TIGRESA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaAnim' });
     }
   }
+  // Bermuda voando na animação do meme da Tigresa.
+  byId.get('costumes').parts.push({ id: 'tigresa_bermudaVoando', fill: 'shorts', showIf: 'tgVoa', dx: 'tgVoaX', dy: 'tgVoaY', path: 'M62,126 L118,126 L125,150 L55,150 Z' });
   // Luto do Shape (funeral da comida fora da dieta): vômito verde e lágrimas, canal nvLuto.
   for (const { group, part } of partesDoLuto()) {
     const alvo = byId.get(group) || byId.get('costumes');
@@ -988,6 +1010,7 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
     if (t.boca) ch.nvBoca = t.boca;
     if (t.olhos && OLHOS[t.olhos]) ch.nvOlhos = OLHOS[t.olhos];
     if (paletaPele(t)) pele = p.id;
+    if (t.pelado) ch.pelado = 1;
   }
   if (pele) ch[`costume_pele${pele}`] = 1;
   return Object.keys(ch).length ? ch : null;

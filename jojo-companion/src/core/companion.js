@@ -2216,6 +2216,8 @@ export class Companion {
       this.effect = { name: 'hearts', until: now + 2400 };
     } else if (action === 'moon') {
       this.behavior.request('moon', { now, force: true });
+    } else if (action === 'tigresa') {
+      this.behavior.request('tigresa', { now, force: true });
     } else if (action === 'bench' || action === 'squat') {
       this.behavior.request(action === 'bench' ? 'benchPress' : 'squat', { now, force: true });
     } else if (['judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad'].includes(action)) {

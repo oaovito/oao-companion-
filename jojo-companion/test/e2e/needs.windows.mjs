@@ -84,7 +84,7 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     });
     assert.equal(l15.nivel, 15);
     assert.equal(l15.vn.visto, 15);
-    assert.equal(l15.vn.novas.length, 25, 'tudo o que o nível liberou (níveis 2 a 15, South Park do 10, memes do 4, 8 e 12 e 7 animes) fica marcado como novo');
+    assert.equal(l15.vn.novas.length, 26, 'tudo o que o nível liberou (níveis 2 a 15, South Park do 10, memes do 4, 8 e 12, 7 animes e a Tigresa) fica marcado como novo');
     assert.ok(Object.keys(l15.vn.pecas).length >= 6, JSON.stringify(l15.vn));
     await win.waitForFunction(() => Object.keys(window.__jojoRenderer.state.visualNivel || {}).length >= 6, null, { timeout: 10000 });
     // O JoJo avisa (balão) e o aviso não fica pendente.
@@ -93,10 +93,10 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     const opened = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.companion.openApp('guardaRoupa'));
     const page = await opened; page.on('pageerror', (e) => errors.push(e.message));
     await page.waitForSelector('#guardaRoupa [data-visual]');
-    assert.match(await page.locator('#guardaBtn').textContent(), /25 novos/);
+    assert.match(await page.locator('#guardaBtn').textContent(), /26 novos/);
     const itens = await page.$$eval('#guardaRoupa [data-visual]', (bs) => bs.map((b) => ({ id: b.dataset.visual, desc: b.querySelector('.visual-desc')?.textContent || '', novo: !!b.querySelector('.selo-novo') })));
-    assert.equal(itens.length, 25, 'níveis 2 a 15 e os extras liberados');
-    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$|^an00[1-7]$/.test(i.id)), 'só liberados como itens');
+    assert.equal(itens.length, 26, 'níveis 2 a 15 e os extras liberados');
+    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$|^an00[1-7]$|^br01$/.test(i.id)), 'só liberados como itens');
     assert.ok(itens.every((i) => i.desc.length > 10 && i.novo), 'cada item com a fala da referência e o selo de novo');
     // Trancados: só cadeado e nível, nada do que é.
     const cadeados = await page.$$eval('#guardaRoupa .cadeado', (cs) => cs.map((c) => c.textContent.trim()));
@@ -136,13 +136,19 @@ test('funeral do shape Windows: comida fora da dieta mostra o slide com as fotos
   } finally { await quit(app); }
 });
 
-test('rebolado Windows: o desenho toca o rebolado de costas sem erro e a opção do foco aparece nas Configurações', { timeout: 120000 }, async () => {
+test('rebolado e Tigresa Windows: o desenho toca o rebolado e o meme da Tigresa sem erro e a opção do foco aparece nas Configurações', { timeout: 120000 }, async () => {
   const { app, win, errors } = await launch();
   try {
     await win.waitForFunction(() => !!window.__jojoRenderer.state, null, { timeout: 15000 });
     await app.evaluate(() => { const c = globalThis.__jojo.companion; return c.behavior.request('twerk', { now: c.clock.now(), force: true }); });
     await win.waitForFunction(() => window.__jojoRenderer.anim === 'twerk', null, { timeout: 10000 });
     await new Promise((r) => setTimeout(r, 1500)); // meio do rebolado, alguns quadros desenhados
+    // "Tigresa, tire sua roupa": a animação do meme toca no desenho real.
+    await new Promise((r) => setTimeout(r, 2000));
+    const tg = await app.evaluate(() => globalThis.__jojo.companion.chat('Tigresa, tire sua roupa'));
+    assert.equal(tg.intent, 'tigresa');
+    await win.waitForFunction(() => window.__jojoRenderer.anim === 'tigresa', null, { timeout: 10000 });
+    await new Promise((r) => setTimeout(r, 4000)); // já pelado
     const aberta = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.openSettings());
     const sw = await aberta; sw.on('pageerror', (e) => errors.push(e.message));
     await sw.waitForSelector('input[name="reboladoFoco"]', { state: 'attached' });
