@@ -27,14 +27,14 @@ function prog({ state = null, inicio = '2026-11-16T10:00:00', data = DATA } = {}
   return { p, passar, dia, ganhar, bonus, salvos };
 }
 
-test('títulos: 200 níveis, cada um com nome próprio; os 10 primeiros e o Megalodon preservados', () => {
+test('títulos: 200 níveis, cada um com nome próprio e referência de cultura pop', () => {
   assert.ok(DATA.niveis.length >= 200);
   assert.equal(new Set(DATA.niveis).size, DATA.niveis.length, 'nenhum título repetido');
   assert.ok(DATA.niveis.every((n) => typeof n === 'string' && n.trim() === n && n.length > 0 && n.length <= 40));
   assert.ok(DATA.niveis.every((n) => !/Patamar/.test(n)), 'acabou o "Megalodon — Patamar N"');
-  assert.deepEqual(DATA.niveis.slice(0, 10), ['Sardinha', 'Lambari', 'Baiacu', 'Moreia', 'Barracuda', 'Tubarão-lixa', 'Tubarão-tigre', 'Tubarão-martelo', 'Tubarão-branco', 'Megalodon']);
-  assert.ok(DATA.niveis.filter((n) => /Megalodon/.test(n)).length >= 10, 'títulos tipo megalodon');
-  assert.equal(DATA.niveis.at(-1), 'Megalodon Supremo');
+  assert.deepEqual(DATA.referencias.map((r) => r.titulo), DATA.niveis, 'uma referência por título');
+  assert.equal(DATA.niveis[9], 'Megatubarão');
+  assert.equal(DATA.niveis.at(-1), 'Tubarão (1975)');
 });
 
 test('escala ×10: mesma constante nas telas e na progressão; limiares da 0.47.0 ×10 em todos os níveis', () => {
@@ -57,7 +57,7 @@ test('migração: o XP já ganho vira ×10 uma vez só e ela continua no mesmo n
   assert.equal(p.st.escalaXp, 10);
   assert.equal(p.st.rewards.history[0].amount, 200, 'histórico na escala nova');
   assert.equal(p.nivel, 14, 'mesmo nível de antes (14)');
-  assert.equal(p.nomeNivel, 'Helicoprion');
+  assert.equal(p.nomeNivel, DATA.niveis[13]);
   assert.equal(salvos.length, 1, 'gravado na hora');
   const outra = prog({ state: structuredClone(p.st) }).p;
   assert.equal(outra.st.xp, 26410, 'abrir de novo não multiplica outra vez');

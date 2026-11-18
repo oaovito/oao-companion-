@@ -81,7 +81,7 @@ Na coluna "Peso / não repetir": "memória 30" quer dizer que o item entra no so
 | 62 | Poses desbloqueáveis | primeira vez que cada animação toca | — | — |
 | 63 | Acessórios | nível 2–7 | — | aparecem como camada às vezes (25 %) |
 | 64 | Álbum de momentos | animações raras e easter | — | últimas 60 |
-| 65 | Níveis do shape | XP ×10 com a curva da 0.47.0 (600 por nível até o 10; depois 1.200·k(k+3)/2) | — | 200 níveis com título próprio, de Sardinha a Megalodon Supremo; 238 bônus de XP com nome (máx. 1 por ação e 6 por dia; XP de bônus é coleção e não acelera o nível); visual novo a cada nível (199 peças em `src/core/visual-nivel.js`, só as liberadas aparecem e podem ser vestidas) |
+| 65 | Níveis do shape | XP ×10 com a curva da 0.47.0 (600 por nível até o 10; depois 1.200·k(k+3)/2) | — | 200 níveis com títulos de filmes, animes, séries e cultura pop (todos os clássicos de tubarão), de Isca de Tubarão a Tubarão (1975); 238 bônus de XP com nome (máx. 1 por ação e 6 por dia; XP de bônus é coleção e não acelera o nível); visual, fala e reação de cada nível tirados da referência (199 peças em `src/core/visual-nivel.js`; só as liberadas aparecem e podem ser vestidas) |
 | 66 | Medalhas por constância | 3, 7 e 30 dias seguidos | — | uma vez |
 | 67 | Missões diárias | 3 sorteadas por dia | o dia | opcionais, sem cobrança |
 | 68 | Mapa do aquário | temporadas visitadas | — | 7 áreas |

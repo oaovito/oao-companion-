@@ -192,8 +192,8 @@ function main() {
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
       animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)),
       foods: readJSON('assets/catalog/foods.json').foods,
-      // Títulos dos níveis: o overlay gera as peças dos visuais por nível a partir deles.
-      niveis: readJSON('assets/catalog/progressao.json').niveis,
+      // Referências dos níveis: o overlay desenha a peça de cada uma (só aparece a vestida).
+      niveis: readJSON('assets/catalog/progressao.json').referencias,
     };
     const catalog = fullCatalog(readJSON);
     const ambientLines = readJSON('assets/dialogue/falas-ambientes.json');
@@ -391,7 +391,7 @@ function main() {
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
         // Só os visuais já liberados (os bloqueados nunca saem do processo principal).
-        visuais: visualSnapshot(store.get().visualNivel, companion.progress.data.niveis, companion.progress.nivel),
+        visuais: companion.progress.data.referencias ? visualSnapshot(store.get().visualNivel, companion.progress.data.referencias, companion.progress.nivel) : null,
         foco: !!companion.focus, trabalho: !!companion.work,
         abrirGuardaRoupa,
         todo: todoService?.model.snapshot() || null,
