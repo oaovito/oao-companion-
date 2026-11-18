@@ -797,6 +797,14 @@ export function partesDoLuto() {
   ];
 }
 export const LUTO = { nome: 'Luto do Shape' };
+/** De onde vem o visual: a obra (e a coleção, nos extras). */
+export function origemVisual(p) {
+  return p.extra && p.colecao && !String(p.obra).includes(p.colecao) ? `${p.obra} (${p.colecao})` : p.obra;
+}
+/** Descrição de todo visual: a frase e de onde ela vem. */
+export function descricaoVisual(p) {
+  return `“${p.fala}” — de ${origemVisual(p)}`;
+}
 /** Visual do meme "Tigresa, tire sua roupa" (coleção memes BR). */
 export const TIGRESA_ID = 'br01';
 
@@ -1028,7 +1036,7 @@ export function visualSnapshot(estado, referencias, nivel) {
   const vestido = {};
   for (const [parte, id] of Object.entries(s.pecas)) if (lib.some((p) => p.id === id)) vestido[parte] = id;
   const partes = VISUAL_PARTES
-    .map((pt) => ({ ...pt, itens: lib.filter((p) => p.parte === pt.id).reverse().map((p) => ({ id: p.id, nome: p.nome, nivel: p.nivel, titulo: p.titulo, obra: p.obra, descricao: p.fala, cor: p.cores.a, novo: novas.has(p.id) })) }))
+    .map((pt) => ({ ...pt, itens: lib.filter((p) => p.parte === pt.id).reverse().map((p) => ({ id: p.id, nome: p.nome, nivel: p.nivel, titulo: p.titulo, obra: p.obra, descricao: descricaoVisual(p), fala: p.fala, origem: origemVisual(p), cor: p.cores.a, novo: novas.has(p.id) })) }))
     .filter((pt) => pt.itens.length);
   const bloqueados = catalogo(referencias).filter((p) => p.nivel > nivel).map((p) => ({ nivel: p.nivel }));
   return { vestido, partes, total: lib.length, novos: lib.filter((p) => novas.has(p.id)).length, bloqueados };

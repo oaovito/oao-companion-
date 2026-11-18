@@ -50,7 +50,7 @@ import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
-import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, FALAS_VISUAL } from './visual-nivel.js';
+import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL } from './visual-nivel.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -125,6 +125,11 @@ const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
 // Animações do modo foco: as duas de sempre e as do catálogo de foco (ids "foco…").
 const FOCUS_ANIM = /^cat_(estudarJunto|treinarJunto|foco[A-Z])/;
+// Animações que não são do catálogo e ficam liberadas para tocar pela Central e por /anim.
+const ANIM_ESPECIAIS = {
+  rebolado: { estado: 'twerk', nome: 'Rebolado do meme', origem: 'meme do Among Us rebolando' },
+  tigresa: { estado: 'tigresa', nome: 'Tigresa, tire sua roupa', origem: 'meme brasileiro "Tigresa, tire sua roupa"' },
+};
 // Rebolado: intervalo mínimo no repouso e no foco, e chance a cada minuto do foco.
 const TWERK_IDLE_GAP_MS = 20 * 60e3;
 const TWERK_FOCO_GAP_MS = 6 * 60e3;
@@ -2016,7 +2021,10 @@ export class Companion {
       // /anim <nome ou id>: toca qualquer animação do catálogo.
       const q = String(raw).replace(/^\/\S+\s*/, '');
       if (!q) text = `${this.catalog.itens.length} animações no catálogo. Use /anim e o nome, ex.: /anim selfie, /anim modo fera, /anim dancinha viral.`;
-      else {
+      else if (ANIM_ESPECIAIS[normalizeText(q).trim()]) {
+        const esp = ANIM_ESPECIAIS[normalizeText(q).trim()];
+        text = !this.work && this.behavior.request(esp.estado, { now: this.clock.now(), force: true }) ? `${esp.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
+      } else {
         const it = this.findCatalog(q);
         if (!it) text = 'Essa animação eu não tenho. E olha que eu tenho centenas. Tenta outro nome.';
         else text = this.playCatalog(it.id, { source: 'comando' }) ? `${it.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
@@ -2893,6 +2901,25 @@ export class Companion {
     if (!m) return null;
     const want = m[4].trim();
     return this.catalog.itens.find((it) => normalizeText(it.nome).startsWith(want)) || this.catalog.itens.find((it) => normalizeText(it.nome).includes(want)) || null;
+  }
+
+  /**
+   * Animações já liberadas para a Central: as poses que ela já viu, as animações dos visuais
+   * liberados pelo nível e os memes especiais (rebolado, Tigresa). Nada bloqueado aparece.
+   */
+  animacoesLiberadas() {
+    const out = new Map();
+    const add = (id, nome, origem) => { if (id && nome && !out.has(id)) out.set(id, { id, nome, origem }); };
+    for (const [id, esp] of Object.entries(ANIM_ESPECIAIS)) add(id, esp.nome, esp.origem);
+    for (const p of this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []) {
+      const it = p.anim && this.catalogById.get(p.anim);
+      if (it) add(it.id, it.nome, `animação do visual ${p.nome} (${p.obra})`);
+    }
+    for (const id of this.progress.st.poses || []) {
+      const it = this.catalogById.get(id);
+      if (it) add(it.id, it.nome, 'pose que você já viu');
+    }
+    return [...out.values()];
   }
 
   /** Busca por id ou nome (comando /anim). */

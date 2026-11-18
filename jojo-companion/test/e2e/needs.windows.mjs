@@ -98,6 +98,7 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     assert.equal(itens.length, 26, 'níveis 2 a 15 e os extras liberados');
     assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$|^an00[1-7]$|^br01$/.test(i.id)), 'só liberados como itens');
     assert.ok(itens.every((i) => i.desc.length > 10 && i.novo), 'cada item com a fala da referência e o selo de novo');
+    assert.ok(itens.every((i) => /^“.+” — de .+/.test(i.desc)), 'descrição com a frase e de onde vem');
     // Trancados: só cadeado e nível, nada do que é.
     const cadeados = await page.$$eval('#guardaRoupa .cadeado', (cs) => cs.map((c) => c.textContent.trim()));
     assert.equal(cadeados.length, 185 + 19 + 47 + 93, 'níveis 16 a 200, 19 de South Park, 47 memes e 93 animes');
@@ -108,6 +109,11 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     await page.locator('#guardaRoupa [data-visual="nv003"]').click();
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv003');
     await win.waitForFunction(() => window.__jojoRenderer.state.visualNivel?.nv_nv003 === 1, null, { timeout: 10000 });
+    // Coleção: todas as animações liberadas tocam com um clique (rebolado e Tigresa inclusos).
+    await page.locator('#colecaoBtn').click();
+    await page.waitForSelector('.animacoes-liberadas button[data-anim="rebolado"]', { state: 'attached' });
+    assert.ok(await page.locator('.animacoes-liberadas button[data-anim="tigresa"]').count() === 1);
+    assert.ok(await page.locator('.animacoes-liberadas button').count() >= 16, 'memes, animações dos visuais liberados e poses vistas');
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });

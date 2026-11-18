@@ -27,6 +27,10 @@
   Trancados continuam só como cadeado.
 
 ### Melhorias
+- Central → Coleção → "Animações liberadas": tudo o que já foi liberado toca com um clique (as
+  poses que ela já viu, a animação de cada visual liberado, o rebolado e a Tigresa). Nada
+  bloqueado aparece. Também por /anim rebolado e /anim tigresa.
+- Todo visual mostra na descrição a frase e de onde ela vem: “frase” — de Obra.
 - Configurações → Movimento e mouse → "Rebolar de vez em quando no modo foco": desmarcar tira o
   rebolado só do foco; no repouso ele continua.
 

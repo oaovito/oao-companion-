@@ -183,7 +183,11 @@ test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central 
     assert.ok(b.nivel > L);
   }
   // Liberados: descrição = fala da referência.
-  for (const i of snap.partes.flatMap((pt) => pt.itens)) assert.equal(i.descricao, CAT.find((p) => p.id === i.id).fala);
+  for (const i of snap.partes.flatMap((pt) => pt.itens)) {
+    const p = CAT.find((x) => x.id === i.id);
+    assert.ok(i.descricao.includes(p.fala) && i.descricao.includes(p.obra), `descrição com a frase e de onde vem: ${i.descricao}`);
+    assert.match(i.descricao, /^“.+” — de .+/);
+  }
 });
 
 test('subir de nível: primeira vez veste o mais recente de cada parte; depois só a peça nova, respeitando o que ela tirou', () => {
@@ -417,6 +421,35 @@ test('"Tigresa, tire sua roupa": visual (nível 3) pelado sem pudor e animação
     e.clock.advance(3000);
     const resp = await chatAdv(e, 'Tigresa, tire sua roupa');
     assert.equal(resp.intent, 'tigresa');
+    assert.equal(e.companion.behavior.state, 'tigresa');
+  } finally {
+    e.companion.stop();
+  }
+});
+
+test('animações liberadas: rebolado, Tigresa, as dos visuais liberados e as poses vistas tocam pela Central; nada bloqueado', async () => {
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    e.companion.start();
+    e.clock.advance(3000);
+    e.companion.progress.st.xp = e.companion.progress.threshold(5);
+    const lista = e.companion.animacoesLiberadas();
+    const ids = lista.map((a) => a.id);
+    assert.ok(ids.includes('rebolado') && ids.includes('tigresa'), 'memes especiais');
+    const doNivel = CAT.filter((p) => p.nivel <= 5).map((p) => p.anim);
+    assert.ok(doNivel.every((id) => ids.includes(id)), 'animação de cada visual liberado');
+    const bloqueadas = new Set(CAT.filter((p) => p.nivel > 5).map((p) => p.anim));
+    const vistas = new Set(e.companion.progress.st.poses);
+    assert.ok(ids.filter((id) => !['rebolado', 'tigresa'].includes(id) && !doNivel.includes(id)).every((id) => vistas.has(id)), 'o resto são poses já vistas');
+    assert.ok(lista.every((a) => a.nome && a.origem), 'nome e de onde vem');
+    assert.equal(new Set(ids).size, ids.length, 'sem repetição');
+    void bloqueadas;
+    // /anim rebolado e /anim tigresa tocam os memes.
+    let r = e.companion.runCommand('anim', null, '/anim rebolado');
+    assert.match(r.text, /Rebolado/);
+    assert.equal(e.companion.behavior.state, 'twerk');
+    e.clock.advance(3500);
+    r = e.companion.runCommand('anim', null, '/anim tigresa');
     assert.equal(e.companion.behavior.state, 'tigresa');
   } finally {
     e.companion.stop();
