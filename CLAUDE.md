@@ -73,7 +73,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   adaptação; tudo desligável e interrompível; doc `jojo-companion/docs/ANTITEDIO.md`.
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
-- Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?".
+- Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?". Desde 18/11/2026,
+  qualquer comida fora da dieta de atleta (doce, pizza, lanche, fritura, refri…) também mostra, **no lugar do balão**, o
+  "funeral do shape": slide com 12 fotos de uma personagem gerada no ChatGPT para a piada (`assets/funeral`), ~11 s,
+  sem clique, bloqueado no Modo Trabalho/tela cheia. Pedido explícito do usuário, que liberou essa piada como exceção.
 - **Motor de intenções** (regra geral, nenhum /comando obrigatório): `dialogue/motor-intencoes.js` (registro `ACOES`,
   compostas, contexto, negação, indiretas, pergunta curta) + `Companion.runActions`; o Qwen devolve `acoes` validadas.
   Doc `docs/INTENCOES.md`. Nunca responder "não está na lista" a um pedido claro.

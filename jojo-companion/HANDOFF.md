@@ -1,5 +1,14 @@
 # HANDOFF — JoJo Companion
 
+## Funeral do shape (não lançado), 18/11/2026
+
+Pedido do usuário: comida fora da dieta → slide de funeral com fotos de uma personagem gerada
+no ChatGPT (ele mostrou o print da geração; `assets/funeral/foto01–12.jpg`, 360 px). Detecção
+na intenção `docinho` (`COMIDA_GORDA` em `scripted-provider.js`), que agora vence o pacote de
+comida; `_doChatAction('nojo')` → `Companion._funeral` (11 s, 6 fotos sorteadas, legenda);
+layout no lugar do balão (`funeral` no estado do overlay, `#funeral` sem clique). Testes:
+`pacotes.test.js` e E2E em `needs.windows.mjs` (47 E2E).
+
 ## Visuais por nível (não lançado), 18/11/2026
 
 REGRA IRREDUTÍVEL (pedido de 18/11): títulos = referências de filme, anime, série, jogo e

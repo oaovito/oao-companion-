@@ -28,6 +28,10 @@
   hora (Modo Trabalho, tela cheia), o aviso espera e sai depois. O botão do Guarda-roupa
   mostra quantos são novos.
 
+- Funeral do shape: quando ela fala de comer doce, pizza, lanche, fritura, refri ou qualquer
+  coisa fora da dieta de atleta, no lugar do balão aparece um slide de funeral ("Em memória do
+  shape") com as fotos passando, em preto e branco, e uma legenda; some em uns 11 segundos.
+
 ### Melhorias
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e

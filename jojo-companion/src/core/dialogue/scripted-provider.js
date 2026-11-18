@@ -17,6 +17,10 @@ export function normalizeText(s) {
 }
 
 // Ordem importa: a primeira intenção que casar vence. Crise e tristeza vêm primeiro.
+// Comida fora da dieta de atleta (texto já normalizado: minúsculo e sem acento).
+export const COMIDA_GORDA = ['pizza\\w*', 'hamburguer\\w*', 'hamburger\\w*', 'burger\\w*', 'lanche\\w*', 'x[- ]?(tudo|salada|bacon|burguer)', 'batata frita', 'batatinha frita', 'fritas', 'fritura\\w*', 'coxinha\\w*', 'pastel\\w*', 'salgadinho\\w*', 'salgado\\w*', 'esfiha\\w*', 'kibe\\w*', 'miojo', 'nuggets?', 'cachorro[- ]quente', 'hot ?dog', 'refri\\w*', 'coca( cola)?', 'fast ?food', 'mc ?donalds?', 'mequi', 'burger king', 'bk', 'lasanha\\w*', 'acai', 'milk ?shake\\w*', 'pipoca\\w*', 'doritos', 'ruffles', 'cheetos', 'nutella', 'churros?', 'waffles?', 'panquecas?', 'pao de queijo', 'brownies?', 'cupcakes?', 'docinho\\w*', 'doces?', 'brigadeiro\\w*', 'chocolate\\w*', 'bolo\\w*', 'sorvete\\w*', 'bombo\\w*', 'sobremesa\\w*', 'pudim', 'torta\\w*', 'cookie\\w*', 'donut\\w*', 'rosquinha\\w*', 'bala\\w*', 'pacoca\\w*', 'trufa\\w*', 'cerveja\\w*', 'breja\\w*'].join('|');
+const VERBOS_COMER = ['comer', 'comi', 'como', 'comendo', 'pedir', 'pedi', 'pedindo', 'vou pedir', 'quero', 'queria', 'devorar', 'devorei', 'atacar', 'ataquei', 'mandar ver (em|no|na)?', 'tomar', 'tomei', 'beber', 'bebi', 'pegar', 'peguei', 'fazer', 'fiz', 'vontade de', 'desejo de', 'larica de'].join('|');
+
 export const INTENTS = [
   // AVC de verdade (sintomas, "tô tendo um AVC"): resposta séria, antes de tudo.
   { id: 'avcReal', patterns: [/\b((to|tou|estou|t[oô]) (tendo|com) (um )?(avc|derrame)|sintomas? de (avc|derrame)|acho que (e|é|to tendo|estou tendo) (um )?(avc|derrame)|boca torta|n[aã]o (consigo|to conseguindo) mexer (o|a) (bra[cç]o|perna|rosto))\b/] },
@@ -26,7 +30,10 @@ export const INTENTS = [
   // Dormir em qualquer forma e horário: o JoJo é radicalmente contra (logo depois da segurança).
   { id: 'sleep', patterns: [/\b(dorm\w*|sono|sonolent\w*|sonequinha|soneca\w*|cochil\w*|nana(r|ndo)?|nanar|deitar?|vou deitar|cama|travesseiro|insonia|capot\w*|zzz+|repous\w*)\b/] },
   // "E se eu comer um docinho?" (e variações): nojo e a pergunta da aberração.
-  { id: 'docinho', patterns: [/\b((e se eu|posso|vou|quero|devo|deveria|to com vontade de|tou com vontade de|bora|pode) (comer|chupar|pegar|atacar|mandar( ver)?)( n?(um|uma|uns|umas|o|a|os|as))? (docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|bombo\w*|bala\w*|balinha\w*|sobremesa\w*|bolo\w*|sorvete\w*|pudim|torta|beijinho\w*|pacoca|pacoquinha|cookie\w*|biscoito recheado|donut\w*|rosquinha\w*|trufa\w*|bombom\w*))\b/, /\b(comer|comi|como) (um |uma |uns |umas )?(docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|sobremesa\w*|bolo\w*|sorvete\w*|bombom\w*)\b/] },
+  { id: 'docinho', patterns: [/\b((e se eu|posso|vou|quero|devo|deveria|to com vontade de|tou com vontade de|bora|pode) (comer|chupar|pegar|atacar|mandar( ver)?)( n?(um|uma|uns|umas|o|a|os|as))? (docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|bombo\w*|bala\w*|balinha\w*|sobremesa\w*|bolo\w*|sorvete\w*|pudim|torta|beijinho\w*|pacoca|pacoquinha|cookie\w*|biscoito recheado|donut\w*|rosquinha\w*|trufa\w*|bombom\w*))\b/, /\b(comer|comi|como) (um |uma |uns |umas )?(docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|sobremesa\w*|bolo\w*|sorvete\w*|bombom\w*)\b/,
+    // Qualquer comida fora da dieta de atleta (pizza, lanche, fritura, refri…): vira o funeral do shape.
+    new RegExp(`\\b(${VERBOS_COMER}) (n?(um|uma|uns|umas|o|a|os|as|uma fatia de|um pedaco de|um pouco de|mais) )?(${COMIDA_GORDA})\\b`),
+    new RegExp(`\\b(${COMIDA_GORDA}) (hoje|agora|de novo|de noite|no jantar|no almoco|pra janta|pro almoco)\\b`)] },
   { id: 'avc', patterns: [/^(jojo )?avc[!?]*$/] },
   { id: 'dressDown', patterns: [/\b((vai |pode )?(vestir|veste|coloca|poe|bota) uma roupa|veste roupa|se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
   { id: 'dressUp', patterns: [/\b(volta (a|pra|para a) fantasia ousada|pode (ser|ficar) ousado|fantasia ousada|volta a ser ousado|tira a roupa comportada)\b/] },

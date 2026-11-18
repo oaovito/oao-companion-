@@ -111,3 +111,25 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });
+
+test('funeral do shape Windows: comida fora da dieta mostra o slide com as fotos no lugar do balão', { timeout: 120000 }, async () => {
+  const { app, win, errors } = await launch();
+  try {
+    await win.waitForFunction(() => !!window.__jojoRenderer.state, null, { timeout: 15000 });
+    await app.evaluate(() => globalThis.__jojo.companion.chat('vou pedir pizza'));
+    await win.waitForFunction(() => !document.getElementById('funeral').classList.contains('hidden'), null, { timeout: 10000 });
+    await win.waitForFunction(() => { const img = document.getElementById('funeralFoto'); return img.complete && img.naturalWidth > 0; }, null, { timeout: 10000 });
+    const tela = await win.evaluate(() => ({
+      foto: document.getElementById('funeralFoto').getAttribute('src'),
+      legenda: document.getElementById('funeralLegenda').textContent,
+      balao: getComputedStyle(document.getElementById('bubble')).display,
+      clique: getComputedStyle(document.getElementById('funeral')).pointerEvents,
+    }));
+    assert.match(tela.foto, /assets\/funeral\/foto\d{2}\.jpg$/);
+    assert.ok(tela.legenda.length > 5);
+    assert.equal(tela.balao, 'none', 'no lugar do balão');
+    assert.equal(tela.clique, 'none', 'não pega clique (click-through preservado)');
+    await win.waitForFunction(() => document.getElementById('funeral').classList.contains('hidden'), null, { timeout: 20000 });
+    assert.deepEqual(errors, []);
+  } finally { await quit(app); }
+});
