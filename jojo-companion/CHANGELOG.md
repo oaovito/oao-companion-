@@ -41,6 +41,11 @@
   Homer, Cartman, Totoro, Kirby, Pac-Man e a capivara ficam gordos de barrigona e papada;
   Shrek e o tubarão zumbi ficam nojentos, com sujeira e moscas; Sextou e Hungry Shark com
   suor e baba.
+- Visuais animados: a barrigona e a papada balançam (bem mais quando ele anda, pula ou
+  dança), as moscas voam em volta, o suor escorre, a baba estica, a aura pulsa, as bolhas
+  sobem e os brilhos piscam. Com um visual vestido, o JoJo às vezes faz sozinho a animação
+  da referência (Venom lambe os dentes, Kirby engole tudo, Godzilla entra no modo poder).
+  No movimento reduzido do Windows tudo fica parado.
 - Cada visual liberado mostra a obra, o título do nível e a fala da referência como
   descrição. Os ainda trancados aparecem só como cadeado com o nível, sem revelar nada
   do que são. Acessórios da coleção só aparecem depois de liberados.

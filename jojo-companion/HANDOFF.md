@@ -18,7 +18,11 @@ pescoço, partes `headRot` e rosto), `nvCorpo` (partes marcadas `corpoX`; braço
 `nvBoca`, `nvOlhos` (`_olhoEstilo`) e paleta `costume_pele<id>` (cabeça usa `nvCabecaPele`).
 A peça mais recente vence cada transformação. Exagero (18/11): `barrigona` (fator),
 `papada`, `manchasOlhos`/`orelhasRedondas` (cor), `suor`, `baba`, `sujeira`, `moscas` viram
-partes (`partesDoCorpo`, grupo `nivelCorpo`); `pele.membros` pinta braços e pernas (`nvMembros`). Janela ganha espaço extra em cima/dos lados.
+partes (`partesDoCorpo`, grupo `nivelCorpo`); `pele.membros` pinta braços e pernas (`nvMembros`).
+Movimento: partes usam `scaleBy`/`dx`/`dy` com canais `nvBarriga`, `nvPapada`, `nvMoscaX/Y`,
+`nvSuor`, `nvBaba`, `nvAura`, `nvBolhas`, `nvBrilho/2`, calculados por quadro em
+`movimentoVisual` (overlay; desligado no movimento reduzido). `Companion._animDoVisual`:
+18% das escolhas de repouso tocam a animação de uma referência vestida. Janela ganha espaço extra em cima/dos lados.
 Avisos (18/11): `visualNivel.avisar` guarda o que o JoJo ainda não anunciou (abertura,
 nível novo; repetido a cada minuto se não deu para falar) e `novas` o que a Central
 ainda não mostrou (selo "Novo", contador no botão; `app:visuais-vistos` limpa). Na

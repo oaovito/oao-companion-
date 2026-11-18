@@ -50,7 +50,7 @@ import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
-import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, FALAS_VISUAL } from './visual-nivel.js';
+import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, FALAS_VISUAL } from './visual-nivel.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -2352,6 +2352,8 @@ export class Companion {
     if (!this.ambientQueue.length && this.rng() < (this.variety.state.boredom >= 3 ? 0.35 : 0.12)) this._startRoutine(date);
     let it = this._dequeue();
     const queued = !!it;
+    // Visual vestido: às vezes faz a animação da referência dele (Venom lambe os dentes, Kirby engole tudo…).
+    if (!it && this.rng() < 0.18) it = this._animDoVisual();
     if (!it) it = this.variety.pickAmbient({ filter: (x) => !(x.mover && this.reducedMotion) });
     if (!it) return null;
     // Energia caótica: emenda mais uma ou duas reações.
@@ -2672,6 +2674,17 @@ export class Companion {
     this._applyLayout(true);
     if (this.onConversationsChange) this.onConversationsChange();
     return true;
+  }
+
+  /** Animação de uma referência vestida (sorteada), para o repouso. null se nenhuma serve. */
+  _animDoVisual() {
+    const refs = this._refs;
+    if (!refs) return null;
+    const ids = Object.values(sanitizeVisual(this.store.get().visualNivel, refs).pecas);
+    const opcoes = ids.map((id) => pecaLiberada(refs, this.progress.nivel, id)).filter(Boolean)
+      .map((p) => this.catalogById.get(p.anim)).filter((it) => it && !it.pacote && !(it.mover && this.reducedMotion));
+    if (!opcoes.length) return null;
+    return opcoes[Math.floor(this.rng() * opcoes.length) % opcoes.length];
   }
 
   /** A Central mostrou os visuais novos: tira o selo de "novo". */

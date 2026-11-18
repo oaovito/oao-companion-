@@ -46,6 +46,23 @@ let reduced = false; // movimento reduzido (quadros estáticos)
 let cmdSel = 0;
 const animationChecks = new Map();
 
+/** Canais de movimento dos visuais de nível (t em segundos). Andando/pulando, tudo balança mais. */
+function movimentoVisual(t, anim = '') {
+  const agitado = /walk|run|jump|land|dance|danc|pul|girar|flex|biceps|fera/i.test(anim) ? 2.4 : 1;
+  return {
+    nvBarriga: 1 + 0.022 * agitado * Math.sin(t * 3.1),
+    nvPapada: 1.4 * agitado * Math.sin(t * 3.1 + 0.6),
+    nvMoscaX: 7 * Math.sin(t * 4.7) + 3 * Math.sin(t * 11),
+    nvMoscaY: 5 * Math.cos(t * 6.3),
+    nvSuor: (t * 9) % 12,
+    nvBaba: 1 + 0.18 * (0.5 + 0.5 * Math.sin(t * 1.7)),
+    nvAura: 1 + 0.035 * Math.sin(t * 5) + 0.015 * Math.sin(t * 13),
+    nvBolhas: -((t * 9) % 16),
+    nvBrilho: 0.55 + 0.6 * Math.abs(Math.sin(t * 2.4)),
+    nvBrilho2: 0.55 + 0.6 * Math.abs(Math.sin(t * 2.4 + 1.3)),
+  };
+}
+
 // ------------------------------------------------------------------ setup
 
 async function init() {
@@ -508,7 +525,12 @@ function draw(now) {
   // Guarda-roupa: peças escolhidas por ela (canais costume_*, prop_*, sexy).
   if (s.outfit) Object.assign(pose, s.outfit);
   // Visuais liberados por nível (coroa, colar, cinturão, aura…).
-  if (s.visualNivel) Object.assign(pose, s.visualNivel);
+  if (s.visualNivel) {
+    Object.assign(pose, s.visualNivel);
+    // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
+    // baba estica, aura pulsa, bolhas sobem, brilhos piscam. Parado no movimento reduzido.
+    if (!reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
+  }
   if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);
