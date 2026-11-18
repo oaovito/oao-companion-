@@ -116,7 +116,7 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
   for (const p of novas) {
     assert.match(p.showIf, /^nv_(nv\d{3}|sp\d{2}|tw\d{2})$/);
     assert.ok(!/NaN|undefined/.test(p.path), p.id);
-    assert.ok(/^#[0-9a-f]{6}$/i.test(p.fill) || ['body', 'cream', 'nvCabecaPele', 'nvMembros'].includes(p.fill), p.id);
+    assert.ok(/^#[0-9a-f]{6}$/i.test(p.fill) || ['body', 'cream', 'nvCabecaPele', 'nvBracos', 'nvPernas'].includes(p.fill), p.id);
     // Pontos absolutos (sem os deslocamentos relativos dos arcos e curvas) cabem no espaço da janela.
     for (const seg of p.path.split(/(?=[MLZ])/)) {
       if (!/^[ML]/.test(seg)) continue;
@@ -296,8 +296,8 @@ test('transformações: o visual muda cabeça, corpo, boca, olhos e pele para pa
   const partesPanda = partesDaPeca(panda).map((x) => x.part.id.replace(`${panda.id}_`, ''));
   for (const id of ['barriga', 'papada', 'manchas', 'orelhas']) assert.ok(partesPanda.includes(id), id);
   assert.ok(ch('Dragão Guerreiro').nvCorpo >= 1.7);
-  assert.equal(r.costumes[`pele${panda.id}`].palette.nvMembros, '#1a1a1a', 'braços e pernas pretos');
-  assert.equal(r.palette.nvMembros, RIG.palette.body, 'sem visual, braços e pernas como sempre');
+  assert.equal(r.costumes[`pele${panda.id}`].palette.nvBracos, '#1a1a1a', 'braços pretos');
+  assert.equal(r.palette.nvPernas, RIG.palette.body, 'sem visual, braços e pernas como sempre');
   const nojento = partesDaPeca(peca('Ogros São Como Cebolas')).map((x) => x.part.id);
   assert.ok(nojento.some((id) => id.endsWith('_moscas')) && nojento.some((id) => id.endsWith('_sujeira')));
   // Sem visual vestido, nenhuma transformação.

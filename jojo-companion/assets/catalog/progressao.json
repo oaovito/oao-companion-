@@ -692,8 +692,13 @@
    "fala": "Peixe é amigo, não comida. Oi, eu sou o Bruce. A sardinha que lute.",
    "anim": "assentir",
    "transforma": {
-    "boca": 1.2,
-    "olhos": "grandes"
+    "boca": 1.45,
+    "olhos": "grandes",
+    "cabeca": 1.15,
+    "pele": {
+     "corpo": "#7f8fa6",
+     "barriga": "#f5f5f5"
+    }
    }
   },
   {
@@ -766,7 +771,8 @@
     "pele": {
      "barriga": "#f2f2ec",
      "corpo": "#4fa3c7"
-    }
+    },
+    "cabeca": 1.2
    }
   },
   {
@@ -784,11 +790,13 @@
    "fala": "Óculos de Tubarão de Rua. Agora a cidade é minha.",
    "anim": "poseEpica",
    "transforma": {
-    "corpo": 1.15,
+    "corpo": 1.3,
     "olhos": "semicerrados",
     "pele": {
-     "corpo": "#546e7a"
-    }
+     "corpo": "#546e7a",
+     "pernas": "#455a64"
+    },
+    "boca": 1.2
    }
   },
   {
@@ -804,7 +812,16 @@
     "#ff5722"
    ],
    "fala": "Sharkboy na área. A Lavagirl esquentou o cinto.",
-   "anim": "flexionarBiceps"
+   "anim": "flexionarBiceps",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#1e63c6",
+     "barriga": "#90caf9",
+     "membros": "#1e63c6",
+     "olho": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "Left Shark",
@@ -842,7 +859,14 @@
     "#ffd54f"
    ],
    "fala": "Marcas da Semana do Tubarão. A semana é minha; o ano também.",
-   "anim": "encararDentes"
+   "anim": "encararDentes",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#6d7b86",
+     "barriga": "#f2f2f2"
+    }
+   }
   },
   {
    "titulo": "Megatubarão",
@@ -882,7 +906,11 @@
     "#ffd54f"
    ],
    "fala": "Luvas do olho do tigre. Escadaria de museu é aquecimento.",
-   "anim": "quedaBraco"
+   "anim": "quedaBraco",
+   "transforma": {
+    "corpo": 1.15,
+    "olhos": "semicerrados"
+   }
   },
   {
    "titulo": "Pede Pra Sair",
@@ -897,7 +925,15 @@
     "#ffffff"
    ],
    "fala": "Pede pra sair. Não pediu? Então treina.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#263238",
+     "membros": "#263238",
+     "barriga": "#37474f"
+    }
+   }
   },
   {
    "titulo": "Homens-Peixe",
@@ -962,7 +998,8 @@
    "fala": "Faixa do Rambo. Eu não comecei a guerra; comecei o treino.",
    "anim": "modoFera",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "corpo": 1.2
    }
   },
   {
@@ -978,7 +1015,10 @@
     "#ffd54f"
    ],
    "fala": "Sunga de pose. O pump é a melhor sensação do mundo.",
-   "anim": "duploBiceps"
+   "anim": "duploBiceps",
+   "transforma": {
+    "corpo": 1.45
+   }
   },
   {
    "titulo": "Autodestruição em Cinco Segundos",
@@ -993,7 +1033,15 @@
     "#e53935"
    ],
    "fala": "Esta mensagem vai se autodestruir em cinco segundos. O supino, não.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#2b2b2b"
+    }
+   }
   },
   {
    "titulo": "Light Weight, Baby",
@@ -1008,7 +1056,10 @@
     "#ffd54f"
    ],
    "fala": "Yeah, buddy! Leve, leve, tudo leve.",
-   "anim": "halteres"
+   "anim": "halteres",
+   "transforma": {
+    "corpo": 1.5
+   }
   },
   {
    "titulo": "Comando para Matar",
@@ -1023,7 +1074,15 @@
     "#9e9e9e"
    ],
    "fala": "Bandoleira de comando. Deixa eu adivinhar: você vai me ajudar no supino.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.35,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#556b2f",
+     "pernas": "#556b2f"
+    }
+   }
   },
   {
    "titulo": "Eu Voltarei",
@@ -1042,7 +1101,10 @@
    "transforma": {
     "olhos": "brilho",
     "pele": {
-     "olho": "#e53935"
+     "olho": "#e53935",
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#424242"
     }
    }
   },
@@ -1059,7 +1121,19 @@
     "#e53935"
    ],
    "fala": "Máscara de caçador. Se sangra, dá pra treinar.",
-   "anim": "circularPresa"
+   "anim": "circularPresa",
+   "transforma": {
+    "boca": 1.35,
+    "olhos": "brilho",
+    "pintas": "#3e4a2a",
+    "pele": {
+     "corpo": "#7d8b5a",
+     "membros": "#7d8b5a",
+     "barriga": "#c2b280",
+     "cabeca": "#7d8b5a",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Conan, o Bárbaro",
@@ -1076,7 +1150,10 @@
    "fala": "Capacete de bárbaro. O que é melhor na vida? Treino de perna.",
    "anim": "poseEpica",
    "transforma": {
-    "corpo": 1.1
+    "corpo": 1.35,
+    "pele": {
+     "pernas": "#5d4037"
+    }
    }
   },
   {
@@ -1096,8 +1173,12 @@
    "transforma": {
     "olhos": "anime",
     "pele": {
-     "olho": "#1e63c6"
-    }
+     "olho": "#1e63c6",
+     "corpo": "#c49a6c",
+     "barriga": "#d4a72c",
+     "pernas": "#8d6e63"
+    },
+    "corpo": 1.3
    }
   },
   {
@@ -1113,7 +1194,15 @@
     "#d4a72c"
    ],
    "fala": "Capacete de gladiador. Vocês não estão entretidos? Eu estou.",
-   "anim": "aplausosImaginarios"
+   "anim": "aplausosImaginarios",
+   "transforma": {
+    "corpo": 1.2,
+    "pele": {
+     "corpo": "#8d6e63",
+     "barriga": "#a1887f",
+     "pernas": "#8d6e63"
+    }
+   }
   },
   {
    "titulo": "Tubarão 2",
@@ -1218,7 +1307,14 @@
     "#ff7043"
    ],
    "fala": "Prancha das Águas Rasas. Na rasa eu também mando.",
-   "anim": "balancar"
+   "anim": "balancar",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#90a4ae",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Medo Profundo",
@@ -1233,7 +1329,14 @@
     "#e53935"
    ],
    "fala": "Cilindro de oxigênio. Quarenta e sete metros e eu nem suei.",
-   "anim": "flutuar"
+   "anim": "flutuar",
+   "transforma": {
+    "pele": {
+     "corpo": "#37474f",
+     "membros": "#37474f",
+     "barriga": "#1e88e5"
+    }
+   }
   },
   {
    "titulo": "Mar Aberto",
@@ -1248,7 +1351,14 @@
     "#ffd54f"
    ],
    "fala": "Ninguém voltou pra te buscar? Eu volto.",
-   "anim": "nadarCirculos"
+   "anim": "nadarCirculos",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#78909c",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Don Lino",
@@ -1268,7 +1378,7 @@
     "corpo": 1.45,
     "olhos": "semicerrados",
     "pele": {
-     "corpo": "#546e7a",
+     "corpo": "#607d8b",
      "barriga": "#cfd8dc"
     },
     "papada": true
@@ -1287,7 +1397,16 @@
     "#ffffff"
    ],
    "fala": "Hadouken! O aquário é o meu dojo.",
-   "anim": "modoPoder"
+   "anim": "modoPoder",
+   "transforma": {
+    "corpo": 1.2,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "membros": "#f5f5f5",
+     "barriga": "#eeeeee"
+    }
+   }
   },
   {
    "titulo": "Plus Ultra",
@@ -1307,7 +1426,12 @@
     "cabeca": 0.85,
     "corpo": 1.6,
     "boca": 1.5,
-    "olhos": "pretos"
+    "olhos": "pretos",
+    "pele": {
+     "corpo": "#1e63c6",
+     "barriga": "#c62828",
+     "membros": "#1e63c6"
+    }
    }
   },
   {
@@ -1327,7 +1451,12 @@
    "transforma": {
     "cabeca": 1.05,
     "boca": 0.45,
-    "olhos": "pontos"
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#ffd400",
+     "membros": "#ffd400",
+     "barriga": "#ffeb3b"
+    }
    }
   },
   {
@@ -1344,7 +1473,15 @@
    ],
    "fala": "Bankai! Espada preta, porque o shape já é colorido demais.",
    "anim": "modoPoder",
-   "reacao": "pk_bankai"
+   "reacao": "pk_bankai",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#424242"
+    }
+   }
   },
   {
    "titulo": "Respiração da Água",
@@ -1359,7 +1496,16 @@
     "#ffffff"
    ],
    "fala": "Respiração da Água, primeira forma. Respiro água desde sempre.",
-   "anim": "alongar"
+   "anim": "alongar",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#1b5e20",
+     "barriga": "#212121",
+     "membros": "#212121",
+     "olho": "#8d1c1c"
+    }
+   }
   },
   {
    "titulo": "Expansão de Domínio",
@@ -1375,7 +1521,14 @@
    ],
    "fala": "Venda nos olhos. Expansão de domínio: academia infinita.",
    "anim": "encarar",
-   "reacao": "pk_dominio"
+   "reacao": "pk_dominio",
+   "transforma": {
+    "pele": {
+     "corpo": "#1a1a2e",
+     "membros": "#1a1a2e",
+     "barriga": "#1a1a2e"
+    }
+   }
   },
   {
    "titulo": "Titã Colossal",
@@ -1421,7 +1574,12 @@
    "reacao": "pk_menacing",
    "transforma": {
     "corpo": 1.1,
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#1e63c6"
+    }
    }
   },
   {
@@ -1437,7 +1595,15 @@
     "#ffd400"
    ],
    "fala": "Choveu tubarão? Eu choveria junto. Com motosserra.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "olhos": "grandes",
+    "suor": true,
+    "pele": {
+     "corpo": "#78909c",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Sharktopus",
@@ -1452,7 +1618,16 @@
     "#ffffff"
    ],
    "fala": "Metade tubarão, metade polvo, cem por cento shape.",
-   "anim": "curioso"
+   "anim": "curioso",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#78909c",
+     "barriga": "#eceff1",
+     "membros": "#e57373",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Mega Tubarão vs. Polvo Gigante",
@@ -1467,7 +1642,14 @@
     "#f48fb1"
    ],
    "fala": "Braceletes da luta do século. O polvo pediu arrego.",
-   "anim": "quedaBraco"
+   "anim": "quedaBraco",
+   "transforma": {
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#546e7a",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Tubarão de Duas Cabeças",
@@ -1482,7 +1664,14 @@
     "#e53935"
    ],
    "fala": "Duas cabeças pensam melhor. Uma já basta pra mim.",
-   "anim": "confuso"
+   "anim": "confuso",
+   "transforma": {
+    "boca": 1.3,
+    "pele": {
+     "corpo": "#78909c",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Tubarão Fantasma",
@@ -1519,7 +1708,13 @@
     "#ffd54f"
    ],
    "fala": "Bermuda de areia. Tubarão nadando na praia seca.",
-   "anim": "esparramado"
+   "anim": "esparramado",
+   "transforma": {
+    "pele": {
+     "corpo": "#c2a26b",
+     "barriga": "#f5e6c8"
+    }
+   }
   },
   {
    "titulo": "Tubarão Zumbi",
@@ -1559,7 +1754,15 @@
     "#d4a72c"
    ],
    "fala": "Invisto cinquenta mil no seu treino por vinte por cento do seu shape.",
-   "anim": "apontar"
+   "anim": "apontar",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#263238",
+     "membros": "#263238",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Pular o Tubarão",
@@ -1574,7 +1777,15 @@
     "#c0c6cf"
    ],
    "fala": "Jaqueta de couro. Eu pulei o tubarão. Brincadeira: eu sou o tubarão.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "pernas": "#1e63c6",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Que a Força Esteja",
@@ -1589,7 +1800,14 @@
     "#e3f2fd"
    ],
    "fala": "Que o shape esteja com você. Faça ou não faça; tentativa não existe.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#a1887f",
+     "membros": "#8d6e63",
+     "barriga": "#d7ccc8"
+    }
+   }
   },
   {
    "titulo": "O Escolhido",
@@ -1604,7 +1822,14 @@
     "#00e676"
    ],
    "fala": "Não existe colher. Existe supino.",
-   "anim": "seAcharMaximo"
+   "anim": "seAcharMaximo",
+   "transforma": {
+    "pele": {
+     "corpo": "#111111",
+     "membros": "#111111",
+     "barriga": "#212121"
+    }
+   }
   },
   {
    "titulo": "O Tempero Deve Fluir",
@@ -1624,7 +1849,10 @@
     "olhos": "brilho",
     "pele": {
      "olho": "#1e88e5",
-     "esclera": "#90caf9"
+     "esclera": "#90caf9",
+     "corpo": "#6d5d4b",
+     "membros": "#6d5d4b",
+     "barriga": "#8d6e63"
     }
    }
   },
@@ -1647,7 +1875,7 @@
     "corpo": 1.35,
     "pele": {
      "corpo": "#7e57c2",
-     "barriga": "#b39ddb",
+     "barriga": "#d4a72c",
      "musculo": "#5e35b1"
     }
    }
@@ -1665,7 +1893,20 @@
     "#b388ff"
    ],
    "fala": "Colar de vibranium. Wakanda para sempre.",
-   "anim": "superioridade"
+   "anim": "superioridade",
+   "transforma": {
+    "olhos": "vazios",
+    "orelhas": "pequenas",
+    "corOrelhas": "#1a1a1a",
+    "corOrelhasDentro": "#2b2b2b",
+    "pele": {
+     "corpo": "#1a1a1a",
+     "membros": "#1a1a1a",
+     "barriga": "#2b2b2b",
+     "cabeca": "#1a1a1a",
+     "esclera": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Hulk Esmaga",
@@ -1705,7 +1946,15 @@
     "#42a5f5"
    ],
    "fala": "Se eu levanto, eu sou digno. Eu levanto.",
-   "anim": "halteres"
+   "anim": "halteres",
+   "transforma": {
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#424242",
+     "barriga": "#9e9e9e",
+     "pernas": "#424242"
+    }
+   }
   },
   {
    "titulo": "Gênio, Bilionário",
@@ -1720,7 +1969,19 @@
     "#e53935"
    ],
    "fala": "Gênio, bilionário, fisiculturista.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "olhos": "brilho",
+    "boca": 0.25,
+    "pele": {
+     "corpo": "#b71c1c",
+     "membros": "#b71c1c",
+     "barriga": "#d4a72c",
+     "cabeca": "#b71c1c",
+     "olho": "#e1f5fe",
+     "esclera": "#e1f5fe"
+    }
+   }
   },
   {
    "titulo": "Repelente de Tubarão Bat",
@@ -1735,7 +1996,20 @@
     "#e53935"
    ],
    "fala": "Cinto com repelente de tubarão. Não funciona em mim.",
-   "anim": "rirPropriaPiada"
+   "anim": "rirPropriaPiada",
+   "transforma": {
+    "olhos": "vazios",
+    "orelhas": "gato",
+    "corOrelhas": "#5c6bc0",
+    "corOrelhasDentro": "#5c6bc0",
+    "pele": {
+     "corpo": "#9e9e9e",
+     "barriga": "#ffd400",
+     "bracos": "#9e9e9e",
+     "pernas": "#9e9e9e",
+     "cabeca": "#5c6bc0"
+    }
+   }
   },
   {
    "titulo": "Rei dos Sete Mares",
@@ -1750,7 +2024,15 @@
     "#4caf50"
    ],
    "fala": "Os tubarões obedecem ao rei dos mares. Menos eu.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#ff8f00",
+     "membros": "#2e7d32",
+     "barriga": "#ffb300"
+    }
+   }
   },
   {
    "titulo": "King Shark",
@@ -1790,7 +2072,14 @@
     "#ffffff"
    ],
    "fala": "Diferente do Profundo, eu sou levado a sério.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "pele": {
+     "corpo": "#00695c",
+     "membros": "#00695c",
+     "barriga": "#004d40"
+    }
+   }
   },
   {
    "titulo": "Jeff, o Tubarão Terrestre",
@@ -1831,7 +2120,14 @@
     "#e53935"
    ],
    "fala": "Braceletes de amazona. Bala ricocheteia; crítica também.",
-   "anim": "superioridade"
+   "anim": "superioridade",
+   "transforma": {
+    "pele": {
+     "corpo": "#c62828",
+     "barriga": "#d4a72c",
+     "pernas": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "Homem de Aço",
@@ -1846,7 +2142,15 @@
     "#1e63c6"
    ],
    "fala": "Mais rápido que uma bala, mais forte que uma locomotiva.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#1e63c6",
+     "membros": "#1e63c6",
+     "barriga": "#c62828"
+    }
+   }
   },
   {
    "titulo": "Lanterna Verde",
@@ -1865,7 +2169,10 @@
    "transforma": {
     "olhos": "brilho",
     "pele": {
-     "olho": "#43a047"
+     "olho": "#43a047",
+     "corpo": "#1b5e20",
+     "membros": "#1b5e20",
+     "barriga": "#212121"
     }
    }
   },
@@ -1906,7 +2213,14 @@
     "#e53935"
    ],
    "fala": "O inverno está chegando. Quem senta no Trono de Ferro sou eu.",
-   "anim": "superioridade"
+   "anim": "superioridade",
+   "transforma": {
+    "pele": {
+     "corpo": "#424242",
+     "barriga": "#5d4037",
+     "membros": "#3e2723"
+    }
+   }
   },
   {
    "titulo": "O Menino Que Sobreviveu",
@@ -1921,7 +2235,14 @@
     "#ffffff"
    ],
    "fala": "O menino que sobreviveu ao leg day. Dez pontos para mim.",
-   "anim": "sobrancelha"
+   "anim": "sobrancelha",
+   "transforma": {
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#8d1c1c"
+    }
+   }
   },
   {
    "titulo": "Coração Valente",
@@ -1936,7 +2257,12 @@
     "#ffffff"
    ],
    "fala": "Podem tirar nossas vidas, mas nunca o nosso shape!",
-   "anim": "gritarSuperficie"
+   "anim": "gritarSuperficie",
+   "transforma": {
+    "pele": {
+     "pernas": "#2e7d32"
+    }
+   }
   },
   {
    "titulo": "Capitão Jack",
@@ -1951,7 +2277,14 @@
     "#e53935"
    ],
    "fala": "Por que o rum acabou? Eu bebo whey.",
-   "anim": "olharLado"
+   "anim": "olharLado",
+   "transforma": {
+    "pele": {
+     "corpo": "#5d4037",
+     "barriga": "#f5e6c8",
+     "membros": "#5d4037"
+    }
+   }
   },
   {
    "titulo": "Solte o Kraken",
@@ -1966,7 +2299,17 @@
     "#e0f2f1"
    ],
    "fala": "Soltem o Kraken! Ele saiu e foi pra academia.",
-   "anim": "modoPoder"
+   "anim": "modoPoder",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#00695c",
+     "membros": "#4db6ac",
+     "barriga": "#80cbc4",
+     "cabeca": "#00695c",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Me Chamem de Ishmael",
@@ -1981,7 +2324,13 @@
     "#ffd54f"
    ],
    "fala": "Me chamem de Ishmael. Ou de JoJo, que é melhor.",
-   "anim": "olharRedor"
+   "anim": "olharRedor",
+   "transforma": {
+    "pele": {
+     "corpo": "#3e2723",
+     "membros": "#3e2723"
+    }
+   }
   },
   {
    "titulo": "Coração do Oceano",
@@ -1996,7 +2345,16 @@
     "#82b1ff"
    ],
    "fala": "Coração do Oceano no pescoço. Eu sou o rei do mundo!",
-   "anim": "comemorar"
+   "anim": "comemorar",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "barriga": "#f5f5f5",
+     "pernas": "#5d4037",
+     "olho": "#1e88e5"
+    }
+   }
   },
   {
    "titulo": "SOS Malibu",
@@ -2011,7 +2369,10 @@
     "#ffd54f"
    ],
    "fala": "Bermuda de salva-vidas. Correndo em câmera lenta.",
-   "anim": "puloOndas"
+   "anim": "puloOndas",
+   "transforma": {
+    "corpo": 1.15
+   }
   },
   {
    "titulo": "De Nada!",
@@ -2026,7 +2387,13 @@
     "#e91e63"
    ],
    "fala": "De nada! Pode agradecer igual.",
-   "anim": "piscadinha"
+   "anim": "piscadinha",
+   "transforma": {
+    "corpo": 1.5,
+    "pele": {
+     "musculo": "#3e2723"
+    }
+   }
   },
   {
    "titulo": "Aqui no Mar",
@@ -2041,7 +2408,15 @@
     "#ffffff"
    ],
    "fala": "Aqui no mar, aqui no mar, ninguém treina igual no mar.",
-   "anim": "cantarDesafinado"
+   "anim": "cantarDesafinado",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "pernas": "#26a69a",
+     "barriga": "#7e57c2",
+     "olho": "#1e88e5"
+    }
+   }
   },
   {
    "titulo": "Estou Pronto!",
@@ -2064,9 +2439,11 @@
     "pele": {
      "olho": "#2196f3",
      "corpo": "#f9e04b",
-     "barriga": "#fff59d",
-     "musculo": "#c9b232"
-    }
+     "barriga": "#ffffff",
+     "musculo": "#c9b232",
+     "pernas": "#8d6e63"
+    },
+    "pintas": "#c9b232"
    }
   },
   {
@@ -2106,7 +2483,14 @@
     "#ffffff"
    ],
    "fala": "Não contavam com minha astúcia! Antenas detectando treino.",
-   "anim": "surpreso"
+   "anim": "surpreso",
+   "transforma": {
+    "pele": {
+     "corpo": "#c62828",
+     "membros": "#c62828",
+     "barriga": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Foi Sem Querer Querendo",
@@ -2121,7 +2505,14 @@
     "#ffd54f"
    ],
    "fala": "Foi sem querer querendo. Comi o seu sanduíche de presunto.",
-   "anim": "naoFuiEu"
+   "anim": "naoFuiEu",
+   "transforma": {
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#a5d6a7",
+     "pernas": "#8d6e63"
+    }
+   }
   },
   {
    "titulo": "Só Sei Que Foi Assim",
@@ -2136,7 +2527,14 @@
     "#ffffff"
    ],
    "fala": "Não sei, só sei que foi assim.",
-   "anim": "ombros"
+   "anim": "ombros",
+   "transforma": {
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#d7ccc8",
+     "pernas": "#8d6e63"
+    }
+   }
   },
   {
    "titulo": "Queime, Cosmo!",
@@ -2151,7 +2549,14 @@
     "#e53935"
    ],
    "fala": "Queime, cosmo! Bronze por enquanto; ouro depois.",
-   "anim": "aura"
+   "anim": "aura",
+   "transforma": {
+    "pele": {
+     "corpo": "#b87333",
+     "barriga": "#d4a72c",
+     "pernas": "#b87333"
+    }
+   }
   },
   {
    "titulo": "Mundo Invertido",
@@ -2166,7 +2571,13 @@
     "#ffffff"
    ],
    "fala": "Aura do Mundo Invertido. Onze waffles e um shake.",
-   "anim": "sustoBorda"
+   "anim": "sustoBorda",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "olho": "#e53935"
+    }
+   }
   },
   {
    "titulo": "Diga Meu Nome",
@@ -2181,7 +2592,14 @@
     "#ffffff"
    ],
    "fala": "Diga meu nome. Isso: Heisenberg do whey.",
-   "anim": "sobrancelha"
+   "anim": "sobrancelha",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffd400",
+     "membros": "#ffd400",
+     "barriga": "#ffeb3b"
+    }
+   }
   },
   {
    "titulo": "Batatinha Frita 1, 2, 3",
@@ -2196,7 +2614,14 @@
     "#e91e63"
    ],
    "fala": "Batatinha frita, um, dois, três. Congelei no meio do agachamento.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "pele": {
+     "corpo": "#1b8a3c",
+     "membros": "#1b8a3c",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Bella Ciao",
@@ -2211,7 +2636,14 @@
     "#ffd54f"
    ],
    "fala": "Bella ciao. O plano é simples: assaltar a geladeira.",
-   "anim": "assobiar"
+   "anim": "assobiar",
+   "transforma": {
+    "pele": {
+     "corpo": "#c62828",
+     "membros": "#c62828",
+     "barriga": "#c62828"
+    }
+   }
   },
   {
    "titulo": "A Dança da Gola Branca",
@@ -2226,7 +2658,15 @@
     "#9e9e9e"
    ],
    "fala": "Gola branca. A dança da Wandinha, mas com bíceps.",
-   "anim": "dancinhaViral"
+   "anim": "dancinhaViral",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#212121"
+    }
+   }
   },
   {
    "titulo": "Arise",
@@ -2246,7 +2686,9 @@
    "transforma": {
     "olhos": "brilho",
     "pele": {
-     "olho": "#7c4dff"
+     "olho": "#7c4dff",
+     "corpo": "#1a1a2e",
+     "membros": "#1a1a2e"
     }
    }
   },
@@ -2266,7 +2708,10 @@
    "anim": "duploBiceps",
    "reacao": "pk_berserker",
    "transforma": {
-    "corpo": 1.4
+    "corpo": 1.4,
+    "pele": {
+     "musculo": "#8d1c1c"
+    }
    }
   },
   {
@@ -2284,7 +2729,10 @@
    "fala": "Marca do músculo na testa. Vergonha é não ter músculo.",
    "anim": "flexionarBiceps",
    "transforma": {
-    "corpo": 1.15
+    "corpo": 1.35,
+    "pele": {
+     "pernas": "#c62828"
+    }
    }
   },
   {
@@ -2300,7 +2748,12 @@
     "#ffd54f"
    ],
    "fala": "Dempsey Roll de barbatana!",
-   "anim": "quedaBraco"
+   "anim": "quedaBraco",
+   "transforma": {
+    "pele": {
+     "pernas": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "Em Nome da Lua",
@@ -2319,7 +2772,10 @@
    "transforma": {
     "olhos": "anime",
     "pele": {
-     "olho": "#1e88e5"
+     "olho": "#1e88e5",
+     "corpo": "#ffffff",
+     "barriga": "#c62828",
+     "pernas": "#1e63c6"
     }
    }
   },
@@ -2336,7 +2792,13 @@
     "#ffffff"
    ],
    "fala": "Quem você pensa que eu sou?! Perfuro os céus com a barbatana.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.15,
+    "pele": {
+     "pernas": "#212121"
+    }
+   }
   },
   {
    "titulo": "1,21 Gigawatts",
@@ -2351,7 +2813,15 @@
     "#ffffff"
    ],
    "fala": "Um vírgula vinte e um gigawatts de pump!",
-   "anim": "surpreso"
+   "anim": "surpreso",
+   "transforma": {
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#90a4ae",
+     "pernas": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "Odeio Cobras",
@@ -2366,7 +2836,14 @@
     "#ffd54f"
    ],
    "fala": "Cobras? Odeio cobras. Tubarão, tudo bem.",
-   "anim": "olharRedor"
+   "anim": "olharRedor",
+   "transforma": {
+    "pele": {
+     "corpo": "#8d6e63",
+     "barriga": "#d7ccc8",
+     "pernas": "#a1887f"
+    }
+   }
   },
   {
    "titulo": "Quem Você Vai Chamar?",
@@ -2381,7 +2858,14 @@
     "#212121"
    ],
    "fala": "Quem você vai chamar? Eu. Sempre eu.",
-   "anim": "apontar"
+   "anim": "apontar",
+   "transforma": {
+    "pele": {
+     "corpo": "#c2b280",
+     "membros": "#c2b280",
+     "barriga": "#c2b280"
+    }
+   }
   },
   {
    "titulo": "Passa Cera, Tira Cera",
@@ -2396,7 +2880,14 @@
     "#e53935"
    ],
    "fala": "Passa cera, tira cera, levanta peso.",
-   "anim": "alongar"
+   "anim": "alongar",
+   "transforma": {
+    "pele": {
+     "corpo": "#f5f5f5",
+     "membros": "#f5f5f5",
+     "barriga": "#f5f5f5"
+    }
+   }
   },
   {
    "titulo": "Lista de Vingança",
@@ -2411,7 +2902,14 @@
     "#e53935"
    ],
    "fala": "Lista de vingança: todo mundo que pulou treino.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffd400",
+     "membros": "#ffd400",
+     "barriga": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Oferta Irrecusável",
@@ -2426,7 +2924,15 @@
     "#c62828"
    ],
    "fala": "Vou te fazer uma oferta que você não pode recusar: treino de perna.",
-   "anim": "sussurrar"
+   "anim": "sussurrar",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#111111",
+     "membros": "#111111",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Diga Olá ao Meu Amiguinho",
@@ -2443,7 +2949,12 @@
    "fala": "Diga olá ao meu amiguinho: o meu bíceps.",
    "anim": "poseVilao",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "membros": "#f5f5f5",
+     "barriga": "#c62828"
+    }
    }
   },
   {
@@ -2459,7 +2970,14 @@
     "#ffffff"
    ],
    "fala": "Sinto a necessidade. A necessidade de pump.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#6b7a3a",
+     "membros": "#6b7a3a",
+     "barriga": "#6b7a3a"
+    }
+   }
   },
   {
    "titulo": "É Tudo Pela Família",
@@ -2474,7 +2992,15 @@
     "#212121"
    ],
    "fala": "Eu não tenho amigos. Eu tenho família.",
-   "anim": "abraco"
+   "anim": "abraco",
+   "transforma": {
+    "corpo": 1.4,
+    "pele": {
+     "corpo": "#eceff1",
+     "barriga": "#eceff1",
+     "pernas": "#455a64"
+    }
+   }
   },
   {
    "titulo": "Baba Yaga",
@@ -2489,7 +3015,15 @@
     "#e57373"
    ],
    "fala": "Um lápis. Com ele eu anoto as séries. Só isso. Por enquanto.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#111111",
+     "membros": "#111111",
+     "barriga": "#212121"
+    }
+   }
   },
   {
    "titulo": "Isto É Esparta",
@@ -2506,7 +3040,10 @@
    "fala": "Isto é Esparta! E isto é o meu abdômen.",
    "anim": "gritarSuperficie",
    "transforma": {
-    "corpo": 1.15
+    "corpo": 1.45,
+    "pele": {
+     "pernas": "#8d1c1c"
+    }
    }
   },
   {
@@ -2522,7 +3059,15 @@
     "#ffd54f"
    ],
    "fala": "Testemunhem! Me pintei de cromado.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "pele": {
+     "corpo": "#eeeeee",
+     "membros": "#eeeeee",
+     "cabeca": "#eeeeee",
+     "barriga": "#eeeeee"
+    }
+   }
   },
   {
    "titulo": "A Vida Encontra um Meio",
@@ -2537,7 +3082,18 @@
     "#ffffff"
    ],
    "fala": "A vida encontra um meio. O shape também.",
-   "anim": "pensando"
+   "anim": "pensando",
+   "transforma": {
+    "olhos": "brilho",
+    "pintas": "#3e4a2a",
+    "pele": {
+     "corpo": "#6b8e4e",
+     "membros": "#6b8e4e",
+     "cabeca": "#6b8e4e",
+     "barriga": "#c5e1a5",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Rei da Ilha da Caveira",
@@ -2576,7 +3132,14 @@
     "#ffffff"
    ],
    "fala": "Hoje a gente cancela o apocalipse.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#455a64",
+     "membros": "#455a64",
+     "barriga": "#90a4ae"
+    }
+   }
   },
   {
    "titulo": "Eu Vejo Você",
@@ -2615,7 +3178,19 @@
     "#ffffff"
    ],
    "fala": "Lembre-se de quem você é. Eu lembro: o maior.",
-   "anim": "estrelas"
+   "anim": "estrelas",
+   "transforma": {
+    "juba": "#8d5524",
+    "orelhas": "pequenas",
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#d4a72c",
+     "membros": "#d4a72c",
+     "barriga": "#fff3c4",
+     "cabeca": "#d4a72c",
+     "olho": "#ff8f00"
+    }
+   }
   },
   {
    "titulo": "Ao Infinito e Além",
@@ -2630,14 +3205,21 @@
     "#ffffff"
    ],
    "fala": "Ao infinito e além! Ou até a próxima série.",
-   "anim": "apontar"
+   "anim": "apontar",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffffff",
+     "barriga": "#7cb342",
+     "membros": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Ogros São Como Cebolas",
    "obra": "Shrek",
    "tipo": "filme",
    "parte": "cabeca",
-   "forma": "orelhas",
+   "forma": "transformacao",
    "peca": "Orelhas de ogro",
    "cores": [
     "#7cb342",
@@ -2651,12 +3233,15 @@
     "boca": 1.1,
     "pele": {
      "corpo": "#8bc34a",
-     "barriga": "#c5e1a5",
-     "musculo": "#558b2f"
+     "barriga": "#d7ccc8",
+     "musculo": "#558b2f",
+     "pernas": "#8d6e63"
     },
     "barrigona": 1.2,
     "sujeira": true,
-    "moscas": true
+    "moscas": true,
+    "orelhas": "ogro",
+    "corOrelhasDentro": "#558b2f"
    }
   },
   {
@@ -2679,8 +3264,10 @@
     "pele": {
      "olho": "#212121",
      "corpo": "#42a5f5",
-     "barriga": "#90caf9"
-    }
+     "barriga": "#90caf9",
+     "membros": "#42a5f5"
+    },
+    "orelhas": "elfo"
    }
   },
   {
@@ -2721,7 +3308,14 @@
     "#ffd54f"
    ],
    "fala": "Nunca vou desistir de você. Nem do seu treino.",
-   "anim": "karaoke"
+   "anim": "karaoke",
+   "transforma": {
+    "pele": {
+     "corpo": "#5d4037",
+     "membros": "#5d4037",
+     "barriga": "#d7ccc8"
+    }
+   }
   },
   {
    "titulo": "Aura Farming",
@@ -2737,7 +3331,11 @@
    ],
    "fala": "Farmando aura em tempo integral.",
    "anim": "poseEpica",
-   "reacao": "pk_auraFarming"
+   "reacao": "pk_auraFarming",
+   "transforma": {
+    "olhos": "semicerrados",
+    "corpo": 1.15
+   }
   },
   {
    "titulo": "Deixa Ele Cozinhar",
@@ -2753,7 +3351,15 @@
    ],
    "fala": "Deixa ele cozinhar. Frango, arroz e batata-doce.",
    "anim": "comer",
-   "reacao": "pk_letHimCook"
+   "reacao": "pk_letHimCook",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffffff",
+     "bracos": "#ffffff",
+     "pernas": "#212121",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Sigma",
@@ -2770,7 +3376,12 @@
    "fala": "Sigma não pula treino. Sigma nem pula.",
    "anim": "superioridade",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#424242",
+     "membros": "#424242",
+     "barriga": "#212121"
+    }
    }
   },
   {
@@ -2792,8 +3403,11 @@
     "olhos": "semicerrados",
     "pele": {
      "barriga": "#efebe9",
-     "corpo": "#8d6e63"
-    }
+     "corpo": "#8d6e63",
+     "pernas": "#1e63c6"
+    },
+    "orelhas": "cachorro",
+    "corOrelhas": "#6d4c41"
    }
   },
   {
@@ -2817,7 +3431,8 @@
     "pele": {
      "corpo": "#9e9e9e",
      "barriga": "#f8bbd0"
-    }
+    },
+    "orelhas": "gato"
    }
   },
   {
@@ -2839,7 +3454,9 @@
     "pele": {
      "corpo": "#d4a574",
      "barriga": "#f3e0c4"
-    }
+    },
+    "orelhas": "cachorro",
+    "corOrelhas": "#b07d4f"
    }
   },
   {
@@ -2855,7 +3472,13 @@
     "#e53935"
    ],
    "fala": "Toc, toc. Entrega. É o tubarão de terra.",
-   "anim": "sustoBorda"
+   "anim": "sustoBorda",
+   "transforma": {
+    "pele": {
+     "corpo": "#78909c",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Gawr Gura",
@@ -2876,7 +3499,10 @@
     "boca": 0.6,
     "olhos": "anime",
     "pele": {
-     "olho": "#1e88e5"
+     "olho": "#1e88e5",
+     "corpo": "#e3f2fd",
+     "membros": "#4fc3f7",
+     "barriga": "#ffffff"
     }
    }
   },
@@ -2939,7 +3565,14 @@
     "#ff8fab"
    ],
    "fala": "Colar da ilha de Mako. Sereia, não: tubarão-mako.",
-   "anim": "sorrisoSuave"
+   "anim": "sorrisoSuave",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "pernas": "#ff8f00",
+     "olho": "#1e88e5"
+    }
+   }
   },
   {
    "titulo": "Kaiju Nº 8",
@@ -2977,7 +3610,15 @@
     "#ffd400"
    ],
    "fala": "Sonho simples: pão com geleia e um treino bom.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "serraCabeca": true,
+    "pele": {
+     "corpo": "#ffffff",
+     "barriga": "#212121",
+     "pernas": "#212121"
+    }
+   }
   },
   {
    "titulo": "Mil Anos de Treino",
@@ -2997,8 +3638,12 @@
     "boca": 0.5,
     "olhos": "anime",
     "pele": {
-     "olho": "#43a047"
-    }
+     "olho": "#43a047",
+     "corpo": "#ffffff",
+     "membros": "#ffffff",
+     "barriga": "#d4a72c"
+    },
+    "orelhas": "elfo"
    }
   },
   {
@@ -3039,7 +3684,12 @@
    "fala": "Glorioso propósito: academia.",
    "anim": "sorrisoCanto",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#2e7d32",
+     "membros": "#2e7d32",
+     "barriga": "#d4a72c"
+    }
    }
   },
   {
@@ -3057,7 +3707,12 @@
    "fala": "Garras de adamantium. Eu sou o melhor no que faço.",
    "anim": "modoFera",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#ffd400",
+     "membros": "#1e63c6",
+     "barriga": "#ffd400"
+    }
    }
   },
   {
@@ -3073,7 +3728,15 @@
     "#ffffff"
    ],
    "fala": "Eu aguento isso o dia todo.",
-   "anim": "orgulhoso"
+   "anim": "orgulhoso",
+   "transforma": {
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#1e63c6",
+     "barriga": "#ffffff",
+     "membros": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "Dormammu, Vim Negociar",
@@ -3088,7 +3751,14 @@
     "#ffd54f"
    ],
    "fala": "Dormammu, vim negociar. Mais uma série.",
-   "anim": "flutuar"
+   "anim": "flutuar",
+   "transforma": {
+    "pele": {
+     "corpo": "#1a237e",
+     "membros": "#1a237e",
+     "barriga": "#8d6e63"
+    }
+   }
   },
   {
    "titulo": "Nós Somos Venom",
@@ -3134,8 +3804,12 @@
     "olhos": "vazios",
     "pele": {
      "cabeca": "#c62828",
-     "esclera": "#ffffff"
-    }
+     "esclera": "#ffffff",
+     "corpo": "#c62828",
+     "membros": "#c62828",
+     "barriga": "#c62828"
+    },
+    "manchasOlhos": "#212121"
    }
   },
   {
@@ -3156,7 +3830,11 @@
     "olhos": "vazios",
     "pele": {
      "cabeca": "#c62828",
-     "esclera": "#ffffff"
+     "esclera": "#ffffff",
+     "corpo": "#c62828",
+     "bracos": "#c62828",
+     "pernas": "#1e63c6",
+     "barriga": "#c62828"
     }
    }
   },
@@ -3173,7 +3851,13 @@
     "#ffd54f"
    ],
    "fala": "Fones de walkman. Música dos anos 80 pra fazer série.",
-   "anim": "dancinha"
+   "anim": "dancinha",
+   "transforma": {
+    "pele": {
+     "corpo": "#8d1c1c",
+     "membros": "#8d1c1c"
+    }
+   }
   },
   {
    "titulo": "O Livro de 1974",
@@ -3188,7 +3872,15 @@
     "#e53935"
    ],
    "fala": "O livro que começou tudo. Eu li. Duas vezes.",
-   "anim": "lendo"
+   "anim": "lendo",
+   "transforma": {
+    "olhos": "pontos",
+    "boca": 1.35,
+    "pele": {
+     "corpo": "#6d7b86",
+     "barriga": "#f2f2f2"
+    }
+   }
   },
   {
    "titulo": "É Perigoso Ir Sozinho",
@@ -3203,7 +3895,16 @@
     "#ffd54f"
    ],
    "fala": "É perigoso ir sozinha. Leva o JoJo.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "orelhas": "elfo",
+    "pele": {
+     "corpo": "#2e7d32",
+     "bracos": "#f5e6c8",
+     "pernas": "#f5f5f5",
+     "barriga": "#2e7d32"
+    }
+   }
   },
   {
    "titulo": "Gotta Go Fast",
@@ -3268,7 +3969,16 @@
     "#ffd400"
    ],
    "fala": "Encaixei a peça comprida. Linha completa de abdômen.",
-   "anim": "comemorar"
+   "anim": "comemorar",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#7e57c2",
+     "bracos": "#00e5ff",
+     "pernas": "#ffd400",
+     "barriga": "#ff7043"
+    }
+   }
   },
   {
    "titulo": "Bloco por Bloco",
@@ -3283,7 +3993,17 @@
     "#ffffff"
    ],
    "fala": "Capacete de diamante. Minerei o shape bloco por bloco.",
-   "anim": "orgulhoso"
+   "anim": "orgulhoso",
+   "transforma": {
+    "cabeca": 1.2,
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#00acc1",
+     "bracos": "#00acc1",
+     "pernas": "#3949ab",
+     "barriga": "#00acc1"
+    }
+   }
   },
   {
    "titulo": "Finish Him!",
@@ -3298,7 +4018,16 @@
     "#e53935"
    ],
    "fala": "Vem aqui! Finish him... com supino.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "olhos": "vazios",
+    "pele": {
+     "corpo": "#ffd400",
+     "membros": "#212121",
+     "barriga": "#212121",
+     "esclera": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Master Chief",
@@ -3313,7 +4042,16 @@
     "#ffffff"
    ],
    "fala": "Termine a luta? Eu termino a série.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.25,
+    "pele": {
+     "corpo": "#4e5b31",
+     "membros": "#4e5b31",
+     "cabeca": "#4e5b31",
+     "barriga": "#3e4a27"
+    }
+   }
   },
   {
    "titulo": "Kept You Waiting",
@@ -3330,7 +4068,12 @@
    "fala": "Te deixei esperando, né? Escondido numa caixa de papelão.",
    "anim": "esconder",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#455a64",
+     "membros": "#455a64",
+     "barriga": "#455a64"
+    }
    }
   },
   {
@@ -3346,7 +4089,14 @@
     "#ffffff"
    ],
    "fala": "Você morreu. Eu não: descansei na fogueira e voltei pro treino.",
-   "anim": "ressuscitar"
+   "anim": "ressuscitar",
+   "transforma": {
+    "pele": {
+     "corpo": "#616161",
+     "membros": "#616161",
+     "barriga": "#757575"
+    }
+   }
   },
   {
    "titulo": "A Tocha Está Acabando",
@@ -3361,7 +4111,14 @@
     "#ffd54f"
    ],
    "fala": "A tocha está acabando, mas o shape continua aceso.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "pele": {
+     "corpo": "#3e2723",
+     "membros": "#3e2723",
+     "barriga": "#5d4037"
+    }
+   }
   },
   {
    "titulo": "Buster Sword",
@@ -3376,7 +4133,16 @@
     "#4fc3f7"
    ],
    "fala": "Espada do tamanho do meu ego. Os dois de respeito.",
-   "anim": "halteres"
+   "anim": "halteres",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#4a148c",
+     "membros": "#4a148c",
+     "barriga": "#4a148c",
+     "olho": "#4fc3f7"
+    }
+   }
   },
   {
    "titulo": "Mergulho Raptura",
@@ -3391,7 +4157,18 @@
     "#e3f2fd"
    ],
    "fala": "Escafandro de Rapture. Uma cidade no fundo do mar, igual eu gosto.",
-   "anim": "flutuar"
+   "anim": "flutuar",
+   "transforma": {
+    "corpo": 1.5,
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#8d6e63",
+     "membros": "#8d6e63",
+     "cabeca": "#b87333",
+     "barriga": "#a1887f",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Mar de Ladrões",
@@ -3406,7 +4183,13 @@
     "#ffd400"
    ],
    "fala": "Arpão de pirata. Megalodon à vista!",
-   "anim": "apontar"
+   "anim": "apontar",
+   "transforma": {
+    "pele": {
+     "corpo": "#5d4037",
+     "barriga": "#f5e6c8"
+    }
+   }
   },
   {
    "titulo": "Aku Aku",
@@ -3421,7 +4204,19 @@
     "#4caf50"
    ],
    "fala": "Máscara Aku Aku. Três dessas e eu fico invencível.",
-   "anim": "girar"
+   "anim": "girar",
+   "transforma": {
+    "boca": 1.3,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ff7043",
+     "bracos": "#ff7043",
+     "pernas": "#1e63c6",
+     "barriga": "#ffccbc",
+     "cabeca": "#ff7043",
+     "olho": "#2e7d32"
+    }
+   }
   },
   {
    "titulo": "Polegar pra Cima",
@@ -3436,7 +4231,14 @@
     "#ffffff"
    ],
    "fala": "Polegar pra cima! Sobrevivi ao apocalipse com o shape inteiro.",
-   "anim": "assentir"
+   "anim": "assentir",
+   "transforma": {
+    "pele": {
+     "corpo": "#1e63c6",
+     "membros": "#1e63c6",
+     "barriga": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Flecha no Joelho",
@@ -3451,7 +4253,13 @@
     "#ffffff"
    ],
    "fala": "Eu era um aventureiro, até levar uma flecha no joelho. Agora faço leg press.",
-   "anim": "ombros"
+   "anim": "ombros",
+   "transforma": {
+    "pele": {
+     "corpo": "#616161",
+     "membros": "#616161"
+    }
+   }
   },
   {
    "titulo": "Rasgar e Destroçar",
@@ -3466,7 +4274,15 @@
     "#e53935"
    ],
    "fala": "Rasgar e destroçar. Os demônios e o treino de perna.",
-   "anim": "modoFera"
+   "anim": "modoFera",
+   "transforma": {
+    "corpo": 1.35,
+    "pele": {
+     "corpo": "#4e5b31",
+     "membros": "#4e5b31",
+     "barriga": "#4e5b31"
+    }
+   }
   },
   {
    "titulo": "Isso É Sus",
@@ -3504,7 +4320,16 @@
     "#ffd400"
    ],
    "fala": "Colar do Loot Shark. Até no Battle Royale tem tubarão marombeiro.",
-   "anim": "dancinhaViral"
+   "anim": "dancinhaViral",
+   "transforma": {
+    "olhos": "brilho",
+    "boca": 1.3,
+    "pele": {
+     "corpo": "#5c6bc0",
+     "barriga": "#c5cae9",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Booyah!",
@@ -3519,7 +4344,14 @@
     "#ffd54f"
    ],
    "fala": "Booyah! Último de pé na arena e no treino.",
-   "anim": "comemorar"
+   "anim": "comemorar",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff6f00",
+     "pernas": "#212121",
+     "barriga": "#ff6f00"
+    }
+   }
   },
   {
    "titulo": "Lorde Prístino",
@@ -3534,14 +4366,21 @@
     "#ffd54f"
    ],
    "fala": "Levanta, Maculado. Vira Lorde Prístino do supino.",
-   "anim": "superioridade"
+   "anim": "superioridade",
+   "transforma": {
+    "pele": {
+     "corpo": "#616161",
+     "membros": "#616161",
+     "barriga": "#d4a72c"
+    }
+   }
   },
   {
    "titulo": "Cavaleiro Oco",
    "obra": "Hollow Knight",
    "tipo": "jogo",
    "parte": "cabeca",
-   "forma": "orelhas",
+   "forma": "transformacao",
    "peca": "Chifres de cavaleiro inseto",
    "cores": [
     "#ffffff",
@@ -3554,8 +4393,13 @@
     "boca": 0.3,
     "olhos": "pretos",
     "pele": {
-     "cabeca": "#f5f5f5"
-    }
+     "cabeca": "#f5f5f5",
+     "corpo": "#1a237e",
+     "membros": "#212121",
+     "barriga": "#1a237e"
+    },
+    "corpo": 0.8,
+    "chifres": "inseto"
    }
   },
   {
@@ -3571,7 +4415,14 @@
     "#212121"
    ],
    "fala": "Nada é verdade, tudo é permitido. Menos pular treino.",
-   "anim": "esconder"
+   "anim": "esconder",
+   "transforma": {
+    "pele": {
+     "corpo": "#eceff1",
+     "membros": "#eceff1",
+     "barriga": "#c62828"
+    }
+   }
   },
   {
    "titulo": "Antes do GTA 6",
@@ -3587,7 +4438,15 @@
    ],
    "fala": "Conseguimos isso antes do GTA 6.",
    "anim": "poseEpica",
-   "reacao": "pk_gta6"
+   "reacao": "pk_gta6",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff4081",
+     "bracos": "#ff4081",
+     "barriga": "#ffffff",
+     "pernas": "#00bcd4"
+    }
+   }
   },
   {
    "titulo": "Determinação",
@@ -3602,7 +4461,15 @@
     "#ffffff"
    ],
    "fala": "Você está cheia de determinação. Eu, de whey.",
-   "anim": "brilhoOlhos"
+   "anim": "brilhoOlhos",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#1e63c6",
+     "barriga": "#d81b60",
+     "membros": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "O Bolo É Mentira",
@@ -3617,7 +4484,14 @@
     "#1e88e5"
    ],
    "fala": "O bolo é mentira. O frango é verdade.",
-   "anim": "teleporte"
+   "anim": "teleporte",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff7043",
+     "membros": "#ff7043",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "titulo": "Keyblade",
@@ -3632,7 +4506,13 @@
     "#e53935"
    ],
    "fala": "Keyblade na mão. Meu coração é minha força. E o bíceps também.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#212121",
+     "pernas": "#c62828"
+    }
+   }
   },
   {
    "titulo": "Medalhão do Lobo",
@@ -3647,7 +4527,16 @@
     "#e53935"
    ],
    "fala": "Medalhão do lobo. Joga uma moeda pro seu bruxo.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#2b2b2b",
+     "olho": "#ffd400"
+    }
+   }
   },
   {
    "titulo": "Fora da Lei",
@@ -3662,7 +4551,13 @@
     "#ffd54f"
    ],
    "fala": "Fora da lei do velho oeste. Laço no frango.",
-   "anim": "sorrisoCanto"
+   "anim": "sorrisoCanto",
+   "transforma": {
+    "pele": {
+     "corpo": "#8d6e63",
+     "barriga": "#d7ccc8"
+    }
+   }
   },
   {
    "titulo": "Equipe S.T.A.R.S.",
@@ -3677,7 +4572,13 @@
     "#e53935"
    ],
    "fala": "Mestre do desbloqueio. Sobrevivi à mansão e ao leg day.",
-   "anim": "olharRedor"
+   "anim": "olharRedor",
+   "transforma": {
+    "pele": {
+     "corpo": "#4e5b31",
+     "membros": "#4e5b31"
+    }
+   }
   },
   {
    "titulo": "Invasores do Espaço",
@@ -3692,7 +4593,17 @@
     "#ffffff"
    ],
    "fala": "Os invasores descem. Eu atiro supino pra cima.",
-   "anim": "estrelas"
+   "anim": "estrelas",
+   "transforma": {
+    "olhos": "pontos",
+    "boca": 0.3,
+    "pele": {
+     "corpo": "#43a047",
+     "membros": "#43a047",
+     "cabeca": "#43a047",
+     "barriga": "#43a047"
+    }
+   }
   },
   {
    "titulo": "Gravata do DK",
@@ -3707,7 +4618,17 @@
     "#ffffff"
    ],
    "fala": "Gravata vermelha. Rei da selva e dos barris.",
-   "anim": "tapinhaAbdomen"
+   "anim": "tapinhaAbdomen",
+   "transforma": {
+    "corpo": 1.5,
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#5d4037",
+     "membros": "#5d4037",
+     "barriga": "#bcaaa4",
+     "cabeca": "#5d4037"
+    }
+   }
   },
   {
    "titulo": "Sugada Cósmica",
@@ -3754,7 +4675,11 @@
    "transforma": {
     "olhos": "brilho",
     "pele": {
-     "olho": "#69f0ae"
+     "olho": "#69f0ae",
+     "corpo": "#eceff1",
+     "barriga": "#1e63c6",
+     "membros": "#eceff1",
+     "cabeca": "#eceff1"
     }
    }
   },
@@ -3799,7 +4724,9 @@
    "transforma": {
     "olhos": "brilho",
     "pele": {
-     "olho": "#e53935"
+     "olho": "#e53935",
+     "corpo": "#212121",
+     "membros": "#212121"
     }
    }
   },
@@ -3816,7 +4743,15 @@
     "#ffffff"
    ],
    "fala": "Aura de Nen, tipo intensificação. Óbvio.",
-   "anim": "aura"
+   "anim": "aura",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#2e7d32",
+     "membros": "#2e7d32",
+     "olho": "#5d4037"
+    }
+   }
   },
   {
    "titulo": "Até Mais, Cowboy do Espaço",
@@ -3831,7 +4766,14 @@
     "#ffd54f"
    ],
    "fala": "Até mais, cowboy do espaço. Volto no próximo treino.",
-   "anim": "tchau"
+   "anim": "tchau",
+   "transforma": {
+    "pele": {
+     "corpo": "#1a237e",
+     "membros": "#1a237e",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Olho do Jagan",
@@ -3846,7 +4788,15 @@
     "#7e57c2"
    ],
    "fala": "Bandana do terceiro olho. Ele só enxerga bíceps.",
-   "anim": "encarar"
+   "anim": "encarar",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121",
+     "olho": "#e53935"
+    }
+   }
   },
   {
    "titulo": "Kaneda!",
@@ -3861,14 +4811,20 @@
     "#ffffff"
    ],
    "fala": "Kaneda! Tetsuo! JoJo!",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#c62828",
+     "membros": "#c62828"
+    }
+   }
   },
   {
    "titulo": "Vizinho Totoro",
    "obra": "Meu Amigo Totoro",
    "tipo": "anime",
    "parte": "cabeca",
-   "forma": "orelhas",
+   "forma": "transformacao",
    "peca": "Orelhas de Totoro",
    "cores": [
     "#78909c",
@@ -3886,7 +4842,8 @@
      "corpo": "#78909c",
      "barriga": "#eceff1"
     },
-    "barrigona": 1.45
+    "barrigona": 1.45,
+    "orelhas": "totoro"
    }
   },
   {
@@ -3908,7 +4865,10 @@
     "corpo": 1.1,
     "olhos": "brilho",
     "pele": {
-     "olho": "#26a69a"
+     "olho": "#26a69a",
+     "corpo": "#ff8f00",
+     "pernas": "#ff8f00",
+     "barriga": "#1e63c6"
     }
    }
   },
@@ -3925,7 +4885,16 @@
     "#c62828"
    ],
    "fala": "Troca equivalente: um treino por um bíceps.",
-   "anim": "flexionarBiceps"
+   "anim": "flexionarBiceps",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#9e9e9e",
+     "pernas": "#212121",
+     "olho": "#ffb300"
+    }
+   }
   },
   {
    "titulo": "Espadachim Negro",
@@ -3943,7 +4912,11 @@
    "anim": "modoFera",
    "reacao": "pk_berserker",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121"
+    }
    }
   },
   {
@@ -3959,7 +4932,13 @@
     "#ffffff"
    ],
    "fala": "Eu não tenho inimigos. Só séries por fazer.",
-   "anim": "ajeitarPostura"
+   "anim": "ajeitarPostura",
+   "transforma": {
+    "pele": {
+     "corpo": "#8d6e63",
+     "membros": "#8d6e63"
+    }
+   }
   },
   {
    "titulo": "???%",
@@ -3978,7 +4957,11 @@
    "transforma": {
     "cabeca": 1.05,
     "boca": 0.5,
-    "olhos": "pontos"
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121"
+    }
    }
   },
   {
@@ -3994,7 +4977,14 @@
     "#ffd54f"
    ],
    "fala": "Ego! O artilheiro do aquário sou eu.",
-   "anim": "comemorar"
+   "anim": "comemorar",
+   "transforma": {
+    "pele": {
+     "corpo": "#0d47a1",
+     "barriga": "#ffffff",
+     "pernas": "#0d47a1"
+    }
+   }
   },
   {
    "titulo": "Voa!",
@@ -4009,7 +4999,13 @@
     "#ffffff"
    ],
    "fala": "Voa! Salto de ataque com barbatana.",
-   "anim": "pular"
+   "anim": "pular",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff6f00",
+     "pernas": "#212121"
+    }
+   }
   },
   {
    "titulo": "Okarun",
@@ -4024,7 +5020,13 @@
     "#ffd54f"
    ],
    "fala": "Óculos de quem acredita em alienígena e em supino.",
-   "anim": "surpreso"
+   "anim": "surpreso",
+   "transforma": {
+    "pele": {
+     "corpo": "#212121",
+     "membros": "#212121"
+    }
+   }
   },
   {
    "titulo": "Waku Waku",
@@ -4045,8 +5047,12 @@
     "boca": 0.6,
     "olhos": "anime",
     "pele": {
-     "olho": "#43a047"
-    }
+     "olho": "#43a047",
+     "corpo": "#212121",
+     "membros": "#212121",
+     "barriga": "#d4a72c"
+    },
+    "antenas": "#f48fb1"
    }
   },
   {
@@ -4067,9 +5073,12 @@
     "cabeca": 1.05,
     "olhos": "grandes",
     "pele": {
-     "corpo": "#ffd521",
-     "barriga": "#ffd521",
-     "musculo": "#d9b21b"
+     "corpo": "#ffffff",
+     "barriga": "#ffffff",
+     "musculo": "#d9b21b",
+     "bracos": "#ffd521",
+     "pernas": "#1e63c6",
+     "cabeca": "#ffd521"
     },
     "corpo": 1.55,
     "barrigona": 1.3,
@@ -4127,7 +5136,10 @@
    "transforma": {
     "olhos": "anime",
     "pele": {
-     "olho": "#4fc3f7"
+     "olho": "#4fc3f7",
+     "corpo": "#81d4fa",
+     "membros": "#b3e5fc",
+     "barriga": "#e1f5fe"
     }
    }
   },
@@ -4144,7 +5156,13 @@
     "#1e63c6"
    ],
    "fala": "Tirei da pedra no primeiro puxão.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#9e9e9e",
+     "membros": "#9e9e9e"
+    }
+   }
   },
   {
    "titulo": "Tridente de Poseidon",
@@ -4159,7 +5177,13 @@
     "#ffffff"
    ],
    "fala": "O mar é meu. O Percy que lute.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff8f00",
+     "pernas": "#1e63c6"
+    }
+   }
   },
   {
    "titulo": "Não Entre Gentilmente",
@@ -4174,7 +5198,14 @@
     "#ffffff"
    ],
    "fala": "Não entre gentilmente nessa noite. Entre no treino.",
-   "anim": "estrelas"
+   "anim": "estrelas",
+   "transforma": {
+    "pele": {
+     "corpo": "#eceff1",
+     "membros": "#eceff1",
+     "barriga": "#eceff1"
+    }
+   }
   },
   {
    "titulo": "Destruidor de Calorias",
@@ -4189,7 +5220,13 @@
     "#ffffff"
    ],
    "fala": "Agora eu me tornei o destruidor de calorias.",
-   "anim": "pensando"
+   "anim": "pensando",
+   "transforma": {
+    "pele": {
+     "corpo": "#5d4037",
+     "membros": "#5d4037"
+    }
+   }
   },
   {
    "titulo": "Eu Sou Só o Ken",
@@ -4209,7 +5246,9 @@
     "corpo": 1.1,
     "olhos": "anime",
     "pele": {
-     "olho": "#1e88e5"
+     "olho": "#1e88e5",
+     "corpo": "#1e88e5",
+     "pernas": "#1e88e5"
     }
    }
   },
@@ -4226,7 +5265,14 @@
     "#ffffff"
    ],
    "fala": "Água, terra, fogo, ar. E agora supino.",
-   "anim": "girar"
+   "anim": "girar",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff8f00",
+     "barriga": "#ffd400",
+     "membros": "#ff8f00"
+    }
+   }
   },
   {
    "titulo": "Salto Livre",
@@ -4297,7 +5343,12 @@
    "transforma": {
     "cabeca": 1.35,
     "boca": 0.45,
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#8d6e63",
+     "bracos": "#8d6e63",
+     "pernas": "#1e63c6"
+    }
    }
   },
   {
@@ -4319,7 +5370,12 @@
    "transforma": {
     "cabeca": 1.35,
     "boca": 0.45,
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ff8f00",
+     "bracos": "#ff8f00",
+     "pernas": "#2e7d32"
+    }
    }
   },
   {
@@ -4337,7 +5393,17 @@
    ],
    "fala": "Não esquece de levar uma toalha. E de treinar.",
    "anim": "toalha",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#4fc3f7",
+     "membros": "#4fc3f7",
+     "cabeca": "#4fc3f7",
+     "barriga": "#ffffff",
+     "esclera": "#ffcdd2"
+    }
+   }
   },
   {
    "nivel": 40,
@@ -4358,7 +5424,11 @@
    "transforma": {
     "cabeca": 1.3,
     "boca": 0.45,
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#5b8a5b",
+     "bracos": "#5b8a5b"
+    }
    }
   },
   {
@@ -4380,7 +5450,11 @@
    "transforma": {
     "cabeca": 1.6,
     "boca": 0.45,
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#9e9e9e",
+     "barriga": "#ffffff"
+    }
    }
   },
   {
@@ -4398,7 +5472,14 @@
    ],
    "fala": "Fase 1: roubar cuecas. Fase 2: ? Fase 3: shape.",
    "anim": "pensando",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "corpo": 0.85,
+    "pele": {
+     "corpo": "#1e63c6",
+     "pernas": "#5d4037"
+    }
+   }
   },
   {
    "nivel": 70,
@@ -4415,7 +5496,16 @@
    ],
    "fala": "Gente-caranguejo, gente-caranguejo! Bíceps de caranguejo.",
    "anim": "dancinha",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#e53935",
+     "membros": "#e53935",
+     "cabeca": "#e53935",
+     "barriga": "#ef9a9a"
+    }
+   }
   },
   {
    "nivel": 80,
@@ -4432,7 +5522,12 @@
    ],
    "fala": "Lembra? Lembra do treino de perna? Eu lembro.",
    "anim": "sorrisoSuave",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "olhos": "grandes",
+    "cabeca": 1.15,
+    "boca": 0.45
+   }
   },
   {
    "nivel": 90,
@@ -4449,7 +5544,17 @@
    ],
    "fala": "O Sr. Chapéu disse que meu shape é bom demais pra ser legal.",
    "anim": "sussurrar",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "olhos": "grandes",
+    "cabeca": 1.2,
+    "boca": 0.45,
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#c62828",
+     "pernas": "#5d4037"
+    }
+   }
   },
   {
    "nivel": 100,
@@ -4473,7 +5578,12 @@
     "boca": 0.45,
     "olhos": "grandes",
     "barrigona": 1.3,
-    "papada": true
+    "papada": true,
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#c62828",
+     "pernas": "#5d4037"
+    }
    }
   },
   {
@@ -4495,7 +5605,11 @@
    "transforma": {
     "cabeca": 1.35,
     "boca": 0.45,
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#1e63c6",
+     "bracos": "#1e63c6"
+    }
    }
   },
   {
@@ -4513,7 +5627,14 @@
    ],
    "fala": "Fazenda Tegridy. Treino com tegridade.",
    "anim": "assentir",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#2e7d32",
+     "esclera": "#ffcdd2"
+    }
+   }
   },
   {
    "nivel": 130,
@@ -4550,7 +5671,14 @@
    ],
    "fala": "Eu sou AWESOM-O 4000. Bip boop. Supino.",
    "anim": "fingirTrabalhar",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "pele": {
+     "corpo": "#bcaaa4",
+     "membros": "#bcaaa4",
+     "barriga": "#a1887f"
+    }
+   }
   },
   {
    "nivel": 150,
@@ -4571,7 +5699,11 @@
    "transforma": {
     "cabeca": 1.15,
     "boca": 0.45,
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#c0c0c0",
+     "membros": "#c0c0c0"
+    }
    }
   },
   {
@@ -4594,7 +5726,14 @@
     "corpo": 1.6,
     "boca": 0.45,
     "barrigona": 1.25,
-    "papada": true
+    "papada": true,
+    "orelhas": "gato",
+    "corOrelhas": "#616161",
+    "pele": {
+     "corpo": "#616161",
+     "membros": "#212121",
+     "barriga": "#9e9e9e"
+    }
    }
   },
   {
@@ -4614,7 +5753,12 @@
    "anim": "sobrancelha",
    "colecao": "South Park",
    "transforma": {
-    "boca": 0.45
+    "boca": 0.45,
+    "pele": {
+     "corpo": "#6a1b9a",
+     "membros": "#6a1b9a",
+     "barriga": "#76ff03"
+    }
    }
   },
   {
@@ -4632,7 +5776,16 @@
    ],
    "fala": "Chef recomenda: frango, arroz e um pouco de soul.",
    "anim": "cantarDesafinado",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "corpo": 1.35,
+    "boca": 1.1,
+    "pele": {
+     "corpo": "#ffffff",
+     "bracos": "#ffffff",
+     "pernas": "#1e63c6"
+    }
+   }
   },
   {
    "nivel": 190,
@@ -4649,7 +5802,18 @@
    ],
    "fala": "Quem tem o Graveto da Verdade manda no universo. Agora ele é meu.",
    "anim": "poseEpica",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "cabeca": 1.15,
+    "corpo": 1.3,
+    "boca": 0.45,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#7b1fa2",
+     "membros": "#7b1fa2",
+     "barriga": "#d4a72c"
+    }
+   }
   },
   {
    "nivel": 200,
@@ -4672,7 +5836,9 @@
     "boca": 0.2,
     "olhos": "grandes",
     "pele": {
-     "cabeca": "#ff8f00"
+     "cabeca": "#ff8f00",
+     "corpo": "#ff8f00",
+     "membros": "#ff8f00"
     }
    }
   },
@@ -4691,7 +5857,11 @@
     "#ffffff"
    ],
    "fala": "Lida com isso.",
-   "anim": "seAcharMaximo"
+   "anim": "seAcharMaximo",
+   "transforma": {
+    "olhos": "semicerrados",
+    "corpo": 1.1
+   }
   },
   {
    "nivel": 8,
@@ -4708,7 +5878,14 @@
     "#212121"
    ],
    "fala": "Thug life. Supino de boné pra trás.",
-   "anim": "poseVilao"
+   "anim": "poseVilao",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121"
+    }
+   }
   },
   {
    "nivel": 12,
@@ -4732,7 +5909,9 @@
     "pele": {
      "corpo": "#d9a35a",
      "barriga": "#fff3e0"
-    }
+    },
+    "orelhas": "gato",
+    "corOrelhasDentro": "#fff3e0"
    }
   },
   {
@@ -4754,7 +5933,12 @@
    "transforma": {
     "cabeca": 1.55,
     "boca": 0.4,
-    "olhos": "pontos"
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#263238",
+     "membros": "#263238",
+     "barriga": "#ffffff"
+    }
    }
   },
   {
@@ -4796,7 +5980,13 @@
     "#ffffff"
    ],
    "fala": "Pular treino? Não. Treinar duas vezes? Sim.",
-   "anim": "negar"
+   "anim": "negar",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff8f00",
+     "bracos": "#ff8f00"
+    }
+   }
   },
   {
    "nivel": 28,
@@ -4813,7 +6003,12 @@
     "#ffffff"
    ],
    "fala": "Ok, boomer. Na minha época o supino era de pedra.",
-   "anim": "revirarOlhos"
+   "anim": "revirarOlhos",
+   "transforma": {
+    "pele": {
+     "corpo": "#90a4ae"
+    }
+   }
   },
   {
    "nivel": 32,
@@ -4822,7 +6017,7 @@
    "obra": "meme do Twitter: Big Chungus",
    "tipo": "meme",
    "parte": "cabeca",
-   "forma": "orelhas",
+   "forma": "transformacao",
    "peca": "Orelhas do Big Chungus",
    "cores": [
     "#9e9e9e",
@@ -4842,7 +6037,8 @@
      "musculo": "#757575"
     },
     "barrigona": 1.4,
-    "papada": true
+    "papada": true,
+    "orelhas": "coelho"
    }
   },
   {
@@ -4867,7 +6063,8 @@
     "pele": {
      "corpo": "#f5f5f5",
      "barriga": "#ffffff"
-    }
+    },
+    "orelhas": "gato"
    }
   },
   {
@@ -4885,7 +6082,14 @@
     "#ffffff"
    ],
    "fala": "Olhei pro lado? Era o meu reflexo. Quem eu amo sou eu.",
-   "anim": "olharLado"
+   "anim": "olharLado",
+   "transforma": {
+    "olhos": "coracao",
+    "pele": {
+     "corpo": "#1e63c6",
+     "bracos": "#1e63c6"
+    }
+   }
   },
   {
    "nivel": 44,
@@ -4902,7 +6106,14 @@
     "#212121"
    ],
    "fala": "Leg day é o melhor dia. Mude minha opinião.",
-   "anim": "apontar"
+   "anim": "apontar",
+   "transforma": {
+    "corpo": 1.15,
+    "pele": {
+     "corpo": "#eceff1",
+     "bracos": "#1e63c6"
+    }
+   }
   },
   {
    "nivel": 48,
@@ -4943,7 +6154,11 @@
     "#ffd54f"
    ],
    "fala": "Harlem Shake! Um dança de capacete, o resto surta.",
-   "anim": "dancarSemRitmo"
+   "anim": "dancarSemRitmo",
+   "transforma": {
+    "olhos": "grandes",
+    "suor": true
+   }
   },
   {
    "nivel": 56,
@@ -4960,7 +6175,14 @@
     "#ffffff"
    ],
    "fala": "Oppa JoJo style! Cavalgando o supino.",
-   "anim": "dancinha"
+   "anim": "dancinha",
+   "transforma": {
+    "pele": {
+     "corpo": "#80deea",
+     "membros": "#80deea",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "nivel": 60,
@@ -4977,7 +6199,14 @@
     "#ffffff"
    ],
    "fala": "Balde de gelo na cabeça. Desafio aceito, mamilo duro e tudo.",
-   "anim": "frio"
+   "anim": "frio",
+   "transforma": {
+    "olhos": "grandes",
+    "suor": true,
+    "pele": {
+     "esclera": "#e1f5fe"
+    }
+   }
   },
   {
    "nivel": 64,
@@ -4996,7 +6225,13 @@
    "fala": "Irmão, posso ter um pouco de lâmpada?",
    "anim": "brilhoOlhos",
    "transforma": {
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "antenas": "#8d6e63",
+    "pele": {
+     "corpo": "#bcaaa4",
+     "cabeca": "#bcaaa4",
+     "membros": "#a1887f"
+    }
    }
   },
   {
@@ -5014,7 +6249,16 @@
     "#ffd54f"
    ],
    "fala": "Bonk! Direto pra cadeia dos taradinhos.",
-   "anim": "zombar"
+   "anim": "zombar",
+   "transforma": {
+    "orelhas": "gato",
+    "corOrelhasDentro": "#fff3e0",
+    "pele": {
+     "corpo": "#d4a574",
+     "barriga": "#fff3e0",
+     "cabeca": "#d4a574"
+    }
+   }
   },
   {
    "nivel": 72,
@@ -5051,7 +6295,14 @@
     "#d4a72c"
    ],
    "fala": "Dança do caixão: quem pulou treino vai nele.",
-   "anim": "dancinha"
+   "anim": "dancinha",
+   "transforma": {
+    "pele": {
+     "corpo": "#111111",
+     "membros": "#111111",
+     "barriga": "#ffffff"
+    }
+   }
   },
   {
    "nivel": 80,
@@ -5070,7 +6321,11 @@
    "fala": "Doomer de gorro preto. Mas treino todo dia.",
    "anim": "suspirar",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121"
+    }
    }
   },
   {
@@ -5080,7 +6335,7 @@
    "obra": "meme do Twitter: Gato Rabugento",
    "tipo": "meme",
    "parte": "cabeca",
-   "forma": "orelhas",
+   "forma": "transformacao",
    "peca": "Orelhas do gato rabugento",
    "cores": [
     "#bcaaa4",
@@ -5095,7 +6350,8 @@
     "pele": {
      "corpo": "#bcaaa4",
      "barriga": "#efebe9"
-    }
+    },
+    "orelhas": "gato"
    }
   },
   {
@@ -5113,7 +6369,13 @@
     "#ffffff"
    ],
    "fala": "LEEROY JENKINS! Entrei no treino sem plano nenhum.",
-   "anim": "gritarSuperficie"
+   "anim": "gritarSuperficie",
+   "transforma": {
+    "pele": {
+     "corpo": "#9e9e9e",
+     "membros": "#9e9e9e"
+    }
+   }
   },
   {
    "nivel": 92,
@@ -5130,7 +6392,14 @@
     "#ffffff"
    ],
    "fala": "Girando o spinner entre as séries.",
-   "anim": "fidget"
+   "anim": "fidget",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#e53935",
+     "bracos": "#e53935"
+    }
+   }
   },
   {
    "nivel": 96,
@@ -5178,9 +6447,11 @@
     "boca": 1.1,
     "olhos": "grandes",
     "pele": {
-     "corpo": "#6abf4b",
-     "barriga": "#9ccc65",
-     "musculo": "#43a047"
+     "corpo": "#212121",
+     "barriga": "#212121",
+     "musculo": "#43a047",
+     "membros": "#212121",
+     "cabeca": "#6abf4b"
     }
    }
   },
@@ -5191,7 +6462,7 @@
    "obra": "meme do Twitter: Vira-Lata Caramelo",
    "tipo": "meme",
    "parte": "cabeca",
-   "forma": "orelhas",
+   "forma": "transformacao",
    "peca": "Orelhas de vira-lata caramelo",
    "cores": [
     "#d4a72c",
@@ -5206,7 +6477,8 @@
      "olho": "#5d4037",
      "corpo": "#c8893c",
      "barriga": "#f3d9b1"
-    }
+    },
+    "orelhas": "cachorro"
    }
   },
   {
@@ -5234,7 +6506,8 @@
      "barriga": "#a1887f"
     },
     "barrigona": 1.3,
-    "papada": true
+    "papada": true,
+    "orelhas": "pequenas"
    }
   },
   {
@@ -5252,7 +6525,11 @@
     "#ffd54f"
    ],
    "fala": "Treino feito. Tá pago. Posta no Twitter.",
-   "anim": "aplausosImaginarios"
+   "anim": "aplausosImaginarios",
+   "transforma": {
+    "corpo": 1.2,
+    "suor": true
+   }
   },
   {
    "nivel": 116,
@@ -5298,7 +6575,8 @@
     "pele": {
      "corpo": "#5ea2d6",
      "barriga": "#ffffff"
-    }
+    },
+    "tenis": "#1e63c6"
    }
   },
   {
@@ -5316,7 +6594,13 @@
     "#ffffff"
    ],
    "fala": "Drip demais. Tô pingando estilo.",
-   "anim": "desfile"
+   "anim": "desfile",
+   "transforma": {
+    "pele": {
+     "corpo": "#eceff1",
+     "bracos": "#eceff1"
+    }
+   }
   },
   {
    "nivel": 128,
@@ -5333,7 +6617,14 @@
     "#ffd54f"
    ],
    "fala": "Ratio. Seu tweet levou ratio do meu bíceps.",
-   "anim": "zombar"
+   "anim": "zombar",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#1da1f2",
+     "bracos": "#1da1f2"
+    }
+   }
   },
   {
    "nivel": 132,
@@ -5350,7 +6641,14 @@
     "#ffffff"
    ],
    "fala": "Vai tocar na grama. Eu toco: com o pé, no agachamento.",
-   "anim": "espreguicar"
+   "anim": "espreguicar",
+   "transforma": {
+    "olhos": "pontos",
+    "pele": {
+     "pernas": "#7cb342",
+     "esclera": "#f1f8e9"
+    }
+   }
   },
   {
    "nivel": 136,
@@ -5447,7 +6745,11 @@
     "#ffffff"
    ],
    "fala": "Manda nudes? Toma: foto da minha barbatana.",
-   "anim": "selfie"
+   "anim": "selfie",
+   "transforma": {
+    "olhos": "semicerrados",
+    "corpo": 1.2
+   }
   },
   {
    "nivel": 156,
@@ -5456,7 +6758,7 @@
    "obra": "meme do Twitter: Chifre de Corno",
    "tipo": "meme",
    "parte": "cabeca",
-   "forma": "chifres",
+   "forma": "transformacao",
    "peca": "Chifres de corno",
    "cores": [
     "#f5e6c8",
@@ -5464,7 +6766,10 @@
     "#ffffff"
    ],
    "fala": "Chifre? Não, é capacete viking. Juro.",
-   "anim": "naoFuiEu"
+   "anim": "naoFuiEu",
+   "transforma": {
+    "chifres": "diabo"
+   }
   },
   {
    "nivel": 160,
@@ -5481,7 +6786,12 @@
     "#ffffff"
    ],
    "fala": "Biscoiteiro? Eu? Só quero elogio. Muito elogio.",
-   "anim": "pedirElogios"
+   "anim": "pedirElogios",
+   "transforma": {
+    "olhos": "coracao",
+    "papada": true,
+    "barrigona": 1.1
+   }
   },
   {
    "nivel": 164,
@@ -5498,7 +6808,13 @@
     "#ff7043"
    ],
    "fala": "Isso foi baseado. No sentido do Twitter. Ou não.",
-   "anim": "esparramado"
+   "anim": "esparramado",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "esclera": "#ffcdd2"
+    }
+   }
   },
   {
    "nivel": 168,
@@ -5515,7 +6831,13 @@
     "#ffffff"
    ],
    "fala": "Ai, papai. Essa barbatana é pecado.",
-   "anim": "beijoExagerado"
+   "anim": "beijoExagerado",
+   "transforma": {
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#c62828"
+    }
+   }
   },
   {
    "nivel": 172,
@@ -5561,7 +6883,11 @@
     "pele": {
      "corpo": "#f5f5f5",
      "barriga": "#ffccbc"
-    }
+    },
+    "orelhas": "cachorro",
+    "corOrelhas": "#f5f5f5",
+    "chifres": "diabo",
+    "pintas": "#212121"
    }
   },
   {
@@ -5579,7 +6905,14 @@
     "#ffd54f"
    ],
    "fala": "Lacrei. Lacrou. Lacração total do shape.",
-   "anim": "superioridade"
+   "anim": "superioridade",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#e91e63",
+     "bracos": "#e91e63"
+    }
+   }
   },
   {
    "nivel": 184,
@@ -5596,7 +6929,11 @@
     "#ffffff"
    ],
    "fala": "Close certo: eu. Close errado: o resto.",
-   "anim": "selfie"
+   "anim": "selfie",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.6
+   }
   },
   {
    "nivel": 188,
@@ -5613,7 +6950,15 @@
     "#ffffff"
    ],
    "fala": "Divou. Diva do aquário, mona.",
-   "anim": "desfile"
+   "anim": "desfile",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#f8bbd0",
+     "bracos": "#f8bbd0",
+     "olho": "#e91e63"
+    }
+   }
   },
   {
    "nivel": 192,
@@ -5630,7 +6975,14 @@
     "#ffffff"
    ],
    "fala": "Fui cancelado no Twitter. Voltei com mais seguidor.",
-   "anim": "ombros"
+   "anim": "ombros",
+   "transforma": {
+    "olhos": "vazios",
+    "pele": {
+     "corpo": "#424242",
+     "bracos": "#424242"
+    }
+   }
   },
   {
    "nivel": 196,
@@ -5670,7 +7022,11 @@
     "#ffffff"
    ],
    "fala": "Thirst trap postado. Pode babar.",
-   "anim": "espelhoInvisivel"
+   "anim": "espelhoInvisivel",
+   "transforma": {
+    "olhos": "semicerrados",
+    "corpo": 1.25
+   }
   }
  ]
 }

@@ -22,7 +22,9 @@ do histórico, sem cauda. Nenhuma mudança futura de anatomia, silhueta ou estil
 `jojo-companion/docs/REQUISITOS_CORRECOES_0.45.1.md`. Exceção autorizada pela usuária (18/11/2026): os
 **visuais de nível** podem transformar o JoJo para parecer com a referência (tamanho da cabeça, corpo mais
 largo, boca, estilo dos olhos e cor da pele, inclusive gordo e nojento: barrigona, papada, suor, baba, sujeira,
-moscas, manchas e orelhas) só enquanto estão vestidos; sem visual, o modelo original não muda.
+moscas, manchas e orelhas) só enquanto estão vestidos; sem visual, o modelo original não muda. Todo visual tem o
+nível de detalhe do panda (Dragão Guerreiro): cores de corpo/braços/pernas/cabeça do personagem e traços presos na
+cabeça (orelhas, chifres, juba, antenas) — **nunca arquinho/tiara para fingir orelha**.
 
 ## O que é
 
