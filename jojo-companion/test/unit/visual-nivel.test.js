@@ -310,3 +310,32 @@ test('transformações: o visual muda cabeça, corpo, boca, olhos e pele para pa
     for (const v of Object.values(t.pele || {})) assert.match(v, /^#[0-9a-f]{6}$/i, p.titulo);
   }
 });
+
+test('variações animadas: barrigona e papada balançam, moscas voam, suor escorre, aura pulsa e brilhos piscam', () => {
+  const partes = (titulo) => partesDaPeca(CAT.find((p) => p.titulo === titulo)).map((x) => x.part);
+  const chungus = partes('Big Chungus');
+  assert.ok(chungus.find((p) => p.id.endsWith('_barriga')).scaleBy === 'nvBarriga');
+  assert.ok(chungus.find((p) => p.id.endsWith('_papada')).dy === 'nvPapada');
+  const ogro = partes('Ogros São Como Cebolas');
+  assert.ok(ogro.some((p) => p.id.endsWith('_moscas') && p.dx === 'nvMoscaX' && p.dy === 'nvMoscaY'));
+  assert.ok(partes("D'oh!").some((p) => p.id.endsWith('_suor') && p.dy === 'nvSuor'));
+  assert.ok(partes("D'oh!").some((p) => p.id.endsWith('_baba') && p.scaleBy === 'nvBaba'));
+  assert.ok(partes('Megatubarão').some((p) => p.id.endsWith('_fora') && p.scaleBy === 'nvAura'));
+  const topo = CAT.at(-1);
+  assert.ok(partesDaPeca(topo).some((x) => /brilho\d/.test(x.part.id) && /^nvBrilho2?$/.test(x.part.scaleBy)));
+});
+
+test('variações animadas: com visual vestido, o repouso às vezes faz a animação da referência', () => {
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    const venom = CAT.find((p) => p.titulo === 'Nós Somos Venom');
+    e.companion.progress.st.xp = e.companion.progress.threshold(venom.nivel);
+    e.store.update({ visualNivel: { pecas: { [venom.parte]: venom.id }, visto: venom.nivel, novas: [], avisar: [] } }, { silent: true });
+    const it = e.companion._animDoVisual();
+    assert.equal(it.id, venom.anim, 'Venom lambe os dentes');
+    e.store.update({ visualNivel: { pecas: {}, visto: venom.nivel, novas: [], avisar: [] } }, { silent: true });
+    assert.equal(e.companion._animDoVisual(), null, 'sem visual, nada muda no repouso');
+  } finally {
+    e.companion.stop();
+  }
+});

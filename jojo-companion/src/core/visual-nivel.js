@@ -463,7 +463,7 @@ const AURA = {
   chamas: (c, t) => auraChamas(c, t),
   raios: (c, t) => [...auraChamas(c, t), ['nivelAura', 'raios', c.b, [[24, 40], [156, 40], [18, 100], [162, 100]].map(([x, y], i) => { const s = i % 2 ? -1 : 1; return poly([[x, y], [x + 8 * s, y + 10], [x + 3 * s, y + 11], [x + 10 * s, y + 24], [x - 1 * s, y + 9], [x + 4 * s, y + 8]]); }).join(' '), { alpha: 0.9 }]],
   sombras: (c, t) => [...auraChamas({ ...c, b: c.a }, t, 0.5), ['nivelAura', 'fumaca', c.b, [[20, 70], [160, 70], [30, 120], [150, 120], [90, -4]].map(([x, y]) => `M${x},${y + 12} C${x - 8},${y} ${x + 6},${y - 10} ${x},${y - 18} C${x + 12},${y - 8} ${x + 10},${y + 4} ${x},${y + 12} Z`).join(' '), { alpha: 0.55 }]],
-  bolhas: (c, t) => [['nivelAura', 'bolhas', c.a, Array.from({ length: 10 + Math.round(t * 8) }, (_, i) => { const ang = Math.PI * (0.95 + (i / (9 + Math.round(t * 8))) * 1.1); return circ(90 + Math.cos(ang) * 76, 110 + Math.sin(ang) * 100, 4 + (i % 3) * 2.5 + t * 3); }).join(' '), { alpha: 0.55 }], ['nivelAura', 'brilhos', c.b, Array.from({ length: 6 }, (_, i) => { const ang = Math.PI * (1.05 + i * 0.16); return circ(90 + Math.cos(ang) * 76 - 2, 110 + Math.sin(ang) * 100 - 2, 1.6); }).join(' '), { alpha: 0.9 }]],
+  bolhas: (c, t) => [['nivelAura', 'bolhas', c.a, Array.from({ length: 10 + Math.round(t * 8) }, (_, i) => { const ang = Math.PI * (0.95 + (i / (9 + Math.round(t * 8))) * 1.1); return circ(90 + Math.cos(ang) * 76, 110 + Math.sin(ang) * 100, 4 + (i % 3) * 2.5 + t * 3); }).join(' '), { alpha: 0.55, dy: 'nvBolhas' }], ['nivelAura', 'brilhos', c.b, Array.from({ length: 6 }, (_, i) => { const ang = Math.PI * (1.05 + i * 0.16); return circ(90 + Math.cos(ang) * 76 - 2, 110 + Math.sin(ang) * 100 - 2, 1.6); }).join(' '), { alpha: 0.9 }]],
   estrelas: (c, t) => [...auraChamas(c, t, 0.35), ['nivelAura', 'estrelas', c.b, [[20, 50], [160, 50], [12, 100], [168, 100], [40, 0], [140, 0], [90, -20]].map(([x, y], i) => estrela(x, y, 5 + (i % 2) * 2)).join(' '), { alpha: 0.95 }]],
   notas: (c, t) => [...auraChamas(c, t, 0.45), ['nivelAura', 'notas', c.b, [[24, 60], [156, 60], [30, 10], [150, 10]].map(([x, y]) => `${elip(x, y + 14, 4.5, 3.4)} ${rect(x + 3, y, 1.8, 14)} ${poly([[x + 3, y], [x + 11, y + 4], [x + 11, y + 7], [x + 4.8, y + 3.4]])}`).join(' '), { alpha: 0.95 }]],
   dorsais: (c, t) => [...auraChamas(c, t, 0.5), ['nivelAura', 'dorsais', c.a, [[14, 100], [36, 40], [90, -16], [144, 40], [166, 100]].map(([x, y]) => `M${x - 9},${y + 12} C${x - 4},${y} ${x + 2},${y - 10} ${x + 8},${y - 16} C${x + 4},${y - 4} ${x + 6},${y + 6} ${x + 9},${y + 12} Z`).join(' '), { alpha: 0.95 }], ['nivelAura', 'agua', c.b, [[14, 112], [36, 52], [90, -4], [144, 52], [166, 112]].map(([x, y]) => rect(x - 12, y, 24, 2.4)).join(' '), { alpha: 0.9 }]],
@@ -663,7 +663,7 @@ function auraChamas({ a, b, g }, t, escala = 1) {
       const fora = i % 2 === 1;
       pts.push([Math.max(4, Math.min(176, 90 + Math.cos(ang) * (fora ? rxo : rxi))), Math.max(-26, 112 + Math.sin(ang) * (fora ? ryo : ryi))]);
     }
-    out.push(['nivelAura', id, fill, poly(pts), { alpha: alpha * escala }]);
+    out.push(['nivelAura', id, fill, poly(pts), { alpha: alpha * escala, scaleBy: 'nvAura', scalePivot: [90, 150] }]);
   };
   const pontas = Math.min(26, 11 + Math.floor(t * 14));
   camada('fora', a, 0.5 + 0.15 * t, 1, pontas);
@@ -720,17 +720,23 @@ function partesDoCorpo(t) {
   const k = t.barrigona;
   if (k) {
     const rx = 34 * k, ry = 28 * k, cy = 120;
-    out.push(['nivelCorpo', 'barriga', 'body', elip(90, cy, rx, ry), { hideIf: 'sexy' }]);
-    out.push(['nivelCorpo', 'barrigaClara', 'cream', elip(90, cy + 3, rx * 0.7, ry * 0.72), { hideIf: 'sexy' }]);
-    out.push(['nivelPintura', 'umbigo', '#5d4037', `M86,${r1(cy + 6)} C88,${r1(cy + 10)} 92,${r1(cy + 10)} 94,${r1(cy + 6)} L93,${r1(cy + 8)} C91,${r1(cy + 11)} 89,${r1(cy + 11)} 87,${r1(cy + 8)} Z`, { alpha: 0.8 }]);
+    // Balança (canal nvBarriga): a barrigona treme a partir de cima.
+    const treme = { scaleBy: 'nvBarriga', scalePivot: [90, cy - ry] };
+    out.push(['nivelCorpo', 'barriga', 'body', elip(90, cy, rx, ry), { hideIf: 'sexy', ...treme }]);
+    out.push(['nivelCorpo', 'barrigaClara', 'cream', elip(90, cy + 3, rx * 0.7, ry * 0.72), { hideIf: 'sexy', ...treme }]);
+    out.push(['nivelPintura', 'umbigo', '#5d4037', `M86,${r1(cy + 6)} C88,${r1(cy + 10)} 92,${r1(cy + 10)} 94,${r1(cy + 6)} L93,${r1(cy + 8)} C91,${r1(cy + 11)} 89,${r1(cy + 11)} 87,${r1(cy + 8)} Z`, { alpha: 0.8, ...treme }]);
   }
-  if (t.papada) out.push(['nivelCorpo', 'papada', 'nvCabecaPele', 'M54,80 C60,100 120,100 126,80 C112,92 68,92 54,80 Z', H()]);
+  if (t.papada) out.push(['nivelCorpo', 'papada', 'nvCabecaPele', 'M54,80 C60,100 120,100 126,80 C112,92 68,92 54,80 Z', H({ dy: 'nvPapada' })]);
   if (t.manchasOlhos) out.push(['headDetail', 'manchas', t.manchasOlhos, 'M60,30 C66,20 88,22 92,38 C95,54 78,62 66,56 C58,52 56,40 60,30 Z M120,30 C114,20 92,22 88,38 C85,54 102,62 114,56 C122,52 124,40 120,30 Z', H()]);
   if (t.orelhasRedondas) out.push(['costumeBack', 'orelhas', t.orelhasRedondas, `${circ(50, 16, 15)} ${circ(130, 16, 15)}`, H()]);
-  if (t.suor) out.push(['costumes', 'suor', '#81d4fa', ['M56,26 C52,34 54,40 58,40 C62,40 63,34 56,26 Z', 'M122,30 C118,38 120,44 124,44 C128,44 129,38 122,30 Z', 'M64,12 C61,18 62,22 65,22 C68,22 69,18 64,12 Z'].join(' '), H({ alpha: 0.9 })]);
-  if (t.baba) out.push(['costumes', 'baba', '#c5e1a5', 'M118,66 C120,74 117,86 121,92 C124,96 128,92 125,86 C123,80 124,72 122,64 Z', H({ alpha: 0.9 })]);
+  if (t.suor) out.push(['costumes', 'suor', '#81d4fa', ['M56,26 C52,34 54,40 58,40 C62,40 63,34 56,26 Z', 'M122,30 C118,38 120,44 124,44 C128,44 129,38 122,30 Z', 'M64,12 C61,18 62,22 65,22 C68,22 69,18 64,12 Z'].join(' '), H({ alpha: 0.9, dy: 'nvSuor' })]);
+  if (t.baba) out.push(['costumes', 'baba', '#c5e1a5', 'M118,66 C120,74 117,86 121,92 C124,96 128,92 125,86 C123,80 124,72 122,64 Z', H({ alpha: 0.9, scaleBy: 'nvBaba', scalePivot: [121, 64] })]);
   if (t.sujeira) out.push(['nivelPintura', 'sujeira', '#6d4c41', `${elip(70, 108, 6, 4)} ${elip(108, 122, 7, 4.5)} ${elip(96, 98, 3.5, 2.5)} ${elip(62, 128, 4, 3)}`, { alpha: 0.75 }]);
-  if (t.moscas) out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [150, 22], [160, 80], [22, 90], [140, 120]].map(([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`).join(' '), { alpha: 0.95 }]);
+  if (t.moscas) {
+    const mosca = ([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`;
+    out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [160, 80], [140, 120]].map(mosca).join(' '), { alpha: 0.95, dx: 'nvMoscaX', dy: 'nvMoscaY' }]);
+    out.push(['nivelAura', 'moscas2', '#212121', [[150, 22], [22, 90]].map(mosca).join(' '), { alpha: 0.95, dx: 'nvMoscaY', dy: 'nvMoscaX' }]);
+  }
   return out;
 }
 
@@ -753,7 +759,7 @@ export function partesDaPeca(p) {
   const n = Math.min(2, Math.floor(p.t * 3));
   for (let i = 0; i < n; i++) {
     const [x, y] = anc.pts[i];
-    out.push({ group: 'nivelBrilho', part: { id: `${p.id}_brilho${i}`, fill: p.cores.g === '#ffffff' ? '#fffde7' : p.cores.g, showIf: ch, alpha: 0.9, path: brilho(x, y, 2.6 + p.t * 1.6), ...(anc.extra || {}) } });
+    out.push({ group: 'nivelBrilho', part: { id: `${p.id}_brilho${i}`, fill: p.cores.g === '#ffffff' ? '#fffde7' : p.cores.g, showIf: ch, alpha: 0.9, path: brilho(x, y, 2.6 + p.t * 1.6), scaleBy: i % 2 ? 'nvBrilho2' : 'nvBrilho', scalePivot: [x, y], ...(anc.extra || {}) } });
   }
   return out;
 }
