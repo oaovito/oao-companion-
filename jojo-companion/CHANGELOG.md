@@ -11,8 +11,8 @@
   a Tigresa vestida (nível 3) e a Tigresa pelada (nível 5).
 - Rebolado do meme, desenhado do zero a partir do GIF: no modo foco, de vez em quando, o JoJo
   vira de costas em 3/4 e rebola 3 segundos como o boneco do Among Us, o corpo inteiro em
-  forma de feijão amassando até cobrir as pernas, alargando e esticando de volta, no mesmo
-  ritmo do GIF (6 quadros de 40 ms), com a cabeça espiando por cima do ombro, e volta ao foco
+  forma de feijão esticando, despencando até quase metade da altura por cima das pernas,
+  alargando, tombando pra frente e voltando com impulso, no mesmo ritmo do GIF (6 quadros de 40 ms), com a cabeça espiando por cima do ombro, e volta ao foco
   sozinho. Fora do foco ele também rebola às vezes
   no repouso. Nunca no Modo Trabalho, com tela cheia, no modo de interação ou com movimento
   reduzido.

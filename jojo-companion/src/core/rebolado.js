@@ -8,7 +8,8 @@
 
 /** Pivô do amassa-estica: o pé do corpo, entre as pernas. */
 export const PIVO = [102, 146];
-const CORPO = { scaleXBy: 'rbSx', scaleYBy: 'rbSy', squashPivot: PIVO, dy: 'rbDown' };
+// Inclina junto (rbRot), como o feijão do GIF que tomba pra frente quando amassa.
+const CORPO = { pivot: PIVO, rot: 'rbRot', scaleXBy: 'rbSx', scaleYBy: 'rbSy', squashPivot: PIVO, dy: 'rbDown' };
 
 const P = (id, fill, path, extra = {}) => ({ id, fill, path, ...extra });
 
@@ -65,14 +66,15 @@ export function rigComRebolado(rig) {
 }
 
 /**
- * Ciclo do GIF (6 quadros de 40 ms): [amassa vertical, alarga, desce, cabeça].
- * Quadro 0 em pé; 1–3 amassando até cobrir as pernas; 4–5 esticando de volta.
+ * Ciclo do GIF (6 quadros de 40 ms), exagerado como no meme: [amassa vertical, alarga,
+ * desce, cabeça, inclina]. Quadro 0 esticado pra cima; 1–3 despencando até quase metade da
+ * altura e cobrindo as pernas, tombando pra frente; 4–5 voltando com impulso.
  */
 export const CICLO = [
-  [1.0, 1.0, 0, 0],
-  [0.9, 1.07, 4, 2],
-  [0.8, 1.15, 8, 4],
-  [0.72, 1.22, 11, 6],
-  [0.76, 1.19, 10, 5],
-  [0.92, 1.05, 3, 2],
+  [1.06, 0.95, -4, -2, -4],
+  [0.84, 1.14, 6, 3, 2],
+  [0.68, 1.3, 13, 7, 6],
+  [0.56, 1.4, 19, 10, 9],
+  [0.64, 1.32, 16, 8, 6],
+  [0.9, 1.08, 4, 2, 0],
 ];

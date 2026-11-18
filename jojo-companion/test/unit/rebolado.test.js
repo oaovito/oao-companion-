@@ -34,8 +34,10 @@ test('animação refeita do GIF: 3 s, 25 quadros por segundo, ciclo de 6 quadros
   const q = (n) => at((n * 40 + 1) / 3000);
   const ciclo = [3, 4, 5, 6, 7, 8].map((n) => [q(n).rbSy, q(n).rbSx, q(n).rbDown]);
   assert.deepEqual(ciclo.map(([y]) => +y.toFixed(2)), CICLO.map((c) => c[0]));
-  assert.ok(ciclo[3][0] < 0.75 && ciclo[3][1] > 1.2, 'amassa e alarga no fundo do ciclo');
-  assert.ok(ciclo[3][2] >= 10, 'o corpo desce por cima das pernas');
+  assert.ok(ciclo[3][0] <= 0.6 && ciclo[3][1] >= 1.35, 'amassa até quase metade e alarga muito, como no GIF');
+  assert.ok(ciclo[3][2] >= 16, 'o corpo despenca por cima das pernas');
+  assert.ok(ciclo[0][0] > 1, 'estica pra cima antes de cada quique');
+  assert.ok(Math.abs(q(6).rbRot) >= 6, 'tomba pra frente ao amassar');
   assert.deepEqual([q(9).rbSy, q(15).rbSy], [q(3).rbSy, q(3).rbSy], 'repete a cada 6 quadros');
 });
 
