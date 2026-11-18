@@ -4,9 +4,9 @@
 
 ### Novidades
 - Pegadinha da semana: uma vez por semana, num momento sorteado (também no foco), um consolo
-  gigante cai do alto na cabeça do JoJo. Ele amassa, ganha galo, rachadura e gota de sangue,
+  absurdamente gigante (dez vezes o tamanho dele) e sujo de bosta cai do alto na cabeça do JoJo. Ele amassa, ganha galo, rachadura e gota de sangue,
   fica de olhos em X com estrelinhas girando, cai tonto e levanta enfaixado; o consolo quica e
-  rola pro chão. Depois ele passa uma hora com a cabeça enfaixada. No Modo Trabalho e com tela
+  tomba no chão do lado dele. Depois ele passa uma hora com a cabeça enfaixada. No Modo Trabalho e com tela
   cheia, a pegadinha espera. Depois da primeira vez ela fica em "Animações liberadas".
 - Calendário de anime: "/anime Dandadan" (ou "me avisa quando sair episódio de One Piece")
   segue o anime; quando sai episódio novo, o JoJo avisa e comemora vestido do visual daquele

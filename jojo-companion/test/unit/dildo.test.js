@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeEnv, loadJSON } from './helpers.js';
 import { Animator } from '../../src/renderer/shared/animator.js';
-import { rigComDildo, GRUPOS_DILDO, ATADURA_MS } from '../../src/core/dildo.js';
+import { rigComDildo, GRUPOS_DILDO, ATADURA_MS, DILDO_ESCALA } from '../../src/core/dildo.js';
 
 const ANIMS = loadJSON('assets/animations/jojo.animations.json');
 const RIG = loadJSON('assets/character/jojo.rig.json');
@@ -21,7 +21,13 @@ test('animação: cai do alto, bate na cabeça, galo, olhos em X, estrelas, cai 
   assert.ok(at(0.25).dlGaloK > 1, 'galo inchando');
   assert.ok(at(0.5).rootRot < -15, 'cai tonto');
   assert.equal(at(0.8).dildoAtadura, 1, 'levanta enfaixado');
-  assert.ok(at(0.8).dlY > 150 && at(0.8).dlX > 50, 'o consolo rolou pro chão, do lado');
+  assert.ok(at(0.8).dlY >= 140 && at(0.8).dlX > 120 && at(0.8).dlRot > 80, 'o consolo tombou pro lado e ficou deitado no chão');
+  assert.ok(at(0.02).dlY <= -800, 'gigante: cai de muito alto');
+  // 10 vezes maior e sujo de bosta.
+  assert.equal(DILDO_ESCALA, 10);
+  const pecas = GRUPOS_DILDO.flatMap((g) => g.parts);
+  assert.ok(pecas.filter((p) => /^dl(Haste|Base|Anel|Bosta)/.test(p.id)).every((p) => p.fix?.[0] === 10));
+  assert.ok(pecas.some((p) => p.id === 'dlBosta') && pecas.some((p) => p.id === 'dlBostaEscorrendo'));
   // Rig: cópia com as peças, nada no arquivo do personagem.
   const antes = JSON.stringify(RIG);
   const r = rigComDildo(RIG);
