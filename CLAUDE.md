@@ -19,7 +19,9 @@ confirmado. Referência atual: `jojo-companion/docs/GITHUB_ACTIONS.md`.
 Direção visual vigente: o personagem original musculoso com pernas, restaurado
 do histórico, sem cauda. Nenhuma mudança futura de anatomia, silhueta ou estilo
 é autorizada sem solicitação explícita do usuário; ver
-`jojo-companion/docs/REQUISITOS_CORRECOES_0.45.1.md`.
+`jojo-companion/docs/REQUISITOS_CORRECOES_0.45.1.md`. Exceção autorizada pela usuária (18/11/2026): os
+**visuais de nível** podem transformar o JoJo para parecer com a referência (tamanho da cabeça, corpo mais
+largo, boca, estilo dos olhos e cor da pele) só enquanto estão vestidos; sem visual, o modelo original não muda.
 
 ## O que é
 
