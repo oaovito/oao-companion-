@@ -766,6 +766,22 @@ function partesDoCorpo(t) {
   return out;
 }
 
+/**
+ * "Luto do Shape": o visual do JoJo durante o funeral da comida fora da dieta. Vomitando
+ * (jato verde da boca até a poça no chão) e chorando. Liga com o canal nvLuto.
+ */
+export function partesDoLuto() {
+  const P = (group, id, fill, path, extra = {}) => ({ group, part: { id: `luto_${id}`, fill, showIf: 'nvLuto', path, ...extra } });
+  return [
+    P('nivelBrilho', 'jato', '#9ccc65', 'M80,66 C78,74 76,80 76,86 C84,84 96,84 104,86 C104,80 102,74 100,66 C94,70 86,70 80,66 Z', { ...CABECA, alpha: 0.95, scaleBy: 'nvLutoJato', scalePivot: [90, 66] }),
+    P('nivelBrilho', 'queda', '#8bc34a', 'M80,92 C74,110 70,130 66,160 L114,160 C110,130 106,110 100,92 Z', { alpha: 0.85, dy: 'nvLutoQueda' }),
+    P('nivelBrilho', 'pedacos', '#cddc39', `${circ(84, 112, 3)} ${circ(96, 126, 2.4)} ${circ(78, 140, 2.8)} ${circ(102, 146, 2.2)} ${circ(90, 100, 2)}`, { alpha: 0.95, dy: 'nvLutoQueda' }),
+    P('nivelBrilho', 'poca', '#9ccc65', elip(90, 166, 42, 6), { alpha: 0.9 }),
+    P('nivelBrilho', 'lagrimas', '#4fc3f7', 'M70,46 C66,56 68,62 72,62 C76,62 76,56 70,46 Z M110,46 C106,56 108,62 112,62 C116,62 116,56 110,46 Z', { ...CABECA, alpha: 0.95, dy: 'nvLutoLagrima' }),
+  ];
+}
+export const LUTO = { nome: 'Luto do Shape' };
+
 /** Canal de pose que liga a peça no desenho. */
 export const canalDaPeca = (p) => `nv_${p.id}`;
 
@@ -839,6 +855,11 @@ export function rigComVisuais(rig, dados) {
       if (GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot') marcado.corpoX = true;
       alvo.parts.push(marcado);
     }
+  }
+  // Luto do Shape (funeral da comida fora da dieta): vômito verde e lágrimas, canal nvLuto.
+  for (const { group, part } of partesDoLuto()) {
+    const alvo = byId.get(group) || byId.get('costumes');
+    alvo.parts.push(GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot' ? { ...part, corpoX: true } : part);
   }
   return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body, nvBracos: rig.palette.body, nvPernas: rig.palette.body } };
 }
