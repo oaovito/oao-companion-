@@ -87,8 +87,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   Crossref, README do MNE_Lab (grátis, sem login/chave; ChatGPT/Gemini não); SSRF/DNS, cache 6 h, dados isolados no
   prompt; "Consultando fontes..." e "(Fontes: …)". **Modo professor** (`dialogue/professor.js`): seriedade antes de
   responder, explicação de verdade, continuidade ("me dá um exemplo", "aprofunda"); balão longo rola, sem corte.
-- **Títulos de nível (REGRA IRREDUTÍVEL)**: todo título é referência a filme, anime, série ou cultura pop, com todas as
-  referências clássicas de tubarão presentes; a peça visual, a fala e a reação de cada nível vêm dessa referência
+- **Títulos de nível (REGRA IRREDUTÍVEL)**: todo título é referência a filme, anime, série, jogo ou cultura pop, **sem
+  repetir obra**, com todas as referências clássicas de tubarão presentes; mais 20 visuais extras de South Park
+  (um a cada 10 níveis, `extras`); a peça visual, a fala e a reação de cada nível vêm dessa referência
   (`assets/catalog/progressao.json` → `referencias`, `src/core/visual-nivel.js`). Bloqueado nunca aparece; liberado se veste à vontade.
 - Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).
 - PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por

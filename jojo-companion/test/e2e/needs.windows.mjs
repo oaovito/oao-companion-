@@ -84,7 +84,7 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     });
     assert.equal(l15.nivel, 15);
     assert.equal(l15.vn.visto, 15);
-    assert.equal(l15.vn.novas.length, 14, 'tudo o que o nível liberou fica marcado como novo');
+    assert.equal(l15.vn.novas.length, 15, 'tudo o que o nível liberou (níveis 2 a 15 e o extra de South Park do 10) fica marcado como novo');
     assert.ok(Object.keys(l15.vn.pecas).length >= 6, JSON.stringify(l15.vn));
     await win.waitForFunction(() => Object.keys(window.__jojoRenderer.state.visualNivel || {}).length >= 6, null, { timeout: 10000 });
     // O JoJo avisa (balão) e o aviso não fica pendente.
@@ -93,17 +93,17 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     const opened = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.companion.openApp('guardaRoupa'));
     const page = await opened; page.on('pageerror', (e) => errors.push(e.message));
     await page.waitForSelector('#guardaRoupa [data-visual]');
-    assert.match(await page.locator('#guardaBtn').textContent(), /14 novos/);
+    assert.match(await page.locator('#guardaBtn').textContent(), /15 novos/);
     const itens = await page.$$eval('#guardaRoupa [data-visual]', (bs) => bs.map((b) => ({ id: b.dataset.visual, desc: b.querySelector('.visual-desc')?.textContent || '', novo: !!b.querySelector('.selo-novo') })));
-    assert.equal(itens.length, 14, 'níveis 2 a 15');
-    assert.ok(itens.every((i) => Number(i.id.slice(2)) <= 15), 'só liberados como itens');
+    assert.equal(itens.length, 15, 'níveis 2 a 15 e o extra do nível 10');
+    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$/.test(i.id)), 'só liberados como itens');
     assert.ok(itens.every((i) => i.desc.length > 10 && i.novo), 'cada item com a fala da referência e o selo de novo');
     // Trancados: só cadeado e nível, nada do que é.
     const cadeados = await page.$$eval('#guardaRoupa .cadeado', (cs) => cs.map((c) => c.textContent.trim()));
-    assert.equal(cadeados.length, 185);
+    assert.equal(cadeados.length, 185 + 19, 'níveis 16 a 200 e 19 extras');
     assert.ok(cadeados.every((t) => /^🔒nível \d+$/.test(t)), cadeados.slice(0, 3).join(' | '));
     const texto = await page.locator('#guardaRoupa').textContent();
-    assert.ok(!/Kiribachi|Chapéu de palha|Plus Ultra|Sabre de luz|Aura dourada/.test(texto), 'nenhum item futuro revelado');
+    assert.ok(!/Sunga de pose|Ushanka|Sabre de luz|Aura dourada|Plus Ultra/.test(texto), 'nenhum item futuro revelado');
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.novas.length === 0); // viu na Central
     await page.locator('#guardaRoupa [data-visual="nv003"]').click();
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv003');

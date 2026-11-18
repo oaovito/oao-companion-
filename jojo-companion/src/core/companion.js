@@ -2616,10 +2616,12 @@ export class Companion {
 
   // ---------------------------------------------------------------- visuais por nível
 
-  /** Referências dos níveis (título, obra, peça, fala e reação de cada nível). */
+  /** Referências dos níveis (título, obra, peça, fala e reação) e os extras de South Park. */
   get _refs() {
     const r = this.progress.data.referencias;
-    return Array.isArray(r) && r.length >= 2 ? r : null;
+    if (!Array.isArray(r) || r.length < 2) return null;
+    // Mesmo objeto sempre: o catálogo gerado fica em cache por ele.
+    return (this._dadosVisuais ||= { referencias: r, extras: Array.isArray(this.progress.data.extras) ? this.progress.data.extras : [] });
   }
 
   /** Canais das peças de nível vestidas (null se nenhuma). */

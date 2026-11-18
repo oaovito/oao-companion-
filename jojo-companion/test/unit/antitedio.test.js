@@ -31,7 +31,7 @@ test('progressão: XP sobe de nível, conquistas por contadores, poses e cartas 
   let t = 0;
   const p = new Progress({ data: PROG, rng: seededRng(1), now: () => t });
   assert.equal(p.nivel, 1);
-  assert.equal(p.nomeNivel, 'Isca de Tubarão');
+  assert.equal(p.nomeNivel, 'Mundo 1-1');
   let lvl = null;
   for (let i = 0; i < 10 && !lvl; i++) lvl = p.xp('jogoVitoria');
   assert.equal(lvl.nivel, 2);
