@@ -12,6 +12,10 @@ const api = window.jojo;
 const canvas = document.getElementById('stage');
 const ctx = canvas.getContext('2d');
 const bubbleEl = document.getElementById('bubble');
+const funeralEl = document.getElementById('funeral');
+const funeralFoto = document.getElementById('funeralFoto');
+let funeralTimer = null;
+let funeralChave = '';
 const measureEl = document.getElementById('measure');
 const tailsEl = document.getElementById('tails');
 const toolbarEl = document.getElementById('toolbar');
@@ -137,6 +141,7 @@ function onState(s) {
   }
   effects.setEffect(reduced ? null : s.effect, now, s.effectKind || null);
   renderBubble(s);
+  renderFuneral(s);
   renderBubbleGame(s);
   renderToolbar(s);
   renderChat(s, prev);
@@ -190,6 +195,37 @@ function applyBubbleScale(el, scale, longo = false) {
   el.style.maxWidth = `${(longo ? 400 : 260) * scale}px`;
   el.style.maxHeight = longo ? `${240 * scale}px` : '';
   el.style.padding = `${8 * scale}px ${13 * scale}px ${9 * scale}px`;
+}
+
+/** Slide de funeral: as fotos passam uma a uma (troca seca no movimento reduzido). */
+function renderFuneral(s) {
+  const f = s.funeral;
+  if (!f) {
+    funeralEl.classList.add('hidden');
+    clearInterval(funeralTimer);
+    funeralTimer = null;
+    funeralChave = '';
+    return;
+  }
+  funeralEl.style.left = `${f.rect.x}px`;
+  funeralEl.style.top = `${f.rect.y}px`;
+  funeralEl.style.width = `${f.rect.width - 4}px`;
+  funeralEl.style.height = `${f.rect.height - 4}px`;
+  const chave = f.fotos.join('|');
+  if (chave === funeralChave) return;
+  funeralChave = chave;
+  document.getElementById('funeralLegenda').textContent = f.legenda;
+  let i = 0;
+  const mostra = () => {
+    funeralFoto.classList.remove('entra');
+    funeralFoto.src = f.fotos[i % f.fotos.length];
+    if (!reduced) { void funeralFoto.offsetWidth; funeralFoto.classList.add('entra'); }
+    i += 1;
+  };
+  mostra();
+  clearInterval(funeralTimer);
+  funeralTimer = setInterval(mostra, Math.max(1200, Math.floor(f.total / f.fotos.length)));
+  funeralEl.classList.remove('hidden');
 }
 
 function renderBubble(s) {

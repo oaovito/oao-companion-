@@ -57,6 +57,11 @@ const FOODS = { peixe: 3, foca: 2, lula: 2, tartaruga: 1.5, pinguim: 1.5, humano
 const BURP_MS = 2500;
 // Altura extra acima da caixa para chapéus das fantasias (px lógicos, escala 1).
 const COSTUME_HEADROOM = 36;
+// Funeral do shape (piada da comida fora da dieta).
+const FUNERAL_MS = 11000;
+const FUNERAL_FOTOS = 12;
+const FUNERAL_SIZE = { width: 230, height: 300 };
+const FUNERAL_LEGENDAS = ['Quer se tornar uma aberração?', 'Aqui jaz o shape. Morreu de pizza.', 'Comeu isso. Virou isso. Descanse em paz, abdômen.', 'Velório do shape: o caixão precisou de reforço.', 'Em memória da cintura. Ela lutou, mas o refri venceu.'];
 const COSTUME_FOOTROOM = 40;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800, avc: 3500 + 1600 + 900 + 60000 + 1500 };
@@ -252,6 +257,7 @@ export class Companion {
     this.ghost = false;
 
     this.bubble = null;        // {text, kind, size, until, category}
+    this.funeral = null;       // funeral do shape: {inicio, ate, fotos, legenda}
     this.bubbleQueue = null;
     this.measureSeq = 0;
     this.effect = null;        // {name, until}
@@ -2156,8 +2162,9 @@ export class Companion {
       return;
     }
     if (action === 'nojo') {
-      // Docinho: cara de nojo, tom esverdeado.
+      // Doce, pizza, fritura…: cara de nojo e, no lugar do balão, o funeral do shape.
       this.playCatalog('nojo', { source: 'chat', speak: false });
+      this._funeral(now);
       return;
     }
     if (action === 'flex' && this.playCatalog('tarefaFinalizada', { source: 'chat', speak: false })) return;
@@ -2453,7 +2460,8 @@ export class Companion {
         if (r) return r;
       }
     }
-    if (s.pacoteComida) {
+    // Comida fora da dieta fica com o funeral do shape (intenção docinho), não com o pacote de comida.
+    if (s.pacoteComida && intent !== 'docinho') {
       const food = detectComida(text);
       if (food) {
         const r = tenta(food);
@@ -4643,6 +4651,30 @@ export class Companion {
     if (!this.sayCategory('alreadyRunning', { force: true }) && tries > 1) this.clock.setTimeout(() => this.notifyAlreadyRunning(tries - 1), 1500);
   }
 
+  // ---------------------------------------------------------------- funeral do shape
+
+  /**
+   * Piada (pedido de 18/11/2026): quando ela fala de comida fora da dieta de atleta, no
+   * lugar do balão aparece um slide de funeral ("em memória do shape") com fotos de uma
+   * personagem gerada para isso (assets/funeral). Some sozinho; não fala nada a mais.
+   */
+  _funeral(now = this.clock.now()) {
+    if (this.work || this.fullscreenHidden || this.userHidden || this.lolHidden) return false;
+    const ordem = Array.from({ length: FUNERAL_FOTOS }, (_, i) => i + 1);
+    for (let i = ordem.length - 1; i > 0; i--) { const j = Math.floor(this.rng() * (i + 1)) % (i + 1); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; }
+    const fotos = ordem.slice(0, 6).map((n) => `../../../assets/funeral/foto${String(n).padStart(2, '0')}.jpg`);
+    const legenda = FUNERAL_LEGENDAS[Math.floor(this.rng() * FUNERAL_LEGENDAS.length) % FUNERAL_LEGENDAS.length];
+    this.funeral = { inicio: now, ate: now + FUNERAL_MS, fotos, legenda };
+    this.hideBubble();
+    this.clock.setTimeout(() => { if (this.funeral && this.clock.now() >= this.funeral.ate) { this.funeral = null; this._applyLayout(true); } }, FUNERAL_MS + 10);
+    this._applyLayout(true);
+    return true;
+  }
+
+  get _funeralAtivo() {
+    return !!(this.funeral && this.clock.now() < this.funeral.ate && !this.work && !this.fullscreenHidden);
+  }
+
   // ---------------------------------------------------------------- layout / renderização
 
   _applyLayout(forceRender = false) {
@@ -4664,7 +4696,14 @@ export class Companion {
         attachments.push(chat);
       }
     }
-    if (this.bubble) {
+    // Funeral do shape no lugar do balão.
+    let funeral = null;
+    if (this._funeralAtivo) {
+      funeral = placeAround(r.visual, FUNERAL_SIZE, wa, { order: ['top', 'right', 'left', 'bottom'], avoid: [toolbar?.rect, chat?.rect], gap: 10 });
+      if (funeral.forced && chat) funeral = null;
+      else attachments.push(funeral);
+    }
+    if (this.bubble && !funeral) {
       const order = this.bubble.kind === 'thought' ? ['top', 'left', 'right', 'bottom'] : ['top', 'right', 'left', 'bottom'];
       bubble = placeAround(r.visual, this.bubble.size, wa, { order, avoid: [toolbar?.rect, chat?.rect], tailTarget: r.head, gap: 10 });
       // Sem lugar livre com a conversa aberta: a fala já está no painel; não sobrepõe.
@@ -4729,6 +4768,7 @@ export class Companion {
       talking: this.talkingUntil > now,
       paused: this.paused,
       interaction: this.interaction,
+      funeral: funeral ? { rect: rel(funeral.rect), fotos: this.funeral.fotos, legenda: this.funeral.legenda, restam: Math.max(0, this.funeral.ate - now), total: FUNERAL_MS } : null,
       bubble: bubble ? {
         text: this.bubble.text, kind: this.bubble.kind, longo: !!this.bubble.longo, dur: this.bubble.dur || 0, side: bubble.side, rect: rel(bubble.rect),
         tail: { x: bubble.tail.x - bounds.x, y: bubble.tail.y - bounds.y }, target: { x: r.head.x - bounds.x, y: r.head.y - bounds.y },

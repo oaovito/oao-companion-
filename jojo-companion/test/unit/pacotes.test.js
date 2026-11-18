@@ -85,20 +85,28 @@ function started() {
   return e;
 }
 
-test('companion: "vou pedir pizza" → traição absoluta (animação + fala), nível de intensidade e cooldown', async () => {
+test('companion: "vou pedir pizza" → funeral do shape no lugar do balão (pedido de 18/11/2026)', async () => {
   const e = started();
   e.companion.enterInteraction('test');
-  let r = await chatAdv(e, 'vou pedir pizza');
-  assert.equal(r.intent, 'pacote:pk_traicao');
-  assert.ok(DATA.reacoes.find((x) => x.id === 'pk_traicao').falas.includes(r.text));
-  assert.match(e.companion.behavior.anim, /^cat_pk_traicao/);
-  e.clock.advance(20000);
-  r = await chatAdv(e, 'vou pedir pizza');
-  assert.notEqual(r.intent, 'pacote:pk_traicao', 'cooldown: não repete a reação logo em seguida');
-  e.store.update({ comidaNivel: 1 });
-  e.clock.advance(20000);
-  r = await chatAdv(e, 'quero tomar sorvete');
-  assert.match(e.companion.behavior.anim, /^cat_pk_nuclear_leve~suave/);
+  const r = await chatAdv(e, 'vou pedir pizza');
+  assert.equal(r.intent, 'docinho', 'comida fora da dieta vai para o funeral, não para o pacote de comida');
+  e.clock.advance(300);
+  const st = e.overlay.state;
+  assert.ok(st.funeral, 'slide de funeral na tela');
+  assert.equal(st.funeral.fotos.length, 6);
+  assert.ok(st.funeral.fotos.every((f) => /assets\/funeral\/foto\d{2}\.jpg$/.test(f)));
+  assert.equal(new Set(st.funeral.fotos).size, 6, 'sem foto repetida no mesmo funeral');
+  assert.equal(st.bubble, null, 'no lugar do balão');
+  assert.ok(st.funeral.legenda.length > 5);
+  e.clock.advance(12000);
+  assert.equal(e.overlay.state.funeral, null, 'some sozinho');
+  // Comida de atleta não dispara.
+  await chatAdv(e, 'vou comer frango com batata doce');
+  assert.equal(e.overlay.state.funeral, null);
+  // Modo Trabalho bloqueia o funeral.
+  e.companion.startWork();
+  await chatAdv(e, 'quero tomar sorvete');
+  assert.equal(e.overlay.state.funeral, null);
 });
 
 test('companion: João magoou → acolhimento sério (sem mandar falar com ele); "quem te criou?" → João', async () => {
