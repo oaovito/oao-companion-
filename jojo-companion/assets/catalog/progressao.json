@@ -3676,7 +3676,7 @@
    "anim": "dorsalTela"
   }
  ],
- "_regraTitulos": "REGRA IRREDUTÍVEL: todo título é referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas as clássicas de tubarão presentes); a peça, a fala e a reação de cada nível são dessa referência (referencias[i] corresponde a niveis[i]). extras: 20 visuais de South Park, um a cada 10 níveis.",
+ "_regraTitulos": "REGRA IRREDUTÍVEL: todo título é referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas as clássicas de tubarão presentes); a peça, a fala e a reação de cada nível são dessa referência (referencias[i] corresponde a niveis[i]). extras: 20 visuais de South Park (um a cada 10 níveis) e 50 de memes do Twitter (um a cada 4 níveis), sem pudor.",
  "extras": [
   {
    "nivel": 10,
@@ -3692,7 +3692,8 @@
     "#ffffff"
    ],
    "fala": "Sabe, eu aprendi uma coisa hoje: gorro de pompom combina com bíceps.",
-   "anim": "acenar"
+   "anim": "acenar",
+   "colecao": "South Park"
   },
   {
    "nivel": 20,
@@ -3708,7 +3709,8 @@
     "#ffffff"
    ],
    "fala": "Ushanka verde. O Kyle tinha razão de novo.",
-   "anim": "assentir"
+   "anim": "assentir",
+   "colecao": "South Park"
   },
   {
    "nivel": 30,
@@ -3724,7 +3726,8 @@
     "#ffd54f"
    ],
    "fala": "Não esquece de levar uma toalha. E de treinar.",
-   "anim": "toalha"
+   "anim": "toalha",
+   "colecao": "South Park"
   },
   {
    "nivel": 40,
@@ -3740,7 +3743,8 @@
     "#ffd54f"
    ],
    "fala": "Pressão demais! Café demais! Treino de menos? Nunca.",
-   "anim": "nervoso"
+   "anim": "nervoso",
+   "colecao": "South Park"
   },
   {
    "nivel": 50,
@@ -3756,7 +3760,8 @@
     "#ffd54f"
    ],
    "fala": "Treinar é bom, m'kay? Pular treino é ruim, m'kay?",
-   "anim": "assentir"
+   "anim": "assentir",
+   "colecao": "South Park"
   },
   {
    "nivel": 60,
@@ -3772,7 +3777,8 @@
     "#ffffff"
    ],
    "fala": "Fase 1: roubar cuecas. Fase 2: ? Fase 3: shape.",
-   "anim": "pensando"
+   "anim": "pensando",
+   "colecao": "South Park"
   },
   {
    "nivel": 70,
@@ -3788,7 +3794,8 @@
     "#ffffff"
    ],
    "fala": "Gente-caranguejo, gente-caranguejo! Bíceps de caranguejo.",
-   "anim": "dancinha"
+   "anim": "dancinha",
+   "colecao": "South Park"
   },
   {
    "nivel": 80,
@@ -3804,7 +3811,8 @@
     "#e1bee7"
    ],
    "fala": "Lembra? Lembra do treino de perna? Eu lembro.",
-   "anim": "sorrisoSuave"
+   "anim": "sorrisoSuave",
+   "colecao": "South Park"
   },
   {
    "nivel": 90,
@@ -3820,7 +3828,8 @@
     "#ffffff"
    ],
    "fala": "O Sr. Chapéu disse que meu shape é bom demais pra ser legal.",
-   "anim": "sussurrar"
+   "anim": "sussurrar",
+   "colecao": "South Park"
   },
   {
    "nivel": 100,
@@ -3836,7 +3845,8 @@
     "#ffffff"
    ],
    "fala": "Respeitem minha autoridade!",
-   "anim": "superioridade"
+   "anim": "superioridade",
+   "colecao": "South Park"
   },
   {
    "nivel": 110,
@@ -3852,7 +3862,8 @@
     "#ffffff"
    ],
    "fala": "O Craig manda recado com o dedo do meio. Eu mando com o bíceps.",
-   "anim": "hmpf"
+   "anim": "hmpf",
+   "colecao": "South Park"
   },
   {
    "nivel": 120,
@@ -3868,7 +3879,8 @@
     "#ffffff"
    ],
    "fala": "Fazenda Tegridy. Treino com tegridade.",
-   "anim": "assentir"
+   "anim": "assentir",
+   "colecao": "South Park"
   },
   {
    "nivel": 130,
@@ -3884,7 +3896,8 @@
     "#ffffff"
    ],
    "fala": "Hidi-ho! O Sr. Hankey, o cocô de Natal, veio me ver.",
-   "anim": "rirPropriaPiada"
+   "anim": "rirPropriaPiada",
+   "colecao": "South Park"
   },
   {
    "nivel": 140,
@@ -3900,7 +3913,8 @@
     "#e53935"
    ],
    "fala": "Eu sou AWESOM-O 4000. Bip boop. Supino.",
-   "anim": "fingirTrabalhar"
+   "anim": "fingirTrabalhar",
+   "colecao": "South Park"
   },
   {
    "nivel": 150,
@@ -3916,7 +3930,8 @@
     "#ffffff"
    ],
    "fala": "Professor Caos! O mundo vai tremer. Ou só o aquário.",
-   "anim": "poseVilao"
+   "anim": "poseVilao",
+   "colecao": "South Park"
   },
   {
    "nivel": 160,
@@ -3932,7 +3947,8 @@
     "#ffffff"
    ],
    "fala": "O Guaxinim chegou. O herói que essa cidade merece.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "colecao": "South Park"
   },
   {
    "nivel": 170,
@@ -3948,7 +3964,8 @@
     "#76ff03"
    ],
    "fala": "Mysterion. Quem sou eu? Um tubarão muito forte.",
-   "anim": "sobrancelha"
+   "anim": "sobrancelha",
+   "colecao": "South Park"
   },
   {
    "nivel": 180,
@@ -3964,7 +3981,8 @@
     "#ffb300"
    ],
    "fala": "Chef recomenda: frango, arroz e um pouco de soul.",
-   "anim": "cantarDesafinado"
+   "anim": "cantarDesafinado",
+   "colecao": "South Park"
   },
   {
    "nivel": 190,
@@ -3980,7 +3998,8 @@
     "#ffffff"
    ],
    "fala": "Quem tem o Graveto da Verdade manda no universo. Agora ele é meu.",
-   "anim": "poseEpica"
+   "anim": "poseEpica",
+   "colecao": "South Park"
   },
   {
    "nivel": 200,
@@ -3996,7 +4015,858 @@
     "#ffffff"
    ],
    "fala": "Oh meu Deus, mataram o Kenny! Seus desgraçados!",
-   "anim": "falsaMorte"
+   "anim": "falsaMorte",
+   "colecao": "South Park"
+  },
+  {
+   "nivel": 4,
+   "colecao": "memes do Twitter",
+   "titulo": "Deal With It",
+   "obra": "meme do Twitter: Deal With It",
+   "tipo": "meme",
+   "parte": "rosto",
+   "forma": "oculosPixel",
+   "peca": "Óculos pixelados do Deal With It",
+   "cores": [
+    "#111111",
+    "#ffffff",
+    "#ffffff"
+   ],
+   "fala": "Lida com isso.",
+   "anim": "seAcharMaximo"
+  },
+  {
+   "nivel": 8,
+   "colecao": "memes do Twitter",
+   "titulo": "Thug Life",
+   "obra": "meme do Twitter: Thug Life",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "correnteOuro",
+   "peca": "Corrente do Thug Life",
+   "cores": [
+    "#d4a72c",
+    "#ffd54f",
+    "#212121"
+   ],
+   "fala": "Thug life. Supino de boné pra trás.",
+   "anim": "poseVilao"
+  },
+  {
+   "nivel": 12,
+   "colecao": "memes do Twitter",
+   "titulo": "Doge",
+   "obra": "meme do Twitter: Doge",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Moeda do Doge",
+   "cores": [
+    "#d4a72c",
+    "#ffd54f",
+    "#fff3c4"
+   ],
+   "fala": "Muito shape. Tal bíceps. Uau.",
+   "anim": "surpreso"
+  },
+  {
+   "nivel": 16,
+   "colecao": "memes do Twitter",
+   "titulo": "Stonks",
+   "obra": "meme do Twitter: Stonks",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "gravata",
+   "peca": "Gravata do Stonks",
+   "cores": [
+    "#0d47a1",
+    "#ffffff",
+    "#4caf50"
+   ],
+   "fala": "Stonks. As ações do meu shape só sobem.",
+   "anim": "apontar"
+  },
+  {
+   "nivel": 20,
+   "colecao": "memes do Twitter",
+   "titulo": "Cérebro Galáctico",
+   "obra": "meme do Twitter: Cérebro Galáctico",
+   "tipo": "meme",
+   "parte": "aura",
+   "forma": "estrelas",
+   "peca": "Aura do cérebro galáctico",
+   "cores": [
+    "#7c4dff",
+    "#e1bee7",
+    "#ffffff"
+   ],
+   "fala": "Cérebro galáctico: treinar perna é treinar a alma.",
+   "anim": "pensando"
+  },
+  {
+   "nivel": 24,
+   "colecao": "memes do Twitter",
+   "titulo": "Drake Sim e Não",
+   "obra": "meme do Twitter: Drake Sim e Não",
+   "tipo": "meme",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Jaqueta laranja do sim e não",
+   "cores": [
+    "#ff8f00",
+    "#ffcc80",
+    "#ffffff"
+   ],
+   "fala": "Pular treino? Não. Treinar duas vezes? Sim.",
+   "anim": "negar"
+  },
+  {
+   "nivel": 28,
+   "colecao": "memes do Twitter",
+   "titulo": "Ok Boomer",
+   "obra": "meme do Twitter: Ok Boomer",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "quepe",
+   "peca": "Boné de boomer",
+   "cores": [
+    "#bcaaa4",
+    "#6d4c41",
+    "#ffffff"
+   ],
+   "fala": "Ok, boomer. Na minha época o supino era de pedra.",
+   "anim": "revirarOlhos"
+  },
+  {
+   "nivel": 32,
+   "colecao": "memes do Twitter",
+   "titulo": "Big Chungus",
+   "obra": "meme do Twitter: Big Chungus",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "orelhas",
+   "peca": "Orelhas do Big Chungus",
+   "cores": [
+    "#9e9e9e",
+    "#f8bbd0",
+    "#ffffff"
+   ],
+   "fala": "Big Chungus. Bulking sem fim e sem vergonha.",
+   "anim": "tapinhaAbdomen"
+  },
+  {
+   "nivel": 36,
+   "colecao": "memes do Twitter",
+   "titulo": "Gato da Mesa",
+   "obra": "meme do Twitter: Gato da Mesa",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "prato",
+   "peca": "Prato de salada do gato",
+   "cores": [
+    "#ffffff",
+    "#7cb342",
+    "#e53935"
+   ],
+   "fala": "O gato gritou com a salada. Eu como frango.",
+   "anim": "confuso"
+  },
+  {
+   "nivel": 40,
+   "colecao": "memes do Twitter",
+   "titulo": "Namorado Distraído",
+   "obra": "meme do Twitter: Namorado Distraído",
+   "tipo": "meme",
+   "parte": "rosto",
+   "forma": "oculosRedondos",
+   "peca": "Óculos de quem olhou pro lado",
+   "cores": [
+    "#ff8a80",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Olhei pro lado? Era o meu reflexo. Quem eu amo sou eu.",
+   "anim": "olharLado"
+  },
+  {
+   "nivel": 44,
+   "colecao": "memes do Twitter",
+   "titulo": "Mude Minha Opinião",
+   "obra": "meme do Twitter: Mude Minha Opinião",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "cartaz",
+   "peca": "Placa do mude minha opinião",
+   "cores": [
+    "#ffffff",
+    "#8d6e63",
+    "#212121"
+   ],
+   "fala": "Leg day é o melhor dia. Mude minha opinião.",
+   "anim": "apontar"
+  },
+  {
+   "nivel": 48,
+   "colecao": "memes do Twitter",
+   "titulo": "Trollface",
+   "obra": "meme do Twitter: Trollface",
+   "tipo": "meme",
+   "parte": "pintura",
+   "forma": "sorriso",
+   "peca": "Sorriso de troll",
+   "cores": [
+    "#ffffff",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Problem? Sorriso de troll e bíceps de verdade.",
+   "anim": "rirPropriaPiada"
+  },
+  {
+   "nivel": 52,
+   "colecao": "memes do Twitter",
+   "titulo": "Harlem Shake",
+   "obra": "meme do Twitter: Harlem Shake",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "capacete",
+   "peca": "Capacete do Harlem Shake",
+   "cores": [
+    "#e53935",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Harlem Shake! Um dança de capacete, o resto surta.",
+   "anim": "dancarSemRitmo"
+  },
+  {
+   "nivel": 56,
+   "colecao": "memes do Twitter",
+   "titulo": "Gangnam Style",
+   "obra": "meme do Twitter: Gangnam Style",
+   "tipo": "meme",
+   "parte": "rosto",
+   "forma": "oculosEscuros",
+   "peca": "Óculos do Oppa",
+   "cores": [
+    "#212121",
+    "#9e9e9e",
+    "#ffffff"
+   ],
+   "fala": "Oppa JoJo style! Cavalgando o supino.",
+   "anim": "dancinha"
+  },
+  {
+   "nivel": 60,
+   "colecao": "memes do Twitter",
+   "titulo": "Desafio do Balde de Gelo",
+   "obra": "meme do Twitter: Desafio do Balde de Gelo",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "balde",
+   "peca": "Balde de gelo",
+   "cores": [
+    "#1e88e5",
+    "#e3f2fd",
+    "#ffffff"
+   ],
+   "fala": "Balde de gelo na cabeça. Desafio aceito, mamilo duro e tudo.",
+   "anim": "frio"
+  },
+  {
+   "nivel": 64,
+   "colecao": "memes do Twitter",
+   "titulo": "Mariposa e a Lâmpada",
+   "obra": "meme do Twitter: Mariposa e a Lâmpada",
+   "tipo": "meme",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Brilho da lâmpada",
+   "cores": [
+    "#ffeb3b",
+    "#fff9c4",
+    "#ffffff"
+   ],
+   "fala": "Irmão, posso ter um pouco de lâmpada?",
+   "anim": "brilhoOlhos"
+  },
+  {
+   "nivel": 68,
+   "colecao": "memes do Twitter",
+   "titulo": "Bonk",
+   "obra": "meme do Twitter: Bonk",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "martelo",
+   "peca": "Bastão do bonk",
+   "cores": [
+    "#8d6e63",
+    "#5d4037",
+    "#ffd54f"
+   ],
+   "fala": "Bonk! Direto pra cadeia dos taradinhos.",
+   "anim": "zombar"
+  },
+  {
+   "nivel": 72,
+   "colecao": "memes do Twitter",
+   "titulo": "Thicc",
+   "obra": "meme do Twitter: Thicc",
+   "tipo": "meme",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Bermuda thicc",
+   "cores": [
+    "#f06292",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Thicc com dois c. Glúteo de aço, pudor zero.",
+   "anim": "desfile"
+  },
+  {
+   "nivel": 76,
+   "colecao": "memes do Twitter",
+   "titulo": "Dança do Caixão",
+   "obra": "meme do Twitter: Dança do Caixão",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "gravataBorboleta",
+   "peca": "Gravata da dança do caixão",
+   "cores": [
+    "#111111",
+    "#ffffff",
+    "#d4a72c"
+   ],
+   "fala": "Dança do caixão: quem pulou treino vai nele.",
+   "anim": "dancinha"
+  },
+  {
+   "nivel": 80,
+   "colecao": "memes do Twitter",
+   "titulo": "Doomer",
+   "obra": "meme do Twitter: Doomer",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "gorro",
+   "peca": "Gorro do doomer",
+   "cores": [
+    "#212121",
+    "#424242",
+    "#ffffff"
+   ],
+   "fala": "Doomer de gorro preto. Mas treino todo dia.",
+   "anim": "suspirar"
+  },
+  {
+   "nivel": 84,
+   "colecao": "memes do Twitter",
+   "titulo": "Gato Rabugento",
+   "obra": "meme do Twitter: Gato Rabugento",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "orelhas",
+   "peca": "Orelhas do gato rabugento",
+   "cores": [
+    "#bcaaa4",
+    "#6d4c41",
+    "#ffffff"
+   ],
+   "fala": "Não. Mas faço supino.",
+   "anim": "hmpf"
+  },
+  {
+   "nivel": 88,
+   "colecao": "memes do Twitter",
+   "titulo": "Leeroy Jenkins",
+   "obra": "meme do Twitter: Leeroy Jenkins",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "chifres",
+   "peca": "Elmo do Leeroy",
+   "cores": [
+    "#9e9e9e",
+    "#c62828",
+    "#ffffff"
+   ],
+   "fala": "LEEROY JENKINS! Entrei no treino sem plano nenhum.",
+   "anim": "gritarSuperficie"
+  },
+  {
+   "nivel": 92,
+   "colecao": "memes do Twitter",
+   "titulo": "Fidget Spinner",
+   "obra": "meme do Twitter: Fidget Spinner",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "spinner",
+   "peca": "Fidget spinner",
+   "cores": [
+    "#1e88e5",
+    "#ffd400",
+    "#ffffff"
+   ],
+   "fala": "Girando o spinner entre as séries.",
+   "anim": "fidget"
+  },
+  {
+   "nivel": 96,
+   "colecao": "memes do Twitter",
+   "titulo": "Caco Tomando Chá",
+   "obra": "meme do Twitter: Caco Tomando Chá",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "caneca",
+   "peca": "Chá do Caco",
+   "cores": [
+    "#7cb342",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Mas isso não é da minha conta.",
+   "anim": "cafeOlhando"
+  },
+  {
+   "nivel": 100,
+   "colecao": "memes do Twitter",
+   "titulo": "Caco do Mal",
+   "obra": "meme do Twitter: Caco do Mal",
+   "tipo": "meme",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Capuz do Caco do mal",
+   "cores": [
+    "#212121",
+    "#424242",
+    "#7cb342"
+   ],
+   "fala": "Pula o treino. Come o docinho. Não, Caco do mal. Não.",
+   "anim": "poseVilao"
+  },
+  {
+   "nivel": 104,
+   "colecao": "memes do Twitter",
+   "titulo": "Vira-Lata Caramelo",
+   "obra": "meme do Twitter: Vira-Lata Caramelo",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "orelhas",
+   "peca": "Orelhas de vira-lata caramelo",
+   "cores": [
+    "#d4a72c",
+    "#8d6e63",
+    "#ffffff"
+   ],
+   "fala": "Vira-lata caramelo: patrimônio nacional, igual ao meu bíceps.",
+   "anim": "feliz"
+  },
+  {
+   "nivel": 108,
+   "colecao": "memes do Twitter",
+   "titulo": "Capivara com Laranja",
+   "obra": "meme do Twitter: Capivara com Laranja",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "fruta",
+   "peca": "Laranja na cabeça da capivara",
+   "cores": [
+    "#ff9800",
+    "#4caf50",
+    "#ffffff"
+   ],
+   "fala": "De boa igual capivara com laranja na cabeça.",
+   "anim": "contente"
+  },
+  {
+   "nivel": 112,
+   "colecao": "memes do Twitter",
+   "titulo": "Tá Pago",
+   "obra": "meme do Twitter: Tá Pago",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Medalha do tá pago",
+   "cores": [
+    "#4caf50",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Treino feito. Tá pago. Posta no Twitter.",
+   "anim": "aplausosImaginarios"
+  },
+  {
+   "nivel": 116,
+   "colecao": "memes do Twitter",
+   "titulo": "Sextou",
+   "obra": "meme do Twitter: Sextou",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "cilindro",
+   "peca": "Latinha do sextou",
+   "cores": [
+    "#ffd400",
+    "#ffffff",
+    "#e53935"
+   ],
+   "fala": "Sextou, porra! Hoje o treino é de bíceps e de copo.",
+   "anim": "festaSozinho"
+  },
+  {
+   "nivel": 120,
+   "colecao": "memes do Twitter",
+   "titulo": "Tralalero Tralala",
+   "obra": "meme do Twitter: Tralalero Tralala",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "pelucia",
+   "peca": "Pelúcia do Tralalero Tralala",
+   "cores": [
+    "#4fc3f7",
+    "#ffffff",
+    "#1e63c6"
+   ],
+   "fala": "Tralalero tralala! Tubarão de tênis, igualzinho eu.",
+   "anim": "dancinhaViral"
+  },
+  {
+   "nivel": 124,
+   "colecao": "memes do Twitter",
+   "titulo": "Drip",
+   "obra": "meme do Twitter: Drip",
+   "tipo": "meme",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Jaqueta do drip",
+   "cores": [
+    "#eceff1",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Drip demais. Tô pingando estilo.",
+   "anim": "desfile"
+  },
+  {
+   "nivel": 128,
+   "colecao": "memes do Twitter",
+   "titulo": "Ratio",
+   "obra": "meme do Twitter: Ratio",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Medalha do ratio",
+   "cores": [
+    "#1da1f2",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Ratio. Seu tweet levou ratio do meu bíceps.",
+   "anim": "zombar"
+  },
+  {
+   "nivel": 132,
+   "colecao": "memes do Twitter",
+   "titulo": "Vai Tocar na Grama",
+   "obra": "meme do Twitter: Vai Tocar na Grama",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "tiara",
+   "peca": "Coroa de grama",
+   "cores": [
+    "#7cb342",
+    "#33691e",
+    "#ffffff"
+   ],
+   "fala": "Vai tocar na grama. Eu toco: com o pé, no agachamento.",
+   "anim": "espreguicar"
+  },
+  {
+   "nivel": 136,
+   "colecao": "memes do Twitter",
+   "titulo": "Rizz",
+   "obra": "meme do Twitter: Rizz",
+   "tipo": "meme",
+   "parte": "rosto",
+   "forma": "oculosAviador",
+   "peca": "Óculos de rizz",
+   "cores": [
+    "#f48fb1",
+    "#ad1457",
+    "#ffffff"
+   ],
+   "fala": "W rizz. Cantada nível tubarão.",
+   "anim": "cantadaRuim"
+  },
+  {
+   "nivel": 140,
+   "colecao": "memes do Twitter",
+   "titulo": "Gyatt",
+   "obra": "meme do Twitter: Gyatt",
+   "tipo": "meme",
+   "parte": "bermuda",
+   "forma": "chamas",
+   "peca": "Bermuda do gyatt",
+   "cores": [
+    "#e91e63",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "Gyatt! Tô falando do MEU glúteo, calma.",
+   "anim": "desfile"
+  },
+  {
+   "nivel": 144,
+   "colecao": "memes do Twitter",
+   "titulo": "Delulu",
+   "obra": "meme do Twitter: Delulu",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "aureola",
+   "peca": "Auréola delulu",
+   "cores": [
+    "#f8bbd0",
+    "#ff80ab",
+    "#ffffff"
+   ],
+   "fala": "Delulu é a solução. Eu sou lindo e não é delírio.",
+   "anim": "olharApaixonado"
+  },
+  {
+   "nivel": 148,
+   "colecao": "memes do Twitter",
+   "titulo": "Big Dick Energy",
+   "obra": "meme do Twitter: Big Dick Energy",
+   "tipo": "meme",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Aura de BDE",
+   "cores": [
+    "#c62828",
+    "#ff8a80",
+    "#ffffff"
+   ],
+   "fala": "Big Dick Energy. Não pergunta, só sente.",
+   "anim": "superioridade"
+  },
+  {
+   "nivel": 152,
+   "colecao": "memes do Twitter",
+   "titulo": "Manda Nudes",
+   "obra": "meme do Twitter: Manda Nudes",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "celular",
+   "peca": "Celular do manda nudes",
+   "cores": [
+    "#212121",
+    "#4fc3f7",
+    "#ffffff"
+   ],
+   "fala": "Manda nudes? Toma: foto da minha barbatana.",
+   "anim": "selfie"
+  },
+  {
+   "nivel": 156,
+   "colecao": "memes do Twitter",
+   "titulo": "Chifre de Corno",
+   "obra": "meme do Twitter: Chifre de Corno",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "chifres",
+   "peca": "Chifres de corno",
+   "cores": [
+    "#f5e6c8",
+    "#8d6e63",
+    "#ffffff"
+   ],
+   "fala": "Chifre? Não, é capacete viking. Juro.",
+   "anim": "naoFuiEu"
+  },
+  {
+   "nivel": 160,
+   "colecao": "memes do Twitter",
+   "titulo": "Biscoiteiro",
+   "obra": "meme do Twitter: Biscoiteiro",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "biscoito",
+   "peca": "Biscoito do biscoiteiro",
+   "cores": [
+    "#a1887f",
+    "#5d4037",
+    "#ffffff"
+   ],
+   "fala": "Biscoiteiro? Eu? Só quero elogio. Muito elogio.",
+   "anim": "pedirElogios"
+  },
+  {
+   "nivel": 164,
+   "colecao": "memes do Twitter",
+   "titulo": "Baseado",
+   "obra": "meme do Twitter: Baseado",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "baseado",
+   "peca": "Baseado do Twitter",
+   "cores": [
+    "#f5f5f5",
+    "#9e9e9e",
+    "#ff7043"
+   ],
+   "fala": "Isso foi baseado. No sentido do Twitter. Ou não.",
+   "anim": "esparramado"
+  },
+  {
+   "nivel": 168,
+   "colecao": "memes do Twitter",
+   "titulo": "Ai Papai",
+   "obra": "meme do Twitter: Ai Papai",
+   "tipo": "meme",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Robe do ai papai",
+   "cores": [
+    "#c62828",
+    "#ffcdd2",
+    "#ffffff"
+   ],
+   "fala": "Ai, papai. Essa barbatana é pecado.",
+   "anim": "beijoExagerado"
+  },
+  {
+   "nivel": 172,
+   "colecao": "memes do Twitter",
+   "titulo": "Palhaço",
+   "obra": "meme do Twitter: Palhaço",
+   "tipo": "meme",
+   "parte": "pintura",
+   "forma": "narizPalhaco",
+   "peca": "Nariz de palhaço",
+   "cores": [
+    "#e53935",
+    "#ffffff",
+    "#ffffff"
+   ],
+   "fala": "Palhaço? Eu sou o circo inteiro.",
+   "anim": "careta"
+  },
+  {
+   "nivel": 176,
+   "colecao": "memes do Twitter",
+   "titulo": "Gado",
+   "obra": "meme do Twitter: Gado",
+   "tipo": "meme",
+   "parte": "pescoco",
+   "forma": "sino",
+   "peca": "Sino de gado",
+   "cores": [
+    "#d4a72c",
+    "#8d6e63",
+    "#ffffff"
+   ],
+   "fala": "Gado demais? Eu sou tubarão. Muuu.",
+   "anim": "apaixonado"
+  },
+  {
+   "nivel": 180,
+   "colecao": "memes do Twitter",
+   "titulo": "Lacrou",
+   "obra": "meme do Twitter: Lacrou",
+   "tipo": "meme",
+   "parte": "mao",
+   "forma": "leque",
+   "peca": "Leque da lacração",
+   "cores": [
+    "#e91e63",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Lacrei. Lacrou. Lacração total do shape.",
+   "anim": "superioridade"
+  },
+  {
+   "nivel": 184,
+   "colecao": "memes do Twitter",
+   "titulo": "Close Errado",
+   "obra": "meme do Twitter: Close Errado",
+   "tipo": "meme",
+   "parte": "rosto",
+   "forma": "oculosEscuros",
+   "peca": "Óculos do close errado",
+   "cores": [
+    "#ff4081",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Close certo: eu. Close errado: o resto.",
+   "anim": "selfie"
+  },
+  {
+   "nivel": 188,
+   "colecao": "memes do Twitter",
+   "titulo": "Divou",
+   "obra": "meme do Twitter: Divou",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "tiara",
+   "peca": "Tiara de diva",
+   "cores": [
+    "#e0e0e0",
+    "#f48fb1",
+    "#ffffff"
+   ],
+   "fala": "Divou. Diva do aquário, mona.",
+   "anim": "desfile"
+  },
+  {
+   "nivel": 192,
+   "colecao": "memes do Twitter",
+   "titulo": "Cancelado",
+   "obra": "meme do Twitter: Cancelado",
+   "tipo": "meme",
+   "parte": "cabeca",
+   "forma": "bandana",
+   "peca": "Faixa de cancelado",
+   "cores": [
+    "#212121",
+    "#e53935",
+    "#ffffff"
+   ],
+   "fala": "Fui cancelado no Twitter. Voltei com mais seguidor.",
+   "anim": "ombros"
+  },
+  {
+   "nivel": 196,
+   "colecao": "memes do Twitter",
+   "titulo": "Tô Pistola",
+   "obra": "meme do Twitter: Tô Pistola",
+   "tipo": "meme",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Aura de pistola",
+   "cores": [
+    "#ff3d00",
+    "#ffab91",
+    "#ffffff"
+   ],
+   "fala": "Tô pistola. Pistolíssimo.",
+   "anim": "irritadoLeve"
+  },
+  {
+   "nivel": 200,
+   "colecao": "memes do Twitter",
+   "titulo": "Thirst Trap",
+   "obra": "meme do Twitter: Thirst Trap",
+   "tipo": "meme",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Sunga de thirst trap",
+   "cores": [
+    "#212121",
+    "#ff4081",
+    "#ffffff"
+   ],
+   "fala": "Thirst trap postado. Pode babar.",
+   "anim": "espelhoInvisivel"
   }
  ]
 }

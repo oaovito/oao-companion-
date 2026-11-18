@@ -5,7 +5,8 @@
 REGRA IRREDUTÍVEL (pedido de 18/11): títulos = referências de filme, anime, série, jogo e
 cultura pop, sem repetir obra (teste em `visual-nivel.test.js`), todas as clássicas de
 tubarão presentes (Tubarão 2, 3 e 4 entram como filmes próprios); `extras` = 20 visuais de
-South Park (ids `sp01`–`sp20`, níveis 10, 20 … 200), fora dos títulos; peça, fala e reação de cada nível vêm da
+South Park (ids `sp01`–`sp20`, níveis 10, 20 … 200) e 50 de memes do Twitter (`tw01`–`tw50`,
+níveis 4, 8 … 200, sem pudor), fora dos títulos, separados pelo campo `colecao`; peça, fala e reação de cada nível vêm da
 referência. Dados em `progressao.json` → `referencias` (titulo, obra, tipo, parte, forma,
 peca, cores, fala, anim, reacao?), alinhado com `niveis`. Formas desenhadas em
 `visual-nivel.js` (FORMAS, PINTURA, AURA, MAO); brilhos de acabamento no grupo

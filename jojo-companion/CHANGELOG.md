@@ -11,6 +11,9 @@
 - 20 visuais extras de South Park, um a cada 10 níveis: gorro do Stan, ushanka do Kyle,
   toalha do Toalhinha, caneca do Tweek, Sr. Hankey, AWESOM-O, Professor Caos, Mysterion,
   e no nível 200 a aura de "mataram o Kenny".
+- 50 visuais extras de memes do Twitter, um a cada 4 níveis, sem pudor: óculos do Deal With
+  It, moeda do Doge, gravata do Stonks, placa do "mude minha opinião", bastão do bonk,
+  bermuda thicc, chifres de corno, aura de BDE, celular do manda nudes, sino de gado e mais.
 - Visual novo a cada nível, tirado da referência daquele nível: fones do Baby Shark, Blåhaj
   na mão, barril amarelo de Tubarão, luvas do Rocky, chapéu de palha, sabre de luz, manopla
   das joias, Sharingan, aura de Super Saiyajin, tridente de Atlântida e outros. Ao subir de
