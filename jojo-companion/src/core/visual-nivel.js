@@ -1055,6 +1055,12 @@ export function rigComVisuais(rig, dados) {
       if (p.id === TIGRESA_NUA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaNua' });
     }
   }
+  // Faixa de otaku (hachimaki) para o episódio novo de um anime sem visual liberado.
+  byId.get('costumes').parts.push(
+    { id: 'anime_faixa', fill: '#f7f5ee', showIf: 'animeFa', ...CABECA, path: 'M52,22 C68,10 112,10 128,22 L127,30 C110,19 70,19 53,30 Z' },
+    { id: 'anime_sol', fill: '#d32f2f', showIf: 'animeFa', ...CABECA, path: circ(90, 18, 4.2) },
+    { id: 'anime_no', fill: '#f7f5ee', showIf: 'animeFa', ...CABECA, path: `${poly([[124, 20], [140, 34], [136, 37], [122, 25]])} ${poly([[123, 23], [134, 44], [129, 45], [121, 26]])}` },
+  );
   // Roupa da Tigresa voando na animação do meme.
   byId.get('costumes').parts.push(
     { id: 'tigresa_coleteVoando', fill: '#e0a91f', showIf: 'tgVoa', dx: 'tgVoaX', dy: 'tgVoaY', path: 'M50,84 C60,79 120,79 130,84 C141,90 143,101 137,109 C131,118 123,124 117,130 L63,130 C57,124 49,118 43,109 C37,101 39,90 50,84 Z' },

@@ -7,6 +7,9 @@
 - "Tigresa, tire sua roupa": estado `tigresa` + visual `br01` (memes BR, nível 3), canal `pelado`.
 - Central → Coleção → "Animações liberadas" (`animacoesLiberadas()`), `/anim rebolado|tigresa`;
   descrição de todo visual “frase” — de Obra.
+- Calendário de anime: `src/core/anime-calendario.js` (AniList GraphQL, sem chave), `companion.comandoAnime`,
+  `sincronizarAnime` (main a cada 30 min), `animeVisita` (visual do anime ou faixa `animeFa` por 20 s). O alias
+  `/anime` saiu de `/reacao` (que segue com `/reacao` e `/meme`).
 - `GENES` em `visual-nivel.js`: olho, enfeite, ajuste da peça e jeito de tocar a animação únicos.
 - `scripts/icon-page/room.html` mede também `animsVisual` e `visuais`; regenerar com
   `npx electron scripts/anim-room.mjs` (Windows) ao mudar desenho/animação. Nesta sessão foi

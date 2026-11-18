@@ -4,6 +4,7 @@
 import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
 import { sanitizeVisual } from './visual-nivel.js';
+import { sanitizeAnimes, sanitizeAvisados } from './anime-calendario.js';
 
 export const SETTINGS_VERSION = 6;
 
@@ -57,6 +58,10 @@ export const DEFAULTS = Object.freeze({
   reboladoFoco: true,           // rebolado do meme de vez em quando no modo foco (no repouso continua sempre)
   guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
   visualNivel: { pecas: {}, visto: 0 }, // visuais liberados por nível: o que está vestido e até que nível já foi aplicado
+  // Calendário de anime (AniList, sem login): animes que ela segue e episódios já cumprimentados.
+  animeAtivo: true,
+  animes: [],
+  animeAvisados: [],
   // Pacotes de reação (memes, anime, comida, namorado, João): ligados por padrão.
   pacoteMemes: true,
   pacoteAnime: true,
@@ -142,7 +147,7 @@ const ENUMS = {
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
 };
 
-const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco'];
+const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -204,6 +209,11 @@ export function sanitize(input) {
     if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');
   }
+  if ('animes' in src) {
+    out.animes = sanitizeAnimes(src.animes);
+    if (!Array.isArray(src.animes) || out.animes.length !== src.animes.length) issues.push('animes');
+  }
+  if ('animeAvisados' in src) out.animeAvisados = sanitizeAvisados(src.animeAvisados);
   if ('visualNivel' in src) {
     out.visualNivel = sanitizeVisual(src.visualNivel);
     if (Object.keys(out.visualNivel.pecas).length !== Object.keys(src.visualNivel?.pecas || {}).length) issues.push('visualNivel');

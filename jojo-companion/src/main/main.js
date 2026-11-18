@@ -37,6 +37,7 @@ import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
 import { createCalendarLinkService, readCalendarFeed } from './calendar-link-service.js';
+import { AnimeCalendario } from '../core/anime-calendario.js';
 import { createLivingService } from './living-service.js';
 import { createSteamService } from './steam-service.js';
 import { createFocusApps } from './focus-apps.js';
@@ -441,6 +442,13 @@ function main() {
     const fetchCalendar = url => readCalendarFeed({ url, userAgent: `JoJoCompanion/${app.getVersion()}`,
       fetch: (target, options) => net.fetch(calBase ? `${calBase}/basic.ics` : target, options) });
     const syncCalendar = () => calendarLinks?.sync();
+    // Calendário de anime (AniList, grátis e sem login): só os ids dos animes seguidos saem.
+    companion.animeApi = new AnimeCalendario({ fetch: (url, options) => net.fetch(url, options) });
+    const syncAnime = () => companion.sincronizarAnime().catch(() => {});
+    const animeTimer = setInterval(syncAnime, 30 * 60e3);
+    powerMonitor.on('resume', () => setTimeout(syncAnime, 25e3));
+    setTimeout(syncAnime, TEST ? 0 : 25e3);
+    app.on('will-quit', () => clearInterval(animeTimer));
     companion.onCalendarSync = syncCalendar;
     powerMonitor.on('resume', () => setTimeout(syncCalendar, 20e3));
     // Ao abrir junto com o Windows a internet pode ainda não estar pronta: espera um pouco.
@@ -602,6 +610,7 @@ function main() {
 
     store.onChange((s, changed) => {
       if (changed.includes('agendaUrl') || changed.includes('agendaAtiva')) calendarLinks.settingsChanged();
+      if (changed.includes('animeAtivo') || changed.includes('animes')) companion.sincronizarAnime().catch(() => {});
       if (changed.includes('iaAtivo') && !s.iaAtivo) cerebro.parar('conversa desligada');
       log('info', `Configurações alteradas: ${changed.join(', ')}`);
       if (changed.includes('interactionHotkey')) registerHotkey();

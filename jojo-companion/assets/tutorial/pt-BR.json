@@ -848,6 +848,33 @@
           }
         }
       ]
+    },
+    {
+      "id": "animeCalendario",
+      "titulo": "Calendário de anime",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/anime"
+      ],
+      "configuracoes": [
+        "animeAtivo"
+      ],
+      "passos": [
+        {
+          "texto": "Me fala o anime que você está vendo e eu aviso quando sair episódio novo, vestido de algo do anime pra comemorar. Testa seguindo um.",
+          "tente": "/anime Dandadan",
+          "espera": {
+            "comando": "anime"
+          }
+        },
+        {
+          "texto": "/anime sozinho mostra os próximos episódios; /anime parar e o nome deixa de seguir. Também vale escrever \"me avisa quando sair episódio de One Piece\". Desliga em Configurações → Privacidade → Calendário de anime.",
+          "tente": "/anime",
+          "espera": {
+            "comando": "anime"
+          }
+        }
+      ]
     }
   ]
 }

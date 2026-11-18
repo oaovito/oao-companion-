@@ -50,6 +50,7 @@ import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
+import { AnimeCalendario, episodiosNovos, visualDoAnime, normTitulo, ANIME_MAX } from './anime-calendario.js';
 import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL } from './visual-nivel.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
@@ -130,6 +131,23 @@ const ANIM_ESPECIAIS = {
   rebolado: { estado: 'twerk', nome: 'Rebolado do meme', origem: 'meme do Among Us rebolando' },
   tigresa: { estado: 'tigresa', nome: 'Tigresa, tire sua roupa', origem: 'meme brasileiro "Tigresa, tire sua roupa"' },
 };
+// Calendário de anime em frase: "me avisa quando sair episódio de X", "segue o anime X".
+function pedidoDeAnime(text) {
+  const n = normalizeText(text).trim();
+  const m = n.match(/^(?:jojo )?(?:me )?(?:avisa|avise|me avisa)(?: quando)? (?:sair|lancar|tiver)(?: o)? (?:episodio|ep|eps|episodios) (?:novo )?(?:de|do|da) (.{2,60})$/)
+    || n.match(/^(?:jojo )?(?:segue|siga|acompanha|acompanhe) (?:o )?anime (.{2,60})$/)
+    || n.match(/^(?:para|pare) de seguir (?:o )?anime (.{2,60})$/);
+  if (!m) return null;
+  return /^(?:para|pare) de seguir/.test(n) ? `parar ${m[1]}` : m[1];
+}
+function quandoTexto(ms, agora) {
+  const d = new Date(ms);
+  const dias = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(agora.getFullYear(), agora.getMonth(), agora.getDate())) / 86400e3);
+  const hora = `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`;
+  if (dias === 0) return `hoje às ${hora}`;
+  if (dias === 1) return `amanhã às ${hora}`;
+  return `em ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')} às ${hora}`;
+}
 // Rebolado: intervalo mínimo no repouso e no foco, e chance a cada minuto do foco.
 const TWERK_IDLE_GAP_MS = 20 * 60e3;
 const TWERK_FOCO_GAP_MS = 6 * 60e3;
@@ -1344,6 +1362,7 @@ export class Companion {
       const pedido = parseBreakdownCommand(String(text).replace(/^\s*\/\S+\s*/, ''));
       return { text: pedido ? await this._breakdown(pedido.titulo) : this._fala('quebraAjuda'), command: cmd, conversationId: conv.id };
     }
+    if (cmd === 'anime') return { text: await this.comandoAnime(String(text).replace(/^\s*\/\S+\s*/, '')), command: cmd, conversationId: conv.id };
     if (['agendar', 'agendados', 'cancelar', 'whatsapp'].includes(cmd)) {
       return { text: await this._waCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, '')), command: cmd, conversationId: conv.id };
     }
@@ -1352,6 +1371,8 @@ export class Companion {
       return { text: await this._studyAction(parseStudyCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, ''))), command: cmd, conversationId: conv.id };
     }
     if (cmd) return this.runCommand(cmd, conv.id, text);
+    const pedidoAnime = pedidoDeAnime(text);
+    if (pedidoAnime) return { text: await this.comandoAnime(pedidoAnime), intent: 'anime', conversationId: conv.id };
     if (!this.dialogue) return null;
     // Segurança não entra na fila atrás de uma geração lenta.
     const urgent = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text)) || modoCiencia(text) === 'emergencia';
@@ -2669,7 +2690,11 @@ export class Companion {
   /** Canais das peças de nível vestidas (null se nenhuma). */
   _visualCanais(vestido = Object.keys(this.outfit).length > 0) {
     if (!this._refs) return null;
-    return canaisVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume, maoLivre: this._handFree() });
+    const base = canaisVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume, maoLivre: this._handFree() });
+    // Episódio novo de anime: por 20 s ele veste o visual do anime (ou a faixa de otaku) por cima.
+    const v = this.animeVisita;
+    if (v && this.clock.now() < v.ate) return { ...(base || {}), ...v.canais };
+    return base;
   }
 
   /**
@@ -4929,6 +4954,80 @@ export class Companion {
     if (Math.hypot(dx, dy) > 700) return null;
     const x = Math.max(-1, Math.min(1, dx / 350)) * (this.facing >= 0 ? 1 : -1);
     return { x: Math.round(x * 10) / 10, y: Math.round(Math.max(-1, Math.min(1, dy / 300)) * 10) / 10 };
+  }
+
+  // ---------------------------------------------------------------- calendário de anime
+
+  /** /anime: sem nada lista os próximos; "parar X" deixa de seguir; outro texto segue o anime. */
+  async comandoAnime(arg) {
+    const s = this.store.get();
+    const q = String(arg || '').trim();
+    if (!s.animeAtivo) return 'O calendário de anime está desligado nas Configurações (Privacidade). Liga lá que eu aviso cada episódio.';
+    const parar = q.match(/^(?:parar|para|tirar|tira|remover|esquecer)\s+(?:de\s+)?(?:seguir\s+)?(.+)$/i);
+    if (parar) {
+      const n = normTitulo(parar[1]);
+      const fica = s.animes.filter((a) => ![a.titulo, a.romaji, a.english].some((t) => normTitulo(t) === n || (n.length >= 4 && normTitulo(t).includes(n))));
+      if (fica.length === s.animes.length) return 'Esse eu nem seguia.';
+      this.store.update({ animes: fica });
+      return 'Parei de seguir. Episódio novo dele eu não aviso mais.';
+    }
+    if (!q) {
+      if (!s.animes.length) return 'Você não segue nenhum anime ainda. Fala /anime e o nome (ex.: /anime Dandadan) que eu aviso quando sair episódio.';
+      const linhas = s.animes.map((a) => {
+        const p = this.animeProximos?.[a.id];
+        return p ? `${a.titulo}: episódio ${p.episodio} ${quandoTexto(p.quando, this.dateNow())}` : `${a.titulo}: sem data de episódio novo`;
+      });
+      return `Animes que eu sigo com você: ${linhas.join('; ')}.`;
+    }
+    if (!this.animeApi) return 'Agora não consigo olhar o calendário. Tenta daqui a pouco.';
+    if (s.animes.length >= ANIME_MAX) return `Já são ${ANIME_MAX} animes. Tira algum (/anime parar nome) antes.`;
+    let achados;
+    try { achados = await this.animeApi.buscar(q); } catch { return 'O calendário de anime não respondeu agora. Tenta daqui a pouco.'; }
+    const a = achados[0];
+    if (!a) return `Não achei anime com esse nome: ${q}.`;
+    if (s.animes.some((x) => x.id === a.id)) return `Já sigo ${a.titulo} com você.`;
+    this.store.update({ animes: [...s.animes, { id: a.id, titulo: a.titulo, romaji: a.romaji, english: a.english, cor: a.cor }] });
+    if (a.proximo) this.animeProximos = { ...(this.animeProximos || {}), [a.id]: a.proximo };
+    const visual = visualDoAnime(a, this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []);
+    const prox = a.proximo ? ` Próximo: episódio ${a.proximo.episodio} ${quandoTexto(a.proximo.quando, this.dateNow())}.` : ' Sem episódio novo marcado por enquanto.';
+    return `Seguindo ${a.titulo}.${prox} Quando sair, eu aviso${visual ? ` vestido de ${visual.nome}` : ''}.`;
+  }
+
+  /** Busca a agenda dos animes seguidos (main chama a cada 30 min) e cumprimenta o que saiu. */
+  async sincronizarAnime() {
+    const s = this.store.get();
+    if (!s.animeAtivo || !s.animes.length || !this.animeApi) return [];
+    let ag;
+    try { ag = await this.animeApi.agenda(s.animes.map((a) => a.id)); } catch { return []; }
+    this.animeProximos = ag.proximos;
+    const novos = episodiosNovos(ag.saiu, s.animes, s.animeAvisados, Date.now());
+    for (const e of novos) if (!(this.animePendentes ||= []).some((x) => x.id === e.id && x.episodio === e.episodio)) this.animePendentes.push(e);
+    this._avisarAnime();
+    return novos;
+  }
+
+  /** Cumprimento do episódio novo com o visual do anime (ou a faixa de otaku), um por vez. */
+  _avisarAnime() {
+    const fila = this.animePendentes || [];
+    if (!fila.length || this._animeTimer) return;
+    const tentar = () => {
+      this._animeTimer = null;
+      if (!fila.length) return;
+      if (!this.started || this.work || this.fullscreenHidden || this.lolHidden || this.userHidden) { this._animeTimer = this.clock.setTimeout(tentar, 60e3); return; }
+      const e = fila.shift();
+      const s = this.store.get();
+      this.store.update({ animeAvisados: [...s.animeAvisados, `${e.id}:${e.episodio}`] });
+      const now = this.clock.now();
+      const visual = visualDoAnime(e.anime, this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []);
+      const canais = visual ? canaisVisual({ pecas: { [visual.parte]: visual.id } }, this._refs, this.progress.nivel) : { animeFa: 1, nvOlhos: 6 };
+      this.animeVisita = { ate: now + 20000, canais, id: e.id, episodio: e.episodio, visual: visual?.id || null };
+      this.clock.setTimeout(() => { if (this.animeVisita && this.clock.now() >= this.animeVisita.ate) { this.animeVisita = null; this._applyLayout(true); } }, 20050);
+      if (this.catalogById.has('comemorar')) this.playCatalog('comemorar', { source: 'evento', speak: false });
+      this.say(`Saiu o episódio ${e.episodio} de ${e.anime.titulo}, {apelido}! ${visual ? `Vim de ${visual.nome} pra comemorar.` : 'Faixa de otaku na cabeça e bora assistir.'}`.replace('{apelido}', this.personality.get().apelido || 'Manu'), 'speech');
+      this._applyLayout(true);
+      if (fila.length) this._animeTimer = this.clock.setTimeout(tentar, 25e3);
+    };
+    tentar();
   }
 
   /** União do espaço medido (jojo.room.json → visuais) dos visuais ligados nos canais. */

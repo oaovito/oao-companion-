@@ -3,6 +3,12 @@
 ## Não lançado — 100 visuais de anime, rebolado no foco e Tigresa
 
 ### Novidades
+- Calendário de anime: "/anime Dandadan" (ou "me avisa quando sair episódio de One Piece")
+  segue o anime; quando sai episódio novo, o JoJo avisa e comemora vestido do visual daquele
+  anime, se já estiver liberado, ou com uma faixa de otaku na cabeça. "/anime" mostra os
+  próximos episódios e "/anime parar nome" deixa de seguir. Fonte: AniList, grátis e sem
+  login; só o nome buscado e os animes seguidos saem do PC. Desliga em Configurações →
+  Privacidade → Calendário de anime. No Modo Trabalho e com tela cheia, o aviso espera.
 - "Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!" (meme do Kung Fu Panda): falando
   a frase no chat (ou "Tigresa, tire sua roupa"), o JoJo aparece de Mestre Tigresa, com a cara
   laranja de máscara branca, listras e orelhas de tigre, colete dourado de folhas vermelhas,
