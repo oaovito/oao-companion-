@@ -6,7 +6,10 @@ Pedido do usuário: comida fora da dieta → slide de funeral com fotos de uma p
 no ChatGPT (ele mostrou o print da geração; `assets/funeral/foto01–12.jpg`, 360 px). Detecção
 na intenção `docinho` (`COMIDA_GORDA` em `scripted-provider.js`), que agora vence o pacote de
 comida; `_doChatAction('nojo')` → `Companion._funeral` (11 s, 6 fotos sorteadas, legenda);
-layout no lugar do balão (`funeral` no estado do overlay, `#funeral` sem clique). Testes:
+layout no lugar do balão (`funeral` no estado do overlay, `#funeral` sem clique). Visual "Luto do
+Shape" (`partesDoLuto`, canal `nvLuto`): vômito, poça, lágrimas; o overlay liga boca aberta,
+tristeza e o movimento enquanto há funeral. Auditoria 18/11: todos os 269 visuais com cores do
+personagem + forma (teste "diretrizes" em `visual-nivel.test.js`). Testes:
 `pacotes.test.js` e E2E em `needs.windows.mjs` (47 E2E).
 
 ## Visuais por nível (não lançado), 18/11/2026

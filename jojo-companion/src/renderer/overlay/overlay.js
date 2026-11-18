@@ -561,6 +561,16 @@ function draw(now) {
   // Guarda-roupa: peças escolhidas por ela (canais costume_*, prop_*, sexy).
   if (s.outfit) Object.assign(pose, s.outfit);
   // Visuais liberados por nível (coroa, colar, cinturão, aura…).
+  // Luto do Shape: durante o funeral ele vomita e chora (boca aberta, cinza de tristeza).
+  if (s.funeral) {
+    const t = now / 1000;
+    Object.assign(pose, {
+      nvLuto: 1, jaw: Math.max(pose.jaw || 0, 1.05), eyeOpen: 0.55, browShow: 1, brow: -1, moodSad: 0.7,
+      nvLutoJato: reduced ? 1 : 1 + 0.12 * Math.sin(t * 9),
+      nvLutoQueda: reduced ? 0 : (t * 26) % 8,
+      nvLutoLagrima: reduced ? 4 : (t * 10) % 14,
+    });
+  }
   if (s.visualNivel) {
     Object.assign(pose, s.visualNivel);
     // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,

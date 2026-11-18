@@ -909,7 +909,12 @@
    "anim": "quedaBraco",
    "transforma": {
     "corpo": 1.15,
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "pernas": "#1e63c6",
+     "barriga": "#eadcc0",
+     "corpo": "#5f76a8"
+    }
    }
   },
   {
@@ -999,7 +1004,12 @@
    "anim": "modoFera",
    "transforma": {
     "olhos": "semicerrados",
-    "corpo": 1.2
+    "corpo": 1.2,
+    "pele": {
+     "corpo": "#556b2f",
+     "bracos": "#5f76a8",
+     "pernas": "#556b2f"
+    }
    }
   },
   {
@@ -1017,7 +1027,11 @@
    "fala": "Sunga de pose. O pump é a melhor sensação do mundo.",
    "anim": "duploBiceps",
    "transforma": {
-    "corpo": 1.45
+    "corpo": 1.45,
+    "pele": {
+     "musculo": "#2b3a5c",
+     "pernas": "#212121"
+    }
    }
   },
   {
@@ -1058,7 +1072,11 @@
    "fala": "Yeah, buddy! Leve, leve, tudo leve.",
    "anim": "halteres",
    "transforma": {
-    "corpo": 1.5
+    "corpo": 1.5,
+    "pele": {
+     "pernas": "#c62828",
+     "musculo": "#2b3a5c"
+    }
    }
   },
   {
@@ -1335,7 +1353,8 @@
      "corpo": "#37474f",
      "membros": "#37474f",
      "barriga": "#1e88e5"
-    }
+    },
+    "olhos": "grandes"
    }
   },
   {
@@ -1527,7 +1546,9 @@
      "corpo": "#1a1a2e",
      "membros": "#1a1a2e",
      "barriga": "#1a1a2e"
-    }
+    },
+    "cabeca": 1.05,
+    "corpo": 1.1
    }
   },
   {
@@ -1713,7 +1734,9 @@
     "pele": {
      "corpo": "#c2a26b",
      "barriga": "#f5e6c8"
-    }
+    },
+    "olhos": "pontos",
+    "boca": 1.2
    }
   },
   {
@@ -1784,7 +1807,8 @@
      "bracos": "#212121",
      "pernas": "#1e63c6",
      "barriga": "#ffffff"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -1806,7 +1830,8 @@
      "corpo": "#a1887f",
      "membros": "#8d6e63",
      "barriga": "#d7ccc8"
-    }
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -1828,7 +1853,8 @@
      "corpo": "#111111",
      "membros": "#111111",
      "barriga": "#212121"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2078,7 +2104,8 @@
      "corpo": "#00695c",
      "membros": "#00695c",
      "barriga": "#004d40"
-    }
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -2126,7 +2153,9 @@
      "corpo": "#c62828",
      "barriga": "#d4a72c",
      "pernas": "#1e63c6"
-    }
+    },
+    "olhos": "anime",
+    "corpo": 1.15
    }
   },
   {
@@ -2219,7 +2248,8 @@
      "corpo": "#424242",
      "barriga": "#5d4037",
      "membros": "#3e2723"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2241,7 +2271,8 @@
      "corpo": "#212121",
      "membros": "#212121",
      "barriga": "#8d1c1c"
-    }
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -2261,7 +2292,9 @@
    "transforma": {
     "pele": {
      "pernas": "#2e7d32"
-    }
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.15
    }
   },
   {
@@ -2283,7 +2316,8 @@
      "corpo": "#5d4037",
      "barriga": "#f5e6c8",
      "membros": "#5d4037"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2329,7 +2363,8 @@
     "pele": {
      "corpo": "#3e2723",
      "membros": "#3e2723"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2371,7 +2406,11 @@
    "fala": "Bermuda de salva-vidas. Correndo em câmera lenta.",
    "anim": "puloOndas",
    "transforma": {
-    "corpo": 1.15
+    "corpo": 1.15,
+    "pele": {
+     "pernas": "#e53935",
+     "corpo": "#5f76a8"
+    }
    }
   },
   {
@@ -2391,7 +2430,11 @@
    "transforma": {
     "corpo": 1.5,
     "pele": {
-     "musculo": "#3e2723"
+     "musculo": "#3e2723",
+     "corpo": "#8d5524",
+     "membros": "#8d5524",
+     "barriga": "#a1887f",
+     "cabeca": "#8d5524"
     }
    }
   },
@@ -2489,7 +2532,9 @@
      "corpo": "#c62828",
      "membros": "#c62828",
      "barriga": "#ffd400"
-    }
+    },
+    "olhos": "grandes",
+    "cabeca": 1.1
    }
   },
   {
@@ -2555,7 +2600,8 @@
      "corpo": "#b87333",
      "barriga": "#d4a72c",
      "pernas": "#b87333"
-    }
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -2575,7 +2621,11 @@
    "transforma": {
     "olhos": "brilho",
     "pele": {
-     "olho": "#e53935"
+     "olho": "#e53935",
+     "corpo": "#3e2723",
+     "membros": "#3e2723",
+     "barriga": "#5d4037",
+     "cabeca": "#e8c4c4"
     }
    }
   },
@@ -2598,7 +2648,8 @@
      "corpo": "#ffd400",
      "membros": "#ffd400",
      "barriga": "#ffeb3b"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2620,7 +2671,9 @@
      "corpo": "#1b8a3c",
      "membros": "#1b8a3c",
      "barriga": "#ffffff"
-    }
+    },
+    "olhos": "grandes",
+    "suor": true
    }
   },
   {
@@ -2642,7 +2695,8 @@
      "corpo": "#c62828",
      "membros": "#c62828",
      "barriga": "#c62828"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2710,7 +2764,9 @@
    "transforma": {
     "corpo": 1.4,
     "pele": {
-     "musculo": "#8d1c1c"
+     "musculo": "#8d1c1c",
+     "corpo": "#5f76a8",
+     "pernas": "#212121"
     }
    }
   },
@@ -2752,7 +2808,9 @@
    "transforma": {
     "pele": {
      "pernas": "#1e63c6"
-    }
+    },
+    "corpo": 1.2,
+    "olhos": "brilho"
    }
   },
   {
@@ -2842,7 +2900,8 @@
      "corpo": "#8d6e63",
      "barriga": "#d7ccc8",
      "pernas": "#a1887f"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2864,7 +2923,8 @@
      "corpo": "#c2b280",
      "membros": "#c2b280",
      "barriga": "#c2b280"
-    }
+    },
+    "olhos": "grandes"
    }
   },
   {
@@ -2886,7 +2946,8 @@
      "corpo": "#f5f5f5",
      "membros": "#f5f5f5",
      "barriga": "#f5f5f5"
-    }
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -2908,7 +2969,8 @@
      "corpo": "#ffd400",
      "membros": "#ffd400",
      "barriga": "#ffd400"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -2976,7 +3038,8 @@
      "corpo": "#6b7a3a",
      "membros": "#6b7a3a",
      "barriga": "#6b7a3a"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -3066,7 +3129,9 @@
      "membros": "#eeeeee",
      "cabeca": "#eeeeee",
      "barriga": "#eeeeee"
-    }
+    },
+    "olhos": "vazios",
+    "boca": 1.3
    }
   },
   {
@@ -3138,7 +3203,8 @@
      "corpo": "#455a64",
      "membros": "#455a64",
      "barriga": "#90a4ae"
-    }
+    },
+    "corpo": 1.2
    }
   },
   {
@@ -3211,7 +3277,9 @@
      "corpo": "#ffffff",
      "barriga": "#7cb342",
      "membros": "#ffffff"
-    }
+    },
+    "olhos": "anime",
+    "cabeca": 1.1
    }
   },
   {
@@ -3314,7 +3382,8 @@
      "corpo": "#5d4037",
      "membros": "#5d4037",
      "barriga": "#d7ccc8"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -3334,7 +3403,12 @@
    "reacao": "pk_auraFarming",
    "transforma": {
     "olhos": "semicerrados",
-    "corpo": 1.15
+    "corpo": 1.15,
+    "pele": {
+     "corpo": "#ffffff",
+     "bracos": "#ffffff",
+     "pernas": "#1e63c6"
+    }
    }
   },
   {
@@ -3358,7 +3432,8 @@
      "bracos": "#ffffff",
      "pernas": "#212121",
      "barriga": "#ffffff"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -3477,7 +3552,9 @@
     "pele": {
      "corpo": "#78909c",
      "barriga": "#eceff1"
-    }
+    },
+    "olhos": "pontos",
+    "boca": 1.3
    }
   },
   {
@@ -3549,7 +3626,11 @@
     "boca": 1.65,
     "corpo": 1.45,
     "barrigona": 1.3,
-    "baba": true
+    "baba": true,
+    "pele": {
+     "corpo": "#4fc3f7",
+     "barriga": "#ffffff"
+    }
    }
   },
   {
@@ -3617,7 +3698,9 @@
      "corpo": "#ffffff",
      "barriga": "#212121",
      "pernas": "#212121"
-    }
+    },
+    "olhos": "vazios",
+    "boca": 1.4
    }
   },
   {
@@ -3757,7 +3840,8 @@
      "corpo": "#1a237e",
      "membros": "#1a237e",
      "barriga": "#8d6e63"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -3856,7 +3940,8 @@
     "pele": {
      "corpo": "#8d1c1c",
      "membros": "#8d1c1c"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4095,7 +4180,8 @@
      "corpo": "#616161",
      "membros": "#616161",
      "barriga": "#757575"
-    }
+    },
+    "olhos": "vazios"
    }
   },
   {
@@ -4117,7 +4203,8 @@
      "corpo": "#3e2723",
      "membros": "#3e2723",
      "barriga": "#5d4037"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4188,7 +4275,8 @@
     "pele": {
      "corpo": "#5d4037",
      "barriga": "#f5e6c8"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4237,7 +4325,9 @@
      "corpo": "#1e63c6",
      "membros": "#1e63c6",
      "barriga": "#ffd400"
-    }
+    },
+    "olhos": "grandes",
+    "boca": 1.2
    }
   },
   {
@@ -4258,7 +4348,8 @@
     "pele": {
      "corpo": "#616161",
      "membros": "#616161"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4350,7 +4441,8 @@
      "corpo": "#ff6f00",
      "pernas": "#212121",
      "barriga": "#ff6f00"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4371,8 +4463,10 @@
     "pele": {
      "corpo": "#616161",
      "membros": "#616161",
-     "barriga": "#d4a72c"
-    }
+     "barriga": "#d4a72c",
+     "olho": "#ffd54f"
+    },
+    "olhos": "brilho"
    }
   },
   {
@@ -4421,7 +4515,8 @@
      "corpo": "#eceff1",
      "membros": "#eceff1",
      "barriga": "#c62828"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4445,7 +4540,8 @@
      "bracos": "#ff4081",
      "barriga": "#ffffff",
      "pernas": "#00bcd4"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4490,7 +4586,8 @@
      "corpo": "#ff7043",
      "membros": "#ff7043",
      "barriga": "#ffffff"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4511,7 +4608,9 @@
     "pele": {
      "corpo": "#212121",
      "pernas": "#c62828"
-    }
+    },
+    "olhos": "anime",
+    "cabeca": 1.1
    }
   },
   {
@@ -4556,7 +4655,8 @@
     "pele": {
      "corpo": "#8d6e63",
      "barriga": "#d7ccc8"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4577,7 +4677,8 @@
     "pele": {
      "corpo": "#4e5b31",
      "membros": "#4e5b31"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4772,7 +4873,8 @@
      "corpo": "#1a237e",
      "membros": "#1a237e",
      "barriga": "#eceff1"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4816,7 +4918,8 @@
     "pele": {
      "corpo": "#c62828",
      "membros": "#c62828"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -4937,7 +5040,9 @@
     "pele": {
      "corpo": "#8d6e63",
      "membros": "#8d6e63"
-    }
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.15
    }
   },
   {
@@ -4982,8 +5087,10 @@
     "pele": {
      "corpo": "#0d47a1",
      "barriga": "#ffffff",
-     "pernas": "#0d47a1"
-    }
+     "pernas": "#0d47a1",
+     "olho": "#1e88e5"
+    },
+    "olhos": "brilho"
    }
   },
   {
@@ -5003,8 +5110,10 @@
    "transforma": {
     "pele": {
      "corpo": "#ff6f00",
-     "pernas": "#212121"
-    }
+     "pernas": "#212121",
+     "olho": "#ff8f00"
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -5025,7 +5134,8 @@
     "pele": {
      "corpo": "#212121",
      "membros": "#212121"
-    }
+    },
+    "olhos": "grandes"
    }
   },
   {
@@ -5161,7 +5271,9 @@
     "pele": {
      "corpo": "#9e9e9e",
      "membros": "#9e9e9e"
-    }
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.15
    }
   },
   {
@@ -5181,8 +5293,10 @@
    "transforma": {
     "pele": {
      "corpo": "#ff8f00",
-     "pernas": "#1e63c6"
-    }
+     "pernas": "#1e63c6",
+     "olho": "#26a69a"
+    },
+    "olhos": "anime"
    }
   },
   {
@@ -5204,7 +5318,8 @@
      "corpo": "#eceff1",
      "membros": "#eceff1",
      "barriga": "#eceff1"
-    }
+    },
+    "olhos": "grandes"
    }
   },
   {
@@ -5224,8 +5339,10 @@
    "transforma": {
     "pele": {
      "corpo": "#5d4037",
-     "membros": "#5d4037"
-    }
+     "membros": "#5d4037",
+     "olho": "#1e88e5"
+    },
+    "olhos": "brilho"
    }
   },
   {
@@ -5271,7 +5388,9 @@
      "corpo": "#ff8f00",
      "barriga": "#ffd400",
      "membros": "#ff8f00"
-    }
+    },
+    "olhos": "grandes",
+    "cabeca": 1.1
    }
   },
   {
@@ -5526,7 +5645,13 @@
    "transforma": {
     "olhos": "grandes",
     "cabeca": 1.15,
-    "boca": 0.45
+    "boca": 0.45,
+    "pele": {
+     "corpo": "#7b1fa2",
+     "membros": "#7b1fa2",
+     "cabeca": "#7b1fa2",
+     "barriga": "#e1bee7"
+    }
    }
   },
   {
@@ -5653,7 +5778,15 @@
    "anim": "rirPropriaPiada",
    "colecao": "South Park",
    "transforma": {
-    "moscas": true
+    "moscas": true,
+    "olhos": "grandes",
+    "boca": 0.6,
+    "pele": {
+     "corpo": "#795548",
+     "membros": "#795548",
+     "cabeca": "#795548",
+     "barriga": "#8d6e63"
+    }
    }
   },
   {
@@ -5677,7 +5810,8 @@
      "corpo": "#bcaaa4",
      "membros": "#bcaaa4",
      "barriga": "#a1887f"
-    }
+    },
+    "corpo": 1.2
    }
   },
   {
@@ -5860,7 +5994,12 @@
    "anim": "seAcharMaximo",
    "transforma": {
     "olhos": "semicerrados",
-    "corpo": 1.1
+    "corpo": 1.1,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "barriga": "#ffffff"
+    }
    }
   },
   {
@@ -5961,7 +6100,11 @@
     "cabeca": 1.55,
     "olhos": "brilho",
     "pele": {
-     "olho": "#e1bee7"
+     "olho": "#e1bee7",
+     "cabeca": "#ce93d8",
+     "corpo": "#4a148c",
+     "membros": "#4a148c",
+     "barriga": "#7c4dff"
     }
    }
   },
@@ -5985,7 +6128,8 @@
     "pele": {
      "corpo": "#ff8f00",
      "bracos": "#ff8f00"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -6007,7 +6151,9 @@
    "transforma": {
     "pele": {
      "corpo": "#90a4ae"
-    }
+    },
+    "olhos": "semicerrados",
+    "cabeca": 1.1
    }
   },
   {
@@ -6157,7 +6303,12 @@
    "anim": "dancarSemRitmo",
    "transforma": {
     "olhos": "grandes",
-    "suor": true
+    "suor": true,
+    "pele": {
+     "corpo": "#e53935",
+     "bracos": "#e53935",
+     "pernas": "#212121"
+    }
    }
   },
   {
@@ -6181,7 +6332,9 @@
      "corpo": "#80deea",
      "membros": "#80deea",
      "barriga": "#ffffff"
-    }
+    },
+    "olhos": "semicerrados",
+    "boca": 1.2
    }
   },
   {
@@ -6204,7 +6357,10 @@
     "olhos": "grandes",
     "suor": true,
     "pele": {
-     "esclera": "#e1f5fe"
+     "esclera": "#e1f5fe",
+     "corpo": "#81d4fa",
+     "membros": "#81d4fa",
+     "barriga": "#e1f5fe"
     }
    }
   },
@@ -6277,7 +6433,11 @@
    "fala": "Thicc com dois c. Glúteo de aço, pudor zero.",
    "anim": "desfile",
    "transforma": {
-    "corpo": 1.45
+    "corpo": 1.45,
+    "pele": {
+     "pernas": "#f06292",
+     "corpo": "#5f76a8"
+    }
    }
   },
   {
@@ -6301,7 +6461,8 @@
      "corpo": "#111111",
      "membros": "#111111",
      "barriga": "#ffffff"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -6374,7 +6535,9 @@
     "pele": {
      "corpo": "#9e9e9e",
      "membros": "#9e9e9e"
-    }
+    },
+    "olhos": "grandes",
+    "boca": 1.4
    }
   },
   {
@@ -6528,7 +6691,12 @@
    "anim": "aplausosImaginarios",
    "transforma": {
     "corpo": 1.2,
-    "suor": true
+    "suor": true,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#5f76a8",
+     "pernas": "#424242"
+    }
    }
   },
   {
@@ -6551,7 +6719,12 @@
     "corpo": 1.45,
     "barrigona": 1.3,
     "suor": true,
-    "papada": true
+    "papada": true,
+    "pele": {
+     "corpo": "#ffd400",
+     "barriga": "#fff59d",
+     "pernas": "#1e63c6"
+    }
    }
   },
   {
@@ -6599,7 +6772,8 @@
     "pele": {
      "corpo": "#eceff1",
      "bracos": "#eceff1"
-    }
+    },
+    "olhos": "semicerrados"
    }
   },
   {
@@ -6667,7 +6841,11 @@
    "fala": "W rizz. Cantada nível tubarão.",
    "anim": "cantadaRuim",
    "transforma": {
-    "olhos": "semicerrados"
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#ad1457",
+     "bracos": "#ad1457"
+    }
    }
   },
   {
@@ -6687,7 +6865,11 @@
    "fala": "Gyatt! Tô falando do MEU glúteo, calma.",
    "anim": "desfile",
    "transforma": {
-    "corpo": 1.45
+    "corpo": 1.45,
+    "pele": {
+     "pernas": "#e91e63",
+     "corpo": "#5f76a8"
+    }
    }
   },
   {
@@ -6707,7 +6889,12 @@
    "fala": "Delulu é a solução. Eu sou lindo e não é delírio.",
    "anim": "olharApaixonado",
    "transforma": {
-    "olhos": "coracao"
+    "olhos": "coracao",
+    "pele": {
+     "corpo": "#f8bbd0",
+     "membros": "#f8bbd0",
+     "barriga": "#fce4ec"
+    }
    }
   },
   {
@@ -6727,7 +6914,12 @@
    "fala": "Big Dick Energy. Não pergunta, só sente.",
    "anim": "superioridade",
    "transforma": {
-    "corpo": 1.3
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#b71c1c",
+     "bracos": "#5f76a8",
+     "pernas": "#212121"
+    }
    }
   },
   {
@@ -6748,7 +6940,12 @@
    "anim": "selfie",
    "transforma": {
     "olhos": "semicerrados",
-    "corpo": 1.2
+    "corpo": 1.2,
+    "pele": {
+     "corpo": "#f48fb1",
+     "bracos": "#5f76a8",
+     "pernas": "#212121"
+    }
    }
   },
   {
@@ -6768,7 +6965,12 @@
    "fala": "Chifre? Não, é capacete viking. Juro.",
    "anim": "naoFuiEu",
    "transforma": {
-    "chifres": "diabo"
+    "chifres": "diabo",
+    "olhos": "semicerrados",
+    "pele": {
+     "cabeca": "#8d6e63",
+     "corpo": "#5f76a8"
+    }
    }
   },
   {
@@ -6790,7 +6992,12 @@
    "transforma": {
     "olhos": "coracao",
     "papada": true,
-    "barrigona": 1.1
+    "barrigona": 1.1,
+    "pele": {
+     "corpo": "#a1887f",
+     "barriga": "#d7ccc8",
+     "pernas": "#5d4037"
+    }
    }
   },
   {
@@ -6812,7 +7019,10 @@
    "transforma": {
     "olhos": "semicerrados",
     "pele": {
-     "esclera": "#ffcdd2"
+     "esclera": "#ffcdd2",
+     "corpo": "#2e7d32",
+     "bracos": "#2e7d32",
+     "pernas": "#1e63c6"
     }
    }
   },
@@ -6836,7 +7046,8 @@
     "pele": {
      "corpo": "#c62828",
      "bracos": "#c62828"
-    }
+    },
+    "olhos": "coracao"
    }
   },
   {
@@ -6932,7 +7143,12 @@
    "anim": "selfie",
    "transforma": {
     "olhos": "semicerrados",
-    "boca": 0.6
+    "boca": 0.6,
+    "pele": {
+     "corpo": "#ff4081",
+     "bracos": "#ff4081",
+     "pernas": "#212121"
+    }
    }
   },
   {
@@ -7025,7 +7241,11 @@
    "anim": "espelhoInvisivel",
    "transforma": {
     "olhos": "semicerrados",
-    "corpo": 1.25
+    "corpo": 1.25,
+    "pele": {
+     "pernas": "#212121",
+     "corpo": "#5f76a8"
+    }
    }
   }
  ]

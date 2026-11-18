@@ -31,6 +31,9 @@
 - Funeral do shape: quando ela fala de comer doce, pizza, lanche, fritura, refri ou qualquer
   coisa fora da dieta de atleta, no lugar do balão aparece um slide de funeral ("Em memória do
   shape") com as fotos passando, em preto e branco, e uma legenda; some em uns 11 segundos.
+  Enquanto isso o JoJo fica no visual "Luto do Shape": vomitando verde até a poça no chão,
+  chorando, de boca aberta e cinza de tristeza. Também vale para "que vontade de comer uma
+  pizza", "queria tanto um chocolate" e parecidos.
 
 ### Melhorias
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda

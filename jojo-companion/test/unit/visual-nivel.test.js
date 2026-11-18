@@ -339,3 +339,25 @@ test('variações animadas: com visual vestido, o repouso às vezes faz a anima�
     e.companion.stop();
   }
 });
+
+test('diretrizes: todo visual tem o capricho do panda (cores do personagem + forma) e nenhum arquinho finge orelha', () => {
+  for (const p of CAT) {
+    const t = p.transforma || {};
+    const pele = t.pele || {};
+    assert.ok(pele.corpo || pele.cabeca || pele.membros || pele.bracos || pele.pernas || pele.barriga, `${p.titulo}: sem cores do personagem`);
+    assert.ok(t.olhos || t.cabeca || t.corpo || t.boca || t.orelhas || t.chifres || t.barrigona, `${p.titulo}: sem mudança de forma`);
+    // "arco" só existe em objeto que é arco de verdade (fone, tiara, cajado), nunca segurando orelha.
+    for (const x of partesDaPeca(p)) if (/_arco$/.test(x.part.id)) assert.ok(['fone', 'tiara', 'cajado'].includes(p.forma), `${p.titulo}: arquinho`);
+    if (/orelh/i.test(p.nome)) assert.ok(t.orelhas || t.orelhasRedondas, `${p.titulo}: orelha tem que sair da cabeça`);
+  }
+});
+
+test('Luto do Shape: durante o funeral ele vomita e chora (partes ligadas por nvLuto)', async () => {
+  const { partesDoLuto, LUTO } = await import('../../src/core/visual-nivel.js');
+  assert.equal(LUTO.nome, 'Luto do Shape');
+  const ids = partesDoLuto().map((x) => x.part.id);
+  for (const id of ['luto_jato', 'luto_queda', 'luto_poca', 'luto_lagrimas']) assert.ok(ids.includes(id), id);
+  assert.ok(partesDoLuto().every((x) => x.part.showIf === 'nvLuto'));
+  const r = rigComVisuais(RIG, REF);
+  assert.ok(r.groups.flatMap((g) => g.parts).some((p) => p.id === 'luto_jato'));
+});

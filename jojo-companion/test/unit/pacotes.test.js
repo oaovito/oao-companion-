@@ -100,6 +100,11 @@ test('companion: "vou pedir pizza" → funeral do shape no lugar do balão (pedi
   assert.ok(st.funeral.legenda.length > 5);
   e.clock.advance(12000);
   assert.equal(e.overlay.state.funeral, null, 'some sozinho');
+  // "que vontade de comer uma pizza" (exemplo do pedido) também abre o funeral.
+  await chatAdv(e, 'que vontade de comer uma pizza');
+  e.clock.advance(300);
+  assert.ok(e.overlay.state.funeral, 'vontade de pizza → funeral');
+  e.clock.advance(12000);
   // Comida de atleta não dispara.
   await chatAdv(e, 'vou comer frango com batata doce');
   assert.equal(e.overlay.state.funeral, null);

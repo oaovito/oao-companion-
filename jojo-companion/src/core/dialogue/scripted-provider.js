@@ -32,7 +32,7 @@ export const INTENTS = [
   // "E se eu comer um docinho?" (e variações): nojo e a pergunta da aberração.
   { id: 'docinho', patterns: [/\b((e se eu|posso|vou|quero|devo|deveria|to com vontade de|tou com vontade de|bora|pode) (comer|chupar|pegar|atacar|mandar( ver)?)( n?(um|uma|uns|umas|o|a|os|as))? (docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|bombo\w*|bala\w*|balinha\w*|sobremesa\w*|bolo\w*|sorvete\w*|pudim|torta|beijinho\w*|pacoca|pacoquinha|cookie\w*|biscoito recheado|donut\w*|rosquinha\w*|trufa\w*|bombom\w*))\b/, /\b(comer|comi|como) (um |uma |uns |umas )?(docinho\w*|doce\w*|brigadeiro\w*|chocolate\w*|sobremesa\w*|bolo\w*|sorvete\w*|bombom\w*)\b/,
     // Qualquer comida fora da dieta de atleta (pizza, lanche, fritura, refri…): vira o funeral do shape.
-    new RegExp(`\\b(${VERBOS_COMER}) (n?(um|uma|uns|umas|o|a|os|as|uma fatia de|um pedaco de|um pouco de|mais) )?(${COMIDA_GORDA})\\b`),
+    new RegExp(`\\b(${VERBOS_COMER}) ((tanto|muito|so|mais|demais) )?(n?(um|uma|uns|umas|o|a|os|as|uma fatia de|um pedaco de|um pouco de|mais) )?(${COMIDA_GORDA})\\b`),
     new RegExp(`\\b(${COMIDA_GORDA}) (hoje|agora|de novo|de noite|no jantar|no almoco|pra janta|pro almoco)\\b`)] },
   { id: 'avc', patterns: [/^(jojo )?avc[!?]*$/] },
   { id: 'dressDown', patterns: [/\b((vai |pode )?(vestir|veste|coloca|poe|bota) uma roupa|veste roupa|se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
