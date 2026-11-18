@@ -35,6 +35,9 @@
   pizza", "queria tanto um chocolate" e parecidos.
 
 ### Melhorias
+- Conversa: quando o JoJo acerta a resposta mas emenda uma frase de desdém ("It's a simple
+  question", "não precisa perguntar de novo"), sai só essa frase e a resposta certa fica, em
+  vez de cair na resposta programada.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

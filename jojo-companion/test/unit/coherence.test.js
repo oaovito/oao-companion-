@@ -555,3 +555,23 @@ test('cancelamento do engine chega ao fetch local do Ollama', async () => {
   await assert.rejects(pending, /tempo esgotado/);
   assert.equal(childSignal.aborted, true);
 });
+
+test('desdém: sai só a frase de desdém e a resposta certa fica (pedido de 18/11/2026)', async () => {
+  const { semDesdem } = await import('../../src/core/dialogue/coherence.js');
+  assert.equal(semDesdem('You mentioned a cat, Emanuele. It’s a simple question.'), 'You mentioned a cat, Emanuele.');
+  assert.equal(semDesdem('Você disse que sua cor preferida é verde, Emanuele. Não precisa perguntar de novo.'), 'Você disse que sua cor preferida é verde, Emanuele.');
+  assert.equal(erroDeCoerencia('Which animal did I just mention?', semDesdem('You mentioned a cat, Emanuele. It’s a simple question.')), null);
+  // Só desdém: nada sobra, continua barrado.
+  assert.equal(semDesdem('It’s a simple question.'), 'It’s a simple question.');
+  assert.equal(erroDeCoerencia('Which animal did I just mention?', 'It’s a simple question.'), 'insulto à usuária ou à pergunta');
+  assert.equal(semDesdem('Verde, Manu.'), 'Verde, Manu.');
+});
+
+test('desdém no motor: a resposta do modelo chega sem a frase e continua sendo do modelo', async () => {
+  const engine = new DialogueEngine({ llm: model({ text: 'You mentioned a cat, Emanuele. It’s a simple question.' }) });
+  await engine.reply('My favorite animal is a cat.');
+  const r = await engine.reply('Which animal did I just mention?');
+  assert.equal(r.intent, 'ia');
+  assert.match(r.text, /cat/);
+  assert.doesNotMatch(r.text, /simple question/);
+});

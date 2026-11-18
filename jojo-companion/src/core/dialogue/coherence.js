@@ -127,6 +127,22 @@ function preferenciaInventada(output, known, userFacts) {
   return false;
 }
 
+// Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
+const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:simple|silly|stupid|dumb) question\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar)\b/;
+
+/**
+ * Tira só as frases de desdém e mantém o resto da resposta ("You mentioned a cat,
+ * Emanuele. It's a simple question." → "You mentioned a cat, Emanuele."). Se não
+ * sobrar nada, devolve o texto como veio e a guarda de coerência descarta.
+ */
+export function semDesdem(text) {
+  const t = String(text || '');
+  const frases = t.split(/(?<=[.!?])\s+/);
+  const resto = frases.filter((f) => !DESDEM.test(norm(f)));
+  if (resto.length === frases.length || !resto.length) return t;
+  return resto.join(' ').trim();
+}
+
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
 export function erroDeCoerencia(input, output, history = []) {
   const q = norm(input);
@@ -140,7 +156,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Frase em que ele fala de si mesmo ("eu sou um tubarão idiota", "que pergunta idiota eu fiz") pode.
   const insultoSolto = r.split(/[.!?]+/).some((frase) => /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/.test(frase)
     && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase));
-  const desdem = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:simple|silly|stupid|dumb) question\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar)\b/.test(r);
+  const desdem = DESDEM.test(r);
   if (questionInsult || personalInsult || insultoSolto || desdem) return 'insulto à usuária ou à pergunta';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
