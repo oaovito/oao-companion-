@@ -125,7 +125,16 @@ test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central 
   assert.deepEqual(snap.vestido, { cabeca: 'nv011' });
   assert.ok(snap.partes.every((pt) => pt.itens.length > 0), 'parte sem peça liberada nem aparece');
   assert.ok(snap.partes.flatMap((pt) => pt.itens).every((i) => i.obra && i.titulo), 'cada peça mostra a obra');
-  assert.deepEqual(visualSnapshot({}, REF, 1), { vestido: {}, partes: [], total: 0 });
+  const zero = visualSnapshot({}, REF, 1);
+  assert.deepEqual([zero.vestido, zero.partes, zero.total, zero.novos], [{}, [], 0, 0]);
+  // Bloqueados: só cadeado com o nível; nenhuma pista do que é.
+  assert.equal(snap.bloqueados.length, CAT.length - (L - 1));
+  for (const b of snap.bloqueados) {
+    assert.deepEqual(Object.keys(b), ['nivel']);
+    assert.ok(b.nivel > L);
+  }
+  // Liberados: descrição = fala da referência.
+  for (const i of snap.partes.flatMap((pt) => pt.itens)) assert.equal(i.descricao, CAT.find((p) => p.id === i.id).fala);
 });
 
 test('subir de nível: primeira vez veste o mais recente de cada parte; depois só a peça nova, respeitando o que ela tirou', () => {
@@ -156,10 +165,10 @@ test('convive com roupa, fantasia e animações com objeto na mão', () => {
 });
 
 test('estado salvo: só peças que existem e na parte certa', () => {
-  assert.deepEqual(sanitizeVisual(null), { pecas: {}, visto: 0 });
-  assert.deepEqual(sanitizeVisual({ pecas: { cabeca: 'nv003', pulsos: 'nv003', aura: 'x' }, visto: 9 }, REF), { pecas: { cabeca: 'nv003' }, visto: 9 });
+  assert.deepEqual(sanitizeVisual(null), { pecas: {}, visto: 0, novas: [], avisar: [] });
+  assert.deepEqual(sanitizeVisual({ pecas: { cabeca: 'nv003', pulsos: 'nv003', aura: 'x' }, visto: 9, novas: ['nv003', 'x', 'nv003'], avisar: 'nv004' }, REF), { pecas: { cabeca: 'nv003' }, visto: 9, novas: ['nv003'], avisar: [] });
   const { settings, issues } = sanitize({ visualNivel: { pecas: { cabeca: 'nv003', voo: 'nv004' }, visto: 4 } });
-  assert.deepEqual(settings.visualNivel, { pecas: { cabeca: 'nv003' }, visto: 4 });
+  assert.deepEqual(settings.visualNivel, { pecas: { cabeca: 'nv003' }, visto: 4, novas: [], avisar: [] });
   assert.ok(issues.includes('visualNivel'));
 });
 
@@ -178,13 +187,17 @@ test('companion: subir de nível veste a peça da referência, fala a frase dela
     assert.equal(e.overlay.state.visualNivel, null, 'nível 1: nenhum visual');
     const falas = [];
     const say = e.companion.say.bind(e.companion);
-    e.companion.say = (t, ...rest) => { falas.push(t); return say(t, ...rest); };
+    e.companion.say = (t, ...rest) => { const ok = say(t, ...rest); if (ok) falas.push(t); return ok; };
     e.companion.progress.award({ id: 't1', amount: 60, source: 'todo', day: '2026-10-30', label: 'teste' }); // 600 XP → nível 2
     assert.equal(e.companion.progress.nivel, 2);
-    assert.deepEqual(e.store.get().visualNivel, { pecas: { pescoco: 'nv002' }, visto: 2 });
-    e.clock.advance(6000);
+    assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002' });
+    assert.deepEqual(e.store.get().visualNivel.novas, ['nv002']);
+    e.clock.advance(20000);
     assert.deepEqual(e.overlay.state.visualNivel, { nv_nv002: 1 });
-    assert.ok(falas.includes(REF[1].fala), `fala da referência: ${falas.join(' | ')}`);
+    assert.ok(falas.some((t) => t.includes(REF[1].fala) && t.includes('Nível 2')), `aviso com a fala da referência: ${falas.join(' | ')}`);
+    assert.deepEqual(e.store.get().visualNivel.avisar, [], 'anunciado uma vez');
+    e.companion.marcarVisuaisVistos();
+    assert.deepEqual(e.store.get().visualNivel.novas, []);
     const r = e.companion.runCommand('vestir', null, `/vestir ${CAT.find((p) => p.nivel === 3).nome}`);
     assert.match(r.text, /Não tenho essa peça/, 'peça de nível maior não é encontrada');
     e.companion.runCommand('vestir', null, '/vestir nv002');
@@ -194,6 +207,34 @@ test('companion: subir de nível veste a peça da referência, fala a frase dela
     e.companion.runCommand('vestir', null, '/vestir nv002');
     e.companion.runCommand('vestir', null, '/vestir melhor');
     assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002' });
+  } finally {
+    e.companion.stop();
+  }
+});
+
+test('aviso: quem já tinha nível recebe a lista do que está liberado; no Modo Trabalho o aviso espera', () => {
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    e.companion.progress.st.xp = e.companion.progress.threshold(30);
+    e.companion._syncVisual({ anunciar: false }); // como na abertura do app depois da atualização
+    const vn = e.store.get().visualNivel;
+    assert.equal(vn.avisar.length, 29);
+    assert.equal(vn.novas.length, 29);
+    const falas = [];
+    const say = e.companion.say.bind(e.companion);
+    e.companion.say = (t, ...rest) => { const ok = say(t, ...rest); if (ok) falas.push(t); return ok; };
+    e.companion.start();
+    e.companion.startWork();
+    e.clock.advance(70000);
+    assert.ok(!falas.some((t) => /liberou 29 visuais/.test(t)), 'no Modo Trabalho não fala');
+    assert.equal(e.store.get().visualNivel.avisar.length, 29, 'continua guardado');
+    e.companion.endWork();
+    e.clock.advance(70000);
+    const aviso = falas.find((t) => /liberou 29 visuais/.test(t));
+    assert.ok(aviso, falas.join(' | '));
+    assert.match(aviso, /Gladiador|Capacete de gladiador/, 'cita as mais recentes');
+    assert.deepEqual(e.store.get().visualNivel.avisar, []);
+    assert.equal(e.store.get().visualNivel.novas.length, 29, 'continuam com o selo de novo até abrir a Central');
   } finally {
     e.companion.stop();
   }

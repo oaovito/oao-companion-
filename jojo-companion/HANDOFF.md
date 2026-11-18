@@ -8,6 +8,10 @@ referência. Dados em `progressao.json` → `referencias` (titulo, obra, tipo, p
 peca, cores, fala, anim, reacao?), alinhado com `niveis`. Formas desenhadas em
 `visual-nivel.js` (FORMAS, PINTURA, AURA, MAO); brilhos de acabamento no grupo
 `nivelBrilho`. A seção abaixo descreve a primeira versão (títulos marinhos), substituída.
+Avisos (18/11): `visualNivel.avisar` guarda o que o JoJo ainda não anunciou (abertura,
+nível novo; repetido a cada minuto se não deu para falar) e `novas` o que a Central
+ainda não mostrou (selo "Novo", contador no botão; `app:visuais-vistos` limpa). Na
+Central, liberado = nome + obra + fala; trancado = só `{nivel}` → cadeado.
 
 Pedido: a cada nível uma melhoria de aparência coerente com o título, o nível N+1
 melhor que o N, tudo liberado equipável à vontade e nada bloqueado visível.

@@ -16,9 +16,15 @@
   pode ser vestido ou tirado à vontade, e "O melhor de cada parte" volta o conjunto
   mais forte. Também funciona pelo chat com /vestir e o nome da peça.
 
+- Avisos de visual: ao abrir a versão nova, o JoJo conta quantos visuais o nível que você
+  já tem liberou; a cada nível novo ele avisa com a fala da obra. Se não puder falar na
+  hora (Modo Trabalho, tela cheia), o aviso espera e sai depois. O botão do Guarda-roupa
+  mostra quantos são novos.
+
 ### Melhorias
-- O que ainda não foi liberado não aparece em lugar nenhum: nem os visuais, nem os
-  acessórios da coleção (sumiu o "🔒 nível N").
+- Cada visual liberado mostra a obra, o título do nível e a fala da referência como
+  descrição. Os ainda trancados aparecem só como cadeado com o nível, sem revelar nada
+  do que são. Acessórios da coleção só aparecem depois de liberados.
 
 ### Como testar
 - Subir de nível: o JoJo aparece com a peça nova e fala o nome dela.

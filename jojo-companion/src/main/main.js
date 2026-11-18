@@ -477,6 +477,11 @@ function main() {
       companion.conversations.setViewing(c.id, true);
       return appState();
     });
+    ipcMain.handle('app:visuais-vistos', (e) => {
+      if (!fromApp(e)) return null;
+      companion.marcarVisuaisVistos();
+      return true;
+    });
     ipcMain.handle('app:pet', (e) => {
       if (fromApp(e)) companion.runCommand('pet');
       return appState();
