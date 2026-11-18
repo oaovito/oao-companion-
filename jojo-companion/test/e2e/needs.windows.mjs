@@ -122,11 +122,13 @@ test('funeral do shape Windows: comida fora da dieta mostra o slide com as fotos
     const tela = await win.evaluate(() => ({
       foto: document.getElementById('funeralFoto').getAttribute('src'),
       legenda: document.getElementById('funeralLegenda').textContent,
+      topo: document.querySelector('#funeral .funeral-topo').textContent,
       balao: getComputedStyle(document.getElementById('bubble')).display,
       clique: getComputedStyle(document.getElementById('funeral')).pointerEvents,
     }));
     assert.match(tela.foto, /assets\/funeral\/foto\d{2}\.jpg$/);
-    assert.ok(tela.legenda.length > 5);
+    assert.equal(tela.legenda, 'Quer se tornar uma aberração?', 'única frase do funeral');
+    assert.equal(tela.topo.replace(/[\s🕯️]/gu, ''), '', 'nenhum outro texto além da legenda');
     assert.equal(tela.balao, 'none', 'no lugar do balão');
     assert.equal(tela.clique, 'none', 'não pega clique (click-through preservado)');
     await win.waitForFunction(() => document.getElementById('funeral').classList.contains('hidden'), null, { timeout: 20000 });

@@ -75,7 +75,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?". Desde 18/11/2026,
   qualquer comida fora da dieta de atleta (doce, pizza, lanche, fritura, refri…) também mostra, **no lugar do balão**, o
-  "funeral do shape": slide com 12 fotos de uma personagem gerada no ChatGPT para a piada (`assets/funeral`), ~11 s,
+  "funeral do shape": slide com 12 fotos de uma personagem gerada no ChatGPT para a piada (`assets/funeral`), única frase "Quer se tornar uma aberração?", ~11 s,
   sem clique, bloqueado no Modo Trabalho/tela cheia. Pedido explícito do usuário, que liberou essa piada como exceção.
 - **Motor de intenções** (regra geral, nenhum /comando obrigatório): `dialogue/motor-intencoes.js` (registro `ACOES`,
   compostas, contexto, negação, indiretas, pergunta curta) + `Companion.runActions`; o Qwen devolve `acoes` validadas.

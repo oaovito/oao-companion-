@@ -63,7 +63,7 @@ const COSTUME_HEADROOM = 36;
 const FUNERAL_MS = 11000;
 const FUNERAL_FOTOS = 12;
 const FUNERAL_SIZE = { width: 230, height: 300 };
-const FUNERAL_LEGENDAS = ['Quer se tornar uma aberração?', 'Aqui jaz o shape. Morreu de pizza.', 'Comeu isso. Virou isso. Descanse em paz, abdômen.', 'Velório do shape: o caixão precisou de reforço.', 'Em memória da cintura. Ela lutou, mas o refri venceu.'];
+const FUNERAL_LEGENDA = 'Quer se tornar uma aberração?'; // única legenda do funeral (pedido de 18/11/2026)
 const COSTUME_FOOTROOM = 40;
 // Momento da fala nas animações com resposta atrasada (ms após o início).
 const DELAYED_REPLY_MS = { smitten: 4200, poop: 4800, avc: 3500 + 1600 + 900 + 60000 + 1500 };
@@ -4707,8 +4707,7 @@ export class Companion {
     const ordem = Array.from({ length: FUNERAL_FOTOS }, (_, i) => i + 1);
     for (let i = ordem.length - 1; i > 0; i--) { const j = Math.floor(this.rng() * (i + 1)) % (i + 1); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; }
     const fotos = ordem.slice(0, 6).map((n) => `../../../assets/funeral/foto${String(n).padStart(2, '0')}.jpg`);
-    const legenda = FUNERAL_LEGENDAS[Math.floor(this.rng() * FUNERAL_LEGENDAS.length) % FUNERAL_LEGENDAS.length];
-    this.funeral = { inicio: now, ate: now + FUNERAL_MS, fotos, legenda };
+    this.funeral = { inicio: now, ate: now + FUNERAL_MS, fotos, legenda: FUNERAL_LEGENDA };
     this.hideBubble();
     this.clock.setTimeout(() => { if (this.funeral && this.clock.now() >= this.funeral.ate) { this.funeral = null; this._applyLayout(true); } }, FUNERAL_MS + 10);
     this._applyLayout(true);
