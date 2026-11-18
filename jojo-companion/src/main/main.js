@@ -1,6 +1,7 @@
 // Ponto de entrada do processo principal (Electron).
 // Conecta o Companion (lógica pura em src/core) às APIs do sistema.
 import { wardrobeSnapshot } from '../core/wardrobe.js';
+import { visualSnapshot } from '../core/visual-nivel.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
@@ -191,6 +192,8 @@ function main() {
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
       animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)),
       foods: readJSON('assets/catalog/foods.json').foods,
+      // Títulos dos níveis: o overlay gera as peças dos visuais por nível a partir deles.
+      niveis: readJSON('assets/catalog/progressao.json').niveis,
     };
     const catalog = fullCatalog(readJSON);
     const ambientLines = readJSON('assets/dialogue/falas-ambientes.json');
@@ -387,6 +390,8 @@ function main() {
         colecao: { ...companion.progress.snapshot(new Date()), jogos: companion.games ? companion.games.data.jogos.map((j) => ({ id: j.id, nome: j.nome, recorde: companion._record(j.id) == null ? null : companion._fmtRecord(j.id, companion._record(j.id)) })) : [] },
         abrirColecao,
         guardaRoupa: wardrobeSnapshot(store.get().guardaRoupa),
+        // Só os visuais já liberados (os bloqueados nunca saem do processo principal).
+        visuais: visualSnapshot(store.get().visualNivel, companion.progress.data.niveis, companion.progress.nivel),
         foco: !!companion.focus, trabalho: !!companion.work,
         abrirGuardaRoupa,
         todo: todoService?.model.snapshot() || null,

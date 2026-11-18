@@ -148,7 +148,7 @@ function renderColecao() {
   const col = el('div', 'card');
   col.append(el('h3', null, 'Coleção'));
   col.append(el('p', null, `Poses vistas: ${c.poses} · Cartas de frases: ${c.cartas}`));
-  col.append(el('p', null, `Acessórios: ${c.acessorios.map((a) => (a.ok ? a.nome : `🔒 nível ${a.nivel}`)).join(' · ')}`));
+  if (c.acessorios.length) col.append(el('p', null, `Acessórios: ${c.acessorios.map((a) => a.nome).join(' · ')}`));
   col.append(el('p', null, `Aquário: ${c.areas.map((a) => (a.ok ? a.nome : '???')).join(' · ')}`));
   if (c.album.length) col.append(el('p', 'muted', `Álbum de momentos raros: ${c.album.map((a) => a.nome).join(', ')}`));
   box.append(nivel, acoes, jogos, miss, conq, col);
@@ -189,6 +189,35 @@ function renderGuarda() {
   }
   topo.append(row);
   box.append(topo);
+  // Visuais do shape: só aparece o que os níveis já liberaram.
+  const v = st.visuais;
+  if (v && v.total) {
+    const card = el('div', 'card');
+    card.append(el('h3', null, `Visuais do shape (${v.total})`));
+    card.append(el('p', 'muted', 'Liberados pelos níveis. Clique para vestir; clicar de novo tira.'));
+    const melhor = el('button', 'chipbtn', '✨ O melhor de cada parte');
+    melhor.addEventListener('click', () => vestir('/vestir melhor'));
+    const linha = el('div', 'buttons');
+    linha.append(melhor);
+    card.append(linha);
+    for (const parte of v.partes) {
+      card.append(el('h4', null, parte.nome));
+      const r = el('div', 'buttons visuais');
+      for (const it of parte.itens) {
+        const on = v.vestido[parte.id] === it.id;
+        const b = el('button', `chipbtn${on ? ' on' : ''}`);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.dataset.visual = it.id;
+        const sw = el('span', 'swatch');
+        sw.style.background = it.cor;
+        b.append(sw, document.createTextNode(`${it.nome} · nível ${it.nivel}`));
+        b.addEventListener('click', () => vestir(`/vestir ${it.id}`));
+        r.append(b);
+      }
+      card.append(r);
+    }
+    box.append(card);
+  }
   for (const parte of g.partes) {
     const card = el('div', 'card');
     card.append(el('h3', null, parte.nome));

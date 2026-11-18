@@ -48,6 +48,7 @@ import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
+import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, FALAS_VISUAL } from './visual-nivel.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -218,6 +219,9 @@ export class Companion {
       now: () => this.clock.now(),
       getQuiet: () => this.feedbackQuiet,
     });
+    // Visual novo a cada nível: veste a peça liberada e o JoJo avisa.
+    this.progress.onLevelUp = () => this._syncVisual({ anunciar: true });
+    this._syncVisual({ anunciar: false });
     this.game = null; // mini-jogo em andamento
     this.focus = null; // bloco de foco (body doubling)
     this.focusBreak = null; // pausa entre blocos de um plano de ciclos
@@ -2069,6 +2073,10 @@ export class Companion {
       }
       if (/^(tira(r)?( tudo)?|nada|pelado|limpar)$/i.test(arg)) return { text: this.despir(), command: cmd, conversationId };
       if (/^(surpresa|aleat[oó]rio|sorteia|sortear)$/i.test(arg)) return { text: this.lookSurpresa(), command: cmd, conversationId };
+      if (/^(melhor|o melhor|visual do n[ií]vel|n[ií]vel)$/i.test(arg)) return { text: this.visualMelhor(), command: cmd, conversationId };
+      // Visual liberado por nível primeiro (bloqueado nem é encontrado), depois o guarda-roupa.
+      const nv = acharVisual(this.progress.data.niveis, this.progress.nivel, arg);
+      if (nv) return { text: this.vestirNivel(nv.id), command: cmd, conversationId };
       const peca = findWardrobeItem(arg);
       return { text: peca ? this.vestir(peca.id) : 'Não tenho essa peça. Abre o guarda-roupa com /vestir.', command: cmd, conversationId };
     }
@@ -2602,6 +2610,68 @@ export class Companion {
   /** Roupa escolhida por ela ({parte: peça}); vazia = sem roupa do guarda-roupa. */
   get outfit() {
     return sanitizeOutfit(this.store.get().guardaRoupa);
+  }
+
+  // ---------------------------------------------------------------- visuais por nível
+
+  /** Canais das peças de nível vestidas (null se nenhuma). */
+  _visualCanais(vestido = Object.keys(this.outfit).length > 0) {
+    return canaisVisual(this.store.get().visualNivel, this.progress.data.niveis, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume });
+  }
+
+  /**
+   * Aplica os visuais do nível atual: na primeira vez veste o melhor de cada
+   * parte; a cada nível novo veste a peça liberada na parte dela e avisa.
+   */
+  _syncVisual({ anunciar = true } = {}) {
+    const niveis = this.progress.data.niveis;
+    if (!Array.isArray(niveis) || niveis.length < 2) return null;
+    const { estado, novas } = aplicarNivel(this.store.get().visualNivel, niveis, this.progress.nivel);
+    if (!novas.length) return null;
+    this.store.update({ visualNivel: estado }, { silent: true });
+    if (anunciar && this.started) {
+      const ultima = novas[novas.length - 1];
+      const linhas = novas.length > 1 ? FALAS_VISUAL.varias : FALAS_VISUAL.nova;
+      const t = linhas[Math.floor(this.rng() * linhas.length) % linhas.length].replace('{P}', ultima.nome).replace('{N}', String(novas.length));
+      // Depois do aviso de nível; não atropela fala com categoria (bronca, lembrete).
+      let tries = 0;
+      const show = () => {
+        if (this.bubble && this.bubble.category && tries++ < 10) return this.clock.setTimeout(show, 1500);
+        this.say(t, 'speech');
+        this.playCatalog('seAcharMaximo', { source: 'evento', speak: false });
+        this._applyLayout(true);
+      };
+      this.clock.setTimeout(show, 4200);
+    }
+    if (this.started) this._applyLayout(true);
+    if (this.onConversationsChange) this.onConversationsChange();
+    return novas;
+  }
+
+  /** Veste (ou tira) um visual liberado. */
+  vestirNivel(id) {
+    const r = vestirVisual(this.store.get().visualNivel, this.progress.data.niveis, this.progress.nivel, id);
+    if (!r.peca) return 'Não tenho essa peça.';
+    return this._saveVisual(r.estado, r.tirou ? 'tira' : 'veste');
+  }
+
+  /** O melhor de cada parte já liberado. */
+  visualMelhor() {
+    const s = sanitizeVisual(this.store.get().visualNivel);
+    return this._saveVisual({ ...s, pecas: melhorConjunto(this.progress.data.niveis, this.progress.nivel) }, 'melhor');
+  }
+
+  _saveVisual(estado, kind) {
+    this.store.update({ visualNivel: estado }, { silent: true });
+    const lines = FALAS_VISUAL[kind];
+    const t = lines[Math.floor(this.rng() * lines.length) % lines.length];
+    if (this.started) {
+      this.say(t, 'speech');
+      this.playCatalog(kind === 'tira' ? 'ajeitarPostura' : 'seAcharMaximo', { source: 'comando', speak: false });
+      this._applyLayout(true);
+    }
+    if (this.onConversationsChange) this.onConversationsChange();
+    return t;
   }
 
   /** Veste a peça (a mesma de novo tira). Retorna a fala do JoJo. */
@@ -4556,7 +4626,8 @@ export class Companion {
 
     // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
     const vestido = Object.keys(this.outfit).length > 0;
-    if (this.costume || vestido) {
+    const visualNivel = this._visualCanais(vestido);
+    if (this.costume || vestido || visualNivel) {
       attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
@@ -4618,6 +4689,8 @@ export class Companion {
       // Roupa do guarda-roupa vale mais que a fantasia da data festiva.
       costume: vestido ? null : this.costume,
       outfit: this._outfitComNerd(vestido),
+      // Visuais liberados por nível (só peças liberadas; a parte ocupada pela roupa ou fantasia fica com ela).
+      visualNivel,
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
       sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
