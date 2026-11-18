@@ -3,6 +3,7 @@
 // animamos e encaminhamos interações explícitas do usuário.
 import { Animator } from '../shared/animator.js';
 import { RigRenderer } from '../shared/rig-renderer.js';
+import { rigComVisuais } from '../../core/visual-nivel.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -51,7 +52,8 @@ async function init() {
   const assets = await api.getAssets();
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
-  rig = new RigRenderer(assets.rig);
+  // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
+  rig = new RigRenderer(rigComVisuais(assets.rig, assets.niveis));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -505,6 +507,8 @@ function draw(now) {
   if (s.costume) pose[`costume_${s.costume}`] = 1;
   // Guarda-roupa: peças escolhidas por ela (canais costume_*, prop_*, sexy).
   if (s.outfit) Object.assign(pose, s.outfit);
+  // Visuais liberados por nível (coroa, colar, cinturão, aura…).
+  if (s.visualNivel) Object.assign(pose, s.visualNivel);
   if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);

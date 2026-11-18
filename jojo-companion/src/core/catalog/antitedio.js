@@ -123,6 +123,7 @@ export class Progress {
     try { this.save(this.st, { immediate: true }); }
     catch (e) { this.st = before; throw e; }
     this.onAward?.(event);
+    if (event.levelUp) { try { this.onLevelUp?.(event); } catch { /* o aviso nunca derruba a recompensa */ } }
     if (source !== 'bonus') this._bonusDepois(atividade || source, day);
     return event;
   }
@@ -310,7 +311,8 @@ export class Progress {
       maximo: this.nivel >= this.data.niveis.length,
       conquistas: this.data.conquistas.map((q) => ({ ...q, ok: Object.hasOwn(this.st.conquistas, q.id) })),
       poses: this.st.poses.length,
-      acessorios: this.data.acessorios.map((a) => ({ ...a, ok: a.nivel <= this.nivel })),
+      // Só o que já foi liberado: nada bloqueado sai daqui para a tela.
+      acessorios: this.acessorios.map((a) => ({ ...a, ok: true })),
       album: this.st.album.slice(-12).reverse(),
       cartas: this.st.cartas.length,
       areas: this.data.areas.map((a) => ({ ...a, ok: this.st.areas.includes(a.id) })),

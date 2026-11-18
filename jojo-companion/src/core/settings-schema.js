@@ -3,6 +3,7 @@
 
 import { isCalendarUrl, normalizeCalendarUrl } from './calendar.js';
 import { sanitizeOutfit } from './wardrobe.js';
+import { sanitizeVisual } from './visual-nivel.js';
 
 export const SETTINGS_VERSION = 6;
 
@@ -54,6 +55,7 @@ export const DEFAULTS = Object.freeze({
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   percepcaoTela: false,         // percepção de tela: só o tipo do app em primeiro plano (local, sem captura); desligada por padrão
   guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
+  visualNivel: { pecas: {}, visto: 0 }, // visuais liberados por nível: o que está vestido e até que nível já foi aplicado
   // Pacotes de reação (memes, anime, comida, namorado, João): ligados por padrão.
   pacoteMemes: true,
   pacoteAnime: true,
@@ -200,6 +202,10 @@ export function sanitize(input) {
   if ('agendaUrl' in src) {
     if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');
+  }
+  if ('visualNivel' in src) {
+    out.visualNivel = sanitizeVisual(src.visualNivel);
+    if (Object.keys(out.visualNivel.pecas).length !== Object.keys(src.visualNivel?.pecas || {}).length) issues.push('visualNivel');
   }
   if ('guardaRoupa' in src) {
     out.guardaRoupa = sanitizeOutfit(src.guardaRoupa);

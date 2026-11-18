@@ -1,5 +1,21 @@
 # HANDOFF — JoJo Companion
 
+## Visuais por nível (não lançado), 18/11/2026
+
+Pedido: a cada nível uma melhoria de aparência coerente com o título, o nível N+1
+melhor que o N, tudo liberado equipável à vontade e nada bloqueado visível.
+`src/core/visual-nivel.js` gera 199 peças (níveis 2–200) a partir dos títulos de
+`progressao.json`: parte por nível (`parteDoNivel`), cor por palavra do título
+(`temaDoTitulo`), detalhe crescente por faixa e por nível (`t`). Só peças por cima
+do desenho: `rigComVisuais` acrescenta partes com `showIf` próprio (`nv_nvNNN`;
+bermuda por `costume_bermudaNvNNN`) e dois grupos sem contorno (`nivelAura` atrás de
+tudo, `nivelPintura` após `armDetail`), sem tocar nas partes originais. Estado em
+`visualNivel` ({pecas, visto}); `Progress.onLevelUp` → `Companion._syncVisual` veste a
+peça nova e avisa; a parte ocupada por roupa/fantasia fica com elas (`canaisVisual`).
+Central recebe só `visualSnapshot` (liberadas). Testes: `test/unit/visual-nivel.test.js`
+e E2E em `test/e2e/needs.windows.mjs`; contagens do CI 667 unitários e 46 E2E.
+Vai na 0.47.2 junto com o WhatsApp.
+
 ## Em andamento — revisão do WhatsApp (não lançada), 13/11/2026
 
 Branch `claude/dreamy-allen-4mtm7j`, baseada em `codex/living-companion` (`8abfe20`,

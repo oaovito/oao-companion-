@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 0.47.2 — em preparo
+
+### Novidades
+- Visual novo a cada nível: do nível 2 ao 200, cada nível libera uma peça para o JoJo
+  (faixa, tiara e coroas; colares e medalhões; munhequeiras e manoplas; cinturão de
+  campeão; bermudas; pintura de guerra; aura), com as cores e o tema do título daquele
+  nível. Cada peça nova é mais caprichada que a anterior da mesma parte, e o JoJo já
+  aparece com ela ao subir de nível e comenta.
+- Guarda-roupa da Central com a seção "Visuais do shape": tudo o que já foi liberado
+  pode ser vestido ou tirado à vontade, e "O melhor de cada parte" volta o conjunto
+  mais forte. Também funciona pelo chat com /vestir e o nome da peça.
+
+### Melhorias
+- O que ainda não foi liberado não aparece em lugar nenhum: nem os visuais, nem os
+  acessórios da coleção (sumiu o "🔒 nível N").
+
+### Como testar
+- Subir de nível: o JoJo aparece com a peça nova e fala o nome dela.
+- Central → Guarda-roupa → Visuais do shape: só peças até o nível atual.
+
 ## 0.47.1 — 2026-11-13
 
 ### Novidades
