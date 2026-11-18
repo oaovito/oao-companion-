@@ -1,5 +1,14 @@
 # HANDOFF — JoJo Companion
 
+## Publicação 0.47.2 sem WhatsApp — 18/11/2026
+
+Pedido da usuária: conferir os visuais nas diretrizes e publicar, mantendo "tudo menos o que
+envolve WhatsApp". Árvore = 0.47.1 publicada + títulos de referência (regra irredutível),
+visuais por nível (200 + 20 South Park + 50 memes), transformações, capricho do panda,
+variações animadas, avisos/cadeados na Central e funeral do shape (visual "Luto do Shape").
+WhatsApp continua como na 0.47.0; a revisão segue só em `claude/dreamy-allen-4mtm7j`.
+Unitários: 650. Integração: 16. E2E esperados: 46.
+
 ## Publicação 0.47.1 sem WhatsApp — 14/11/2026
 
 Pedido da usuária: "Publica tudo menos o que envolve WhatsApp". A árvore de

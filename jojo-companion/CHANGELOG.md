@@ -1,5 +1,74 @@
 # CHANGELOG
 
+## 0.47.2 — 2026-11-18
+
+### Novidades
+- Os 200 títulos de nível agora são referências a filmes, animes, séries, jogos e cultura
+  pop, cada um de uma obra diferente, com todos os clássicos de tubarão: de Mundo 1-1 (Super
+  Mario Bros.) a Tubarão (1975), passando por Procurando Nemo, Megatubarão, Sharknado, Do
+  Fundo do Mar, O Espanta Tubarões, Kisame, Arlong, Baby Shark, Left Shark, King Shark,
+  Jabberjaw, Zelda, Sonic, Minecraft, Dark Souls e muitos outros.
+- 20 visuais extras de South Park, um a cada 10 níveis: gorro do Stan, ushanka do Kyle,
+  toalha do Toalhinha, caneca do Tweek, Sr. Hankey, AWESOM-O, Professor Caos, Mysterion,
+  e no nível 200 a aura de "mataram o Kenny".
+- 50 visuais extras de memes do Twitter, um a cada 4 níveis, sem pudor: óculos do Deal With
+  It, moeda do Doge, gravata do Stonks, placa do "mude minha opinião", bastão do bonk,
+  bermuda thicc, chifres de corno, aura de BDE, celular do manda nudes, sino de gado e mais.
+- Visual novo a cada nível, tirado da referência daquele nível: fones do Baby Shark, Blåhaj
+  na mão, barril amarelo de Tubarão, luvas do Rocky, chapéu de palha, sabre de luz, manopla
+  das joias, Sharingan, aura de Super Saiyajin, tridente de Atlântida e outros. Ao subir de
+  nível o JoJo já aparece com a peça, fala uma frase da obra e reage com a animação dela.
+  Do meio do caminho em diante as peças ganham brilhos, então o conjunto sempre melhora.
+- Guarda-roupa da Central com a seção "Visuais dos níveis": tudo o que já foi liberado
+  pode ser vestido ou tirado à vontade, e "O melhor de cada parte" volta o conjunto
+  mais forte. Também funciona pelo chat com /vestir e o nome da peça.
+- Avisos de visual: ao abrir a versão nova, o JoJo conta quantos visuais o nível que você
+  já tem liberou; a cada nível novo ele avisa com a fala da obra. Se não puder falar na
+  hora (Modo Trabalho, tela cheia), o aviso espera e sai depois. O botão do Guarda-roupa
+  mostra quantos são novos.
+- Funeral do shape: quando ela fala de comer doce, pizza, lanche, fritura, refri ou qualquer
+  coisa fora da dieta de atleta, no lugar do balão aparece um slide de funeral ("Em memória do
+  shape") com as fotos passando, em preto e branco, e uma legenda; some em uns 11 segundos.
+  Enquanto isso o JoJo fica no visual "Luto do Shape": vomitando verde até a poça no chão,
+  chorando, de boca aberta e cinza de tristeza. Também vale para "que vontade de comer uma
+  pizza", "queria tanto um chocolate" e parecidos.
+
+### Melhorias
+- Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
+  enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
+  largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,
+  Bob Esponja e Simpsons amarelos, Big Chungus gordo, Stonks de cabeção, Kenny de capuz
+  laranja, Sharingan vermelho, olhos de anime, olhos de coração e muitos outros. Óculos
+  triangulares do Kamina e máscara ninja do Mortal Kombat redesenhados. Sem visual, o JoJo
+  original continua igual.
+- Exagero sem pudor nos visuais que pedem: o Dragão Guerreiro é um panda gordo (branco,
+  braços e pernas pretos, manchas nos olhos, orelhas redondas e barrigona); Big Chungus,
+  Homer, Cartman, Totoro, Kirby, Pac-Man e a capivara ficam gordos de barrigona e papada;
+  Shrek e o tubarão zumbi ficam nojentos, com sujeira e moscas; Sextou e Hungry Shark com
+  suor e baba.
+- Todos os 269 visuais com o capricho do panda: o JoJo ganha as cores do personagem (corpo,
+  braços, pernas e cabeça separados: uniforme do Superman, do Homem-Aranha, do Goku, do Crash,
+  do Link, do Stan e do Kyle…) e os traços dele presos na cabeça, sem arquinho: orelhas de ogro
+  do Shrek, de coelho do Big Chungus, de gato, de cachorro, de elfo da Frieren e do Link, juba
+  do Rei Leão, chifres do Hollow Knight, motosserra do Chainsaw Man, tênis do Tralalero.
+- Visuais animados: a barrigona e a papada balançam (bem mais quando ele anda, pula ou
+  dança), as moscas voam em volta, o suor escorre, a baba estica, a aura pulsa, as bolhas
+  sobem e os brilhos piscam. Com um visual vestido, o JoJo às vezes faz sozinho a animação
+  da referência (Venom lambe os dentes, Kirby engole tudo, Godzilla entra no modo poder).
+  No movimento reduzido do Windows tudo fica parado.
+- Cada visual liberado mostra a obra, o título do nível e a fala da referência como
+  descrição. Os ainda trancados aparecem só como cadeado com o nível, sem revelar nada
+  do que são. Acessórios da coleção só aparecem depois de liberados.
+
+### Como testar
+- Subir de nível: o JoJo aparece com a peça nova, fala a frase da obra e avisa no balão.
+- Central → Guarda-roupa → Visuais dos níveis: só as peças até o nível atual, cada uma com a
+  fala da referência; o resto aparece só como cadeado com o nível.
+- Vestir um visual (Dragão Guerreiro, Shrek, Big Chungus…): o JoJo muda de cor, corpo e
+  cabeça enquanto estiver vestido; tirar volta o JoJo original.
+- Escrever "que vontade de comer uma pizza": o slide de funeral aparece no lugar do balão e
+  some sozinho; no Modo Trabalho ou com app em tela cheia nada aparece.
+
 ## 0.47.1 — 2026-11-14
 
 ### Novidades
