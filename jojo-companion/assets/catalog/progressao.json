@@ -711,14 +711,15 @@
    "fala": "Baby shark, doo doo doo. Pronto, grudou na sua cabeça também.",
    "anim": "dancinha",
    "transforma": {
-    "cabeca": 1.2,
-    "boca": 0.7,
+    "cabeca": 1.45,
+    "boca": 0.6,
     "olhos": "anime",
     "pele": {
      "barriga": "#fff8e1",
      "olho": "#5d4037",
      "corpo": "#ffd54f"
-    }
+    },
+    "corpo": 0.85
    }
   },
   {
@@ -858,13 +859,14 @@
    "fala": "Aura do Megatubarão. Vinte metros de shape.",
    "anim": "modoPoder",
    "transforma": {
-    "cabeca": 1.1,
-    "boca": 1.3,
+    "cabeca": 1.2,
+    "boca": 1.55,
     "olhos": "pontos",
     "pele": {
      "barriga": "#e0e0e0",
      "corpo": "#5b6770"
-    }
+    },
+    "corpo": 1.2
    }
   },
   {
@@ -1263,12 +1265,13 @@
    "fala": "Gravata do Don Lino. Família de tubarão não perdoa. E o Lenny é vegetariano.",
    "anim": "poseVilao",
    "transforma": {
-    "corpo": 1.2,
+    "corpo": 1.45,
     "olhos": "semicerrados",
     "pele": {
      "corpo": "#546e7a",
      "barriga": "#cfd8dc"
-    }
+    },
+    "papada": true
    }
   },
   {
@@ -1301,9 +1304,9 @@
    "fala": "Plus Ultra! Agora está tudo bem, porque eu cheguei.",
    "anim": "duploBiceps",
    "transforma": {
-    "cabeca": 0.92,
-    "corpo": 1.3,
-    "boca": 1.3,
+    "cabeca": 0.85,
+    "corpo": 1.6,
+    "boca": 1.5,
     "olhos": "pretos"
    }
   },
@@ -1390,13 +1393,15 @@
    "anim": "modoPoder",
    "reacao": "pk_rumbling",
    "transforma": {
-    "cabeca": 1.1,
+    "cabeca": 1.2,
     "olhos": "vazios",
     "pele": {
      "musculo": "#7f2a28",
      "barriga": "#e9a29e",
      "corpo": "#c0504d"
-    }
+    },
+    "corpo": 1.25,
+    "boca": 1.4
    }
   },
   {
@@ -1535,7 +1540,10 @@
     "pele": {
      "barriga": "#b7c9a8",
      "corpo": "#6b8f5a"
-    }
+    },
+    "sujeira": true,
+    "moscas": true,
+    "baba": true
    }
   },
   {
@@ -1635,8 +1643,8 @@
    "fala": "Estalo os dedos e metade das calorias some.",
    "anim": "estalar",
    "transforma": {
-    "cabeca": 1.05,
-    "corpo": 1.15,
+    "cabeca": 1.15,
+    "corpo": 1.35,
     "pele": {
      "corpo": "#7e57c2",
      "barriga": "#b39ddb",
@@ -1674,8 +1682,8 @@
    "fala": "Bermuda roxa que não rasga. Hulk esmaga; JoJo agacha.",
    "anim": "modoFera",
    "transforma": {
-    "cabeca": 0.9,
-    "corpo": 1.3,
+    "cabeca": 0.85,
+    "corpo": 1.6,
     "olhos": "semicerrados",
     "pele": {
      "corpo": "#5aa83a",
@@ -1759,9 +1767,9 @@
    "fala": "Bermuda do King Shark. Nom nom. Amigo.",
    "anim": "devorar",
    "transforma": {
-    "cabeca": 1.15,
-    "corpo": 1.3,
-    "boca": 1.35,
+    "cabeca": 1.3,
+    "corpo": 1.55,
+    "boca": 1.55,
     "olhos": "pontos",
     "pele": {
      "corpo": "#5f7f8f",
@@ -1799,9 +1807,9 @@
    "fala": "Bolhas do Jeff. Tubarão terrestre também tem charme.",
    "anim": "sorrisoSuave",
    "transforma": {
-    "cabeca": 1.25,
-    "corpo": 0.9,
-    "boca": 0.55,
+    "cabeca": 1.45,
+    "corpo": 0.8,
+    "boca": 0.45,
     "olhos": "anime",
     "pele": {
      "olho": "#212121",
@@ -1876,8 +1884,8 @@
    "fala": "Um anel pra todos governar. Meu precioso shape.",
    "anim": "esconderAtras",
    "transforma": {
-    "cabeca": 1.15,
-    "corpo": 0.85,
+    "cabeca": 1.3,
+    "corpo": 0.7,
     "olhos": "grandes",
     "pele": {
      "corpo": "#b8b49a",
@@ -2258,7 +2266,7 @@
    "anim": "duploBiceps",
    "reacao": "pk_berserker",
    "transforma": {
-    "corpo": 1.2
+    "corpo": 1.4
    }
   },
   {
@@ -2546,7 +2554,7 @@
    "fala": "Bati no peito igual ao Kong. Doeu no Kong.",
    "anim": "tapinhaAbdomen",
    "transforma": {
-    "corpo": 1.3,
+    "corpo": 1.6,
     "olhos": "pontos",
     "pele": {
      "corpo": "#4e342e",
@@ -2639,13 +2647,16 @@
    "fala": "Ogros são como cebolas. Tubarões são como halteres.",
    "anim": "careta",
    "transforma": {
-    "corpo": 1.2,
+    "corpo": 1.5,
     "boca": 1.1,
     "pele": {
      "corpo": "#8bc34a",
      "barriga": "#c5e1a5",
      "musculo": "#558b2f"
-    }
+    },
+    "barrigona": 1.2,
+    "sujeira": true,
+    "moscas": true
    }
   },
   {
@@ -2687,13 +2698,14 @@
    "fala": "Mandíbula de granito. Esse sou eu desde sempre.",
    "anim": "encararDentes",
    "transforma": {
-    "cabeca": 0.95,
+    "cabeca": 0.85,
     "olhos": "semicerrados",
     "pele": {
      "corpo": "#808080",
      "barriga": "#d0d0d0",
      "musculo": "#4d4d4d"
-    }
+    },
+    "corpo": 1.25
    }
   },
   {
@@ -2908,7 +2920,10 @@
    "fala": "Fome infinita. O placar sobe, o shape também.",
    "anim": "devorar",
    "transforma": {
-    "boca": 1.4
+    "boca": 1.65,
+    "corpo": 1.45,
+    "barrigona": 1.3,
+    "baba": true
    }
   },
   {
@@ -3001,7 +3016,7 @@
    "fala": "Garoto! Treina.",
    "anim": "modoFera",
    "transforma": {
-    "corpo": 1.15,
+    "corpo": 1.3,
     "olhos": "semicerrados",
     "pele": {
      "corpo": "#d7d2c8",
@@ -3090,14 +3105,15 @@
    "fala": "Nós somos Venom. Nós queremos frango.",
    "anim": "lamberDentes",
    "transforma": {
-    "boca": 1.4,
+    "boca": 1.7,
     "olhos": "vazios",
     "pele": {
      "corpo": "#141414",
      "barriga": "#2b2b2b",
      "musculo": "#000000",
      "esclera": "#ffffff"
-    }
+    },
+    "corpo": 1.25
    }
   },
   {
@@ -3228,14 +3244,15 @@
    "fala": "Waka waka. Comi os fantasminhas e o frango também.",
    "anim": "devorar",
    "transforma": {
-    "corpo": 1.2,
-    "boca": 1.4,
+    "corpo": 1.5,
+    "boca": 1.6,
     "olhos": "pontos",
     "pele": {
      "corpo": "#ffd400",
      "barriga": "#fff59d",
      "olho": "#212121"
-    }
+    },
+    "barrigona": 1.2
    }
   },
   {
@@ -3466,8 +3483,8 @@
    "fala": "Visor de tripulante. Quem pulou o treino é sus.",
    "anim": "sobrancelha",
    "transforma": {
-    "corpo": 1.25,
-    "boca": 0.3,
+    "corpo": 1.45,
+    "boca": 0.25,
     "pele": {
      "corpo": "#c51111",
      "barriga": "#7a0838"
@@ -3707,8 +3724,8 @@
    "fala": "Eu engulo tudo e copio o poder. Hoje copiei o supino.",
    "anim": "engolirTudo",
    "transforma": {
-    "cabeca": 1.2,
-    "corpo": 1.35,
+    "cabeca": 1.3,
+    "corpo": 1.6,
     "boca": 0.5,
     "olhos": "anime",
     "pele": {
@@ -3716,7 +3733,8 @@
      "corpo": "#ff8fb0",
      "barriga": "#ffc1d6",
      "musculo": "#e06b8f"
-    }
+    },
+    "barrigona": 1.3
    }
   },
   {
@@ -3860,14 +3878,15 @@
    "fala": "Esperando o ônibus-gato com orelhas de Totoro.",
    "anim": "sorrisoSuave",
    "transforma": {
-    "cabeca": 1.1,
-    "corpo": 1.4,
-    "boca": 1.3,
+    "cabeca": 1.15,
+    "corpo": 1.75,
+    "boca": 1.5,
     "olhos": "grandes",
     "pele": {
      "corpo": "#78909c",
      "barriga": "#eceff1"
-    }
+    },
+    "barrigona": 1.45
    }
   },
   {
@@ -4051,7 +4070,12 @@
      "corpo": "#ffd521",
      "barriga": "#ffd521",
      "musculo": "#d9b21b"
-    }
+    },
+    "corpo": 1.55,
+    "barrigona": 1.3,
+    "papada": true,
+    "baba": true,
+    "suor": true
    }
   },
   {
@@ -4069,13 +4093,21 @@
    "fala": "Não existe ingrediente secreto. É só treino.",
    "anim": "modoFoco",
    "transforma": {
-    "corpo": 1.35,
+    "corpo": 1.75,
     "olhos": "grandes",
     "pele": {
      "corpo": "#f5f5f5",
      "barriga": "#ffffff",
-     "musculo": "#212121"
-    }
+     "musculo": "#bdbdbd",
+     "cabeca": "#f5f5f5",
+     "membros": "#1a1a1a"
+    },
+    "cabeca": 1.15,
+    "boca": 0.8,
+    "barrigona": 1.35,
+    "papada": true,
+    "manchasOlhos": "#1a1a1a",
+    "orelhasRedondas": "#1a1a1a"
    }
   },
   {
@@ -4234,8 +4266,8 @@
    "fala": "Vamos precisar de um barco maior. Tubarão, o clássico: ninguém entra na água sem pensar em mim.",
    "anim": "dorsalTela",
    "transforma": {
-    "cabeca": 1.1,
-    "boca": 1.35,
+    "cabeca": 1.2,
+    "boca": 1.6,
     "olhos": "pontos",
     "pele": {
      "corpo": "#6d7b86",
@@ -4263,7 +4295,7 @@
    "anim": "acenar",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.2,
+    "cabeca": 1.35,
     "boca": 0.45,
     "olhos": "grandes"
    }
@@ -4285,7 +4317,7 @@
    "anim": "assentir",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.2,
+    "cabeca": 1.35,
     "boca": 0.45,
     "olhos": "grandes"
    }
@@ -4324,7 +4356,7 @@
    "anim": "nervoso",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.15,
+    "cabeca": 1.3,
     "boca": 0.45,
     "olhos": "grandes"
    }
@@ -4346,7 +4378,7 @@
    "anim": "assentir",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.4,
+    "cabeca": 1.6,
     "boca": 0.45,
     "olhos": "grandes"
    }
@@ -4436,10 +4468,12 @@
    "anim": "superioridade",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.15,
-    "corpo": 1.35,
+    "cabeca": 1.25,
+    "corpo": 1.65,
     "boca": 0.45,
-    "olhos": "grandes"
+    "olhos": "grandes",
+    "barrigona": 1.3,
+    "papada": true
    }
   },
   {
@@ -4459,7 +4493,7 @@
    "anim": "hmpf",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.2,
+    "cabeca": 1.35,
     "boca": 0.45,
     "olhos": "semicerrados"
    }
@@ -4496,7 +4530,10 @@
    ],
    "fala": "Hidi-ho! O Sr. Hankey, o cocô de Natal, veio me ver.",
    "anim": "rirPropriaPiada",
-   "colecao": "South Park"
+   "colecao": "South Park",
+   "transforma": {
+    "moscas": true
+   }
   },
   {
    "nivel": 140,
@@ -4554,8 +4591,10 @@
    "anim": "poseEpica",
    "colecao": "South Park",
    "transforma": {
-    "corpo": 1.35,
-    "boca": 0.45
+    "corpo": 1.6,
+    "boca": 0.45,
+    "barrigona": 1.25,
+    "papada": true
    }
   },
   {
@@ -4629,7 +4668,7 @@
    "anim": "falsaMorte",
    "colecao": "South Park",
    "transforma": {
-    "cabeca": 1.2,
+    "cabeca": 1.35,
     "boca": 0.2,
     "olhos": "grandes",
     "pele": {
@@ -4713,8 +4752,8 @@
    "fala": "Stonks. As ações do meu shape só sobem.",
    "anim": "apontar",
    "transforma": {
-    "cabeca": 1.3,
-    "boca": 0.5,
+    "cabeca": 1.55,
+    "boca": 0.4,
     "olhos": "pontos"
    }
   },
@@ -4735,7 +4774,7 @@
    "fala": "Cérebro galáctico: treinar perna é treinar a alma.",
    "anim": "pensando",
    "transforma": {
-    "cabeca": 1.3,
+    "cabeca": 1.55,
     "olhos": "brilho",
     "pele": {
      "olho": "#e1bee7"
@@ -4793,15 +4832,17 @@
    "fala": "Big Chungus. Bulking sem fim e sem vergonha.",
    "anim": "tapinhaAbdomen",
    "transforma": {
-    "cabeca": 1.05,
-    "corpo": 1.5,
-    "boca": 0.6,
+    "cabeca": 1.1,
+    "corpo": 1.8,
+    "boca": 0.55,
     "olhos": "semicerrados",
     "pele": {
      "corpo": "#9e9e9e",
      "barriga": "#f5f5f5",
      "musculo": "#757575"
-    }
+    },
+    "barrigona": 1.4,
+    "papada": true
    }
   },
   {
@@ -4880,7 +4921,7 @@
    "fala": "Problem? Sorriso de troll e bíceps de verdade.",
    "anim": "rirPropriaPiada",
    "transforma": {
-    "boca": 1.35,
+    "boca": 1.65,
     "olhos": "semicerrados",
     "pele": {
      "cabeca": "#f5f5f5"
@@ -4992,7 +5033,7 @@
    "fala": "Thicc com dois c. Glúteo de aço, pudor zero.",
    "anim": "desfile",
    "transforma": {
-    "corpo": 1.2
+    "corpo": 1.45
    }
   },
   {
@@ -5185,13 +5226,15 @@
    "fala": "De boa igual capivara com laranja na cabeça.",
    "anim": "contente",
    "transforma": {
-    "corpo": 1.25,
+    "corpo": 1.55,
     "boca": 0.5,
     "olhos": "pontos",
     "pele": {
      "corpo": "#8d6e4f",
      "barriga": "#a1887f"
-    }
+    },
+    "barrigona": 1.3,
+    "papada": true
    }
   },
   {
@@ -5226,7 +5269,13 @@
     "#e53935"
    ],
    "fala": "Sextou, porra! Hoje o treino é de bíceps e de copo.",
-   "anim": "festaSozinho"
+   "anim": "festaSozinho",
+   "transforma": {
+    "corpo": 1.45,
+    "barrigona": 1.3,
+    "suor": true,
+    "papada": true
+   }
   },
   {
    "nivel": 120,
@@ -5340,7 +5389,7 @@
    "fala": "Gyatt! Tô falando do MEU glúteo, calma.",
    "anim": "desfile",
    "transforma": {
-    "corpo": 1.2
+    "corpo": 1.45
    }
   },
   {
@@ -5380,7 +5429,7 @@
    "fala": "Big Dick Energy. Não pergunta, só sente.",
    "anim": "superioridade",
    "transforma": {
-    "corpo": 1.1
+    "corpo": 1.3
    }
   },
   {

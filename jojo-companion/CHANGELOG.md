@@ -36,6 +36,11 @@
   laranja, Sharingan vermelho, olhos de anime, olhos de coração e muitos outros. Óculos
   triangulares do Kamina e máscara ninja do Mortal Kombat redesenhados. Sem visual, o JoJo
   original continua igual.
+- Exagero sem pudor nos visuais que pedem: o Dragão Guerreiro é um panda gordo (branco,
+  braços e pernas pretos, manchas nos olhos, orelhas redondas e barrigona); Big Chungus,
+  Homer, Cartman, Totoro, Kirby, Pac-Man e a capivara ficam gordos de barrigona e papada;
+  Shrek e o tubarão zumbi ficam nojentos, com sujeira e moscas; Sextou e Hungry Shark com
+  suor e baba.
 - Cada visual liberado mostra a obra, o título do nível e a fala da referência como
   descrição. Os ainda trancados aparecem só como cadeado com o nível, sem revelar nada
   do que são. Acessórios da coleção só aparecem depois de liberados.

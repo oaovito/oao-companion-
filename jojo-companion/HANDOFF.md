@@ -16,7 +16,9 @@ referência/extra (`cabeca`, `corpo`, `boca` — fatores; `olhos` — estilo em 
 corpo/barriga/musculo/cabeca/olho/esclera). Renderer: canais `nvCabeca` (escala no pivô do
 pescoço, partes `headRot` e rosto), `nvCorpo` (partes marcadas `corpoX`; braços `ladoX`),
 `nvBoca`, `nvOlhos` (`_olhoEstilo`) e paleta `costume_pele<id>` (cabeça usa `nvCabecaPele`).
-A peça mais recente vence cada transformação. Janela ganha espaço extra em cima/dos lados.
+A peça mais recente vence cada transformação. Exagero (18/11): `barrigona` (fator),
+`papada`, `manchasOlhos`/`orelhasRedondas` (cor), `suor`, `baba`, `sujeira`, `moscas` viram
+partes (`partesDoCorpo`, grupo `nivelCorpo`); `pele.membros` pinta braços e pernas (`nvMembros`). Janela ganha espaço extra em cima/dos lados.
 Avisos (18/11): `visualNivel.avisar` guarda o que o JoJo ainda não anunciou (abertura,
 nível novo; repetido a cada minuto se não deu para falar) e `novas` o que a Central
 ainda não mostrou (selo "Novo", contador no botão; `app:visuais-vistos` limpa). Na
