@@ -116,7 +116,7 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
   for (const p of novas) {
     assert.match(p.showIf, /^nv_(nv\d{3}|sp\d{2}|tw\d{2})$/);
     assert.ok(!/NaN|undefined/.test(p.path), p.id);
-    assert.match(p.fill, /^#[0-9a-f]{6}$/i, p.id);
+    assert.ok(/^#[0-9a-f]{6}$/i.test(p.fill) || ['body', 'cream', 'nvCabecaPele', 'nvMembros'].includes(p.fill), p.id);
     // Pontos absolutos (sem os deslocamentos relativos dos arcos e curvas) cabem no espaço da janela.
     for (const seg of p.path.split(/(?=[MLZ])/)) {
       if (!/^[ML]/.test(seg)) continue;
@@ -274,7 +274,8 @@ test('transformações: o visual muda cabeça, corpo, boca, olhos e pele para pa
   const peca = (titulo) => CAT.find((p) => p.titulo === titulo);
   const ch = (titulo) => { const p = peca(titulo); return canaisVisual({ pecas: { [p.parte]: p.id } }, REF, 200); };
   const hulk = ch('Hulk Esmaga');
-  assert.equal(hulk.nvCorpo, 1.3);
+  assert.equal(hulk.nvCorpo, peca('Hulk Esmaga').transforma.corpo);
+  assert.ok(hulk.nvCorpo >= 1.5, 'Hulk bem largo');
   assert.equal(hulk[`costume_pele${peca('Hulk Esmaga').id}`], 1);
   const r = rigComVisuais(RIG, REF);
   assert.equal(r.costumes[`pele${peca('Hulk Esmaga').id}`].palette.body, '#5aa83a', 'Hulk verde');
@@ -284,17 +285,27 @@ test('transformações: o visual muda cabeça, corpo, boca, olhos e pele para pa
   assert.ok(ch('Stonks').nvBoca < 1, 'boquinha');
   assert.equal(ch('Nós Somos Venom').nvOlhos, OLHOS.vazios);
   // A peça mais recente vence quando duas transformam a mesma coisa.
-  const a = peca('Hulk Esmaga'), b = peca('Sugada Cósmica');
+  const a = peca('Baby Shark'), b = peca('Hulk Esmaga');
   const dois = canaisVisual({ pecas: { [a.parte]: a.id, [b.parte]: b.id } }, REF, 200);
-  assert.equal(dois.nvCorpo, 1.35, 'Kirby (nível mais alto) vence o Hulk no corpo');
+  assert.equal(dois.nvCorpo, b.transforma.corpo, 'o Hulk (nível mais alto) vence o Baby Shark no corpo');
+  assert.equal(dois.nvBoca, a.transforma.boca, 'a boquinha continua a do Baby Shark: o Hulk não mexe na boca');
   assert.equal(dois[`costume_pele${b.id}`], 1);
   assert.equal(dois[`costume_pele${a.id}`], undefined, 'uma pele por vez');
+  // Exagero liberado (pedido de 18/11): o Dragão Guerreiro é um panda gordo.
+  const panda = peca('Dragão Guerreiro');
+  const partesPanda = partesDaPeca(panda).map((x) => x.part.id.replace(`${panda.id}_`, ''));
+  for (const id of ['barriga', 'papada', 'manchas', 'orelhas']) assert.ok(partesPanda.includes(id), id);
+  assert.ok(ch('Dragão Guerreiro').nvCorpo >= 1.7);
+  assert.equal(r.costumes[`pele${panda.id}`].palette.nvMembros, '#1a1a1a', 'braços e pernas pretos');
+  assert.equal(r.palette.nvMembros, RIG.palette.body, 'sem visual, braços e pernas como sempre');
+  const nojento = partesDaPeca(peca('Ogros São Como Cebolas')).map((x) => x.part.id);
+  assert.ok(nojento.some((id) => id.endsWith('_moscas')) && nojento.some((id) => id.endsWith('_sujeira')));
   // Sem visual vestido, nenhuma transformação.
   assert.equal(canaisVisual({}, REF, 200), null);
   // Valores dentro do que o desenho aguenta.
   for (const p of CAT.filter((x) => x.transforma)) {
     const t = p.transforma;
-    for (const k of ['cabeca', 'corpo', 'boca']) if (t[k] != null) assert.ok(t[k] >= 0.2 && t[k] <= 1.6, `${p.titulo} ${k}`);
+    for (const k of ['cabeca', 'corpo', 'boca']) if (t[k] != null) assert.ok(t[k] >= 0.2 && t[k] <= 1.8, `${p.titulo} ${k}`);
     if (t.olhos) assert.ok(OLHOS[t.olhos], `${p.titulo} olhos ${t.olhos}`);
     for (const v of Object.values(t.pele || {})) assert.match(v, /^#[0-9a-f]{6}$/i, p.titulo);
   }

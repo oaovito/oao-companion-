@@ -700,13 +700,38 @@ export function paletaPele(t) {
   const p = t?.pele;
   if (!p) return null;
   const out = {};
-  if (p.corpo) { out.body = p.corpo; out.bodyShade = escurece(p.corpo, 0.15); out.muscle = p.musculo || escurece(p.corpo); out.nvCabecaPele = p.cabeca || p.corpo; }
+  if (p.corpo) { out.body = p.corpo; out.bodyShade = escurece(p.corpo, 0.15); out.muscle = p.musculo || escurece(p.corpo); out.nvCabecaPele = p.cabeca || p.corpo; out.nvMembros = p.membros || p.corpo; }
+  if (p.membros) out.nvMembros = p.membros;
   if (p.cabeca) out.nvCabecaPele = p.cabeca;
   if (p.musculo) out.muscle = p.musculo;
   if (p.barriga) out.cream = p.barriga;
   if (p.olho) out.eye = p.olho;
   if (p.esclera) out.sclera = p.esclera;
   return Object.keys(out).length ? out : null;
+}
+
+/**
+ * Partes do corpo transformado (sem pudor): barrigona, papada, manchas de panda,
+ * orelhas redondas, suor, baba, sujeira e moscas. Cores da pele do próprio visual.
+ */
+function partesDoCorpo(t) {
+  if (!t) return [];
+  const out = [];
+  const k = t.barrigona;
+  if (k) {
+    const rx = 34 * k, ry = 28 * k, cy = 120;
+    out.push(['nivelCorpo', 'barriga', 'body', elip(90, cy, rx, ry), { hideIf: 'sexy' }]);
+    out.push(['nivelCorpo', 'barrigaClara', 'cream', elip(90, cy + 3, rx * 0.7, ry * 0.72), { hideIf: 'sexy' }]);
+    out.push(['nivelPintura', 'umbigo', '#5d4037', `M86,${r1(cy + 6)} C88,${r1(cy + 10)} 92,${r1(cy + 10)} 94,${r1(cy + 6)} L93,${r1(cy + 8)} C91,${r1(cy + 11)} 89,${r1(cy + 11)} 87,${r1(cy + 8)} Z`, { alpha: 0.8 }]);
+  }
+  if (t.papada) out.push(['nivelCorpo', 'papada', 'nvCabecaPele', 'M54,80 C60,100 120,100 126,80 C112,92 68,92 54,80 Z', H()]);
+  if (t.manchasOlhos) out.push(['headDetail', 'manchas', t.manchasOlhos, 'M60,30 C66,20 88,22 92,38 C95,54 78,62 66,56 C58,52 56,40 60,30 Z M120,30 C114,20 92,22 88,38 C85,54 102,62 114,56 C122,52 124,40 120,30 Z', H()]);
+  if (t.orelhasRedondas) out.push(['costumeBack', 'orelhas', t.orelhasRedondas, `${circ(50, 16, 15)} ${circ(130, 16, 15)}`, H()]);
+  if (t.suor) out.push(['costumes', 'suor', '#81d4fa', ['M56,26 C52,34 54,40 58,40 C62,40 63,34 56,26 Z', 'M122,30 C118,38 120,44 124,44 C128,44 129,38 122,30 Z', 'M64,12 C61,18 62,22 65,22 C68,22 69,18 64,12 Z'].join(' '), H({ alpha: 0.9 })]);
+  if (t.baba) out.push(['costumes', 'baba', '#c5e1a5', 'M118,66 C120,74 117,86 121,92 C124,96 128,92 125,86 C123,80 124,72 122,64 Z', H({ alpha: 0.9 })]);
+  if (t.sujeira) out.push(['nivelPintura', 'sujeira', '#6d4c41', `${elip(70, 108, 6, 4)} ${elip(108, 122, 7, 4.5)} ${elip(96, 98, 3.5, 2.5)} ${elip(62, 128, 4, 3)}`, { alpha: 0.75 }]);
+  if (t.moscas) out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [150, 22], [160, 80], [22, 90], [140, 120]].map(([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`).join(' '), { alpha: 0.95 }]);
+  return out;
 }
 
 /** Canal de pose que liga a peça no desenho. */
@@ -721,6 +746,7 @@ export function partesDaPeca(p) {
   else if (p.parte === 'mao') lista = (MAO[p.forma] || MAO.espada)(c, p.t).map(([, id, fill, path, extra]) => ['costumeHand', id, fill, path, { parent: 'foreR', ...(extra || {}) }]);
   else lista = (FORMAS[p.forma] || FORMAS[p.parte === 'bermuda' ? 'liso' : 'medalhao'])(c, p.t);
   const ch = canalDaPeca(p);
+  lista = [...partesDoCorpo(p.transforma), ...lista];
   const out = lista.map(([group, id, fill, path, extra]) => ({ group, part: { id: `${p.id}_${id}`, fill, showIf: ch, path, ...(extra || {}) } }));
   // Acabamento pelo nível: 0 a 2 brilhos, num grupo sem contorno por cima de tudo.
   const anc = ANCORAS[p.parte];
@@ -738,8 +764,9 @@ export function partesDaPeca(p) {
  * detalhe dos braços, ambos escondidos de costas (mooning).
  */
 // Grupos do tronco (esticam com o corpo mais largo) e o dos braços (afastam para os lados).
-const GRUPOS_CORPO = new Set(['costumeBack', 'legs', 'legDetail', 'sexyNet', 'body', 'bodyDetail', 'catalogChest', 'shorts', 'shortsDetail', 'sexyLayer', 'costumes', 'nivelAura', 'nivelPintura', 'nivelBrilho']);
+const GRUPOS_CORPO = new Set(['costumeBack', 'legs', 'legDetail', 'sexyNet', 'body', 'bodyDetail', 'catalogChest', 'shorts', 'shortsDetail', 'sexyLayer', 'costumes', 'nivelAura', 'nivelPintura', 'nivelBrilho', 'nivelCorpo']);
 const GRUPOS_CABECA_PELE = new Set(['head', 'headDetail']);
+const GRUPOS_MEMBROS = new Set(['arms', 'legs']);
 
 export function rigComVisuais(rig, dados) {
   const { referencias } = fonte(dados);
@@ -749,6 +776,7 @@ export function rigComVisuais(rig, dados) {
   const groups = rig.groups.map((g) => ({ ...g, parts: g.parts.map((pt) => {
     const out = { ...pt };
     if (GRUPOS_CABECA_PELE.has(g.id) && pt.fill === 'body') out.fill = 'nvCabecaPele';
+    if (GRUPOS_MEMBROS.has(g.id) && pt.fill === 'body') out.fill = 'nvMembros';
     if (g.id === 'arms' && !pt.parent && pt.pivot) out.ladoX = pt.pivot[0] < 90 ? -1 : 1;
     else if (GRUPOS_CORPO.has(g.id) && !pt.parent && pt.rot !== 'headRot') out.corpoX = true;
     return out;
@@ -756,6 +784,10 @@ export function rigComVisuais(rig, dados) {
   const aura = { id: 'nivelAura', hideIf: 'mooning', parts: [] };
   const pintura = { id: 'nivelPintura', hideIf: 'mooning', parts: [] };
   const brilhos = { id: 'nivelBrilho', hideIf: 'mooning', parts: [] };
+  // Corpo transformado (barrigona, papada): por cima da bermuda e abaixo das peças e dos braços.
+  const corpoGrupo = { id: 'nivelCorpo', hideIf: 'mooning', outline: true, parts: [] };
+  const iShorts = groups.findIndex((g) => g.id === 'shortsDetail');
+  groups.splice(iShorts >= 0 ? iShorts + 1 : groups.length, 0, corpoGrupo);
   const iArm = groups.findIndex((g) => g.id === 'armDetail');
   groups.splice(iArm >= 0 ? iArm + 1 : groups.length, 0, pintura);
   const iMao = groups.findIndex((g) => g.id === 'costumeHand');
@@ -774,7 +806,7 @@ export function rigComVisuais(rig, dados) {
       alvo.parts.push(marcado);
     }
   }
-  return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body } };
+  return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body, nvMembros: rig.palette.body } };
 }
 
 // ---------------------------------------------------------------- estado e uso
