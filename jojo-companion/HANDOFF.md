@@ -11,6 +11,12 @@ referência. Dados em `progressao.json` → `referencias` (titulo, obra, tipo, p
 peca, cores, fala, anim, reacao?), alinhado com `niveis`. Formas desenhadas em
 `visual-nivel.js` (FORMAS, PINTURA, AURA, MAO); brilhos de acabamento no grupo
 `nivelBrilho`. A seção abaixo descreve a primeira versão (títulos marinhos), substituída.
+Transformações (18/11, autorizadas pela usuária só para visuais): `transforma` em cada
+referência/extra (`cabeca`, `corpo`, `boca` — fatores; `olhos` — estilo em `OLHOS`; `pele` —
+corpo/barriga/musculo/cabeca/olho/esclera). Renderer: canais `nvCabeca` (escala no pivô do
+pescoço, partes `headRot` e rosto), `nvCorpo` (partes marcadas `corpoX`; braços `ladoX`),
+`nvBoca`, `nvOlhos` (`_olhoEstilo`) e paleta `costume_pele<id>` (cabeça usa `nvCabecaPele`).
+A peça mais recente vence cada transformação. Janela ganha espaço extra em cima/dos lados.
 Avisos (18/11): `visualNivel.avisar` guarda o que o JoJo ainda não anunciou (abertura,
 nível novo; repetido a cada minuto se não deu para falar) e `novas` o que a Central
 ainda não mostrou (selo "Novo", contador no botão; `app:visuais-vistos` limpa). Na

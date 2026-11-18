@@ -58,8 +58,9 @@ export class RigRenderer {
     const costumes = this.rig.costumes || {};
     // Bermuda do guarda-roupa (costume_bermuda*) vence a paleta das outras peças.
     const on = Object.keys(costumes).filter((k) => k[0] !== '_' && (pose[`costume_${k}`] ?? 0) >= 0.5);
-    const costume = on.find((k) => k.startsWith('bermuda')) || on[0] || null;
-    let key = costume ? `c:${costume};` : '';
+    // Ordem: fantasia do dia, pele do visual de nível, bermuda (a bermuda vence nas cores dela).
+    const ordem = [on.find((k) => !k.startsWith('bermuda') && !k.startsWith('pele')), ...on.filter((k) => k.startsWith('pele')), on.find((k) => k.startsWith('bermuda'))].filter(Boolean);
+    let key = ordem.length ? `c:${ordem.join(',')};` : '';
     for (const ch of Object.keys(moods)) {
       if (ch[0] === '_') continue;
       const v = Math.round(Math.max(0, Math.min(1, pose[ch] || 0)) * 40);
@@ -70,7 +71,8 @@ export class RigRenderer {
       this.tinted = this._tintCache;
       return;
     }
-    const out = { ...this.rig.palette, ...(costume ? costumes[costume].palette || {} : {}) };
+    const out = { ...this.rig.palette };
+    for (const k of ordem) Object.assign(out, costumes[k].palette || {});
     for (const ch of Object.keys(moods)) {
       if (ch[0] === '_') continue;
       const amt = Math.max(0, Math.min(1, pose[ch] || 0)) * (moods[ch].max ?? 1);
@@ -94,6 +96,8 @@ export class RigRenderer {
     const P = (k, d = 0) => (pose[k] ?? d);
     const rig = this.rig;
     this._applyMoods(pose);
+    // Visuais de nível podem transformar o JoJo: cabeça, corpo, boca e olhos (1 = normal).
+    this.nv = { cab: P('nvCabeca', 1), corpo: P('nvCorpo', 1), boca: P('nvBoca', 1), olhos: Math.round(P('nvOlhos', 0)) };
     const W = this.box.width;
     const gx = W / 2;
     const gy = this.ground;
@@ -175,12 +179,21 @@ export class RigRenderer {
       const parent = this.partsById.get(part.parent);
       if (parent) this._xform(ctx, parent, pose, depth + 1);
     }
+    // Corpo mais largo (visual de nível): tronco/pernas esticam; braços vão para os lados.
+    const corpo = this.nv?.corpo ?? 1;
+    if (corpo !== 1) {
+      if (part.corpoX) { ctx.translate(90, 0); ctx.scale(corpo, 1); ctx.translate(-90, 0); }
+      if (part.ladoX) ctx.translate(part.ladoX * (corpo - 1) * 44, 0);
+    }
     if (part.pivot && part.rot) {
       ctx.translate(part.pivot[0], part.pivot[1]);
       // Canais tailRot legados viram movimento discreto dos pés, sem desenhar cauda.
       const sway = ['legL', 'legR', 'clawL', 'clawR'].includes(part.id) ? (pose.tailRot || 0) * 0.25 : 0;
       const angle = (pose[part.rot] || 0) + sway;
       ctx.rotate(angle * (part.rotSign ?? 1) * DEG);
+      // Cabeça maior ou menor (visual de nível), crescendo a partir do pescoço.
+      const cab = this.nv?.cab ?? 1;
+      if (part.rot === 'headRot' && cab !== 1) ctx.scale(cab, cab);
       ctx.translate(-part.pivot[0], -part.pivot[1]);
     }
     if (part.lift) ctx.translate(0, -(pose[part.lift] || 0));
@@ -203,6 +216,7 @@ export class RigRenderer {
     ctx.save();
     ctx.translate(F.pivot[0], F.pivot[1]);
     ctx.rotate(P('headRot') * DEG);
+    if (this.nv && this.nv.cab !== 1) ctx.scale(this.nv.cab, this.nv.cab);
     ctx.translate(-F.pivot[0] + P('headX'), -F.pivot[1] + P('headY'));
 
     // Guelras.
@@ -264,6 +278,7 @@ export class RigRenderer {
     const wink = P('wink') > 0.5;
     for (const e of this.eyes) {
       const p = wink && e.x > this.faceCenter ? { ...pose, eyeOpen: 0, happyEyes: 0 } : pose;
+      if (this.nv?.olhos && this._olhoEstilo(ctx, p, e, this.nv.olhos)) continue;
       (sp ? this._eyeSP : this._eye).call(this, ctx, p, e);
     }
     for (const b of this.brows) (sp ? this._browSP : this._brow).call(this, ctx, pose, b);
@@ -378,7 +393,7 @@ export class RigRenderer {
     // Pálpebras (cor do corpo), recortadas pelo olho.
     ctx.save();
     ctx.clip(eye);
-    ctx.fillStyle = this.color('body');
+    ctx.fillStyle = this.color(this.rig.palette.nvCabecaPele ? 'nvCabecaPele' : 'body');
     ctx.strokeStyle = outline;
     ctx.lineWidth = 2;
     const top = E.y - ry;
@@ -457,7 +472,73 @@ export class RigRenderer {
     ctx.restore();
   }
 
+  /** Boca maior ou menor (visual de nível), a partir do centro do sorriso. */
   _mouth(ctx, pose) {
+    const k = this.nv?.boca ?? 1;
+    if (k === 1) return this._mouthBase(ctx, pose);
+    const M = this.rig.face.mouth;
+    ctx.save();
+    ctx.translate(M.cx, M.y1);
+    ctx.scale(k, 0.55 + 0.45 * k);
+    ctx.translate(-M.cx, -M.y1);
+    this._mouthBase(ctx, pose);
+    ctx.restore();
+  }
+
+  /**
+   * Olhos de outro estilo (visual de nível). Cor da íris: paleta `eye`; branco: `sclera`.
+   * 1 anime · 2 pontinhos · 3 sharingan · 4 brancos vazios · 5 pretos · 6 brilhando ·
+   * 7 coração · 8 semicerrados · 9 grandes e redondos. Devolve false para o estilo normal.
+   */
+  _olhoEstilo(ctx, pose, E, estilo) {
+    const open = Math.max(0, Math.min(1, pose.eyeOpen ?? 1));
+    const outline = this.color('outline');
+    if (estilo === 7) return this._eyeSP(ctx, { ...pose, heartEyes: 1 }, E), true;
+    if (estilo === 8) return this._eyeSP(ctx, { ...pose, eyeOpen: Math.min(open, 0.42) }, E), true;
+    if (open < 0.14 || pose.happyEyes > 0.5 || pose.eyeX > 0.5 || pose.heartEyes > 0.5) return false;
+    const lado = E.x < this.faceCenter ? -1 : 1;
+    const px = (pose.pupilX || 0) * 2, py = (pose.pupilY || 0) * 2;
+    const oval = (x, y, rx, ry, fill, stroke = true, rot = 0) => {
+      ctx.beginPath(); ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
+      ctx.fillStyle = fill; ctx.fill();
+      if (stroke) { ctx.strokeStyle = outline; ctx.lineWidth = 2; ctx.stroke(); }
+    };
+    ctx.save();
+    if (estilo === 1) {
+      oval(E.x, E.y, E.rx * 1.2, E.ry * 1.3 * open, this.color('sclera'));
+      oval(E.x + px, E.y + 2 + py, E.rx * 0.78, E.ry * 1.05 * open, this.color('eye'), false);
+      oval(E.x + px, E.y + 3 + py, E.rx * 0.38, E.ry * 0.5 * open, '#111111', false);
+      oval(E.x + px - 3, E.y - 3 + py, 3, 3.6 * open, '#ffffff', false);
+      oval(E.x + px + 3, E.y + 6 + py, 1.4, 1.4, '#ffffff', false);
+    } else if (estilo === 2) {
+      oval(E.x + px, E.y + 2 + py, 3.4, 3.8 * open, this.color('eye'), false);
+    } else if (estilo === 3) {
+      oval(E.x, E.y, E.rx, E.ry * open, this.color('sclera'));
+      oval(E.x + px, E.y + 1 + py, 6.6, 6.6 * open, this.color('eye'));
+      oval(E.x + px, E.y + 1 + py, 2, 2, '#111111', false);
+      for (let i = 0; i < 3; i++) { const a = -Math.PI / 2 + (i * 2 * Math.PI) / 3; oval(E.x + px + Math.cos(a) * 4, E.y + 1 + py + Math.sin(a) * 4, 1.4, 1.4, '#111111', false); }
+    } else if (estilo === 4) {
+      oval(E.x + lado * 1, E.y, E.rx * 1.25, E.ry * 0.95 * open, this.color('sclera'), true, lado * 0.45);
+    } else if (estilo === 5) {
+      oval(E.x, E.y + 2, E.rx * 1.05, E.ry * 1.25 * open, this.color('eye'));
+      oval(E.x - 3, E.y - 3, 2, 2.4, 'rgba(255,255,255,0.7)', false);
+    } else if (estilo === 6) {
+      ctx.globalAlpha *= 0.35; oval(E.x, E.y, E.rx * 1.5, E.ry * 1.4, this.color('eye'), false); ctx.globalAlpha /= 0.35;
+      oval(E.x, E.y, E.rx, E.ry * open, this.color('sclera'));
+      oval(E.x + px, E.y + 1 + py, 5.2, 5.6 * open, this.color('eye'), false);
+      oval(E.x + px - 1.6, E.y - 1 + py, 1.6, 1.6, '#ffffff', false);
+    } else if (estilo === 9) {
+      oval(E.x, E.y - 1, 12.5, 12.5 * open, this.color('sclera'));
+      oval(E.x + px, E.y + py, 2.8, 2.8, this.color('eye'), false);
+    } else {
+      ctx.restore();
+      return false;
+    }
+    ctx.restore();
+    return true;
+  }
+
+  _mouthBase(ctx, pose) {
     const M = this.rig.face.mouth;
     // mouthClose (0..1) recolhe o sorriso de repouso (ex.: acolhimento).
     const rest = this.restJaw * (1 - Math.max(0, Math.min(1, pose.mouthClose ?? 0)));

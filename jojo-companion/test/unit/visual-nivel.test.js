@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { loadJSON, makeEnv } from './helpers.js';
 import {
   VISUAL_PARTES, gerarVisuais, partesDaPeca, rigComVisuais, visuaisLiberados, pecaLiberada, melhorConjunto,
-  aplicarNivel, vestirVisual, canaisVisual, visualSnapshot, acharVisual, sanitizeVisual, canalDaPeca,
+  aplicarNivel, vestirVisual, canaisVisual, visualSnapshot, acharVisual, sanitizeVisual, canalDaPeca, OLHOS,
 } from '../../src/core/visual-nivel.js';
 import { Progress } from '../../src/core/catalog/antitedio.js';
 import { sanitize } from '../../src/core/settings-schema.js';
@@ -102,7 +102,13 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
   assert.equal(RIG.groups.some((g) => g.id === 'nivelAura'), false, 'não altera o rig original');
   assert.equal(r.groups[0].id, 'nivelAura', 'aura atrás de tudo');
   for (const id of ['nivelAura', 'nivelPintura', 'nivelBrilho']) assert.equal(r.groups.find((g) => g.id === id).hideIf, 'mooning', 'de costas some');
-  for (const g of RIG.groups) assert.deepEqual(r.groups.find((x) => x.id === g.id).parts.slice(0, g.parts.length), g.parts, g.id);
+  // Partes originais: mesmo desenho (só ganham marcas de transformação e a cor separada da cabeça).
+  for (const g of RIG.groups) {
+    const novas = r.groups.find((x) => x.id === g.id).parts.slice(0, g.parts.length);
+    assert.deepEqual(novas.map((p) => [p.id, p.path, p.pivot, p.rot]), g.parts.map((p) => [p.id, p.path, p.pivot, p.rot]), g.id);
+  }
+  assert.equal(RIG.groups.find((g) => g.id === 'head').parts.some((p) => p.corpoX || p.fill === 'nvCabecaPele'), false, 'o rig original não é alterado');
+  assert.equal(r.palette.nvCabecaPele, RIG.palette.body, 'sem visual, a cabeça tem a cor de sempre');
   const todas = r.groups.flatMap((g) => g.parts);
   assert.equal(new Set(todas.map((p) => p.id)).size, todas.length, 'ids únicos no rig');
   const novas = todas.filter((p) => /^(nv\d{3}|sp\d{2}|tw\d{2})_/.test(p.id));
@@ -136,7 +142,10 @@ test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central 
   const antes = { pecas: { cabeca: 'nv003' }, visto: L };
   assert.deepEqual(vestirVisual(antes, REF, L, bloqueada.id).estado.pecas, antes.pecas, 'vestir bloqueada não muda nada');
   const forjado = { pecas: { [bloqueada.parte]: bloqueada.id, cabeca: 'nv003' }, visto: L };
-  assert.deepEqual(canaisVisual(forjado, REF, L), { nv_nv003: 1 });
+  const chForjado = canaisVisual(forjado, REF, L);
+  assert.equal(chForjado.nv_nv003, 1);
+  assert.equal(chForjado[`nv_${bloqueada.id}`], undefined, 'peça bloqueada não liga canal');
+  assert.ok(Object.keys(chForjado).every((k) => !k.includes(bloqueada.id)));
   const json = JSON.stringify(visualSnapshot(forjado, REF, L));
   const snap = visualSnapshot(forjado, REF, L);
   const titulos = new Set(snap.partes.flatMap((pt) => pt.itens.map((i) => i.titulo)));
@@ -213,7 +222,8 @@ test('companion: subir de nível veste a peça da referência, fala a frase dela
     assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002' });
     assert.deepEqual(e.store.get().visualNivel.novas, ['nv002']);
     e.clock.advance(20000);
-    assert.deepEqual(e.overlay.state.visualNivel, { nv_nv002: 1 });
+    assert.equal(e.overlay.state.visualNivel.nv_nv002, 1);
+    assert.equal(e.overlay.state.visualNivel.nvOlhos, 9, 'olhos grandes do Bruce');
     assert.ok(falas.some((t) => t.includes(PROG.referencias[1].fala) && t.includes('Nível 2')), `aviso com a fala da referência: ${falas.join(' | ')}`);
     assert.deepEqual(e.store.get().visualNivel.avisar, [], 'anunciado uma vez');
     e.companion.marcarVisuaisVistos();
@@ -257,5 +267,35 @@ test('aviso: quem já tinha nível recebe a lista do que está liberado; no Modo
     assert.equal(e.store.get().visualNivel.novas.length, 39, 'continuam com o selo de novo até abrir a Central');
   } finally {
     e.companion.stop();
+  }
+});
+
+test('transformações: o visual muda cabeça, corpo, boca, olhos e pele para parecer a referência', () => {
+  const peca = (titulo) => CAT.find((p) => p.titulo === titulo);
+  const ch = (titulo) => { const p = peca(titulo); return canaisVisual({ pecas: { [p.parte]: p.id } }, REF, 200); };
+  const hulk = ch('Hulk Esmaga');
+  assert.equal(hulk.nvCorpo, 1.3);
+  assert.equal(hulk[`costume_pele${peca('Hulk Esmaga').id}`], 1);
+  const r = rigComVisuais(RIG, REF);
+  assert.equal(r.costumes[`pele${peca('Hulk Esmaga').id}`].palette.body, '#5aa83a', 'Hulk verde');
+  assert.equal(ch('Baby Shark').nvOlhos, OLHOS.anime);
+  assert.ok(ch('Baby Shark').nvCabeca > 1, 'cabeção de bebê');
+  assert.ok(ch('Big Chungus').nvCorpo >= 1.5, 'Big Chungus gordo');
+  assert.ok(ch('Stonks').nvBoca < 1, 'boquinha');
+  assert.equal(ch('Nós Somos Venom').nvOlhos, OLHOS.vazios);
+  // A peça mais recente vence quando duas transformam a mesma coisa.
+  const a = peca('Hulk Esmaga'), b = peca('Sugada Cósmica');
+  const dois = canaisVisual({ pecas: { [a.parte]: a.id, [b.parte]: b.id } }, REF, 200);
+  assert.equal(dois.nvCorpo, 1.35, 'Kirby (nível mais alto) vence o Hulk no corpo');
+  assert.equal(dois[`costume_pele${b.id}`], 1);
+  assert.equal(dois[`costume_pele${a.id}`], undefined, 'uma pele por vez');
+  // Sem visual vestido, nenhuma transformação.
+  assert.equal(canaisVisual({}, REF, 200), null);
+  // Valores dentro do que o desenho aguenta.
+  for (const p of CAT.filter((x) => x.transforma)) {
+    const t = p.transforma;
+    for (const k of ['cabeca', 'corpo', 'boca']) if (t[k] != null) assert.ok(t[k] >= 0.2 && t[k] <= 1.6, `${p.titulo} ${k}`);
+    if (t.olhos) assert.ok(OLHOS[t.olhos], `${p.titulo} olhos ${t.olhos}`);
+    for (const v of Object.values(t.pele || {})) assert.match(v, /^#[0-9a-f]{6}$/i, p.titulo);
   }
 });

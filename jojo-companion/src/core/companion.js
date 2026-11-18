@@ -4718,7 +4718,11 @@ export class Companion {
     const vestido = Object.keys(this.outfit).length > 0;
     const visualNivel = this._visualCanais(vestido);
     if (this.costume || vestido || visualNivel) {
-      attachments.push({ rect: { x: r.box.x, y: r.box.y - COSTUME_HEADROOM * s.size, width: r.box.width, height: COSTUME_HEADROOM * s.size } });
+      // Visual que aumenta a cabeça precisa de mais espaço em cima; corpo mais largo, dos lados.
+      const topo = COSTUME_HEADROOM + Math.max(0, (visualNivel?.nvCabeca || 1) - 1) * 130;
+      attachments.push({ rect: { x: r.box.x, y: r.box.y - topo * s.size, width: r.box.width, height: topo * s.size } });
+      const lado = Math.max(0, (visualNivel?.nvCorpo || 1) - 1) * 50 * s.size;
+      if (lado) attachments.push({ rect: { x: r.box.x - lado, y: r.box.y, width: r.box.width + 2 * lado, height: r.box.height } });
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
     }

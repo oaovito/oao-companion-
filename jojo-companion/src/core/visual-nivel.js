@@ -6,7 +6,9 @@
 // Cada nível a partir do 2 libera uma peça desenhada por cima do JoJo (o corpo, a
 // silhueta e o estilo de recorte de papel não mudam). Quanto mais alto o nível,
 // mais acabamento a peça ganha (friso, gemas, brilhos), então o conjunto sempre
-// melhora. Puro: catálogo, partes do rig e canais. Nada aqui revela peça bloqueada:
+// melhora. Pedido de 18/11: os visuais podem transformar o JoJo para parecer com a
+// referência (cabeça, corpo, boca, olhos e cor da pele) enquanto estão vestidos;
+// sem visual, o modelo original continua igual. Puro: catálogo, partes do rig e canais. Nada aqui revela peça bloqueada:
 // toda função pública que lista recebe o nível e filtra.
 
 export const VISUAL_PARTES = [
@@ -60,7 +62,7 @@ export function gerarVisuais(dados) {
     if (!r || !PARTES.has(r.parte)) continue;
     const t = (nivel - 2) / Math.max(1, total - 2);
     const [a, b, g] = r.cores;
-    out.push({ id: `nv${id3(nivel)}`, nivel, parte: r.parte, forma: r.forma, t, titulo: r.titulo, obra: r.obra, tipo: r.tipo, nome: r.peca, fala: r.fala, anim: r.anim || null, reacao: r.reacao || null, cores: { a, b, g } });
+    out.push({ id: `nv${id3(nivel)}`, nivel, parte: r.parte, forma: r.forma, t, titulo: r.titulo, obra: r.obra, tipo: r.tipo, nome: r.peca, fala: r.fala, anim: r.anim || null, reacao: r.reacao || null, cores: { a, b, g }, transforma: r.transforma || null });
   }
   // Extras (20 de South Park, 50 de memes do Twitter): liberados junto com o nível
   // indicado, depois da peça do nível. Id pelo prefixo e pela ordem dentro da coleção.
@@ -71,7 +73,7 @@ export function gerarVisuais(dados) {
     const n = contagem[pre] = (contagem[pre] || 0) + 1;
     if (!PARTES.has(x.parte) || !(x.nivel >= 2 && x.nivel <= total)) continue;
     const [a, b, g] = x.cores;
-    out.push({ id: `${pre}${String(n).padStart(2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, extra: true });
+    out.push({ id: `${pre}${String(n).padStart(2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
   }
   return out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
 }
@@ -212,6 +214,15 @@ const FORMAS = {
     ['costumes', 'armacao', b, poly([[58, 32], [122, 32], [122, 35], [58, 35]]), H()],
     ['costumes', 'lenteE', a, 'M66,33 L92,33 C92,46 86,48 79,48 C70,48 66,44 66,33 Z', H()],
     ['costumes', 'lenteD', a, 'M88,33 L114,33 C114,44 110,48 101,48 C94,48 88,46 88,33 Z', H()],
+  ],
+  oculosTriangulo: ({ a, b }) => [
+    ['costumes', 'armacao', a, `${poly([[54, 26], [90, 34], [126, 26], [126, 30], [90, 38], [54, 30]])}`, H()],
+    ['costumes', 'lentes', b, `${poly([[58, 30], [88, 36], [84, 50]])} ${poly([[122, 30], [92, 36], [96, 50]])}`, H({ alpha: 0.9 })],
+  ],
+  mascaraNinja: ({ a, b }) => [
+    ['costumes', 'mascara', a, 'M44,50 C60,46 120,46 136,50 L134,84 C110,90 70,90 46,84 Z', H()],
+    ['costumes', 'capuz', a, `M44,30 C44,0 136,0 136,30 L130,30 C120,14 60,14 50,30 Z`, H()],
+    ['costumes', 'costura', b, `${rect(58, 56, 64, 2.4)} ${rect(88, 50, 4, 34)}`, H()],
   ],
   oculosAviador: ({ a, b }) => [
     ['costumes', 'ponte', a, poly([[60, 31], [120, 31], [120, 33], [60, 33]]), H()],
@@ -675,6 +686,29 @@ const ANCORAS = {
   mao: { group: 'costumeHand', pts: [[162, 96], [136, 100], [166, 124], [132, 124]], extra: { parent: 'foreR' } },
 };
 
+// ---------------------------------------------------------------- transformações
+
+// Estilos de olho do renderizador (rig-renderer _olhoEstilo).
+export const OLHOS = { anime: 1, pontos: 2, sharingan: 3, vazios: 4, pretos: 5, brilho: 6, coracao: 7, semicerrados: 8, grandes: 9 };
+const escurece = (hex, k = 0.32) => {
+  const n = parseInt(hex.slice(1), 16);
+  const c = (sh) => Math.round(((n >> sh) & 255) * (1 - k));
+  return `#${((1 << 24) | (c(16) << 16) | (c(8) << 8) | c(0)).toString(16).slice(1)}`;
+};
+/** Paleta da "pele" de um visual: corpo, barriga, músculo, cabeça, olhos. */
+export function paletaPele(t) {
+  const p = t?.pele;
+  if (!p) return null;
+  const out = {};
+  if (p.corpo) { out.body = p.corpo; out.bodyShade = escurece(p.corpo, 0.15); out.muscle = p.musculo || escurece(p.corpo); out.nvCabecaPele = p.cabeca || p.corpo; }
+  if (p.cabeca) out.nvCabecaPele = p.cabeca;
+  if (p.musculo) out.muscle = p.musculo;
+  if (p.barriga) out.cream = p.barriga;
+  if (p.olho) out.eye = p.olho;
+  if (p.esclera) out.sclera = p.esclera;
+  return Object.keys(out).length ? out : null;
+}
+
 /** Canal de pose que liga a peça no desenho. */
 export const canalDaPeca = (p) => `nv_${p.id}`;
 
@@ -703,11 +737,22 @@ export function partesDaPeca(p) {
  * o rig recebido. Grupos novos: aura atrás de tudo e pintura logo depois do
  * detalhe dos braços, ambos escondidos de costas (mooning).
  */
+// Grupos do tronco (esticam com o corpo mais largo) e o dos braços (afastam para os lados).
+const GRUPOS_CORPO = new Set(['costumeBack', 'legs', 'legDetail', 'sexyNet', 'body', 'bodyDetail', 'catalogChest', 'shorts', 'shortsDetail', 'sexyLayer', 'costumes', 'nivelAura', 'nivelPintura', 'nivelBrilho']);
+const GRUPOS_CABECA_PELE = new Set(['head', 'headDetail']);
+
 export function rigComVisuais(rig, dados) {
   const { referencias } = fonte(dados);
   if (!rig || referencias.length < 2 || typeof referencias[0] !== 'object') return rig;
   const pecas = gerarVisuais(dados);
-  const groups = rig.groups.map((g) => ({ ...g, parts: [...g.parts] }));
+  // Cópia das partes com as marcas de transformação (o rig original não muda).
+  const groups = rig.groups.map((g) => ({ ...g, parts: g.parts.map((pt) => {
+    const out = { ...pt };
+    if (GRUPOS_CABECA_PELE.has(g.id) && pt.fill === 'body') out.fill = 'nvCabecaPele';
+    if (g.id === 'arms' && !pt.parent && pt.pivot) out.ladoX = pt.pivot[0] < 90 ? -1 : 1;
+    else if (GRUPOS_CORPO.has(g.id) && !pt.parent && pt.rot !== 'headRot') out.corpoX = true;
+    return out;
+  }) }));
   const aura = { id: 'nivelAura', hideIf: 'mooning', parts: [] };
   const pintura = { id: 'nivelPintura', hideIf: 'mooning', parts: [] };
   const brilhos = { id: 'nivelBrilho', hideIf: 'mooning', parts: [] };
@@ -720,9 +765,16 @@ export function rigComVisuais(rig, dados) {
   const costumes = { ...(rig.costumes || {}) };
   for (const p of pecas) {
     if (p.parte === 'bermuda') costumes[`bermuda${p.id}`] = { palette: { shorts: p.cores.a, stripe: p.cores.b } };
-    for (const { group, part } of partesDaPeca(p)) (byId.get(group) || byId.get('costumes')).parts.push(part);
+    const pele = paletaPele(p.transforma);
+    if (pele) costumes[`pele${p.id}`] = { palette: pele };
+    for (const { group, part } of partesDaPeca(p)) {
+      const alvo = byId.get(group) || byId.get('costumes');
+      const marcado = { ...part };
+      if (GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot') marcado.corpoX = true;
+      alvo.parts.push(marcado);
+    }
   }
-  return { ...rig, groups, costumes };
+  return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body } };
 }
 
 // ---------------------------------------------------------------- estado e uso
@@ -827,13 +879,28 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
   if (fantasia && FANTASIA_NA_MAO.has(fantasia)) ocupado.add('mao');
   if (fantasia === 'halloween') ocupado.add('costas');
   const ch = {};
+  const vestidas = [];
   for (const [parte, id] of Object.entries(s.pecas)) {
     if (ocupado.has(parte)) continue;
     const p = pecaLiberada(referencias, nivel, id);
     if (!p) continue;
     ch[canalDaPeca(p)] = 1;
     if (p.parte === 'bermuda') ch[`costume_bermuda${p.id}`] = 1;
+    vestidas.push(p);
   }
+  // Transformações (cabeça, corpo, boca, olhos, pele): a peça mais recente que define cada uma vence.
+  vestidas.sort((a, b) => a.nivel - b.nivel || Number(!!a.extra) - Number(!!b.extra));
+  let pele = null;
+  for (const p of vestidas) {
+    const t = p.transforma;
+    if (!t) continue;
+    if (t.cabeca) ch.nvCabeca = t.cabeca;
+    if (t.corpo) ch.nvCorpo = t.corpo;
+    if (t.boca) ch.nvBoca = t.boca;
+    if (t.olhos && OLHOS[t.olhos]) ch.nvOlhos = OLHOS[t.olhos];
+    if (paletaPele(t)) pele = p.id;
+  }
+  if (pele) ch[`costume_pele${pele}`] = 1;
   return Object.keys(ch).length ? ch : null;
 }
 

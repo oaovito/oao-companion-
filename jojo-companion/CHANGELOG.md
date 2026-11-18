@@ -29,6 +29,13 @@
   mostra quantos são novos.
 
 ### Melhorias
+- Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
+  enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
+  largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,
+  Bob Esponja e Simpsons amarelos, Big Chungus gordo, Stonks de cabeção, Kenny de capuz
+  laranja, Sharingan vermelho, olhos de anime, olhos de coração e muitos outros. Óculos
+  triangulares do Kamina e máscara ninja do Mortal Kombat redesenhados. Sem visual, o JoJo
+  original continua igual.
 - Cada visual liberado mostra a obra, o título do nível e a fala da referência como
   descrição. Os ainda trancados aparecem só como cadeado com o nível, sem revelar nada
   do que são. Acessórios da coleção só aparecem depois de liberados.
