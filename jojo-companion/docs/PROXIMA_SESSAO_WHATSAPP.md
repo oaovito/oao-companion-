@@ -73,3 +73,5 @@ O QUE VOCÊ (SESSÃO) DEVE FAZER
    testes, e repetir o fluxo de publicação.
 4. Nunca enviar mensagens de verdade nos testes; nunca pedir senha ou login.
 ```
+- 18/11: a 0.47.1 foi publicada sem o WhatsApp. A revisão do WhatsApp sai como 0.47.2:
+  subir a versão, criar a seção 0.47.2 no CHANGELOG e ajustar `pendingVersion` na política.

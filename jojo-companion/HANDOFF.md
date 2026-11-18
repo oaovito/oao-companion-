@@ -32,6 +32,13 @@ conversa real por variação do modelo (frase de desdém recusada pela guarda de
 relato: o celular recusava o QR ("Verifique sua conexão"); causa e correção no adendo
 de `docs/WHATSAPP_DIAGNOSTICO.md` (identidade Chrome e `companion_reg_refresh`).
 
+PUBLICADA 18/11: a 0.47.1 saiu SEM o WhatsApp (pedido "Publica tudo menos o que envolve
+WhatsApp"), da árvore `codex/living-companion` @ `69af7c5`, run 44203264231 tentativa 2
+(conversa aprovada; release pública e atualizador verificados pelo próprio run). Conteúdo:
+200 títulos, curva da 0.47.0 ×10, 238 bônus (coleção, não aceleram nível), painel sem
+corte, seções de Tarefas e Discord ocultas. O WhatsApp desta branch precisa sair como
+0.47.2 (versão, CHANGELOG e `ci/actions-cost-policy.json` a ajustar na próxima publicação).
+
 Publicação 0.47.1 (13/11, autorizada pela usuária): versão, CHANGELOG e política
 preparados em `dd50b99`, `codex/living-companion` avançada por fast-forward. Run oficial
 43471126958, tentativas 1–5: preflight, lint, instalação e 644/644 unitários passaram em
