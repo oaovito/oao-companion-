@@ -77,7 +77,130 @@ export function gerarVisuais(dados) {
     const [a, b, g] = x.cores;
     out.push({ id: `${pre}${String(n).padStart(CASAS[pre] || 2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
   }
-  return out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
+  out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
+  atribuirGenes(out);
+  return out;
+}
+
+// ---------------------------------------------------------------- genes (variação única por visual)
+
+// Pedido de 18/11/2026: variar 50x mais os elementos, sem repetir nada de um visual no outro
+// (o olho kawaii, por exemplo, nunca igual). Cada visual recebe, de forma determinística e
+// sem repetição, um olho próprio (se a referência muda os olhos), um enfeite próprio na peça
+// e um ajuste próprio de tamanho e inclinação da peça.
+export const GENES = {
+  pupilas: ['redonda', 'fenda vertical', 'fenda horizontal', 'estrela', 'coração', 'losango', 'cruz', 'anel', 'dupla', 'gota'],
+  brilhos: [0, 1, 2, 3],
+  cilios: [0, 1, 2, 3, 4],
+  formatos: [[1, 1], [1.18, 0.9], [0.9, 1.18], [1.25, 1.1], [0.86, 0.86], [1.08, 1.3]],
+  inclinacoes: [-0.32, -0.14, 0, 0.14, 0.32],
+  enfeites: ['pontos', 'listras', 'estrelas', 'gemas', 'rebites', 'zigue', 'coracoes', 'triangulos', 'losangos', 'aneis', 'raios', 'ondas'],
+  quantidades: [2, 3, 4, 5, 6],
+  cores: ['a', 'b', 'g'],
+  faixas: [0, 1, 2],
+  escalas: [0.93, 0.97, 1, 1.03, 1.07],
+  giros: [-6, -3, 0, 3, 6],
+  // Animação da referência: cada visual a toca do seu jeito (intensidade, ritmo e gesto de arremate).
+  intensidades: ['suave', 'normal', 'exagerado'],
+  ritmos: [0.8, 0.9, 1, 1.12, 1.25],
+  arremates: ['piscadinha', 'brilharDentes', 'flexionarBiceps', 'sobrancelha', 'sorrisoCanto', 'assentir', 'ombrosDeboche', 'beijoBiceps', 'revirarOlhos', 'linguaVitoria'],
+};
+const hash = (s) => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+/** Escolhe a combinação de número `n` (0..total-1) em cada lista, como um número em base mista. */
+function combinacao(n, listas) {
+  return listas.map((l) => { const v = l[n % l.length]; n = Math.floor(n / l.length); return v; });
+}
+function atribuirGenes(lista) {
+  const G = GENES;
+  const olhosListas = [G.pupilas.map((_, i) => i), G.brilhos, G.cilios, G.formatos, G.inclinacoes];
+  const olhosTotal = olhosListas.reduce((m, l) => m * l.length, 1);
+  const pecaListas = [G.enfeites, G.quantidades, G.cores, G.faixas, G.escalas, G.giros];
+  const pecaTotal = pecaListas.reduce((m, l) => m * l.length, 1);
+  const usadosOlho = new Set();
+  const usadosPeca = new Set();
+  const usadosAnim = new Set();
+  for (const p of lista) {
+    const h = hash(p.id);
+    let genes = { olho: null };
+    if (p.transforma?.olhos) {
+      // Olho único entre todos os visuais (o estilo base pode repetir; a combinação, nunca).
+      let n = h % olhosTotal;
+      while (usadosOlho.has(`${p.transforma.olhos}:${n}`) || usadosOlho.has(`*:${n}`)) n = (n + 7919) % olhosTotal;
+      usadosOlho.add(`*:${n}`);
+      const [pupila, brilhos, cilios, [rx, ry], tilt] = combinacao(n, olhosListas);
+      const iris = [p.cores.g, p.cores.b, p.cores.a].find((c) => /^#/.test(c) && !/^#(?:f{6}|0{6}|1{6}|2{6})$/i.test(c)) || p.cores.a;
+      genes.olho = { pupila, brilhos, cilios, rx, ry, tilt, iris };
+    }
+    // Peça única: a forma base pode repetir entre obras; forma + enfeite + ajuste, nunca.
+    let m = (h >>> 3) % pecaTotal;
+    while (usadosPeca.has(`${p.forma}:${m}`)) m = (m + 104729) % pecaTotal;
+    usadosPeca.add(`${p.forma}:${m}`);
+    const [enfeite, quantidade, cor, faixa, escala, giro] = combinacao(m, pecaListas);
+    genes = { ...genes, enfeite, quantidade, cor, faixa, escala, giro };
+    // Animação: visuais com a mesma animação de referência nunca a tocam do mesmo jeito.
+    const animListas = [G.intensidades, G.ritmos, G.arremates];
+    const animTotal = animListas.reduce((x, l) => x * l.length, 1);
+    let k = (h >>> 7) % animTotal;
+    while (usadosAnim.has(`${p.anim}:${k}`)) k = (k + 31) % animTotal;
+    usadosAnim.add(`${p.anim}:${k}`);
+    const [intensidade, ritmo, arremate] = combinacao(k, animListas);
+    // O arremate é sempre outro gesto (nunca a própria animação de referência).
+    const outro = G.arremates[(G.arremates.indexOf(arremate) + 1) % G.arremates.length];
+    genes.anim = { intensidade, ritmo, arremate: arremate === p.anim ? outro : arremate };
+    p.genes = genes;
+  }
+}
+
+/** Assinatura do visual (forma + genes): nenhuma se repete. */
+export function assinaturaVisual(p) {
+  const g = p.genes || {};
+  return `${p.parte}:${p.forma}:${g.enfeite}:${g.quantidade}:${g.cor}:${g.faixa}:${g.escala}:${g.giro}`;
+}
+
+// Onde cada parte recebe o enfeite (faixas alternativas) e o pivô do ajuste de tamanho/giro.
+const ZONAS = {
+  cabeca: { faixas: [[62, 12, 56], [58, 4, 64], [66, 18, 48]], pivo: [90, 14], extra: CABECA },
+  rosto: { faixas: [[60, 29, 60], [64, 46, 52], [58, 24, 64]], pivo: [90, 38], extra: CABECA },
+  pescoco: { faixas: [[66, 98, 48], [70, 104, 40], [62, 92, 56]], pivo: [90, 100] },
+  costas: { faixas: [[34, 150, 112], [40, 136, 100], [28, 160, 124]], pivo: [90, 120], grupo: 'costumeBack' },
+  pulsos: { faixas: [[24, 143, 18], [24, 140, 18], [24, 146, 18]], pivo: [90, 142], grupo: 'costumeHand', pulsos: true },
+  cinto: { faixas: [[60, 126, 60], [64, 127, 52], [58, 125, 64]], pivo: [90, 126], extra: { hideIf: 'sexy' } },
+  bermuda: { faixas: [[62, 138, 56], [64, 132, 52], [60, 144, 60]], pivo: [90, 138], grupo: 'shortsDetail' },
+  pintura: { faixas: [[52, 104, 76], [56, 114, 68], [48, 96, 84]], pivo: [90, 108], grupo: 'nivelPintura' },
+  aura: { faixas: [[20, 30, 140], [14, 70, 152], [24, 110, 132]], pivo: [90, 150], grupo: 'nivelAura' },
+  mao: { faixas: [[138, 124, 22], [140, 132, 18], [136, 116, 26]], pivo: [149, 130], grupo: 'costumeHand', extra: { parent: 'foreR' } },
+};
+
+/** Enfeite próprio da peça (pontos, listras, estrelas…) na zona da parte, nas cores da obra. */
+function enfeiteDaPeca(p) {
+  const g = p.genes;
+  const z = ZONAS[p.parte];
+  if (!g || !z) return [];
+  const [x0, y, w] = z.faixas[g.faixa];
+  const n = g.quantidade;
+  const fill = p.cores[g.cor];
+  const passo = w / (n + 1);
+  const forma = (cx, cy, i) => {
+    const r = 2.4;
+    switch (g.enfeite) {
+      case 'listras': return rect(cx - 0.9, cy - 3.5, 1.8, 7);
+      case 'estrelas': return estrela(cx, cy, 3.2);
+      case 'gemas': return poly([[cx, cy - 3.4], [cx + 2.6, cy], [cx, cy + 3.4], [cx - 2.6, cy]]);
+      case 'rebites': return `${circ(cx, cy, 1.6)}`;
+      case 'zigue': return poly([[cx - 3, cy + (i % 2 ? 2 : -2)], [cx + 3, cy + (i % 2 ? -2 : 2)], [cx + 3, cy + (i % 2 ? 0 : 4)], [cx - 3, cy + (i % 2 ? 4 : 0)]]);
+      case 'coracoes': return `M${r1(cx)},${r1(cy + 2.8)} C${r1(cx - 4.2)},${r1(cy - 0.6)} ${r1(cx - 1.6)},${r1(cy - 3.6)} ${r1(cx)},${r1(cy - 1.2)} C${r1(cx + 1.6)},${r1(cy - 3.6)} ${r1(cx + 4.2)},${r1(cy - 0.6)} ${r1(cx)},${r1(cy + 2.8)} Z`;
+      case 'triangulos': return poly([[cx - 2.8, cy + 2.4], [cx + 2.8, cy + 2.4], [cx, cy - 2.8]]);
+      case 'losangos': return poly([[cx, cy - 2.4], [cx + 3.4, cy], [cx, cy + 2.4], [cx - 3.4, cy]]);
+      case 'aneis': return `${circ(cx, cy, 2.6)} ${furo(cx, cy, 1.4, 1.4)}`;
+      case 'raios': return poly([[cx + 1, cy - 3.6], [cx - 2, cy + 0.4], [cx, cy + 0.4], [cx - 1, cy + 3.6], [cx + 2, cy - 0.4], [cx, cy - 0.4]]);
+      case 'ondas': return `M${r1(cx - 3.4)},${r1(cy)} Q${r1(cx - 1.7)},${r1(cy - 2.6)} ${r1(cx)},${r1(cy)} Q${r1(cx + 1.7)},${r1(cy + 2.6)} ${r1(cx + 3.4)},${r1(cy)} L${r1(cx + 3.4)},${r1(cy + 1.4)} Q${r1(cx + 1.7)},${r1(cy + 4)} ${r1(cx)},${r1(cy + 1.4)} Q${r1(cx - 1.7)},${r1(cy - 1.2)} ${r1(cx - 3.4)},${r1(cy + 1.4)} Z`;
+      default: return circ(cx, cy, r);
+    }
+  };
+  const caminhos = (dx = 0) => Array.from({ length: n }, (_, i) => forma(x0 + dx + passo * (i + 1), y + (g.enfeite === 'zigue' ? 0 : (i % 2) * 1.2), i)).join(' ');
+  const grupo = z.grupo || 'costumes';
+  if (z.pulsos) return [[grupo, 'enfeiteE', fill, caminhos(0), { parent: 'foreL', alpha: 0.95 }], [grupo, 'enfeiteD', fill, caminhos(111), { parent: 'foreR', alpha: 0.95 }]];
+  return [[grupo, 'enfeite', fill, caminhos(), { ...(z.extra || {}), alpha: 0.95 }]];
 }
 
 // ---------------------------------------------------------------- formas
@@ -820,7 +943,12 @@ export function partesDaPeca(p) {
   else if (p.parte === 'mao') lista = (MAO[p.forma] || MAO.espada)(c, p.t).map(([, id, fill, path, extra]) => ['costumeHand', id, fill, path, { parent: 'foreR', ...(extra || {}) }]);
   else lista = (FORMAS[p.forma] || FORMAS[p.parte === 'bermuda' ? 'liso' : 'medalhao'])(c, p.t);
   const ch = canalDaPeca(p);
-  lista = [...partesDoCorpo(p.transforma), ...lista];
+  // Ajuste próprio da peça (tamanho e giro em torno da zona da parte) e o enfeite dela.
+  const z = ZONAS[p.parte];
+  if (p.genes && z && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
+    lista = lista.map(([gr, id, fill, path, extra]) => [gr, id, fill, path, { ...(extra || {}), fix: [p.genes.escala, p.genes.giro, ...z.pivo] }]);
+  }
+  lista = [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
   const out = lista.map(([group, id, fill, path, extra]) => ({ group, part: { id: `${p.id}_${id}`, fill, showIf: ch, path, ...(extra || {}) } }));
   // Acabamento pelo nível: 0 a 2 brilhos, num grupo sem contorno por cima de tudo.
   const anc = ANCORAS[p.parte];
@@ -877,6 +1005,7 @@ export function rigComVisuais(rig, dados) {
     if (p.parte === 'bermuda') costumes[`bermuda${p.id}`] = { palette: { shorts: p.cores.a, stripe: p.cores.b } };
     const pele = paletaPele(p.transforma);
     if (pele) costumes[`pele${p.id}`] = { palette: pele };
+    if (p.genes?.olho) costumes[`olho${p.id}`] = { palette: { nvIris: p.genes.olho.iris } };
     for (const { group, part } of partesDaPeca(p)) {
       const alvo = byId.get(group) || byId.get('costumes');
       const marcado = { ...part };
@@ -1010,17 +1139,21 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
   // Transformações (cabeça, corpo, boca, olhos, pele): a peça mais recente que define cada uma vence.
   vestidas.sort((a, b) => a.nivel - b.nivel || Number(!!a.extra) - Number(!!b.extra));
   let pele = null;
+  let olho = null;
   for (const p of vestidas) {
     const t = p.transforma;
     if (!t) continue;
     if (t.cabeca) ch.nvCabeca = t.cabeca;
     if (t.corpo) ch.nvCorpo = t.corpo;
     if (t.boca) ch.nvBoca = t.boca;
-    if (t.olhos && OLHOS[t.olhos]) ch.nvOlhos = OLHOS[t.olhos];
+    if (t.olhos && OLHOS[t.olhos]) { ch.nvOlhos = OLHOS[t.olhos]; olho = p; }
     if (paletaPele(t)) pele = p.id;
     if (t.pelado) ch.pelado = 1;
   }
   if (pele) ch[`costume_pele${pele}`] = 1;
+  // Olho próprio do visual que define os olhos (pupila, brilhos, cílios, formato, inclinação e íris).
+  const go = olho?.genes?.olho;
+  if (go) Object.assign(ch, { nvPupila: go.pupila, nvBrilhos: go.brilhos, nvCilios: go.cilios, nvOlhoRx: go.rx, nvOlhoRy: go.ry, nvOlhoTilt: go.tilt, [`costume_olho${olho.id}`]: 1 });
   return Object.keys(ch).length ? ch : null;
 }
 

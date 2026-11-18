@@ -24,7 +24,9 @@ do histórico, sem cauda. Nenhuma mudança futura de anatomia, silhueta ou estil
 largo, boca, estilo dos olhos e cor da pele, inclusive gordo e nojento: barrigona, papada, suor, baba, sujeira,
 moscas, manchas e orelhas) só enquanto estão vestidos; sem visual, o modelo original não muda. Todo visual tem o
 nível de detalhe do panda (Dragão Guerreiro): cores de corpo/braços/pernas/cabeça do personagem e traços presos na
-cabeça (orelhas, chifres, juba, antenas) — **nunca arquinho/tiara para fingir orelha**.
+cabeça (orelhas, chifres, juba, antenas) — **nunca arquinho/tiara para fingir orelha**. Variação (18/11/2026): `GENES` em `visual-nivel.js` dá a cada
+visual olho, enfeite, ajuste da peça e jeito de tocar a animação únicos (nada repete entre visuais); espaço da janela
+medido por visual e por animação com visual (`jojo.room.json` → `visuais`, `animsVisual`), sem parede invisível.
 
 ## O que é
 

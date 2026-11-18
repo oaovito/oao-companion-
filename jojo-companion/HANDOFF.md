@@ -1,5 +1,17 @@
 # HANDOFF — JoJo Companion
 
+## Rebolado refeito, Tigresa, liberados acessíveis e variação 50x (não lançado) — 18/11/2026
+
+- Rebolado refeito do GIF do Among Us (6 quadros de 40 ms): modelo próprio de costas em 3/4,
+  `src/core/rebolado.js` (grupos `rb*`, canal `rebolando`), `stepFps` 25 por animação.
+- "Tigresa, tire sua roupa": estado `tigresa` + visual `br01` (memes BR, nível 3), canal `pelado`.
+- Central → Coleção → "Animações liberadas" (`animacoesLiberadas()`), `/anim rebolado|tigresa`;
+  descrição de todo visual “frase” — de Obra.
+- `GENES` em `visual-nivel.js`: olho, enfeite, ajuste da peça e jeito de tocar a animação únicos.
+- `scripts/icon-page/room.html` mede também `animsVisual` e `visuais`; regenerar com
+  `npx electron scripts/anim-room.mjs` (Windows) ao mudar desenho/animação. Nesta sessão foi
+  medido no Chromium (mesma página).
+
 ## Rebolado no foco (não lançado) — 18/11/2026
 
 Pedido do usuário (com o GIF do Among Us rebolando): no modo foco o JoJo rebola 3 s de vez em

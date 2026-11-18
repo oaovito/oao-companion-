@@ -2416,6 +2416,13 @@ export class Companion {
     const usaObjeto = it.receita && [].concat(it.receita.objeto || []).length;
     this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
     if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
+    if (it.visualAnim) {
+      const va = it.visualAnim;
+      const arremate = this.catalogById.get(va.arremate);
+      if (arremate && !queued) this.ambientQueue.push(arremate.id);
+      const d = this._catalogData(it, va.intensidade);
+      return { ...d, ms: Math.round(d.ms / va.ritmo) };
+    }
     return this._catalogData(it);
   }
 
@@ -2713,9 +2720,11 @@ export class Companion {
     if (!refs) return null;
     const ids = Object.values(sanitizeVisual(this.store.get().visualNivel, refs).pecas);
     const opcoes = ids.map((id) => pecaLiberada(refs, this.progress.nivel, id)).filter(Boolean)
-      .map((p) => this.catalogById.get(p.anim)).filter((it) => it && !it.pacote && !(it.mover && this.reducedMotion));
+      .map((p) => ({ p, it: this.catalogById.get(p.anim) })).filter(({ it }) => it && !it.pacote && !(it.mover && this.reducedMotion));
     if (!opcoes.length) return null;
-    return opcoes[Math.floor(this.rng() * opcoes.length) % opcoes.length];
+    const { p, it } = opcoes[Math.floor(this.rng() * opcoes.length) % opcoes.length];
+    // Cada visual toca a animação do seu jeito (genes): intensidade, ritmo e gesto de arremate.
+    return p.genes?.anim ? { ...it, visualAnim: p.genes.anim } : it;
   }
 
   /** A Central mostrou os visuais novos: tira o selo de "novo". */
@@ -4829,6 +4838,13 @@ export class Companion {
       attachments.push({ rect: { x: r.box.x, y: r.box.y - topo * s.size, width: r.box.width, height: topo * s.size } });
       const lado = Math.max(0, (visualNivel?.nvCorpo || 1) - 1) * 50 * s.size;
       if (lado) attachments.push({ rect: { x: r.box.x - lado, y: r.box.y, width: r.box.width + 2 * lado, height: r.box.height } });
+      // Espaço medido de cada visual vestido (nada cortado por parede invisível).
+      const ev = this._espacoVisuais(visualNivel);
+      if (ev) {
+        const k = s.size;
+        const l = (this.facing >= 0 ? ev.l : ev.r) * k, rr = (this.facing >= 0 ? ev.r : ev.l) * k;
+        attachments.push({ rect: { x: r.box.x - l, y: r.box.y - ev.t * k, width: r.box.width + l + rr, height: r.box.height + (ev.t + ev.b) * k } });
+      }
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
     }
@@ -4915,6 +4931,20 @@ export class Companion {
     return { x: Math.round(x * 10) / 10, y: Math.round(Math.max(-1, Math.min(1, dy / 300)) * 10) / 10 };
   }
 
+  /** União do espaço medido (jojo.room.json → visuais) dos visuais ligados nos canais. */
+  _espacoVisuais(canais) {
+    const tabela = this.room.visuais;
+    if (!canais || !tabela) return null;
+    let out = null;
+    for (const [ch, v] of Object.entries(canais)) {
+      if (!ch.startsWith('nv_') || v < 0.5) continue;
+      const e = tabela[ch.slice(3)];
+      if (!e) continue;
+      out = out ? { l: Math.max(out.l, e.l), t: Math.max(out.t, e.t), r: Math.max(out.r, e.r), b: Math.max(out.b, e.b) } : { ...e };
+    }
+    return out;
+  }
+
   /** Espaço extra (px na escala 1) da animação atual, da anterior (transição) e do efeito. */
   _animRoom() {
     const now = this.clock.now();
@@ -4924,8 +4954,11 @@ export class Companion {
       this.roomPrev = { anim, prev: this.roomPrev ? this.roomPrev.anim : null, until: now + 400 };
       if (this.roomPrev.prev) this.clock.setTimeout(() => this._applyLayout(), 450);
     }
-    const parts = [this.room.anims[anim]];
-    if (this.roomPrev.prev && now < this.roomPrev.until) parts.push(this.room.anims[this.roomPrev.prev]);
+    // Com visual vestido, o espaço medido com os visuais (orelhas, auras, objetos na mão).
+    const comVisual = !!this._visualCanais(Object.keys(this.outfit).length > 0);
+    const tabelas = comVisual && this.room.animsVisual ? [this.room.anims, this.room.animsVisual] : [this.room.anims];
+    const parts = tabelas.map((tb) => tb[anim]);
+    if (this.roomPrev.prev && now < this.roomPrev.until) for (const tb of tabelas) parts.push(tb[this.roomPrev.prev]);
     if (this.effect) parts.push(this.room.effects[this.effect.name]);
     let out = null;
     for (const p of parts) {

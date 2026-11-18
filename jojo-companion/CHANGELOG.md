@@ -27,6 +27,14 @@
   Trancados continuam só como cadeado.
 
 ### Melhorias
+- Variação muito maior, sem nada repetido entre visuais. Cada visual tem um olho só dele: o
+  olho kawaii nunca repete, com pupila (estrela, coração, fenda, losango, anel…), brilhos,
+  cílios, formato, inclinação e cor da íris próprios. Cada peça tem um enfeite próprio
+  (pontos, listras, estrelas, gemas, rebites, ondas…) e um ajuste de tamanho e inclinação.
+  Cada visual também toca a animação da obra do seu jeito: intensidade, ritmo e um gesto de
+  arremate diferentes de todos os outros.
+- Nada cortado por parede invisível: o espaço de cada visual vestido, de cada animação com
+  visual e do rebolado e da Tigresa é medido no desenho, e a janela cresce o necessário.
 - Central → Coleção → "Animações liberadas": tudo o que já foi liberado toca com um clique (as
   poses que ela já viu, a animação de cada visual liberado, o rebolado e a Tigresa). Nada
   bloqueado aparece. Também por /anim rebolado e /anim tigresa.

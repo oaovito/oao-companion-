@@ -455,3 +455,67 @@ test('animações liberadas: rebolado, Tigresa, as dos visuais liberados e as po
     e.companion.stop();
   }
 });
+
+test('variação 50x (pedido de 18/11/2026): nenhum visual repete outro; olho e peça de cada um são únicos', async () => {
+  const { GENES, assinaturaVisual } = await import('../../src/core/visual-nivel.js');
+  // Muito mais combinações que antes (9 estilos de olho; ~70 formas de peça).
+  const olhos = GENES.pupilas.length * GENES.brilhos.length * GENES.cilios.length * GENES.formatos.length * GENES.inclinacoes.length;
+  assert.ok(olhos >= 9 * 50 * 10, `combinações de olho: ${olhos}`);
+  const pecas = GENES.enfeites.length * GENES.quantidades.length * GENES.cores.length * GENES.faixas.length * GENES.escalas.length * GENES.giros.length;
+  assert.ok(pecas >= 50 * 100, `combinações de peça: ${pecas}`);
+  // Peça: forma + enfeite + ajuste nunca se repetem.
+  assert.equal(new Set(CAT.map(assinaturaVisual)).size, CAT.length, 'nenhuma peça igual a outra');
+  // Olho: todo visual que muda os olhos tem um olho só dele (o kawaii nunca se repete).
+  const comOlho = CAT.filter((p) => p.transforma?.olhos);
+  assert.ok(comOlho.every((p) => p.genes.olho));
+  const olhoDe = (p) => JSON.stringify([p.genes.olho.pupila, p.genes.olho.brilhos, p.genes.olho.cilios, p.genes.olho.rx, p.genes.olho.ry, p.genes.olho.tilt]);
+  assert.equal(new Set(comOlho.map(olhoDe)).size, comOlho.length, 'nenhum olho repetido');
+  const kawaii = comOlho.filter((p) => ['anime', 'grandes', 'brilho'].includes(p.transforma.olhos));
+  assert.ok(kawaii.length > 50 && new Set(kawaii.map(olhoDe)).size === kawaii.length, 'olho kawaii sempre diferente');
+  // O desenho recebe o olho do visual (canais e a cor da íris) e o enfeite próprio da peça.
+  const p = comOlho[0];
+  const ch = canaisVisual({ pecas: { [p.parte]: p.id } }, REF, 200);
+  assert.equal(ch.nvPupila, p.genes.olho.pupila);
+  assert.equal(ch[`costume_olho${p.id}`], 1);
+  const r = rigComVisuais(RIG, REF);
+  assert.equal(r.costumes[`olho${p.id}`].palette.nvIris, p.genes.olho.iris);
+  for (const q of CAT) assert.ok(partesDaPeca(q).some((x) => /_enfeite[ED]?$/.test(x.part.id)), `${q.titulo}: enfeite próprio`);
+  // Animação da referência: nenhum visual a toca igual a outro (intensidade, ritmo, arremate).
+  assert.equal(new Set(CAT.map((q) => `${q.anim}:${JSON.stringify(q.genes.anim)}`)).size, CAT.length, 'animação de cada visual é única');
+  assert.ok(CAT.every((q) => GENES.intensidades.includes(q.genes.anim.intensidade) && q.genes.anim.arremate !== q.anim));
+  // Determinístico: a mesma coleção gera os mesmos genes.
+  const de2 = gerarVisuais(REF);
+  assert.deepEqual(de2.map(assinaturaVisual), CAT.map(assinaturaVisual));
+});
+
+test('sem parede invisível: espaço medido para cada visual, cada animação com visual e o rebolado/Tigresa; a janela cresce', () => {
+  const ROOM = loadJSON('assets/animations/jojo.room.json');
+  for (const p of CAT) assert.ok(ROOM.visuais?.[p.id], `${p.id} sem medida`);
+  const ANIMS = loadJSON('assets/animations/jojo.animations.json');
+  for (const nome of Object.keys(ANIMS.animations)) if (nome !== 'hidden' && !ANIMS.animations[nome].variantOf) {
+    assert.ok(ROOM.anims[nome], `${nome} sem medida`);
+    assert.ok(ROOM.animsVisual?.[nome], `${nome} sem medida com visual`);
+  }
+  // Com visual o envelope nunca é menor que sem.
+  for (const [nome, r] of Object.entries(ROOM.anims)) {
+    const v = ROOM.animsVisual[nome];
+    if (v) for (const k of ['l', 't', 'r', 'b']) assert.ok(v[k] >= r[k], `${nome}.${k}`);
+  }
+  // Orelhas de coelho (Kyubey) passam do topo: a janela cresce para cima o que foi medido.
+  const kyubey = CAT.find((p) => p.obra === 'Puella Magi Madoka Magica');
+  assert.ok(ROOM.visuais[kyubey.id].t > 30);
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    e.companion.start();
+    e.clock.advance(3000);
+    e.companion.progress.st.xp = e.companion.progress.threshold(kyubey.nivel);
+    e.store.update({ visualNivel: { pecas: { [kyubey.parte]: kyubey.id }, visto: kyubey.nivel, novas: [], avisar: [] } }, { silent: true });
+    e.companion._applyLayout(true);
+    const r = e.companion._rects();
+    const b = e.companion.lastBounds;
+    const s = e.store.get().size;
+    assert.ok(r.box.y - b.y >= ROOM.visuais[kyubey.id].t * s - 1, 'espaço medido acima da cabeça');
+  } finally {
+    e.companion.stop();
+  }
+});
