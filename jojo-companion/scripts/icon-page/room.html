@@ -41,6 +41,10 @@ window.measure = async (rigJson, animJson, foodJson = { foods: [] }, niveis = nu
   // Mesmo desenho do overlay: visuais de nível e o modelo do rebolado.
   const rigFull = niveis ? rigComRebolado(rigComVisuais(rigJson, niveis)) : rigComRebolado(rigJson);
   const rig = new RigRenderer(rigFull);
+  // Sem visuais o desenho é muito mais leve: as animações comuns medem com ele; as que vestem
+  // peças de visual na própria animação (Tigresa) medem com o desenho completo.
+  const rigLeve = new RigRenderer(rigComRebolado(rigJson));
+  const COM_VISUAL = new Set(['tigresa']);
   const box = rigJson.metrics.box, head = rigJson.metrics.head, mouth = rigJson.metrics.mouth;
   const out = { anims: {}, effects: {} };
   for (const [name, anim] of Object.entries(animJson.animations)) {
@@ -54,7 +58,8 @@ window.measure = async (rigJson, animJson, foodJson = { foods: [] }, niveis = nu
       a.play(name, 0, { variant: name });
       const fx = new Effects({ rng: () => seed });
       const dur = anim.duration || 1000;
-      for (let t = 0; t <= dur + 400; t += 1000 / 24) drawFrame(ctx, rig, a.sample(t), fx, t, head, mouth);
+      const r0 = COM_VISUAL.has(name) ? rig : rigLeve;
+      for (let t = 0; t <= dur + 400; t += 1000 / 24) drawFrame(ctx, r0, a.sample(t), fx, t, head, mouth);
       i++;
     }
     const base = (anim.variantOf || name).replace(/~.*$/, '');
