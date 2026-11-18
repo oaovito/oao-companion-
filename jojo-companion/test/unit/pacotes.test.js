@@ -97,7 +97,7 @@ test('companion: "vou pedir pizza" → funeral do shape no lugar do balão (pedi
   assert.ok(st.funeral.fotos.every((f) => /assets\/funeral\/foto\d{2}\.jpg$/.test(f)));
   assert.equal(new Set(st.funeral.fotos).size, 6, 'sem foto repetida no mesmo funeral');
   assert.equal(st.bubble, null, 'no lugar do balão');
-  assert.ok(st.funeral.legenda.length > 5);
+  assert.equal(st.funeral.legenda, 'Quer se tornar uma aberração?', 'única legenda');
   e.clock.advance(12000);
   assert.equal(e.overlay.state.funeral, null, 'some sozinho');
   // "que vontade de comer uma pizza" (exemplo do pedido) também abre o funeral.
