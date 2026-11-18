@@ -111,8 +111,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   1 chance em 1 bilhão a cada escolha autônoma (`MOON_IDLE_CHANCE` em `behavior.js`).
 - Rebolado do meme (estado `twerk`, 3 s; refeito do GIF do Among Us: modelo próprio de costas em 3/4, corpo em feijão
   amassando e esticando em 6 quadros de 40 ms a 25 fps; `src/core/rebolado.js` injeta o modelo sem mudar o rig): de vez em quando no modo foco (opção `reboladoFoco`, desligável) e às vezes no repouso (sempre).
-- "Tigresa, tire sua roupa" (estado `tigresa`, 6,5 s): vira tigresa, a bermuda voa e ele fica pelado sem pudor (canal
-  `pelado` esconde bermuda/sunga e mostra tudo); visual extra `br01` (memes BR, nível 3) pelado o tempo todo.
+- "Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!" (Kung Fu Panda; também "Tigresa, tire sua roupa"; estado
+  `tigresa`, 6,5 s): JoJo de Mestre Tigresa na pose do Po, a roupa voa e ele fica pelado sem pudor (canal `pelado` esconde
+  bermuda/sunga e mostra tudo); visuais `br01` (Tigresa vestida, nível 3) e `br02` (pelada, nível 5), memes BR.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços e inclina a cabeça, preservando o modelo original com pernas e sem cauda.

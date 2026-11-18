@@ -9883,29 +9883,59 @@
   {
    "nivel": 3,
    "colecao": "memes BR",
-   "titulo": "Tigresa, Tire Sua Roupa",
-   "obra": "meme brasileiro \"Tigresa, tire sua roupa\"",
+   "titulo": "Tigresa, Fique Pelada",
+   "obra": "meme \"Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!\" (Kung Fu Panda)",
    "tipo": "meme",
    "parte": "pintura",
-   "forma": "listras",
-   "peca": "Listras de tigresa e mais nada",
+   "forma": "tigresaFantasia",
+   "peca": "Roupa de Mestre Tigresa",
    "cores": [
-    "#212121",
-    "#3e2723",
-    "#fff3e0"
+    "#e0a91f",
+    "#b3261e",
+    "#f2a900"
    ],
-   "fala": "Tigresa, tire sua roupa? Já tirei. Toda. Pode olhar, eu não tenho vergonha nenhuma.",
+   "fala": "Tigresa, fique pelada, Tigresa! Eu sou o Dragão Guerreiro!",
+   "anim": "poseEpica",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8892b",
+     "barriga": "#fff6e8",
+     "cabeca": "#e8892b"
+    },
+    "orelhas": "gato",
+    "corOrelhas": "#e8892b",
+    "corOrelhasDentro": "#fff6e8",
+    "olhos": "anime",
+    "tigre": true
+   }
+  },
+  {
+   "nivel": 5,
+   "colecao": "memes BR",
+   "titulo": "A Tigresa Obedeceu",
+   "obra": "meme \"Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!\" (Kung Fu Panda)",
+   "tipo": "meme",
+   "parte": "pintura",
+   "forma": "listrasTigre",
+   "peca": "Tigresa pelada, só de listras",
+   "cores": [
+    "#1a1a1a",
+    "#e8892b",
+    "#f2a900"
+   ],
+   "fala": "Ordem do Dragão Guerreiro é ordem. Fiquei pelada. Pode olhar, eu não tenho vergonha nenhuma.",
    "anim": "desfile",
    "transforma": {
     "pele": {
-     "corpo": "#ff8f00",
-     "barriga": "#fff3e0",
-     "cabeca": "#ff8f00"
+     "corpo": "#e8892b",
+     "barriga": "#fff6e8",
+     "cabeca": "#e8892b"
     },
     "orelhas": "gato",
-    "corOrelhas": "#ff8f00",
-    "corOrelhasDentro": "#fff3e0",
+    "corOrelhas": "#e8892b",
+    "corOrelhasDentro": "#fff6e8",
     "olhos": "semicerrados",
+    "tigre": true,
     "pelado": true
    }
   }

@@ -157,6 +157,9 @@ export function assinaturaVisual(p) {
   return `${p.parte}:${p.forma}:${g.enfeite}:${g.quantidade}:${g.cor}:${g.faixa}:${g.escala}:${g.giro}`;
 }
 
+// Fantasias de corpo inteiro: sem ajuste de tamanho/giro (encaixe exato no corpo).
+const FANTASIAS_INTEIRAS = new Set(['tigresaFantasia', 'listrasTigre']);
+
 // Onde cada parte recebe o enfeite (faixas alternativas) e o pivô do ajuste de tamanho/giro.
 const ZONAS = {
   cabeca: { faixas: [[62, 12, 56], [58, 4, 64], [66, 18, 48]], pivo: [90, 14], extra: CABECA },
@@ -581,6 +584,35 @@ const PINTURA = {
     ['nivelPintura', 'nariz', a, circ(90, 51, 7), H({ alpha: 1 })],
     ['nivelPintura', 'brilho', b, circ(87, 48, 1.8), H({ alpha: 1 })],
   ],
+  // Mestre Tigresa (Kung Fu Panda) inteira: colete dourado com folhas vermelhas, gola preta,
+  // mangas curtas, faixa na cintura, calça preta e ataduras nos pulsos e tornozelos.
+  tigresaFantasia: ({ a, b }) => {
+    const folha = (x, y, k = 1, s = 1) => `M${r1(x)},${r1(y)} Q${r1(x + 5 * k * s)},${r1(y - 6 * k)} ${r1(x + 11 * k * s)},${r1(y - 2 * k)} Q${r1(x + 5 * k * s)},${r1(y + 3 * k)} ${r1(x)},${r1(y)} Z`;
+    return [
+      ['nivelCorpo', 'calca', '#1c1c22', 'M58,130 L122,130 L128,158 L94,158 L90,142 L86,158 L52,158 Z'],
+      ['nivelCorpo', 'tornozelos', '#efe6d2', `${rect(53, 154, 34, 6)} ${rect(93, 154, 34, 6)}`],
+      ['nivelCorpo', 'colete', a, 'M50,84 C60,79 120,79 130,84 C141,90 143,101 137,109 C131,118 123,124 117,130 L63,130 C57,124 49,118 43,109 C37,101 39,90 50,84 Z'],
+      ['nivelCorpo', 'gola', '#1c1c22', 'M68,82 L90,102 L112,82 L116,86 L90,108 L64,86 Z'],
+      ['nivelCorpo', 'faixa', '#d6d2c8', 'M59,123 L121,123 L122,132 L58,132 Z'],
+      ['nivelPintura', 'faixaListras', '#8a8578', `${rect(59, 125.5, 63, 1.4)} ${rect(58, 129, 64, 1.4)}`],
+      ['nivelPintura', 'folhas', b, [folha(58, 98), folha(64, 108, 0.9), folha(72, 118, 0.8), folha(110, 96, 1, -1), folha(116, 106, 0.9, -1), folha(122, 116, 0.8, -1), folha(80, 92, 0.7)].join(' ') + ` ${rect(56, 98, 30, 1.2)}`],
+      ['costumeHand', 'mangaE', a, 'M54,84 C40,80 28,90 27,104 L46,107 C48,99 52,93 58,90 Z', { parent: 'armL' }],
+      ['costumeHand', 'mangaD', a, 'M126,84 C140,80 152,90 153,104 L134,107 C132,99 128,93 122,90 Z', { parent: 'armR' }],
+      ['nivelPintura', 'folhasMangas', b, `${folha(32, 98, 0.7)} ${folha(148, 98, 0.7, -1)}`],
+      ['costumeHand', 'atadurasE', '#efe6d2', `${rect(25, 138, 20, 3)} ${rect(25, 142, 20, 3)}`, { parent: 'foreL' }],
+      ['costumeHand', 'atadurasD', '#efe6d2', `${rect(135, 138, 20, 3)} ${rect(135, 142, 20, 3)}`, { parent: 'foreR' }],
+    ];
+  },
+  // Listras de tigre pelo corpo todo (a Tigresa pelada).
+  listrasTigre: ({ a }) => {
+    const l = (x, y, w, s = 1) => poly([[x, y], [x + w * s, y + 3], [x + w * 0.6 * s, y + 6]]);
+    return [
+      ['nivelPintura', 'tronco', a, [l(46, 96, 14), l(44, 108, 12), l(134, 96, 14, -1), l(136, 108, 12, -1), l(50, 118, 10), l(130, 118, 10, -1)].join(' '), { alpha: 0.95 }],
+      ['nivelPintura', 'bracoE', a, `${l(26, 100, 10)} ${l(27, 112, 9)}`, { parent: 'armL', alpha: 0.95 }],
+      ['nivelPintura', 'bracoD', a, `${l(154, 100, 10, -1)} ${l(153, 112, 9, -1)}`, { parent: 'armR', alpha: 0.95 }],
+      ['nivelPintura', 'pernas', a, `${l(54, 150, 10)} ${l(126, 150, 10, -1)} ${l(56, 158, 8)} ${l(124, 158, 8, -1)}`, { alpha: 0.95 }],
+    ];
+  },
   marcasTita: ({ a }) => [['nivelPintura', 'marcas', a, `${poly([[64, 46], [76, 46], [74, 52], [70, 58], [66, 52]])} ${poly([[116, 46], [104, 46], [106, 52], [110, 58], [114, 52]])}`, H({ alpha: 0.85 })]],
 };
 
@@ -897,6 +929,11 @@ function partesDoCorpo(t) {
     out.push(['nivelPintura', 'cabecinha', '#e57373', 'M86,162 C87,167 93,168 94,162 C93,164 87,164 86,162 Z', { ...nu, pivot: [90, 137], rot: 'tgPinto' }]);
     out.push(['nivelPintura', 'pelos', '#2b1d14', 'M74,135 L77,128 L80,134 L84,127 L87,133 L90,126 L93,133 L96,127 L100,134 L103,128 L106,135 C96,140 84,140 74,135 Z', { ...nu, alpha: 0.95 }]);
   }
+  // Cara de tigre (Mestre Tigresa): máscara branca nos olhos e listras pretas na cabeça.
+  if (t.tigre) {
+    out.push(['headDetail', 'tigreMascara', '#fff8ee', 'M58,46 C56,30 72,24 90,31 C108,24 124,30 122,46 C118,54 104,54 90,49 C76,54 62,54 58,46 Z', H()]);
+    out.push(['headDetail', 'tigreListras', '#1a1a1a', [poly([[84, 10], [88, 10], [87, 24], [85, 24]]), poly([[92, 10], [96, 10], [95, 24], [93, 24]]), poly([[76, 13], [80, 12], [82, 22], [79, 22]]), poly([[100, 12], [104, 13], [101, 22], [98, 22]]), poly([[41, 36], [54, 40], [42, 43]]), poly([[42, 48], [54, 50], [43, 54]]), poly([[139, 36], [126, 40], [138, 43]]), poly([[138, 48], [126, 50], [137, 54]])].join(' '), H()]);
+  }
   if (t.moscas) {
     const mosca = ([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`;
     out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [160, 80], [140, 120]].map(mosca).join(' '), { alpha: 0.95, dx: 'nvMoscaX', dy: 'nvMoscaY' }]);
@@ -930,6 +967,8 @@ export function descricaoVisual(p) {
 }
 /** Visual do meme "Tigresa, tire sua roupa" (coleção memes BR). */
 export const TIGRESA_ID = 'br01';
+/** A Tigresa pelada (a ordem do Dragão Guerreiro cumprida). */
+export const TIGRESA_NUA_ID = 'br02';
 
 /** Canal de pose que liga a peça no desenho. */
 export const canalDaPeca = (p) => `nv_${p.id}`;
@@ -945,7 +984,7 @@ export function partesDaPeca(p) {
   const ch = canalDaPeca(p);
   // Ajuste próprio da peça (tamanho e giro em torno da zona da parte) e o enfeite dela.
   const z = ZONAS[p.parte];
-  if (p.genes && z && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
+  if (p.genes && z && !FANTASIAS_INTEIRAS.has(p.forma) && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
     lista = lista.map(([gr, id, fill, path, extra]) => [gr, id, fill, path, { ...(extra || {}), fix: [p.genes.escala, p.genes.giro, ...z.pivo] }]);
   }
   lista = [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
@@ -1013,10 +1052,14 @@ export function rigComVisuais(rig, dados) {
       alvo.parts.push(marcado);
       // A animação do meme veste a Tigresa por alguns segundos (canal próprio, sem tocar no Guarda-roupa).
       if (p.id === TIGRESA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaAnim' });
+      if (p.id === TIGRESA_NUA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaNua' });
     }
   }
-  // Bermuda voando na animação do meme da Tigresa.
-  byId.get('costumes').parts.push({ id: 'tigresa_bermudaVoando', fill: 'shorts', showIf: 'tgVoa', dx: 'tgVoaX', dy: 'tgVoaY', path: 'M62,126 L118,126 L125,150 L55,150 Z' });
+  // Roupa da Tigresa voando na animação do meme.
+  byId.get('costumes').parts.push(
+    { id: 'tigresa_coleteVoando', fill: '#e0a91f', showIf: 'tgVoa', dx: 'tgVoaX', dy: 'tgVoaY', path: 'M50,84 C60,79 120,79 130,84 C141,90 143,101 137,109 C131,118 123,124 117,130 L63,130 C57,124 49,118 43,109 C37,101 39,90 50,84 Z' },
+    { id: 'tigresa_calcaVoando', fill: '#1c1c22', showIf: 'tgVoa', dx: 'tgVoa2X', dy: 'tgVoa2Y', path: 'M58,130 L122,130 L128,158 L94,158 L90,142 L86,158 L52,158 Z' },
+  );
   // Luto do Shape (funeral da comida fora da dieta): vômito verde e lágrimas, canal nvLuto.
   for (const { group, part } of partesDoLuto()) {
     const alvo = byId.get(group) || byId.get('costumes');
