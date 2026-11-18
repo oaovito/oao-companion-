@@ -173,6 +173,7 @@ function renderColecao() {
 
 // ---------------- guarda-roupa: brincar de boneca com o JoJo (opcional)
 let showingGuarda = false;
+let marcandoVistos = null;
 let lastGuardaReq = 0;
 function renderGuarda() {
   const box = $('guardaRoupa');
@@ -239,8 +240,10 @@ function renderGuarda() {
       card.append(grade);
     }
     box.append(card);
-    // Ela viu: o selo de "novo" sai na próxima vez (a tela atual continua mostrando).
-    if (v.novos && api.visuaisVistos) api.visuaisVistos();
+    // Ela viu: depois de alguns segundos na tela, o selo de "novo" sai (uma vez por abertura).
+    if (v.novos && api.visuaisVistos && !marcandoVistos) {
+      marcandoVistos = setTimeout(() => { marcandoVistos = null; if (showingGuarda) api.visuaisVistos(); }, 4000);
+    }
   }
   for (const parte of g.partes) {
     const card = el('div', 'card');
