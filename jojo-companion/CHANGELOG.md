@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## Não lançado — 100 visuais de anime
+
+### Novidades
+- 100 visuais extras de anime, um a cada 2 níveis, cada um de uma obra que ainda não aparecia
+  em nenhum título nem extra: Hokuto no Ken, Doraemon, Inuyasha, Samurai X, Trigun, Code Geass,
+  Tokyo Ghoul, Fairy Tail, KonoSuba, Overlord, Slime, A Viagem de Chihiro, Princesa Mononoke,
+  Hellsing, Devilman, Cyberpunk: Edgerunners, Detetive Conan, Lupin III, Initial D, Beastars,
+  Kill la Kill, Yu-Gi-Oh!, Beyblade, Madoka Magica, Dorohedoro, Gintama, Sakamoto Days, Mashle,
+  Porco Rosso, Assassination Classroom, Dungeon Meshi, Zom 100, Hamtaro, Shin-chan, Gantz e
+  outros, até o Sol do Orgulho do Leão (Nanatsu no Taizai) no nível 200.
+- Mesmo capricho dos outros visuais: peça da obra, fala e animação dela, cores do personagem e
+  transformação (orelhas de meio-yōkai do Inuyasha, chifres do Devilman, slime azul de barrigona,
+  Sakamoto de barrigão e papada, zumbi do Zom 100 com baba e moscas, porco do Porco Rosso).
+  Trancados continuam só como cadeado.
+
+### Como testar
+- Subir para o nível 2: além da peça do nível, chegam as munhequeiras do Hokuto Shinken.
+- Central → Guarda-roupa → Visuais dos níveis: os de anime aparecem como "Extra de animes".
+
 ## 0.47.2 — em preparo
 
 ### Novidades

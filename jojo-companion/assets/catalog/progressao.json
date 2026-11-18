@@ -5441,7 +5441,7 @@
    }
   }
  ],
- "_regraTitulos": "REGRA IRREDUTÍVEL: todo título é referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas as clássicas de tubarão presentes); a peça, a fala e a reação de cada nível são dessa referência (referencias[i] corresponde a niveis[i]). extras: 20 visuais de South Park (um a cada 10 níveis) e 50 de memes do Twitter (um a cada 4 níveis), sem pudor.",
+ "_regraTitulos": "REGRA IRREDUTÍVEL: todo título é referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas as clássicas de tubarão presentes); a peça, a fala e a reação de cada nível são dessa referência (referencias[i] corresponde a niveis[i]). extras: 20 visuais de South Park (um a cada 10 níveis) e 50 de memes do Twitter (um a cada 4 níveis), sem pudor; mais 100 visuais de anime (um a cada 2 níveis), cada um de uma obra que não aparece em nenhum título nem extra.",
  "extras": [
   {
    "nivel": 10,
@@ -7245,6 +7245,2638 @@
     "pele": {
      "pernas": "#212121",
      "corpo": "#5f76a8"
+    }
+   }
+  },
+  {
+   "nivel": 2,
+   "colecao": "animes",
+   "titulo": "Você Já Está Morto",
+   "obra": "Hokuto no Ken",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Munhequeiras do Hokuto Shinken",
+   "cores": [
+    "#3e2723",
+    "#c62828",
+    "#ffd54f"
+   ],
+   "fala": "Omae wa mou shindeiru. Você já está morto, e eu nem tirei a regata.",
+   "anim": "encarar",
+   "reacao": "pk_serio",
+   "transforma": {
+    "corpo": 1.65,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#d7a27a",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 4,
+   "colecao": "animes",
+   "titulo": "Gadget do Bolso Mágico",
+   "obra": "Doraemon",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "sino",
+   "peca": "Sininho do gato-robô",
+   "cores": [
+    "#fdd835",
+    "#c62828",
+    "#ffffff"
+   ],
+   "fala": "Do meu bolso mágico sai: whey, creatina e uma porta pra academia.",
+   "anim": "feliz",
+   "transforma": {
+    "cabeca": 1.5,
+    "boca": 1.4,
+    "olhos": "grandes",
+    "barrigona": 1.15,
+    "pele": {
+     "corpo": "#1e88e5",
+     "barriga": "#ffffff",
+     "cabeca": "#1e88e5"
+    }
+   }
+  },
+  {
+   "nivel": 6,
+   "colecao": "animes",
+   "titulo": "Poderoso Astro",
+   "obra": "Astro Boy",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Shortinho preto do Astro",
+   "cores": [
+    "#212121",
+    "#e53935",
+    "#ffd54f"
+   ],
+   "fala": "Cem mil cavalos de potência. Igual ao meu leg day.",
+   "anim": "flutuar",
+   "transforma": {
+    "cabeca": 1.3,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "pernas": "#e53935"
+    }
+   }
+  },
+  {
+   "nivel": 8,
+   "colecao": "animes",
+   "titulo": "Go Speed Racer",
+   "obra": "Speed Racer",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "capacete",
+   "peca": "Capacete do Mach 5",
+   "cores": [
+    "#ffffff",
+    "#e53935",
+    "#1565c0"
+   ],
+   "fala": "Go, Speed Racer, go! Corre pra academia antes que feche.",
+   "anim": "poseEpica",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "bracos": "#ffffff",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 10,
+   "colecao": "animes",
+   "titulo": "Forma Voltron",
+   "obra": "Voltron",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espada",
+   "peca": "Espada Flamejante do Voltron",
+   "cores": [
+    "#90caf9",
+    "#ffd54f",
+    "#e53935"
+   ],
+   "fala": "Formar Voltron! Eu sou a cabeça, o tronco e principalmente o bíceps.",
+   "anim": "modoPoder",
+   "transforma": {
+    "corpo": 1.5,
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#eceff1",
+     "bracos": "#1565c0",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 12,
+   "colecao": "animes",
+   "titulo": "Rocket Punch",
+   "obra": "Mazinger Z",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "caixaRobo",
+   "peca": "Cabine do Mazinger Z",
+   "cores": [
+    "#263238",
+    "#e53935",
+    "#ffd54f"
+   ],
+   "fala": "Rocket Punch! Meu soco sai do braço e volta com proteína.",
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.55,
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#37474f",
+     "bracos": "#263238",
+     "cabeca": "#455a64"
+    }
+   }
+  },
+  {
+   "nivel": 14,
+   "colecao": "animes",
+   "titulo": "O Chute do Tigre",
+   "obra": "Super Campeões (Captain Tsubasa)",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "listras",
+   "peca": "Calção do Nankatsu",
+   "cores": [
+    "#ffffff",
+    "#1565c0",
+    "#e53935"
+   ],
+   "fala": "O campo tem dez quilômetros e eu chego no gol antes do episódio acabar.",
+   "anim": "pular",
+   "transforma": {
+    "cabeca": 1.2,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "bracos": "#ffffff",
+     "pernas": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 16,
+   "colecao": "animes",
+   "titulo": "Gênio do Rebote",
+   "obra": "Slam Dunk",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Munhequeiras do Shohoku",
+   "cores": [
+    "#e53935",
+    "#ffffff",
+    "#212121"
+   ],
+   "fala": "Eu sou um gênio! Rebote é só supino com bola.",
+   "anim": "comemorar",
+   "transforma": {
+    "corpo": 1.3,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#d7a27a",
+     "cabeca": "#e57373",
+     "bracos": "#e53935"
+    }
+   }
+  },
+  {
+   "nivel": 18,
+   "colecao": "animes",
+   "titulo": "Senta, Garoto",
+   "obra": "Inuyasha",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Orelhas de meio-yōkai",
+   "cores": [
+    "#f5f5f5",
+    "#c62828",
+    "#ffd54f"
+   ],
+   "fala": "Senta? Eu não sento. Eu agacho. Com carga.",
+   "anim": "curioso",
+   "transforma": {
+    "orelhas": "cachorro",
+    "corOrelhas": "#f5f5f5",
+    "olhos": "anime",
+    "pele": {
+     "cabeca": "#f5f5f5",
+     "bracos": "#c62828",
+     "pernas": "#c62828"
+    }
+   }
+  },
+  {
+   "nivel": 20,
+   "colecao": "animes",
+   "titulo": "Água Fria, Água Quente",
+   "obra": "Ranma ½",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "gola",
+   "peca": "Gola chinesa do Ranma",
+   "cores": [
+    "#c62828",
+    "#ffd54f",
+    "#212121"
+   ],
+   "fala": "Água fria e eu viro outra pessoa. Água quente e eu volto a ser lindo.",
+   "anim": "surpreso",
+   "transforma": {
+    "olhos": "grandes",
+    "boca": 0.8,
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#c62828",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 22,
+   "colecao": "animes",
+   "titulo": "Oro?",
+   "obra": "Samurai X (Rurouni Kenshin)",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "cicatriz",
+   "peca": "Cicatriz em X do Battousai",
+   "cores": [
+    "#c62828",
+    "#ffffff",
+    "#ffd54f"
+   ],
+   "fala": "Oro? Eu jurei não matar mais ninguém. Só o seu sedentarismo.",
+   "anim": "olharLado",
+   "transforma": {
+    "olhos": "anime",
+    "boca": 0.7,
+    "pele": {
+     "corpo": "#c2185b",
+     "cabeca": "#ffccbc",
+     "pernas": "#eceff1"
+    }
+   }
+  },
+  {
+   "nivel": 24,
+   "colecao": "animes",
+   "titulo": "Love and Peace",
+   "obra": "Trigun",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "oculosAviador",
+   "peca": "Óculos laranja do Vash",
+   "cores": [
+    "#212121",
+    "#ff9800",
+    "#e53935"
+   ],
+   "fala": "Love and peace! E um tiro de proteína no meio da testa do cansaço.",
+   "anim": "acenar",
+   "transforma": {
+    "cabeca": 1.15,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#c62828",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 26,
+   "colecao": "animes",
+   "titulo": "Hip-Hop Samurai",
+   "obra": "Samurai Champloo",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "rasgada",
+   "peca": "Calça rasgada do Mugen",
+   "cores": [
+    "#1565c0",
+    "#e53935",
+    "#ffd54f"
+   ],
+   "fala": "Samurai que treina ao som de lo-fi. O break da batida é o meu descanso.",
+   "anim": "dancinha",
+   "transforma": {
+    "corpo": 1.2,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#8d6e63",
+     "bracos": "#e53935",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 28,
+   "colecao": "animes",
+   "titulo": "Lelouch Ordena",
+   "obra": "Code Geass",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "lentes",
+   "peca": "Olho do Geass",
+   "cores": [
+    "#e91e63",
+    "#ff1744",
+    "#ffffff"
+   ],
+   "fala": "Lelouch vi Britannia ordena: mais uma série. Agora.",
+   "anim": "poseVilao",
+   "reacao": "pk_sharingan",
+   "transforma": {
+    "olhos": "sharingan",
+    "boca": 0.8,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 30,
+   "colecao": "animes",
+   "titulo": "El Psy Kongroo",
+   "obra": "Steins;Gate",
+   "tipo": "anime",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Jaleco do cientista louco",
+   "cores": [
+    "#f5f5f5",
+    "#90a4ae",
+    "#4caf50"
+   ],
+   "fala": "El Psy Kongroo. Viajei no tempo e você continua sem treinar em todas as linhas.",
+   "anim": "rirPropriaPiada",
+   "transforma": {
+    "olhos": "semicerrados",
+    "cabeca": 1.1,
+    "pele": {
+     "corpo": "#f5f5f5",
+     "bracos": "#f5f5f5",
+     "pernas": "#37474f"
+    }
+   }
+  },
+  {
+   "nivel": 32,
+   "colecao": "animes",
+   "titulo": "Mil Menos Sete",
+   "obra": "Tokyo Ghoul",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara do ghoul de um olho",
+   "cores": [
+    "#212121",
+    "#ffffff",
+    "#d50000"
+   ],
+   "fala": "Quanto é mil menos sete? É o número de repetições que faltam.",
+   "anim": "lamberDentes",
+   "reacao": "pk_menacing",
+   "transforma": {
+    "olhos": "pretos",
+    "boca": 1.4,
+    "pele": {
+     "corpo": "#263238",
+     "cabeca": "#eceff1",
+     "bracos": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 34,
+   "colecao": "animes",
+   "titulo": "A Mão Que Pensa",
+   "obra": "Parasyte",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "garras",
+   "peca": "Migi na mão direita",
+   "cores": [
+    "#b0bec5",
+    "#d50000",
+    "#eceff1"
+   ],
+   "fala": "Minha mão direita tem olho, boca e opinião sobre a sua dieta.",
+   "anim": "nojo",
+   "transforma": {
+    "boca": 1.5,
+    "baba": true,
+    "olhos": "vazios",
+    "pele": {
+     "corpo": "#eceff1",
+     "bracos": "#b0bec5"
+    }
+   }
+  },
+  {
+   "nivel": 36,
+   "colecao": "animes",
+   "titulo": "Tô Ficando Animado",
+   "obra": "Fairy Tail",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "cachecol",
+   "peca": "Cachecol de escamas do Natsu",
+   "cores": [
+    "#f5f5f5",
+    "#90a4ae",
+    "#ff7043"
+   ],
+   "fala": "Tô ficando animado! Fogo no supino e fogo na guilda.",
+   "anim": "empolgado",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "cabeca": "#f48fb1",
+     "pernas": "#f5f5f5"
+    }
+   }
+  },
+  {
+   "nivel": 38,
+   "colecao": "animes",
+   "titulo": "Meu Limite É Agora",
+   "obra": "Black Clover",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "livro",
+   "peca": "Grimório de cinco folhas",
+   "cores": [
+    "#212121",
+    "#4caf50",
+    "#ffd54f"
+   ],
+   "fala": "Não ter magia é a minha magia. Ter bíceps também ajuda.",
+   "anim": "flexionarBiceps",
+   "transforma": {
+    "corpo": 1.45,
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "cabeca": "#cfd8dc",
+     "bracos": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 40,
+   "colecao": "animes",
+   "titulo": "Sorriso do Demônio Bombeiro",
+   "obra": "Fire Force",
+   "tipo": "anime",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Chamas dos pés do Shinra",
+   "cores": [
+    "#ff5722",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "Eu sorrio quando fico nervoso. E eu fico nervoso quando você pula treino.",
+   "anim": "sorrisoCanto",
+   "transforma": {
+    "boca": 1.6,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#424242",
+     "pernas": "#ffd54f"
+    }
+   }
+  },
+  {
+   "nivel": 42,
+   "colecao": "animes",
+   "titulo": "A Lua Que Ri",
+   "obra": "Soul Eater",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "sorriso",
+   "peca": "Sorriso da lua de Soul Eater",
+   "cores": [
+    "#d50000",
+    "#fff59d",
+    "#212121"
+   ],
+   "fala": "A lua sangra e ri da sua cara. Eu só rio junto.",
+   "anim": "risada",
+   "transforma": {
+    "boca": 1.7,
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#212121",
+     "cabeca": "#fff59d"
+    }
+   }
+  },
+  {
+   "nivel": 44,
+   "colecao": "animes",
+   "titulo": "Excalibur da Saber",
+   "obra": "Fate/stay night",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espadaRei",
+   "peca": "Espada invisível da Saber",
+   "cores": [
+    "#1565c0",
+    "#ffd54f",
+    "#e3f2fd"
+   ],
+   "fala": "Pergunto: você é meu mestre? Então manda eu treinar.",
+   "anim": "poseEpica",
+   "transforma": {
+    "olhos": "anime",
+    "boca": 0.7,
+    "pele": {
+     "corpo": "#1565c0",
+     "bracos": "#cfd8dc",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 46,
+   "colecao": "animes",
+   "titulo": "Link Start",
+   "obra": "Sword Art Online",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espada",
+   "peca": "Elucidator do Espadachim Negro",
+   "cores": [
+    "#212121",
+    "#90a4ae",
+    "#4fc3f7"
+   ],
+   "fala": "Link Start! Se eu morrer no jogo, morro na academia também.",
+   "anim": "girar",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 48,
+   "colecao": "animes",
+   "titulo": "Volta pela Morte",
+   "obra": "Re:Zero",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Chifre de oni da Rem",
+   "cores": [
+    "#90caf9",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Morri, voltei e continuo devendo uma série de agachamento.",
+   "anim": "ressuscitar",
+   "transforma": {
+    "chifres": "diabo",
+    "corChifres": "#f5f5f5",
+    "olhos": "anime",
+    "pele": {
+     "cabeca": "#90caf9",
+     "corpo": "#212121",
+     "bracos": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 50,
+   "colecao": "animes",
+   "titulo": "EXPLOSION!",
+   "obra": "KonoSuba",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "chapeuMago",
+   "peca": "Chapéu da arquimaga explosiva",
+   "cores": [
+    "#212121",
+    "#c62828",
+    "#ffd54f"
+   ],
+   "fala": "EXPLOSION! Uma por dia. Depois eu desmaio igual depois do treino de perna.",
+   "anim": "desmaio",
+   "transforma": {
+    "cabeca": 1.25,
+    "olhos": "grandes",
+    "boca": 0.6,
+    "pele": {
+     "corpo": "#c62828",
+     "bracos": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 52,
+   "colecao": "animes",
+   "titulo": "Ainz Ooal Gown",
+   "obra": "Overlord",
+   "tipo": "anime",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Manto do Rei Feiticeiro",
+   "cores": [
+    "#4a148c",
+    "#ffd54f",
+    "#d50000"
+   ],
+   "fala": "Eu sou um esqueleto supremo e mesmo assim tenho mais músculo que você.",
+   "anim": "superioridade",
+   "reacao": "pk_dominio",
+   "transforma": {
+    "olhos": "vazios",
+    "boca": 1.3,
+    "cabeca": 1.1,
+    "pele": {
+     "corpo": "#eceff1",
+     "cabeca": "#f5f5f5",
+     "bracos": "#eceff1",
+     "pernas": "#4a148c"
+    }
+   }
+  },
+  {
+   "nivel": 54,
+   "colecao": "animes",
+   "titulo": "Reencarnei como Slime",
+   "obra": "Tensei Shitara Slime Datta Ken",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Pele de slime azul",
+   "cores": [
+    "#4fc3f7",
+    "#e1f5fe",
+    "#ffd54f"
+   ],
+   "fala": "Reencarnei como slime e engoli um tubarão. Agora o tubarão sou eu.",
+   "anim": "engolirTudo",
+   "transforma": {
+    "cabeca": 1.4,
+    "olhos": "semicerrados",
+    "barrigona": 1.35,
+    "pele": {
+     "corpo": "#4fc3f7",
+     "cabeca": "#4fc3f7",
+     "barriga": "#e1f5fe"
+    }
+   }
+  },
+  {
+   "nivel": 56,
+   "colecao": "animes",
+   "titulo": "Desta Vez a Sério",
+   "obra": "Mushoku Tensei",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "cajado",
+   "peca": "Cajado de Aqua Heartia",
+   "cores": [
+    "#6d4c41",
+    "#4fc3f7",
+    "#e1f5fe"
+   ],
+   "fala": "Nesta vida eu levo a sério. O treino, pelo menos.",
+   "anim": "assentir",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#5d4037",
+     "cabeca": "#ffe0c2",
+     "bracos": "#e1f5fe"
+    }
+   }
+  },
+  {
+   "nivel": 58,
+   "colecao": "animes",
+   "titulo": "Apito Branco",
+   "obra": "Made in Abyss",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Apito branco do Abismo",
+   "cores": [
+    "#f5f5f5",
+    "#9e9e9e",
+    "#ffd54f"
+   ],
+   "fala": "Descer é fácil. Subir é a maldição. Igual escada na academia.",
+   "anim": "olharRedor",
+   "transforma": {
+    "cabeca": 1.35,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "cabeca": "#ffe0c2",
+     "pernas": "#8d6e63"
+    }
+   }
+  },
+  {
+   "nivel": 60,
+   "colecao": "animes",
+   "titulo": "Número no Pescoço",
+   "obra": "The Promised Neverland",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "marcaTesta",
+   "peca": "Número da Grace Field",
+   "cores": [
+    "#212121",
+    "#f5f5f5",
+    "#4caf50"
+   ],
+   "fala": "Número tatuado, muro alto e um plano de fuga. Eu fujo é da dieta.",
+   "anim": "pensando",
+   "transforma": {
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "bracos": "#f5f5f5",
+     "pernas": "#f5f5f5"
+    }
+   }
+  },
+  {
+   "nivel": 62,
+   "colecao": "animes",
+   "titulo": "Dez Bilhões por Cento",
+   "obra": "Dr. Stone",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "cilindro",
+   "peca": "Fluido de despetrificação",
+   "cores": [
+    "#4caf50",
+    "#cfd8dc",
+    "#ffd54f"
+   ],
+   "fala": "Dez bilhões por cento de chance de eu bater o recorde no supino. Isso é ciência.",
+   "anim": "processando",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#8d6e63",
+     "cabeca": "#e0e0e0",
+     "pernas": "#5d4037"
+    }
+   }
+  },
+  {
+   "nivel": 64,
+   "colecao": "animes",
+   "titulo": "Shokugeki",
+   "obra": "Food Wars! (Shokugeki no Soma)",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "chapeuChef",
+   "peca": "Bandana do Restaurante Yukihira",
+   "cores": [
+    "#ffffff",
+    "#e53935",
+    "#212121"
+   ],
+   "fala": "Quer um duelo culinário? Frango, batata-doce e brócolis. Eu ganho.",
+   "anim": "comer",
+   "transforma": {
+    "olhos": "anime",
+    "boca": 1.2,
+    "pele": {
+     "corpo": "#ffffff",
+     "bracos": "#ffffff",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 66,
+   "colecao": "animes",
+   "titulo": "O Cometa",
+   "obra": "Your Name (Kimi no Na wa)",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "braceletes",
+   "peca": "Kumihimo do cometa",
+   "cores": [
+    "#e53935",
+    "#ffd54f",
+    "#ce93d8"
+   ],
+   "fala": "Acordei no corpo de outro e já fui malhar. Nem sei o nome dele.",
+   "anim": "olharApaixonado",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#1a237e",
+     "bracos": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 68,
+   "colecao": "animes",
+   "titulo": "Sem-Rosto",
+   "obra": "A Viagem de Chihiro",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara do Sem-Rosto",
+   "cores": [
+    "#f5f5f5",
+    "#7b1fa2",
+    "#212121"
+   ],
+   "fala": "Ahh... ahh... ouro? Não. Só quero frango.",
+   "anim": "devorar",
+   "transforma": {
+    "olhos": "pretos",
+    "corpo": 1.4,
+    "barrigona": 1.3,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#f5f5f5"
+    }
+   }
+  },
+  {
+   "nivel": 70,
+   "colecao": "animes",
+   "titulo": "A Princesa dos Lobos",
+   "obra": "Princesa Mononoke",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "marcasTita",
+   "peca": "Pintura de guerra da San",
+   "cores": [
+    "#d50000",
+    "#f5f5f5",
+    "#212121"
+   ],
+   "fala": "Vai embora, humano. Ou fica e treina com os lobos.",
+   "anim": "modoFera",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "cabeca": "#ffe0c2",
+     "pernas": "#6d4c41"
+    }
+   }
+  },
+  {
+   "nivel": 72,
+   "colecao": "animes",
+   "titulo": "Coração de Fogo",
+   "obra": "O Castelo Animado",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Pingente azul do Howl",
+   "cores": [
+    "#90caf9",
+    "#ffd54f",
+    "#e53935"
+   ],
+   "fala": "O Calcifer cozinha meu frango e eu só fico bonito.",
+   "anim": "desfile",
+   "transforma": {
+    "olhos": "brilho",
+    "cabeca": 1.1,
+    "pele": {
+     "corpo": "#ec407a",
+     "cabeca": "#ffe0c2",
+     "bracos": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 74,
+   "colecao": "animes",
+   "titulo": "Ponyo Ama Presunto",
+   "obra": "Ponyo",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "balde",
+   "peca": "Balde verde da Ponyo",
+   "cores": [
+    "#4caf50",
+    "#a5d6a7",
+    "#e53935"
+   ],
+   "fala": "Ponyo ama presunto. Eu amo peito de frango. Cada um com seu vício.",
+   "anim": "puloOndas",
+   "transforma": {
+    "cabeca": 1.45,
+    "olhos": "grandes",
+    "boca": 1.3,
+    "pele": {
+     "corpo": "#e53935",
+     "cabeca": "#ffe0c2",
+     "pernas": "#e53935"
+    }
+   }
+  },
+  {
+   "nivel": 76,
+   "colecao": "animes",
+   "titulo": "Entrega Expressa",
+   "obra": "O Serviço de Entregas da Kiki",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "faixa",
+   "peca": "Laço vermelho da bruxa",
+   "cores": [
+    "#d50000",
+    "#ffffff",
+    "#212121"
+   ],
+   "fala": "Entrego em tempo recorde: na vassoura e com a marmita do pós-treino.",
+   "anim": "flutuar",
+   "transforma": {
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#311b92",
+     "bracos": "#311b92",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 78,
+   "colecao": "animes",
+   "titulo": "Vale do Vento",
+   "obra": "Nausicaä do Vale do Vento",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "viseira",
+   "peca": "Máscara de gás do Mar da Decomposição",
+   "cores": [
+    "#b0bec5",
+    "#4fc3f7",
+    "#ffd54f"
+   ],
+   "fala": "Eu respiro o ar do mar podre e mesmo assim cheiro melhor que academia.",
+   "anim": "vento",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#1565c0",
+     "cabeca": "#ffe0c2",
+     "pernas": "#ffecb3"
+    }
+   }
+  },
+  {
+   "nivel": 80,
+   "colecao": "animes",
+   "titulo": "O Sexto Jogador Fantasma",
+   "obra": "Kuroko no Basket",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Calção do Seirin",
+   "cores": [
+    "#f5f5f5",
+    "#212121",
+    "#e53935"
+   ],
+   "fala": "Você nem me viu passar. Eu já estou no supino.",
+   "anim": "desaparecer",
+   "transforma": {
+    "olhos": "vazios",
+    "boca": 0.7,
+    "pele": {
+     "corpo": "#f5f5f5",
+     "cabeca": "#bbdefb",
+     "bracos": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 82,
+   "colecao": "animes",
+   "titulo": "Eros no Gelo",
+   "obra": "Yuri!!! on Ice",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "gola",
+   "peca": "Figurino Eros",
+   "cores": [
+    "#212121",
+    "#d50000",
+    "#ffd54f"
+   ],
+   "fala": "Eros no gelo, eros no supino. O quadríceps sabe dançar.",
+   "anim": "desfile",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 84,
+   "colecao": "animes",
+   "titulo": "O Cão de Caça",
+   "obra": "Hellsing",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "chapeu",
+   "peca": "Chapéu vermelho do Alucard",
+   "cores": [
+    "#b71c1c",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Eu sou o vampiro mais forte e mesmo assim preciso de proteína.",
+   "anim": "encararDentes",
+   "reacao": "pk_menacing",
+   "transforma": {
+    "olhos": "brilho",
+    "boca": 1.6,
+    "pele": {
+     "corpo": "#b71c1c",
+     "cabeca": "#eceff1",
+     "bracos": "#b71c1c"
+    }
+   }
+  },
+  {
+   "nivel": 86,
+   "colecao": "animes",
+   "titulo": "Crybaby",
+   "obra": "Devilman Crybaby",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Chifres do Devilman",
+   "cores": [
+    "#212121",
+    "#d50000",
+    "#7b1fa2"
+   ],
+   "fala": "Chorei, virei demônio e fiz mais uma série. Nessa ordem.",
+   "anim": "modoFera",
+   "reacao": "pk_berserker",
+   "transforma": {
+    "chifres": "diabo",
+    "corChifres": "#212121",
+    "corpo": 1.6,
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#263238",
+     "bracos": "#212121",
+     "pernas": "#4a148c"
+    }
+   }
+  },
+  {
+   "nivel": 88,
+   "colecao": "animes",
+   "titulo": "Lenda de Night City",
+   "obra": "Cyberpunk: Edgerunners",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "neon",
+   "peca": "Implantes neon do edgerunner",
+   "cores": [
+    "#00e5ff",
+    "#ff4081",
+    "#ffeb3b"
+   ],
+   "fala": "Sandevistan no talo. Eu faço 30 repetições antes de você piscar.",
+   "anim": "teleporte",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#ffeb3b",
+     "bracos": "#00e5ff",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 90,
+   "colecao": "animes",
+   "titulo": "Fantasma na Concha",
+   "obra": "Ghost in the Shell",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "cromado",
+   "peca": "Pele sintética da Major",
+   "cores": [
+    "#b0bec5",
+    "#7e57c2",
+    "#ffffff"
+   ],
+   "fala": "Meu corpo é prótese. Minha alma é do supino.",
+   "anim": "aparecer",
+   "transforma": {
+    "olhos": "semicerrados",
+    "corpo": 1.2,
+    "pele": {
+     "corpo": "#b0bec5",
+     "bracos": "#90a4ae",
+     "cabeca": "#cfd8dc"
+    }
+   }
+  },
+  {
+   "nivel": 92,
+   "colecao": "animes",
+   "titulo": "Você Se Lembra do Amor?",
+   "obra": "Macross",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "microfone",
+   "peca": "Microfone da Minmay",
+   "cores": [
+    "#e91e63",
+    "#f5f5f5",
+    "#ffd54f"
+   ],
+   "fala": "Eu canto e a frota inteira para de atirar. Eu flexiono e você para de respirar.",
+   "anim": "karaoke",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#e91e63",
+     "bracos": "#f5f5f5",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 94,
+   "colecao": "animes",
+   "titulo": "O Ladrão Cavalheiro",
+   "obra": "Lupin III",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "gravata",
+   "peca": "Gravata do ladrão cavalheiro",
+   "cores": [
+    "#fdd835",
+    "#212121",
+    "#e53935"
+   ],
+   "fala": "Vim roubar o seu coração. E o seu pré-treino.",
+   "anim": "piscadinha",
+   "transforma": {
+    "cabeca": 1.1,
+    "boca": 1.3,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#d50000",
+     "bracos": "#d50000",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 96,
+   "colecao": "animes",
+   "titulo": "Só Existe uma Verdade",
+   "obra": "Detetive Conan",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "gravataBorboleta",
+   "peca": "Gravata-borboleta modificadora de voz",
+   "cores": [
+    "#d50000",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Só existe uma verdade: você pulou o treino ontem.",
+   "anim": "apontar",
+   "transforma": {
+    "cabeca": 1.35,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#1565c0",
+     "bracos": "#1565c0",
+     "pernas": "#90a4ae"
+    }
+   }
+  },
+  {
+   "nivel": 98,
+   "colecao": "animes",
+   "titulo": "Bandeira da Caveira",
+   "obra": "Capitão Harlock",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "tapaOlho",
+   "peca": "Tapa-olho do Capitão Harlock",
+   "cores": [
+    "#212121",
+    "#ffd54f",
+    "#d50000"
+   ],
+   "fala": "Navego pelo espaço com uma caveira na bandeira e um shake na mão.",
+   "anim": "poseEpica",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.8,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "pernas": "#4a148c"
+    }
+   }
+  },
+  {
+   "nivel": 100,
+   "colecao": "animes",
+   "titulo": "Rumo a Iscandar",
+   "obra": "Patrulha Estelar (Space Battleship Yamato)",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "quepe",
+   "peca": "Quepe do capitão Okita",
+   "cores": [
+    "#f5f5f5",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Faltam 296 mil anos-luz e eu não pulo nenhum dia de treino.",
+   "anim": "assentir",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "bracos": "#f5f5f5",
+     "cabeca": "#ffccbc"
+    }
+   }
+  },
+  {
+   "nivel": 102,
+   "colecao": "animes",
+   "titulo": "Copo Sem Derramar",
+   "obra": "Initial D",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "caneca",
+   "peca": "Copo d'água do Takumi",
+   "cores": [
+    "#90caf9",
+    "#ffffff",
+    "#e1f5fe"
+   ],
+   "fala": "Se a água do copo não derrama na curva, o shake também não derrama.",
+   "anim": "beberShake",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.7,
+    "pele": {
+     "corpo": "#ffffff",
+     "bracos": "#ffffff",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 104,
+   "colecao": "animes",
+   "titulo": "Grande Professor Onizuka",
+   "obra": "Great Teacher Onizuka",
+   "tipo": "anime",
+   "parte": "cinto",
+   "forma": "cinturao",
+   "peca": "Cinto do Onizuka",
+   "cores": [
+    "#212121",
+    "#ffd54f",
+    "#e53935"
+   ],
+   "fala": "Ex-delinquente, professor e agora seu personal. Não discute.",
+   "anim": "ombrosDeboche",
+   "transforma": {
+    "corpo": 1.25,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#4e342e",
+     "cabeca": "#ffe082",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 106,
+   "colecao": "animes",
+   "titulo": "Mangá na Jump",
+   "obra": "Bakuman",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "lapis",
+   "peca": "Pena G do mangaká",
+   "cores": [
+    "#212121",
+    "#90a4ae",
+    "#ffd54f"
+   ],
+   "fala": "Desenho até de madrugada pra sair na Jump. E ainda treino às seis.",
+   "anim": "digitando",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#37474f",
+     "bracos": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 108,
+   "colecao": "animes",
+   "titulo": "O Lobo Gentil",
+   "obra": "Beastars",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Orelhas de lobo do Legoshi",
+   "cores": [
+    "#9e9e9e",
+    "#eceff1",
+    "#d50000"
+   ],
+   "fala": "Lobo gentil, mas carnívoro. Por isso a proteína.",
+   "anim": "lamberDentes",
+   "transforma": {
+    "orelhas": "gato",
+    "corOrelhas": "#9e9e9e",
+    "boca": 1.5,
+    "olhos": "semicerrados",
+    "pele": {
+     "cabeca": "#9e9e9e",
+     "corpo": "#9e9e9e",
+     "barriga": "#eceff1"
+    }
+   }
+  },
+  {
+   "nivel": 110,
+   "colecao": "animes",
+   "titulo": "Death Metal no Karaokê",
+   "obra": "Aggretsuko",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Orelhinhas da panda-vermelha",
+   "cores": [
+    "#e64a19",
+    "#ffffff",
+    "#212121"
+   ],
+   "fala": "Sorrio no trabalho, grito death metal no karaokê e solto no supino.",
+   "anim": "karaoke",
+   "transforma": {
+    "orelhas": "pequenas",
+    "corOrelhas": "#e64a19",
+    "cabeca": 1.4,
+    "olhos": "pontos",
+    "pele": {
+     "cabeca": "#e64a19",
+     "corpo": "#e64a19",
+     "barriga": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 112,
+   "colecao": "animes",
+   "titulo": "Vida Fibra",
+   "obra": "Kill la Kill",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espadaGigante",
+   "peca": "Tesoura-espada da Ryuko",
+   "cores": [
+    "#d50000",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Roupa que te veste é vida fibra. A minha é músculo.",
+   "anim": "modoPoder",
+   "reacao": "pk_berserker",
+   "transforma": {
+    "olhos": "anime",
+    "boca": 1.3,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#d50000",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 114,
+   "colecao": "animes",
+   "titulo": "Burning Rescue",
+   "obra": "Promare",
+   "tipo": "anime",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Chamas rosa do Promare",
+   "cores": [
+    "#ff4081",
+    "#00e5ff",
+    "#ffeb3b"
+   ],
+   "fala": "Bombeiro com alma em chamas. Meu cardio é apagar incêndio.",
+   "anim": "aura",
+   "transforma": {
+    "corpo": 1.35,
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#1565c0",
+     "bracos": "#ff4081",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 116,
+   "colecao": "animes",
+   "titulo": "O Gato do Zodíaco",
+   "obra": "Fruits Basket",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Orelhas de gato do zodíaco",
+   "cores": [
+    "#ff7043",
+    "#ffccbc",
+    "#212121"
+   ],
+   "fala": "Um abraço e eu viro gato. Dois, e eu viro tubarão de novo.",
+   "anim": "hmpf",
+   "transforma": {
+    "orelhas": "gato",
+    "corOrelhas": "#ff7043",
+    "olhos": "semicerrados",
+    "pele": {
+     "cabeca": "#ff7043",
+     "corpo": "#212121",
+     "bracos": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 118,
+   "colecao": "animes",
+   "titulo": "Digievolução",
+   "obra": "Digimon Adventure",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "celular",
+   "peca": "Digivice",
+   "cores": [
+    "#eceff1",
+    "#ff9800",
+    "#4fc3f7"
+   ],
+   "fala": "Digievolução! Tubarão digievolui para Megatubarão.",
+   "anim": "evolucao",
+   "transforma": {
+    "cabeca": 1.3,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ff9800",
+     "barriga": "#ffe0b2",
+     "bracos": "#ff9800"
+    }
+   }
+  },
+  {
+   "nivel": 120,
+   "colecao": "animes",
+   "titulo": "É Hora do Duelo",
+   "obra": "Yu-Gi-Oh!",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "medalhao",
+   "peca": "Enigma do Milênio",
+   "cores": [
+    "#ffd54f",
+    "#ff8f00",
+    "#7b1fa2"
+   ],
+   "fala": "É hora do duelo! Eu invoco o bíceps de olhos azuis em modo de ataque.",
+   "anim": "poseEpica",
+   "transforma": {
+    "cabeca": 1.2,
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#212121",
+     "cabeca": "#ffe0c2",
+     "bracos": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 122,
+   "colecao": "animes",
+   "titulo": "Deixa Rasgar",
+   "obra": "Beyblade",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "spinner",
+   "peca": "Beyblade Dragoon",
+   "cores": [
+    "#1565c0",
+    "#ffd54f",
+    "#e53935"
+   ],
+   "fala": "Três, dois, um... deixa rasgar! Eu giro mais que essa piorra.",
+   "anim": "girar",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#d50000",
+     "bracos": "#1565c0",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 124,
+   "colecao": "animes",
+   "titulo": "Vai Dar Tudo Certo",
+   "obra": "Shaman King",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "fone",
+   "peca": "Fones laranja do Yoh",
+   "cores": [
+    "#ff9800",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Vai dar tudo certo... depois do treino.",
+   "anim": "ouvindo",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#f5f5f5",
+     "bracos": "#ffe0c2",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 126,
+   "colecao": "animes",
+   "titulo": "Libere-se",
+   "obra": "Sakura Card Captors",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "varinha",
+   "peca": "Báculo do Selo",
+   "cores": [
+    "#e91e63",
+    "#ffd54f",
+    "#f8bbd0"
+   ],
+   "fala": "Chave que guarda o poder das estrelas: libere-se! E me libere do cardio.",
+   "anim": "brilhoOlhos",
+   "transforma": {
+    "olhos": "brilho",
+    "cabeca": 1.2,
+    "pele": {
+     "corpo": "#f8bbd0",
+     "bracos": "#ffffff",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 128,
+   "colecao": "animes",
+   "titulo": "Faça um Contrato",
+   "obra": "Puella Magi Madoka Magica",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Orelhas do Kyubey",
+   "cores": [
+    "#ffffff",
+    "#ffcdd2",
+    "#d50000"
+   ],
+   "fala": "Faça um contrato comigo e vire uma garota mágica. Ou um tubarão monstro.",
+   "anim": "sorrisoCanto",
+   "transforma": {
+    "orelhas": "coelho",
+    "corOrelhas": "#ffffff",
+    "olhos": "pontos",
+    "boca": 0.5,
+    "pele": {
+     "cabeca": "#ffffff",
+     "corpo": "#ffffff",
+     "barriga": "#ffcdd2"
+    }
+   }
+  },
+  {
+   "nivel": 130,
+   "colecao": "animes",
+   "titulo": "Estrela nos Olhos",
+   "obra": "Oshi no Ko",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "lentes",
+   "peca": "Olhos de estrela da idol",
+   "cores": [
+    "#ff4081",
+    "#ffd54f",
+    "#ffffff"
+   ],
+   "fala": "A mentira mais bonita é dizer que ama. A verdade é que eu amo supino.",
+   "anim": "piscadinha",
+   "transforma": {
+    "olhos": "brilho",
+    "boca": 0.8,
+    "pele": {
+     "corpo": "#ff4081",
+     "bracos": "#ffffff",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 132,
+   "colecao": "animes",
+   "titulo": "Gangue Toman",
+   "obra": "Tokyo Revengers",
+   "tipo": "anime",
+   "parte": "costas",
+   "forma": "capa",
+   "peca": "Tokkōfuku da Toman",
+   "cores": [
+    "#212121",
+    "#ffd54f",
+    "#d50000"
+   ],
+   "fala": "Voltei no tempo pra salvar a gangue. E pra fazer a série que eu pulei.",
+   "anim": "poseVilao",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 134,
+   "colecao": "animes",
+   "titulo": "Sem Engrenagem",
+   "obra": "Megalo Box",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "luvasBoxe",
+   "peca": "Luvas do Gearless Joe",
+   "cores": [
+    "#d50000",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Eles lutam com prótese. Eu luto sem engrenagem e com shape.",
+   "anim": "encarar",
+   "transforma": {
+    "corpo": 1.35,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#8d6e63",
+     "bracos": "#8d6e63",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 136,
+   "colecao": "animes",
+   "titulo": "Cinzas Brancas",
+   "obra": "Ashita no Joe",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Calção do Joe Yabuki",
+   "cores": [
+    "#212121",
+    "#ffffff",
+    "#d50000"
+   ],
+   "fala": "Queimei até virar cinza branca. Era só o aquecimento.",
+   "anim": "cansado",
+   "transforma": {
+    "corpo": 1.2,
+    "olhos": "vazios",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "bracos": "#ffe0c2",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 138,
+   "colecao": "animes",
+   "titulo": "Cabeça de Lagarto",
+   "obra": "Dorohedoro",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Cabeça de lagarto do Caiman",
+   "cores": [
+    "#558b2f",
+    "#ffffff",
+    "#d50000"
+   ],
+   "fala": "Abre a boca. Não você, o feiticeiro. Eu quero ver quem tá aí dentro.",
+   "anim": "lamberDentes",
+   "transforma": {
+    "cabeca": 1.45,
+    "boca": 1.75,
+    "olhos": "pontos",
+    "baba": true,
+    "sujeira": true,
+    "pele": {
+     "cabeca": "#558b2f",
+     "corpo": "#6d4c41",
+     "bracos": "#558b2f"
+    }
+   }
+  },
+  {
+   "nivel": 140,
+   "colecao": "animes",
+   "titulo": "Samurai Preguiçoso",
+   "obra": "Gintama",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espadaEnfaixada",
+   "peca": "Bokutō Tōyako",
+   "cores": [
+    "#8d6e63",
+    "#ffffff",
+    "#4fc3f7"
+   ],
+   "fala": "Leite de morango, mangá e espada de madeira. A vida de samurai é isso.",
+   "anim": "palito",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.8,
+    "pele": {
+     "corpo": "#ffffff",
+     "cabeca": "#ffe0c2",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 142,
+   "colecao": "animes",
+   "titulo": "Aposentado e Letal",
+   "obra": "Sakamoto Days",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "oculosRedondos",
+   "peca": "Óculos do Sakamoto aposentado",
+   "cores": [
+    "#212121",
+    "#e3f2fd",
+    "#ffd54f"
+   ],
+   "fala": "Aposentado, de barrigão e ainda o mais perigoso da loja de conveniência.",
+   "anim": "esparramado",
+   "transforma": {
+    "corpo": 1.6,
+    "barrigona": 1.45,
+    "papada": true,
+    "suor": true,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#ffd54f",
+     "barriga": "#fff8e1",
+     "pernas": "#424242"
+    }
+   }
+  },
+  {
+   "nivel": 144,
+   "colecao": "animes",
+   "titulo": "O Amor É Guerra",
+   "obra": "Kaguya-sama: Love Is War",
+   "tipo": "anime",
+   "parte": "pescoco",
+   "forma": "gravataBorboleta",
+   "peca": "Laço do conselho estudantil",
+   "cores": [
+    "#d50000",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "O amor é guerra. Quem confessa primeiro perde. Quem pula treino também.",
+   "anim": "superioridade",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.7,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 146,
+   "colecao": "animes",
+   "titulo": "Sugimoto Imortal",
+   "obra": "Golden Kamuy",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "quepe",
+   "peca": "Quepe do Sugimoto Imortal",
+   "cores": [
+    "#4e342e",
+    "#ffd54f",
+    "#d50000"
+   ],
+   "fala": "Sou imortal. Levo tiro, facada e mesmo assim faço perna.",
+   "anim": "poseEpica",
+   "transforma": {
+    "corpo": 1.3,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#4e342e",
+     "bracos": "#4e342e",
+     "cabeca": "#d7a27a"
+    }
+   }
+  },
+  {
+   "nivel": 148,
+   "colecao": "animes",
+   "titulo": "Magia É Músculo",
+   "obra": "Mashle",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "biscoito",
+   "peca": "Bomba de creme do Mash",
+   "cores": [
+    "#ffe082",
+    "#fff8e1",
+    "#8d6e63"
+   ],
+   "fala": "Magia? Resolvo com músculo. E com uma bomba de creme no pós-treino.",
+   "anim": "duploBiceps",
+   "transforma": {
+    "corpo": 1.7,
+    "olhos": "pontos",
+    "boca": 0.6,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#ffe0c2",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 150,
+   "colecao": "animes",
+   "titulo": "Darling da Tigresa",
+   "obra": "Urusei Yatsura",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "listras",
+   "peca": "Biquíni de tigre da Lum",
+   "cores": [
+    "#fdd835",
+    "#212121",
+    "#4fc3f7"
+   ],
+   "fala": "Darling! Eu dou choque em quem pula treino, tá?",
+   "anim": "charmeCauda",
+   "transforma": {
+    "chifres": "diabo",
+    "corChifres": "#fdd835",
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "cabeca": "#4db6ac",
+     "pernas": "#fdd835"
+    }
+   }
+  },
+  {
+   "nivel": 152,
+   "colecao": "animes",
+   "titulo": "Eliminar o Mal",
+   "obra": "Akame ga Kill!",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espada",
+   "peca": "Murasame, a espada maldita",
+   "cores": [
+    "#212121",
+    "#d50000",
+    "#eceff1"
+   ],
+   "fala": "Um corte e o veneno pega. Igual ao meu olhar quando você come doce.",
+   "anim": "encarar",
+   "reacao": "pk_serio",
+   "transforma": {
+    "olhos": "sharingan",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 154,
+   "colecao": "animes",
+   "titulo": "Matador de Goblins",
+   "obra": "Goblin Slayer",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "capacete",
+   "peca": "Elmo do Matador de Goblins",
+   "cores": [
+    "#9e9e9e",
+    "#d50000",
+    "#424242"
+   ],
+   "fala": "Goblins? Mato. Preguiça? Mato também.",
+   "anim": "encarar",
+   "transforma": {
+    "olhos": "vazios",
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#6d4c41",
+     "bracos": "#9e9e9e",
+     "pernas": "#424242"
+    }
+   }
+  },
+  {
+   "nivel": 156,
+   "colecao": "animes",
+   "titulo": "Duas Mãos",
+   "obra": "Black Lagoon",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "tatuagemEspartana",
+   "peca": "Tatuagem tribal da Revy",
+   "cores": [
+    "#212121",
+    "#d50000",
+    "#ffd54f"
+   ],
+   "fala": "Duas Mãos, dois halteres e zero paciência.",
+   "anim": "sorrisoCanto",
+   "transforma": {
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#d7a27a",
+     "bracos": "#d7a27a",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 158,
+   "colecao": "animes",
+   "titulo": "Um Cara Dândi no Espaço",
+   "obra": "Space Dandy",
+   "tipo": "anime",
+   "parte": "cinto",
+   "forma": "cinturao",
+   "peca": "Cinto do caçador de aliens",
+   "cores": [
+    "#4fc3f7",
+    "#ffd54f",
+    "#e91e63"
+   ],
+   "fala": "Sou um cara dândi no espaço. De topete, bíceps e nenhuma vergonha.",
+   "anim": "seAcharMaximo",
+   "transforma": {
+    "cabeca": 1.2,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#4fc3f7",
+     "bracos": "#4fc3f7",
+     "cabeca": "#ffe0c2",
+     "pernas": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 160,
+   "colecao": "animes",
+   "titulo": "Antes Porco que Fascista",
+   "obra": "Porco Rosso",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "oculosAviador",
+   "peca": "Óculos de aviador do Porco Rosso",
+   "cores": [
+    "#6d4c41",
+    "#d50000",
+    "#ffd54f"
+   ],
+   "fala": "Antes porco que fascista. Antes tubarão que sedentário.",
+   "anim": "olharLado",
+   "transforma": {
+    "orelhas": "pequenas",
+    "corOrelhas": "#f48fb1",
+    "cabeca": 1.3,
+    "boca": 1.3,
+    "barrigona": 1.25,
+    "papada": true,
+    "pele": {
+     "cabeca": "#f48fb1",
+     "corpo": "#f48fb1",
+     "barriga": "#fce4ec"
+    }
+   }
+  },
+  {
+   "nivel": 162,
+   "colecao": "animes",
+   "titulo": "Chamas Azuis",
+   "obra": "Blue Exorcist",
+   "tipo": "anime",
+   "parte": "aura",
+   "forma": "chamas",
+   "peca": "Chamas azuis de Satanás",
+   "cores": [
+    "#2962ff",
+    "#82b1ff",
+    "#e3f2fd"
+   ],
+   "fala": "Sou filho de Satanás e mesmo assim lavo a louça do pós-treino. Eu, não você.",
+   "anim": "modoPoder",
+   "reacao": "pk_bankai",
+   "transforma": {
+    "orelhas": "elfo",
+    "corOrelhas": "#ffe0c2",
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#212121",
+     "cabeca": "#ffe0c2",
+     "bracos": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 164,
+   "colecao": "animes",
+   "titulo": "Tentáculos do Professor",
+   "obra": "Assassination Classroom",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "ventosas",
+   "peca": "Tentáculos do Koro-sensei",
+   "cores": [
+    "#fdd835",
+    "#212121",
+    "#ffffff"
+   ],
+   "fala": "Nurufufu! Mach 20, tentáculos e prova surpresa de agachamento.",
+   "anim": "risada",
+   "transforma": {
+    "cabeca": 1.6,
+    "boca": 1.7,
+    "olhos": "pontos",
+    "pele": {
+     "cabeca": "#fdd835",
+     "corpo": "#212121",
+     "bracos": "#fdd835"
+    }
+   }
+  },
+  {
+   "nivel": 166,
+   "colecao": "animes",
+   "titulo": "Cento e Um Metros",
+   "obra": "Eyeshield 21",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "viseira",
+   "peca": "Viseira verde do Eyeshield 21",
+   "cores": [
+    "#4caf50",
+    "#ffffff",
+    "#d50000"
+   ],
+   "fala": "Corro 40 jardas em 4,2 segundos. Fugindo do cardio.",
+   "anim": "nadarParaTela",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#d50000",
+     "bracos": "#ffffff",
+     "pernas": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 168,
+   "colecao": "animes",
+   "titulo": "O Discípulo Mais Forte",
+   "obra": "Kenichi: O Discípulo Mais Forte da História",
+   "tipo": "anime",
+   "parte": "cinto",
+   "forma": "faixaKarate",
+   "peca": "Faixa do dojô Ryōzanpaku",
+   "cores": [
+    "#212121",
+    "#ffffff",
+    "#d50000"
+   ],
+   "fala": "Treino com seis mestres e todos querem me matar. Igual à minha nutricionista.",
+   "anim": "treinarJunto",
+   "transforma": {
+    "corpo": 1.25,
+    "olhos": "grandes",
+    "pele": {
+     "corpo": "#ffffff",
+     "bracos": "#ffffff",
+     "pernas": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 170,
+   "colecao": "animes",
+   "titulo": "Comer Monstro",
+   "obra": "Dungeon Meshi",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "prato",
+   "peca": "Prato de cogumelo andante",
+   "cores": [
+    "#8d6e63",
+    "#a5d6a7",
+    "#e53935"
+   ],
+   "fala": "Comer monstro é proteína magra. Cogumelo andante, slime grelhado, tudo vale.",
+   "anim": "comer",
+   "transforma": {
+    "corpo": 1.2,
+    "barrigona": 1.2,
+    "sujeira": true,
+    "moscas": true,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#8d6e63",
+     "barriga": "#d7ccc8",
+     "cabeca": "#d7a27a"
+    }
+   }
+  },
+  {
+   "nivel": 172,
+   "colecao": "animes",
+   "titulo": "A Boticária",
+   "obra": "Diários de uma Apotecária",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "cilindro",
+   "peca": "Frasco de veneno da Maomao",
+   "cores": [
+    "#7b1fa2",
+    "#ce93d8",
+    "#4caf50"
+   ],
+   "fala": "Provo veneno por diversão. Creatina não me assusta.",
+   "anim": "nojo",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.6,
+    "pele": {
+     "corpo": "#4caf50",
+     "bracos": "#f5f5f5",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 174,
+   "colecao": "animes",
+   "titulo": "Cabeça de Pássaro",
+   "obra": "Shangri-La Frontier",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "mascara",
+   "peca": "Máscara de pássaro do Sunraku",
+   "cores": [
+    "#5d4037",
+    "#ffd54f",
+    "#212121"
+   ],
+   "fala": "Jogo lixo é meu treino. Seminu e de cabeça de pássaro.",
+   "anim": "zombar",
+   "transforma": {
+    "cabeca": 1.3,
+    "boca": 0.5,
+    "olhos": "pontos",
+    "pele": {
+     "corpo": "#ffe0c2",
+     "cabeca": "#8d6e63",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 176,
+   "colecao": "animes",
+   "titulo": "Cem Coisas Antes de Virar Zumbi",
+   "obra": "Zom 100",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "cartaz",
+   "peca": "Lista das 100 coisas antes de virar zumbi",
+   "cores": [
+    "#fdd835",
+    "#212121",
+    "#d50000"
+   ],
+   "fala": "Item 1: largar o emprego. Item 2: supino. Item 3: morder quem pular treino.",
+   "anim": "festaSozinho",
+   "transforma": {
+    "baba": true,
+    "moscas": true,
+    "sujeira": true,
+    "olhos": "vazios",
+    "boca": 1.4,
+    "pele": {
+     "corpo": "#7cb342",
+     "cabeca": "#9ccc65",
+     "bracos": "#7cb342"
+    }
+   }
+  },
+  {
+   "nivel": 178,
+   "colecao": "animes",
+   "titulo": "Quantos Quilos Você Levanta?",
+   "obra": "Dumbbell Nan Kilo Moteru?",
+   "tipo": "anime",
+   "parte": "pulsos",
+   "forma": "munhequeiras",
+   "peca": "Munhequeiras da Silverman Gym",
+   "cores": [
+    "#f48fb1",
+    "#ffffff",
+    "#212121"
+   ],
+   "fala": "Quantos quilos você levanta? Eu levanto o anime inteiro.",
+   "anim": "halteres",
+   "transforma": {
+    "corpo": 1.5,
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#f48fb1",
+     "bracos": "#ffe0c2",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 180,
+   "colecao": "animes",
+   "titulo": "Hamtaro e Companhia",
+   "obra": "Hamtaro",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "transformacao",
+   "peca": "Orelhinhas do hamster",
+   "cores": [
+    "#ff9800",
+    "#ffffff",
+    "#f48fb1"
+   ],
+   "fala": "Sementinha de girassol é pré-treino de hamster.",
+   "anim": "comerPeixinhos",
+   "transforma": {
+    "orelhas": "pequenas",
+    "corOrelhas": "#ff9800",
+    "cabeca": 1.5,
+    "olhos": "pontos",
+    "barrigona": 1.2,
+    "pele": {
+     "cabeca": "#ff9800",
+     "corpo": "#ff9800",
+     "barriga": "#ffffff"
+    }
+   }
+  },
+  {
+   "nivel": 182,
+   "colecao": "animes",
+   "titulo": "Elefantinho",
+   "obra": "Crayon Shin-chan",
+   "tipo": "anime",
+   "parte": "bermuda",
+   "forma": "liso",
+   "peca": "Shortinho amarelo do Shin-chan",
+   "cores": [
+    "#fdd835",
+    "#d50000",
+    "#212121"
+   ],
+   "fala": "Ora ora! Elefantinho, elefantinho! Dança da bundinha depois do supino.",
+   "anim": "dancinhaViral",
+   "transforma": {
+    "cabeca": 1.5,
+    "olhos": "pontos",
+    "boca": 0.8,
+    "pele": {
+     "corpo": "#d50000",
+     "bracos": "#d50000",
+     "pernas": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 184,
+   "colecao": "animes",
+   "titulo": "Cabeça de Pão",
+   "obra": "Anpanman",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "narizPalhaco",
+   "peca": "Nariz redondo do Anpanman",
+   "cores": [
+    "#e53935",
+    "#ffffff",
+    "#8d6e63"
+   ],
+   "fala": "Come um pedaço da minha cabeça. É pão, tem carboidrato, depois treina.",
+   "anim": "feliz",
+   "transforma": {
+    "cabeca": 1.55,
+    "boca": 1.3,
+    "olhos": "pontos",
+    "pele": {
+     "cabeca": "#ffb74d",
+     "corpo": "#e53935",
+     "pernas": "#1565c0"
+    }
+   }
+  },
+  {
+   "nivel": 186,
+   "colecao": "animes",
+   "titulo": "O Menino do Cemitério",
+   "obra": "GeGeGe no Kitaro",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "tapaOlho",
+   "peca": "Franja do Kitaro",
+   "cores": [
+    "#5d4037",
+    "#ffd54f",
+    "#d50000"
+   ],
+   "fala": "O olho do meu pai mora no meu cabelo e mesmo assim te vê pulando treino.",
+   "anim": "espiarUmOlho",
+   "transforma": {
+    "olhos": "pretos",
+    "cabeca": 1.2,
+    "pele": {
+     "corpo": "#ffd54f",
+     "bracos": "#212121",
+     "pernas": "#424242"
+    }
+   }
+  },
+  {
+   "nivel": 188,
+   "colecao": "animes",
+   "titulo": "A Brigada SOS",
+   "obra": "A Melancolia de Haruhi Suzumiya",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "tiara",
+   "peca": "Fita amarela da Haruhi",
+   "cores": [
+    "#fdd835",
+    "#ffeb3b",
+    "#d50000"
+   ],
+   "fala": "Não ligo pra humano comum. Só pra alien, viajante do tempo e marombeiro.",
+   "anim": "apontar",
+   "transforma": {
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#1565c0",
+     "bracos": "#ffffff",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 190,
+   "colecao": "animes",
+   "titulo": "Tudo ou Nada",
+   "obra": "Kakegurui",
+   "tipo": "anime",
+   "parte": "rosto",
+   "forma": "lentes",
+   "peca": "Olhar de apostadora da Yumeko",
+   "cores": [
+    "#d50000",
+    "#ff1744",
+    "#212121"
+   ],
+   "fala": "Vamos apostar? Aposto que você não aguenta três séries até a falha.",
+   "anim": "apostar",
+   "reacao": "pk_menacing",
+   "transforma": {
+    "olhos": "brilho",
+    "boca": 1.4,
+    "pele": {
+     "corpo": "#b71c1c",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 192,
+   "colecao": "animes",
+   "titulo": "Superchute de Fogo",
+   "obra": "Inazuma Eleven",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "faixa",
+   "peca": "Faixa laranja do goleiro",
+   "cores": [
+    "#ff9800",
+    "#ffffff",
+    "#fdd835"
+   ],
+   "fala": "Mão divina! Nenhuma bola passa. Nenhuma desculpa também.",
+   "anim": "highFive",
+   "transforma": {
+    "olhos": "anime",
+    "pele": {
+     "corpo": "#fdd835",
+     "bracos": "#1565c0",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 194,
+   "colecao": "animes",
+   "titulo": "Traje Preto",
+   "obra": "Gantz",
+   "tipo": "anime",
+   "parte": "pintura",
+   "forma": "reator",
+   "peca": "Traje preto do Gantz",
+   "cores": [
+    "#00e5ff",
+    "#212121",
+    "#90caf9"
+   ],
+   "fala": "Morri, acordei numa sala com uma bola preta e agora tenho que caçar alien de traje justo.",
+   "anim": "modoPoder",
+   "reacao": "pk_rumbling",
+   "transforma": {
+    "corpo": 1.45,
+    "olhos": "semicerrados",
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "pernas": "#212121"
+    }
+   }
+  },
+  {
+   "nivel": 196,
+   "colecao": "animes",
+   "titulo": "Expresso da Galáxia",
+   "obra": "Galaxy Express 999",
+   "tipo": "anime",
+   "parte": "cabeca",
+   "forma": "ushanka",
+   "peca": "Chapéu de pele da Maetel",
+   "cores": [
+    "#212121",
+    "#fdd835",
+    "#d50000"
+   ],
+   "fala": "Peguei o trem espacial em busca de um corpo de máquina. Achei o meu na academia.",
+   "anim": "olharRelogio",
+   "transforma": {
+    "olhos": "semicerrados",
+    "boca": 0.7,
+    "pele": {
+     "corpo": "#212121",
+     "bracos": "#212121",
+     "cabeca": "#ffe0c2"
+    }
+   }
+  },
+  {
+   "nivel": 198,
+   "colecao": "animes",
+   "titulo": "Bruxa de Olhos Prateados",
+   "obra": "Claymore",
+   "tipo": "anime",
+   "parte": "mao",
+   "forma": "espadaGigante",
+   "peca": "Claymore de prata",
+   "cores": [
+    "#cfd8dc",
+    "#ffd54f",
+    "#212121"
+   ],
+   "fala": "Meio humana, meio yoma e com uma espada maior que você. Respeita.",
+   "anim": "poseEpica",
+   "reacao": "pk_haki",
+   "transforma": {
+    "olhos": "brilho",
+    "corpo": 1.3,
+    "pele": {
+     "corpo": "#cfd8dc",
+     "bracos": "#eceff1",
+     "cabeca": "#fff8e1"
+    }
+   }
+  },
+  {
+   "nivel": 200,
+   "colecao": "animes",
+   "titulo": "O Orgulho do Leão",
+   "obra": "Os Sete Pecados Capitais (Nanatsu no Taizai)",
+   "tipo": "anime",
+   "parte": "aura",
+   "forma": "raios",
+   "peca": "Sol do Orgulho do Leão",
+   "cores": [
+    "#ffb300",
+    "#fff176",
+    "#ff6f00"
+   ],
+   "fala": "Quem decidiu isso? Eu. Ao meio-dia eu sou o sol, e o sol faz supino.",
+   "anim": "superioridade",
+   "reacao": "pk_ultraInstinto",
+   "transforma": {
+    "corpo": 1.8,
+    "cabeca": 0.85,
+    "juba": "#ffb300",
+    "olhos": "brilho",
+    "pele": {
+     "corpo": "#ffcc80",
+     "bracos": "#ffcc80",
+     "pernas": "#4e342e"
     }
    }
   }

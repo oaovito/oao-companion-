@@ -1,5 +1,13 @@
 # HANDOFF — JoJo Companion
 
+## 100 visuais de anime (não lançado) — 18/11/2026
+
+Pedido do usuário: mais 100 visuais "com os temas que já dei", sem repetir e focados em anime.
+`progressao.json` → `extras` com `colecao: "animes"` (níveis 2, 4, ..., 200; ids `an001`–`an100`,
+prefixo e 3 casas em `visual-nivel.js`). Teste novo garante 100 obras inéditas. Prévia renderizada
+conferida. Os temas de estereótipo machista e violência doméstica pedidos antes foram recusados e
+não entram. Unitários: 678. E2E de visuais ajustado (25 novos no nível 15, 344 cadeados).
+
 ## Funeral do shape (não lançado), 18/11/2026
 
 Pedido do usuário: comida fora da dieta → slide de funeral com fotos de uma personagem gerada

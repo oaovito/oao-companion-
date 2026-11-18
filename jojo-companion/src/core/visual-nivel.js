@@ -1,7 +1,7 @@
 // Visuais por nível. REGRA IRREDUTÍVEL (pedido de 18/11/2026): todo título de nível
 // é uma referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas
 // as clássicas de tubarão estão presentes), mais 20 extras de South Park e 50 de memes do
-// Twitter (`extras`, sem pudor), e a peça, a fala e a reação de cada nível são dessa
+// Twitter (`extras`, sem pudor), mais 100 de anime (um a cada 2 níveis, obras novas), e a peça, a fala e a reação de cada nível são dessa
 // referência. Os dados ficam em `progressao.json` → `referencias` (um por nível).
 // Cada nível a partir do 2 libera uma peça desenhada por cima do JoJo (o corpo, a
 // silhueta e o estilo de recorte de papel não mudam). Quanto mais alto o nível,
@@ -49,9 +49,11 @@ const topo = (x) => 20 - 8 * (1 - ((x - 90) / 36) ** 2);
  */
 /** Aceita só as referências (lista) ou {referencias, extras}. */
 const fonte = (d) => (Array.isArray(d) ? { referencias: d, extras: [] } : { referencias: d?.referencias || [], extras: d?.extras || [] });
-const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2})$/;
+const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3})$/;
 // Prefixo do id de cada coleção de extras.
-const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw' };
+const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an' };
+// Casas do número no id (100 animes pedem três).
+const CASAS = { an: 3 };
 
 export function gerarVisuais(dados) {
   const { referencias, extras } = fonte(dados);
@@ -64,7 +66,7 @@ export function gerarVisuais(dados) {
     const [a, b, g] = r.cores;
     out.push({ id: `nv${id3(nivel)}`, nivel, parte: r.parte, forma: r.forma, t, titulo: r.titulo, obra: r.obra, tipo: r.tipo, nome: r.peca, fala: r.fala, anim: r.anim || null, reacao: r.reacao || null, cores: { a, b, g }, transforma: r.transforma || null });
   }
-  // Extras (20 de South Park, 50 de memes do Twitter): liberados junto com o nível
+  // Extras (20 de South Park, 50 de memes do Twitter, 100 de anime): liberados junto com o nível
   // indicado, depois da peça do nível. Id pelo prefixo e pela ordem dentro da coleção.
   const contagem = {};
   for (const x of extras) {
@@ -73,7 +75,7 @@ export function gerarVisuais(dados) {
     const n = contagem[pre] = (contagem[pre] || 0) + 1;
     if (!PARTES.has(x.parte) || !(x.nivel >= 2 && x.nivel <= total)) continue;
     const [a, b, g] = x.cores;
-    out.push({ id: `${pre}${String(n).padStart(2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
+    out.push({ id: `${pre}${String(n).padStart(CASAS[pre] || 2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
   }
   return out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
 }
