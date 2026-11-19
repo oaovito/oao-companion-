@@ -610,3 +610,12 @@ test('run 228: resposta incoerente ganha segunda geração; perspectiva trocada 
   assert.equal(r.intent, 'ia');
   assert.match(r.text, /Prazo mudando/);
 });
+
+test('run 233: "não me faz perder tempo" sai; a segunda geração recebe o motivo da recusa', async () => {
+  assert.equal(semDesdem('Organizar é o teu talento, Manu. Mas não me faz perder tempo com isso.'), 'Organizar é o teu talento, Manu.');
+  const pedidos = [];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: pedidos.length === 1 ? 'Que droga, Manu? Acha que eu tenho tempo para essas idiotices?' : 'Que droga, Manu! Prazo mudando de novo cansa. Reorganiza a entrega.' }; } };
+  const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
+  assert.deepEqual(pedidos.map(Boolean), [false, true]);
+  assert.equal(r.intent, 'ia');
+});

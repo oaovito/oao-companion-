@@ -296,3 +296,21 @@ test('resposta rápida: depois de uma falha da IA, as próximas vão direto pras
   assert.equal(calls.length, 1, 'não espera a IA de novo logo em seguida');
   assert.ok(llm('x').timeoutMs <= 8000, 'tempo máximo de espera curto');
 });
+
+test('segunda tentativa diz ao modelo por que a primeira foi recusada e varia mais (run 233)', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => {
+      calls.push(JSON.parse(options.body));
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'Que droga, Manu! Chefe que muda prazo toda hora cansa. Reorganiza a entrega.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'Meu chefe mudou o prazo de novo.' });
+  await p.reply({ text: 'Meu chefe mudou o prazo de novo.', corrigir: 'respondeu como se fosse com ele' });
+  assert.doesNotMatch(calls[0].messages[0].content, /was rejected/);
+  assert.equal(calls[0].options.temperature, 0.3);
+  assert.match(calls[1].messages[0].content, /previous reply to this message was rejected \(respondeu como se fosse com ele\).*on her side.*never say she is wasting your time/);
+  assert.equal(calls[1].options.temperature, 0.7);
+  assert.match(calls[0].messages[0].content, /on her side: be annoyed at the situation, never at her/);
+});

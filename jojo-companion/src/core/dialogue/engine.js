@@ -123,12 +123,13 @@ export class DialogueEngine {
         const budget = achado ? Math.min(base, 25e3) : longo ? Math.min(Math.max(base, this.timeoutMs), 45e3) : base;
         // Resposta incoerente ganha uma segunda geração antes de cair na fala programada.
         let out;
+        let corrigir = '';
         for (let tentativa = 0; ; tentativa++) {
           const controller = new AbortController();
           this.pendingGeneration = controller;
           let r;
           try {
-            r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal }), budget, () => controller.abort());
+            r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal, ...(corrigir ? { corrigir } : {}) }), budget, () => controller.abort());
           } finally {
             if (this.pendingGeneration === controller) this.pendingGeneration = null;
           }
@@ -139,6 +140,7 @@ export class DialogueEngine {
           if (!incoerente) break;
           if (tentativa === 0) {
             this.log('warn', `IA: ${incoerente}; gerando de novo.`);
+            corrigir = incoerente;
             continue;
           }
           const e = new Error(incoerente);

@@ -133,7 +133,7 @@ function preferenciaInventada(output, known, userFacts) {
 }
 
 // Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
-const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b/;
+const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
 
 /**
  * Tira só as frases de desdém e mantém o resto da resposta ("You mentioned a cat,

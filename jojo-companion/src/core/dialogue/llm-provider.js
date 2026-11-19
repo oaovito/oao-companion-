@@ -327,7 +327,7 @@ export class LlmProvider extends DialogueProvider {
   }
 
   /** Modelo no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
-  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', followup = null, signal = null }) {
+  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', followup = null, signal = null, corrigir = '' }) {
     let base = this.baseOverride;
     let modelo = cfg.modelo || OLLAMA_MODEL;
     if (!base) {
@@ -384,6 +384,8 @@ export class LlmProvider extends DialogueProvider {
       if (!matching.length && /\b(remember|said|mention|that|lembra|disse|isso)\b/i.test(text)) messages[0].content += '\nPrevious exchange for reference only: ' + JSON.stringify(previous.slice(-2));
       relevant = matching;
     }
+    // Segunda tentativa: diz por que a primeira foi recusada (o modelo repete a mesma resposta se não souber).
+    if (corrigir) messages[0].content += `\nYour previous reply to this message was rejected (${String(corrigir).slice(0, 80)}). Write a different one: answer what she said, on her side; if she tells you something that happened to her, be against the situation, never against her, and never say she is wasting your time.`;
     const atual = { role: 'user', content: String(text).slice(0, 500) };
     messages.push(...cabeNoContexto(messages[0], relevant.map((h) => ({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) })), atual, opts));
     messages.push(atual);
@@ -398,7 +400,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: corrigir ? 0.7 : 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
@@ -461,11 +463,11 @@ export class LlmProvider extends DialogueProvider {
     }
   }
 
-  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', followup = null, signal = null }) {
+  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', followup = null, signal = null, corrigir = '' }) {
     const cfg = this.getConfig() || {};
     const preset = this.preset;
     if (preset.native) {
-      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal }), { name: this.getProfile().nomeCompanion || 'JoJo' });
+      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal, corrigir }), { name: this.getProfile().nomeCompanion || 'JoJo' });
       if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
       if (correcaoPessoal(text)) parsed.text = semComentarioDeCerteza(parsed.text);
       const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280, input: text });
