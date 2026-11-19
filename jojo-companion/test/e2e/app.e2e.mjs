@@ -639,8 +639,12 @@ test('conversa local: transporte Ollama com streaming preserva personalidade e m
       last = await win.evaluate(() => document.querySelector('#log .msg.jojo:last-child')?.textContent);
     }
     assert.equal(last, 'Dia bom é dia de supino, Manu. O seu foi no Instagram.');
-    assert.equal(bodies.length, 1);
+    // A segunda leitura é outra chamada (JSON, prompt de revisão); aqui conta só a geração.
+    const geracoes = bodies.filter((b) => !(b.format === 'json' && /^You review one reply/.test(b.messages?.[0]?.content || '')));
+    assert.equal(geracoes.length, 1);
+    assert.ok(bodies.length <= 2, 'no máximo a geração e uma segunda leitura');
     assert.equal(urls[0], '/api/chat');
+    assert.equal(bodies[0], geracoes[0], 'a geração vem antes da leitura');
     assert.equal(bodies[0].model, LOCAL_MODEL);
     assert.equal(bodies[0].stream, true);
     assert.ok(bodies[0].options.num_ctx <= 4096 && bodies[0].options.num_predict <= 512);
@@ -658,9 +662,11 @@ test('conversa local: transporte Ollama com streaming preserva personalidade e m
 test('Central: conversa única, histórico preservado e fala/expressão protegidas contra geração incoerente', async () => {
   let calls = 0;
   const server = http.createServer((req, res) => {
-    req.resume();
+    let b = '';
+    req.on('data', (c) => (b += c));
     req.on('end', () => {
-      calls++;
+      const body = b ? JSON.parse(b) : {};
+      if (!(body.format === 'json' && /^You review one reply/.test(body.messages?.[0]?.content || ''))) calls++;
       res.setHeader('Content-Type', 'application/x-ndjson');
       res.end(JSON.stringify({ message: { content: '{"texto":"Você vai morrer. O João é meu inimigo.","acao":"eat"}' }, done: true }) + '\n');
     });
@@ -679,7 +685,8 @@ test('Central: conversa única, histórico preservado e fala/expressão protegid
     assert.equal(calls, 0, 'fato do personagem não é delegado à imaginação');
     const rejected = await central.evaluate(() => window.appApi.send(null, 'hoje aconteceu uma coisa'));
     assert.doesNotMatch(rejected.text, /vai morrer|inimigo/);
-    assert.equal(calls, 1);
+    // Incoerente nas três gerações (a primeira e mais duas, cada uma com o motivo): cai na programada.
+    assert.equal(calls, 3);
     const feedback = await central.evaluate(() => window.appApi.send(null, 'esses óculos são feios'));
     assert.match(feedback.text, /óculos/);
     await sleep(100);
