@@ -88,7 +88,10 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   if (entry.status !== 'passed') {
     if (optional) { console.log(`${id}: diagnostico opcional falhou; log preservado`); return; }
     // O arquivo ja foi filtrado por execute; manter a causa visivel mesmo sem artefato CI.
-    console.error(fs.readFileSync(log, 'utf8').split('\n').filter(line => !/^JOJO_CONVERSATION_(REPORT|PREVIEW):/.test(line)).slice(-80).join('\n'));
+    const linhas = fs.readFileSync(log, 'utf8').split('\n').filter(line => !/^JOJO_(CONVERSATION_(REPORT|PREVIEW)|TASKS_PREVIEW):/.test(line));
+    // Bloco de cada teste que falhou (o tail de 80 linhas mostra só os últimos testes).
+    linhas.forEach((line, i) => { if (/^\s*not ok \d+/.test(line)) console.error(linhas.slice(i, i + 40).join('\n')); });
+    console.error(linhas.slice(-80).join('\n'));
     throw new Error(`Falha em ${id}; consultar log privado`);
   }
   try {
@@ -104,7 +107,9 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
 try {
   for (const name of fs.readdirSync(summary)) if (name !== 'validation.json') fs.rmSync(path.join(summary, name), { recursive: true, force: true });
   save();
-  const evidence = createPrivateEvidence({ commit, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, token: process.env.GITHUB_TOKEN });
+  const politica = JSON.parse(fs.readFileSync(path.join(root, 'ci/actions-cost-policy.json'), 'utf8'));
+  const permitirPublico = typeof politica.evidenciaEmRepositorioPublico === 'string' && politica.evidenciaEmRepositorioPublico.trim().length > 0;
+  const evidence = createPrivateEvidence({ commit, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, token: process.env.GITHUB_TOKEN, permitirPublico });
   report.evidence = { branch: evidence.branch, conversationPath: evidence.conversationPath, validationPath: evidence.validationPath, reviewPath: evidence.reviewPath }; save();
   for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) fs.rmSync(path.join(app, 'out', name), { force: true });
   await step('preflight', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/preflight-windows.ps1'], 1);
@@ -112,7 +117,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 699));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 709));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));

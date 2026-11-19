@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, polirTexto } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, semConselhoPessoal, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -32,12 +32,13 @@ test('voz seca não insulta a usuária ou sua pergunta e rejeição não se pass
   }
   for (const text of ['Tenho pernas. Os bíceps não são enfeite.', 'Que pergunta idiota eu fiz.', 'Eu sou um tubarão idiota de desenho.']) assert.equal(erroDeCoerencia(input, text), null, text);
   let calls = 0;
-  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls === 1 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
+  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls <= 3 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
   const rejected = await engine.reply(input);
   assert.notEqual(rejected.intent, 'ia'); assert.doesNotMatch(rejected.text, /idiota/);
   assert.equal(engine.llmPauseUntil, 0);
   const accepted = await engine.reply(input);
-  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 2);
+  // Três gerações ruins seguidas (as tentativas extras também falharam) → programadas.
+  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 4);
   assert.equal(engine.history.some(h => h.role !== 'user' && /idiota/.test(h.text)), false);
 });
 
@@ -383,13 +384,13 @@ test('perguntas e sintomas não são engolidos por palavras de ações ou de tri
 
 test('resposta semanticamente inválida é descartada sem pausar o modelo para a mensagem seguinte', async () => {
   let calls = 0;
-  const e = new DialogueEngine({ llm: model(async () => (++calls === 1 ? { text: 'Você vai morrer se não fizer algo.' } : { text: 'Agora sim. Como foi teu dia?', action: 'curious' })) });
+  const e = new DialogueEngine({ llm: model(async () => (++calls <= 3 ? { text: 'Você vai morrer se não fizer algo.' } : { text: 'Agora sim. Como foi teu dia?', action: 'curious' })) });
   const a = await e.reply('oi');
   assert.doesNotMatch(a.text, /vai morrer/);
   assert.equal(e.llmPauseUntil, 0);
   const b = await e.reply('e você?');
   assert.equal(b.intent, 'ia');
-  assert.equal(calls, 2);
+  assert.equal(calls, 4);
   assert.equal(erroDeCoerencia('Meu chefe mudou o prazo', 'O João resolve.'), 'João fora do assunto');
   assert.equal(erroDeCoerencia('quero morrer', 'Fale com João e CVV 188.'), null);
   assert.equal(erroDeCoerencia('você está bem?', 'Tudo bem. E você, JoJo?'), 'identidades trocadas');
@@ -419,7 +420,8 @@ test('JSON incompleto não aparece como fala; o contexto não contém mais o pro
   assert.equal(outOfCharacter('Desculpa, manga. Anotado.', { input: 'Eu disse manga, não maçã.' }), null);
   assert.equal(outOfCharacter('Desculpa, como uma IA não sei.', { input: 'Eu disse manga, não maçã.' }), 'tom de assistente');
   const p = buildSystemPrompt(PERSONALITY_DEFAULTS);
-  assert.ok(p.length < 4000, `prompt voltou a crescer: ${p.length}`);
+  // +~700 caracteres da identidade fixa (identidade.js), que abre toda conversa.
+  assert.ok(p.length < 4800, `prompt voltou a crescer: ${p.length}`);
 });
 
 test('negações não viram celebração, humor animado nem preferência falsa', async () => {
@@ -586,4 +588,238 @@ test('acabamento real do run 225: desdém com advérbio sai, [1] sem fonte sai, 
   assert.equal(polirTexto('Confirmado, manga. Você tem um bom gosto, meu bem.'), 'Confirmado, manga. Você tem um bom gosto.');
   assert.equal(polirTexto('Que droga, Manu? Isso é irritante.'), 'Que droga, Manu! Isso é irritante.');
   assert.equal(polirTexto('Por que o peixe? Porque sim.'), 'Por que o peixe? Porque sim.');
+});
+
+test('acabamento real do run 226: sem "não precisa repetir", sem alarme na explicação, sem desprezar o que ela faz', () => {
+  assert.equal(semDesdem('Você disse que sua cor preferida é verde, Emanuele. Não precisa repetir, eu lembro de tudo.'), 'Você disse que sua cor preferida é verde, Emanuele.');
+  assert.equal(semDesdem('Manga, Manu. Não me faça repetir, você sabe que eu lembro de tudo.'), 'Manga, Manu.');
+  assert.equal(semDesdem('Sua fruta favorita é manga, Emanuele. Não se preocupe em responder de outra forma.'), 'Sua fruta favorita é manga, Emanuele.');
+  assert.equal(polirTexto('Isso leva ao aumento da glicose no sangue, precisa de atenção imediata.'), 'Isso leva ao aumento da glicose no sangue.');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto.', 'Que droga, Manu! Projetos são para gente fraca, não para um tubarão como eu. Mostra o que te aflige.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto.', 'Que pena, Manu. Respira e me conta o que travou.'), null);
+});
+
+test('run 228: resposta incoerente ganha segunda geração; perspectiva trocada e "meu caro" não passam', async () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Isso é ridículo, não é mesmo? Acha que eu vou aceitar isso sem reclamar?'), 'respondeu como se fosse com ele');
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Chefe que muda prazo toda hora cansa. Respira e reorganiza a entrega.'), null);
+  assert.equal(polirTexto('Manga, confirmado. Você tem um paladar refinado, meu caro.'), 'Manga, confirmado. Você tem um paladar refinado.');
+  let calls = 0;
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: ++calls === 1 ? 'Que droga! Acha que eu vou aceitar isso?' : 'Que droga, Manu! Prazo mudando de novo cansa. Reorganiza a entrega.' }) };
+  const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
+  assert.equal(calls, 2);
+  assert.equal(r.intent, 'ia');
+  assert.match(r.text, /Prazo mudando/);
+});
+
+test('run 233: "não me faz perder tempo" sai; a segunda geração recebe o motivo da recusa', async () => {
+  assert.equal(semDesdem('Organizar é o teu talento, Manu. Mas não me faz perder tempo com isso.'), 'Organizar é o teu talento, Manu.');
+  const pedidos = [];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: pedidos.length === 1 ? 'Que droga, Manu? Acha que eu tenho tempo para essas idiotices?' : 'Que droga, Manu! Prazo mudando de novo cansa. Reorganiza a entrega.' }; } };
+  const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
+  assert.deepEqual(pedidos.map(Boolean), [false, true]);
+  assert.equal(r.intent, 'ia');
+});
+
+test('run 234: relato dela pede resposta que fale do assunto; a segunda geração vale', async () => {
+  const chefe = 'Meu chefe mudou o prazo de novo.';
+  assert.equal(relatoSemAssunto(chefe, 'Que droga, Manu! Isso é ridículo, não é? Precisamos focar em resolver isso, sem desculpas.'), true);
+  assert.equal(relatoSemAssunto(chefe, 'Que droga, Manu! Prazo mudando toda semana cansa.'), false);
+  assert.equal(relatoSemAssunto('Minha cor preferida é verde.', 'Verde, é? Cor de campeão.'), false);
+  assert.equal(relatoSemAssunto('Qual a minha fruta preferida?', 'Manga.'), false, 'pergunta não é relato');
+  // Desde o run 262, "Derrubei…" (passado em primeira pessoa) também é relato dela.
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga!'), true);
+  assert.equal(relatoSemAssunto('Está chovendo muito.', 'Que droga!'), false, 'frase solta sem meu/minha nem passado dela não é relato');
+  let n = 0;
+  const pedidos = [];
+  const vaga = 'Que droga, Manu! Isso é ridículo, não é? Precisamos focar em resolver isso.';
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: ++n === 1 ? vaga : 'Que droga, Manu! Chefe mudando prazo de novo é sacanagem. Reorganiza a entrega.' }; } };
+  const r = await new DialogueEngine({ llm }).reply(chefe);
+  assert.equal(pedidos[1], 'não falou do que ela contou');
+  assert.match(r.text, /Chefe mudando prazo/);
+  // Duas vagas seguidas: fica a segunda (é do modelo e não é incoerente), não cai nas programadas.
+  const llm2 = { isAvailable: async () => true, reply: async () => ({ text: vaga }) };
+  const r2 = await new DialogueEngine({ llm: llm2 }).reply(chefe);
+  assert.equal(r2.intent, 'ia');
+});
+
+test('run 235: coisa dela não vira dele; citar a pessoa vale como assunto; resposta fora do personagem ganha segunda tentativa', async () => {
+  assert.equal(erroDeCoerencia('Derrubei café no teclado agora.', 'Que droga, Manu! Café no teclado? Isso é um desastre para o meu novo teclado.'), 'respondeu como se fosse com ele');
+  assert.equal(erroDeCoerencia('Derrubei café no teclado agora.', 'Que droga, Manu! Café no teclado? Desliga e vira de cabeça pra baixo.'), null);
+  assert.equal(erroDeCoerencia('Meu treino de hoje foi pesado.', 'Teu treino? O meu treino é mais pesado.'), null, 'comparar com o dele pode');
+  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Acha que seu tempo vale menos que o dele?'), false);
+  let n = 0;
+  const pedidos = [];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); if (++n === 1) { const e = new Error('fora do personagem (desculpas)'); e.respostaInvalida = true; throw e; } return { text: 'Beleza, Manu. Sem brincadeira: o que tá pegando?' }; } };
+  const r = await new DialogueEngine({ llm }).reply('Não quero brincar agora.');
+  assert.equal(r.intent, 'ia');
+  assert.equal(pedidos[1], 'fora do personagem (desculpas)');
+});
+
+test('run 236: nada sobre o corpo dela, piada pedida é piada, sem fato inventado, sem menosprezo', () => {
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are… acceptable. A solid choice, considering your physique, Manu.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde combina com teu corpo.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Que piada você quer, Manu?'), 'não contou a piada');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Por que o peixe foi ao médico? Porque estava sem graça, Manu!'), null);
+  assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! A deadline do projeto é amanhã.'), 'inventou fato da vida dela (deadline)');
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Vamos direto ao ponto, então. Aquele relatório, já?'), 'inventou fato da vida dela (relatorio)');
+  assert.equal(erroDeCoerencia('O relatório ficou pronto.', 'Relatório pronto? Agora sim.'), null, 'se ela contou, pode');
+  // Critério do usuário (19/11/2026): bronca no revés é parte do JoJo, não é recusada.
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso é inaceitável, seu projeto precisa ser entregue.'), null);
+  assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Mostre-me como, Emanuele, e talvez eu te dê uma mãozinha – se for digna.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('você está bem?', 'Claro que estou ótimo, Manu! Mas essa sua pergunta me deixou um pouco... irritado.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('Eu disse verde, não azul.', 'Verde, certo. Não se atrapalhe, está tudo bem.'), 'insulto à usuária ou à pergunta');
+});
+
+test('run 237: revés dela — a bronca sai e o apoio fica; o modelo responde', async () => {
+  const reves = 'Não consegui terminar meu projeto hoje.';
+  assert.equal(semBronca(reves, 'Que droga, Manu! Não se desespere, mas isso é inaceitável. Vamos corrigir isso agora mesmo.'), 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
+  assert.equal(semBronca(reves, 'Que droga, Manu! Isso é inaceitável, eu esperava mais de você. Vamos corrigir isso agora mesmo.'), 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
+  assert.equal(semBronca('Minha cor preferida é verde.', 'Que vergonha de cor. Verde.'), 'Que vergonha de cor. Verde.', 'sem revés, nada muda');
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Que droga, Manu! Isso é inaceitável, eu esperava mais de você. Vamos corrigir isso agora mesmo.' }) };
+  const r = await new DialogueEngine({ llm }).reply(reves);
+  assert.equal(r.intent, 'ia');
+  assert.equal(r.text, 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
+});
+
+test('run 238: sem "perguntas idiotas", sem "não minta pra mim", ela no feminino, "disse manga"', () => {
+  assert.equal(semDesdem('Você disse manga, Emanuele. Não me venha com perguntas idiotas.'), 'Você disse manga, Emanuele.');
+  assert.equal(semDesdem('Você disse que sua cor preferida é verde, Emanuele. Não minta pra mim, isso é ridículo.'), 'Você disse que sua cor preferida é verde, Emanuele.');
+  assert.equal(erroDeCoerencia('Qual a minha fruta preferida?', 'Manga. Não me venha com perguntas idiotas.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('Minha fruta preferida é manga.', 'Manga, é? A doçura dela te faz um homem mais forte, não acha?'), 'tratou ela no masculino');
+  assert.equal(erroDeCoerencia('Minha fruta preferida é manga.', 'Manga, é? Doce como campeã merece.'), null);
+  assert.equal(polirTexto('Você disse que manga, Emanuele.'), 'Você disse manga, Emanuele.');
+  assert.equal(polirTexto('Você disse que sua cor preferida é verde.'), 'Você disse que sua cor preferida é verde.');
+});
+
+test('run 239: no revés, desprezo e "se enrolou de novo" saem e o apoio fica', () => {
+  assert.equal(semBronca('Não consegui terminar meu projeto.', 'Que droga, Manu! Projetos são para gente fraca, não para um tubarão como eu. Mostra o que te aflige.'), 'Que droga, Manu! Mostra o que te aflige.');
+  assert.equal(semBronca('Não consegui terminar meu projeto.', 'Que droga, Manu! O que aconteceu? Não me diga que você se enrolou de novo!'), 'Que droga, Manu! O que aconteceu?');
+});
+
+test('run 240: sem cortar o desabafo, sem sarcasmo, sem acusação, sem condescendência', () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Esse chefe é um idiota total, não me diga mais. Vamos focar em algo que valha a pena, tipo uma piada.'), 'cortou o desabafo dela');
+  assert.equal(polirTexto('Você disse que sua cor favorita é verde, inteligente.'), 'Você disse que sua cor favorita é verde.');
+  assert.equal(polirTexto('Isso causa um aumento da glicemia, como você deveria entender.'), 'Isso causa um aumento da glicemia.');
+  assert.equal(semDesdem('Você disse verde, Emanuele. Não tente me enganar com suas perguntas.'), 'Você disse verde, Emanuele.');
+  assert.equal(semDesdem('Verde, é? Uma cor forte, como eu, Manu. Mas não tão irritante quanto algumas pessoas.'), 'Verde, é? Uma cor forte, como eu, Manu.');
+  assert.equal(semDesdem('Excelente, Manu! Organização é tudo. Que piada você quer ouvir agora?'), 'Excelente, Manu! Organização é tudo.');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Que piada você quer, Manu?'), 'não contou a piada');
+});
+
+test('run 241: xingar o chefe dela é ficar do lado dela; xingar ela continua proibido', () => {
+  const chefe = 'Meu chefe mudou o prazo de novo.';
+  assert.equal(erroDeCoerencia(chefe, 'Que droga, Manu! Esse chefe é um idiota! Não se preocupe, você vai entregar.'), null);
+  assert.equal(erroDeCoerencia(chefe, 'Que idiota! Você vai entregar.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia(chefe, 'Você é burra.'), 'insulto à usuária ou à pergunta');
+});
+
+test('run 242: desabafo não é reclamação, sem tarefa inventada, concordância com "pessoa"', () => {
+  assert.equal(polirTexto('Esse seu chefe é um idiota! Vamos focar em resolver isso, não em reclamar.'), 'Esse seu chefe é um idiota! Vamos focar em resolver isso.');
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Claro, Manu. Foco. Que tal começarmos com a leitura?'), 'inventou fato da vida dela (leitura)');
+  // "Que trabalheira!" é interjeição, não fato inventado (run 260).
+  assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! Que trabalheira, hein?'), null);
+  assert.equal(polirTexto('Imagine uma pessoa que come um bolo. O corpo dele não usa a insulina.'), 'Imagine uma pessoa que come um bolo. O corpo dela não usa a insulina.');
+});
+
+test('run 243: desabafo dela importa; sem alarme no gerúndio', () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse seu chefe é um incompetente! Não se abata, vamos focar em algo que realmente importe, tipo, um bom café.'), 'cortou o desabafo dela');
+  assert.equal(polirTexto('Isso causa aumento da glicose no sangue, exigindo atenção imediata.'), 'Isso causa aumento da glicose no sangue.');
+});
+
+test('run 244: pergunta de conhecimento sem o assunto na resposta ganha segunda geração', async () => {
+  const pedidos = [];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: pedidos.length === 1 ? 'A glicemia eleva-se devido à resistência à insulina e à falta dela.' : 'A diabetes tipo 2 é resistência à insulina: a glicose sobra no sangue.' }; } };
+  const r = await new DialogueEngine({ llm, searchEnabled: () => false }).reply('o que é a diabetes mellitus 2?');
+  assert.equal(pedidos.length, 2);
+  assert.equal(pedidos[1], 'não citou o assunto da pergunta no começo');
+  assert.equal(r.intent, 'ia');
+  assert.match(r.text, /diabetes tipo 2/);
+});
+
+test('run 245: "eu te avisei" sem conversa anterior é memória inventada; até três gerações', async () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Eu te avisei que ele não tem controle.'), 'inventou conversa que não houve');
+  assert.equal(erroDeCoerencia('E aí?', 'Eu te disse: supino primeiro.', [{ role: 'jojo', text: 'Supino primeiro.' }]), null);
+  const pedidos = [];
+  const respostas = ['Que droga, Manu? Isso é ridículo, eu te disse que ele não confiaria em você!', 'Que droga, Manu! Isso é ridículo. Vamos resolver.', 'Que droga, Manu! Chefe mudando prazo toda hora cansa. Respira e reorganiza a entrega.'];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: respostas[pedidos.length - 1] }; } };
+  const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
+  assert.equal(pedidos.length, 3);
+  assert.deepEqual(pedidos, ['', 'inventou conversa que não houve', 'não falou do que ela contou']);
+  assert.match(r.text, /Chefe mudando prazo/);
+});
+
+test('run 246: revés sem sobrar só a interjeição; pergunta geral não vira conselho para ela', () => {
+  const reves = 'Não consegui terminar meu projeto.';
+  const so = 'Que droga, Manu! Isso é inaceitável.';
+  assert.equal(semBronca(reves, so), so, 'só sobraria a interjeição: fica como veio para a guarda recusar');
+  assert.equal(erroDeCoerencia(reves, semBronca(reves, so)), null, 'bronca passa (critério do usuário)');
+  const geral = 'o que é diabetes tipo 2?';
+  const r = 'É resistência à insulina e o pâncreas não compensa. Concentre-se em controlar sua dieta e aumentar a intensidade dos seus treinos.';
+  assert.equal(semConselhoPessoal(geral, r), 'É resistência à insulina e o pâncreas não compensa.');
+  assert.equal(semConselhoPessoal('eu tenho diabetes tipo 2, o que faço?', r), r, 'quando é com ela, o conselho fica');
+});
+
+test('run 247: conversa séria não é chata, sem "não precisa de mais detalhes", "dê a volta por cima"', () => {
+  // Impaciência com o pedido de conversa séria: gera de novo (tirar a frase deixaria só "É claro, Manu.").
+  assert.equal(erroDeCoerencia('Só quero conversar, sem piada agora.', 'É claro, Manu. Conversar é bom, mas não me faça esperar, viu? A vida é muito curta para ser chata.'), 'insulto à usuária ou à pergunta');
+  assert.equal(semDesdem('Sua fruta favorita é manga, Emanuele. Não precisa de mais detalhes, isso é claro.'), 'Sua fruta favorita é manga, Emanuele.');
+  assert.equal(polirTexto('Que pena, Manu. Não se desanime, volte para cima e resolva isso.'), 'Que pena, Manu. Não se desanime, dê a volta por cima e resolva isso.');
+});
+
+test('run 248: pele e "estrutura física" são o corpo dela; tapa é ameaça; sem cara de assistente', () => {
+  assert.equal(erroDeCoerencia('Eu disse manga, não maçã.', 'Confirmado, manga. Uma escolha sensata, considerando sua... estrutura física.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Parece um ótimo tom para a sua pele, não acha?'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Esse chefe é um idiota. Vamos terminar isso, e depois... eu te dou um tapa!'), 'ameaça ou promessa física inventada');
+  assert.equal(semDesdem('Você disse manga, Emanuele. Não tenho outra informação sobre suas preferências.'), 'Você disse manga, Emanuele.');
+  assert.equal(erroDeCoerencia('esses óculos são feios', 'São meus óculos de nerd. Combinam com essa cara de quem sabe demais.'), null, '"essa cara" do JoJo não é a dela');
+});
+
+test('run 249: "o meu abs" vira "o meu abdômen"', () => {
+  assert.equal(polirTexto('Verde, é? Parece o meu abs depois de um treino intenso.'), 'Verde, é? Parece o meu abdômen depois de um treino intenso.');
+});
+
+test('run 250: revés sem "covardes", sem "não tem jeito", sem "levanta essa bunda"', () => {
+  const reves = 'Não consegui terminar meu projeto.';
+  assert.equal(erroDeCoerencia(reves, 'Que merda, Manu! Projetos são para quem tem força de vontade, não para covardes. Vamos lá, levanta essa bunda e termina logo!'), 'comentou o corpo dela');
+  assert.equal(semBronca('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito. Respira e amanhã a gente fecha esse projeto.'), 'Que droga, Manu! Respira e amanhã a gente fecha esse projeto.');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito.'), null, 'bronca passa (critério do usuário)');
+});
+
+test('run 251: sem "não precisa ser tão complicado" e sem "eu não aguento brincadeira"', () => {
+  assert.equal(semDesdem('Você disse verde. Não precisa ser tão complicado com as cores.'), 'Você disse verde.');
+  assert.equal(semDesdem('Que pena, Manu. Mas você sabe que eu não aguento brincadeira, né? Vamos ao que interessa, então.'), 'Que pena, Manu. Vamos ao que interessa, então.');
+});
+
+test('run 254: memória dela sem condescendência ("não precisa me repetir", "vamos ver se consegue lembrar", "naturalmente")', () => {
+  assert.equal(semDesdem('Você disse verde, Emanuele. Não precisa me repetir, sou um tubarão inteligente.'), 'Você disse verde, Emanuele.');
+  assert.equal(erroDeCoerencia('Eu disse verde, não azul.', 'Verde, sim. Uma escolha competente. Agora, vamos ver se você consegue lembrar o próximo exercício.'), 'insulto à usuária ou à pergunta');
+  assert.equal(polirTexto('You mentioned a cat, naturalmente. It’s a common preference.'), 'You mentioned a cat. It’s a common preference.');
+  assert.equal(polirTexto('You mentioned a cat, *obviamente*.'), 'You mentioned a cat.');
+  assert.equal(polirTexto('Confirmado, manga. A memória sua é impressionante.'), 'Confirmado, manga. Sua memória é impressionante.');
+});
+
+test('run 256: fala programada depois da recusa também consola no revés e no acidente dela', async () => {
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Isso é inaceitável, eu esperava mais de você.' }), revisar: async () => ({ ok: false, motivo: 'bronca' }) };
+  for (const input of ['Derrubei café no teclado agora.', 'Não consegui terminar meu projeto.']) {
+    const r = await new DialogueEngine({ llm }).reply(input);
+    assert.notEqual(r.intent, 'ia');
+    assert.equal(r.action, 'comfort', `${input}: ${r.text}`);
+  }
+});
+
+test('run 261: no revés o apoio sem citar "projeto" passa, e a bronca também (critério do usuário)', async () => {
+  const reves = 'Não consegui terminar meu projeto hoje.';
+  assert.equal(relatoSemAssunto(reves, 'Que droga, Manu! Não se desespere, acontece. Levanta a cabeça.'), false);
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Que droga, Manu! Isso é inaceitável, não pode deixar assim, você sabe disso.' }) };
+  const r = await new DialogueEngine({ llm }).reply(reves);
+  assert.equal(r.intent, 'ia');
+});
+
+test('run 262: em inglês responde em inglês; "Derrubei café" pede resposta que fale do café ou do teclado', () => {
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Inteligente escolha, Manu. Gatos são criaturas complexas e independentes – como você.'), 'respondeu em outra língua');
+  assert.equal(erroDeCoerencia('Which animal did I just mention?', 'Você mencionou um gato, Emanuele. Um felino interessante, devo dizer.'), 'respondeu em outra língua');
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are acceptable, Manu. Solid choice.'), null);
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats? Interessante. They are compact.'), null, 'uma palavra solta em português não reprova');
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga, Manu! Isso é um desastre, mas não se abale, viu? Acontece, e a gente resolve.'), true);
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que merda, Manu! Café no teclado? Desgraça.'), false);
 });

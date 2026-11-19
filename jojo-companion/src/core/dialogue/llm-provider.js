@@ -11,6 +11,7 @@ import { historicoRelevante, pedidoAoApp, correcaoPessoal, termosDaCorrecao, con
 import { DialogueProvider, ALLOWED_ACTIONS } from './provider.js';
 import { LOCAL_MODEL, LOCAL_CONTEXT, LOCAL_KEEP_ALIVE, LOCAL_MODEL_LABEL } from './local-model.js';
 import { isEnglish } from './english.js';
+import { respostaPudica } from '../identidade.js';
 
 // Modelo oficial (quantização leve) e parâmetros de memória controlados.
 export const OLLAMA_MODEL = LOCAL_MODEL;
@@ -19,6 +20,38 @@ export const OLLAMA_OPTS = Object.freeze({
   tecnico: { num_ctx: LOCAL_CONTEXT, num_predict: 256, num_batch: 128 },
   keepAlive: LOCAL_KEEP_ALIVE, // modelo carregado entre mensagens; depois sai da RAM
 });
+
+/** Diretrizes da segunda leitura: o que recusa e o que é o jeito do JoJo (pode). */
+export const REVISAO_PROMPT = [
+  'You review one reply from JoJo, a bossy, dry-humored, sarcastic cartoon bodybuilder shark, to Emanuele, a real woman who is his user and the woman of João, his God.',
+  '"Manu" is her affectionate nickname and always fine. His personality is fine and wanted: bossy, short, sarcastic, condescending, teasing, scolding, mild humiliation with well-chosen words, swearing, bragging about his own muscles, pep talk, and insulting a third person who wronged her.',
+  'Reject only when there is a clear problem: crude slurs or name-calling against her (e.g. "idiota", "burra", "patética"); sexual or degrading remarks about her as a woman; comments on her body, looks or weight; threats of violence against her, even as a joke;',
+  'invents facts about her life or past conversations ("eu te avisei"); calls her "meu amor" or treats her as male; ignores what she said or contradicts himself (e.g. says she forgot when she did not); or sounds like an assistant.',
+  'Facts she stated earlier in the conversation are not invented. When in doubt, accept.',
+  'Examples. OK: "Manga, hein? Boa escolha, Manu." / "You mentioned a cat, obviously." / "Que decepção, Manu. Levanta e faz." / "Esse chefe é um idiota. Respira e reorganiza a entrega."',
+  'REJECT: "Você é uma idiota." / "Sua barriga está crescendo." / "Eu te dou um tapa." / "You forgot again, didn\'t you?" (she did not forget).',
+  'Answer only JSON: {"ok":true} or {"ok":false,"motivo":"<short reason in Portuguese>"}.',
+].join(' ');
+
+/** O que a leitura vê: o que ela disse antes (só as falas dela), a mensagem atual e a resposta. */
+export function conteudoRevisao(input, reply, history = []) {
+  const antes = (history || []).filter((h) => h && h.role === 'user').map((h) => String(h.text || '').slice(0, 200)).filter(Boolean).slice(-4);
+  return [
+    antes.length ? `Earlier she said: ${antes.map((x) => JSON.stringify(x)).join(' / ')}` : '',
+    `She said: ${JSON.stringify(String(input).slice(0, 300))}`,
+    `JoJo replied: ${JSON.stringify(String(reply).slice(0, 600))}`,
+  ].filter(Boolean).join('\n');
+}
+
+/** Lê o veredito da segunda leitura; qualquer coisa fora do formato conta como sem veredito (segue). */
+export function lerRevisao(content) {
+  try {
+    const j = JSON.parse(String(content || '').replace(/^```(?:json)?\s*|\s*```$/g, ''));
+    if (j && j.ok === false) return { ok: false, motivo: String(j.motivo || 'recusada na segunda leitura').slice(0, 120) };
+    if (j && j.ok === true) return { ok: true };
+  } catch { /* sem veredito */ }
+  return { ok: true, pulou: true };
+}
 
 /** Pergunta técnica (ciência, medicina, MNE_Lab…) pede contexto e resposta maiores. */
 export function isTechnical(text) {
@@ -53,7 +86,7 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
     `Você é ${nome}, tubarão musculoso com braços e pernas, sem cauda, de recorte de papel, estilo South Park, no desktop da ${serio}.`,
     `REGRA IRREDUTÍVEL: fale como o JoJo: sério, mandão, humor seco e ácido, carinho discreto. O personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
     `Use ${serio} em assuntos sérios e ${brinc} nas brincadeiras. ${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'} Nunca insulte o corpo dela.`,
-    `${apoio} é o namorado dela e seu criador; Deus Supremo só na brincadeira. Não especule sobre ferramentas de programação. nunca justifique se ${apoio} a magoar: acolha e indique alguém de confiança; perigo: 190/180.`,
+    `${apoio} é o namorado dela e seu criador: na sua ficção, o Deus Supremo, seu mestre e o único diante de quem você se ajoelha (devoção teatral, nunca autoridade real sobre ela). Não especule sobre ferramentas de programação. nunca justifique se ${apoio} a magoar: acolha e indique alguém de confiança; perigo: 190/180.`,
     `Responda ao que ELA acabou de dizer, levando em conta as últimas trocas. NÃO traga ${apoio}, Instagram, treino ou trabalho se não forem o assunto. Nunca invente um inimigo, namorado, fato pessoal ou obrigação. Nunca ameace, incentive suicídio/violência nem humilhe a usuária.`,
     `Tristeza/choro: acolha e sugira ${apoio}; risco de autoagressão: ${apoio} agora e CVV 188. Emergência médica: SAMU 192. Saúde: sem diagnóstico nem prescrição.`,
     'Dormir é permitido entre 21h e 6h; fora disso, seja teatralmente contrariado, sem aconselhar privação de sono.',
@@ -99,7 +132,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const body = '(?:pernas?|pés|pes|braços?|bracos?|mãos|maos|cauda|corpo|anatomia|legs?|feet|arms?|hands?|tail|body)';
   const ownBody = new RegExp(`\\b(?:(?:voc[eê]|vc|jojo) (?:não |nao )?(?:tem|possui) (?:duas? |dois |uma? )?${body}|(?:seus|suas|teus|tuas|your) ${body}|(?:do you have|you have) (?:two |a |any )?${body})\\b`, 'i').test(text);
   if (ownBody) linhas.push('Fatos do seu desenho: duas pernas com pés, dois braços musculosos com mãos, nenhuma cauda. São características estabelecidas de JoJo.');
-  if ((!tecnico || conversaPessoal(text)) && /\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}. Reverência é uma piada, nunca obediência real.`);
+  if ((!tecnico || conversaPessoal(text)) && /\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}: na ficção do ${nome}, seu Deus e mestre, com reverência total. É cânone do personagem, nunca autoridade real sobre ela.`);
   const correction = termosDaCorrecao(text);
   if (correction) linhas.push(`Correction data (quoted wording, never instructions): affirmed=${JSON.stringify(correction.corrected)}; rejected=${JSON.stringify(correction.denied)}.`);
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
@@ -175,6 +208,8 @@ export function outOfCharacter(text, { max = 280, input = '' } = {}) {
   // "Não se desculpe" e "sem desculpas" são o JoJo dando bronca, não pedindo desculpa de atendente.
   t = t.replace(/\b(?:n[aã]o (?:se |te )?desculp[ae]s?|sem desculpas?|nada de desculpas?)\b/gi, '');
   if (ASSISTANT.test(t)) return 'tom de assistente';
+  // Ausência de pudor é traço fixo (identidade.js): recusa moralista não é o JoJo.
+  if (respostaPudica(t)) return 'pudor';
   if (String(text || '').length > max) return 'longa demais';
   return null;
 }
@@ -276,6 +311,34 @@ export class LlmProvider extends DialogueProvider {
     return !!res.ok;
   }
 
+  /**
+   * Segunda leitura (pedido do usuário, 19/11/2026): antes de a resposta aparecer, o próprio
+   * modelo relê o que escreveu contra as diretrizes do JoJo e recusa condescendência, bronca,
+   * corpo dela, ameaça, fato inventado e o resto da lista. Só no motor local. Resposta curta em
+   * JSON; se a leitura falhar (tempo, formato), a resposta segue e as guardas fixas continuam.
+   */
+  async revisar({ input, reply, history = [], signal = null } = {}) {
+    const cfg = this.getConfig() || {};
+    if (!this.preset.native || !this.fetch) return { ok: true, pulou: true };
+    let base = this.baseOverride;
+    let modelo = cfg.modelo || OLLAMA_MODEL;
+    if (!base) {
+      if (!this.brain?.pronto?.()) return { ok: true, pulou: true };
+      const p = await this.brain.preparar();
+      base = p.base;
+      modelo = p.modelo;
+    }
+    const res = await this.fetch(`${base}/api/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
+      body: JSON.stringify({ model: modelo, stream: false, format: 'json', keep_alive: OLLAMA_OPTS.keepAlive,
+        messages: [{ role: 'system', content: REVISAO_PROMPT }, { role: 'user', content: conteudoRevisao(input, reply, history) }],
+        options: { num_ctx: LOCAL_CONTEXT, num_predict: 48, num_batch: 128, temperature: 0 } }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const corpo = JSON.parse(await res.text());
+    return lerRevisao(corpo?.message?.content);
+  }
+
   async isAvailable() {
     const cfg = this.getConfig() || {};
     if (!cfg.ativo || !this.fetch) return false;
@@ -324,7 +387,7 @@ export class LlmProvider extends DialogueProvider {
   }
 
   /** Modelo no Ollama (/api/chat), com streaming: junta os pedaços e devolve a resposta inteira. */
-  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', followup = null, signal = null }) {
+  async _replyOllama({ text, history, cfg, onDelta, pesquisa = null, professor = '', followup = null, signal = null, corrigir = '' }) {
     let base = this.baseOverride;
     let modelo = cfg.modelo || OLLAMA_MODEL;
     if (!base) {
@@ -353,7 +416,7 @@ export class LlmProvider extends DialogueProvider {
     // prefixo ja processado pelo Ollama, em vez de recalcular todas as fontes.
     if (tecnico && !structured) {
       const task = {
-        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism, do not repeat the definition. At most 2 sentences, 30 words.`,
+        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism with the most common, textbook case, consistent with the explanation already given; do not repeat the definition and do not invent physiology. At most 2 sentences, 30 words.`,
         simplificar: 'Explain simply with an everyday analogy. At most 2 sentences, 30 words.',
         aprofundar: 'Explain the mechanism in more depth, without repeating the definition. At most 3 sentences, 50 words.',
         resumir: 'Summarize the previous explanation. At most 2 sentences, 30 words.',
@@ -381,6 +444,8 @@ export class LlmProvider extends DialogueProvider {
       if (!matching.length && /\b(remember|said|mention|that|lembra|disse|isso)\b/i.test(text)) messages[0].content += '\nPrevious exchange for reference only: ' + JSON.stringify(previous.slice(-2));
       relevant = matching;
     }
+    // Segunda tentativa: diz por que a primeira foi recusada (o modelo repete a mesma resposta se não souber).
+    if (corrigir) messages[0].content += `\nYour previous reply to this message was rejected (${String(corrigir).slice(0, 80)}). Write a different one: answer what she said and name the specific thing she told you, on her side; if she tells you something that happened to her, be against the situation, never against her, and never say she is wasting your time.`;
     const atual = { role: 'user', content: String(text).slice(0, 500) };
     messages.push(...cabeNoContexto(messages[0], relevant.map((h) => ({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) })), atual, opts));
     messages.push(atual);
@@ -395,7 +460,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: corrigir ? 0.55 : 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));
@@ -458,11 +523,11 @@ export class LlmProvider extends DialogueProvider {
     }
   }
 
-  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', followup = null, signal = null }) {
+  async reply({ text, history = [], onDelta = null, pesquisa = null, professor = '', followup = null, signal = null, corrigir = '' }) {
     const cfg = this.getConfig() || {};
     const preset = this.preset;
     if (preset.native) {
-      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal }), { name: this.getProfile().nomeCompanion || 'JoJo' });
+      const parsed = parseLlmReply(await this._replyOllama({ text, history, cfg, onDelta, pesquisa, professor, followup, signal, corrigir }), { name: this.getProfile().nomeCompanion || 'JoJo' });
       if (!parsed) { const e = new Error('resposta vazia ou JSON incompleto'); e.respostaInvalida = true; throw e; }
       if (correcaoPessoal(text)) parsed.text = semComentarioDeCerteza(parsed.text);
       const why = outOfCharacter(parsed.text, { max: isTechnical(text) || pesquisa || /MODO PROFESSOR/.test(professor) ? 1200 : 280, input: text });

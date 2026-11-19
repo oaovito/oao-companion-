@@ -1,8 +1,16 @@
 # CHANGELOG
 
-## Não lançado — 100 visuais de anime, rebolado no foco e Tigresa
+## 0.47.2 — 2026-11-18
 
 ### Novidades
+- Personalidade consolidada (prompt mestre): o JoJo é um tubarão colossal, narcisista, sarcástico,
+  autoritário e sem pudor nenhum, devoto do João, seu Deus, criador e mestre, o único diante de quem
+  ele se ajoelha. "Jojo, quem é meu dono?" (e variações) responde sempre "Seu dono e seu Deus é
+  João.", com ou sem conversa local. Pedir pra ele se ajoelhar, perguntar quem é o Deus dele ou
+  falar mal do João também têm resposta fixa (blasfêmia!). Falas novas de devoção e de disciplina.
+  A Emanuele, a mulher do João, recebe tratamento especial e provocação nos hábitos; em
+  Configurações → Privacidade → "Provocações do JoJo dirigidas a você" ela desliga as alfinetadas
+  sem mudar o resto. Resposta pudica ou moralista do modelo é descartada. Detalhes em docs/IDENTIDADE.md.
 - Pegadinha da semana: uma vez por semana, num momento sorteado (também no foco), um consolo
   absurdamente gigante (dez vezes o tamanho dele) e sujo de bosta cai do alto na cabeça do JoJo. Ele amassa, ganha galo, rachadura e gota de sangue,
   fica de olhos em X com estrelinhas girando, cai tonto e levanta enfaixado; o consolo quica e
@@ -38,31 +46,6 @@
   transformação (orelhas de meio-yōkai do Inuyasha, chifres do Devilman, slime azul de barrigona,
   Sakamoto de barrigão e papada, zumbi do Zom 100 com baba e moscas, porco do Porco Rosso).
   Trancados continuam só como cadeado.
-
-### Melhorias
-- Variação muito maior, sem nada repetido entre visuais. Cada visual tem um olho só dele: o
-  olho kawaii nunca repete, com pupila (estrela, coração, fenda, losango, anel…), brilhos,
-  cílios, formato, inclinação e cor da íris próprios. Cada peça tem um enfeite próprio
-  (pontos, listras, estrelas, gemas, rebites, ondas…) e um ajuste de tamanho e inclinação.
-  Cada visual também toca a animação da obra do seu jeito: intensidade, ritmo e um gesto de
-  arremate diferentes de todos os outros.
-- Nada cortado por parede invisível: o espaço de cada visual vestido, de cada animação com
-  visual e do rebolado e da Tigresa é medido no desenho, e a janela cresce o necessário.
-- Central → Coleção → "Animações liberadas": tudo o que já foi liberado toca com um clique (as
-  poses que ela já viu, a animação de cada visual liberado, o rebolado e a Tigresa). Nada
-  bloqueado aparece. Também por /anim rebolado e /anim tigresa.
-- Todo visual mostra na descrição a frase e de onde ela vem: “frase” — de Obra.
-- Configurações → Movimento e mouse → "Rebolar de vez em quando no modo foco": desmarcar tira o
-  rebolado só do foco; no repouso ele continua.
-
-### Como testar
-- /foco 25 e esperar alguns minutos: em algum momento ele rebola 3 s e volta a estudar.
-- Subir para o nível 2: além da peça do nível, chegam as munhequeiras do Hokuto Shinken.
-- Central → Guarda-roupa → Visuais dos níveis: os de anime aparecem como "Extra de animes".
-
-## 0.47.2 — em preparo
-
-### Novidades
 - Os 200 títulos de nível agora são referências a filmes, animes, séries, jogos e cultura
   pop, cada um de uma obra diferente, com todos os clássicos de tubarão: de Mundo 1-1 (Super
   Mario Bros.) a Tubarão (1975), passando por Procurando Nemo, Megatubarão, Sharknado, Do
@@ -79,15 +62,13 @@
   das joias, Sharingan, aura de Super Saiyajin, tridente de Atlântida e outros. Ao subir de
   nível o JoJo já aparece com a peça, fala uma frase da obra e reage com a animação dela.
   Do meio do caminho em diante as peças ganham brilhos, então o conjunto sempre melhora.
-- Guarda-roupa da Central com a seção "Visuais do shape": tudo o que já foi liberado
+- Guarda-roupa da Central com a seção "Visuais dos níveis": tudo o que já foi liberado
   pode ser vestido ou tirado à vontade, e "O melhor de cada parte" volta o conjunto
   mais forte. Também funciona pelo chat com /vestir e o nome da peça.
-
 - Avisos de visual: ao abrir a versão nova, o JoJo conta quantos visuais o nível que você
   já tem liberou; a cada nível novo ele avisa com a fala da obra. Se não puder falar na
   hora (Modo Trabalho, tela cheia), o aviso espera e sai depois. O botão do Guarda-roupa
   mostra quantos são novos.
-
 - Funeral do shape: quando ela fala de comer doce, pizza, lanche, fritura, refri ou qualquer
   coisa fora da dieta de atleta, no lugar do balão aparece um slide de funeral com velas e as
   fotos passando, em preto e branco, e uma única frase: "Quer se tornar uma aberração?";
@@ -97,12 +78,67 @@
   pizza", "queria tanto um chocolate" e parecidos.
 
 ### Melhorias
+- Variação muito maior, sem nada repetido entre visuais. Cada visual tem um olho só dele: o
+  olho kawaii nunca repete, com pupila (estrela, coração, fenda, losango, anel…), brilhos,
+  cílios, formato, inclinação e cor da íris próprios. Cada peça tem um enfeite próprio
+  (pontos, listras, estrelas, gemas, rebites, ondas…) e um ajuste de tamanho e inclinação.
+  Cada visual também toca a animação da obra do seu jeito: intensidade, ritmo e um gesto de
+  arremate diferentes de todos os outros.
+- Nada cortado por parede invisível: o espaço de cada visual vestido, de cada animação com
+  visual e do rebolado e da Tigresa é medido no desenho, e a janela cresce o necessário.
+- Central → Coleção → "Animações liberadas": tudo o que já foi liberado toca com um clique (as
+  poses que ela já viu, a animação de cada visual liberado, o rebolado e a Tigresa). Nada
+  bloqueado aparece. Também por /anim rebolado e /anim tigresa.
+- Todo visual mostra na descrição a frase e de onde ela vem: “frase” — de Obra.
+- Configurações → Movimento e mouse → "Rebolar de vez em quando no modo foco": desmarcar tira o
+  rebolado só do foco; no repouso ele continua.
 - Conversa: quando o JoJo acerta a resposta mas emenda uma frase de desdém ("It's a simple
   question", "não precisa perguntar de novo"), sai só essa frase e a resposta certa fica, em
   vez de cair na resposta programada.
 - Acabamento das respostas da conversa: some também o desdém com advérbio ("a remarkably
   simple question", "é uma pergunta muito simples"), o marcador [1] quando não há fonte de
-  verdade, palavra de Portugal ("a hormona" vira "o hormônio") e o "meu bem".
+  verdade, palavra de Portugal ("a hormona" vira "o hormônio"), o "meu bem", o "não precisa
+  repetir" quando ela pergunta o que disse e o alarme "precisa de atenção imediata" numa
+  explicação. Resposta que despreza o que ela faz ("projetos são para gente fraca") é trocada
+  por uma fala programada.
+- Conversa: resposta que sai torta (xingamento, desdém, como se o problema fosse dele) ganha uma
+  segunda tentativa antes de cair numa fala programada. "Meu chefe mudou o prazo" não vira mais
+  "Acha que eu vou aceitar isso?", o JoJo fica do lado dela contra a situação, não diz que ela
+  está fazendo ele perder tempo e não chama ela de "meu caro".
+- Quando ela conta algo dela ("meu chefe mudou o prazo"), a resposta fala disso; resposta vaga
+  ("isso é ridículo, precisamos resolver") ganha uma segunda tentativa. O que é dela não vira
+  dele ("café no teclado" não vira "meu teclado"), e resposta fora do personagem também ganha
+  uma segunda tentativa antes da fala programada.
+- A conversa nunca comenta o corpo dela, não inventa fato da vida dela (prazo, relatório,
+  reunião que ela não contou), conta a piada quando ela pede e não menospreza ("se for digna",
+  "não se atrapalhe"). Quando ela não consegue algo, a bronca ("isso é inaceitável", "esperava
+  mais de você") sai e fica o apoio. Sem "perguntas idiotas", sem "não minta pra mim" e sem
+  tratar ela no masculino. Quando ela desabafa ele não corta o assunto ("não me diga mais"), e
+  some a condescendência ("como você deveria entender", "não tente me enganar").
+- Xingar quem fez mal a ela ("esse chefe é um idiota") é ficar do lado dela e passa; xingar ela
+  continua proibido.
+- Desabafo dela não vira "não em reclamar", sem tarefa inventada ("a leitura") e concordância
+  certa nos exemplos ("uma pessoa… o corpo dela"). O desabafo dela não vira "vamos focar em algo
+  que realmente importe", e explicação de saúde não termina em alarme ("exigindo atenção imediata").
+- Pergunta de conhecimento cuja resposta não cita o assunto também ganha uma segunda tentativa
+  antes de recorrer à pesquisa.
+- Resposta recusada ganha até duas novas tentativas (cada uma sabendo o motivo da recusa), e o
+  JoJo não inventa conversa que não houve ("eu te avisei").
+- Pergunta geral de saúde ("o que é diabetes tipo 2?") não vira conselho para ela, como se ela
+  tivesse a doença; e o apoio no revés nunca fica só num "Que droga, Manu!".
+- Pedido de conversa séria não recebe impaciência ("não me faça esperar", "a vida é curta para
+  ser chata").
+- Nada sobre a pele, o rosto ou a "estrutura física" dela, nem "te dou um tapa", mesmo de brincadeira.
+- No modo professor, o exemplo usa o caso clássico, coerente com a explicação, sem fisiologia
+  inventada.
+- No revés dela, sem "covardes", sem "isso não tem jeito" e sem "levanta essa bunda".
+- Sem "não precisa ser tão complicado" quando ela pergunta o que disse, e sem "eu não aguento
+  brincadeira".
+- Segunda leitura da conversa: antes de a resposta aparecer, o próprio modelo do PC dela relê o
+  que escreveu contra as diretrizes do JoJo (sem condescendência, sem bronca no revés, nada sobre o
+  corpo dela, sem ameaça, sem fato inventado, sem cara de assistente) e, se recusar, escreve de novo
+  sabendo o motivo. Leva cerca de 1 a 2 segundos a mais por resposta; se a leitura falhar, as
+  guardas fixas continuam valendo.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,
@@ -128,25 +164,6 @@
 - Cada visual liberado mostra a obra, o título do nível e a fala da referência como
   descrição. Os ainda trancados aparecem só como cadeado com o nível, sem revelar nada
   do que são. Acessórios da coleção só aparecem depois de liberados.
-
-### Como testar
-- Subir de nível: o JoJo aparece com a peça nova e fala o nome dela.
-- Central → Guarda-roupa → Visuais do shape: só peças até o nível atual.
-
-## 0.47.1 — 2026-11-13
-
-### Novidades
-- 200 níveis, cada um com título próprio: de Sardinha a Megalodon, depois pré-históricos,
-  répteis do mar antigo, zonas do oceano, abismo, shape de tubarão, academia, elementais,
-  lendas do mar, cósmicos, nobreza dos mares, megalodons e o ápice, até Megalodon Supremo.
-- 238 bônus de XP com nome próprio (estreia do dia, trinca, coruja do recife, semana de aço,
-  combo de barbatana, centenário…), para conversa, carinho, foco, tarefas, cuidados,
-  mini-jogos, missões e Darkest Dungeon. No máximo um bônus por ação e seis por dia.
-- Todo XP vale dez vezes mais (+20 em vez de +2) e as metas também: o tempo para subir de
-  nível é exatamente o da 0.47.0, e o XP já ganho foi convertido, então ninguém perde o
-  nível. O XP dos bônus vai para a coleção de bônus e não acelera o nível.
-
-### Melhorias
 - Janela do WhatsApp em telas, uma por vez (Conexão, Mensagens, Contatos), com o estado
   da conexão sempre visível no topo: Desconectado, Aguardando QR code, Conectando,
   Conectado ou Erro. Conectado mostra o nome e o número da conta, depois de confirmar com
@@ -174,6 +191,43 @@
 - O nome do perfil não apaga mais o nome salvo na agenda; contatos só com identificador
   novo do WhatsApp (LID) ganham o número; a própria conta não aparece como contato.
 - Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.
+
+### Como testar
+- Perguntar "Jojo, quem é meu dono?": a resposta começa sempre por "Seu dono e seu Deus é João.".
+  Configurações → Privacidade → desmarcar "Provocações do JoJo dirigidas a você" e perguntar de novo.
+- /anim consolo (depois da primeira vez): o consolo gigante cai na cabeça e ele levanta enfaixado.
+- /foco 25 e esperar alguns minutos: em algum momento ele rebola 3 s e volta a estudar.
+- Subir para o nível 2: além da peça do nível, chegam as munhequeiras do Hokuto Shinken.
+- Central → Guarda-roupa → Visuais dos níveis: os de anime aparecem como "Extra de animes".
+- Subir de nível: o JoJo aparece com a peça nova, fala a frase da obra e avisa no balão.
+- Central → Guarda-roupa → Visuais dos níveis: só as peças até o nível atual, cada uma com a
+  fala da referência; o resto aparece só como cadeado com o nível.
+- Vestir um visual (Dragão Guerreiro, Shrek, Big Chungus…): o JoJo muda de cor, corpo e
+  cabeça enquanto estiver vestido; tirar volta o JoJo original.
+- Escrever "que vontade de comer uma pizza": o slide de funeral aparece no lugar do balão e
+  some sozinho; no Modo Trabalho ou com app em tela cheia nada aparece.
+- /whatsapp: conecte pelo QR code (WhatsApp no celular → Aparelhos conectados → Conectar
+  um aparelho) e confira o nome e o número em "Conectado".
+- Feche e abra o JoJo: a conexão volta sem QR. Desligue o Wi-Fi: aparece "Conectando" com
+  a próxima tentativa; ligue de novo: volta para "Conectado".
+- Aba Contatos: busque por nome e por número; veja Pessoas e Grupos separados.
+- Nova mensagem → Escolher contato → confira a tela de confirmação e agende uma mensagem
+  de teste para você mesma alguns minutos à frente.
+
+## 0.47.1 — 2026-11-14
+
+### Novidades
+- 200 níveis, cada um com título próprio: de Sardinha a Megalodon, depois pré-históricos,
+  répteis do mar antigo, zonas do oceano, abismo, shape de tubarão, academia, elementais,
+  lendas do mar, cósmicos, nobreza dos mares, megalodons e o ápice, até Megalodon Supremo.
+- 238 bônus de XP com nome próprio (estreia do dia, trinca, coruja do recife, semana de aço,
+  combo de barbatana, centenário…), para conversa, carinho, foco, tarefas, cuidados,
+  mini-jogos, missões e Darkest Dungeon. No máximo um bônus por ação e seis por dia.
+- Todo XP vale dez vezes mais (+20 em vez de +2) e as metas também: o tempo para subir de
+  nível é exatamente o da 0.47.0, e o XP já ganho foi convertido, então ninguém perde o
+  nível. O XP dos bônus vai para a coleção de bônus e não acelera o nível.
+
+### Correções
 - O painel ao lado do JoJo (Saciedade, Saúde, Higiene, nível e Cuidados) não sai mais
   cortado nem quebrado: duas linhas fixas, com espaço para tudo.
 
@@ -182,11 +236,10 @@
   Configurações; os valores já escolhidos continuam valendo.
 
 ### Como testar
-- /whatsapp: conecte pelo QR code e confira o nome e o número em "Conectado".
-- Feche e abra o JoJo: a conexão volta sem QR. Desligue o Wi-Fi: aparece "Conectando" com
-  a próxima tentativa; ligue de novo: volta para "Conectado".
-- Aba Contatos: busque por nome e por número; veja Pessoas e Grupos separados.
-- Nova mensagem → Escolher contato → confira a tela de confirmação e agende.
+- Abra a Central, em Coleção: o nível continua o mesmo, agora com título próprio e XP ×10.
+- Converse e faça carinho no JoJo: aparecem bônus com nome (no máximo seis por dia).
+- Veja o painel ao lado do JoJo: Saciedade, Saúde, Higiene, nível e Cuidados inteiros.
+- Abra as Configurações: não aparecem "Lista de Tarefas" nem "Bloqueio do Discord".
 
 ## 0.47.0 — 2026-11-12
 

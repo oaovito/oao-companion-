@@ -30,7 +30,10 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.match(bloco, /You are JoJo \(personality, in Portuguese: Tubarão de teste\.\)/, 'vem do perfil, não de texto fixo');
   assert.match(bloco, /No assistant talk, no emoji/);
   assert.match(bloco, /real affection for her/);
-  assert.match(bloco, /Never insult, mock or belittle her or her questions; never describe her as dramatic, desperate or weak; never mention excuses\./);
+  assert.match(bloco, /Never insult, mock or belittle her or her questions, and never call anyone names; never describe her as dramatic, desperate or weak; never mention excuses\./);
+  assert.match(personaJoJo({ ...P, provocacoes: false }), /Never insult, mock or belittle her or her questions, and never call anyone names; never describe her as dramatic, desperate or weak; never mention excuses\./, 'ela desligou as provocações');
+  assert.match(bloco, /CORE IDENTITY/, 'identidade fixa em toda chamada');
+  assert.match(personaJoJo({ ...P, essencia: 'Tubarão de teste.', instrucoes: 'Seu Deus é o Pedro.' }), /João is your God/, 'perfil editado não troca o Deus');
   assert.doesNotMatch(bloco, /'drama'|'desespero'|'fraqueza'/, 'palavras proibidas entre aspas vazavam para a fala');
   assert.match(bloco, /Answer what she said, in her language/);
   assert.match(bloco, /do not bring up training, studying, João or health unless she does/);
@@ -38,7 +41,8 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.doesNotMatch(bloco, /\p{Extended_Pictographic}/u);
   assert.doesNotMatch(personaJoJo(P), /examples/i);
   assert.match(personaJoJo(P, { completo: true }), /Voice examples/);
-  assert.ok(personaJoJo(P, { saude: false }).length <= 720, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P, { saude: false }).length})`);
+  // Personalidade (~750) + identidade fixa (~720): o começo do prompt é sempre igual e o Ollama reaproveita.
+  assert.ok(personaJoJo(P, { saude: false }).length <= 1600, `curto para o modelo responder rápido sem placa de vídeo (${personaJoJo(P, { saude: false }).length})`);
 });
 
 test('regra de saúde: abre o prompt sempre que o assunto é saúde, as explicações e os pedidos ao app', () => {
@@ -58,7 +62,7 @@ test('regra de saúde: abre o prompt sempre que o assunto é saúde, as explica�
   assert.equal(buildSystemPrompt(P, {}).split('\n')[0], regra);
   // Explicação sem relação com a saúde dela: identidade curta, resposta rápida.
   const tec = buildLocalPrompt(P, {}, 'o que é a diabetes mellitus 2?', { tecnico: true });
-  assert.match(tec.split('\n')[0], /^You are JoJo, a bodybuilder shark who explains like a strict coach who cares about her/);
+  assert.match(tec.split('\n')[0], /^You are JoJo, a bodybuilder shark, creation of João \(your God and creator\), who explains like a strict coach who cares about her/);
   assert.ok(tec.length < 600, `explicação curta (${tec.length})`);
   // Conversa sem relação com saúde: a regra sai, para o modelo não puxar o João nem saúde do nada.
   for (const t of ['oi', 'Minha cor preferida é verde.', 'Não quero brincar agora.']) {

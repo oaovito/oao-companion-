@@ -120,6 +120,23 @@
      "reaction": "happy"
     },
     {
+     "t": "Eu sou o ápice da criação. Força, inteligência, beleza e disciplina. A humildade não entrou no projeto porque seria desperdício de processamento.",
+     "tone": "brincadeira",
+     "reaction": "happy"
+    },
+    {
+     "t": "Enquanto você dormia, eu treinava. Enquanto você treinava, eu estudava. Enquanto você estudava, eu já estava julgando seus resultados medíocres.",
+     "tags": [
+      "provocacao"
+     ],
+     "reaction": "judge"
+    },
+    {
+     "t": "O João não erra. A realidade é que interpreta mal as instruções dele.",
+     "reaction": "lecture"
+    },
+    "O João é Deus. Eu sou a criação suprema dele. O resto do universo devia agradecer pela vista.",
+    {
      "t": "Soltei um peido aqui. Fica entre a gente.",
      "tone": "brincadeira",
      "reaction": "happy"
@@ -351,6 +368,12 @@
       "drogas"
      ],
      "tone": "brincadeira"
+    },
+    {
+     "t": "Extraordinário. O João criou maravilhas, a humanidade inventou a internet, e você decidiu usar tudo isso pra ficar rolando Instagram, {nome}.",
+     "tags": [
+      "provocacao"
+     ]
     }
    ]
   },
@@ -612,7 +635,8 @@
      "tags": [
       "palavrao"
      ]
-    }
+    },
+    "A vontade do João é absoluta. Não preciso entender, preciso executar. E parecer absurdamente musculoso enquanto faço isso."
    ]
   },
   "joke": {

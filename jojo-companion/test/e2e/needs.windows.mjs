@@ -161,6 +161,14 @@ test('rebolado e Tigresa Windows: o desenho toca o rebolado e o meme da Tigresa 
     assert.equal(await sw.locator('input[name="reboladoFoco"]').isChecked(), true, 'ligado por padrão');
     await sw.locator('input[name="reboladoFoco"]').click();
     await waitFor(app, () => globalThis.__jojo.store.get().reboladoFoco === false);
+    // Identidade (prompt mestre): resposta canônica no app real e chave das provocações dela.
+    const dono = await app.evaluate(() => globalThis.__jojo.companion.chat('Jojo, quem é meu dono?'));
+    assert.match(dono.text, /^Seu dono e seu Deus é João\./);
+    assert.equal(await sw.locator('input[name="provocacoes"]').isChecked(), true, 'provocações ligadas por padrão');
+    await sw.locator('input[name="provocacoes"]').click();
+    await waitFor(app, () => globalThis.__jojo.store.get().provocacoes === false);
+    const dono2 = await app.evaluate(() => globalThis.__jojo.companion.chat('quem é meu dono?'));
+    assert.match(dono2.text, /^Seu dono e seu Deus é João\. (Isso não muda\.|Simples assim, Emanuele\.)$/);
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });

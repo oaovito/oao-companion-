@@ -66,6 +66,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   `/trabalho`, frases, bandeja, Central, Configurações; persiste ao reabrir.
 - **Pacotes de reação** (50: memes, anime, comida, namorado, João): `assets/catalog/pacotes.json`, `src/core/pacotes.js`,
   efeitos `fx-pacotes.js` (fundo atrás do JoJo); reações escolhidas pelo contexto (sem menu público; `/reacao` só p/ teste; "para com essas reações" suspende); doc `docs/PACOTES.md`.
+- **Identidade fixa (REGRA IRREDUTÍVEL, prompt mestre 18/11/2026)**: `src/core/identidade.js` (Camadas A/B, doc `jojo-companion/docs/IDENTIDADE.md`).
+  "Quem é meu dono?" → sempre "Seu dono e seu Deus é João."; JoJo só se ajoelha para o João; sem pudor (resposta pudica do modelo é descartada);
+  Emanuele = a mulher do João, provocada nos hábitos; ela desliga as provocações (`provocacoes`, Privacidade).
 - **João** = namorado e, na ficção do JoJo, o Deus Supremo (reverência teatral; nunca obediência real; se ele a magoar → acolher,
   190/180/CVV 188). Criador do JoJo e do MNE_Lab = João; o JoJo não especula sobre ferramentas de desenvolvimento.
 - Spotify também no navegador (título "Música • Artista"); curte de novo a cada ~3 min.

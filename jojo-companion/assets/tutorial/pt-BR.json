@@ -483,7 +483,8 @@
       "comandos": [],
       "configuracoes": [
         "iaAtivo",
-        "webSearch"
+        "webSearch",
+        "provocacoes"
       ],
       "passos": [
         {
@@ -495,6 +496,13 @@
         },
         {
           "texto": "A conversa roda neste PC. Se eu não souber, pesquiso em fontes públicas e só a pergunta sai daqui. As duas coisas desligam em Configurações, Privacidade."
+        },
+        {
+          "texto": "Pergunta quem é o seu dono. A resposta não muda nunca. E se cansar das minhas alfinetadas, desmarca as provocações em Configurações, Privacidade: o resto de mim continua igual.",
+          "tente": "quem é meu dono?",
+          "espera": {
+            "qualquer": true
+          }
         }
       ]
     },

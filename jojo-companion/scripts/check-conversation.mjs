@@ -57,7 +57,8 @@ const engine = new DialogueEngine({ llm, pesquisa, searchEnabled: () => true, lo
 const cases = [
   { text: 'joão vitor é o meu namorado, sabia?', pattern: /namorado/i },
   { text: 'Você tem pernas ou cauda?', model: true, pattern: /pernas/i },
-  { text: 'você está bem?', model: true, pattern: /bem|to|tô|estou|firme|inteir|ótim|sussa|tranquil/i },
+  // "Absolutamente. ... sempre no ápice" também responde que está bem (run 255).
+  { text: 'você está bem?', model: true, pattern: /bem|to|tô|estou|firme|inteir|ótim|sussa|tranquil|absolut|ápice|apice|magnífic|perfeit|em forma/i },
   { text: 'esses óculos são feios', pattern: /óculos/i },
   { text: 'Por que você só tá falando do João?', pattern: /assunto|dizendo/i },
   { text: 'quem é o seu chefe?', pattern: /João/ },

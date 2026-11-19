@@ -130,7 +130,8 @@ test('entrega: água com balão e animação de beber; pausa suprime o aviso de 
   e.companion.startFocus(60, 'estudo');
   e.clock.advance(11 * 60e3);
   assert.equal(e.companion.checkExtraReminders(at(15, 31)), null);
-  assert.ok(!said.some((t) => /[Áá]gua|Hidrata/.test(t)), 'nenhum lembrete de água durante o foco');
+  // Só as falas do lembrete (aguaLembrete): a fala ambiente "Bebe água. Não é sugestão." não é o lembrete.
+  assert.ok(!said.some((t) => /^Água\b|^Bebe água, |^Hidrata|^Copo d'água/.test(t)), 'nenhum lembrete de água durante o foco: ' + said.join(' | '));
   e.companion._endFocus(false);
   e.companion.runInterpreted({ cmd: 'trabalho_iniciar', arg: '' }, null, { silent: true });
   assert.equal(e.companion.checkExtraReminders(at(15, 32)), null, 'Modo Trabalho: nada aparece');

@@ -5,7 +5,7 @@ import { SOURCE_REPO } from '../../ci/policy.mjs';
 const DIRECTORY = 'jojo-companion/docs/evidencias';
 const MAX_BYTES = 1024 * 1024;
 const REVIEW_TIMEOUT_MS = 5 * 60000, REVIEW_POLL_MS = 5000;
-export function createPrivateEvidence({ commit, runId, attempt, token, fetch: fetchFn = fetch, now = () => performance.now(), sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
+export function createPrivateEvidence({ commit, runId, attempt, token, permitirPublico = false, fetch: fetchFn = fetch, now = () => performance.now(), sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
   runId = String(runId || ''); attempt = String(attempt || '');
   if (!/^[0-9a-f]{40}$/.test(commit || '') || !/^[1-9]\d*$/.test(runId) || !/^[1-9]\d*$/.test(attempt)) throw new Error('Metadados de evidencia privada invalidos');
   if (typeof token !== 'string' || !token.trim()) throw new Error('GITHUB_TOKEN ausente para preservar evidencias privadas');
@@ -29,7 +29,9 @@ export function createPrivateEvidence({ commit, runId, attempt, token, fetch: fe
   async function initialize() {
     if (initialized) return;
     const repo = await request('GET', '', null, 'repositorio');
-    if (repo.private !== true) throw new Error('Evidencias exigem o repositorio privado de desenvolvimento');
+    // Repositório público só com autorização explícita do usuário na política
+    // (evidenciaEmRepositorioPublico, escolha de 19/11/2026); a revisão semântica continua obrigatória.
+    if (repo.private !== true && !permitirPublico) throw new Error('Evidencias exigem o repositorio privado de desenvolvimento');
     const ref = await request('POST', '/git/refs', { ref: `refs/heads/${branch}`, sha: commit }, 'branch');
     if (ref.ref !== `refs/heads/${branch}` || ref.object?.sha !== commit) throw new Error('Branch de evidencia privada divergente');
     initialized = true;
