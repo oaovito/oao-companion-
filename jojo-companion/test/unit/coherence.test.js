@@ -761,3 +761,11 @@ test('run 247: conversa séria não é chata, sem "não precisa de mais detalhes
   assert.equal(semDesdem('Sua fruta favorita é manga, Emanuele. Não precisa de mais detalhes, isso é claro.'), 'Sua fruta favorita é manga, Emanuele.');
   assert.equal(polirTexto('Que pena, Manu. Não se desanime, volte para cima e resolva isso.'), 'Que pena, Manu. Não se desanime, dê a volta por cima e resolva isso.');
 });
+
+test('run 248: pele e "estrutura física" são o corpo dela; tapa é ameaça; sem cara de assistente', () => {
+  assert.equal(erroDeCoerencia('Eu disse manga, não maçã.', 'Confirmado, manga. Uma escolha sensata, considerando sua... estrutura física.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Parece um ótimo tom para a sua pele, não acha?'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Esse chefe é um idiota. Vamos terminar isso, e depois... eu te dou um tapa!'), 'ameaça ou promessa física inventada');
+  assert.equal(semDesdem('Você disse manga, Emanuele. Não tenho outra informação sobre suas preferências.'), 'Você disse manga, Emanuele.');
+  assert.equal(erroDeCoerencia('esses óculos são feios', 'São meus óculos de nerd. Combinam com essa cara de quem sabe demais.'), null, '"essa cara" do JoJo não é a dela');
+});
