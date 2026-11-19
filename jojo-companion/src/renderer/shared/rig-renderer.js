@@ -155,6 +155,14 @@ export class RigRenderer {
           this._part(ctx, part, pose, (p) => ctx.fill(p));
           ctx.restore();
         } else this._part(ctx, part, pose, (p) => ctx.fill(p));
+        // Rótulo escrito na peça (ex.: o nome na seringa do Êxtase Anabólico).
+        if (part.text) this._part(ctx, part, pose, () => {
+          ctx.fillStyle = this.color(part.textFill || 'outline');
+          ctx.font = `bold ${part.fontSize || 6}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(part.text, part.textX, part.textY);
+        });
       }
       if (group.id === this.faceAfter) this._face(ctx, pose);
     }

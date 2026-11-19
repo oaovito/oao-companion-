@@ -51,6 +51,7 @@ import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 import { DILDO_MS, ATADURA_MS, CANAIS_ATADURA, FALAS_DILDO } from './dildo.js';
+import { BALOES_ESTEROIDE } from './esteroide.js';
 import { AnimeCalendario, episodiosNovos, visualDoAnime, normTitulo, ANIME_MAX } from './anime-calendario.js';
 import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL, visuaisComAnimacao } from './visual-nivel.js';
 import { memeDoTexto, animDoMeme, itensDeMemes } from './memes-br.js';
@@ -132,6 +133,7 @@ const FOCUS_ANIM = /^cat_(estudarJunto|treinarJunto|foco[A-Z])/;
 const ANIM_ESPECIAIS = {
   rebolado: { estado: 'twerk', nome: 'Rebolado do meme', origem: 'meme do Among Us rebolando' },
   tigresa: { estado: 'tigresa', nome: 'Tigresa, tire sua roupa', origem: 'meme brasileiro "Tigresa, tire sua roupa"' },
+  esteroide: { estado: 'esteroide', nome: 'Êxtase Anabólico', origem: 'comédia de academia (seringas de desenho)' },
   consolo: { estado: 'dildo', nome: 'Consolo na cabeça', origem: 'pegadinha semanal (liberada depois da primeira vez)', depoisDe: (c) => (c.progress.st.dildo?.vezes || 0) > 0 },
 };
 // Calendário de anime em frase: "me avisa quando sair episódio de X", "segue o anime X".
@@ -2060,7 +2062,8 @@ export class Companion {
       if (!q) text = `${this.catalog.itens.length} animações no catálogo. Use /anim e o nome, ex.: /anim selfie, /anim modo fera, /anim dancinha viral.`;
       else if (ANIM_ESPECIAIS[normalizeText(q).trim()] && (!ANIM_ESPECIAIS[normalizeText(q).trim()].depoisDe || ANIM_ESPECIAIS[normalizeText(q).trim()].depoisDe(this))) {
         const esp = ANIM_ESPECIAIS[normalizeText(q).trim()];
-        text = !this.work && this.behavior.request(esp.estado, { now: this.clock.now(), force: true }) ? `${esp.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
+        const ok = esp.estado === 'esteroide' ? this.extaseAnabolico() : !this.work && this.behavior.request(esp.estado, { now: this.clock.now(), force: true });
+        text = ok ? `${esp.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
       } else {
         const it = this.findCatalog(q);
         if (!it) text = 'Essa animação eu não tenho. E olha que eu tenho centenas. Tenta outro nome.';
@@ -2263,6 +2266,8 @@ export class Companion {
       this.behavior.request('moon', { now, force: true });
     } else if (action === 'tigresa') {
       this.behavior.request('tigresa', { now, force: true });
+    } else if (action === 'esteroide') {
+      this.extaseAnabolico(now);
     } else if (action === 'bench' || action === 'squat') {
       this.behavior.request(action === 'bench' ? 'benchPress' : 'squat', { now, force: true });
     } else if (['judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad'].includes(action)) {
@@ -4832,6 +4837,25 @@ export class Companion {
       this.dildoMarca = { ate: this.clock.now() + ATADURA_MS };
       this._applyLayout(true);
     }, DILDO_MS);
+    return true;
+  }
+
+  /**
+   * Êxtase Anabólico (15 s): só quando dá para assistir. Modo Trabalho, foco, tela cheia,
+   * escondido ou pausado: não toca. Os balões só saem se a animação ainda estiver tocando
+   * (interrompida, para tudo e ele volta ao normal sozinho, porque os canais são da animação).
+   */
+  extaseAnabolico(now = this.clock.now()) {
+    if (this.work || this.focus || this.fullscreenHidden || this.lolHidden || this.userHidden || this.paused) return false;
+    if (!this.behavior.request('esteroide', { now, force: true })) return false;
+    const inicio = this.clock.now();
+    const nome = this.personality.get().apelido || 'Manu';
+    for (const b of BALOES_ESTEROIDE) {
+      this.clock.setTimeout(() => {
+        if (this.behavior.state !== 'esteroide' || this.clock.now() - inicio > 15000) return;
+        this.say(b.texto.replace('{nome}', nome), 'speech');
+      }, b.s * 1000);
+    }
     return true;
   }
 

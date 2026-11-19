@@ -88,6 +88,8 @@ export const STATES = {
   tigresa: { priority: P.INTERACT, phases: [{ anim: 'tigresa', ms: 6500 }], next: 'idle' },
   // Pegadinha semanal: consolo gigante cai na cabeça (traumatismo craniano de desenho).
   dildo: { priority: P.INTERACT, phases: [{ anim: 'dildo', ms: 6500 }], next: 'idle' },
+  // Êxtase Anabólico (STEROID_EUPHORIA): 15 s de seringas de desenho, músculos inchando e clímax dourado.
+  esteroide: { priority: P.INTERACT, phases: [{ anim: 'esteroide', ms: 15000 }], next: 'idle' },
   angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },
   sad: { priority: P.INTERACT, phases: [{ anim: 'sad', ms: 3200 }], next: 'idle' },
   // Animações do catálogo: `act` (pedido, evento, chat) e `ambient` (sorteio enquanto ela trabalha).

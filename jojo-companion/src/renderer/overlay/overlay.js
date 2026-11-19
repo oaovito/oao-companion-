@@ -6,6 +6,7 @@ import { RigRenderer } from '../shared/rig-renderer.js';
 import { rigComVisuais } from '../../core/visual-nivel.js';
 import { rigComRebolado } from '../../core/rebolado.js';
 import { rigComDildo } from '../../core/dildo.js';
+import { rigComEsteroide } from '../../core/esteroide.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
@@ -78,7 +79,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))));
+  rig = new RigRenderer(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -582,6 +583,9 @@ function draw(now) {
   // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
   // baba estica, aura pulsa, bolhas sobem, brilhos piscam, fogo tremula. Parado no movimento reduzido.
   if ((s.visualNivel || fantasiaInteira) && !reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
+  // Êxtase Anabólico: os músculos incham por cima do corpo que ela vestiu (visual largo continua largo).
+  if (pose.stMusculo) pose.nvCorpo = (pose.nvCorpo ?? 1) * pose.stMusculo;
+  if (reduced && sample.name === 'esteroide') pose.rootX = 0; // sem tremedeira no movimento reduzido
   if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);

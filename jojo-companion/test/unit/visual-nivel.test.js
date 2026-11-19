@@ -275,23 +275,23 @@ test('aviso: quem já tinha nível recebe a lista do que está liberado; no Modo
     e.companion.progress.st.xp = e.companion.progress.threshold(30);
     e.companion._syncVisual({ anunciar: false }); // como na abertura do app depois da atualização
     const vn = e.store.get().visualNivel;
-    assert.equal(vn.avisar.length, 64, '29 dos níveis, 3 de South Park, 7 memes, 15 animes, as duas Tigresas e 8 memes BR');
-    assert.equal(vn.novas.length, 64);
+    assert.equal(vn.avisar.length, 71, '29 dos níveis, 3 de South Park, 7 memes, 15 animes, as duas Tigresas, 8 memes BR e 7 jogos');
+    assert.equal(vn.novas.length, 71);
     const falas = [];
     const say = e.companion.say.bind(e.companion);
     e.companion.say = (t, ...rest) => { const ok = say(t, ...rest); if (ok) falas.push(t); return ok; };
     e.companion.start();
     e.companion.startWork();
     e.clock.advance(70000);
-    assert.ok(!falas.some((t) => /liberou 64 visuais/.test(t)), 'no Modo Trabalho não fala');
-    assert.equal(e.store.get().visualNivel.avisar.length, 64, 'continua guardado');
+    assert.ok(!falas.some((t) => /liberou 71 visuais/.test(t)), 'no Modo Trabalho não fala');
+    assert.equal(e.store.get().visualNivel.avisar.length, 71, 'continua guardado');
     e.companion.endWork();
     e.clock.advance(70000);
-    const aviso = falas.find((t) => /liberou 64 visuais/.test(t));
+    const aviso = falas.find((t) => /liberou 71 visuais/.test(t));
     assert.ok(aviso, falas.join(' | '));
     assert.match(aviso, /Toalha do Toalhinha/, 'cita as mais recentes');
     assert.deepEqual(e.store.get().visualNivel.avisar, []);
-    assert.equal(e.store.get().visualNivel.novas.length, 64, 'continuam com o selo de novo até abrir a Central');
+    assert.equal(e.store.get().visualNivel.novas.length, 71, 'continuam com o selo de novo até abrir a Central');
   } finally {
     e.companion.stop();
   }
@@ -447,10 +447,10 @@ test('animações liberadas: rebolado, Tigresa, as dos visuais liberados e as po
     const bloqueadas = new Set(CAT.filter((p) => p.nivel > 5).map((p) => p.anim));
     const vistas = new Set(e.companion.progress.st.poses);
     // Fantasia completa (show) de cada visual liberado, no padrão da Tigresa; nada bloqueado.
-    const shows = CAT.filter((p) => p.nivel <= 5).map((p) => (/^br/.test(p.id) && p.meme ? `memeBr_${p.id}` : `visual_${p.id}`)).filter((id) => ids.includes(id));
+    const shows = CAT.filter((p) => p.nivel <= 5).map((p) => (/^br/.test(p.id) && p.meme ? `memeBr_${p.id}` : /^jg/.test(p.id) ? `jogo_${p.id}` : `visual_${p.id}`)).filter((id) => ids.includes(id));
     assert.ok(shows.length >= CAT.filter((p) => p.nivel <= 5 && p.show).length, 'show de cada visual liberado');
-    assert.ok(!ids.some((id) => CAT.some((p) => p.nivel > 5 && (id === `visual_${p.id}` || id === `memeBr_${p.id}`))), 'show bloqueado não aparece');
-    assert.ok(ids.filter((id) => !['rebolado', 'tigresa'].includes(id) && !doNivel.includes(id) && !shows.includes(id)).every((id) => vistas.has(id)), 'o resto são poses já vistas');
+    assert.ok(!ids.some((id) => CAT.some((p) => p.nivel > 5 && (id === `visual_${p.id}` || id === `memeBr_${p.id}` || id === `jogo_${p.id}`))), 'show bloqueado não aparece');
+    assert.ok(ids.filter((id) => !['rebolado', 'tigresa', 'esteroide'].includes(id) && !doNivel.includes(id) && !shows.includes(id)).every((id) => vistas.has(id)), 'o resto são poses já vistas');
     assert.ok(lista.every((a) => a.nome && a.origem), 'nome e de onde vem');
     assert.equal(new Set(ids).size, ids.length, 'sem repetição');
     void bloqueadas;
