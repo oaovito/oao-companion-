@@ -158,7 +158,7 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   t = t.replace(/\s*\[(\d+)\]/g, (m, n) => (Number(n) >= 1 && Number(n) <= fontes ? m : ''));
   t = t.replace(/\b([Aa]) hormona\b/g, (m, a) => (a === 'A' ? 'O' : 'o') + ' hormônio')
     .replace(/\bhormonas\b/g, 'hormônios').replace(/\bhormona\b/g, 'hormônio');
-  t = t.replace(/,\s*meu bem(?=[.!?,]|$)/gi, '').replace(/\bmeu bem,\s*/gi, '');
+  t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');
   // Alarme que não cabe numa explicação ("Isso leva ao aumento da glicose, precisa de atenção imediata.").
   t = t.replace(/,?\s*(?:e |isso |o que )?(?:precisa|requer|exige) (?:de )?aten[cç][aã]o imediata(?=[.!?]|$)/gi, '');
   t = t.replace(/^((?:Que|Mas que) (?:droga|merda|saco|porra)(?:, [A-ZÀ-Ú][\wà-ú]+)?)\?/, '$1!');
@@ -179,9 +179,13 @@ export function erroDeCoerencia(input, output, history = []) {
   const insultoSolto = r.split(/[.!?]+/).some((frase) => /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/.test(frase)
     && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase));
   const desdem = DESDEM.test(r);
+  // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
+  const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)
+    && /\bacha que eu (?:vou|tenho|aceito|aguento)\b|\b(?:eu nao vou aceitar|eu nao tenho tempo pra isso|eu nao tenho tempo para isso)\b/.test(r);
   // Desprezar o que ela faz ("projetos são para gente fraca") é xingar por tabela e não faz sentido.
   const desprezo = /\b(?:sao|e|eh) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?\b|\bare for (?:the )?weak\b/.test(r);
   if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
+  if (perspectiva) return 'respondeu como se fosse com ele';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);

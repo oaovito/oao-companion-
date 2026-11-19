@@ -101,6 +101,9 @@
   repetir" quando ela pergunta o que disse e o alarme "precisa de atenção imediata" numa
   explicação. Resposta que despreza o que ela faz ("projetos são para gente fraca") é trocada
   por uma fala programada.
+- Conversa: resposta que sai torta (xingamento, desdém, como se o problema fosse dele) ganha uma
+  segunda tentativa antes de cair numa fala programada. "Meu chefe mudou o prazo" não vira mais
+  "Acha que eu vou aceitar isso?", e o JoJo não chama ela de "meu caro".
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

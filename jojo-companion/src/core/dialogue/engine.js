@@ -121,19 +121,26 @@ export class DialogueEngine {
         const longo = achado || professor;
         // Com a pesquisa em mãos, não faz esperar demais: se o modelo demorar, responde com a fonte.
         const budget = achado ? Math.min(base, 25e3) : longo ? Math.min(Math.max(base, this.timeoutMs), 45e3) : base;
-        const controller = new AbortController();
-        this.pendingGeneration = controller;
-        let r;
-        try {
-          r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal }), budget, () => controller.abort());
-        } finally {
-          if (this.pendingGeneration === controller) this.pendingGeneration = null;
-        }
-        const out = normalizeReply(r);
-        out.text = semDesdem(out.text); // a frase de desdém sai; a resposta certa fica
-        out.text = polirTexto(out.text, { fontes: achado?.fontes?.length || 0 });
-        const incoerente = erroDeCoerencia(input, out.text, this.history.slice(0, -1));
-        if (incoerente) {
+        // Resposta incoerente ganha uma segunda geração antes de cair na fala programada.
+        let out;
+        for (let tentativa = 0; ; tentativa++) {
+          const controller = new AbortController();
+          this.pendingGeneration = controller;
+          let r;
+          try {
+            r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal }), budget, () => controller.abort());
+          } finally {
+            if (this.pendingGeneration === controller) this.pendingGeneration = null;
+          }
+          out = normalizeReply(r);
+          out.text = semDesdem(out.text); // a frase de desdém sai; a resposta certa fica
+          out.text = polirTexto(out.text, { fontes: achado?.fontes?.length || 0 });
+          const incoerente = erroDeCoerencia(input, out.text, this.history.slice(0, -1));
+          if (!incoerente) break;
+          if (tentativa === 0) {
+            this.log('warn', `IA: ${incoerente}; gerando de novo.`);
+            continue;
+          }
           const e = new Error(incoerente);
           e.foraDoAssunto = true;
           throw e;

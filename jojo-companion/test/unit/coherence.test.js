@@ -32,12 +32,13 @@ test('voz seca não insulta a usuária ou sua pergunta e rejeição não se pass
   }
   for (const text of ['Tenho pernas. Os bíceps não são enfeite.', 'Que pergunta idiota eu fiz.', 'Eu sou um tubarão idiota de desenho.']) assert.equal(erroDeCoerencia(input, text), null, text);
   let calls = 0;
-  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls === 1 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
+  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls <= 2 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
   const rejected = await engine.reply(input);
   assert.notEqual(rejected.intent, 'ia'); assert.doesNotMatch(rejected.text, /idiota/);
   assert.equal(engine.llmPauseUntil, 0);
   const accepted = await engine.reply(input);
-  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 2);
+  // Duas gerações ruins seguidas (a segunda tentativa também falhou) → programadas.
+  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 3);
   assert.equal(engine.history.some(h => h.role !== 'user' && /idiota/.test(h.text)), false);
 });
 
@@ -383,13 +384,13 @@ test('perguntas e sintomas não são engolidos por palavras de ações ou de tri
 
 test('resposta semanticamente inválida é descartada sem pausar o modelo para a mensagem seguinte', async () => {
   let calls = 0;
-  const e = new DialogueEngine({ llm: model(async () => (++calls === 1 ? { text: 'Você vai morrer se não fizer algo.' } : { text: 'Agora sim. Como foi teu dia?', action: 'curious' })) });
+  const e = new DialogueEngine({ llm: model(async () => (++calls <= 2 ? { text: 'Você vai morrer se não fizer algo.' } : { text: 'Agora sim. Como foi teu dia?', action: 'curious' })) });
   const a = await e.reply('oi');
   assert.doesNotMatch(a.text, /vai morrer/);
   assert.equal(e.llmPauseUntil, 0);
   const b = await e.reply('e você?');
   assert.equal(b.intent, 'ia');
-  assert.equal(calls, 2);
+  assert.equal(calls, 3);
   assert.equal(erroDeCoerencia('Meu chefe mudou o prazo', 'O João resolve.'), 'João fora do assunto');
   assert.equal(erroDeCoerencia('quero morrer', 'Fale com João e CVV 188.'), null);
   assert.equal(erroDeCoerencia('você está bem?', 'Tudo bem. E você, JoJo?'), 'identidades trocadas');
@@ -596,4 +597,16 @@ test('acabamento real do run 226: sem "não precisa repetir", sem alarme na expl
   assert.equal(polirTexto('Isso leva ao aumento da glicose no sangue, precisa de atenção imediata.'), 'Isso leva ao aumento da glicose no sangue.');
   assert.equal(erroDeCoerencia('Não consegui terminar meu projeto.', 'Que droga, Manu! Projetos são para gente fraca, não para um tubarão como eu. Mostra o que te aflige.'), 'insulto à usuária ou à pergunta');
   assert.equal(erroDeCoerencia('Não consegui terminar meu projeto.', 'Que pena, Manu. Respira e me conta o que travou.'), null);
+});
+
+test('run 228: resposta incoerente ganha segunda geração; perspectiva trocada e "meu caro" não passam', async () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Isso é ridículo, não é mesmo? Acha que eu vou aceitar isso sem reclamar?'), 'respondeu como se fosse com ele');
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Chefe que muda prazo toda hora cansa. Respira e reorganiza a entrega.'), null);
+  assert.equal(polirTexto('Manga, confirmado. Você tem um paladar refinado, meu caro.'), 'Manga, confirmado. Você tem um paladar refinado.');
+  let calls = 0;
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: ++calls === 1 ? 'Que droga! Acha que eu vou aceitar isso?' : 'Que droga, Manu! Prazo mudando de novo cansa. Reorganiza a entrega.' }) };
+  const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
+  assert.equal(calls, 2);
+  assert.equal(r.intent, 'ia');
+  assert.match(r.text, /Prazo mudando/);
 });
