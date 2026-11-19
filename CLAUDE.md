@@ -126,6 +126,11 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - **Shows dos visuais** (revisão de 19/11/2026, padrão da Tigresa): cada um dos 369 visuais (nv/sp/tw/an) tem fantasia
   completa + show de 6,5 s (`visual_<id>`, specs em `src/core/fantasias-visuais.js`); toca ao liberar/vestir; a peça
   continua combinável no guarda-roupa. Animação com fantasia (`ehAnimFantasia`) esconde as peças vestidas no overlay.
+- **Jogos** (19/11/2026): 50 visuais `jg01`–`jg50` (coleção `jogos`, níveis 3+4i), fantasia inteira + animação `jogo_<id>`;
+  dados em `scripts/jogos-dados.mjs` → `progressao.json` (mesmo formato dos memes BR). Sem League of Legends.
+- **Êxtase Anabólico** (estado `esteroide`, 15 s; `src/core/esteroide.js`): peças st* numa cópia do rig (aura atrás de tudo),
+  animação gravada no JSON por `node scripts/esteroide-anim.mjs`; `stMusculo` multiplica `nvCorpo` no overlay; balões por
+  `BALOES_ESTEROIDE`; bloqueado em Trabalho/foco/tela cheia. Peças de rig aceitam `text` (rótulo desenhado com fillText).
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no

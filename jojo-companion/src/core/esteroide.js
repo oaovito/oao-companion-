@@ -190,3 +190,6 @@ export function animacaoEsteroide() {
 
 /** Canais que a animação usa e o valor neutro (para os testes de "volta ao normal"). */
 export const NEUTRO_ESTEROIDE = { stSerX: -36, stSerY: -16, stBabaK: 2, stPlimK: 0.6, stSobe: -12, stSobe2: -16, stBiceps: 0.9, stMusculo: 1, squashY: 1, stAuraK: 1, stAuraRot: 40, stLagrimaY: 22, eyeScale: 1, eyeOpen: 1, jaw: 0.5 };
+
+/** Valor de repouso dos canais st* (os que não estão aqui ficam em 0 = desligado). */
+export const REPOUSO_ESTEROIDE = { stMusculo: 1, stBiceps: 1, stAuraK: 1, stBabaK: 1, stPlimK: 1 };

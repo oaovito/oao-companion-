@@ -25,7 +25,29 @@
   volta ao normal. O show toca quando o visual é liberado ou vestido e fica nas animações liberadas da
   Central. No guarda-roupa a peça continua combinável como antes.
 
+- 50 visuais e animações de jogos clássicos (coleção "jogos", jg01 a jg50, um a cada 4 níveis do 3 ao 199):
+  Mega Man, Castlevania, Metroid, Tekken, Prince of Persia, Contra, Guitar Hero, Frogger, Q*bert, Dig Dug,
+  Bomberman, Double Dragon, Golden Axe, Duck Hunt, Punch-Out!!, Ghosts 'n Goblins, Earthworm Jim, Spyro,
+  Banjo-Kazooie, Rayman, Pitfall!, Tomb Raider, Duke Nukem, Half-Life, Silent Hill, Metal Slug, The King of
+  Fighters, Dragon Quest, Chrono Trigger, EarthBound, Star Fox, F-Zero, Animal Crossing, Splatoon, Ace Attorney,
+  Team Fortress 2, Angry Birds, Plants vs. Zombies, Cuphead, Fall Guys, The Sims, Age of Empires, Warcraft,
+  Diablo, Persona 5, Devil May Cry, Alex Kidd, Top Gear, Worms e Galaga. Fantasia inteira com peças novas
+  (boné do encanador, capacete de pirâmide, cabeça de xícara, plumbob, turbante, presas, machado, bomba,
+  guitarra, cogumelo, pé de cabra, canhão de braço, chicote, bandeira quadriculada) e corpo variado
+  (orelhas, chifres, barrigona, cabeça e corpo de tamanhos diferentes); animação própria de 6,5 s e frase no chat.
+- Êxtase Anabólico (15 s, comédia de desenho): a seringa TREMBOLONA com coração aparece, pupilas dilatadas e
+  baba; aplicação fictícia de desenho no ombro com olhos revirados, tremedeira, bochecha corada, corações e
+  estrelas; chegam Testosterona, Nandrolona, Boldenona e Stanozolol e os músculos incham; clímax com olhos
+  brancos, brilho dourado, pose de fisiculturista e os balões "EU CONSIGO OUVIR MEUS RECEPTORES ANDROGÊNICOS."
+  e "NÃO É VÍCIO. É AMOR."; no fim uma lágrima, "Foi melhor que meu último relacionamento." e tudo volta ao
+  normal. Sem áudio e sem técnica real; não toca no Modo Trabalho, no foco nem com tela cheia; interrompida,
+  para os balões. Pelo chat ("êxtase anabólico", "toma uma trembolona"), por /anim esteroide e pela Central.
+
 ### Melhorias
+- Mula sem Cabeça: no lugar da cabeça só o fogo, em camadas e tremulando.
+- Nível de detalhe da Tigresa sem achatar a variedade: barrigona, papada, orelhas, chifres, suor e moscas
+  aparecem por cima das fantasias; memes ganharam corpos diferentes (Dona Redonda, Abaporu, Hulk do Paraguai…).
+- O giro dos shows agora é de pé (vira de frente para trás), sem o JoJo deitar de lado.
 - Com fantasia inteira vestida, a bermuda preta não aparece mais por baixo; o Saci tem uma perna só.
 - Durante animação com fantasia inteira (Tigresa, memes BR e shows), as peças vestidas saem de cena para
   nada ficar por cima da fantasia nem brigar com a pele do personagem.
@@ -34,6 +56,8 @@
 ### Como testar
 - Escrever "Nazaré confusa" no chat: o JoJo vira a Nazaré, faz as contas e responde.
 - Subir de nível (2, 6, 10…) e ver o meme BR liberado na Central, vestível pelo guarda-roupa.
+- Subir para o nível 3 e ver o Mega Man liberado; "bora jogar mega man" no chat toca a animação.
+- Escrever "êxtase anabólico" no chat (fora do Modo Trabalho e do foco) e assistir aos 15 s.
 
 ## 0.47.2 — 2026-11-18
 

@@ -3,12 +3,22 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { animacaoEsteroide } from '../src/core/esteroide.js';
+import { animacaoEsteroide, REPOUSO_ESTEROIDE as REPOUSO } from '../src/core/esteroide.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arq = path.join(ROOT, 'assets/animations/jojo.animations.json');
 let txt = fs.readFileSync(arq, 'utf8');
 const nova = animacaoEsteroide();
+// Canais novos (st*) com o valor de repouso, logo depois do último canal da pegadinha.
+const canais = JSON.parse(txt).channels;
+const faltam = Object.keys(nova.tracks).filter((ch) => !(ch in canais));
+if (faltam.length) {
+  const ultimo = '    "dlX": 0';
+  if (!txt.includes(`${ultimo}\n`)) throw new Error('canal dlX não encontrado');
+  txt = txt.replace(`${ultimo}\n`, `${ultimo},\n${faltam.map((ch) => `    "${ch}": ${REPOUSO[ch] ?? 0}`).join(',\n')}\n`);
+  console.log(`esteroide: ${faltam.length} canais novos`);
+  fs.writeFileSync(arq, txt);
+}
 const atual = JSON.parse(txt).animations.esteroide;
 if (atual && JSON.stringify(atual) === JSON.stringify(nova)) {
   console.log('esteroide: já atualizada');
