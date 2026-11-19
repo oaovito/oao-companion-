@@ -22,7 +22,7 @@ test('toda reação do catálogo tem gatilho natural (ambiente, frase, evento, p
   const orfas = catalog.itens.filter((it) => {
     const g = it.gatilho || {};
     // "usa": reaproveita uma animação feita à mão, tocada pelo próprio estado (wake, eat, comfort…).
-    return !it.usa && !it.pacote && !g.ambiente && !(g.frases || []).length && !(g.eventos || []).length && !(it.eventos || []).length && !g.estado && !new RegExp(`['"\`]${it.id}['"\`]`).test(codigo);
+    return !it.usa && !it.pacote && !(g.viral || []).length && !g.ambiente && !(g.frases || []).length && !(g.eventos || []).length && !(it.eventos || []).length && !g.estado && !new RegExp(`['"\`]${it.id}['"\`]`).test(codigo);
   }).map((it) => it.id);
   assert.deepEqual(orfas, []);
 });

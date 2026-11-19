@@ -356,6 +356,8 @@ export function buildAnimation(item, intensity = 'normal') {
     }
   }
   for (const obj of [].concat(r.objeto || [])) tracks[PROPS[obj] || `prop_${obj}`] = hold(1);
+  // Quadros-chave próprios (animações virais): valem por cima da receita.
+  if (item.faixas) Object.assign(tracks, item.faixas);
   // Adereços flutuantes têm movimento próprio, sem inventar mãos para segurá-los.
   if (r.aderecosAnimados) for (const obj of [].concat(r.objeto || [])) {
     tracks[`angle_${obj}`] = alt(-5 * I.i, 5 * I.i, 4, { rest: 0 });
@@ -366,7 +368,8 @@ export function buildAnimation(item, intensity = 'normal') {
     if (!ch) throw new Error(`Humor desconhecido: ${k} (${item.id})`);
     tracks[ch] = ehs(v * Math.min(1.3, I.i));
   }
-  const fxList = [].concat(r.fx || []);
+  // Versão suave de um item com `fxLeve` ("reduzir efeitos" dos virais): só os efeitos leves.
+  const fxList = [].concat(intensity === 'suave' && item.fxLeve ? item.fxLeve : r.fx || []);
   const anim = {
     duration: Math.round((item.duracao || 3000) * I.dur),
     loop: !!item.loop,

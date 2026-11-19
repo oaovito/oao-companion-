@@ -83,6 +83,32 @@
     </fieldset>
 
     <fieldset>
+      <legend>Animações virais</legend>
+      <label class="check"><input type="checkbox" name="viraisAtivo"> 50 memes reinterpretados pelo JoJo, só em momentos reais (jogo aberto, derrota, refeição, fim do trabalho, Instagram…). Nunca no Modo Trabalho, no foco ou em tela cheia.</label>
+      <label class="row">Frequência
+        <select name="viraisFrequencia">
+          <option value="pouca">Pouca</option>
+          <option value="normal">Normal</option>
+          <option value="muita">Muita</option>
+        </select>
+      </label>
+      <label class="row">Intensidade das reações
+        <select name="viraisIntensidade">
+          <option value="suave">Suave</option>
+          <option value="normal">Normal</option>
+          <option value="exagerado">Exagerada</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="viraisAdulto"> Humor adulto</label>
+      <label class="check"><input type="checkbox" name="viraisNegro"> Humor negro e sátira</label>
+      <label class="check"><input type="checkbox" name="viraisReduzir"> Reduzir efeitos visuais</label>
+      <details>
+        <summary>Permitir ou bloquear cada animação</summary>
+        <div id="viraisLista" class="viraisLista"></div>
+      </details>
+    </fieldset>
+
+    <fieldset>
       <legend>Monitores</legend>
       <label class="row">Monitor preferido
         <select name="preferredDisplay" id="displaySelect"></select>

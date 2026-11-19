@@ -131,6 +131,12 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - **Êxtase Anabólico** (estado `esteroide`, 15 s; `src/core/esteroide.js`): peças st* numa cópia do rig (aura atrás de tudo),
   animação gravada no JSON por `node scripts/esteroide-anim.mjs`; `stMusculo` multiplica `nvCorpo` no overlay; balões por
   `BALOES_ESTEROIDE`; bloqueado em Trabalho/foco/tela cheia. Peças de rig aceitam `text` (rótulo desenhado com fillText).
+- **Animações virais** (0.47.4, `src/core/virais.js`): 50 memes (Twitter/TikTok/shitpost) reinterpretados como animações
+  do JoJo, itens `cat_vr01`–`cat_vr50` no catálogo (receita + `faixas` próprias + peças `vr_*` numa cópia do rig, cores
+  `vrCinza`/`vrAzul`; cópias do JoJo e pixel art em `src/renderer/shared/virais-desenho.js`). `GerenciadorVirais` escolhe
+  por gatilho real (`companion._viral`: jogo, derrota, vitória, conquista, ocioso, Instagram, procrastinação, tarefa,
+  refeição, erro, fim do trabalho, lazer) com cooldown e preferências (`viraisAtivo`, `viraisFrequencia`, `viraisAdulto`,
+  `viraisNegro`, `viraisReduzir`, `viraisIntensidade`, `viraisBloqueadas`); nunca no Trabalho/foco/tela cheia.
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no

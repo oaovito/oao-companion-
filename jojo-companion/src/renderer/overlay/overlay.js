@@ -7,6 +7,8 @@ import { rigComVisuais } from '../../core/visual-nivel.js';
 import { rigComRebolado } from '../../core/rebolado.js';
 import { rigComDildo } from '../../core/dildo.js';
 import { rigComEsteroide } from '../../core/esteroide.js';
+import { rigComVirais } from '../../core/virais.js';
+import { desenharComVirais } from '../shared/virais-desenho.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
@@ -79,7 +81,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))));
+  rig = new RigRenderer(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -636,7 +638,8 @@ function draw(now) {
     ctx.restore();
   }
 
-  rig.draw(ctx, pose, { origin: { x: box.x, y: box.y }, scale, facing, alpha: s.opacity });
+  // Virais: cópias do JoJo e pixel art só durante a animação; senão é o desenho de sempre.
+  desenharComVirais(rig, ctx, pose, sample, { origin: { x: box.x, y: box.y }, scale, facing, alpha: s.opacity });
 
   fxSpace();
   const mark = sample.flags.mark && (reduced || (sample.t > 0.08 && sample.t < 0.92)) ? sample.flags.mark : null;

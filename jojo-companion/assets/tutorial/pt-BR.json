@@ -883,6 +883,30 @@
           }
         }
       ]
+    },
+    {
+      "id": "animacoesVirais",
+      "titulo": "Minhas animações virais",
+      "grupo": "Utilidades",
+      "comandos": [],
+      "configuracoes": [
+        "viraisAtivo",
+        "viraisFrequencia",
+        "viraisIntensidade",
+        "viraisAdulto",
+        "viraisNegro",
+        "viraisReduzir",
+        "viraisBloqueadas"
+      ],
+      "passos": [
+        {
+          "texto": "Tenho 50 animações de meme feitas do meu jeito: Maxwell, Oiia, GigaChad, O Conselho, Coffin Dance e por aí vai. Elas aparecem em momentos reais: jogo aberto, derrota no mini-jogo, Instagram, fim do Modo Trabalho, hora de comer. Escreve o nome de um meme pra ver.",
+          "tente": "absolute cinema"
+        },
+        {
+          "texto": "Nas Configurações, em Animações virais, você liga ou desliga tudo, escolhe frequência e intensidade, tira o humor adulto ou o negro, reduz os efeitos e bloqueia as que não quiser. No Modo Trabalho, no foco e em tela cheia eu nunca faço."
+        }
+      ]
     }
   ]
 }
