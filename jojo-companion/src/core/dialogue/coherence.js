@@ -249,6 +249,8 @@ export function erroDeCoerencia(input, output, history = []) {
   const contado = norm([input, ...history.map((h) => h.text)].join(' '));
   const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura|trabalheira)\b/g) || []).find((w) => !contado.includes(w));
   if (inventado) return `inventou fato da vida dela (${inventado})`;
+  // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
+  if (/\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(r) && !history.some((h) => h.role === 'jojo' || h.role === 'assistant')) return 'inventou conversa que não houve';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);

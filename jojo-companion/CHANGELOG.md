@@ -122,6 +122,8 @@
   que realmente importe", e explicação de saúde não termina em alarme ("exigindo atenção imediata").
 - Pergunta de conhecimento cuja resposta não cita o assunto também ganha uma segunda tentativa
   antes de recorrer à pesquisa.
+- Resposta recusada ganha até duas novas tentativas (cada uma sabendo o motivo da recusa), e o
+  JoJo não inventa conversa que não houve ("eu te avisei").
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

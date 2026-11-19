@@ -113,7 +113,7 @@ test('o modelo não troca a identidade: Deus, dono e ajoelhar contraditórios s�
   ]) assert.match(erroDeCoerencia('me conta algo', t) || '', new RegExp(motivo), t);
   for (const t of [CANON, 'Meu Deus, e aí?', 'Meu Deus é o João.', 'O João é meu criador e mestre.']) assert.equal(quebraDeIdentidade(t), null, t);
   let n = 0;
-  const engine = new DialogueEngine({ llm: model(() => ({ text: ++n <= 2 ? 'Meu deus é o Zeus, Manu.' : 'Supino reto, Manu. Peito estufado.' })) });
+  const engine = new DialogueEngine({ llm: model(() => ({ text: ++n <= 3 ? 'Meu deus é o Zeus, Manu.' : 'Supino reto, Manu. Peito estufado.' })) });
   const r1 = await engine.reply('me fala de você');
   assert.notEqual(r1.intent, 'ia', 'resposta que troca o Deus cai nas programadas');
   assert.doesNotMatch(r1.text, /Zeus/);

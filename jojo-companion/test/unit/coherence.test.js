@@ -32,13 +32,13 @@ test('voz seca não insulta a usuária ou sua pergunta e rejeição não se pass
   }
   for (const text of ['Tenho pernas. Os bíceps não são enfeite.', 'Que pergunta idiota eu fiz.', 'Eu sou um tubarão idiota de desenho.']) assert.equal(erroDeCoerencia(input, text), null, text);
   let calls = 0;
-  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls <= 2 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
+  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls <= 3 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
   const rejected = await engine.reply(input);
   assert.notEqual(rejected.intent, 'ia'); assert.doesNotMatch(rejected.text, /idiota/);
   assert.equal(engine.llmPauseUntil, 0);
   const accepted = await engine.reply(input);
-  // Duas gerações ruins seguidas (a segunda tentativa também falhou) → programadas.
-  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 3);
+  // Três gerações ruins seguidas (as tentativas extras também falharam) → programadas.
+  assert.equal(accepted.intent, 'ia'); assert.equal(calls, 4);
   assert.equal(engine.history.some(h => h.role !== 'user' && /idiota/.test(h.text)), false);
 });
 
@@ -384,13 +384,13 @@ test('perguntas e sintomas não são engolidos por palavras de ações ou de tri
 
 test('resposta semanticamente inválida é descartada sem pausar o modelo para a mensagem seguinte', async () => {
   let calls = 0;
-  const e = new DialogueEngine({ llm: model(async () => (++calls <= 2 ? { text: 'Você vai morrer se não fizer algo.' } : { text: 'Agora sim. Como foi teu dia?', action: 'curious' })) });
+  const e = new DialogueEngine({ llm: model(async () => (++calls <= 3 ? { text: 'Você vai morrer se não fizer algo.' } : { text: 'Agora sim. Como foi teu dia?', action: 'curious' })) });
   const a = await e.reply('oi');
   assert.doesNotMatch(a.text, /vai morrer/);
   assert.equal(e.llmPauseUntil, 0);
   const b = await e.reply('e você?');
   assert.equal(b.intent, 'ia');
-  assert.equal(calls, 3);
+  assert.equal(calls, 4);
   assert.equal(erroDeCoerencia('Meu chefe mudou o prazo', 'O João resolve.'), 'João fora do assunto');
   assert.equal(erroDeCoerencia('quero morrer', 'Fale com João e CVV 188.'), null);
   assert.equal(erroDeCoerencia('você está bem?', 'Tudo bem. E você, JoJo?'), 'identidades trocadas');
@@ -730,4 +730,16 @@ test('run 244: pergunta de conhecimento sem o assunto na resposta ganha segunda 
   assert.equal(pedidos[1], 'não citou o assunto da pergunta no começo');
   assert.equal(r.intent, 'ia');
   assert.match(r.text, /diabetes tipo 2/);
+});
+
+test('run 245: "eu te avisei" sem conversa anterior é memória inventada; até três gerações', async () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Eu te avisei que ele não tem controle.'), 'inventou conversa que não houve');
+  assert.equal(erroDeCoerencia('E aí?', 'Eu te disse: supino primeiro.', [{ role: 'jojo', text: 'Supino primeiro.' }]), null);
+  const pedidos = [];
+  const respostas = ['Que droga, Manu? Isso é ridículo, eu te disse que ele não confiaria em você!', 'Que droga, Manu! Isso é ridículo. Vamos resolver.', 'Que droga, Manu! Chefe mudando prazo toda hora cansa. Respira e reorganiza a entrega.'];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: respostas[pedidos.length - 1] }; } };
+  const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
+  assert.equal(pedidos.length, 3);
+  assert.deepEqual(pedidos, ['', 'inventou conversa que não houve', 'não falou do que ela contou']);
+  assert.match(r.text, /Chefe mudando prazo/);
 });

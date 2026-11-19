@@ -124,6 +124,8 @@ export class DialogueEngine {
         // Resposta incoerente ganha uma segunda geração antes de cair na fala programada.
         let out;
         let corrigir = '';
+        // Até três gerações: a primeira e mais duas, cada uma sabendo por que a anterior foi recusada.
+        const ULTIMA = 2;
         for (let tentativa = 0; ; tentativa++) {
           const controller = new AbortController();
           this.pendingGeneration = controller;
@@ -132,7 +134,7 @@ export class DialogueEngine {
             r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal, ...(corrigir ? { corrigir } : {}) }), budget, () => controller.abort());
           } catch (e) {
             // Fora do personagem (assistente, pudor, "desculpas"...): também ganha a segunda tentativa.
-            if (e.respostaInvalida && tentativa === 0 && !e.cancelled) {
+            if (e.respostaInvalida && tentativa < ULTIMA && !e.cancelled) {
               this.log('warn', `IA: ${e.message}; gerando de novo.`);
               corrigir = e.message;
               continue;
@@ -147,12 +149,12 @@ export class DialogueEngine {
           out.text = polirTexto(out.text, { fontes: achado?.fontes?.length || 0 });
           let incoerente = erroDeCoerencia(input, out.text, this.history.slice(0, -1));
           // Ela contou algo dela ("meu chefe mudou o prazo"): a resposta tem de falar disso.
-          // Na segunda tentativa vale a resposta (é do assunto da conversa, melhor que a programada).
-          if (!incoerente && tentativa === 0 && relatoSemAssunto(input, out.text)) incoerente = 'não falou do que ela contou';
+          // Na última tentativa vale a resposta (é do assunto da conversa, melhor que a programada).
+          if (!incoerente && tentativa < ULTIMA && relatoSemAssunto(input, out.text)) incoerente = 'não falou do que ela contou';
           // Pergunta de conhecimento: a primeira resposta que não cita o assunto também ganha outra chance.
-          if (!incoerente && tentativa === 0 && (achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) incoerente = 'não citou o assunto da pergunta no começo';
+          if (!incoerente && tentativa < ULTIMA && (achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) incoerente = 'não citou o assunto da pergunta no começo';
           if (!incoerente) break;
-          if (tentativa === 0) {
+          if (tentativa < ULTIMA) {
             this.log('warn', `IA: ${incoerente}; gerando de novo.`);
             corrigir = incoerente;
             continue;
