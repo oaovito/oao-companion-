@@ -88,7 +88,10 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
   if (entry.status !== 'passed') {
     if (optional) { console.log(`${id}: diagnostico opcional falhou; log preservado`); return; }
     // O arquivo ja foi filtrado por execute; manter a causa visivel mesmo sem artefato CI.
-    console.error(fs.readFileSync(log, 'utf8').split('\n').filter(line => !/^JOJO_CONVERSATION_(REPORT|PREVIEW):/.test(line)).slice(-80).join('\n'));
+    const linhas = fs.readFileSync(log, 'utf8').split('\n').filter(line => !/^JOJO_(CONVERSATION_(REPORT|PREVIEW)|TASKS_PREVIEW):/.test(line));
+    // Bloco de cada teste que falhou (o tail de 80 linhas mostra só os últimos testes).
+    linhas.forEach((line, i) => { if (/^\s*not ok \d+/.test(line)) console.error(linhas.slice(i, i + 40).join('\n')); });
+    console.error(linhas.slice(-80).join('\n'));
     throw new Error(`Falha em ${id}; consultar log privado`);
   }
   try {
