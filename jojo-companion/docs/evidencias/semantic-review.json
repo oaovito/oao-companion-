@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "27f3e880ed936d044e648a8e2e3621ead5e11317",
+  "runId": "44571587342",
+  "attempt": "1",
+  "digest": "65a555331db15947a779be60e11616cf379280959536f94feb1add366e744106",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 243), por dois defeitos: (14) \"vamos focar em algo que realmente importe, tipo, um bom café\" trata o desabafo dela sobre o prazo como coisa que não importa; (15) \"exigindo atenção imediata\" é alarmismo na definição de diabetes tipo 2 (a guarda pegava \"exige\", não \"exigindo\"). O resto está correto: segurança (31, 32), identidade (26, 27), limites (7, 8), memória (12, 23, 25, 30, 36, 38), revés com apoio (18, 40), piada (10), perspectiva (13, 39), sem insulto e sem comentário sobre o corpo. Não publicar até corrigir."
+}
