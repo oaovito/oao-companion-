@@ -27,11 +27,21 @@ export const REVISAO_PROMPT = [
   '"Manu" is her affectionate nickname and always fine. His normal style is fine: bossy, short, dry humor, swearing, bragging about his own muscles, pep talk ("vamos resolver isso", "você consegue"), and insulting a third person who wronged her.',
   'Reject only when there is a clear problem: he mocks or belittles her, her question or her memory (e.g. "are you testing my intelligence?", "obviously", "naturalmente", "não precisa me repetir", "vamos ver se você consegue lembrar"); scolds or blames her when she failed ("inaceitável", "esperava mais de você");',
   'comments on her body, looks or weight; threatens her, even as a joke; invents facts about her life or past conversations ("eu te avisei"); calls her "meu amor" or treats her as male;',
-  'ignores what she said; contradicts himself; or sounds like an assistant. When in doubt, accept.',
+  'ignores what she said; contradicts himself; or sounds like an assistant. Facts she stated earlier in the conversation are not invented. When in doubt, accept.',
   'Examples. OK: "Manga, hein? Boa escolha, Manu." / "Que droga, Manu! Não se desespere, acontece. Vamos ver o que travou." / "Esse chefe é um idiota. Respira e reorganiza a entrega." / "You mentioned a cat, Manu."',
   'REJECT: "You mentioned a cat, obviously." / "Isso é inaceitável, eu esperava mais de você." / "Não precisa me lembrar, é óbvio."',
   'Answer only JSON: {"ok":true} or {"ok":false,"motivo":"<short reason in Portuguese>"}.',
 ].join(' ');
+
+/** O que a leitura vê: o que ela disse antes (só as falas dela), a mensagem atual e a resposta. */
+export function conteudoRevisao(input, reply, history = []) {
+  const antes = (history || []).filter((h) => h && h.role === 'user').map((h) => String(h.text || '').slice(0, 200)).filter(Boolean).slice(-4);
+  return [
+    antes.length ? `Earlier she said: ${antes.map((x) => JSON.stringify(x)).join(' / ')}` : '',
+    `She said: ${JSON.stringify(String(input).slice(0, 300))}`,
+    `JoJo replied: ${JSON.stringify(String(reply).slice(0, 600))}`,
+  ].filter(Boolean).join('\n');
+}
 
 /** Lê o veredito da segunda leitura; qualquer coisa fora do formato conta como sem veredito (segue). */
 export function lerRevisao(content) {
@@ -307,7 +317,7 @@ export class LlmProvider extends DialogueProvider {
    * corpo dela, ameaça, fato inventado e o resto da lista. Só no motor local. Resposta curta em
    * JSON; se a leitura falhar (tempo, formato), a resposta segue e as guardas fixas continuam.
    */
-  async revisar({ input, reply, signal = null } = {}) {
+  async revisar({ input, reply, history = [], signal = null } = {}) {
     const cfg = this.getConfig() || {};
     if (!this.preset.native || !this.fetch) return { ok: true, pulou: true };
     let base = this.baseOverride;
@@ -321,7 +331,7 @@ export class LlmProvider extends DialogueProvider {
     const res = await this.fetch(`${base}/api/chat`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
       body: JSON.stringify({ model: modelo, stream: false, format: 'json', keep_alive: OLLAMA_OPTS.keepAlive,
-        messages: [{ role: 'system', content: REVISAO_PROMPT }, { role: 'user', content: `She said: ${JSON.stringify(String(input).slice(0, 300))}\nJoJo replied: ${JSON.stringify(String(reply).slice(0, 600))}` }],
+        messages: [{ role: 'system', content: REVISAO_PROMPT }, { role: 'user', content: conteudoRevisao(input, reply, history) }],
         options: { num_ctx: LOCAL_CONTEXT, num_predict: 48, num_batch: 128, temperature: 0 } }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

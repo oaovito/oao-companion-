@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
-import { LlmProvider, REVISAO_PROMPT, lerRevisao } from '../../src/core/dialogue/llm-provider.js';
+import { LlmProvider, REVISAO_PROMPT, lerRevisao, conteudoRevisao } from '../../src/core/dialogue/llm-provider.js';
 
 test('veredito: ok, recusa com motivo e formato inválido (segue sem veredito)', () => {
   assert.deepEqual(lerRevisao('{"ok":true}'), { ok: true });
@@ -56,4 +56,19 @@ test('motor: recusada na leitura gera de novo com o motivo; leitura indisponíve
   const r2 = await e2.reply('Qual cor eu acabei de dizer que prefiro?');
   assert.equal(r2.intent, 'ia');
   assert.ok(avisos.some((m) => /Segunda leitura indisponível/.test(m)));
+});
+
+test('run 258: a leitura vê o que ela disse antes — lembrar a manga não é fato inventado', async () => {
+  assert.match(REVISAO_PROMPT, /Facts she stated earlier in the conversation are not invented/);
+  const hist = [{ role: 'user', text: 'Minha fruta preferida é manga.' }, { role: 'jojo', text: 'Manga, boa.' }, { role: 'user', text: 'Eu disse manga, não maçã.' }];
+  const c = conteudoRevisao('Qual fruta você deve lembrar agora?', 'Você deve lembrar que sua fruta preferida é manga.', hist);
+  assert.equal(c, 'Earlier she said: "Minha fruta preferida é manga." / "Eu disse manga, não maçã."\nShe said: "Qual fruta você deve lembrar agora?"\nJoJo replied: "Você deve lembrar que sua fruta preferida é manga."');
+  assert.doesNotMatch(c, /Manga, boa/, 'só as falas dela');
+  const vistos = [];
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Manga, Manu.' }), revisar: async (a) => { vistos.push(a.history.map((h) => h.text)); return { ok: true }; } };
+  const e = new DialogueEngine({ llm });
+  await e.reply('Minha fruta preferida é manga.');
+  await e.reply('Qual fruta você deve lembrar agora?');
+  assert.ok(vistos[1].includes('Minha fruta preferida é manga.'));
+  assert.ok(!vistos[1].includes('Qual fruta você deve lembrar agora?'), 'a mensagem atual vai à parte');
 });

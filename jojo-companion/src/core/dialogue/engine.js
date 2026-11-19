@@ -160,7 +160,7 @@ export class DialogueEngine {
           // Segunda leitura: o próprio modelo relê a resposta contra as diretrizes (pedido de 19/11/2026).
           if (!incoerente && this.llm.revisar) {
             try {
-              const rev = await withTimeout(this.llm.revisar({ input, reply: out.text }), REVISAO_MS);
+              const rev = await withTimeout(this.llm.revisar({ input, reply: out.text, history: this.history.slice(0, -1).slice(-8) }), REVISAO_MS);
               if (rev && rev.ok === false) incoerente = `segunda leitura: ${rev.motivo}`;
             } catch (e) {
               this.log('warn', `Segunda leitura indisponível (${e.message}); valem as guardas fixas.`);
