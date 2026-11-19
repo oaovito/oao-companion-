@@ -144,6 +144,10 @@ test('evidências CI: destino público, branch existente e erro remoto falham se
     await assert.rejects(evidence.writeConversation(conversation()), error => !error.message.includes(token));
     assert.equal(remote.calls.some(c => c.method === 'PUT'), false);
   }
+  // Público só com autorização explícita: cria a branch e segue para a revisão.
+  const pub = server({ privateRepo: false }), autorizado = createPrivateEvidence({ ...metadata, fetch: pub.fetch, permitirPublico: true });
+  await autorizado.writeConversation(conversation());
+  assert.equal(pub.calls.some(c => c.method === 'PUT'), true);
   const broken = createPrivateEvidence({ ...metadata, fetch: async () => { throw new Error(`Authorization: Bearer ${token}`); } });
   await assert.rejects(broken.writeConversation(conversation()), error => /falha de rede/.test(error.message) && !error.message.includes(token));
 });

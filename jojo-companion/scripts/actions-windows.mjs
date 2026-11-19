@@ -104,7 +104,9 @@ async function step(id, command, commandArgs, minutes = 10, check = null, stepEn
 try {
   for (const name of fs.readdirSync(summary)) if (name !== 'validation.json') fs.rmSync(path.join(summary, name), { recursive: true, force: true });
   save();
-  const evidence = createPrivateEvidence({ commit, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, token: process.env.GITHUB_TOKEN });
+  const politica = JSON.parse(fs.readFileSync(path.join(root, 'ci/actions-cost-policy.json'), 'utf8'));
+  const permitirPublico = typeof politica.evidenciaEmRepositorioPublico === 'string' && politica.evidenciaEmRepositorioPublico.trim().length > 0;
+  const evidence = createPrivateEvidence({ commit, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, token: process.env.GITHUB_TOKEN, permitirPublico });
   report.evidence = { branch: evidence.branch, conversationPath: evidence.conversationPath, validationPath: evidence.validationPath, reviewPath: evidence.reviewPath }; save();
   for (const name of ['conversa-real-windows.json', 'conversa-interface-windows.json', 'conversa-interface-windows.png']) fs.rmSync(path.join(app, 'out', name), { force: true });
   await step('preflight', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', '../ci/preflight-windows.ps1'], 1);

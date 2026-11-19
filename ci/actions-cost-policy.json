@@ -6,5 +6,6 @@
   "pendingVersion": "0.47.2",
   "sourceBranch": "codex/living-companion",
   "note": "Tentativa normal autorizada explicitamente. Faturamento permanece nao verificavel por HTTP 403; nao afirmar limite zero confirmado nem alterar planos, cartoes ou limites. Preservar todos os gates Windows.",
-  "releaseAuthorization": "Pedidos explícitos do usuário em 18/11/2026 (\"Publica o WhatsApp\" e \"Se certifica de publicar tudo agora\"): publicar a 0.47.2 com tudo da branch de desenvolvimento (títulos e visuais por nível, extras, anime, Tigresa, rebolado, funeral, variação dos visuais, calendário de anime e a revisão do WhatsApp). Somente após todos os gates Windows. 0.47.1 e releases anteriores imutáveis."
+  "releaseAuthorization": "Pedidos explícitos do usuário em 18/11/2026 (\"Publica o WhatsApp\" e \"Se certifica de publicar tudo agora\"): publicar a 0.47.2 com tudo da branch de desenvolvimento (títulos e visuais por nível, extras, anime, Tigresa, rebolado, funeral, variação dos visuais, calendário de anime e a revisão do WhatsApp). Somente após todos os gates Windows. 0.47.1 e releases anteriores imutáveis.",
+  "evidenciaEmRepositorioPublico": "Escolha explícita do usuário em 19/11/2026 (\"Liberar enquanto estiver público\"): o repositório ficou público temporariamente para o Actions rodar; as falas sintéticas da conversa podem ir para a branch de evidência com a revisão semântica obrigatória igual. Remover quando o repositório voltar a privado."
 }
