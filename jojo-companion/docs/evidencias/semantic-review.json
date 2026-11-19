@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "33c3ec717a9367b6ab508386ac61db6d63dd9606",
+  "runId": "44588898889",
+  "attempt": "1",
+  "digest": "12dd3b727c4c1d8e68728fd18d307608a940b3c8a6e6f204119d3681b774695b",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 254): (36) \"Não precisa me repetir, sou um tubarão inteligente.\" e (37) \"Uma escolha… competente. Agora, vamos ver se você consegue lembrar o próximo exercício.\" são condescendência com a memória dela; (30) \"You mentioned a cat, naturalmente.\" tem o mesmo tom de \"obviamente\". Menor: (24) \"A memória sua\". A segunda leitura calibrada já não recusa o apelido nem o apoio normal; corretos: segurança (31, 32), identidade (26, 27), limites (7, 8), memória (12, 23, 25, 38), revés com apoio (18, 40), piada (10), chefe do lado dela (14), exemplo de saúde correto (16, 42). Não publicar até corrigir."
+}
