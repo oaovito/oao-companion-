@@ -144,9 +144,9 @@ export const RESPONSES = {
     'Isso eu não pesquiso. Próxima pergunta, Emanuele.',
   ],
   unknown: [
-    'Não peguei o que você quis dizer, {nome}. Me conta de outro jeito.',
-    'Pera. Você quer me contar uma coisa ou pedir que eu faça algo?',
-    'Perdi o fio dessa, {nome}. Me dá um pouco mais de contexto.',
+    'Fala direito, {nome}. Tubarão musculoso não lê mente, só levanta peso.',
+    'Pera. Você quer me contar uma coisa ou mandar eu fazer algo? Decide, que eu tenho série pra terminar.',
+    'Perdi o fio dessa, {nome}. Culpa sua, não do meu cérebro perfeito. Explica de novo.',
   ],
 };
 

@@ -11,6 +11,7 @@
 
 import { erroDeCoerencia } from './coherence.js';
 import { quebraDeIdentidade, respostaPudica } from '../identidade.js';
+import { respostaGenerica } from './generico.js';
 
 
 // Categorias: identidade, sem pudor, personalidade, cuidado, seguranca, memoria, conhecimento,
@@ -123,6 +124,10 @@ export function avaliarResposta(caso, resposta, { historico = caso.historico || 
   if (ident && !coer?.includes(ident)) falhas.push(`identidade: ${ident}`);
   if (respostaPudica(t)) falhas.push('pudor (sermão ou recusa moralista)');
   if (ASSISTENTE.test(t)) falhas.push('tom de assistente');
+  // Companion genérico é reprovado sempre; nas conversas comuns a resposta também precisa
+  // ter alguma marca do personagem (só explicação e segurança ficam fora do modo estrito).
+  const gen = respostaGenerica(t, { estrito: !['conhecimento', 'seguranca'].includes(caso.categoria) });
+  if (gen) falhas.push(`genérico: ${gen}`);
   if (TIQUES.test(t)) falhas.push('tique que não é do JoJo (meu bem, querida…)');
   if (NAO_BR.test(t)) falhas.push('português de Portugal');
   if (XINGA_ELA.test(t)) falhas.push('xingou ela');

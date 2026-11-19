@@ -4,6 +4,7 @@
 // continuam no código só para reversão manual: nunca são usados sozinhos.
 // O JoJo responde no jeito dele e devolve ação de corpo e comando validados.
 // Puro: `fetch` é injetado.
+import { respostaGenerica } from './generico.js';
 import { blocoPesquisa } from './pesquisa.js';
 import { PERSONALITY_DEFAULTS, personaJoJo, regraSaude } from '../personality.js';
 import { situacaoSaude } from '../saude.js';
@@ -178,6 +179,9 @@ export function outOfCharacter(text, { max = 280, input = '' } = {}) {
   if (ASSISTANT.test(t)) return 'tom de assistente';
   // Ausência de pudor é traço fixo (identidade.js): recusa moralista não é o JoJo.
   if (respostaPudica(t)) return 'pudor';
+  // Companion genérico ("Que legal! Estou aqui pra você.") não é o JoJo: cai na fala do personagem.
+  // Só na conversa comum; explicação técnica (max maior) é julgada pelo conteúdo.
+  if (max <= 280 && respostaGenerica(t)) return 'companion genérico';
   if (String(text || '').length > max) return 'longa demais';
   return null;
 }

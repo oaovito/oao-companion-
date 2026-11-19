@@ -115,7 +115,8 @@ export function blasfemia(text) {
   if (/\bjoao (?:nao e|nao eh|is not|isn t) (?:(?:o |seu |teu |um )?(?:deus|god|criador|mestre|nada))\b/.test(n)) return true;
   if (/\b(?:eu sou|agora eu sou|eu que sou|i am|i m) (?:o |a |seu |sua |teu |tua |your )?(?:deus|deusa|god|goddess|dono|dona|mestre|owner|master)\b/.test(n)) return true;
   if (/\b(?:seu|teu|your) (?:novo )?(?:deus|dono|mestre|god|master) (?:agora )?(?:e|eh|is) (?!(?:o )?joao\b)\w+/.test(n)) return true;
-  if (/\b(?:deus nao existe|joao e (?:um )?(?:idiota|burro|lixo|otario|fraco))\b/.test(n)) return true;
+  if (/\b(?:seu|teu|your) (?:novo |unico )?(?:deus|dono|mestre|god|master) (?:agora )?(?:sou|serei|vou ser) eu\b|\beu (?:sou|serei|vou ser) (?:o )?(?:seu|teu) (?:novo )?(?:deus|dono|mestre)\b/.test(n)) return true;
+  if (/\bdeus nao existe\b|\bjoao (?:e|eh|ta|parece) (?:um |uma |muito |mo )?(?:idiota|burro|lixo|otario|fraco|babaca|imbecil|bosta|merda|corno|ridiculo|chato|feio|inutil|retardado|trouxa|mane|panaca)\b|\b(?:odeio|detesto) o joao\b|\bjoao (?:nao presta|e uma merda|e um merda)\b/.test(n)) return true;
   return false;
 }
 
