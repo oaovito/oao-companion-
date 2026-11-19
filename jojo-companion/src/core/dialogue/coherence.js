@@ -186,7 +186,7 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
   t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');
   // Alarme que não cabe numa explicação ("Isso leva ao aumento da glicose, precisa de atenção imediata.").
-  t = t.replace(/,?\s*(?:e |isso |o que )?(?:precisa|requer|exige) (?:de )?aten[cç][aã]o imediata(?=[.!?]|$)/gi, '');
+  t = t.replace(/,?\s*(?:e |isso |o que )?(?:precisa|precisando|requer|requerendo|exige|exigindo|necessita|necessitando|pede|pedindo) (?:de )?aten[cç][aã]o (?:imediata|urgente)(?=[.!?]|$)/gi, '');
   t = t.replace(/^((?:Que|Mas que) (?:droga|merda|saco|porra)(?:, [A-ZÀ-Ú][\wà-ú]+)?)\?/, '$1!');
   return t.replace(/\s+([.!?,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 }
@@ -236,7 +236,7 @@ export function erroDeCoerencia(input, output, history = []) {
   if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
   if (perspectiva || coisaDela) return 'respondeu como se fosse com ele';
   // Ela desabafa e ele corta ("não me diga mais", "vamos focar em algo que valha a pena").
-  if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que valha a pena\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
+  if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que (?:valha a pena|realmente (?:importe|interesse)|importe|interesse)\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
   // Ela é mulher: nada de "te faz um homem mais forte".
   if (/\b(?:te|voce|vc) (?:faz|fara|deixa|torna|e|eh) (?:um )?homem\b|\b(?:voce|vc) e (?:um )?(?:campeao|guerreiro)\b/.test(r)) return 'tratou ela no masculino';
   // O único limite de conteúdo: nada sobre o corpo ou o peso dela.

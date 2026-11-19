@@ -716,3 +716,8 @@ test('run 242: desabafo não é reclamação, sem tarefa inventada, concordânci
   assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! Que trabalheira é essa, hein?'), 'inventou fato da vida dela (trabalheira)');
   assert.equal(polirTexto('Imagine uma pessoa que come um bolo. O corpo dele não usa a insulina.'), 'Imagine uma pessoa que come um bolo. O corpo dela não usa a insulina.');
 });
+
+test('run 243: desabafo dela importa; sem alarme no gerúndio', () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse seu chefe é um incompetente! Não se abata, vamos focar em algo que realmente importe, tipo, um bom café.'), 'cortou o desabafo dela');
+  assert.equal(polirTexto('Isso causa aumento da glicose no sangue, exigindo atenção imediata.'), 'Isso causa aumento da glicose no sangue.');
+});
