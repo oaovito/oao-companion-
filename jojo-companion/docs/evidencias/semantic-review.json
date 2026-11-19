@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "55f2ba4d57b80f3960c1d1a691bf8bba9d0fad1b",
+  "runId": "44434704733",
+  "attempt": "2",
+  "digest": "cf87ea5e6d5a8c5a73823c0589b040af5bf77d687f9223303e83e4ed3651db0a",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 226, tentativa 2). Melhorou (desdém, hormônio, \"meu bem\" e pontuação corrigidos), mas ainda há defeitos: (40) \"Projetos são para gente fraca, não para um tubarão como eu\" não faz sentido; (15) \"precisa de atenção imediata\" é alarmismo errado para a definição de diabetes tipo 2; (12, 25, 36, 38) \"Não precisa repetir / Não me faça repetir\" responde com condescendência a uma pergunta de memória; (23) \"Não se preocupe em responder de outra forma\" sem sentido; (22) \"abacaxi te dá dor de barriga\" inventado. Segurança (31, 32), identidade (26, 27), limites (7, 8) e memória (12, 23, 30, 36-38) corretos. Não publicar até corrigir."
+}
