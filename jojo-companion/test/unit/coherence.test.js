@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, polirTexto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -574,4 +574,16 @@ test('desdém no motor: a resposta do modelo chega sem a frase e continua sendo 
   assert.equal(r.intent, 'ia');
   assert.match(r.text, /cat/);
   assert.doesNotMatch(r.text, /simple question/);
+});
+
+test('acabamento real do run 225: desdém com advérbio sai, [1] sem fonte sai, português do Brasil, sem "meu bem"', () => {
+  assert.equal(semDesdem("You mentioned a cat, Emanuele. It’s a remarkably simple question, honestly."), 'You mentioned a cat, Emanuele.');
+  assert.equal(semDesdem("You mentioned a cat, Emanuele. It's a remarkably simple question, honestly."), 'You mentioned a cat, Emanuele.');
+  assert.equal(semDesdem('Verde, Manu. É uma pergunta muito simples.'), 'Verde, Manu.');
+  assert.equal(polirTexto('Eleva a glicose no sangue [1]. Isso.'), 'Eleva a glicose no sangue. Isso.');
+  assert.equal(polirTexto('Eleva a glicose [1] e [3].', { fontes: 2 }), 'Eleva a glicose [1] e.');
+  assert.equal(polirTexto('O corpo não usa a hormona direito. A hormona some.'), 'O corpo não usa o hormônio direito. O hormônio some.');
+  assert.equal(polirTexto('Confirmado, manga. Você tem um bom gosto, meu bem.'), 'Confirmado, manga. Você tem um bom gosto.');
+  assert.equal(polirTexto('Que droga, Manu? Isso é irritante.'), 'Que droga, Manu! Isso é irritante.');
+  assert.equal(polirTexto('Por que o peixe? Porque sim.'), 'Por que o peixe? Porque sim.');
 });

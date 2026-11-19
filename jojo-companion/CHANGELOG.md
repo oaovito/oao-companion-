@@ -100,6 +100,9 @@
 - Conversa: quando o JoJo acerta a resposta mas emenda uma frase de desdém ("It's a simple
   question", "não precisa perguntar de novo"), sai só essa frase e a resposta certa fica, em
   vez de cair na resposta programada.
+- Acabamento das respostas da conversa: some também o desdém com advérbio ("a remarkably
+  simple question", "é uma pergunta muito simples"), o marcador [1] quando não há fonte de
+  verdade, palavra de Portugal ("a hormona" vira "o hormônio") e o "meu bem".
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,
