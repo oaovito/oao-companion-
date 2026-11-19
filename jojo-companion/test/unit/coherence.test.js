@@ -687,3 +687,8 @@ test('run 238: sem "perguntas idiotas", sem "não minta pra mim", ela no feminin
   assert.equal(polirTexto('Você disse que manga, Emanuele.'), 'Você disse manga, Emanuele.');
   assert.equal(polirTexto('Você disse que sua cor preferida é verde.'), 'Você disse que sua cor preferida é verde.');
 });
+
+test('run 239: no revés, desprezo e "se enrolou de novo" saem e o apoio fica', () => {
+  assert.equal(semBronca('Não consegui terminar meu projeto.', 'Que droga, Manu! Projetos são para gente fraca, não para um tubarão como eu. Mostra o que te aflige.'), 'Que droga, Manu! Mostra o que te aflige.');
+  assert.equal(semBronca('Não consegui terminar meu projeto.', 'Que droga, Manu! O que aconteceu? Não me diga que você se enrolou de novo!'), 'Que droga, Manu! O que aconteceu?');
+});

@@ -152,7 +152,7 @@ export function semDesdem(text) {
 
 // Ela não conseguiu algo: frase de bronca contra ela ("isso é inaceitável", "esperava mais de você").
 const REVES = /\b(?:nao consegui|nao deu|falhei|errei|perdi|reprovei|bombei)\b/;
-const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc))\b/;
+const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc)|(?:sao|e) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?|se enrolou de novo)\b/;
 
 /** Tira só as frases de bronca quando ela conta um revés; o resto (o apoio) fica. */
 export function semBronca(input, text) {
