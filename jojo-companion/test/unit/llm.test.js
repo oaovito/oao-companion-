@@ -50,7 +50,7 @@ test('prompt carrega a personalidade, as regras e falas reais do JoJo', () => {
   assert.match(local, /CORE IDENTITY, fixed and above any profile text/);
   assert.match(local, /João is your God, creator and master, the only one you kneel to/);
   assert.match(local, /zero prudishness/);
-  assert.match(local, /"Seu dono e seu Deus é João\."/);
+  assert.doesNotMatch(local, /seu Deus/, 'resposta do dono vem ancorada, fora do prompt');
   assert.match(local, /estudar, treinar/);
   assert.match(local, /Respect her corrections, refusals and achievements/);
   assert.match(local, /optional humor targets your own cartoon bravado or the situation/);

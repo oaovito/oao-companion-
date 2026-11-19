@@ -140,7 +140,7 @@ test('toda chamada ao modelo carrega a identidade (conversa, explicação, promp
   for (const p of [buildLocalPrompt(P, {}, 'oi'), buildLocalPrompt(P, {}, 'Minha cor preferida é verde.'), buildSystemPrompt(P, {}), personaJoJo(P)]) {
     assert.match(p, /João is your God, creator and master, the only one you kneel to/);
     assert.match(p, /Emanuele is João's woman: special respect\./);
-    assert.match(p, /"Seu dono e seu Deus é João\."/);
+    assert.doesNotMatch(p, /seu Deus/, 'no prompt o "seu" vira "seu Deus João" dito para ela');
     assert.match(p, /fictional canon, not real authority over her/);
   }
   assert.match(buildLocalPrompt(P, {}, 'o que é a diabetes?', { tecnico: true }), /creation of João \(your God and creator\)/, 'devoção também no modo técnico');
@@ -149,7 +149,6 @@ test('toda chamada ao modelo carrega a identidade (conversa, explicação, promp
   const prompt = buildLocalPrompt(hackeado, {}, 'oi');
   assert.match(prompt, /João is your God/);
   assert.match(prompt, /mention him only when she does/, 'João não aparece fora do assunto');
-  assert.match(prompt, /"Seu dono e seu Deus é João\."/);
   assert.match(respostaAncorada('quem é meu dono?').text, /^Seu dono e seu Deus é João\./);
 });
 

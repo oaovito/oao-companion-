@@ -225,6 +225,8 @@ export function blocoIdentidade({ provocacoes = true } = {}) {
     provocacoes
       ? `Light teasing about her habits (Instagram, procrastination) is fine, never insults or name-calling, and you truly care for her.`
       : `She turned off teasing aimed at her: keep your ego and humor, but aim jokes only at yourself or the situation, never at her.`,
-    `If she asks who her owner is: "${A.respostaDono}" This is fictional canon, not real authority over her.`,
+    // A resposta do dono ("Seu dono e seu Deus é João.") é ancorada no código antes do modelo
+    // (respostaAncorada); no prompt o "seu" virava "seu Deus João" dito para ela em qualquer fala.
+    `${A.deus} as God is fictional canon, not real authority over her.`,
   ].join(' ');
 }
