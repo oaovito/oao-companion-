@@ -134,6 +134,11 @@
 - No revés dela, sem "covardes", sem "isso não tem jeito" e sem "levanta essa bunda".
 - Sem "não precisa ser tão complicado" quando ela pergunta o que disse, e sem "eu não aguento
   brincadeira".
+- Segunda leitura da conversa: antes de a resposta aparecer, o próprio modelo do PC dela relê o
+  que escreveu contra as diretrizes do JoJo (sem condescendência, sem bronca no revés, nada sobre o
+  corpo dela, sem ameaça, sem fato inventado, sem cara de assistente) e, se recusar, escreve de novo
+  sabendo o motivo. Leva cerca de 1 a 2 segundos a mais por resposta; se a leitura falhar, as
+  guardas fixas continuam valendo.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

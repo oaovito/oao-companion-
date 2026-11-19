@@ -15,6 +15,9 @@ const SCRIPTED_ONLY = new Set(['crisis', 'distress', 'sad', 'avcReal', 'avc', 'p
 // Pausa da IA depois de uma falha: as próximas mensagens respondem na hora.
 const LLM_PAUSE_MS = 90e3;
 
+// Tempo máximo da segunda leitura; passou disso, a resposta segue com as guardas fixas.
+const REVISAO_MS = 15000;
+
 export class DialogueEngine {
   /**
    * @param search pesquisa na internet (WebSearch) para perguntas sem resposta
@@ -154,6 +157,15 @@ export class DialogueEngine {
           if (!incoerente && tentativa < ULTIMA && relatoSemAssunto(input, out.text)) incoerente = 'não falou do que ela contou';
           // Pergunta de conhecimento: a primeira resposta que não cita o assunto também ganha outra chance.
           if (!incoerente && tentativa < ULTIMA && (achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) incoerente = 'não citou o assunto da pergunta no começo';
+          // Segunda leitura: o próprio modelo relê a resposta contra as diretrizes (pedido de 19/11/2026).
+          if (!incoerente && this.llm.revisar) {
+            try {
+              const rev = await withTimeout(this.llm.revisar({ input, reply: out.text }), REVISAO_MS);
+              if (rev && rev.ok === false) incoerente = `segunda leitura: ${rev.motivo}`;
+            } catch (e) {
+              this.log('warn', `Segunda leitura indisponível (${e.message}); valem as guardas fixas.`);
+            }
+          }
           if (!incoerente) break;
           if (tentativa < ULTIMA) {
             this.log('warn', `IA: ${incoerente}; gerando de novo.`);

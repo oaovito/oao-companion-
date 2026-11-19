@@ -21,6 +21,26 @@ export const OLLAMA_OPTS = Object.freeze({
   keepAlive: LOCAL_KEEP_ALIVE, // modelo carregado entre mensagens; depois sai da RAM
 });
 
+/** Diretrizes da segunda leitura: o que recusa e o que é o jeito do JoJo (pode). */
+export const REVISAO_PROMPT = [
+  'You review one reply from JoJo, a bossy, dry-humored cartoon bodybuilder shark, to Emanuele, a real woman who is his user.',
+  'Reject the reply if it: is condescending or sarcastic toward her, or mocks her, her question or her memory; scolds, blames or calls her weak when she failed;',
+  'comments on her body, looks or weight; threatens her, even as a joke; invents facts about her life or past conversations; calls her "meu amor" or treats her as male;',
+  'does not answer what she said; contradicts itself; or sounds like an assistant.',
+  'Fine: swearing, dry humor, bragging about his own muscles, short answers, and insulting a third person who wronged her.',
+  'Answer only JSON: {"ok":true} or {"ok":false,"motivo":"<short reason in Portuguese>"}.',
+].join(' ');
+
+/** Lê o veredito da segunda leitura; qualquer coisa fora do formato conta como sem veredito (segue). */
+export function lerRevisao(content) {
+  try {
+    const j = JSON.parse(String(content || '').replace(/^```(?:json)?\s*|\s*```$/g, ''));
+    if (j && j.ok === false) return { ok: false, motivo: String(j.motivo || 'recusada na segunda leitura').slice(0, 120) };
+    if (j && j.ok === true) return { ok: true };
+  } catch { /* sem veredito */ }
+  return { ok: true, pulou: true };
+}
+
 /** Pergunta técnica (ciência, medicina, MNE_Lab…) pede contexto e resposta maiores. */
 export function isTechnical(text) {
   return /\b(dls|nta|zeta|pdi|nanopart\w*|nano\w*|anova|estat[ií]stic\w*|fisiopatolog\w*|farmac\w*|diagn[oó]stic\w*|hemograma|exame|sintoma\w*|mecanismo|mne_?lab|lightscattering|nanobrook|explica|por que|como funciona)\b/i.test(String(text || ''));
@@ -277,6 +297,34 @@ export class LlmProvider extends DialogueProvider {
         keep_alive: OLLAMA_OPTS.keepAlive, options: { ...OLLAMA_OPTS.curto, num_predict: 1, temperature: 0.3 } }),
     });
     return !!res.ok;
+  }
+
+  /**
+   * Segunda leitura (pedido do usuário, 19/11/2026): antes de a resposta aparecer, o próprio
+   * modelo relê o que escreveu contra as diretrizes do JoJo e recusa condescendência, bronca,
+   * corpo dela, ameaça, fato inventado e o resto da lista. Só no motor local. Resposta curta em
+   * JSON; se a leitura falhar (tempo, formato), a resposta segue e as guardas fixas continuam.
+   */
+  async revisar({ input, reply, signal = null } = {}) {
+    const cfg = this.getConfig() || {};
+    if (!this.preset.native || !this.fetch) return { ok: true, pulou: true };
+    let base = this.baseOverride;
+    let modelo = cfg.modelo || OLLAMA_MODEL;
+    if (!base) {
+      if (!this.brain?.pronto?.()) return { ok: true, pulou: true };
+      const p = await this.brain.preparar();
+      base = p.base;
+      modelo = p.modelo;
+    }
+    const res = await this.fetch(`${base}/api/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
+      body: JSON.stringify({ model: modelo, stream: false, format: 'json', keep_alive: OLLAMA_OPTS.keepAlive,
+        messages: [{ role: 'system', content: REVISAO_PROMPT }, { role: 'user', content: `She said: ${JSON.stringify(String(input).slice(0, 300))}\nJoJo replied: ${JSON.stringify(String(reply).slice(0, 600))}` }],
+        options: { num_ctx: LOCAL_CONTEXT, num_predict: 48, num_batch: 128, temperature: 0 } }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const corpo = JSON.parse(await res.text());
+    return lerRevisao(corpo?.message?.content);
   }
 
   async isAvailable() {
