@@ -10111,10 +10111,11 @@
    "fala": "Ô psit! Cuma? Tô aqui, ó.",
    "anim": "memeBr_br06",
    "transforma": {
+    "cabeca": 1.15,
+    "boca": 1.2,
     "pele": {
      "corpo": "#c68c63"
-    },
-    "olhos": "grandes"
+    }
    },
    "fantasia": {
     "tronco": "camisa",
@@ -10161,6 +10162,8 @@
    "fala": "Alô, criançada, o Bozo chegou! E tá bombado.",
    "anim": "memeBr_br07",
    "transforma": {
+    "cabeca": 1.2,
+    "boca": 1.3,
     "pele": {
      "corpo": "#ffe0d0"
     },
@@ -10217,6 +10220,9 @@
    "fala": "Fofão chegou! Bochecha de buldogue e bíceps de aço.",
    "anim": "memeBr_br08",
    "transforma": {
+    "papada": true,
+    "cabeca": 1.25,
+    "boca": 1.2,
     "pele": {
      "corpo": "#d7a26a"
     },
@@ -10379,6 +10385,7 @@
    "fala": "Curupira de guarda: quem segue minhas pegadas vai pro lado errado.",
    "anim": "memeBr_br11",
    "transforma": {
+    "orelhas": "elfo",
     "pele": {
      "corpo": "#8d5a3b"
     },
@@ -10485,11 +10492,11 @@
    "fala": "Perdi a cabeça. Literalmente.",
    "anim": "memeBr_br13",
    "transforma": {
+    "corpo": 1.15,
     "pele": {
      "corpo": "#6d4c41",
      "cabeca": "#6d4c41"
-    },
-    "olhos": "vazios"
+    }
    },
    "fantasia": {
     "tronco": "pelagem",
@@ -10587,6 +10594,7 @@
    "fala": "Pega o menino! E a Manu também, que não estudou.",
    "anim": "memeBr_br15",
    "transforma": {
+    "boca": 1.5,
     "pele": {
      "corpo": "#7cb342",
      "cabeca": "#7cb342"
@@ -10635,6 +10643,9 @@
    "fala": "Tenho um plano infalível! Nada pode dar elado.",
    "anim": "memeBr_br16",
    "transforma": {
+    "cabeca": 1.35,
+    "boca": 0.8,
+    "corpo": 0.85,
     "pele": {
      "corpo": "#f1c9a5"
     },
@@ -10684,6 +10695,9 @@
    "fala": "É pavê ou pra comer? Hahaha. Pavê de whey.",
    "anim": "memeBr_br17",
    "transforma": {
+    "papada": true,
+    "suor": true,
+    "cabeca": 1.1,
     "pele": {
      "corpo": "#e0a882"
     },
@@ -10794,10 +10808,10 @@
    "fala": "Bah, tchê! Treino é que nem chimarrão: todo dia.",
    "anim": "memeBr_br19",
    "transforma": {
+    "barrigona": 1.1,
     "pele": {
      "corpo": "#e0b08a"
-    },
-    "olhos": "semicerrados"
+    }
    },
    "fantasia": {
     "tronco": "camisa",
@@ -11016,10 +11030,11 @@
    "fala": "Levanta, boi! Caprichoso ou Garantido, eu sou o mais forte.",
    "anim": "memeBr_br23",
    "transforma": {
+    "chifres": "diabo",
+    "corChifres": "#fffde7",
     "pele": {
      "corpo": "#b5784f"
-    },
-    "olhos": "brilho"
+    }
    },
    "fantasia": {
     "tronco": "bata",
@@ -11185,6 +11200,7 @@
    "fala": "Rapaaaaz! Que bíceps é esse?",
    "anim": "memeBr_br26",
    "transforma": {
+    "boca": 1.3,
     "pele": {
      "corpo": "#8d6e63",
      "cabeca": "#8d6e63"
@@ -11240,11 +11256,11 @@
    "fala": "Eu sou uma coxinha. Empanada, crocante e fora da dieta.",
    "anim": "memeBr_br27",
    "transforma": {
+    "barrigona": 1.1,
     "pele": {
      "corpo": "#d4892a",
      "cabeca": "#d4892a"
-    },
-    "olhos": "pontos"
+    }
    },
    "fantasia": {
     "tronco": "bata",
@@ -11292,6 +11308,9 @@
    "fala": "Churrasco é sagrado. Picanha mal passada e proteína.",
    "anim": "memeBr_br28",
    "transforma": {
+    "papada": true,
+    "suor": true,
+    "corpo": 1.15,
     "pele": {
      "corpo": "#d79a72"
     },
@@ -11510,6 +11529,7 @@
    "fala": "Seu Creysson vai vencer! Primeiramente, bíceps.",
    "anim": "memeBr_br32",
    "transforma": {
+    "cabeca": 1.2,
     "pele": {
      "corpo": "#d79a72"
     },
@@ -11522,7 +11542,8 @@
     "pes": "sapato",
     "cabeca": "topete",
     "rosto": [
-     "bigode"
+     "dentuco",
+     "oculos"
     ],
     "pescoco": "nenhum",
     "mao": "microfone",
@@ -11564,6 +11585,8 @@
    "fala": "Vou te rogar uma praga! Ah, não deu certo de novo.",
    "anim": "memeBr_br33",
    "transforma": {
+    "orelhas": "elfo",
+    "boca": 1.25,
     "pele": {
      "corpo": "#cfd8dc",
      "cabeca": "#cfd8dc"
@@ -11673,10 +11696,11 @@
    "fala": "Uai, sô! Pão de queijo pós-treino, trem bão.",
    "anim": "memeBr_br35",
    "transforma": {
+    "barrigona": 1.15,
+    "papada": true,
     "pele": {
      "corpo": "#e0b08a"
-    },
-    "olhos": "semicerrados"
+    }
    },
    "fantasia": {
     "tronco": "camisa",
@@ -11729,10 +11753,10 @@
    "fala": "Mermão, olha o mate! Biscoito Globo e shape de praia.",
    "anim": "memeBr_br36",
    "transforma": {
+    "corpo": 1.2,
     "pele": {
      "corpo": "#c07a4a"
-    },
-    "olhos": "semicerrados"
+    }
    },
    "fantasia": {
     "tronco": "tanga",
@@ -11841,7 +11865,8 @@
      "corpo": "#d4892a",
      "cabeca": "#d4892a"
     },
-    "cabeca": 0.8
+    "cabeca": 0.55,
+    "corpo": 1.25
    },
    "fantasia": {
     "tronco": "tanga",
@@ -11943,6 +11968,7 @@
    "fala": "Canarinho Pistola não aceita derrota. NEM VOCÊ.",
    "anim": "memeBr_br40",
    "transforma": {
+    "boca": 1.35,
     "pele": {
      "corpo": "#ffd600",
      "cabeca": "#ffd600"
@@ -12001,6 +12027,8 @@
    "fala": "Panela na cabeça e vento nas orelhas.",
    "anim": "memeBr_br41",
    "transforma": {
+    "cabeca": 1.35,
+    "corpo": 0.85,
     "pele": {
      "corpo": "#f1c9a5"
     },
@@ -12109,11 +12137,13 @@
    "fala": "Hulk do Paraguai: verde-limão, roxo-desbotado e garantia de 3 dias.",
    "anim": "memeBr_br43",
    "transforma": {
+    "suor": true,
+    "papada": true,
     "pele": {
      "corpo": "#76ff03",
      "cabeca": "#76ff03"
     },
-    "corpo": 1.15,
+    "corpo": 1.4,
     "olhos": "pretos"
    },
    "fantasia": {
@@ -12159,6 +12189,8 @@
    "fala": "Tá me achando com cara de otário? Hein? Hein?",
    "anim": "memeBr_br44",
    "transforma": {
+    "barrigona": 1.15,
+    "suor": true,
     "pele": {
      "corpo": "#e0a882"
     },
@@ -12216,6 +12248,8 @@
    "fala": "Tô certo ou tô errado? Tô certo.",
    "anim": "memeBr_br45",
    "transforma": {
+    "papada": true,
+    "barrigona": 1.1,
     "pele": {
      "corpo": "#e0a882"
     },
@@ -12329,6 +12363,7 @@
    "fala": "Ai, que preguiça... mas o supino eu faço.",
    "anim": "memeBr_br47",
    "transforma": {
+    "baba": true,
     "pele": {
      "corpo": "#6d4c41"
     },
@@ -12380,6 +12415,8 @@
    "fala": "Num paga a pena... mas pagar o treino paga.",
    "anim": "memeBr_br48",
    "transforma": {
+    "baba": true,
+    "corpo": 0.85,
     "pele": {
      "corpo": "#d7a86e"
     },
@@ -12496,6 +12533,9 @@
    "fala": "Comi demais e... POW. É isso que acontece, {nome}.",
    "anim": "memeBr_br50",
    "transforma": {
+    "suor": true,
+    "corpo": 1.55,
+    "cabeca": 1.1,
     "pele": {
      "corpo": "#f1c9a5"
     },
@@ -12608,6 +12648,9 @@
    "fala": "Fé em Deus que Ele é justo! Motorista de van não tem medo de nada.",
    "anim": "memeBr_br52",
    "transforma": {
+    "barrigona": 1.2,
+    "papada": true,
+    "suor": true,
     "pele": {
      "corpo": "#e0a882"
     },

@@ -67,6 +67,7 @@ function movimentoVisual(t, anim = '') {
     nvBolhas: -((t * 9) % 16),
     nvBrilho: 0.55 + 0.6 * Math.abs(Math.sin(t * 2.4)),
     nvBrilho2: 0.55 + 0.6 * Math.abs(Math.sin(t * 2.4 + 1.3)),
+    nvChama: 1 + 0.07 * Math.sin(t * 9) + 0.035 * Math.sin(t * 23),
   };
 }
 
@@ -577,12 +578,10 @@ function draw(now) {
   // Animação com fantasia inteira (Tigresa, memes BR): os visuais vestidos saem durante ela,
   // para nada ficar por cima da fantasia nem brigar com a pele do personagem.
   const fantasiaInteira = ehAnimFantasia(sample.name);
-  if (s.visualNivel && !fantasiaInteira) {
-    Object.assign(pose, s.visualNivel);
-    // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
-    // baba estica, aura pulsa, bolhas sobem, brilhos piscam. Parado no movimento reduzido.
-    if (!reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
-  }
+  if (s.visualNivel && !fantasiaInteira) Object.assign(pose, s.visualNivel);
+  // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
+  // baba estica, aura pulsa, bolhas sobem, brilhos piscam, fogo tremula. Parado no movimento reduzido.
+  if ((s.visualNivel || fantasiaInteira) && !reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
   if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);

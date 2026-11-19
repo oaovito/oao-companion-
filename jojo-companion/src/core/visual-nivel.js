@@ -1020,7 +1020,9 @@ export function partesDaPeca(p) {
   if (p.genes && z && !p.fantasia && !FANTASIAS_INTEIRAS.has(p.forma) && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
     lista = lista.map(([gr, id, fill, path, extra]) => [gr, id, fill, path, { ...(extra || {}), fix: [p.genes.escala, p.genes.giro, ...z.pivo] }]);
   }
-  lista = [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
+  // Fantasia inteira: barrigona, papada, sujeira e pintas ficam por cima da roupa (a barriga
+  // escapa da camisa), para a fantasia nunca achatar o corpo do personagem.
+  lista = p.fantasia ? [...lista, ...partesDoCorpo(p.transforma), ...enfeiteDaPeca(p)] : [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
   const out = lista.map(([group, id, fill, path, extra]) => ({ group, part: { id: `${p.id}_${id}`, fill, showIf: ch, path, ...(extra || {}) } }));
   // Acabamento pelo nível: 0 a 2 brilhos, num grupo sem contorno por cima de tudo.
   const anc = ANCORAS[p.parte];
@@ -1061,6 +1063,8 @@ export function rigComVisuais(rig, dados) {
   for (const g of groups) if (['shorts', 'shortsDetail', 'sexyLayer'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'pelado', 'nvSemBermuda'])];
   // Fantasia de uma perna só (Saci): a perna esquerda e a garra dela somem.
   for (const g of groups) for (const pt of g.parts) if (pt.id === 'legL' || pt.id === 'clawL') pt.hideIf = [...new Set([...[].concat(pt.hideIf || []), 'nvSemPernaE'])];
+  // Mula sem Cabeça: a cabeça inteira some (crânio, focinho, rosto e adereços); no lugar só o fogo.
+  for (const g of groups) if (['head', 'headDetail', 'headProps', 'catalogHead'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'nvSemCabeca'])];
   const aura = { id: 'nivelAura', hideIf: 'mooning', parts: [] };
   const pintura = { id: 'nivelPintura', hideIf: 'mooning', parts: [] };
   const brilhos = { id: 'nivelBrilho', hideIf: 'mooning', parts: [] };
@@ -1097,6 +1101,14 @@ export function rigComVisuais(rig, dados) {
         const alvo = byId.get(group) || byId.get('costumes');
         const part = { id: `${p.id}_sh_${id}`, fill, showIf: canalMeme(p.id), path, ...(extra || {}) };
         if (GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot') part.corpoX = true;
+        alvo.parts.push(part);
+      }
+      // O corpo do personagem (barrigona, papada, sujeira, pintas) por cima da fantasia: nada fica chapado.
+      for (const [group, id, fill, path, extra] of partesDoCorpo(p.transforma)) {
+        if (group !== 'nivelCorpo' && group !== 'nivelPintura') continue;
+        const alvo = byId.get(group);
+        const part = { id: `${p.id}_shc_${id}`, fill, showIf: canalMeme(p.id), path, ...(extra || {}) };
+        if (!part.parent && part.rot !== 'headRot') part.corpoX = true;
         alvo.parts.push(part);
       }
     }
@@ -1250,7 +1262,7 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
     if (t.pelado) ch.pelado = 1;
   }
   // Fantasia inteira (memes BR): cobre a bermuda; o Saci fica numa perna só.
-  for (const p of vestidas) if (p.fantasia) { ch.nvSemBermuda = 1; if (p.fantasia.umaPerna) ch.nvSemPernaE = 1; }
+  for (const p of vestidas) if (p.fantasia) { ch.nvSemBermuda = 1; if (p.fantasia.umaPerna) ch.nvSemPernaE = 1; if (p.fantasia.cabeca === 'semCabeca') ch.nvSemCabeca = 1; }
   if (pele) ch[`costume_pele${pele}`] = 1;
   // Olho próprio do visual que define os olhos (pupila, brilhos, cílios, formato, inclinação e íris).
   const go = olho?.genes?.olho;

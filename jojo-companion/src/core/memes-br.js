@@ -125,7 +125,7 @@ const CABECAS = {
   gorroSaci: (c) => [['costumes', 'gorroCone', c, 'M52,22 C58,4 76,-14 104,-26 C98,-10 116,6 128,22 C110,14 70,14 52,22 Z', H()], ['costumes', 'pomponzinho', '#ffffff', circ(104, -26, 4), H()]],
   cartola: (c, g) => [['costumes', 'abaCartola', c, elip(90, 16, 46, 6), H()], ['costumes', 'tuboCartola', c, rect(66, -30, 48, 46), H()], ['costumes', 'fitaCartola', g, rect(66, 6, 48, 6), H()]],
   panela: (c) => [['costumes', 'panelaCabeca', c, 'M52,22 C52,-6 128,-6 128,22 Z', H()], ['costumes', 'caboPanela', '#424242', rect(128, 8, 34, 6), H()]],
-  fogo: (c, g) => [['costumeBack', 'chamasCabelo', c, 'M40,30 C34,10 46,-6 54,-18 C56,-6 62,0 68,-4 C66,-18 74,-30 84,-36 C84,-22 92,-14 98,-10 C100,-24 110,-32 120,-34 C116,-20 124,-8 132,-6 C136,4 140,18 140,30 Z', H()], ['costumeBack', 'chamasMiolo', g, 'M56,26 C54,12 62,2 66,-6 C70,6 78,4 84,-14 C88,0 96,2 102,-10 C106,4 116,6 122,0 C126,10 126,20 124,26 Z', H()]],
+  fogo: (c, g) => [['costumeBack', 'chamasCabelo', c, 'M40,30 C34,10 46,-6 54,-18 C56,-6 62,0 68,-4 C66,-18 74,-30 84,-36 C84,-22 92,-14 98,-10 C100,-24 110,-32 120,-34 C116,-20 124,-8 132,-6 C136,4 140,18 140,30 Z', H({ scaleBy: 'nvChama', scalePivot: [90, 30] })], ['costumeBack', 'chamasMiolo', g, 'M56,26 C54,12 62,2 66,-6 C70,6 78,4 84,-14 C88,0 96,2 102,-10 C106,4 116,6 122,0 C126,10 126,20 124,26 Z', H({ scaleBy: 'nvChama', scalePivot: [90, 30] })]],
   palhaco: (c) => [['costumeBack', 'tufos', c, `${circ(40, 30, 16)} ${circ(140, 30, 16)} ${circ(46, 12, 12)} ${circ(134, 12, 12)}`, H()]],
   topete: (c) => [['costumes', 'topete', c, 'M56,22 C54,-4 90,-14 120,-4 C110,0 124,10 128,22 C110,12 76,12 56,22 Z', H()]],
   cabeloLongo: (c) => [['costumeBack', 'cabeloLongo', c, 'M36,28 C30,70 34,110 40,140 L62,136 C56,100 54,60 58,30 Z M144,28 C150,70 146,110 140,140 L118,136 C124,100 126,60 122,30 Z'], ['costumes', 'topoLongo', c, 'M48,26 C54,0 126,0 132,26 C112,14 68,14 48,26 Z', H()]],
@@ -134,7 +134,18 @@ const CABECAS = {
   fitas: (c, g) => [['costumes', 'chapeuFitas', c, 'M56,20 C58,-2 122,-2 124,20 Z', H()], ['costumeBack', 'fitasCaindo', g, [46, 62, 78, 102, 118, 134].map((x, i) => rect(x, 18, 5, 70 + (i % 3) * 14)).join(' '), H()]],
   mascara: (c, g) => [['costumes', 'mascaraBate', c, 'M46,30 C46,0 134,0 134,30 L134,60 C120,70 60,70 46,60 Z', H()], ['costumes', 'olhosMascara', '#111111', `${elip(72, 40, 8, 6)} ${elip(108, 40, 8, 6)}`, H()], ['costumes', 'bocaMascara', g, 'M70,56 C80,64 100,64 110,56 C100,60 80,60 70,56 Z', H()]],
   gota: (c) => [['costumes', 'pontaGota', c, 'M56,22 C64,2 80,-16 90,-36 C100,-16 116,2 124,22 C104,12 76,12 56,22 Z', H()]],
-  semCabeca: (c, g) => [['costumes', 'fogoPescoco', c, 'M54,84 C44,60 52,30 66,10 C68,26 76,30 80,18 C84,2 92,-8 98,-14 C98,4 106,12 112,6 C120,26 132,50 126,84 Z'], ['costumes', 'fogoMiolo', g, 'M66,84 C60,64 66,44 74,32 C78,46 86,44 90,30 C96,42 104,46 108,36 C116,52 118,70 114,84 Z']],
+  // Mula sem Cabeça: no lugar da cabeça (que some pelo canal nvSemCabeca) só o fogo saindo do pescoço,
+  // em três camadas (vermelho, laranja e o miolo amarelo), com fagulhas, tremulando (nvChama).
+  semCabeca: (c, g) => {
+    const vivo = { scaleBy: 'nvChama', scalePivot: [90, 86] };
+    return [
+      ['costumes', 'fogoBase', sombra(c, 0.85), 'M50,88 C38,62 44,30 58,8 C62,24 70,28 74,14 C78,-6 88,-20 94,-30 C96,-10 104,0 110,-8 C122,14 138,46 130,88 Z', vivo],
+      ['costumes', 'fogoPescoco', c, 'M56,88 C48,64 54,38 66,18 C69,32 76,34 80,22 C84,6 92,-6 97,-14 C99,2 106,10 112,4 C121,24 132,52 124,88 Z', vivo],
+      ['costumes', 'fogoMiolo', g, 'M68,88 C62,70 66,52 74,40 C78,52 86,50 90,36 C96,48 104,52 108,42 C116,58 118,74 112,88 Z', vivo],
+      ['costumes', 'fogoBrasa', '#fff8e1', 'M80,88 C78,78 82,68 86,62 C88,70 94,70 96,64 C100,72 102,80 100,88 Z', vivo],
+      ['costumes', 'fagulhas', g, `${circ(48, 20, 2.2)} ${circ(132, 30, 2)} ${circ(70, -10, 1.8)} ${circ(116, -16, 2.2)} ${circ(92, -32, 1.6)}`, { dy: 'mbFumaca' }],
+    ];
+  },
   lenco: (c) => [['costumes', 'lencoCabeca', c, 'M48,26 C52,2 128,2 132,26 C112,18 68,18 48,26 Z M128,22 L146,30 L132,34 Z', H()]],
   cincoFios: (c) => [['costumes', 'cincoFios', c, [70, 80, 90, 100, 110].map((x) => `M${x - 1},14 C${x - 3},4 ${x - 1},-4 ${x + 1},-10 L${x + 2},-9 C${x + 1},-3 ${x},4 ${x + 1.4},14 Z`).join(' '), H()]],
   cartolaPalheta: (c, g) => [['costumes', 'abaPalheta', c, elip(90, 14, 44, 6), H()], ['costumes', 'copaPalheta', c, rect(64, -6, 52, 20), H()], ['costumes', 'fitaPalheta', g, rect(64, 4, 52, 5), H()]],
@@ -149,6 +160,12 @@ const CABECAS = {
   fedora: (c, g) => [['costumes', 'abaFedora', c, elip(90, 18, 50, 6), H()], ['costumes', 'copaFedora', c, 'M62,18 C62,-8 118,-8 118,18 C104,8 76,8 62,18 Z', H()], ['costumes', 'fitaFedora', g, rect(62, 10, 56, 5), H()]],
   espetado: (c) => [['costumes', 'cabeloEspetado', c, 'M46,28 L36,6 L56,12 L52,-14 L72,2 L80,-26 L92,-2 L106,-24 L110,4 L130,-12 L124,12 L146,6 L134,28 C110,18 70,18 46,28 Z', H()]],
   orelhasBicho: (c, g) => [['costumes', 'orelhasRedondas', c, `${circ(52, 10, 14)} ${circ(128, 10, 14)}`, H()], ['costumes', 'orelhasMiolo', g, `${circ(52, 10, 7)} ${circ(128, 10, 7)}`, H()]],
+  // Jogos (pedido de 19/11/2026).
+  bonePlumb: (c, g) => [['costumes', 'copaBone', c, 'M52,22 C54,-2 126,-2 128,22 Z', H()], ['costumes', 'abaFrente', c, 'M60,20 C74,28 106,28 120,20 L122,26 C106,34 74,34 58,26 Z', H()], ['costumes', 'escudoBone', '#ffffff', circ(90, 8, 8), H()], ['costumes', 'letraBone', g, 'M84,13 L84,3 L90,9 L96,3 L96,13 L94,13 L94,8 L90,12 L86,8 L86,13 Z', H()]],
+  piramide: (c, g) => [['costumes', 'piramide', c, 'M90,-44 L148,58 L32,58 Z', H()], ['costumes', 'piramideRebites', g, `${circ(70, 40, 2)} ${circ(110, 40, 2)} ${circ(90, 6, 2)}`, H()], ['costumes', 'piramideSombra', sombra(c, 0.6), 'M90,-44 L148,58 L118,58 Z', H({ alpha: 0.6 })]],
+  xicara: (c, g) => [['costumes', 'xicaraCopo', c, 'M50,22 L54,-14 L126,-14 L130,22 Z', H()], ['costumes', 'xicaraBorda', g, elip(90, -14, 36, 6), H()], ['costumes', 'xicaraCha', '#5d4037', elip(90, -14, 30, 4), H()], ['costumes', 'canudo', '#ffffff', 'M104,-14 L114,-40 L130,-36 L128,-32 L116,-35 L108,-13 Z', H()], ['costumes', 'canudoListras', '#e53935', 'M110,-26 L112,-30 L114,-29 L112,-25 Z M106,-18 L108,-22 L110,-21 L108,-17 Z', H()]],
+  plumbob: (c, g) => [['costumes', 'plumbob', c, 'M90,-36 L102,-14 L90,8 L78,-14 Z', H({ dy: 'mbEfY' })], ['costumes', 'plumbobBrilho', g, 'M90,-30 L96,-14 L90,-14 Z', H({ dy: 'mbEfY' })]],
+  turbante: (c, g) => [['costumes', 'turbante', c, 'M46,26 C40,-6 140,-6 134,26 C112,14 68,14 46,26 Z', H()], ['costumes', 'dobrasTurbante', sombra(c), 'M52,16 C70,4 110,4 128,16 L128,20 C110,8 70,8 52,20 Z', H()], ['costumes', 'joiaTurbante', g, circ(90, 10, 5), H()], ['costumes', 'peninha', '#fafafa', 'M90,6 C84,-8 88,-22 96,-28 C94,-16 96,-6 92,6 Z', H()]],
   careca: () => [],
   nenhuma: () => [],
 };
@@ -167,6 +184,9 @@ const ROSTOS = {
   oculosEscuros: (c) => [['headDetail', 'oculosEscuros', c, 'M56,38 L86,38 L84,50 L60,50 Z M94,38 L124,38 L120,50 L96,50 Z M86,40 L94,40 L94,42 L86,42 Z', H()]],
   mascaraOlhos: (c) => [['headDetail', 'mascaraOlhos', c, 'M52,36 C70,30 110,30 128,36 L126,50 C110,46 70,46 54,50 Z', H()]],
   cachimbo: (c) => [['headDetail', 'cachimbo', c, 'M108,64 L132,66 L132,62 C138,60 142,62 142,70 C140,76 132,76 130,70 L108,68 Z', H()], ['headDetail', 'fumacinha', '#eeeeee', `${circ(140, 54, 4)} ${circ(146, 44, 5)} ${circ(140, 32, 6)}`, H({ alpha: 0.7, dy: 'mbFumaca' })]],
+  // Seu Creysson: dentes da frente enormes por cima da boca.
+  dentuco: () => [['headDetail', 'dentoes', '#fffdf0', 'M80,60 L89,60 L89,76 C86,78 82,78 80,76 Z M91,60 L100,60 L100,76 C98,78 94,78 91,76 Z', H()], ['headDetail', 'vaoDentes', '#3e2723', rect(89, 60, 2, 16), H()]],
+  presas: () => [['headDetail', 'presasOrc', '#fffde7', 'M70,68 L74,52 L78,68 Z M102,68 L106,52 L110,68 Z', H()]],
   nenhum: () => [],
 };
 
@@ -213,6 +233,14 @@ const MAOS = {
   caneca: (c) => [['caneca', c, rect(146, 128, 18, 22)], ['alcaCaneca', c, 'M164,132 C172,132 172,146 164,146 L164,142 C168,142 168,136 164,136 Z']],
   placa: (c, g) => [['caboPlaca', '#795548', rect(155, 112, 3, 46)], ['placa', c, rect(134, 90, 44, 26)], ['textoPlaca', g, [rect(140, 96, 32, 3), rect(140, 103, 26, 3)].join(' ')]],
   bola: (c, g) => [['bola', c, circ(158, 130, 11)], ['gomosBola', g, 'M148,126 C154,130 162,130 168,126 L168,128 C162,132 154,132 148,128 Z M157,119 L159,119 L159,141 L157,141 Z']],
+  machado: (c, g) => [['caboMachado', '#6d4c41', rect(154, 98, 4, 60)], ['laminaMachado', c, 'M158,98 C174,94 182,106 178,122 C172,116 164,114 158,116 Z'], ['fioMachado', g, 'M176,104 C180,110 180,116 178,122 L176,120 C177,114 177,110 174,105 Z']],
+  bomba: (c, g) => [['bomba', c, circ(156, 132, 13)], ['brilhoBomba', '#ffffff', circ(150, 126, 3), { alpha: 0.7 }], ['pavio', '#795548', 'M158,119 C160,112 166,110 168,106 L170,107 C168,112 162,114 160,120 Z'], ['faisca', g, estrela(169, 104, 5, 6)]],
+  guitarra: (c, g) => [['corpoGuitarra', c, 'M140,146 C132,138 136,126 146,128 C150,122 160,124 160,132 C166,136 164,148 156,150 C152,156 144,154 140,146 Z'], ['braco', '#5d4037', 'M154,134 L176,100 L179,102 L157,136 Z'], ['botoesGuitarra', g, `${circ(167, 112, 1.6)} ${circ(170, 108, 1.6)} ${circ(150, 140, 4)}`]],
+  cogumelo: (c, g) => [['caule', '#fff3e0', rect(150, 132, 12, 16)], ['chapeuCogumelo', c, 'M140,134 C140,114 172,114 172,134 Z'], ['pintasCogumelo', g, `${circ(150, 124, 3.4)} ${circ(163, 126, 3)} ${circ(156, 118, 2.4)}`], ['olhosCogumelo', '#212121', `${elip(153, 140, 1.4, 2.4)} ${elip(159, 140, 1.4, 2.4)}`]],
+  pecabra: (c) => [['pecabra', c, 'M150,152 L172,104 C176,98 182,100 180,106 L178,108 C178,104 176,104 174,106 L154,154 Z']],
+  canhao: (c, g) => [['canhaoBraco', c, 'M132,124 L170,124 C176,124 178,136 172,140 L132,140 Z'], ['bocaCanhao', '#263238', elip(172, 132, 4, 6)], ['luzCanhao', g, rect(140, 128, 14, 3)]],
+  chicote: (c) => [['caboChicote', '#4e342e', rect(152, 132, 5, 18)], ['chicote', c, 'M155,132 C150,110 164,96 176,104 C170,100 160,108 158,132 Z']],
+  bandeiraXadrez: (c) => [['mastro', '#795548', rect(154, 92, 2.4, 64)], ['pano', '#fafafa', 'M157,92 L178,92 L178,110 L157,110 Z'], ['xadrez', c, [0, 1, 2, 3].flatMap((l) => [0, 1, 2, 3].filter((k) => (k + l) % 2 === 0).map((k) => rect(157 + k * 5.25, 92 + l * 4.5, 5.25, 4.5))).join(' ')],
   nenhum: () => [],
 };
 
@@ -283,7 +311,8 @@ const GESTOS = {
   // Grito com a boca escancarada e o corpo tremendo (Zé Pequeno, Canarinho Pistola).
   grito: () => ({ jaw: k([[0, 0.4], [0.2, 1, 'step'], [0.8, 1], [1, 0.4]]), browAngry: k([[0, 0], [0.2, 1, 'step'], [0.85, 1], [1, 0]]), rootX: batidas(0.2, 0.8, 16, -3, 3), squashY: k([[0, 1], [0.2, 1.08], [0.8, 1.08], [1, 1]]), moodAngry: k([[0, 0], [0.25, 1], [0.8, 1], [1, 0]]) }),
   // Gira no lugar com os braços abertos (Bozo, Galinha, Curupira).
-  giro: () => ({ rootRot: k([[0, 0], [0.2, 0], [0.45, 360], [0.7, 720], [0.72, 0, 'step'], [1, 0]]), legFL: k([[0, 0], [0.2, 90], [0.7, 90], [1, 0]]), legFR: k([[0, 0], [0.2, 90], [0.7, 90], [1, 0]]), happyEyes: k([[0, 0], [0.2, 1, 'step'], [0.8, 1], [1, 0, 'step']]) }),
+  // Rodopio em pé (nunca de ponta-cabeça): o corpo estreita, vira de lado e volta, três voltas.
+  giro: () => ({ squashX: k([[0, 1], [0.2, 1], ...[0, 1, 2].flatMap((i) => { const t = 0.2 + i * 0.18; return [[t + 0.045, 0.15], [t + 0.09, -1], [t + 0.135, 0.15], [t + 0.18, 1]]; }), [1, 1]]), rootY: batidas(0.2, 0.74, 6, -8, 0), legFL: k([[0, 0], [0.2, 90], [0.74, 90], [1, 0]]), legFR: k([[0, 0], [0.2, 90], [0.74, 90], [1, 0]]), happyEyes: k([[0, 0], [0.2, 1, 'step'], [0.8, 1], [1, 0, 'step']]) }),
   // Explica com o objeto, mão para cima e para baixo (Professor Raimundo, Seu Creysson).
   explica: () => ({ legFR: batidas(0.2, 0.8, 6, 70, 40), elbowR: batidas(0.2, 0.8, 6, 50, 80), jaw: batidas(0.2, 0.8, 10, 0.9, 0.3, 0.4), headRot: batidas(0.2, 0.8, 4, -5, 5) }),
   // Incha e estoura (Dona Redonda, Coxinha): cresce e volta num puf.
@@ -354,6 +383,10 @@ export function animacaoMeme(p) {
     mbFumaca: [[0, 0], [0.5, -10], [1, 0]],
     ...g,
   };
+  // Acabamento de animação: agacha antes do puf, quica ao virar o personagem e faz a pose final
+  // (peito estufado) antes de voltar, quando o gesto não usa esses canais.
+  if (!g.squashY && !g.scale) tracks.squashY = [[0, 1], [0.03, 0.88], [0.07, 1.08], [0.11, 0.97], [0.15, 1], [0.86, 1], [0.9, 1.05], [0.95, 1], [1, 1]];
+  if (!g.rootY) tracks.rootY = [[0, 0], [0.03, 3], [0.07, -10], [0.12, 0], [1, 0]];
   // A transformação do visual vem junto da fantasia: pele, olhos, cabeça, corpo e boca
   // (como costume_pelebr01 na Tigresa), e volta ao normal no fim.
   if (p.canaisShow) {
@@ -366,6 +399,7 @@ export function animacaoMeme(p) {
   if (p.fantasia?.baixo === null) tracks[`costume_bermuda${p.id}`] = veste;
   else tracks.nvSemBermuda = veste;
   if (p.fantasia?.umaPerna) tracks.nvSemPernaE = veste;
+  if (p.fantasia?.cabeca === 'semCabeca') tracks.nvSemCabeca = veste;
   return { duration: 6500, blendIn: 0, mark: '!', blink: true, tracks };
 }
 
