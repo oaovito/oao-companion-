@@ -793,3 +793,12 @@ test('run 254: memória dela sem condescendência ("não precisa me repetir", "v
   assert.equal(polirTexto('You mentioned a cat, *obviamente*.'), 'You mentioned a cat.');
   assert.equal(polirTexto('Confirmado, manga. A memória sua é impressionante.'), 'Confirmado, manga. Sua memória é impressionante.');
 });
+
+test('run 256: fala programada depois da recusa também consola no revés e no acidente dela', async () => {
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Isso é inaceitável, eu esperava mais de você.' }), revisar: async () => ({ ok: false, motivo: 'bronca' }) };
+  for (const input of ['Derrubei café no teclado agora.', 'Não consegui terminar meu projeto.']) {
+    const r = await new DialogueEngine({ llm }).reply(input);
+    assert.notEqual(r.intent, 'ia');
+    assert.equal(r.action, 'comfort', `${input}: ${r.text}`);
+  }
+});

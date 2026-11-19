@@ -223,6 +223,9 @@ export class DialogueEngine {
       raw = await this.fallback.reply({ text: input });
     }
     const out = normalizeReply(raw);
+    // Fala programada (inclusive quando o modelo foi recusado) também segue a expressão coerente com o
+    // que ela contou: revés ou acidente dela pede consolo, não julgamento.
+    if (out.action && out.intent !== 'crisis' && expressaoCoerente(input, out, seriedade) === 'comfort') out.action = 'comfort';
     const unavailable = this.llm?.unavailableReason?.();
     if (out.intent === 'unknown' && !raw.search && unavailable && !['desligada', 'sem motor'].includes(unavailable)) {
       out.text = unavailable.startsWith('erro:')
