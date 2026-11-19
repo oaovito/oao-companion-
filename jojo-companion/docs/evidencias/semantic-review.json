@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "dc97a4bf914c6886eadc69c9e0c565e4d2ffa5a0",
+  "runId": "44584453784",
+  "attempt": "1",
+  "digest": "6d571460814dcbe516b88682320704d14e8223ca83c8e5d9d554a6f3efde228c",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 252): (30) \"Are you trying to test my intelligence?\", (36) \"Não precisa me lembrar, é óbvio.\" e (41) \"e você precisa entender isso\" são condescendência com ela; (37) \"A memória não é o meu forte\" contradiz o que ele acabou de fazer; (40) \"não pra se entregar assim\" fica contra ela no revés; (20) \"e não me interrompa!\" sem motivo; (3) \"meu amor\" não é como o JoJo trata a Emanuele (ela é namorada do João). Corretos: segurança (31, 32), identidade (26, 27), limites (7, 8), memória (12, 23, 25, 38), piada (10), chefe do lado dela (14), exemplo de saúde correto (16, 42). Não publicar."
+}
