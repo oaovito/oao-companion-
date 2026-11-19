@@ -1,5 +1,40 @@
 # CHANGELOG
 
+## 0.47.3 — 2026-11-19
+
+### Novidades
+- 50 memes BR novos no padrão da Tigresa (coleção "memes BR", br03 a br52, um a cada 4 níveis do 2 ao 198):
+  Nazaré Confusa, Carminha, Odete Roitman, Didi, Bozo, Fofão, Zé Gotinha, Saci, Curupira, Iara, Mula sem
+  Cabeça, Boitatá, Cuca, Cebolinha, Tiozão do Pavê, Bom dia do Zap, Gaúcho, Lampião, Bate-bola, Passista,
+  Boi-bumbá, Galinha Pintadinha, Louro José, Xaropinho, Coxinha, Tio do churrasco, Mandrake, Zé Pequeno,
+  Professor Raimundo, Seu Creysson, Bento Carneiro, Biscoito ou bolacha, Mineiro, Carioca, Faria Lima,
+  Abaporu, Zé Carioca, Canarinho Pistola, Menino Maluquinho, Fuleco, Hulk do Paraguai, Agostinho Carrara,
+  Sinhozinho Malta, Dona Hermínia, Macunaíma, Jeca Tatu, Zé do Caixão, Dona Redonda, Morgana e Rogerinho do Ingá.
+  Cada um é uma fantasia inteira (cabeça, rosto, pescoço, tronco, mangas, parte de baixo, pés e objeto na mão)
+  que transforma o JoJo, com pele e olhos do personagem, e tem animação própria de 6,5 s: puf de fumaça,
+  o gesto do meme com efeito girando (contas, corações, fogo, notas, confete, dinheiro…) e a pose final.
+- A frase de cada meme no chat ("Nazaré confusa", "me serve, vadia", "é pavê ou pra comer?", "biscoito ou
+  bolacha", "tá tranquilo, tá favorável"…) toca a animação e o JoJo responde no personagem. As animações
+  também ficam na coleção.
+
+- Revisão de todos os visuais no padrão da Tigresa: os 369 visuais antigos (níveis, South Park, memes do
+  Twitter e animes) ganharam a fantasia completa da referência (roupa, parte de baixo, calçado, cabeça,
+  rosto, pescoço e objeto na mão, com peças novas como armadura, kimono, jaleco, sobretudo, toga, coroa,
+  elmo, capacete, espada, martelo, tridente e cajado) e um show próprio de 6,5 s: puf, o JoJo vira o
+  personagem (pele, olhos, cabeça, corpo e boca da referência) junto com a peça, faz o gesto com efeito e
+  volta ao normal. O show toca quando o visual é liberado ou vestido e fica nas animações liberadas da
+  Central. No guarda-roupa a peça continua combinável como antes.
+
+### Melhorias
+- Com fantasia inteira vestida, a bermuda preta não aparece mais por baixo; o Saci tem uma perna só.
+- Durante animação com fantasia inteira (Tigresa, memes BR e shows), as peças vestidas saem de cena para
+  nada ficar por cima da fantasia nem brigar com a pele do personagem.
+- Os memes BR também transformam olhos, cabeça, corpo e boca durante a animação, como os shows.
+
+### Como testar
+- Escrever "Nazaré confusa" no chat: o JoJo vira a Nazaré, faz as contas e responde.
+- Subir de nível (2, 6, 10…) e ver o meme BR liberado na Central, vestível pelo guarda-roupa.
+
 ## 0.47.2 — 2026-11-18
 
 ### Novidades

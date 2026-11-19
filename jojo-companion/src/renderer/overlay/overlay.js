@@ -6,6 +6,7 @@ import { RigRenderer } from '../shared/rig-renderer.js';
 import { rigComVisuais } from '../../core/visual-nivel.js';
 import { rigComRebolado } from '../../core/rebolado.js';
 import { rigComDildo } from '../../core/dildo.js';
+import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -573,7 +574,10 @@ function draw(now) {
       nvLutoLagrima: reduced ? 4 : (t * 10) % 14,
     });
   }
-  if (s.visualNivel) {
+  // Animação com fantasia inteira (Tigresa, memes BR): os visuais vestidos saem durante ela,
+  // para nada ficar por cima da fantasia nem brigar com a pele do personagem.
+  const fantasiaInteira = ehAnimFantasia(sample.name);
+  if (s.visualNivel && !fantasiaInteira) {
     Object.assign(pose, s.visualNivel);
     // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
     // baba estica, aura pulsa, bolhas sobem, brilhos piscam. Parado no movimento reduzido.

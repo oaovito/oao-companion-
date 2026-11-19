@@ -52,7 +52,8 @@ import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReac
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 import { DILDO_MS, ATADURA_MS, CANAIS_ATADURA, FALAS_DILDO } from './dildo.js';
 import { AnimeCalendario, episodiosNovos, visualDoAnime, normTitulo, ANIME_MAX } from './anime-calendario.js';
-import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL } from './visual-nivel.js';
+import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL, visuaisComAnimacao } from './visual-nivel.js';
+import { memeDoTexto, animDoMeme, itensDeMemes } from './memes-br.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -1434,6 +1435,15 @@ export class Companion {
       this.react('comfort');
       return this._quickReply(conv, t, 'cuidado');
     }
+    // Memes BR: a frase do meme ("me serve, vadia", "bah, tchê") vira a animação própria dele,
+    // vestido do personagem, como a Tigresa. Segurança vem antes.
+    const meme = !safety && !this.work && memeDoTexto(text, this._memes);
+    if (meme) {
+      this.playCatalog(animDoMeme(meme.id), { source: 'chat', speak: false });
+      const rs = meme.meme.respostas?.length ? meme.meme.respostas : [meme.fala];
+      const nome = profileVars(this.personality.get(), 'brincadeira').nome;
+      return this._quickReply(conv, rs[Math.floor(this.rng() * rs.length)].replaceAll('{nome}', nome), 'meme');
+    }
     // Emergência médica: segurança antes de tudo (192 e o João, médico), sem óculos nem piada.
     const ciencia = intent0 === 'avcReal' ? null : modoCiencia(text);
     const saude = ['avcReal', 'crisis'].includes(intent0) ? null : situacaoSaude(text);
@@ -2348,6 +2358,7 @@ export class Companion {
    * Interação dela (clique, arrasto, /pet) interrompe com transição suave.
    */
   playCatalog(id, { source = 'comando', speak = true, intensity = null } = {}) {
+    if (/^(memeBr|visual)_/.test(id)) void this._memes;
     const item = this.catalogById.get(id);
     if (this.clock.now() < (this.emotionalUntil || 0) && !['chat', 'comando', 'pedido', 'manual'].includes(source)) return false;
     if (!item || this.quitting || !this.started || this.userHidden) return false;
@@ -2692,6 +2703,16 @@ export class Companion {
     // Mesmo objeto sempre: o catálogo gerado fica em cache por ele.
     return (this._dadosVisuais ||= { referencias: r, extras: Array.isArray(this.progress.data.extras) ? this.progress.data.extras : [] });
   }
+  /** Visuais com animação própria: memes BR (a frase sempre toca) e o show de cada visual. */
+  get _memes() {
+    if (this._memesCache === undefined) {
+      this._memesCache = this._refs ? visuaisComAnimacao(this._refs) : [];
+      // A animação própria de cada meme entra na Coleção (só por frase ou pela Central).
+      for (const it of itensDeMemes(this._memesCache)) if (!this.catalogById.has(it.id)) { this.catalog.itens.push(it); this.catalogById.set(it.id, it); }
+    }
+    return this._memesCache;
+  }
+
 
   /** Canais das peças de nível vestidas (null se nenhuma). */
   _visualCanais(vestido = Object.keys(this.outfit).length > 0) {
@@ -2770,6 +2791,9 @@ export class Companion {
 
   /** Reação da referência: o pacote dela (se as reações estão ligadas) ou a animação dela. */
   _reagirReferencia(p) {
+    // Padrão da Tigresa: o visual liberado ou vestido aparece com a fantasia completa no show dele.
+    void this._memes;
+    if (this.catalogById.has(animDoMeme(p.id)) && this.playCatalog(animDoMeme(p.id), { source: 'evento', speak: false })) return true;
     const s = this.store.get();
     const pk = p.reacao ? this.catalogById.get(p.reacao) : null;
     if (pk && pk.pacote && !this.reacoesPausadas && s[PACOTE_CONFIG[pk.pacote]] && this.playPack(p.reacao, { source: 'chat', falar: false }) !== null) return true;
@@ -2951,12 +2975,15 @@ export class Companion {
    * liberados pelo nível e os memes especiais (rebolado, Tigresa). Nada bloqueado aparece.
    */
   animacoesLiberadas() {
+    void this._memes; // registra as animações dos memes BR na Coleção
     const out = new Map();
     const add = (id, nome, origem) => { if (id && nome && !out.has(id)) out.set(id, { id, nome, origem }); };
     for (const [id, esp] of Object.entries(ANIM_ESPECIAIS)) if (!esp.depoisDe || esp.depoisDe(this)) add(id, esp.nome, esp.origem);
     for (const p of this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []) {
       const it = p.anim && this.catalogById.get(p.anim);
       if (it) add(it.id, it.nome, `animação do visual ${p.nome} (${p.obra})`);
+      const show = this.catalogById.get(animDoMeme(p.id));
+      if (show) add(show.id, show.nome, `fantasia completa de ${p.obra}`);
     }
     for (const id of this.progress.st.poses || []) {
       const it = this.catalogById.get(id);

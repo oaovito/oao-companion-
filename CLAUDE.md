@@ -120,6 +120,12 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - "Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!" (Kung Fu Panda; também "Tigresa, tire sua roupa"; estado
   `tigresa`, 6,5 s): JoJo de Mestre Tigresa na pose do Po, a roupa voa e ele fica pelado sem pudor (canal `pelado` esconde
   bermuda/sunga e mostra tudo); visuais `br01` (Tigresa vestida, nível 3) e `br02` (pelada, nível 5), memes BR.
+- **Memes BR no padrão da Tigresa** (19/11/2026): 50 visuais `br03`–`br52` (um a cada 4 níveis do 2 ao 198), fantasia
+  inteira que transforma o JoJo + animação própria de 6,5 s (`memeBr_<id>`); dados em `scripts/memes-br-dados.mjs` →
+  `progressao.json`, desenho/animação/gatilhos em `src/core/memes-br.js`; a frase do meme no chat toca a animação.
+- **Shows dos visuais** (revisão de 19/11/2026, padrão da Tigresa): cada um dos 369 visuais (nv/sp/tw/an) tem fantasia
+  completa + show de 6,5 s (`visual_<id>`, specs em `src/core/fantasias-visuais.js`); toca ao liberar/vestir; a peça
+  continua combinável no guarda-roupa. Animação com fantasia (`ehAnimFantasia`) esconde as peças vestidas no overlay.
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
