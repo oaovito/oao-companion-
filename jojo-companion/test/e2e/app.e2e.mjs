@@ -650,7 +650,10 @@ test('conversa local: transporte Ollama com streaming preserva personalidade e m
     assert.ok(bodies[0].options.num_ctx <= 4096 && bodies[0].options.num_predict <= 512);
     assert.match(bodies[0].messages[0].content, /humor seco|dry humo[u]?r/i);
     assert.equal(bodies[0].format, undefined, 'fala livre não precisa inventar JSON de metadados');
-    assert.ok(bodies[0].messages[0].content.length < 1800, 'instrução local cabe no contexto sem exemplos fora do assunto');
+    // Sem exemplos fora do assunto na instrução casual (o objetivo deste limite). O tamanho subiu com o
+    // bloco de identidade fixa do JoJo (pedido do João, 0.47.2): ~2,5 mil caracteres, bem dentro do contexto.
+    assert.doesNotMatch(bodies[0].messages[0].content, /Voice examples|Exemplos de fala/i, 'sem exemplos fora do assunto');
+    assert.ok(bodies[0].messages[0].content.length < 2800, `instrução local cabe no contexto (${bodies[0].messages[0].content.length})`);
     const text = await win.evaluate(() => document.body.innerText);
     assert.ok(!/\bIA\b|intelig[eê]ncia artificial|programadas/i.test(text), 'nada de IA na tela');
   } finally {
