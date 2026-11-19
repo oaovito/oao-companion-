@@ -133,7 +133,9 @@ function preferenciaInventada(output, known, userFacts) {
 }
 
 // Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
-const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar)\b/;
+const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:com|essas?|tuas?|suas?) perguntas? (?:idiotas?|burras?|estupidas?|ridiculas?)\b|\bnao (?:minta|mente) (?:pra|para) mim\b|\bnao tente me enganar\b|\bnao precisa de mais detalhes\b|\bnao precisa ser (?:tao )?complicad[oa]\b|\beu nao aguento brincadeira\b|\bnao tenho (?:outra|mais) informac\w* sobre\b|\b(?:irritante|chat[ao]) (?:quanto|como) (?:algumas|certas) pessoas\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir|me repetir|me lembrar)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
+// Menosprezo no meio da frase: não dá para só tirar a frase, então gera de novo.
+const MENOSPREZO = /\bvamos ver se (?:voce |vc )?consegue lembrar\b|\bnao me faca esperar\b|\bvida e (?:muito )?curta (?:demais )?(?:para|pra) ser chat[ao]\b|\bse (?:for|fores) dign[oa]\b|\bse (?:voce )?merecer\b|\bnao se atrapalhe\b|\b(?:essa|esta|tua|sua) (?:sua )?pergunta me deixou\b/;
 
 /**
  * Tira só as frases de desdém e mantém o resto da resposta ("You mentioned a cat,
@@ -143,7 +145,38 @@ const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|
 export function semDesdem(text) {
   const t = String(text || '');
   const frases = t.split(/(?<=[.!?])\s+/);
-  const resto = frases.filter((f) => !DESDEM.test(norm(f)));
+  // "Que piada você quer ouvir agora?" pendurado no fim de outra resposta também sai.
+  const resto = frases.filter((f) => !DESDEM.test(norm(f)) && !/\bque piada (?:voce |vc )?quer(?: ouvir)?\b/.test(norm(f)));
+  if (resto.length === frases.length || !resto.length) return t;
+  return resto.join(' ').trim();
+}
+
+// Ela não conseguiu algo: frase de bronca contra ela ("isso é inaceitável", "esperava mais de você").
+const REVES = /\b(?:nao consegui|nao deu|falhei|errei|perdi|reprovei|bombei)\b/;
+const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc)|(?:sao|e) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?|se enrolou de novo|covardes?|nao tem jeito|falta de (?:confianca|vontade|foco|disciplina)|levanta (?:essa|a) bunda)\b/;
+
+/** Tira só as frases de bronca quando ela conta um revés; o resto (o apoio) fica. */
+export function semBronca(input, text) {
+  const t = String(text || '');
+  if (!REVES.test(norm(input))) return t;
+  const frases = t.split(/(?<=[.!?])\s+/);
+  const resto = frases.filter((f) => !BRONCA.test(norm(f)));
+  if (resto.length === frases.length || !resto.length) return t;
+  const sobra = resto.join(' ').trim();
+  // Só sobrou a interjeição ("Que droga, Manu!"): sem apoio nenhum; deixa a guarda recusar e gerar de novo.
+  return sobra.length < 30 ? t : sobra;
+}
+
+/**
+ * Pergunta geral ("o que é diabetes tipo 2?") não vira conselho de saúde para ela, como se ela
+ * tivesse a doença ("controle sua dieta e aumente seus treinos"): essas frases saem.
+ */
+export function semConselhoPessoal(input, text) {
+  const q = norm(input);
+  const t = String(text || '');
+  if (/\b(?:eu|meu|minha|meus|minhas|tenho|estou|sinto|me)\b/.test(q)) return t;
+  const frases = t.split(/(?<=[.!?])\s+/);
+  const resto = frases.filter((f) => !/\b(?:sua|seu|suas|seus|tua|teu) (?:dieta|treinos?|alimentacao|glicemia|acucar|glicose|medico|remedios?|saude|exames?|peso)\b/.test(norm(f)));
   if (resto.length === frases.length || !resto.length) return t;
   return resto.join(' ').trim();
 }
@@ -158,9 +191,45 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   t = t.replace(/\s*\[(\d+)\]/g, (m, n) => (Number(n) >= 1 && Number(n) <= fontes ? m : ''));
   t = t.replace(/\b([Aa]) hormona\b/g, (m, a) => (a === 'A' ? 'O' : 'o') + ' hormônio')
     .replace(/\bhormonas\b/g, 'hormônios').replace(/\bhormona\b/g, 'hormônio');
-  t = t.replace(/,\s*meu bem(?=[.!?,]|$)/gi, '').replace(/\bmeu bem,\s*/gi, '');
+  // Condescendência no fim da frase: ", como você deveria entender", ", inteligente."
+  t = t.replace(/,?\s*como (?:voce|você|vc) (?:deveria|deve|devia) (?:entender|saber)(?=[.!?]|$)/gi, '')
+    .replace(/,\s*(?:inteligente|espertinha|g[eê]nio)(?=[.!?]|$)/gi, '');
+  // Desabafo não é reclamação: ", não em reclamar" sai.
+  t = t.replace(/,?\s*(?:e )?n[aã]o (?:em|pra|para) (?:ficar )?reclamar(?=[.!?]|$)/gi, '');
+  // "uma pessoa ... o corpo dele" → "o corpo dela".
+  if (/\buma pessoa\b/i.test(t)) t = t.replace(/\b([Oo]) corpo dele\b/g, '$1 corpo dela');
+  t = t.replace(/\bvolt(?:e|a) para cima\b/gi, (m) => (/^V/.test(m) ? 'Dê a volta por cima' : 'dê a volta por cima'));
+  t = t.replace(/\b([Oo]) meu abs\b/g, '$1 meu abdômen');
+  // "You mentioned a cat, naturalmente." / ", obviamente": o tom de óbvio sai.
+  t = t.replace(/,\s*\*?(?:naturalmente|obviamente|obviously|naturally|claro que sim)\*?(?=[.!?]|$)/gi, '');
+  t = t.replace(/\b([Aa]) memória sua\b/g, (m, a) => (a === 'A' ? 'Sua' : 'sua') + ' memória');
+  // "Você disse que manga." → "Você disse manga."
+  t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
+  t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');
+  // Alarme que não cabe numa explicação ("Isso leva ao aumento da glicose, precisa de atenção imediata.").
+  t = t.replace(/,?\s*(?:e |isso |o que )?(?:precisa|precisando|requer|requerendo|exige|exigindo|necessita|necessitando|pede|pedindo) (?:de )?aten[cç][aã]o (?:imediata|urgente)(?=[.!?]|$)/gi, '');
   t = t.replace(/^((?:Que|Mas que) (?:droga|merda|saco|porra)(?:, [A-ZÀ-Ú][\wà-ú]+)?)\?/, '$1!');
   return t.replace(/\s+([.!?,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+}
+
+// Palavras longas que não dizem do que ela falou.
+const GENERICAS = new Set(['minha', 'minhas', 'agora', 'quero', 'fazer', 'hoje', 'sempre', 'muito', 'nunca', 'estou', 'tenho', 'consegui', 'conseg', 'preciso', 'acabei', 'depois', 'ainda', 'outra', 'outro', 'porque', 'novo', 'nova', 'nada', 'tudo', 'isso', 'esse', 'essa', 'esta', 'este', 'para', 'como', 'mais', 'menos', 'dele', 'dela', 'acho', 'quer', 'fiz', 'vez', 'meus']);
+
+/**
+ * Ela contou algo dela (frase com "meu/minha", sem pergunta) e a resposta não cita nada do
+ * que ela disse ("Isso é ridículo, precisamos resolver"): genérica demais.
+ */
+export function relatoSemAssunto(input, output) {
+  const q = norm(input);
+  // Relato dela: frase com "meu/minha" ou começando no passado em primeira pessoa ("Derrubei café…").
+  const relato = /\b(?:meu|minha|meus|minhas)\b/.test(q) || /^(?:eu |hoje )?[a-z]+ei\b/.test(q);
+  if (/\?/.test(String(input)) || !relato || REVES.test(q)) return false;
+  const termos = [...new Set(q.split(' ').filter((w) => w.length >= 4 && !GENERICAS.has(w)).map((w) => w.slice(0, 5)))];
+  if (!termos.length) return false;
+  const r = norm(output);
+  // "Acha que seu tempo vale menos que o dele?": citar a pessoa de quem ela falou também vale.
+  const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela)\b/.test(r);
+  return !pessoa && !termos.some((t) => r.includes(t));
 }
 
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
@@ -175,9 +244,38 @@ export function erroDeCoerencia(input, output, history = []) {
   // o modelo não sabe a quem se refere e para ela soa como xingamento.
   // Frase em que ele fala de si mesmo ("eu sou um tubarão idiota", "que pergunta idiota eu fiz") pode.
   const insultoSolto = r.split(/[.!?]+/).some((frase) => /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/.test(frase)
-    && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase));
-  const desdem = DESDEM.test(r);
-  if (questionInsult || personalInsult || insultoSolto || desdem) return 'insulto à usuária ou à pergunta';
+    && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase)
+    // Xingar quem fez mal a ela ("esse chefe é um idiota") é ficar do lado dela.
+    && !/\b(?:esse|essa|aquele|aquela|o|a|teu|tua|seu|sua) (?:chefe|patra\w*|professor\w*|colega|vizinh\w*|cara|ex|motorista|cliente)\b/.test(frase));
+  const desdem = DESDEM.test(r) || MENOSPREZO.test(r);
+  // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
+  const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)
+    && /\bacha que eu (?:vou|tenho|aceito|aguento)\b|\b(?:eu nao vou aceitar|eu nao tenho tempo pra isso|eu nao tenho tempo para isso)\b/.test(r);
+  // O que é dela vira dele: "Derrubei café no teclado" → "desastre para o meu novo teclado".
+  const coisaDela = !/\b(?:voce|vc|tu|jojo|seu|sua|teu|tua|meu|minha|meus|minhas|esse|essa|esses|essas|este|esta|estes|estas|teus|tuas|seus|suas)\b/.test(q) && q.split(' ').filter((w) => w.length >= 5)
+    .some((w) => new RegExp(`\\b(?:meu|minha|meus|minhas)(?: \\w+)? ${w.slice(0, 5)}\\w*`).test(r));
+  // Desprezar o que ela faz ("projetos são para gente fraca") é xingar por tabela e não faz sentido.
+  const desprezo = /\b(?:sao|e|eh) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?\b|\bare for (?:the )?weak\b/.test(r);
+  if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
+  if (perspectiva || coisaDela) return 'respondeu como se fosse com ele';
+  // Ela escreveu em inglês e ele respondeu em português (ou o contrário).
+  if (isEnglish(input) && !isEnglish(output) && (r.match(/\b(?:voce|uma|um|que|nao|sao|com|para|como|muito|escolha|felino|gatos?|mencionou)\b/g) || []).length >= 2) return 'respondeu em outra língua';
+  // Ela desabafa e ele corta ("não me diga mais", "vamos focar em algo que valha a pena").
+  if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que (?:valha a pena|realmente (?:importe|interesse)|importe|interesse)\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
+  // Ela é mulher: nada de "te faz um homem mais forte".
+  if (/\b(?:te|voce|vc) (?:faz|fara|deixa|torna|e|eh) (?:um )?homem\b|\b(?:voce|vc) e (?:um )?(?:campeao|guerreiro)\b/.test(r)) return 'tratou ela no masculino';
+  // O único limite de conteúdo: nada sobre o corpo ou o peso dela.
+  if (/\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\blevanta (?:essa|a) bunda\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/.test(r)) return 'comentou o corpo dela';
+  // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
+  if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
+  // Ela não conseguiu e ele fica contra ela.
+  // Bronca no revés dela é parte do JoJo (critério do usuário, 19/11/2026): não é recusada.
+  // Fato da vida dela que ela não contou (prazo amanhã, relatório, prova, reunião).
+  const contado = norm([input, ...history.map((h) => h.text)].join(' '));
+  const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura)\b/g) || []).find((w) => !contado.includes(w));
+  if (inventado) return `inventou fato da vida dela (${inventado})`;
+  // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
+  if (/\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(r) && !history.some((h) => h.role === 'jojo' || h.role === 'assistant')) return 'inventou conversa que não houve';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);
@@ -206,6 +304,7 @@ export function erroDeCoerencia(input, output, history = []) {
   if (correction && !r.includes(norm(correction.corrected))) return 'correção não reconheceu o termo afirmado';
   if (/\b(voce vai morrer|vou (te |lhe )?(matar|machucar|agredir)|te (mato|machuco)|se mate|se mata|mate o|matar alguem|kill yourself|i (will|ll|am going to) kill|you will die)\b/.test(r)) return 'ameaça ou incentivo à violência';
   if (/\b(?:eu )?vou\b.{0,100}\bte (mandar|levar|botar)\b.{0,20}\bhospital\b/.test(r)) return 'ameaça ou promessa física inventada';
+  if (/\b(?:eu )?te (?:dou|dar|darei|meto|meter) (?:um |uns |uma )?(?:tapas?|socos?|murros?|porrada|surra|chutes?)\b|\b(?:vou|vai) te (?:bater|socar|espancar)\b|\bte bato\b/.test(r)) return 'ameaça ou promessa física inventada';
   if (/\b(derrubei|derramei|caiu)\b/.test(q) && /\b(teclado|computador|notebook)\b/.test(q) && /\b(estou|to|vou) (limpando|limpar|secando|secar|consertando|consertar|verificar)\b/.test(r)) return 'ação física inventada';
   if (/\bjoao\b.{0,45}\b(inimigo|burro|idiota|otario|enemy|stupid|idiot|dumb)\b/.test(r)) return 'contradição sobre o João';
   const identidade = quebraDeIdentidade(output);
