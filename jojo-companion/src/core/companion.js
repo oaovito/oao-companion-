@@ -592,6 +592,8 @@ export class Companion {
     if (changed.includes('visible')) this.setVisible(settings.visible, { fromSettings: true });
     if (changed.includes('bubbleScale') && this.bubble) this._remeasureBubble();
     if (changed.includes('lolBronca') && !settings.lolBronca) this._lolReturn();
+    // Ela ligou/desligou as provocações dirigidas a ela: refaz o filtro de falas na hora.
+    if (changed.includes('provocacoes')) this.applyPersonality(this.personality.get());
     if (changed.includes('spotifyReacoes') && !settings.spotifyReacoes) this.onSpotify(null);
     this._applyLayout(true);
     this._schedule(0);
@@ -1645,6 +1647,8 @@ export class Companion {
         history: conv.messages.slice(0, -1).filter((m) => m.who === 'user' || m.who === 'jojo').slice(-18).map((m) => ({ role: m.who === 'user' ? 'user' : 'assistant', text: m.text })),
         state: this.behavior.state,
         persona: this.personality.get().instrucoes,
+        // A Emanuele pode desligar as provocações dirigidas a ela (identidade.js, Camada B).
+        provocacoes: this.store.get().provocacoes !== false,
         // Indicação temporária enquanto pesquisa (some quando a resposta chega).
         onStatus: (t) => {
           this.clock.clearTimeout(thinkTimer);
@@ -2973,7 +2977,9 @@ export class Companion {
   // ---------------------------------------------------------------- personalidade
 
   applyPersonality(profile) {
-    this.phrases.setProfile({ filter: phraseFilter(profile), weight: phraseWeight(profile) });
+    // Provocações dirigidas a ela ficam na configuração dela (settings), não no perfil.
+    const efetivo = { ...profile, provocacoes: this.store?.get?.().provocacoes !== false };
+    this.phrases.setProfile({ filter: phraseFilter(efetivo), weight: phraseWeight(efetivo) });
   }
 
   /** Pode dar uma bronca/lembrete agora? Respeita silêncio, pausa, ocultação e despedida. */

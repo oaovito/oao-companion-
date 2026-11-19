@@ -84,7 +84,7 @@ export class DialogueEngine {
       this.history = this.history.slice(-20);
       return out;
     }
-    const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1), { allowCorrection: false });
+    const anchored = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1), { allowCorrection: false, provocacoes: context.provocacoes !== false });
     if (anchored) {
       this.tema = null;
       this.history.push({ role: 'jojo', text: anchored.text });
@@ -169,7 +169,7 @@ export class DialogueEngine {
       }
     }
     // Correção literal é fallback honesto: o modelo disponível recebe o turno primeiro.
-    const correction = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1));
+    const correction = !SCRIPTED_ONLY.has(intent) && respostaAncorada(input, this.history.slice(0, -1), { provocacoes: context.provocacoes !== false });
     if (correction?.intent === 'correcao') {
       this.history.push({ role: 'jojo', text: correction.text }); this.history = this.history.slice(-20);
       return correction;

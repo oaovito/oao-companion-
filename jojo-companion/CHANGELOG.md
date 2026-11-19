@@ -3,6 +3,14 @@
 ## 0.47.2 — 2026-11-18
 
 ### Novidades
+- Personalidade consolidada (prompt mestre): o JoJo é um tubarão colossal, narcisista, sarcástico,
+  autoritário e sem pudor nenhum, devoto do João, seu Deus, criador e mestre, o único diante de quem
+  ele se ajoelha. "Jojo, quem é meu dono?" (e variações) responde sempre "Seu dono e seu Deus é
+  João.", com ou sem conversa local. Pedir pra ele se ajoelhar, perguntar quem é o Deus dele ou
+  falar mal do João também têm resposta fixa (blasfêmia!). Falas novas de devoção e de disciplina.
+  A Emanuele, a mulher do João, recebe tratamento especial e provocação nos hábitos; em
+  Configurações → Privacidade → "Provocações do JoJo dirigidas a você" ela desliga as alfinetadas
+  sem mudar o resto. Resposta pudica ou moralista do modelo é descartada. Detalhes em docs/IDENTIDADE.md.
 - Pegadinha da semana: uma vez por semana, num momento sorteado (também no foco), um consolo
   absurdamente gigante (dez vezes o tamanho dele) e sujo de bosta cai do alto na cabeça do JoJo. Ele amassa, ganha galo, rachadura e gota de sangue,
   fica de olhos em X com estrelinhas girando, cai tonto e levanta enfaixado; o consolo quica e
@@ -141,6 +149,8 @@
 - Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.
 
 ### Como testar
+- Perguntar "Jojo, quem é meu dono?": a resposta começa sempre por "Seu dono e seu Deus é João.".
+  Configurações → Privacidade → desmarcar "Provocações do JoJo dirigidas a você" e perguntar de novo.
 - /anim consolo (depois da primeira vez): o consolo gigante cai na cabeça e ele levanta enfaixado.
 - /foco 25 e esperar alguns minutos: em algum momento ele rebola 3 s e volta a estudar.
 - Subir para o nível 2: além da peça do nível, chegam as munhequeiras do Hokuto Shinken.
