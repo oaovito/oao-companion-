@@ -400,7 +400,7 @@ export class LlmProvider extends DialogueProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: ctrl.signal,
-        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: corrigir ? 0.7 : 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
+        body: JSON.stringify({ model: modelo, messages, stream: true, ...(/^qwen3(?:\.5)?:/.test(modelo) && !/instruct/.test(modelo) ? { think: false } : {}), ...(structured ? { format: 'json' } : {}), keep_alive: OLLAMA_OPTS.keepAlive, options: { ...opts, temperature: corrigir ? 0.55 : 0.3, presence_penalty: 0, repeat_penalty: 1.05, ...(!structured && endStops ? { stop: [...endStops, `[${this.getProfile().nomeCompanion || 'JoJo'}`, `*${this.getProfile().nomeCompanion || 'JoJo'}`] } : {}) } }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       content = await readNdjson(res, (piece) => onDelta && onDelta(piece));

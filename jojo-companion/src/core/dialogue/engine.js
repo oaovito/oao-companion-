@@ -130,6 +130,14 @@ export class DialogueEngine {
           let r;
           try {
             r = await withTimeout(this.llm.reply({ text: input, history: this.history.slice(-12), context, pesquisa: achado, professor, followup: seg ? { kind: seg, topic: temaVivo.texto } : null, signal: controller.signal, ...(corrigir ? { corrigir } : {}) }), budget, () => controller.abort());
+          } catch (e) {
+            // Fora do personagem (assistente, pudor, "desculpas"...): também ganha a segunda tentativa.
+            if (e.respostaInvalida && tentativa === 0 && !e.cancelled) {
+              this.log('warn', `IA: ${e.message}; gerando de novo.`);
+              corrigir = e.message;
+              continue;
+            }
+            throw e;
           } finally {
             if (this.pendingGeneration === controller) this.pendingGeneration = null;
           }

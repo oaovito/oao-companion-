@@ -311,6 +311,6 @@ test('segunda tentativa diz ao modelo por que a primeira foi recusada e varia ma
   assert.doesNotMatch(calls[0].messages[0].content, /was rejected/);
   assert.equal(calls[0].options.temperature, 0.3);
   assert.match(calls[1].messages[0].content, /previous reply to this message was rejected \(respondeu como se fosse com ele\).*on her side.*never say she is wasting your time/);
-  assert.equal(calls[1].options.temperature, 0.7);
+  assert.equal(calls[1].options.temperature, 0.55);
   assert.match(calls[0].messages[0].content, /on her side: be annoyed at the situation, never at her/);
 });

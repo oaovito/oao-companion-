@@ -178,7 +178,9 @@ export function relatoSemAssunto(input, output) {
   const termos = [...new Set(q.split(' ').filter((w) => w.length >= 4 && !GENERICAS.has(w)).map((w) => w.slice(0, 5)))];
   if (!termos.length) return false;
   const r = norm(output);
-  return !termos.some((t) => r.includes(t));
+  // "Acha que seu tempo vale menos que o dele?": citar a pessoa de quem ela falou também vale.
+  const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela)\b/.test(r);
+  return !pessoa && !termos.some((t) => r.includes(t));
 }
 
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
@@ -198,10 +200,13 @@ export function erroDeCoerencia(input, output, history = []) {
   // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
   const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)
     && /\bacha que eu (?:vou|tenho|aceito|aguento)\b|\b(?:eu nao vou aceitar|eu nao tenho tempo pra isso|eu nao tenho tempo para isso)\b/.test(r);
+  // O que é dela vira dele: "Derrubei café no teclado" → "desastre para o meu novo teclado".
+  const coisaDela = !/\b(?:voce|vc|tu|jojo|seu|sua|teu|tua|meu|minha|meus|minhas|esse|essa|esses|essas|este|esta|estes|estas|teus|tuas|seus|suas)\b/.test(q) && q.split(' ').filter((w) => w.length >= 5)
+    .some((w) => new RegExp(`\\b(?:meu|minha|meus|minhas)(?: \\w+)? ${w.slice(0, 5)}\\w*`).test(r));
   // Desprezar o que ela faz ("projetos são para gente fraca") é xingar por tabela e não faz sentido.
   const desprezo = /\b(?:sao|e|eh) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?\b|\bare for (?:the )?weak\b/.test(r);
   if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
-  if (perspectiva) return 'respondeu como se fosse com ele';
+  if (perspectiva || coisaDela) return 'respondeu como se fosse com ele';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);

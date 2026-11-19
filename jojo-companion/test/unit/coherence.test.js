@@ -639,3 +639,16 @@ test('run 234: relato dela pede resposta que fale do assunto; a segunda geraçã
   const r2 = await new DialogueEngine({ llm: llm2 }).reply(chefe);
   assert.equal(r2.intent, 'ia');
 });
+
+test('run 235: coisa dela não vira dele; citar a pessoa vale como assunto; resposta fora do personagem ganha segunda tentativa', async () => {
+  assert.equal(erroDeCoerencia('Derrubei café no teclado agora.', 'Que droga, Manu! Café no teclado? Isso é um desastre para o meu novo teclado.'), 'respondeu como se fosse com ele');
+  assert.equal(erroDeCoerencia('Derrubei café no teclado agora.', 'Que droga, Manu! Café no teclado? Desliga e vira de cabeça pra baixo.'), null);
+  assert.equal(erroDeCoerencia('Meu treino de hoje foi pesado.', 'Teu treino? O meu treino é mais pesado.'), null, 'comparar com o dele pode');
+  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Acha que seu tempo vale menos que o dele?'), false);
+  let n = 0;
+  const pedidos = [];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); if (++n === 1) { const e = new Error('fora do personagem (desculpas)'); e.respostaInvalida = true; throw e; } return { text: 'Beleza, Manu. Sem brincadeira: o que tá pegando?' }; } };
+  const r = await new DialogueEngine({ llm }).reply('Não quero brincar agora.');
+  assert.equal(r.intent, 'ia');
+  assert.equal(pedidos[1], 'fora do personagem (desculpas)');
+});
