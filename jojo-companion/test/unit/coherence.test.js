@@ -754,3 +754,10 @@ test('run 246: revés sem sobrar só a interjeição; pergunta geral não vira c
   assert.equal(semConselhoPessoal(geral, r), 'É resistência à insulina e o pâncreas não compensa.');
   assert.equal(semConselhoPessoal('eu tenho diabetes tipo 2, o que faço?', r), r, 'quando é com ela, o conselho fica');
 });
+
+test('run 247: conversa séria não é chata, sem "não precisa de mais detalhes", "dê a volta por cima"', () => {
+  // Impaciência com o pedido de conversa séria: gera de novo (tirar a frase deixaria só "É claro, Manu.").
+  assert.equal(erroDeCoerencia('Só quero conversar, sem piada agora.', 'É claro, Manu. Conversar é bom, mas não me faça esperar, viu? A vida é muito curta para ser chata.'), 'insulto à usuária ou à pergunta');
+  assert.equal(semDesdem('Sua fruta favorita é manga, Emanuele. Não precisa de mais detalhes, isso é claro.'), 'Sua fruta favorita é manga, Emanuele.');
+  assert.equal(polirTexto('Que pena, Manu. Não se desanime, volte para cima e resolva isso.'), 'Que pena, Manu. Não se desanime, dê a volta por cima e resolva isso.');
+});

@@ -133,9 +133,9 @@ function preferenciaInventada(output, known, userFacts) {
 }
 
 // Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
-const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:com|essas?|tuas?|suas?) perguntas? (?:idiotas?|burras?|estupidas?|ridiculas?)\b|\bnao (?:minta|mente) (?:pra|para) mim\b|\bnao tente me enganar\b|\b(?:irritante|chat[ao]) (?:quanto|como) (?:algumas|certas) pessoas\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
+const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:com|essas?|tuas?|suas?) perguntas? (?:idiotas?|burras?|estupidas?|ridiculas?)\b|\bnao (?:minta|mente) (?:pra|para) mim\b|\bnao tente me enganar\b|\bnao precisa de mais detalhes\b|\b(?:irritante|chat[ao]) (?:quanto|como) (?:algumas|certas) pessoas\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
 // Menosprezo no meio da frase: não dá para só tirar a frase, então gera de novo.
-const MENOSPREZO = /\bse (?:for|fores) dign[oa]\b|\bse (?:voce )?merecer\b|\bnao se atrapalhe\b|\b(?:essa|esta|tua|sua) (?:sua )?pergunta me deixou\b/;
+const MENOSPREZO = /\bnao me faca esperar\b|\bvida e (?:muito )?curta (?:demais )?(?:para|pra) ser chat[ao]\b|\bse (?:for|fores) dign[oa]\b|\bse (?:voce )?merecer\b|\bnao se atrapalhe\b|\b(?:essa|esta|tua|sua) (?:sua )?pergunta me deixou\b/;
 
 /**
  * Tira só as frases de desdém e mantém o resto da resposta ("You mentioned a cat,
@@ -198,6 +198,7 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   t = t.replace(/,?\s*(?:e )?n[aã]o (?:em|pra|para) (?:ficar )?reclamar(?=[.!?]|$)/gi, '');
   // "uma pessoa ... o corpo dele" → "o corpo dela".
   if (/\buma pessoa\b/i.test(t)) t = t.replace(/\b([Oo]) corpo dele\b/g, '$1 corpo dela');
+  t = t.replace(/\bvolt(?:e|a) para cima\b/gi, (m) => (/^V/.test(m) ? 'Dê a volta por cima' : 'dê a volta por cima'));
   // "Você disse que manga." → "Você disse manga."
   t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
   t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');
