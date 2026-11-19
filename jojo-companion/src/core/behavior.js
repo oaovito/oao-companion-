@@ -82,6 +82,12 @@ export const STATES = {
   smitten: { priority: P.INTERACT, phases: [{ anim: 'smitten', ms: 6000 }], next: 'idle' },
   // "Vai tomar no cu": vira de costas, mostra o prolapso rebolando por ~5 s e desvira.
   moon: { priority: P.INTERACT, phases: [{ anim: 'moon', ms: 7400 }], next: 'idle' },
+  // Rebolado do meme (de costas, mãos nos joelhos, sem prolapso): 3 s, no foco e às vezes no repouso.
+  twerk: { priority: P.INTERACT, phases: [{ anim: 'twerk', ms: 3000 }], next: 'idle' },
+  // "Tigresa, tire sua roupa": vira tigresa, rebola, a bermuda voa e ele fica pelado sem pudor.
+  tigresa: { priority: P.INTERACT, phases: [{ anim: 'tigresa', ms: 6500 }], next: 'idle' },
+  // Pegadinha semanal: consolo gigante cai na cabeça (traumatismo craniano de desenho).
+  dildo: { priority: P.INTERACT, phases: [{ anim: 'dildo', ms: 6500 }], next: 'idle' },
   angry: { priority: P.INTERACT, phases: [{ anim: 'angry', ms: 2400 }], next: 'idle' },
   sad: { priority: P.INTERACT, phases: [{ anim: 'sad', ms: 3200 }], next: 'idle' },
   // Animações do catálogo: `act` (pedido, evento, chat) e `ambient` (sorteio enquanto ela trabalha).
@@ -118,6 +124,8 @@ export function autoWeights(activity, { sleepiness = 0, alert = false } = {}) {
 
 /** Chance, a cada escolha autônoma do repouso, de virar de costas e rebolar sozinho. */
 export const MOON_IDLE_CHANCE = 1e-9;
+/** Chance, a cada escolha autônoma do repouso (quando liberado pelo companion), de rebolar 3 s. */
+export const TWERK_IDLE_CHANCE = 0.05;
 
 export function weightedPick(weights, rng = Math.random, avoid = []) {
   const entries = Object.entries(weights).map(([k, v]) => [k, avoid.includes(k) ? v * 0.25 : v]);
@@ -304,6 +312,8 @@ export class BehaviorMachine {
     if (ctx.work) return 'meditate';
     // 1 em 1 bilhão: o "vai tomar no cu" sozinho, sem ninguém pedir.
     if (!ctx.paused && !ctx.alert && this.rareRng() < MOON_IDLE_CHANCE) return 'moon';
+    // Rebolado de vez em quando no repouso (o companion libera com intervalo mínimo).
+    if (ctx.twerkOk && !ctx.paused && !ctx.alert && this.rng() < TWERK_IDLE_CHANCE) return 'twerk';
     const w = autoWeights(this.activity, ctx);
     if (!this.canSleep()) w.sleep = 0;
     if (ctx.alert) {

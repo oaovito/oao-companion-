@@ -13,9 +13,10 @@ export function sourceCommit(root) {
   return git(root, ['rev-parse', 'HEAD']);
 }
 
-export function verifyPublication(root, { reportPath, tag, version, files, platform = process.platform, execution = { githubActions: process.env.GITHUB_ACTIONS, runner: process.env.RUNNER_ENVIRONMENT, runId: process.env.GITHUB_RUN_ID } }) {
+export function verifyPublication(root, { reportPath, tag, version, files, platform = process.platform, execution = { githubActions: process.env.GITHUB_ACTIONS, runner: process.env.RUNNER_ENVIRONMENT, runId: process.env.GITHUB_RUN_ID, maquinaPropria: process.env.JOJO_MAQUINA_PROPRIA === 'true' } }) {
   if (platform !== 'win32') throw new Error('Publicacao exige executor Windows nativo');
-  if (execution.githubActions !== 'true' || execution.runner !== 'github-hosted') throw new Error('Publicacao exige runner oficial hospedado pelo GitHub');
+  const runnerOk = execution.runner === 'github-hosted' || (execution.runner === 'self-hosted' && execution.maquinaPropria === true);
+  if (execution.githubActions !== 'true' || !runnerOk) throw new Error('Publicacao exige runner do GitHub ou a maquina propria pedida no run');
   if (tag !== `v${version}`) throw new Error('Publicacao exige tag oficial igual a versao');
   const commit = sourceCommit(root);
   if (git(root, ['rev-parse', `${tag}^{commit}`]) !== commit) throw new Error('Tag oficial aponta para outro commit');

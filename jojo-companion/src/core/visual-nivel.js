@@ -1,7 +1,7 @@
 // Visuais por nível. REGRA IRREDUTÍVEL (pedido de 18/11/2026): todo título de nível
 // é uma referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas
 // as clássicas de tubarão estão presentes), mais 20 extras de South Park e 50 de memes do
-// Twitter (`extras`, sem pudor), e a peça, a fala e a reação de cada nível são dessa
+// Twitter (`extras`, sem pudor), mais 100 de anime (um a cada 2 níveis, obras novas), e a peça, a fala e a reação de cada nível são dessa
 // referência. Os dados ficam em `progressao.json` → `referencias` (um por nível).
 // Cada nível a partir do 2 libera uma peça desenhada por cima do JoJo (o corpo, a
 // silhueta e o estilo de recorte de papel não mudam). Quanto mais alto o nível,
@@ -49,9 +49,11 @@ const topo = (x) => 20 - 8 * (1 - ((x - 90) / 36) ** 2);
  */
 /** Aceita só as referências (lista) ou {referencias, extras}. */
 const fonte = (d) => (Array.isArray(d) ? { referencias: d, extras: [] } : { referencias: d?.referencias || [], extras: d?.extras || [] });
-const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2})$/;
+const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$/;
 // Prefixo do id de cada coleção de extras.
-const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw' };
+const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an', 'memes BR': 'br' };
+// Casas do número no id (100 animes pedem três).
+const CASAS = { an: 3 };
 
 export function gerarVisuais(dados) {
   const { referencias, extras } = fonte(dados);
@@ -64,7 +66,7 @@ export function gerarVisuais(dados) {
     const [a, b, g] = r.cores;
     out.push({ id: `nv${id3(nivel)}`, nivel, parte: r.parte, forma: r.forma, t, titulo: r.titulo, obra: r.obra, tipo: r.tipo, nome: r.peca, fala: r.fala, anim: r.anim || null, reacao: r.reacao || null, cores: { a, b, g }, transforma: r.transforma || null });
   }
-  // Extras (20 de South Park, 50 de memes do Twitter): liberados junto com o nível
+  // Extras (20 de South Park, 50 de memes do Twitter, 100 de anime): liberados junto com o nível
   // indicado, depois da peça do nível. Id pelo prefixo e pela ordem dentro da coleção.
   const contagem = {};
   for (const x of extras) {
@@ -73,9 +75,135 @@ export function gerarVisuais(dados) {
     const n = contagem[pre] = (contagem[pre] || 0) + 1;
     if (!PARTES.has(x.parte) || !(x.nivel >= 2 && x.nivel <= total)) continue;
     const [a, b, g] = x.cores;
-    out.push({ id: `${pre}${String(n).padStart(2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
+    out.push({ id: `${pre}${String(n).padStart(CASAS[pre] || 2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
   }
-  return out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
+  out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
+  atribuirGenes(out);
+  return out;
+}
+
+// ---------------------------------------------------------------- genes (variação única por visual)
+
+// Pedido de 18/11/2026: variar 50x mais os elementos, sem repetir nada de um visual no outro
+// (o olho kawaii, por exemplo, nunca igual). Cada visual recebe, de forma determinística e
+// sem repetição, um olho próprio (se a referência muda os olhos), um enfeite próprio na peça
+// e um ajuste próprio de tamanho e inclinação da peça.
+export const GENES = {
+  pupilas: ['redonda', 'fenda vertical', 'fenda horizontal', 'estrela', 'coração', 'losango', 'cruz', 'anel', 'dupla', 'gota'],
+  brilhos: [0, 1, 2, 3],
+  cilios: [0, 1, 2, 3, 4],
+  formatos: [[1, 1], [1.18, 0.9], [0.9, 1.18], [1.25, 1.1], [0.86, 0.86], [1.08, 1.3]],
+  inclinacoes: [-0.32, -0.14, 0, 0.14, 0.32],
+  enfeites: ['pontos', 'listras', 'estrelas', 'gemas', 'rebites', 'zigue', 'coracoes', 'triangulos', 'losangos', 'aneis', 'raios', 'ondas'],
+  quantidades: [2, 3, 4, 5, 6],
+  cores: ['a', 'b', 'g'],
+  faixas: [0, 1, 2],
+  escalas: [0.93, 0.97, 1, 1.03, 1.07],
+  giros: [-6, -3, 0, 3, 6],
+  // Animação da referência: cada visual a toca do seu jeito (intensidade, ritmo e gesto de arremate).
+  intensidades: ['suave', 'normal', 'exagerado'],
+  ritmos: [0.8, 0.9, 1, 1.12, 1.25],
+  arremates: ['piscadinha', 'brilharDentes', 'flexionarBiceps', 'sobrancelha', 'sorrisoCanto', 'assentir', 'ombrosDeboche', 'beijoBiceps', 'revirarOlhos', 'linguaVitoria'],
+};
+const hash = (s) => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+/** Escolhe a combinação de número `n` (0..total-1) em cada lista, como um número em base mista. */
+function combinacao(n, listas) {
+  return listas.map((l) => { const v = l[n % l.length]; n = Math.floor(n / l.length); return v; });
+}
+function atribuirGenes(lista) {
+  const G = GENES;
+  const olhosListas = [G.pupilas.map((_, i) => i), G.brilhos, G.cilios, G.formatos, G.inclinacoes];
+  const olhosTotal = olhosListas.reduce((m, l) => m * l.length, 1);
+  const pecaListas = [G.enfeites, G.quantidades, G.cores, G.faixas, G.escalas, G.giros];
+  const pecaTotal = pecaListas.reduce((m, l) => m * l.length, 1);
+  const usadosOlho = new Set();
+  const usadosPeca = new Set();
+  const usadosAnim = new Set();
+  for (const p of lista) {
+    const h = hash(p.id);
+    let genes = { olho: null };
+    if (p.transforma?.olhos) {
+      // Olho único entre todos os visuais (o estilo base pode repetir; a combinação, nunca).
+      let n = h % olhosTotal;
+      while (usadosOlho.has(`${p.transforma.olhos}:${n}`) || usadosOlho.has(`*:${n}`)) n = (n + 7919) % olhosTotal;
+      usadosOlho.add(`*:${n}`);
+      const [pupila, brilhos, cilios, [rx, ry], tilt] = combinacao(n, olhosListas);
+      const iris = [p.cores.g, p.cores.b, p.cores.a].find((c) => /^#/.test(c) && !/^#(?:f{6}|0{6}|1{6}|2{6})$/i.test(c)) || p.cores.a;
+      genes.olho = { pupila, brilhos, cilios, rx, ry, tilt, iris };
+    }
+    // Peça única: a forma base pode repetir entre obras; forma + enfeite + ajuste, nunca.
+    let m = (h >>> 3) % pecaTotal;
+    while (usadosPeca.has(`${p.forma}:${m}`)) m = (m + 104729) % pecaTotal;
+    usadosPeca.add(`${p.forma}:${m}`);
+    const [enfeite, quantidade, cor, faixa, escala, giro] = combinacao(m, pecaListas);
+    genes = { ...genes, enfeite, quantidade, cor, faixa, escala, giro };
+    // Animação: visuais com a mesma animação de referência nunca a tocam do mesmo jeito.
+    const animListas = [G.intensidades, G.ritmos, G.arremates];
+    const animTotal = animListas.reduce((x, l) => x * l.length, 1);
+    let k = (h >>> 7) % animTotal;
+    while (usadosAnim.has(`${p.anim}:${k}`)) k = (k + 31) % animTotal;
+    usadosAnim.add(`${p.anim}:${k}`);
+    const [intensidade, ritmo, arremate] = combinacao(k, animListas);
+    // O arremate é sempre outro gesto (nunca a própria animação de referência).
+    const outro = G.arremates[(G.arremates.indexOf(arremate) + 1) % G.arremates.length];
+    genes.anim = { intensidade, ritmo, arremate: arremate === p.anim ? outro : arremate };
+    p.genes = genes;
+  }
+}
+
+/** Assinatura do visual (forma + genes): nenhuma se repete. */
+export function assinaturaVisual(p) {
+  const g = p.genes || {};
+  return `${p.parte}:${p.forma}:${g.enfeite}:${g.quantidade}:${g.cor}:${g.faixa}:${g.escala}:${g.giro}`;
+}
+
+// Fantasias de corpo inteiro: sem ajuste de tamanho/giro (encaixe exato no corpo).
+const FANTASIAS_INTEIRAS = new Set(['tigresaFantasia', 'listrasTigre']);
+
+// Onde cada parte recebe o enfeite (faixas alternativas) e o pivô do ajuste de tamanho/giro.
+const ZONAS = {
+  cabeca: { faixas: [[62, 12, 56], [58, 4, 64], [66, 18, 48]], pivo: [90, 14], extra: CABECA },
+  rosto: { faixas: [[60, 29, 60], [64, 46, 52], [58, 24, 64]], pivo: [90, 38], extra: CABECA },
+  pescoco: { faixas: [[66, 98, 48], [70, 104, 40], [62, 92, 56]], pivo: [90, 100] },
+  costas: { faixas: [[34, 150, 112], [40, 136, 100], [28, 160, 124]], pivo: [90, 120], grupo: 'costumeBack' },
+  pulsos: { faixas: [[24, 143, 18], [24, 140, 18], [24, 146, 18]], pivo: [90, 142], grupo: 'costumeHand', pulsos: true },
+  cinto: { faixas: [[60, 126, 60], [64, 127, 52], [58, 125, 64]], pivo: [90, 126], extra: { hideIf: 'sexy' } },
+  bermuda: { faixas: [[62, 138, 56], [64, 132, 52], [60, 144, 60]], pivo: [90, 138], grupo: 'shortsDetail' },
+  pintura: { faixas: [[52, 104, 76], [56, 114, 68], [48, 96, 84]], pivo: [90, 108], grupo: 'nivelPintura' },
+  aura: { faixas: [[20, 30, 140], [14, 70, 152], [24, 110, 132]], pivo: [90, 150], grupo: 'nivelAura' },
+  mao: { faixas: [[138, 124, 22], [140, 132, 18], [136, 116, 26]], pivo: [149, 130], grupo: 'costumeHand', extra: { parent: 'foreR' } },
+};
+
+/** Enfeite próprio da peça (pontos, listras, estrelas…) na zona da parte, nas cores da obra. */
+function enfeiteDaPeca(p) {
+  const g = p.genes;
+  const z = ZONAS[p.parte];
+  if (!g || !z) return [];
+  const [x0, y, w] = z.faixas[g.faixa];
+  const n = g.quantidade;
+  const fill = p.cores[g.cor];
+  const passo = w / (n + 1);
+  const forma = (cx, cy, i) => {
+    const r = 2.4;
+    switch (g.enfeite) {
+      case 'listras': return rect(cx - 0.9, cy - 3.5, 1.8, 7);
+      case 'estrelas': return estrela(cx, cy, 3.2);
+      case 'gemas': return poly([[cx, cy - 3.4], [cx + 2.6, cy], [cx, cy + 3.4], [cx - 2.6, cy]]);
+      case 'rebites': return `${circ(cx, cy, 1.6)}`;
+      case 'zigue': return poly([[cx - 3, cy + (i % 2 ? 2 : -2)], [cx + 3, cy + (i % 2 ? -2 : 2)], [cx + 3, cy + (i % 2 ? 0 : 4)], [cx - 3, cy + (i % 2 ? 4 : 0)]]);
+      case 'coracoes': return `M${r1(cx)},${r1(cy + 2.8)} C${r1(cx - 4.2)},${r1(cy - 0.6)} ${r1(cx - 1.6)},${r1(cy - 3.6)} ${r1(cx)},${r1(cy - 1.2)} C${r1(cx + 1.6)},${r1(cy - 3.6)} ${r1(cx + 4.2)},${r1(cy - 0.6)} ${r1(cx)},${r1(cy + 2.8)} Z`;
+      case 'triangulos': return poly([[cx - 2.8, cy + 2.4], [cx + 2.8, cy + 2.4], [cx, cy - 2.8]]);
+      case 'losangos': return poly([[cx, cy - 2.4], [cx + 3.4, cy], [cx, cy + 2.4], [cx - 3.4, cy]]);
+      case 'aneis': return `${circ(cx, cy, 2.6)} ${furo(cx, cy, 1.4, 1.4)}`;
+      case 'raios': return poly([[cx + 1, cy - 3.6], [cx - 2, cy + 0.4], [cx, cy + 0.4], [cx - 1, cy + 3.6], [cx + 2, cy - 0.4], [cx, cy - 0.4]]);
+      case 'ondas': return `M${r1(cx - 3.4)},${r1(cy)} Q${r1(cx - 1.7)},${r1(cy - 2.6)} ${r1(cx)},${r1(cy)} Q${r1(cx + 1.7)},${r1(cy + 2.6)} ${r1(cx + 3.4)},${r1(cy)} L${r1(cx + 3.4)},${r1(cy + 1.4)} Q${r1(cx + 1.7)},${r1(cy + 4)} ${r1(cx)},${r1(cy + 1.4)} Q${r1(cx - 1.7)},${r1(cy - 1.2)} ${r1(cx - 3.4)},${r1(cy + 1.4)} Z`;
+      default: return circ(cx, cy, r);
+    }
+  };
+  const caminhos = (dx = 0) => Array.from({ length: n }, (_, i) => forma(x0 + dx + passo * (i + 1), y + (g.enfeite === 'zigue' ? 0 : (i % 2) * 1.2), i)).join(' ');
+  const grupo = z.grupo || 'costumes';
+  if (z.pulsos) return [[grupo, 'enfeiteE', fill, caminhos(0), { parent: 'foreL', alpha: 0.95 }], [grupo, 'enfeiteD', fill, caminhos(111), { parent: 'foreR', alpha: 0.95 }]];
+  return [[grupo, 'enfeite', fill, caminhos(), { ...(z.extra || {}), alpha: 0.95 }]];
 }
 
 // ---------------------------------------------------------------- formas
@@ -456,6 +584,35 @@ const PINTURA = {
     ['nivelPintura', 'nariz', a, circ(90, 51, 7), H({ alpha: 1 })],
     ['nivelPintura', 'brilho', b, circ(87, 48, 1.8), H({ alpha: 1 })],
   ],
+  // Mestre Tigresa (Kung Fu Panda) inteira: colete dourado com folhas vermelhas, gola preta,
+  // mangas curtas, faixa na cintura, calça preta e ataduras nos pulsos e tornozelos.
+  tigresaFantasia: ({ a, b }) => {
+    const folha = (x, y, k = 1, s = 1) => `M${r1(x)},${r1(y)} Q${r1(x + 5 * k * s)},${r1(y - 6 * k)} ${r1(x + 11 * k * s)},${r1(y - 2 * k)} Q${r1(x + 5 * k * s)},${r1(y + 3 * k)} ${r1(x)},${r1(y)} Z`;
+    return [
+      ['nivelCorpo', 'calca', '#1c1c22', 'M58,130 L122,130 L128,158 L94,158 L90,142 L86,158 L52,158 Z'],
+      ['nivelCorpo', 'tornozelos', '#efe6d2', `${rect(53, 154, 34, 6)} ${rect(93, 154, 34, 6)}`],
+      ['nivelCorpo', 'colete', a, 'M50,84 C60,79 120,79 130,84 C141,90 143,101 137,109 C131,118 123,124 117,130 L63,130 C57,124 49,118 43,109 C37,101 39,90 50,84 Z'],
+      ['nivelCorpo', 'gola', '#1c1c22', 'M68,82 L90,102 L112,82 L116,86 L90,108 L64,86 Z'],
+      ['nivelCorpo', 'faixa', '#d6d2c8', 'M59,123 L121,123 L122,132 L58,132 Z'],
+      ['nivelPintura', 'faixaListras', '#8a8578', `${rect(59, 125.5, 63, 1.4)} ${rect(58, 129, 64, 1.4)}`],
+      ['nivelPintura', 'folhas', b, [folha(58, 98), folha(64, 108, 0.9), folha(72, 118, 0.8), folha(110, 96, 1, -1), folha(116, 106, 0.9, -1), folha(122, 116, 0.8, -1), folha(80, 92, 0.7)].join(' ') + ` ${rect(56, 98, 30, 1.2)}`],
+      ['costumeHand', 'mangaE', a, 'M54,84 C40,80 28,90 27,104 L46,107 C48,99 52,93 58,90 Z', { parent: 'armL' }],
+      ['costumeHand', 'mangaD', a, 'M126,84 C140,80 152,90 153,104 L134,107 C132,99 128,93 122,90 Z', { parent: 'armR' }],
+      ['nivelPintura', 'folhasMangas', b, `${folha(32, 98, 0.7)} ${folha(148, 98, 0.7, -1)}`],
+      ['costumeHand', 'atadurasE', '#efe6d2', `${rect(25, 138, 20, 3)} ${rect(25, 142, 20, 3)}`, { parent: 'foreL' }],
+      ['costumeHand', 'atadurasD', '#efe6d2', `${rect(135, 138, 20, 3)} ${rect(135, 142, 20, 3)}`, { parent: 'foreR' }],
+    ];
+  },
+  // Listras de tigre pelo corpo todo (a Tigresa pelada).
+  listrasTigre: ({ a }) => {
+    const l = (x, y, w, s = 1) => poly([[x, y], [x + w * s, y + 3], [x + w * 0.6 * s, y + 6]]);
+    return [
+      ['nivelPintura', 'tronco', a, [l(46, 96, 14), l(44, 108, 12), l(134, 96, 14, -1), l(136, 108, 12, -1), l(50, 118, 10), l(130, 118, 10, -1)].join(' '), { alpha: 0.95 }],
+      ['nivelPintura', 'bracoE', a, `${l(26, 100, 10)} ${l(27, 112, 9)}`, { parent: 'armL', alpha: 0.95 }],
+      ['nivelPintura', 'bracoD', a, `${l(154, 100, 10, -1)} ${l(153, 112, 9, -1)}`, { parent: 'armR', alpha: 0.95 }],
+      ['nivelPintura', 'pernas', a, `${l(54, 150, 10)} ${l(126, 150, 10, -1)} ${l(56, 158, 8)} ${l(124, 158, 8, -1)}`, { alpha: 0.95 }],
+    ];
+  },
   marcasTita: ({ a }) => [['nivelPintura', 'marcas', a, `${poly([[64, 46], [76, 46], [74, 52], [70, 58], [66, 52]])} ${poly([[116, 46], [104, 46], [106, 52], [110, 58], [114, 52]])}`, H({ alpha: 0.85 })]],
 };
 
@@ -758,6 +915,25 @@ function partesDoCorpo(t) {
   if (t.serraCabeca) out.push(['costumeBack', 'serraCabeca', '#9e9e9e', 'M82,14 L82,-30 L98,-30 L98,14 Z', H()], ['costumes', 'serraDentes', '#eceff1', Array.from({ length: 7 }, (_, i) => poly([[98, -28 + i * 6], [103, -25 + i * 6], [98, -22 + i * 6]])).join(' '), H()]);
   if (t.tenis) out.push(['nivelCorpo', 'tenis', t.tenis, `${elip(68, 164, 18, 6)} ${elip(112, 164, 18, 6)}`], ['nivelCorpo', 'sola', '#ffffff', `${rect(50, 166, 36, 2.6)} ${rect(94, 166, 36, 2.6)}`]);
   if (t.pintas) out.push(['nivelPintura', 'pintas', t.pintas, `${circ(66, 104, 3.6)} ${circ(110, 112, 4.4)} ${circ(84, 124, 2.8)} ${circ(118, 96, 2.4)} ${circ(58, 120, 2.6)}`, { alpha: 0.9 }], ['nivelPintura', 'pintasCabeca', t.pintas, `${circ(60, 24, 3)} ${circ(122, 30, 3.6)} ${circ(110, 14, 2.4)}`, H({ alpha: 0.9 })]);
+  // Pelado sem pudor ("Tigresa, tire sua roupa"): quadril, virilha em V, pelos e tudo à mostra.
+  // A bermuda some pelo canal `pelado`; o pinto balança pelo canal `tgPinto`.
+  if (t.pelado) {
+    // Só com o canal `pelado` (visual vestido ou depois que a bermuda voa na animação do meme).
+    const nu = { showIf: 'pelado' };
+    // Quadril sem contorno atravessado (emenda tronco e pernas) e só as laterais contornadas.
+    out.push(['nivelPintura', 'quadril', 'body', 'M63,128 L117,128 L125,150 L55,150 Z', nu]);
+    out.push(['nivelPintura', 'quadrilLados', '#17171f', 'M62,128 L65,128 L57,150 L53,150 Z M118,128 L115,128 L123,150 L127,150 Z', nu]);
+    out.push(['nivelPintura', 'virilha', '#4a2a10', 'M64,128 Q78,140 86,146 Q76,138 67,128 Z M116,128 Q102,140 94,146 Q104,138 113,128 Z', { ...nu, alpha: 0.9 }]);
+    out.push(['nivelCorpo', 'saco', 'body', `${circ(84, 151, 7.5)} ${circ(96, 151, 7.5)}`, { ...nu, dy: 'tgSaco' }]);
+    out.push(['nivelCorpo', 'pinto', 'body', 'M85,136 C84,148 83,158 86,165 C88,170 93,170 95,165 C97,158 96,148 95,136 Z', { ...nu, pivot: [90, 137], rot: 'tgPinto' }]);
+    out.push(['nivelPintura', 'cabecinha', '#e57373', 'M86,162 C87,167 93,168 94,162 C93,164 87,164 86,162 Z', { ...nu, pivot: [90, 137], rot: 'tgPinto' }]);
+    out.push(['nivelPintura', 'pelos', '#2b1d14', 'M74,135 L77,128 L80,134 L84,127 L87,133 L90,126 L93,133 L96,127 L100,134 L103,128 L106,135 C96,140 84,140 74,135 Z', { ...nu, alpha: 0.95 }]);
+  }
+  // Cara de tigre (Mestre Tigresa): máscara branca nos olhos e listras pretas na cabeça.
+  if (t.tigre) {
+    out.push(['headDetail', 'tigreMascara', '#fff8ee', 'M58,46 C56,30 72,24 90,31 C108,24 124,30 122,46 C118,54 104,54 90,49 C76,54 62,54 58,46 Z', H()]);
+    out.push(['headDetail', 'tigreListras', '#1a1a1a', [poly([[84, 10], [88, 10], [87, 24], [85, 24]]), poly([[92, 10], [96, 10], [95, 24], [93, 24]]), poly([[76, 13], [80, 12], [82, 22], [79, 22]]), poly([[100, 12], [104, 13], [101, 22], [98, 22]]), poly([[41, 36], [54, 40], [42, 43]]), poly([[42, 48], [54, 50], [43, 54]]), poly([[139, 36], [126, 40], [138, 43]]), poly([[138, 48], [126, 50], [137, 54]])].join(' '), H()]);
+  }
   if (t.moscas) {
     const mosca = ([x, y]) => `${circ(x, y, 2.4)} ${elip(x - 3, y - 3, 2.6, 1.4)} ${elip(x + 3, y - 3, 2.6, 1.4)}`;
     out.push(['nivelAura', 'moscas', '#212121', [[30, 30], [160, 80], [140, 120]].map(mosca).join(' '), { alpha: 0.95, dx: 'nvMoscaX', dy: 'nvMoscaY' }]);
@@ -781,6 +957,18 @@ export function partesDoLuto() {
   ];
 }
 export const LUTO = { nome: 'Luto do Shape' };
+/** De onde vem o visual: a obra (e a coleção, nos extras). */
+export function origemVisual(p) {
+  return p.extra && p.colecao && !String(p.obra).includes(p.colecao) ? `${p.obra} (${p.colecao})` : p.obra;
+}
+/** Descrição de todo visual: a frase e de onde ela vem. */
+export function descricaoVisual(p) {
+  return `“${p.fala}” — de ${origemVisual(p)}`;
+}
+/** Visual do meme "Tigresa, tire sua roupa" (coleção memes BR). */
+export const TIGRESA_ID = 'br01';
+/** A Tigresa pelada (a ordem do Dragão Guerreiro cumprida). */
+export const TIGRESA_NUA_ID = 'br02';
 
 /** Canal de pose que liga a peça no desenho. */
 export const canalDaPeca = (p) => `nv_${p.id}`;
@@ -794,7 +982,12 @@ export function partesDaPeca(p) {
   else if (p.parte === 'mao') lista = (MAO[p.forma] || MAO.espada)(c, p.t).map(([, id, fill, path, extra]) => ['costumeHand', id, fill, path, { parent: 'foreR', ...(extra || {}) }]);
   else lista = (FORMAS[p.forma] || FORMAS[p.parte === 'bermuda' ? 'liso' : 'medalhao'])(c, p.t);
   const ch = canalDaPeca(p);
-  lista = [...partesDoCorpo(p.transforma), ...lista];
+  // Ajuste próprio da peça (tamanho e giro em torno da zona da parte) e o enfeite dela.
+  const z = ZONAS[p.parte];
+  if (p.genes && z && !FANTASIAS_INTEIRAS.has(p.forma) && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
+    lista = lista.map(([gr, id, fill, path, extra]) => [gr, id, fill, path, { ...(extra || {}), fix: [p.genes.escala, p.genes.giro, ...z.pivo] }]);
+  }
+  lista = [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
   const out = lista.map(([group, id, fill, path, extra]) => ({ group, part: { id: `${p.id}_${id}`, fill, showIf: ch, path, ...(extra || {}) } }));
   // Acabamento pelo nível: 0 a 2 brilhos, num grupo sem contorno por cima de tudo.
   const anc = ANCORAS[p.parte];
@@ -831,6 +1024,8 @@ export function rigComVisuais(rig, dados) {
     else if (GRUPOS_CORPO.has(g.id) && !pt.parent && pt.rot !== 'headRot') out.corpoX = true;
     return out;
   }) }));
+  // Pelado (visual da Tigresa ou a animação do meme): a bermuda e a sunga somem.
+  for (const g of groups) if (['shorts', 'shortsDetail', 'sexyLayer'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'pelado'])];
   const aura = { id: 'nivelAura', hideIf: 'mooning', parts: [] };
   const pintura = { id: 'nivelPintura', hideIf: 'mooning', parts: [] };
   const brilhos = { id: 'nivelBrilho', hideIf: 'mooning', parts: [] };
@@ -849,13 +1044,28 @@ export function rigComVisuais(rig, dados) {
     if (p.parte === 'bermuda') costumes[`bermuda${p.id}`] = { palette: { shorts: p.cores.a, stripe: p.cores.b } };
     const pele = paletaPele(p.transforma);
     if (pele) costumes[`pele${p.id}`] = { palette: pele };
+    if (p.genes?.olho) costumes[`olho${p.id}`] = { palette: { nvIris: p.genes.olho.iris } };
     for (const { group, part } of partesDaPeca(p)) {
       const alvo = byId.get(group) || byId.get('costumes');
       const marcado = { ...part };
       if (GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot') marcado.corpoX = true;
       alvo.parts.push(marcado);
+      // A animação do meme veste a Tigresa por alguns segundos (canal próprio, sem tocar no Guarda-roupa).
+      if (p.id === TIGRESA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaAnim' });
+      if (p.id === TIGRESA_NUA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaNua' });
     }
   }
+  // Faixa de otaku (hachimaki) para o episódio novo de um anime sem visual liberado.
+  byId.get('costumes').parts.push(
+    { id: 'anime_faixa', fill: '#f7f5ee', showIf: 'animeFa', ...CABECA, path: 'M52,22 C68,10 112,10 128,22 L127,30 C110,19 70,19 53,30 Z' },
+    { id: 'anime_sol', fill: '#d32f2f', showIf: 'animeFa', ...CABECA, path: circ(90, 18, 4.2) },
+    { id: 'anime_no', fill: '#f7f5ee', showIf: 'animeFa', ...CABECA, path: `${poly([[124, 20], [140, 34], [136, 37], [122, 25]])} ${poly([[123, 23], [134, 44], [129, 45], [121, 26]])}` },
+  );
+  // Roupa da Tigresa voando na animação do meme.
+  byId.get('costumes').parts.push(
+    { id: 'tigresa_coleteVoando', fill: '#e0a91f', showIf: 'tgVoa', dx: 'tgVoaX', dy: 'tgVoaY', path: 'M50,84 C60,79 120,79 130,84 C141,90 143,101 137,109 C131,118 123,124 117,130 L63,130 C57,124 49,118 43,109 C37,101 39,90 50,84 Z' },
+    { id: 'tigresa_calcaVoando', fill: '#1c1c22', showIf: 'tgVoa', dx: 'tgVoa2X', dy: 'tgVoa2Y', path: 'M58,130 L122,130 L128,158 L94,158 L90,142 L86,158 L52,158 Z' },
+  );
   // Luto do Shape (funeral da comida fora da dieta): vômito verde e lágrimas, canal nvLuto.
   for (const { group, part } of partesDoLuto()) {
     const alvo = byId.get(group) || byId.get('costumes');
@@ -978,16 +1188,21 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
   // Transformações (cabeça, corpo, boca, olhos, pele): a peça mais recente que define cada uma vence.
   vestidas.sort((a, b) => a.nivel - b.nivel || Number(!!a.extra) - Number(!!b.extra));
   let pele = null;
+  let olho = null;
   for (const p of vestidas) {
     const t = p.transforma;
     if (!t) continue;
     if (t.cabeca) ch.nvCabeca = t.cabeca;
     if (t.corpo) ch.nvCorpo = t.corpo;
     if (t.boca) ch.nvBoca = t.boca;
-    if (t.olhos && OLHOS[t.olhos]) ch.nvOlhos = OLHOS[t.olhos];
+    if (t.olhos && OLHOS[t.olhos]) { ch.nvOlhos = OLHOS[t.olhos]; olho = p; }
     if (paletaPele(t)) pele = p.id;
+    if (t.pelado) ch.pelado = 1;
   }
   if (pele) ch[`costume_pele${pele}`] = 1;
+  // Olho próprio do visual que define os olhos (pupila, brilhos, cílios, formato, inclinação e íris).
+  const go = olho?.genes?.olho;
+  if (go) Object.assign(ch, { nvPupila: go.pupila, nvBrilhos: go.brilhos, nvCilios: go.cilios, nvOlhoRx: go.rx, nvOlhoRy: go.ry, nvOlhoTilt: go.tilt, [`costume_olho${olho.id}`]: 1 });
   return Object.keys(ch).length ? ch : null;
 }
 
@@ -1003,7 +1218,7 @@ export function visualSnapshot(estado, referencias, nivel) {
   const vestido = {};
   for (const [parte, id] of Object.entries(s.pecas)) if (lib.some((p) => p.id === id)) vestido[parte] = id;
   const partes = VISUAL_PARTES
-    .map((pt) => ({ ...pt, itens: lib.filter((p) => p.parte === pt.id).reverse().map((p) => ({ id: p.id, nome: p.nome, nivel: p.nivel, titulo: p.titulo, obra: p.obra, descricao: p.fala, cor: p.cores.a, novo: novas.has(p.id) })) }))
+    .map((pt) => ({ ...pt, itens: lib.filter((p) => p.parte === pt.id).reverse().map((p) => ({ id: p.id, nome: p.nome, nivel: p.nivel, titulo: p.titulo, obra: p.obra, descricao: descricaoVisual(p), fala: p.fala, origem: origemVisual(p), cor: p.cores.a, novo: novas.has(p.id) })) }))
     .filter((pt) => pt.itens.length);
   const bloqueados = catalogo(referencias).filter((p) => p.nivel > nivel).map((p) => ({ nivel: p.nivel }));
   return { vestido, partes, total: lib.length, novos: lib.filter((p) => novas.has(p.id)).length, bloqueados };

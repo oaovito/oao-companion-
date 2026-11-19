@@ -5,7 +5,7 @@
 // o que está bloqueado nunca aparece.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadJSON, makeEnv } from './helpers.js';
+import { loadJSON, makeEnv, chatAdv } from './helpers.js';
 import {
   VISUAL_PARTES, gerarVisuais, partesDaPeca, rigComVisuais, visuaisLiberados, pecaLiberada, melhorConjunto,
   aplicarNivel, vestirVisual, canaisVisual, visualSnapshot, acharVisual, sanitizeVisual, canalDaPeca, OLHOS,
@@ -43,14 +43,34 @@ test('extras: 20 de South Park (um a cada 10 níveis) e 50 de memes do Twitter (
   assert.deepEqual(sp.map((x) => x.nivel), Array.from({ length: 20 }, (_, i) => (i + 1) * 10));
   assert.deepEqual(tw.map((x) => x.nivel), Array.from({ length: 50 }, (_, i) => (i + 1) * 4));
   assert.ok(sp.every((x) => x.obra === 'South Park'));
-  assert.equal(new Set(PROG.extras.map((x) => x.titulo)).size, 70, 'nenhum extra repetido');
+  assert.equal(new Set(PROG.extras.map((x) => x.titulo)).size, 172, 'nenhum extra repetido');
   // Nenhum meme dos extras repete um título de nível.
   const titulos = new Set(PROG.niveis.map((t) => t.toLowerCase()));
   assert.ok(tw.every((x) => !titulos.has(x.titulo.toLowerCase())));
   const cat = CAT.filter((p) => p.extra);
-  assert.equal(cat.length, 70);
-  assert.ok(cat.every((p) => /^(sp|tw)\d{2}$/.test(p.id) && partesDaPeca(p).length >= 1));
+  assert.equal(cat.length, 172);
+  assert.ok(cat.every((p) => /^((sp|tw|br)\d{2}|an\d{3})$/.test(p.id) && partesDaPeca(p).length >= 1));
   assert.equal(new Set(CAT.map((p) => p.nome)).size, CAT.length, 'nenhuma peça com nome repetido');
+});
+
+test('extras de anime (pedido de 18/11/2026): 100, um a cada 2 níveis, cada um de uma obra que não aparece em mais nada', () => {
+  const an = PROG.extras.filter((x) => x.colecao === 'animes');
+  assert.equal(an.length, 100);
+  assert.deepEqual(an.map((x) => x.nivel), Array.from({ length: 100 }, (_, i) => (i + 1) * 2));
+  assert.ok(an.every((x) => x.tipo === 'anime'));
+  const obrasAnime = an.map((x) => x.obra);
+  assert.equal(new Set(obrasAnime).size, 100, 'nenhuma obra de anime se repete');
+  const outras = new Set([...PROG.referencias.map((r) => r.obra), ...PROG.extras.filter((x) => x.colecao !== 'animes').map((x) => x.obra)]);
+  assert.ok(obrasAnime.every((o) => !outras.has(o)), 'nenhuma obra já usada em título ou extra');
+  const titulos = new Set(PROG.niveis.map((t) => t.toLowerCase()));
+  assert.ok(an.every((x) => !titulos.has(x.titulo.toLowerCase())));
+  const cat = CAT.filter((p) => p.colecao === 'animes');
+  assert.deepEqual([cat[0].id, cat.at(-1).id], ['an001', 'an100']);
+  // Exagero e nojeira também no anime.
+  const t = (obra) => an.find((x) => x.obra === obra).transforma;
+  assert.ok(t('Sakamoto Days').barrigona && t('Sakamoto Days').papada, 'Sakamoto de barrigão');
+  assert.ok(t('Zom 100').moscas && t('Zom 100').baba, 'zumbi nojento');
+  assert.equal(t('Inuyasha').orelhas, 'cachorro', 'orelhas presas na cabeça');
 });
 
 test('regra irredutível: todas as referências clássicas de tubarão estão presentes', () => {
@@ -111,10 +131,10 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
   assert.equal(r.palette.nvCabecaPele, RIG.palette.body, 'sem visual, a cabeça tem a cor de sempre');
   const todas = r.groups.flatMap((g) => g.parts);
   assert.equal(new Set(todas.map((p) => p.id)).size, todas.length, 'ids únicos no rig');
-  const novas = todas.filter((p) => /^(nv\d{3}|sp\d{2}|tw\d{2})_/.test(p.id));
+  const novas = todas.filter((p) => /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})_/.test(p.id));
   assert.ok(novas.length > 600);
   for (const p of novas) {
-    assert.match(p.showIf, /^nv_(nv\d{3}|sp\d{2}|tw\d{2})$/);
+    assert.match(p.showIf, /^nv_(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$|^tigresaAnim$|^tigresaNua$|^pelado$/, 'canal da peça (ou a animação do meme da Tigresa / pelado)');
     assert.ok(!/NaN|undefined/.test(p.path), p.id);
     assert.ok(/^#[0-9a-f]{6}$/i.test(p.fill) || ['body', 'cream', 'nvCabecaPele', 'nvBracos', 'nvPernas'].includes(p.fill), p.id);
     // Pontos absolutos (sem os deslocamentos relativos dos arcos e curvas) cabem no espaço da janela.
@@ -131,7 +151,7 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
 test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central só têm o que já foi liberado', () => {
   const L = 14;
   assert.ok(visuaisLiberados(REF, L).every((p) => p.nivel <= L));
-  assert.equal(visuaisLiberados(REF, L).length, L - 1 + 1 + 3, 'níveis 2 a 14, o South Park do 10 e os memes do 4, 8 e 12');
+  assert.equal(visuaisLiberados(REF, L).length, L - 1 + 1 + 3 + 7 + 2, 'níveis 2 a 14, o South Park do 10, os memes do 4, 8 e 12, 7 animes e as duas Tigresas');
   assert.equal(visuaisLiberados(REF, 1).length, 0, 'nível 1: nada');
   const bloqueada = CAT.find((p) => p.nivel === 15);
   assert.equal(pecaLiberada(REF, L, bloqueada.id), null);
@@ -150,25 +170,29 @@ test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central 
   const snap = visualSnapshot(forjado, REF, L);
   const titulos = new Set(snap.partes.flatMap((pt) => pt.itens.map((i) => i.titulo)));
   for (const p of CAT.filter((x) => x.nivel > L)) assert.ok(!json.includes(`"${p.nome}"`) && !json.includes(`"${p.id}"`) && !titulos.has(p.titulo), p.nome);
-  assert.equal(snap.total, L + 3);
+  assert.equal(snap.total, L + 12);
   assert.deepEqual(snap.vestido, { cabeca: 'nv003' });
   assert.ok(snap.partes.every((pt) => pt.itens.length > 0), 'parte sem peça liberada nem aparece');
   assert.ok(snap.partes.flatMap((pt) => pt.itens).every((i) => i.obra && i.titulo), 'cada peça mostra a obra');
   const zero = visualSnapshot({}, REF, 1);
   assert.deepEqual([zero.vestido, zero.partes, zero.total, zero.novos], [{}, [], 0, 0]);
   // Bloqueados: só cadeado com o nível; nenhuma pista do que é.
-  assert.equal(snap.bloqueados.length, CAT.length - (L + 3));
+  assert.equal(snap.bloqueados.length, CAT.length - (L + 12));
   for (const b of snap.bloqueados) {
     assert.deepEqual(Object.keys(b), ['nivel']);
     assert.ok(b.nivel > L);
   }
   // Liberados: descrição = fala da referência.
-  for (const i of snap.partes.flatMap((pt) => pt.itens)) assert.equal(i.descricao, CAT.find((p) => p.id === i.id).fala);
+  for (const i of snap.partes.flatMap((pt) => pt.itens)) {
+    const p = CAT.find((x) => x.id === i.id);
+    assert.ok(i.descricao.includes(p.fala) && i.descricao.includes(p.obra), `descrição com a frase e de onde vem: ${i.descricao}`);
+    assert.match(i.descricao, /^“.+” — de .+/);
+  }
 });
 
 test('subir de nível: primeira vez veste o mais recente de cada parte; depois só a peça nova, respeitando o que ela tirou', () => {
   let { estado, novas } = aplicarNivel({}, REF, 12);
-  assert.equal(novas.length, 15, 'níveis 2 a 12, o South Park do 10 e os memes do 4, 8 e 12');
+  assert.equal(novas.length, 23, 'níveis 2 a 12, o South Park do 10, os memes do 4, 8 e 12, 6 animes e as duas Tigresas');
   assert.deepEqual(estado.pecas, melhorConjunto(REF, 12));
   estado = vestirVisual(estado, REF, 12, estado.pecas.cabeca).estado; // ela tirou a peça da cabeça
   assert.equal(estado.pecas.cabeca, undefined);
@@ -219,24 +243,26 @@ test('companion: subir de nível veste a peça da referência, fala a frase dela
     e.companion.say = (t, ...rest) => { const ok = say(t, ...rest); if (ok) falas.push(t); return ok; };
     e.companion.progress.award({ id: 't1', amount: 60, source: 'todo', day: '2026-10-30', label: 'teste' }); // 600 XP → nível 2
     assert.equal(e.companion.progress.nivel, 2);
-    assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002' });
-    assert.deepEqual(e.store.get().visualNivel.novas, ['nv002']);
+    // Nível 2: a peça do nível (Bruce) e o primeiro anime (Hokuto no Ken).
+    assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002', pulsos: 'an001' });
+    assert.deepEqual(e.store.get().visualNivel.novas, ['nv002', 'an001']);
     e.clock.advance(20000);
     assert.equal(e.overlay.state.visualNivel.nv_nv002, 1);
-    assert.equal(e.overlay.state.visualNivel.nvOlhos, 9, 'olhos grandes do Bruce');
-    assert.ok(falas.some((t) => t.includes(PROG.referencias[1].fala) && t.includes('Nível 2')), `aviso com a fala da referência: ${falas.join(' | ')}`);
+    assert.equal(e.overlay.state.visualNivel.nv_an001, 1);
+    const an1 = CAT.find((p) => p.id === 'an001');
+    assert.ok(falas.some((t) => t.includes('liberou 2 visuais') && t.includes(an1.nome) && t.includes(CAT.find((p) => p.id === 'nv002').nome)), `aviso com as duas peças: ${falas.join(' | ')}`);
     assert.deepEqual(e.store.get().visualNivel.avisar, [], 'anunciado uma vez');
     e.companion.marcarVisuaisVistos();
     assert.deepEqual(e.store.get().visualNivel.novas, []);
     const r = e.companion.runCommand('vestir', null, `/vestir ${CAT.find((p) => p.nivel === 3).nome}`);
     assert.match(r.text, /Não tenho essa peça/, 'peça de nível maior não é encontrada');
     e.companion.runCommand('vestir', null, '/vestir nv002');
-    assert.deepEqual(e.store.get().visualNivel.pecas, {});
+    assert.deepEqual(e.store.get().visualNivel.pecas, { pulsos: 'an001' });
     const de = e.companion.runCommand('vestir', null, '/vestir peixe é amigo, não comida');
     assert.equal(de.text, PROG.referencias[1].fala, 'vestir pelo título fala a frase da referência');
     e.companion.runCommand('vestir', null, '/vestir nv002');
     e.companion.runCommand('vestir', null, '/vestir melhor');
-    assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002' });
+    assert.deepEqual(e.store.get().visualNivel.pecas, { pescoco: 'nv002', pulsos: 'an001' });
   } finally {
     e.companion.stop();
   }
@@ -248,23 +274,23 @@ test('aviso: quem já tinha nível recebe a lista do que está liberado; no Modo
     e.companion.progress.st.xp = e.companion.progress.threshold(30);
     e.companion._syncVisual({ anunciar: false }); // como na abertura do app depois da atualização
     const vn = e.store.get().visualNivel;
-    assert.equal(vn.avisar.length, 39, '29 dos níveis, 3 de South Park e 7 memes');
-    assert.equal(vn.novas.length, 39);
+    assert.equal(vn.avisar.length, 56, '29 dos níveis, 3 de South Park, 7 memes, 15 animes e as duas Tigresas');
+    assert.equal(vn.novas.length, 56);
     const falas = [];
     const say = e.companion.say.bind(e.companion);
     e.companion.say = (t, ...rest) => { const ok = say(t, ...rest); if (ok) falas.push(t); return ok; };
     e.companion.start();
     e.companion.startWork();
     e.clock.advance(70000);
-    assert.ok(!falas.some((t) => /liberou 39 visuais/.test(t)), 'no Modo Trabalho não fala');
-    assert.equal(e.store.get().visualNivel.avisar.length, 39, 'continua guardado');
+    assert.ok(!falas.some((t) => /liberou 56 visuais/.test(t)), 'no Modo Trabalho não fala');
+    assert.equal(e.store.get().visualNivel.avisar.length, 56, 'continua guardado');
     e.companion.endWork();
     e.clock.advance(70000);
-    const aviso = falas.find((t) => /liberou 39 visuais/.test(t));
+    const aviso = falas.find((t) => /liberou 56 visuais/.test(t));
     assert.ok(aviso, falas.join(' | '));
     assert.match(aviso, /Toalha do Toalhinha/, 'cita as mais recentes');
     assert.deepEqual(e.store.get().visualNivel.avisar, []);
-    assert.equal(e.store.get().visualNivel.novas.length, 39, 'continuam com o selo de novo até abrir a Central');
+    assert.equal(e.store.get().visualNivel.novas.length, 56, 'continuam com o selo de novo até abrir a Central');
   } finally {
     e.companion.stop();
   }
@@ -360,4 +386,141 @@ test('Luto do Shape: durante o funeral ele vomita e chora (partes ligadas por nv
   assert.ok(partesDoLuto().every((x) => x.part.showIf === 'nvLuto'));
   const r = rigComVisuais(RIG, REF);
   assert.ok(r.groups.flatMap((g) => g.parts).some((p) => p.id === 'luto_jato'));
+});
+
+test('"Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!": Mestre Tigresa vestida (nível 3), pelada (nível 5) e a animação do meme', async () => {
+  const { TIGRESA_ID, TIGRESA_NUA_ID } = await import('../../src/core/visual-nivel.js');
+  const tg = CAT.find((p) => p.id === TIGRESA_ID);
+  const nua = CAT.find((p) => p.id === TIGRESA_NUA_ID);
+  assert.deepEqual([tg.nivel, nua.nivel], [3, 5]);
+  assert.ok([tg, nua].every((p) => p.colecao === 'memes BR' && /Kung Fu Panda/.test(p.obra) && p.transforma.tigre && p.transforma.orelhas === 'gato'));
+  assert.match(tg.fala, /fique pelada.*Dragão Guerreiro/);
+  // Vestida: colete dourado com folhas, gola, faixa, calça preta, mangas e ataduras; sem nudez.
+  const roupa = partesDaPeca(tg).map((x) => x.part.id.replace(`${tg.id}_`, ''));
+  for (const id of ['colete', 'gola', 'faixa', 'calca', 'mangaE', 'mangaD', 'folhas', 'atadurasE', 'tigreMascara', 'tigreListras']) assert.ok(roupa.includes(id), id);
+  assert.equal(canaisVisual({ pecas: { pintura: tg.id } }, REF, 5).pelado, undefined, 'vestida não fica pelada');
+  const ch = canaisVisual({ pecas: { pintura: nua.id } }, REF, 5);
+  assert.equal(ch.pelado, 1, 'a pelada fica pelada');
+  const r = rigComVisuais(RIG, REF);
+  for (const id of ['shorts', 'shortsDetail', 'sexyLayer']) assert.ok([].concat(r.groups.find((g) => g.id === id).hideIf).includes('pelado'), `${id} some`);
+  const nus = r.groups.flatMap((g) => g.parts).filter((p) => p.showIf === 'pelado').map((p) => p.id);
+  for (const id of ['br02_quadril', 'br02_saco', 'br02_pinto', 'br02_pelos']) assert.ok(nus.includes(id), id);
+  // Animação: dança de bermuda, a bermuda voa e ele fica pelado até o fim.
+  const A = loadJSON('assets/animations/jojo.animations.json');
+  const { Animator } = await import('../../src/renderer/shared/animator.js');
+  const at = (t) => { const an = new Animator(A); an.play('tigresa', 0, { restart: true }); return an.sample(A.animations.tigresa.duration * t).pose; };
+  assert.equal(at(0.2).pelado, 0, 'ainda vestida');
+  assert.equal(at(0.2).tigresaAnim, 1, 'de Mestre Tigresa, na pose do Dragão Guerreiro');
+  assert.ok(at(0.2).elbowR > 90, 'pata erguida como o Po');
+  assert.equal(at(0.7).tigresaNua, 1, 'Tigresa pelada');
+  assert.equal(at(0.45).tgVoa, 1, 'bermuda voando');
+  assert.equal(at(0.7).pelado, 1, 'pelado');
+  assert.ok(Math.abs(at(0.7).tgPinto) > 0 || Math.abs(at(0.71).tgPinto) > 0, 'balançando');
+  assert.equal(at(0.995).pelado, 0, 'volta ao normal');
+  // Chat: a frase do meme dispara.
+  const { detectIntent } = await import('../../src/core/dialogue/scripted-provider.js');
+  for (const t of ['Tigresa, tire sua roupa', 'tigresa tira a roupa', 'tira a roupa tigresa', 'Tigresa, fique pelada, Tigresa', 'eu sou o dragão guerreiro!']) assert.equal(detectIntent(t), 'tigresa', t);
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    e.companion.start();
+    e.clock.advance(3000);
+    const resp = await chatAdv(e, 'Tigresa, tire sua roupa');
+    assert.equal(resp.intent, 'tigresa');
+    assert.equal(e.companion.behavior.state, 'tigresa');
+  } finally {
+    e.companion.stop();
+  }
+});
+
+test('animações liberadas: rebolado, Tigresa, as dos visuais liberados e as poses vistas tocam pela Central; nada bloqueado', async () => {
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    e.companion.start();
+    e.clock.advance(3000);
+    e.companion.progress.st.xp = e.companion.progress.threshold(5);
+    const lista = e.companion.animacoesLiberadas();
+    const ids = lista.map((a) => a.id);
+    assert.ok(ids.includes('rebolado') && ids.includes('tigresa'), 'memes especiais');
+    const doNivel = CAT.filter((p) => p.nivel <= 5).map((p) => p.anim);
+    assert.ok(doNivel.every((id) => ids.includes(id)), 'animação de cada visual liberado');
+    const bloqueadas = new Set(CAT.filter((p) => p.nivel > 5).map((p) => p.anim));
+    const vistas = new Set(e.companion.progress.st.poses);
+    assert.ok(ids.filter((id) => !['rebolado', 'tigresa'].includes(id) && !doNivel.includes(id)).every((id) => vistas.has(id)), 'o resto são poses já vistas');
+    assert.ok(lista.every((a) => a.nome && a.origem), 'nome e de onde vem');
+    assert.equal(new Set(ids).size, ids.length, 'sem repetição');
+    void bloqueadas;
+    // /anim rebolado e /anim tigresa tocam os memes.
+    let r = e.companion.runCommand('anim', null, '/anim rebolado');
+    assert.match(r.text, /Rebolado/);
+    assert.equal(e.companion.behavior.state, 'twerk');
+    e.clock.advance(3500);
+    r = e.companion.runCommand('anim', null, '/anim tigresa');
+    assert.equal(e.companion.behavior.state, 'tigresa');
+  } finally {
+    e.companion.stop();
+  }
+});
+
+test('variação 50x (pedido de 18/11/2026): nenhum visual repete outro; olho e peça de cada um são únicos', async () => {
+  const { GENES, assinaturaVisual } = await import('../../src/core/visual-nivel.js');
+  // Muito mais combinações que antes (9 estilos de olho; ~70 formas de peça).
+  const olhos = GENES.pupilas.length * GENES.brilhos.length * GENES.cilios.length * GENES.formatos.length * GENES.inclinacoes.length;
+  assert.ok(olhos >= 9 * 50 * 10, `combinações de olho: ${olhos}`);
+  const pecas = GENES.enfeites.length * GENES.quantidades.length * GENES.cores.length * GENES.faixas.length * GENES.escalas.length * GENES.giros.length;
+  assert.ok(pecas >= 50 * 100, `combinações de peça: ${pecas}`);
+  // Peça: forma + enfeite + ajuste nunca se repetem.
+  assert.equal(new Set(CAT.map(assinaturaVisual)).size, CAT.length, 'nenhuma peça igual a outra');
+  // Olho: todo visual que muda os olhos tem um olho só dele (o kawaii nunca se repete).
+  const comOlho = CAT.filter((p) => p.transforma?.olhos);
+  assert.ok(comOlho.every((p) => p.genes.olho));
+  const olhoDe = (p) => JSON.stringify([p.genes.olho.pupila, p.genes.olho.brilhos, p.genes.olho.cilios, p.genes.olho.rx, p.genes.olho.ry, p.genes.olho.tilt]);
+  assert.equal(new Set(comOlho.map(olhoDe)).size, comOlho.length, 'nenhum olho repetido');
+  const kawaii = comOlho.filter((p) => ['anime', 'grandes', 'brilho'].includes(p.transforma.olhos));
+  assert.ok(kawaii.length > 50 && new Set(kawaii.map(olhoDe)).size === kawaii.length, 'olho kawaii sempre diferente');
+  // O desenho recebe o olho do visual (canais e a cor da íris) e o enfeite próprio da peça.
+  const p = comOlho[0];
+  const ch = canaisVisual({ pecas: { [p.parte]: p.id } }, REF, 200);
+  assert.equal(ch.nvPupila, p.genes.olho.pupila);
+  assert.equal(ch[`costume_olho${p.id}`], 1);
+  const r = rigComVisuais(RIG, REF);
+  assert.equal(r.costumes[`olho${p.id}`].palette.nvIris, p.genes.olho.iris);
+  for (const q of CAT) assert.ok(partesDaPeca(q).some((x) => /_enfeite[ED]?$/.test(x.part.id)), `${q.titulo}: enfeite próprio`);
+  // Animação da referência: nenhum visual a toca igual a outro (intensidade, ritmo, arremate).
+  assert.equal(new Set(CAT.map((q) => `${q.anim}:${JSON.stringify(q.genes.anim)}`)).size, CAT.length, 'animação de cada visual é única');
+  assert.ok(CAT.every((q) => GENES.intensidades.includes(q.genes.anim.intensidade) && q.genes.anim.arremate !== q.anim));
+  // Determinístico: a mesma coleção gera os mesmos genes.
+  const de2 = gerarVisuais(REF);
+  assert.deepEqual(de2.map(assinaturaVisual), CAT.map(assinaturaVisual));
+});
+
+test('sem parede invisível: espaço medido para cada visual, cada animação com visual e o rebolado/Tigresa; a janela cresce', () => {
+  const ROOM = loadJSON('assets/animations/jojo.room.json');
+  for (const p of CAT) assert.ok(ROOM.visuais?.[p.id], `${p.id} sem medida`);
+  const ANIMS = loadJSON('assets/animations/jojo.animations.json');
+  for (const nome of Object.keys(ANIMS.animations)) if (nome !== 'hidden' && !ANIMS.animations[nome].variantOf) {
+    assert.ok(ROOM.anims[nome], `${nome} sem medida`);
+    assert.ok(ROOM.animsVisual?.[nome], `${nome} sem medida com visual`);
+  }
+  // Com visual o envelope nunca é menor que sem.
+  for (const [nome, r] of Object.entries(ROOM.anims)) {
+    const v = ROOM.animsVisual[nome];
+    if (v) for (const k of ['l', 't', 'r', 'b']) assert.ok(v[k] >= r[k], `${nome}.${k}`);
+  }
+  // Orelhas de coelho (Kyubey) passam do topo: a janela cresce para cima o que foi medido.
+  const kyubey = CAT.find((p) => p.obra === 'Puella Magi Madoka Magica');
+  assert.ok(ROOM.visuais[kyubey.id].t > 30);
+  const e = makeEnv({ settings: { speechFrequency: 'off' } });
+  try {
+    e.companion.start();
+    e.clock.advance(3000);
+    e.companion.progress.st.xp = e.companion.progress.threshold(kyubey.nivel);
+    e.store.update({ visualNivel: { pecas: { [kyubey.parte]: kyubey.id }, visto: kyubey.nivel, novas: [], avisar: [] } }, { silent: true });
+    e.companion._applyLayout(true);
+    const r = e.companion._rects();
+    const b = e.companion.lastBounds;
+    const s = e.store.get().size;
+    assert.ok(r.box.y - b.y >= ROOM.visuais[kyubey.id].t * s - 1, 'espaço medido acima da cabeça');
+  } finally {
+    e.companion.stop();
+  }
 });

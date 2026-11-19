@@ -4,6 +4,8 @@
 import { Animator } from '../shared/animator.js';
 import { RigRenderer } from '../shared/rig-renderer.js';
 import { rigComVisuais } from '../../core/visual-nivel.js';
+import { rigComRebolado } from '../../core/rebolado.js';
+import { rigComDildo } from '../../core/dildo.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -74,7 +76,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComVisuais(assets.rig, assets.niveis));
+  rig = new RigRenderer(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -476,7 +478,7 @@ function frame(now) {
     return;
   }
   // Animação escalonada: não adianta desenhar mais vezes que os degraus.
-  const cap = animator.style.stepFps || 60;
+  const cap = animator.current?.anim?.stepFps || animator.style.stepFps || 60;
   const fps = Math.min(targetFps(), cap);
   clearTimeout(frameTimer);
   if (fps > 0) {

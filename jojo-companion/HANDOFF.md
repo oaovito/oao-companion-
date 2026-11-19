@@ -1,5 +1,20 @@
 # HANDOFF — JoJo Companion
 
+## Rebolado refeito, Tigresa, liberados acessíveis e variação 50x (não lançado) — 18/11/2026
+
+- Rebolado refeito do GIF do Among Us (6 quadros de 40 ms): modelo próprio de costas em 3/4,
+  `src/core/rebolado.js` (grupos `rb*`, canal `rebolando`), `stepFps` 25 por animação.
+- "Tigresa, tire sua roupa": estado `tigresa` + visual `br01` (memes BR, nível 3), canal `pelado`.
+- Central → Coleção → "Animações liberadas" (`animacoesLiberadas()`), `/anim rebolado|tigresa`;
+  descrição de todo visual “frase” — de Obra.
+- Calendário de anime: `src/core/anime-calendario.js` (AniList GraphQL, sem chave), `companion.comandoAnime`,
+  `sincronizarAnime` (main a cada 30 min), `animeVisita` (visual do anime ou faixa `animeFa` por 20 s). O alias
+  `/anime` saiu de `/reacao` (que segue com `/reacao` e `/meme`).
+- `GENES` em `visual-nivel.js`: olho, enfeite, ajuste da peça e jeito de tocar a animação únicos.
+- `scripts/icon-page/room.html` mede também `animsVisual` e `visuais`; regenerar com
+  `npx electron scripts/anim-room.mjs` (Windows) ao mudar desenho/animação. Nesta sessão foi
+  medido no Chromium (mesma página).
+
 ## Publicação 0.47.2 com WhatsApp — 18/11/2026
 
 Pedidos do usuário: conferir os visuais e publicar; depois "Publica o WhatsApp". O run

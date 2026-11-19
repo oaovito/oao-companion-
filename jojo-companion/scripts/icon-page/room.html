@@ -5,6 +5,9 @@
 import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
 import { Animator } from '../../src/renderer/shared/animator.js';
 import { Effects } from '../../src/renderer/shared/effects.js';
+import { rigComVisuais, gerarVisuais, canaisVisual } from '../../src/core/visual-nivel.js';
+import { rigComRebolado } from '../../src/core/rebolado.js';
+import { rigComDildo } from '../../src/core/dildo.js';
 // Mede quanto cada animação (com efeitos) passa da caixa do JoJo.
 const O = 400, SIZE = 1000;
 function bbox(ctx, box) {
@@ -30,8 +33,19 @@ function drawFrame(ctx, rig, s, fx, now, head, mouth) {
   fx.draw(ctx, now, { mark: s.flags.mark, head, mouth, facingSign: 1 });
   ctx.restore();
 }
-window.measure = async (rigJson, animJson, foodJson = { foods: [] }) => {
-  const rig = new RigRenderer(rigJson);
+// Movimento dos visuais no extremo (aura maior, moscas longe, bolhas no alto, baba esticada).
+const MOVIMENTO = [
+  { nvAura: 1.06, nvMoscaX: 7, nvMoscaY: 5, nvBolhas: -14, nvSuor: 12, nvBaba: 1.2, nvBarriga: 1.06, nvPapada: 3.4, nvBrilho: 1.15, nvBrilho2: 1.15 },
+  { nvAura: 0.95, nvMoscaX: -7, nvMoscaY: -5, nvBolhas: 0, nvSuor: 0, nvBaba: 1, nvBarriga: 0.95, nvPapada: -3.4, nvBrilho: 0.55, nvBrilho2: 0.55 },
+];
+window.measure = async (rigJson, animJson, foodJson = { foods: [] }, niveis = null) => {
+  // Mesmo desenho do overlay: visuais de nível e o modelo do rebolado.
+  const rigFull = rigComDildo(niveis ? rigComRebolado(rigComVisuais(rigJson, niveis)) : rigComRebolado(rigJson));
+  const rig = new RigRenderer(rigFull);
+  // Sem visuais o desenho é muito mais leve: as animações comuns medem com ele; as que vestem
+  // peças de visual na própria animação (Tigresa) medem com o desenho completo.
+  const rigLeve = new RigRenderer(rigComDildo(rigComRebolado(rigJson)));
+  const COM_VISUAL = new Set(['tigresa']);
   const box = rigJson.metrics.box, head = rigJson.metrics.head, mouth = rigJson.metrics.mouth;
   const out = { anims: {}, effects: {} };
   for (const [name, anim] of Object.entries(animJson.animations)) {
@@ -45,12 +59,56 @@ window.measure = async (rigJson, animJson, foodJson = { foods: [] }) => {
       a.play(name, 0, { variant: name });
       const fx = new Effects({ rng: () => seed });
       const dur = anim.duration || 1000;
-      for (let t = 0; t <= dur + 400; t += 1000 / 24) drawFrame(ctx, rig, a.sample(t), fx, t, head, mouth);
+      const r0 = COM_VISUAL.has(name) ? rig : rigLeve;
+      for (let t = 0; t <= dur + 400; t += 1000 / 24) drawFrame(ctx, r0, a.sample(t), fx, t, head, mouth);
       i++;
     }
     const base = (anim.variantOf || name).replace(/~.*$/, '');
     const r = bbox(ctx, box), prev = out.anims[base];
     out.anims[base] = prev ? { l: Math.max(prev.l, r.l), t: Math.max(prev.t, r.t), r: Math.max(prev.r, r.r), b: Math.max(prev.b, r.b) } : r;
+  }
+  // Com visual vestido: cada animação com TODOS os visuais ligados ao mesmo tempo, na maior
+  // cabeça e no corpo mais largo (envelope máximo); e o espaço de cada visual parado.
+  if (niveis) {
+    const cat = gerarVisuais(niveis);
+    const todos = {};
+    let cab = 1, corpo = 1;
+    for (const p of cat) {
+      Object.assign(todos, canaisVisual({ pecas: { [p.parte]: p.id } }, niveis, 999) || {});
+      cab = Math.max(cab, p.transforma?.cabeca || 1);
+      corpo = Math.max(corpo, p.transforma?.corpo || 1);
+    }
+    for (const k of Object.keys(todos)) if (/^costume_/.test(k)) delete todos[k];
+    Object.assign(todos, { nvCabeca: cab, nvCorpo: corpo, nvOlhos: 0, pelado: 0 });
+    out.animsVisual = {};
+    for (const [name, anim] of Object.entries(animJson.animations)) {
+      if (name === 'hidden') continue;
+      const ctx = canvas();
+      // 13 quadros espalhados pela animação bastam para o envelope (todos os visuais juntos são pesados).
+      const a = new Animator(animJson, { rng: () => 0.5 });
+      a.play(name, 0, { variant: name });
+      const dur = anim.duration || 1000;
+      for (let i = 0; i <= 12; i++) { const s = a.sample((dur * i) / 12); rig.draw(ctx, { ...s.pose, ...todos, ...MOVIMENTO[i % 2] }, { origin: { x: O, y: O }, scale: 1, facing: 1 }); }
+      const base = (anim.variantOf || name).replace(/~.*$/, '');
+      const r = bbox(ctx, box), prev = out.animsVisual[base];
+      out.animsVisual[base] = prev ? { l: Math.max(prev.l, r.l), t: Math.max(prev.t, r.t), r: Math.max(prev.r, r.r), b: Math.max(prev.b, r.b) } : r;
+    }
+    // Com visual nunca menos espaço que sem (os 13 quadros podem pular o pico de um efeito).
+    for (const [nome, r] of Object.entries(out.anims)) {
+      const v = out.animsVisual[nome];
+      if (v) for (const k of ['l', 't', 'r', 'b']) v[k] = Math.max(v[k], r[k]);
+    }
+    out.visuais = {};
+    const repouso = new Animator(animJson, { rng: () => 0.5 });
+    for (const p of cat) {
+      const ctx = canvas();
+      const ch = canaisVisual({ pecas: { [p.parte]: p.id } }, niveis, 999) || {};
+      for (const mov of MOVIMENTO) for (const t of [0, 400, 800, 1200]) {
+        repouso.play('idle', 0, { restart: true });
+        rig.draw(ctx, { ...repouso.sample(t).pose, ...ch, ...mov, tgPinto: 22 }, { origin: { x: O, y: O }, scale: 1, facing: 1 });
+      }
+      out.visuais[p.id] = bbox(ctx, box);
+    }
   }
   // Efeitos ligados pelo companion (comida, bola, corações) sobre a pose parada.
   const idle = { pose: { ...animJson.channels }, flags: {} };

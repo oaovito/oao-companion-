@@ -3,6 +3,41 @@
 ## 0.47.2 — 2026-11-18
 
 ### Novidades
+- Pegadinha da semana: uma vez por semana, num momento sorteado (também no foco), um consolo
+  absurdamente gigante (dez vezes o tamanho dele) e sujo de bosta cai do alto na cabeça do JoJo. Ele amassa, ganha galo, rachadura e gota de sangue,
+  fica de olhos em X com estrelinhas girando, cai tonto e levanta enfaixado; o consolo quica e
+  tomba no chão do lado dele. Depois ele passa uma hora com a cabeça enfaixada. No Modo Trabalho e com tela
+  cheia, a pegadinha espera. Depois da primeira vez ela fica em "Animações liberadas".
+- Calendário de anime: "/anime Dandadan" (ou "me avisa quando sair episódio de One Piece")
+  segue o anime; quando sai episódio novo, o JoJo avisa e comemora vestido do visual daquele
+  anime, se já estiver liberado, ou com uma faixa de otaku na cabeça. "/anime" mostra os
+  próximos episódios e "/anime parar nome" deixa de seguir. Fonte: AniList, grátis e sem
+  login; só o nome buscado e os animes seguidos saem do PC. Desliga em Configurações →
+  Privacidade → Calendário de anime. No Modo Trabalho e com tela cheia, o aviso espera.
+- "Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!" (meme do Kung Fu Panda): falando
+  a frase no chat (ou "Tigresa, tire sua roupa"), o JoJo aparece de Mestre Tigresa, com a cara
+  laranja de máscara branca, listras e orelhas de tigre, colete dourado de folhas vermelhas,
+  faixa, calça preta e ataduras. Faz a pose do Dragão Guerreiro, a roupa voa e ele fica pelado
+  sem pudor nenhum, só de listras, balançando tudo. Também são dois visuais extras (memes BR):
+  a Tigresa vestida (nível 3) e a Tigresa pelada (nível 5).
+- Rebolado do meme, desenhado do zero a partir do GIF: no modo foco, de vez em quando, o JoJo
+  vira de costas em 3/4 e rebola 3 segundos como o boneco do Among Us, o corpo inteiro em
+  forma de feijão esticando, despencando até quase metade da altura por cima das pernas,
+  alargando, tombando pra frente e voltando com impulso, no mesmo ritmo do GIF (6 quadros de 40 ms), com a cabeça espiando por cima do ombro, e volta ao foco
+  sozinho. Fora do foco ele também rebola às vezes
+  no repouso. Nunca no Modo Trabalho, com tela cheia, no modo de interação ou com movimento
+  reduzido.
+- 100 visuais extras de anime, um a cada 2 níveis, cada um de uma obra que ainda não aparecia
+  em nenhum título nem extra: Hokuto no Ken, Doraemon, Inuyasha, Samurai X, Trigun, Code Geass,
+  Tokyo Ghoul, Fairy Tail, KonoSuba, Overlord, Slime, A Viagem de Chihiro, Princesa Mononoke,
+  Hellsing, Devilman, Cyberpunk: Edgerunners, Detetive Conan, Lupin III, Initial D, Beastars,
+  Kill la Kill, Yu-Gi-Oh!, Beyblade, Madoka Magica, Dorohedoro, Gintama, Sakamoto Days, Mashle,
+  Porco Rosso, Assassination Classroom, Dungeon Meshi, Zom 100, Hamtaro, Shin-chan, Gantz e
+  outros, até o Sol do Orgulho do Leão (Nanatsu no Taizai) no nível 200.
+- Mesmo capricho dos outros visuais: peça da obra, fala e animação dela, cores do personagem e
+  transformação (orelhas de meio-yōkai do Inuyasha, chifres do Devilman, slime azul de barrigona,
+  Sakamoto de barrigão e papada, zumbi do Zom 100 com baba e moscas, porco do Porco Rosso).
+  Trancados continuam só como cadeado.
 - Os 200 títulos de nível agora são referências a filmes, animes, séries, jogos e cultura
   pop, cada um de uma obra diferente, com todos os clássicos de tubarão: de Mundo 1-1 (Super
   Mario Bros.) a Tubarão (1975), passando por Procurando Nemo, Megatubarão, Sharknado, Do
@@ -35,6 +70,20 @@
   pizza", "queria tanto um chocolate" e parecidos.
 
 ### Melhorias
+- Variação muito maior, sem nada repetido entre visuais. Cada visual tem um olho só dele: o
+  olho kawaii nunca repete, com pupila (estrela, coração, fenda, losango, anel…), brilhos,
+  cílios, formato, inclinação e cor da íris próprios. Cada peça tem um enfeite próprio
+  (pontos, listras, estrelas, gemas, rebites, ondas…) e um ajuste de tamanho e inclinação.
+  Cada visual também toca a animação da obra do seu jeito: intensidade, ritmo e um gesto de
+  arremate diferentes de todos os outros.
+- Nada cortado por parede invisível: o espaço de cada visual vestido, de cada animação com
+  visual e do rebolado e da Tigresa é medido no desenho, e a janela cresce o necessário.
+- Central → Coleção → "Animações liberadas": tudo o que já foi liberado toca com um clique (as
+  poses que ela já viu, a animação de cada visual liberado, o rebolado e a Tigresa). Nada
+  bloqueado aparece. Também por /anim rebolado e /anim tigresa.
+- Todo visual mostra na descrição a frase e de onde ela vem: “frase” — de Obra.
+- Configurações → Movimento e mouse → "Rebolar de vez em quando no modo foco": desmarcar tira o
+  rebolado só do foco; no repouso ele continua.
 - Conversa: quando o JoJo acerta a resposta mas emenda uma frase de desdém ("It's a simple
   question", "não precisa perguntar de novo"), sai só essa frase e a resposta certa fica, em
   vez de cair na resposta programada.
@@ -92,6 +141,10 @@
 - Reconexão sozinha quando a conexão cai, mostrando "reconectando" e a próxima tentativa.
 
 ### Como testar
+- /anim consolo (depois da primeira vez): o consolo gigante cai na cabeça e ele levanta enfaixado.
+- /foco 25 e esperar alguns minutos: em algum momento ele rebola 3 s e volta a estudar.
+- Subir para o nível 2: além da peça do nível, chegam as munhequeiras do Hokuto Shinken.
+- Central → Guarda-roupa → Visuais dos níveis: os de anime aparecem como "Extra de animes".
 - Subir de nível: o JoJo aparece com a peça nova, fala a frase da obra e avisa no balão.
 - Central → Guarda-roupa → Visuais dos níveis: só as peças até o nível atual, cada uma com a
   fala da referência; o resto aparece só como cadeado com o nível.

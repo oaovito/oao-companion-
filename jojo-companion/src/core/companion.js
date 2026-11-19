@@ -50,7 +50,9 @@ import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
-import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, FALAS_VISUAL } from './visual-nivel.js';
+import { DILDO_MS, ATADURA_MS, CANAIS_ATADURA, FALAS_DILDO } from './dildo.js';
+import { AnimeCalendario, episodiosNovos, visualDoAnime, normTitulo, ANIME_MAX } from './anime-calendario.js';
+import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL } from './visual-nivel.js';
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -125,6 +127,33 @@ const REMINDER_CATS = /^(refeicao_|treinoLembrete|foodReminder)/;
 
 // Animações do modo foco: as duas de sempre e as do catálogo de foco (ids "foco…").
 const FOCUS_ANIM = /^cat_(estudarJunto|treinarJunto|foco[A-Z])/;
+// Animações que não são do catálogo e ficam liberadas para tocar pela Central e por /anim.
+const ANIM_ESPECIAIS = {
+  rebolado: { estado: 'twerk', nome: 'Rebolado do meme', origem: 'meme do Among Us rebolando' },
+  tigresa: { estado: 'tigresa', nome: 'Tigresa, tire sua roupa', origem: 'meme brasileiro "Tigresa, tire sua roupa"' },
+  consolo: { estado: 'dildo', nome: 'Consolo na cabeça', origem: 'pegadinha semanal (liberada depois da primeira vez)', depoisDe: (c) => (c.progress.st.dildo?.vezes || 0) > 0 },
+};
+// Calendário de anime em frase: "me avisa quando sair episódio de X", "segue o anime X".
+function pedidoDeAnime(text) {
+  const n = normalizeText(text).trim();
+  const m = n.match(/^(?:jojo )?(?:me )?(?:avisa|avise|me avisa)(?: quando)? (?:sair|lancar|tiver)(?: o)? (?:episodio|ep|eps|episodios) (?:novo )?(?:de|do|da) (.{2,60})$/)
+    || n.match(/^(?:jojo )?(?:segue|siga|acompanha|acompanhe) (?:o )?anime (.{2,60})$/)
+    || n.match(/^(?:para|pare) de seguir (?:o )?anime (.{2,60})$/);
+  if (!m) return null;
+  return /^(?:para|pare) de seguir/.test(n) ? `parar ${m[1]}` : m[1];
+}
+function quandoTexto(ms, agora) {
+  const d = new Date(ms);
+  const dias = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(agora.getFullYear(), agora.getMonth(), agora.getDate())) / 86400e3);
+  const hora = `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`;
+  if (dias === 0) return `hoje às ${hora}`;
+  if (dias === 1) return `amanhã às ${hora}`;
+  return `em ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')} às ${hora}`;
+}
+// Rebolado: intervalo mínimo no repouso e no foco, e chance a cada minuto do foco.
+const TWERK_IDLE_GAP_MS = 20 * 60e3;
+const TWERK_FOCO_GAP_MS = 6 * 60e3;
+const TWERK_FOCO_CHANCE = 0.2;
 
 // Partes do pedido de foco que descrevem o plano de ciclos (não são a duração do bloco).
 const FOCUS_PLAN_PARTS = /pausa(?:\s+de)?\s+\d{1,2}(?:\s*min\w*)?|\bx\s*\d{1,2}\b|\b\d{1,2}\s*(?:ciclos?|blocos?|vezes)\b/gi;
@@ -169,6 +198,7 @@ export class Companion {
     this.onOpenApp = null; // (conversationId|null) => void — traz a Central do JoJo para frente
     this.onOpenSettings = null; // () => void
     this.reducedMotion = false;
+    this.lastTwerkAt = -Infinity; // último rebolado (repouso ou foco)
     this.costume = null; // fantasia da data festiva (natal, pascoa…)
     this.dateNow = dateNow; // relógio de parede (regra de sono 6h–21h); injetável nos testes
     this.powderKind = null; // 'snort' | 'chug' enquanto senta no chão (PC parado)
@@ -831,7 +861,14 @@ export class Companion {
       ambientWeight: (AMBIENT_WEIGHTS[this.store.get().ambienteFrequencia] ?? 0) * (this.reducedMotion ? 0.5 : 1) * this.progress.hourBoost() * (this.progress.st.diasQuietos === dayKey(new Date()) ? 0.4 : 1),
       pickAmbient: () => this._pickAmbient(),
       hasQueue: this.ambientQueue.length > 0,
+      // Rebolado no repouso: de vez em quando, nunca em sequência, fora do foco e do Modo Trabalho.
+      twerkOk: this._podeRebolar(this.clock.now()) && !this.focus && this.clock.now() - this.lastTwerkAt >= TWERK_IDLE_GAP_MS,
     };
+  }
+
+  /** Pode rebolar agora (Modo Trabalho, movimento reduzido, interação e tela cheia não). */
+  _podeRebolar() {
+    return !this.work && !this.reducedMotion && !this.interaction && !this.fullscreenHidden && !this.paused;
   }
 
   // ---------------------------------------------------------------- PC parado → "ligadão"
@@ -946,6 +983,7 @@ export class Companion {
     }
     // Foco junto: voltou ao repouso → continua estudando/treinando do lado dela.
     if (ev.state === 'idle' && this.focus && !this.interaction) this.clock.setTimeout(() => this.focus && this.behavior.state === 'idle' && this._focusAnim(this.clock.now()), 0);
+    if (ev.state === 'twerk') this.lastTwerkAt = now;
     if (ev.state === 'walk') this._startWalk(now);
     if (ev.state === 'sleep' && ev.prev !== 'sleep') this.clock.setTimeout(() => this._sleepTalk(), 3000);
     if (ev.state === 'curious' && this.rng() < 0.35) this.sayCategory('curious', { spontaneous: true });
@@ -1326,6 +1364,7 @@ export class Companion {
       const pedido = parseBreakdownCommand(String(text).replace(/^\s*\/\S+\s*/, ''));
       return { text: pedido ? await this._breakdown(pedido.titulo) : this._fala('quebraAjuda'), command: cmd, conversationId: conv.id };
     }
+    if (cmd === 'anime') return { text: await this.comandoAnime(String(text).replace(/^\s*\/\S+\s*/, '')), command: cmd, conversationId: conv.id };
     if (['agendar', 'agendados', 'cancelar', 'whatsapp'].includes(cmd)) {
       return { text: await this._waCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, '')), command: cmd, conversationId: conv.id };
     }
@@ -1334,6 +1373,8 @@ export class Companion {
       return { text: await this._studyAction(parseStudyCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, ''))), command: cmd, conversationId: conv.id };
     }
     if (cmd) return this.runCommand(cmd, conv.id, text);
+    const pedidoAnime = pedidoDeAnime(text);
+    if (pedidoAnime) return { text: await this.comandoAnime(pedidoAnime), intent: 'anime', conversationId: conv.id };
     if (!this.dialogue) return null;
     // Segurança não entra na fila atrás de uma geração lenta.
     const urgent = ['crisis', 'distress', 'sad', 'avcReal'].includes(detectIntent(text)) || modoCiencia(text) === 'emergencia';
@@ -2003,7 +2044,10 @@ export class Companion {
       // /anim <nome ou id>: toca qualquer animação do catálogo.
       const q = String(raw).replace(/^\/\S+\s*/, '');
       if (!q) text = `${this.catalog.itens.length} animações no catálogo. Use /anim e o nome, ex.: /anim selfie, /anim modo fera, /anim dancinha viral.`;
-      else {
+      else if (ANIM_ESPECIAIS[normalizeText(q).trim()] && (!ANIM_ESPECIAIS[normalizeText(q).trim()].depoisDe || ANIM_ESPECIAIS[normalizeText(q).trim()].depoisDe(this))) {
+        const esp = ANIM_ESPECIAIS[normalizeText(q).trim()];
+        text = !this.work && this.behavior.request(esp.estado, { now: this.clock.now(), force: true }) ? `${esp.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
+      } else {
         const it = this.findCatalog(q);
         if (!it) text = 'Essa animação eu não tenho. E olha que eu tenho centenas. Tenta outro nome.';
         else text = this.playCatalog(it.id, { source: 'comando' }) ? `${it.nome}. Assiste.` : 'Agora não. Tenta daqui a pouco.';
@@ -2203,6 +2247,8 @@ export class Companion {
       this.effect = { name: 'hearts', until: now + 2400 };
     } else if (action === 'moon') {
       this.behavior.request('moon', { now, force: true });
+    } else if (action === 'tigresa') {
+      this.behavior.request('tigresa', { now, force: true });
     } else if (action === 'bench' || action === 'squat') {
       this.behavior.request(action === 'bench' ? 'benchPress' : 'squat', { now, force: true });
     } else if (['judge', 'wave', 'nod', 'comfort', 'lecture', 'angry', 'sad'].includes(action)) {
@@ -2393,6 +2439,13 @@ export class Companion {
     const usaObjeto = it.receita && [].concat(it.receita.objeto || []).length;
     this.layer = acc.length && !usaObjeto && this.rng() < 0.25 ? { [`prop_${acc[Math.floor(this.rng() * acc.length) % acc.length].prop}`]: 1 } : null;
     if (!this.mover.active && this.rng() < 0.35) this.facing = -this.facing;
+    if (it.visualAnim) {
+      const va = it.visualAnim;
+      const arremate = this.catalogById.get(va.arremate);
+      if (arremate && !queued) this.ambientQueue.push(arremate.id);
+      const d = this._catalogData(it, va.intensidade);
+      return { ...d, ms: Math.round(d.ms / va.ritmo) };
+    }
     return this._catalogData(it);
   }
 
@@ -2639,7 +2692,14 @@ export class Companion {
   /** Canais das peças de nível vestidas (null se nenhuma). */
   _visualCanais(vestido = Object.keys(this.outfit).length > 0) {
     if (!this._refs) return null;
-    return canaisVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume, maoLivre: this._handFree() });
+    const base = canaisVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume, maoLivre: this._handFree() });
+    // Episódio novo de anime: por 20 s ele veste o visual do anime (ou a faixa de otaku) por cima.
+    let out = base;
+    // Depois da pegadinha do consolo: uma hora com a cabeça enfaixada e o galo.
+    if (this.dildoMarca && this.clock.now() < this.dildoMarca.ate) out = { ...(out || {}), ...CANAIS_ATADURA };
+    const v = this.animeVisita;
+    if (v && this.clock.now() < v.ate) return { ...(out || {}), ...v.canais };
+    return out;
   }
 
   /**
@@ -2690,9 +2750,11 @@ export class Companion {
     if (!refs) return null;
     const ids = Object.values(sanitizeVisual(this.store.get().visualNivel, refs).pecas);
     const opcoes = ids.map((id) => pecaLiberada(refs, this.progress.nivel, id)).filter(Boolean)
-      .map((p) => this.catalogById.get(p.anim)).filter((it) => it && !it.pacote && !(it.mover && this.reducedMotion));
+      .map((p) => ({ p, it: this.catalogById.get(p.anim) })).filter(({ it }) => it && !it.pacote && !(it.mover && this.reducedMotion));
     if (!opcoes.length) return null;
-    return opcoes[Math.floor(this.rng() * opcoes.length) % opcoes.length];
+    const { p, it } = opcoes[Math.floor(this.rng() * opcoes.length) % opcoes.length];
+    // Cada visual toca a animação do seu jeito (genes): intensidade, ritmo e gesto de arremate.
+    return p.genes?.anim ? { ...it, visualAnim: p.genes.anim } : it;
   }
 
   /** A Central mostrou os visuais novos: tira o selo de "novo". */
@@ -2878,6 +2940,25 @@ export class Companion {
     if (!m) return null;
     const want = m[4].trim();
     return this.catalog.itens.find((it) => normalizeText(it.nome).startsWith(want)) || this.catalog.itens.find((it) => normalizeText(it.nome).includes(want)) || null;
+  }
+
+  /**
+   * Animações já liberadas para a Central: as poses que ela já viu, as animações dos visuais
+   * liberados pelo nível e os memes especiais (rebolado, Tigresa). Nada bloqueado aparece.
+   */
+  animacoesLiberadas() {
+    const out = new Map();
+    const add = (id, nome, origem) => { if (id && nome && !out.has(id)) out.set(id, { id, nome, origem }); };
+    for (const [id, esp] of Object.entries(ANIM_ESPECIAIS)) if (!esp.depoisDe || esp.depoisDe(this)) add(id, esp.nome, esp.origem);
+    for (const p of this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []) {
+      const it = p.anim && this.catalogById.get(p.anim);
+      if (it) add(it.id, it.nome, `animação do visual ${p.nome} (${p.obra})`);
+    }
+    for (const id of this.progress.st.poses || []) {
+      const it = this.catalogById.get(id);
+      if (it) add(it.id, it.nome, 'pose que você já viu');
+    }
+    return [...out.values()];
   }
 
   /** Busca por id ou nome (comando /anim). */
@@ -3288,8 +3369,21 @@ export class Companion {
       f.metade = true;
       this._focusIncentive('metade', now);
     } else if (now >= f.trocaEm) this._focusSwap(now);
-    if (!FOCUS_ANIM.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT) this._focusAnim(now);
+    else this._focusTwerk(now);
+    if (!FOCUS_ANIM.test(this.behavior.anim || '') && this.behavior.priority >= PRIORITY.INTERACT && !['twerk', 'dildo'].includes(this.behavior.state)) this._focusAnim(now);
     this.clock.setTimeout(() => this._focusTick(), 60e3);
+  }
+
+  /**
+   * Rebolado no foco (pedido de 18/11/2026): de vez em quando, 3 s como no meme, e volta
+   * ao foco sozinho. Desligável em Configurações (reboladoFoco); no repouso continua.
+   */
+  _focusTwerk(now) {
+    const f = this.focus;
+    if (!f || this.store.get().reboladoFoco === false || !this._podeRebolar()) return false;
+    if (now - f.inicio < 2 * 60e3 || now - this.lastTwerkAt < TWERK_FOCO_GAP_MS) return false;
+    if (this.rng() >= TWERK_FOCO_CHANCE) return false;
+    return this.behavior.request('twerk', { now, force: true }) !== false;
   }
 
   _endFocus(done) {
@@ -3762,6 +3856,7 @@ export class Companion {
       // Um lembrete por minuto: refeição/treino primeiro; senão água, pausa ou remédio.
       if (!this.checkTutorial() && !this.checkDailyReminder(new Date()) && !this.checkExtraReminders(new Date()) && !this.checkRoutine(new Date()) && !this.checkDaySummary(new Date())) this.checkCheckin(new Date());
       this.checkWeeklyLegends(new Date());
+      this.checkWeeklyDildo(new Date());
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
       this._avisarVisuais(); // visual liberado que ainda não foi anunciado
@@ -4676,6 +4771,37 @@ export class Companion {
   }
 
   /** Uma vez por semana, em momento aleatório: "jogar Legends é ideia burra". */
+  /**
+   * Pegadinha semanal: o consolo gigante cai na cabeça uma vez por semana, em momento
+   * sorteado (8h–23h), também no foco. Modo Trabalho, tela cheia, pausa e interação esperam.
+   */
+  checkWeeklyDildo(date = new Date()) {
+    const st = this.progress.st;
+    const cfg = { ativo: true, inicio: 8, fim: 23, ...(st.dildo || {}) };
+    const { due, state } = weeklyReminder(date, cfg, this.rng);
+    const pode = this.started && !this.work && !this.fullscreenHidden && !this.lolHidden && !this.userHidden && !this.paused && !this.interaction;
+    const deliver = due && pode;
+    const next = { ...cfg, momento: state.momento, ...(deliver ? { ultimaSemana: state.ultimaSemana, vezes: (cfg.vezes || 0) + 1 } : {}) };
+    if (JSON.stringify(next) !== JSON.stringify(st.dildo || {})) { st.dildo = next; this.progress.save(st); }
+    if (deliver) this.pegadinhaDildo(this.clock.now());
+    return deliver;
+  }
+
+  /** Toca a pegadinha agora: animação, fala na pancada e uma hora enfaixado depois. */
+  pegadinhaDildo(now = this.clock.now()) {
+    if (this.work || this.fullscreenHidden) return false;
+    if (!this.behavior.request('dildo', { now, force: true })) return false;
+    this.clock.setTimeout(() => {
+      const fala = FALAS_DILDO[Math.floor(this.rng() * FALAS_DILDO.length) % FALAS_DILDO.length];
+      this.say(fala.replace('{nome}', this.personality.get().apelido || 'Manu'), 'speech');
+    }, 1300);
+    this.clock.setTimeout(() => {
+      this.dildoMarca = { ate: this.clock.now() + ATADURA_MS };
+      this._applyLayout(true);
+    }, DILDO_MS);
+    return true;
+  }
+
   checkWeeklyLegends(date = new Date()) {
     const cfg = this.personality.get().legends;
     const { due, state } = weeklyReminder(date, cfg, this.rng);
@@ -4774,6 +4900,13 @@ export class Companion {
       attachments.push({ rect: { x: r.box.x, y: r.box.y - topo * s.size, width: r.box.width, height: topo * s.size } });
       const lado = Math.max(0, (visualNivel?.nvCorpo || 1) - 1) * 50 * s.size;
       if (lado) attachments.push({ rect: { x: r.box.x - lado, y: r.box.y, width: r.box.width + 2 * lado, height: r.box.height } });
+      // Espaço medido de cada visual vestido (nada cortado por parede invisível).
+      const ev = this._espacoVisuais(visualNivel);
+      if (ev) {
+        const k = s.size;
+        const l = (this.facing >= 0 ? ev.l : ev.r) * k, rr = (this.facing >= 0 ? ev.r : ev.l) * k;
+        attachments.push({ rect: { x: r.box.x - l, y: r.box.y - ev.t * k, width: r.box.width + l + rr, height: r.box.height + (ev.t + ev.b) * k } });
+      }
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
     }
@@ -4860,6 +4993,94 @@ export class Companion {
     return { x: Math.round(x * 10) / 10, y: Math.round(Math.max(-1, Math.min(1, dy / 300)) * 10) / 10 };
   }
 
+  // ---------------------------------------------------------------- calendário de anime
+
+  /** /anime: sem nada lista os próximos; "parar X" deixa de seguir; outro texto segue o anime. */
+  async comandoAnime(arg) {
+    const s = this.store.get();
+    const q = String(arg || '').trim();
+    if (!s.animeAtivo) return 'O calendário de anime está desligado nas Configurações (Privacidade). Liga lá que eu aviso cada episódio.';
+    const parar = q.match(/^(?:parar|para|tirar|tira|remover|esquecer)\s+(?:de\s+)?(?:seguir\s+)?(.+)$/i);
+    if (parar) {
+      const n = normTitulo(parar[1]);
+      const fica = s.animes.filter((a) => ![a.titulo, a.romaji, a.english].some((t) => normTitulo(t) === n || (n.length >= 4 && normTitulo(t).includes(n))));
+      if (fica.length === s.animes.length) return 'Esse eu nem seguia.';
+      this.store.update({ animes: fica });
+      return 'Parei de seguir. Episódio novo dele eu não aviso mais.';
+    }
+    if (!q) {
+      if (!s.animes.length) return 'Você não segue nenhum anime ainda. Fala /anime e o nome (ex.: /anime Dandadan) que eu aviso quando sair episódio.';
+      const linhas = s.animes.map((a) => {
+        const p = this.animeProximos?.[a.id];
+        return p ? `${a.titulo}: episódio ${p.episodio} ${quandoTexto(p.quando, this.dateNow())}` : `${a.titulo}: sem data de episódio novo`;
+      });
+      return `Animes que eu sigo com você: ${linhas.join('; ')}.`;
+    }
+    if (!this.animeApi) return 'Agora não consigo olhar o calendário. Tenta daqui a pouco.';
+    if (s.animes.length >= ANIME_MAX) return `Já são ${ANIME_MAX} animes. Tira algum (/anime parar nome) antes.`;
+    let achados;
+    try { achados = await this.animeApi.buscar(q); } catch { return 'O calendário de anime não respondeu agora. Tenta daqui a pouco.'; }
+    const a = achados[0];
+    if (!a) return `Não achei anime com esse nome: ${q}.`;
+    if (s.animes.some((x) => x.id === a.id)) return `Já sigo ${a.titulo} com você.`;
+    this.store.update({ animes: [...s.animes, { id: a.id, titulo: a.titulo, romaji: a.romaji, english: a.english, cor: a.cor }] });
+    if (a.proximo) this.animeProximos = { ...(this.animeProximos || {}), [a.id]: a.proximo };
+    const visual = visualDoAnime(a, this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []);
+    const prox = a.proximo ? ` Próximo: episódio ${a.proximo.episodio} ${quandoTexto(a.proximo.quando, this.dateNow())}.` : ' Sem episódio novo marcado por enquanto.';
+    return `Seguindo ${a.titulo}.${prox} Quando sair, eu aviso${visual ? ` vestido de ${visual.nome}` : ''}.`;
+  }
+
+  /** Busca a agenda dos animes seguidos (main chama a cada 30 min) e cumprimenta o que saiu. */
+  async sincronizarAnime() {
+    const s = this.store.get();
+    if (!s.animeAtivo || !s.animes.length || !this.animeApi) return [];
+    let ag;
+    try { ag = await this.animeApi.agenda(s.animes.map((a) => a.id)); } catch { return []; }
+    this.animeProximos = ag.proximos;
+    const novos = episodiosNovos(ag.saiu, s.animes, s.animeAvisados, Date.now());
+    for (const e of novos) if (!(this.animePendentes ||= []).some((x) => x.id === e.id && x.episodio === e.episodio)) this.animePendentes.push(e);
+    this._avisarAnime();
+    return novos;
+  }
+
+  /** Cumprimento do episódio novo com o visual do anime (ou a faixa de otaku), um por vez. */
+  _avisarAnime() {
+    const fila = this.animePendentes || [];
+    if (!fila.length || this._animeTimer) return;
+    const tentar = () => {
+      this._animeTimer = null;
+      if (!fila.length) return;
+      if (!this.started || this.work || this.fullscreenHidden || this.lolHidden || this.userHidden) { this._animeTimer = this.clock.setTimeout(tentar, 60e3); return; }
+      const e = fila.shift();
+      const s = this.store.get();
+      this.store.update({ animeAvisados: [...s.animeAvisados, `${e.id}:${e.episodio}`] });
+      const now = this.clock.now();
+      const visual = visualDoAnime(e.anime, this._refs ? visuaisLiberados(this._refs, this.progress.nivel) : []);
+      const canais = visual ? canaisVisual({ pecas: { [visual.parte]: visual.id } }, this._refs, this.progress.nivel) : { animeFa: 1, nvOlhos: 6 };
+      this.animeVisita = { ate: now + 20000, canais, id: e.id, episodio: e.episodio, visual: visual?.id || null };
+      this.clock.setTimeout(() => { if (this.animeVisita && this.clock.now() >= this.animeVisita.ate) { this.animeVisita = null; this._applyLayout(true); } }, 20050);
+      if (this.catalogById.has('comemorar')) this.playCatalog('comemorar', { source: 'evento', speak: false });
+      this.say(`Saiu o episódio ${e.episodio} de ${e.anime.titulo}, {apelido}! ${visual ? `Vim de ${visual.nome} pra comemorar.` : 'Faixa de otaku na cabeça e bora assistir.'}`.replace('{apelido}', this.personality.get().apelido || 'Manu'), 'speech');
+      this._applyLayout(true);
+      if (fila.length) this._animeTimer = this.clock.setTimeout(tentar, 25e3);
+    };
+    tentar();
+  }
+
+  /** União do espaço medido (jojo.room.json → visuais) dos visuais ligados nos canais. */
+  _espacoVisuais(canais) {
+    const tabela = this.room.visuais;
+    if (!canais || !tabela) return null;
+    let out = null;
+    for (const [ch, v] of Object.entries(canais)) {
+      if (!ch.startsWith('nv_') || v < 0.5) continue;
+      const e = tabela[ch.slice(3)];
+      if (!e) continue;
+      out = out ? { l: Math.max(out.l, e.l), t: Math.max(out.t, e.t), r: Math.max(out.r, e.r), b: Math.max(out.b, e.b) } : { ...e };
+    }
+    return out;
+  }
+
   /** Espaço extra (px na escala 1) da animação atual, da anterior (transição) e do efeito. */
   _animRoom() {
     const now = this.clock.now();
@@ -4869,8 +5090,11 @@ export class Companion {
       this.roomPrev = { anim, prev: this.roomPrev ? this.roomPrev.anim : null, until: now + 400 };
       if (this.roomPrev.prev) this.clock.setTimeout(() => this._applyLayout(), 450);
     }
-    const parts = [this.room.anims[anim]];
-    if (this.roomPrev.prev && now < this.roomPrev.until) parts.push(this.room.anims[this.roomPrev.prev]);
+    // Com visual vestido, o espaço medido com os visuais (orelhas, auras, objetos na mão).
+    const comVisual = !!this._visualCanais(Object.keys(this.outfit).length > 0);
+    const tabelas = comVisual && this.room.animsVisual ? [this.room.anims, this.room.animsVisual] : [this.room.anims];
+    const parts = tabelas.map((tb) => tb[anim]);
+    if (this.roomPrev.prev && now < this.roomPrev.until) for (const tb of tabelas) parts.push(tb[this.roomPrev.prev]);
     if (this.effect) parts.push(this.room.effects[this.effect.name]);
     let out = null;
     for (const p of parts) {

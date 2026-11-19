@@ -24,7 +24,9 @@ do histórico, sem cauda. Nenhuma mudança futura de anatomia, silhueta ou estil
 largo, boca, estilo dos olhos e cor da pele, inclusive gordo e nojento: barrigona, papada, suor, baba, sujeira,
 moscas, manchas e orelhas) só enquanto estão vestidos; sem visual, o modelo original não muda. Todo visual tem o
 nível de detalhe do panda (Dragão Guerreiro): cores de corpo/braços/pernas/cabeça do personagem e traços presos na
-cabeça (orelhas, chifres, juba, antenas) — **nunca arquinho/tiara para fingir orelha**.
+cabeça (orelhas, chifres, juba, antenas) — **nunca arquinho/tiara para fingir orelha**. Variação (18/11/2026): `GENES` em `visual-nivel.js` dá a cada
+visual olho, enfeite, ajuste da peça e jeito de tocar a animação únicos (nada repete entre visuais); espaço da janela
+medido por visual e por animação com visual (`jojo.room.json` → `visuais`, `animsVisual`), sem parede invisível.
 
 ## O que é
 
@@ -71,6 +73,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   saúde pessoal → sério; emergência → 192); prompt técnico no `llm-provider.js`.
 - Antitédio: rotinas, mini-jogos, progressão/coleção (Central), foco junto (`/foco`), estímulos (💪 ✨ /calma /ritmo /bolhas),
   adaptação; tudo desligável e interrompível; doc `jojo-companion/docs/ANTITEDIO.md`.
+- **Calendário de anime** (`/anime`, "me avisa quando sair episódio de X"): episódio novo de anime seguido → JoJo cumprimenta
+  vestido do visual daquele anime (se liberado; senão faixa de otaku) por 20 s; espera Modo Trabalho/tela cheia; desligável
+  (`animeAtivo`). Fonte AniList (o animeschedule.net exige token por app, proibido em app público).
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?". Desde 18/11/2026,
@@ -97,7 +102,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   responder, explicação de verdade, continuidade ("me dá um exemplo", "aprofunda"); balão longo rola, sem corte.
 - **Títulos de nível (REGRA IRREDUTÍVEL)**: todo título é referência a filme, anime, série, jogo ou cultura pop, **sem
   repetir obra**, com todas as referências clássicas de tubarão presentes; mais 20 visuais extras de South Park
-  (um a cada 10 níveis) e 50 de memes do Twitter (um a cada 4 níveis, sem pudor), em `extras`; a peça visual, a fala e a reação de cada nível vêm dessa referência
+  (um a cada 10 níveis), 50 de memes do Twitter (um a cada 4 níveis, sem pudor) e 100 de anime (um a cada 2 níveis, ids
+  `an001`–`an100`, só obras que não aparecem em nenhum título nem extra), em `extras`; a peça visual, a fala e a reação de cada nível vêm dessa referência
   (`assets/catalog/progressao.json` → `referencias`, `src/core/visual-nivel.js`). Bloqueado nunca aparece; liberado se veste à vontade.
 - Objetivo do JoJo: fazer a Emanuele sorrir (piadas, supino, agachamento de vez em quando).
 - PC parado 5 min: senta no chão e cheira pó (pré-treino sem `humorDrogas`); ligadão por
@@ -106,6 +112,13 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (estado `moon`, 7,4 s; canais `mooning`, `spread`, `gagSize`, `drip`). De costas ele continua
   fisiculturista (costas em V, trapézio, dorsais, tríceps) em qualquer meme. Sozinho no repouso:
   1 chance em 1 bilhão a cada escolha autônoma (`MOON_IDLE_CHANCE` em `behavior.js`).
+- Rebolado do meme (estado `twerk`, 3 s; refeito do GIF do Among Us: modelo próprio de costas em 3/4, corpo em feijão
+  amassando e esticando em 6 quadros de 40 ms a 25 fps; `src/core/rebolado.js` injeta o modelo sem mudar o rig): de vez em quando no modo foco (opção `reboladoFoco`, desligável) e às vezes no repouso (sempre).
+- "Tigresa, fique pelada, Tigresa, eu sou o Dragão Guerreiro!" (Kung Fu Panda; também "Tigresa, tire sua roupa"; estado
+  `tigresa`, 6,5 s): JoJo de Mestre Tigresa na pose do Po, a roupa voa e ele fica pelado sem pudor (canal `pelado` esconde
+  bermuda/sunga e mostra tudo); visuais `br01` (Tigresa vestida, nível 3) e `br02` (pelada, nível 5), memes BR.
+- Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
+  desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços e inclina a cabeça, preservando o modelo original com pernas e sem cauda.
@@ -163,7 +176,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    contatos (só nomes e números) ficam em `<userData>/whatsapp`; desconectar apaga sessão e contatos. A única
    saída é para o próprio WhatsApp. Detalhes: `jojo-companion/docs/WHATSAPP.md`.
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
-   conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) e a
+   conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) o **calendário de anime** (AniList, grátis e sem login: só o nome buscado ao seguir e os ids dos animes seguidos saem; `src/core/anime-calendario.js`, `/anime`) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. **Silêncio absoluto**: nenhum som (sem áudio no código, janelas mutadas, sem opções de som);
    **"iniciar com o Windows" ligado por padrão** (desmarcável).

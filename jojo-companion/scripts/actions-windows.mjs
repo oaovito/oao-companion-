@@ -13,7 +13,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const app = path.join(root, 'jojo-companion');
 const { publishing } = pipelineArgs(process.argv.slice(2));
 if (publishing) throw new Error('Publicacao e tag sao controladas pelo workflow oficial depois dos gates');
-if (process.env.GITHUB_ACTIONS !== 'true' || process.env.RUNNER_ENVIRONMENT !== 'github-hosted') throw new Error('Exige runner oficial hospedado pelo GitHub');
+// Máquina do GitHub, ou a máquina Windows própria do usuário (runner self-hosted) quando o run pede
+// maquina_propria (autorizado pelo usuário em 18/11/2026, com a cota de minutos do GitHub esgotada).
+const maquinaPropria = process.env.JOJO_MAQUINA_PROPRIA === 'true' && process.env.RUNNER_ENVIRONMENT === 'self-hosted';
+if (process.env.GITHUB_ACTIONS !== 'true' || (process.env.RUNNER_ENVIRONMENT !== 'github-hosted' && !maquinaPropria)) throw new Error('Exige runner do GitHub ou a máquina própria pedida no run');
 if (process.platform !== 'win32' || process.arch !== 'x64') throw new Error('Exige Windows x64 nativo; nenhuma validacao foi executada');
 const tools = JSON.parse(fs.readFileSync(path.join(root, 'ci/windows-toolchain.json')));
 if (process.versions.node !== tools.node.version) throw new Error('Node deve corresponder a versao fixada no actions/setup-node');
@@ -41,7 +44,7 @@ fs.mkdirSync(summary, { recursive: true });
 const reportPath = path.join(run, 'validation.json');
 const report = { schema: 1, source: SOURCE_REPO, version, tag: `v${version}`, commit,
   platform: process.platform, arch: process.arch, node: process.versions.node, windows: os.release(),
-  executor: process.env.RUNNER_ENVIRONMENT, runId: process.env.GITHUB_RUN_ID,
+  executor: process.env.RUNNER_ENVIRONMENT, ...(maquinaPropria ? { maquinaPropria: true } : {}), runId: process.env.GITHUB_RUN_ID,
   startedAt: new Date().toISOString(), status: 'running', steps: [], files: [] };
 const save = () => {
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
@@ -109,7 +112,7 @@ try {
   await step('install', node, [npm, 'ci', '--prefer-offline', '--no-audit', '--no-fund']);
   fs.mkdirSync(env.JOJO_TEST_REPORT_DIR, { recursive: true });
   const tests = fs.readdirSync(path.join(app, 'test/unit')).filter((f) => f.endsWith('.test.js')).sort().map((f) => `test/unit/${f}`);
-  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 677));
+  await step('unit', node, ['--test', '--test-reporter=tap', '--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(env.JOJO_TEST_REPORT_DIR, 'unit.xml')}`, ...tests], 5, (text) => tapTotals(text, 699));
   // Validar modelo/interface antes do build caro: mesmas suites, sem repeticao.
   await step('conversation', powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-File', 'scripts/check-conversation-windows.ps1', '-WorkDirectory', path.join(run, 'runtime'), '-CacheDirectory', cache], 25, () => {
     const qa = JSON.parse(fs.readFileSync(path.join(app, 'out/conversa-real-windows.json')));
@@ -159,7 +162,7 @@ try {
   await step('presence', node, ['scripts/presenca-windows.mjs', 'dist/JoJoCompanion.exe'], 6);
   await cleanupShortcut();
   await step('windows', node, ['test/e2e/run-e2e.mjs', '--integration'], 8, (text) => tapTotals(text, 16));
-  await step('e2e', node, ['test/e2e/run-e2e.mjs'], 14, (text) => tapTotals(text, 47));
+  await step('e2e', node, ['test/e2e/run-e2e.mjs'], 14, (text) => tapTotals(text, 48));
   await evidence.writeValidation(report);
   await step('animations', node, [npm, 'run', 'audit:animations'], 10, () => {
     const audit = JSON.parse(fs.readFileSync(path.join(env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json')));

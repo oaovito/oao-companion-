@@ -148,6 +148,7 @@ export class ConversationManager {
  */
 export const COMMANDS = Object.freeze([
   { "id":"pet","cmd":"/pet","aliases":[],"label":"Tuck Away Pet","desc":"Mostra ou esconde o pet","hint":"Esconde o pet" },
+  { "id":"anime","cmd":"/anime","aliases":["/calendario-anime"],"label":"Calendário de anime","desc":"Avisa episódio novo de anime","hint":"/anime nome segue; /anime parar nome deixa de seguir; /anime mostra os próximos episódios" },
   { "id":"quiet","cmd":"/silencio","aliases":["/silêncio"],"label":"Modo silencioso","desc":"Sem falas sozinho e sem bronca","hint":"Liga/desliga as falas espontâneas e broncas" },
   { "id":"settings","cmd":"/config","aliases":["/configuracoes"],"label":"Configurações","desc":"Abre as configurações","hint":"Abre as configurações" },
   { "id":"anim","cmd":"/anim","aliases":["/animacao","/animação"],"label":"Animação","desc":"Toca uma animação pelo nome","hint":"Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)" },
@@ -158,7 +159,7 @@ export const COMMANDS = Object.freeze([
   { "id":"ritmo","cmd":"/ritmo","aliases":[],"label":"Ritmo","desc":"Sequência rítmica de 30 s","hint":"Sequência rítmica previsível por 30 s" },
   { "id":"bolhas","cmd":"/bolhas","aliases":[],"label":"Bolhas","desc":"Bolhas para estourar","hint":"Bolhas para estourar com clique, sem placar" },
   { "id":"resumo","cmd":"/resumo","aliases":[],"label":"Resumo do dia","desc":"Resumo do dia, manhã ou noite","hint":"O que rolou hoje. /resumo manha: o que há para fazer; /resumo noite: o que foi feito e o que ficou" },
-  { "id":"reacao","cmd":"/reacao","aliases":["/reação","/meme","/anime"],"label":"Reação","desc":"Reação de meme, anime e afins","hint":"Memes, anime, comida, namorado e João: /reacao side eye, /reacao bankai…" },
+  { "id":"reacao","cmd":"/reacao","aliases":["/reação","/meme"],"label":"Reação","desc":"Reação de meme, anime e afins","hint":"Memes, anime, comida, namorado e João: /reacao side eye, /reacao bankai…" },
   { "id":"trabalho","cmd":"/trabalho","aliases":["/trabalhar"],"label":"Modo Trabalho","desc":"JoJo quieto no canto","hint":"JoJo medita quieto no canto: /trabalho, /trabalho 50, /trabalho deep, /trabalho invisivel, /trabalho sair" },
   { "id":"vestir","cmd":"/vestir","aliases":["/roupa","/guardaroupa","/guarda-roupa"],"label":"Guarda-roupa","desc":"Guarda-roupa do JoJo","hint":"Veste o JoJo: /vestir (abre), /vestir coroa, /vestir surpresa, /vestir tirar" },
   { "id":"rotina","cmd":"/rotina","aliases":[],"label":"Rotina fixa","desc":"Rotina do dia em blocos","hint":"Rotina do dia: /rotina montar manha 7:00 estudo 14:00 treino 18:00 sono 22:30, /rotina ver, /rotina feito treino, /rotina limpar. Frase fixa: /rotina bom dia: texto" },

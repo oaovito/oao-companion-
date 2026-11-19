@@ -274,7 +274,9 @@
       "titulo": "Eu no modo foco",
       "grupo": "Utilidades",
       "comandos": [],
-      "configuracoes": [],
+      "configuracoes": [
+        "reboladoFoco"
+      ],
       "passos": [
         {
           "texto": "No foco de estudo eu leio, escrevo, digito e marco texto. No de treino eu faço flexão, prancha e agachamento. Troco de atividade de tempos em tempos e nunca repito a mesma em seguida. Abre um de treino pra ver.",
@@ -289,6 +291,9 @@
           "espera": {
             "comando": "foco"
           }
+        },
+        {
+          "texto": "De vez em quando, no meio do foco, eu viro de costas e rebolo 3 segundos, como no meme, e volto ao trabalho. Quem não quiser desliga em Configurações → Movimento e mouse → Rebolar no modo foco. Fora do foco eu continuo rebolando às vezes."
         }
       ]
     },
@@ -840,6 +845,33 @@
           "tente": "/tutorial lista",
           "espera": {
             "comando": "tutorial"
+          }
+        }
+      ]
+    },
+    {
+      "id": "animeCalendario",
+      "titulo": "Calendário de anime",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/anime"
+      ],
+      "configuracoes": [
+        "animeAtivo"
+      ],
+      "passos": [
+        {
+          "texto": "Me fala o anime que você está vendo e eu aviso quando sair episódio novo, vestido de algo do anime pra comemorar. Testa seguindo um.",
+          "tente": "/anime Dandadan",
+          "espera": {
+            "comando": "anime"
+          }
+        },
+        {
+          "texto": "/anime sozinho mostra os próximos episódios; /anime parar e o nome deixa de seguir. Também vale escrever \"me avisa quando sair episódio de One Piece\". Desliga em Configurações → Privacidade → Calendário de anime.",
+          "tente": "/anime",
+          "espera": {
+            "comando": "anime"
           }
         }
       ]

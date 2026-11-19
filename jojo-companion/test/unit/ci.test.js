@@ -129,3 +129,12 @@ test('CI 0.45: agenda por link dispensa credenciais; todos os gates Windows e hi
   }
   assert.doesNotThrow(() => assertValidation(fixture(), expected));
 });
+
+test('máquina própria (runner self-hosted): só vale quando o run pediu; o resto continua exigindo o GitHub', async () => {
+  const { assertValidation } = await import('../../../ci/policy.mjs');
+  const base = fixture();
+  const opts = { version: '0.44.0', commit: 'a'.repeat(40), files: base.files };
+  assert.throws(() => assertValidation({ ...base, executor: 'self-hosted' }, opts), /runner do GitHub/);
+  assert.throws(() => assertValidation({ ...base, executor: 'qualquer', maquinaPropria: true }, opts), /runner do GitHub/);
+  try { assertValidation({ ...base, executor: 'self-hosted', maquinaPropria: true }, opts); } catch (e) { assert.doesNotMatch(e.message, /runner do GitHub/); }
+});

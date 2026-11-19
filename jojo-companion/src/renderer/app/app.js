@@ -164,6 +164,21 @@ function renderColecao() {
     }
     scenes.append(buttons); box.append(scenes);
   }
+  // Animações já liberadas (poses vistas e as dos visuais liberados): todas tocam com um clique.
+  if (c.animacoes?.length) {
+    const anims = el('details', 'card animacoes-liberadas');
+    anims.append(el('summary', null, `Animações liberadas (${c.animacoes.length})`));
+    const botoes = el('div', 'buttons');
+    for (const a of c.animacoes) {
+      const b = el('button', 'chipbtn', a.nome);
+      b.dataset.anim = a.id;
+      if (a.origem) b.title = a.origem;
+      b.addEventListener('click', () => playCmd(`/anim ${a.id}`));
+      botoes.append(b);
+    }
+    anims.append(botoes);
+    box.append(anims);
+  }
   if (c.rewardHistory?.length) {
     const history = el('details', 'card'); history.append(el('summary', null, 'Últimas recompensas de XP'));
     for (const reward of c.rewardHistory) history.append(el('p', 'muted', `+${reward.amount} XP · ${reward.label} · ${reward.day}`));
@@ -221,7 +236,7 @@ function renderGuarda() {
         sw.style.background = it.cor;
         topo.append(sw, el('b', null, it.nome));
         if (it.novo) topo.append(el('span', 'selo-novo', 'Novo'));
-        b.append(topo, el('small', 'visual-obra', `Nível ${it.nivel} · ${it.titulo} · ${it.obra}`), el('span', 'visual-desc', `“${it.descricao}”`));
+        b.append(topo, el('small', 'visual-obra', `Nível ${it.nivel} · ${it.titulo} · ${it.obra}`), el('span', 'visual-desc', it.descricao));
         b.addEventListener('click', () => vestir(`/vestir ${it.id}`));
         lista.append(b);
       }

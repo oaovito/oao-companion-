@@ -84,7 +84,7 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     });
     assert.equal(l15.nivel, 15);
     assert.equal(l15.vn.visto, 15);
-    assert.equal(l15.vn.novas.length, 18, 'tudo o que o nível liberou (níveis 2 a 15, South Park do 10, memes do 4, 8 e 12) fica marcado como novo');
+    assert.equal(l15.vn.novas.length, 27, 'tudo o que o nível liberou (níveis 2 a 15, South Park do 10, memes do 4, 8 e 12, 7 animes e as duas Tigresas) fica marcado como novo');
     assert.ok(Object.keys(l15.vn.pecas).length >= 6, JSON.stringify(l15.vn));
     await win.waitForFunction(() => Object.keys(window.__jojoRenderer.state.visualNivel || {}).length >= 6, null, { timeout: 10000 });
     // O JoJo avisa (balão) e o aviso não fica pendente.
@@ -93,21 +93,27 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     const opened = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.companion.openApp('guardaRoupa'));
     const page = await opened; page.on('pageerror', (e) => errors.push(e.message));
     await page.waitForSelector('#guardaRoupa [data-visual]');
-    assert.match(await page.locator('#guardaBtn').textContent(), /18 novos/);
+    assert.match(await page.locator('#guardaBtn').textContent(), /27 novos/);
     const itens = await page.$$eval('#guardaRoupa [data-visual]', (bs) => bs.map((b) => ({ id: b.dataset.visual, desc: b.querySelector('.visual-desc')?.textContent || '', novo: !!b.querySelector('.selo-novo') })));
-    assert.equal(itens.length, 18, 'níveis 2 a 15 e os extras liberados');
-    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$/.test(i.id)), 'só liberados como itens');
+    assert.equal(itens.length, 27, 'níveis 2 a 15 e os extras liberados');
+    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$|^an00[1-7]$|^br0[12]$/.test(i.id)), 'só liberados como itens');
     assert.ok(itens.every((i) => i.desc.length > 10 && i.novo), 'cada item com a fala da referência e o selo de novo');
+    assert.ok(itens.every((i) => /^“.+” — de .+/.test(i.desc)), 'descrição com a frase e de onde vem');
     // Trancados: só cadeado e nível, nada do que é.
     const cadeados = await page.$$eval('#guardaRoupa .cadeado', (cs) => cs.map((c) => c.textContent.trim()));
-    assert.equal(cadeados.length, 185 + 19 + 47, 'níveis 16 a 200, 19 de South Park e 47 memes');
+    assert.equal(cadeados.length, 185 + 19 + 47 + 93, 'níveis 16 a 200, 19 de South Park, 47 memes e 93 animes');
     assert.ok(cadeados.every((t) => /^🔒nível \d+$/.test(t)), cadeados.slice(0, 3).join(' | '));
     const texto = await page.locator('#guardaRoupa').textContent();
-    assert.ok(!/Sunga de pose|Ushanka|Sabre de luz|Aura dourada|Plus Ultra/.test(texto), 'nenhum item futuro revelado');
+    assert.ok(!/Sunga de pose|Ushanka|Sabre de luz|Aura dourada|Plus Ultra|Grimório|Sol do Orgulho/.test(texto), 'nenhum item futuro revelado');
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.novas.length === 0); // viu na Central
     await page.locator('#guardaRoupa [data-visual="nv003"]').click();
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv003');
     await win.waitForFunction(() => window.__jojoRenderer.state.visualNivel?.nv_nv003 === 1, null, { timeout: 10000 });
+    // Coleção: todas as animações liberadas tocam com um clique (rebolado e Tigresa inclusos).
+    await page.locator('#colecaoBtn').click();
+    await page.waitForSelector('.animacoes-liberadas button[data-anim="rebolado"]', { state: 'attached' });
+    assert.ok(await page.locator('.animacoes-liberadas button[data-anim="tigresa"]').count() === 1);
+    assert.ok(await page.locator('.animacoes-liberadas button').count() >= 16, 'memes, animações dos visuais liberados e poses vistas');
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });
@@ -132,6 +138,29 @@ test('funeral do shape Windows: comida fora da dieta mostra o slide com as fotos
     assert.equal(tela.balao, 'none', 'no lugar do balão');
     assert.equal(tela.clique, 'none', 'não pega clique (click-through preservado)');
     await win.waitForFunction(() => document.getElementById('funeral').classList.contains('hidden'), null, { timeout: 20000 });
+    assert.deepEqual(errors, []);
+  } finally { await quit(app); }
+});
+
+test('rebolado e Tigresa Windows: o desenho toca o rebolado e o meme da Tigresa sem erro e a opção do foco aparece nas Configurações', { timeout: 120000 }, async () => {
+  const { app, win, errors } = await launch();
+  try {
+    await win.waitForFunction(() => !!window.__jojoRenderer.state, null, { timeout: 15000 });
+    await app.evaluate(() => { const c = globalThis.__jojo.companion; return c.behavior.request('twerk', { now: c.clock.now(), force: true }); });
+    await win.waitForFunction(() => window.__jojoRenderer.anim === 'twerk', null, { timeout: 10000 });
+    await new Promise((r) => setTimeout(r, 1500)); // meio do rebolado, alguns quadros desenhados
+    // "Tigresa, tire sua roupa": a animação do meme toca no desenho real.
+    await new Promise((r) => setTimeout(r, 2000));
+    const tg = await app.evaluate(() => globalThis.__jojo.companion.chat('Tigresa, tire sua roupa'));
+    assert.equal(tg.intent, 'tigresa');
+    await win.waitForFunction(() => window.__jojoRenderer.anim === 'tigresa', null, { timeout: 10000 });
+    await new Promise((r) => setTimeout(r, 4000)); // já pelado
+    const aberta = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.openSettings());
+    const sw = await aberta; sw.on('pageerror', (e) => errors.push(e.message));
+    await sw.waitForSelector('input[name="reboladoFoco"]', { state: 'attached' });
+    assert.equal(await sw.locator('input[name="reboladoFoco"]').isChecked(), true, 'ligado por padrão');
+    await sw.locator('input[name="reboladoFoco"]').click();
+    await waitFor(app, () => globalThis.__jojo.store.get().reboladoFoco === false);
     assert.deepEqual(errors, []);
   } finally { await quit(app); }
 });

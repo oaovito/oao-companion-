@@ -59,7 +59,7 @@ export class RigRenderer {
     // Bermuda do guarda-roupa (costume_bermuda*) vence a paleta das outras peças.
     const on = Object.keys(costumes).filter((k) => k[0] !== '_' && (pose[`costume_${k}`] ?? 0) >= 0.5);
     // Ordem: fantasia do dia, pele do visual de nível, bermuda (a bermuda vence nas cores dela).
-    const ordem = [on.find((k) => !k.startsWith('bermuda') && !k.startsWith('pele')), ...on.filter((k) => k.startsWith('pele')), on.find((k) => k.startsWith('bermuda'))].filter(Boolean);
+    const ordem = [on.find((k) => !k.startsWith('bermuda') && !k.startsWith('pele') && !k.startsWith('olho')), ...on.filter((k) => k.startsWith('pele')), ...on.filter((k) => k.startsWith('olho')), on.find((k) => k.startsWith('bermuda'))].filter(Boolean);
     let key = ordem.length ? `c:${ordem.join(',')};` : '';
     for (const ch of Object.keys(moods)) {
       if (ch[0] === '_') continue;
@@ -206,6 +206,19 @@ export class RigRenderer {
       ctx.translate(part.scalePivot[0], part.scalePivot[1]);
       ctx.scale(k, k);
       ctx.translate(-part.scalePivot[0], -part.scalePivot[1]);
+    }
+    // Ajuste fixo da peça (gene do visual): [escala, giro em graus, pivô x, pivô y].
+    if (part.fix) {
+      const [k, g, fx, fy] = part.fix;
+      ctx.translate(fx, fy); ctx.rotate(g * DEG); ctx.scale(k, k); ctx.translate(-fx, -fy);
+    }
+    // Escala só horizontal/vertical por canal (ex.: corpo amassando e alargando no rebolado).
+    if ((part.scaleXBy || part.scaleYBy) && part.squashPivot) {
+      const kx = Math.max(0.2, part.scaleXBy ? pose[part.scaleXBy] ?? 1 : 1);
+      const ky = Math.max(0.2, part.scaleYBy ? pose[part.scaleYBy] ?? 1 : 1);
+      ctx.translate(part.squashPivot[0], part.squashPivot[1]);
+      ctx.scale(kx, ky);
+      ctx.translate(-part.squashPivot[0], -part.squashPivot[1]);
     }
   }
 
@@ -490,51 +503,107 @@ export class RigRenderer {
    * 1 anime · 2 pontinhos · 3 sharingan · 4 brancos vazios · 5 pretos · 6 brilhando ·
    * 7 coração · 8 semicerrados · 9 grandes e redondos. Devolve false para o estilo normal.
    */
+  /**
+   * Olhos dos visuais de nível. O estilo (1–9) dá a base; os genes do visual (canais
+   * nvPupila, nvBrilhos, nvCilios, nvOlhoRx/Ry, nvOlhoTilt e a cor nvIris da paleta) fazem
+   * cada visual ter um olho só dele: nenhum olho de visual repete o de outro.
+   */
   _olhoEstilo(ctx, pose, E, estilo) {
     const open = Math.max(0, Math.min(1, pose.eyeOpen ?? 1));
     const outline = this.color('outline');
-    if (estilo === 7) return this._eyeSP(ctx, { ...pose, heartEyes: 1 }, E), true;
-    if (estilo === 8) return this._eyeSP(ctx, { ...pose, eyeOpen: Math.min(open, 0.42) }, E), true;
-    if (open < 0.14 || pose.happyEyes > 0.5 || pose.eyeX > 0.5 || pose.heartEyes > 0.5) return false;
+    const g = {
+      pupila: Math.round(pose.nvPupila ?? 0), brilhos: Math.round(pose.nvBrilhos ?? -1), cilios: Math.round(pose.nvCilios ?? 0),
+      rx: pose.nvOlhoRx ?? 1, ry: pose.nvOlhoRy ?? 1, tilt: pose.nvOlhoTilt ?? 0,
+    };
     const lado = E.x < this.faceCenter ? -1 : 1;
+    const iris = (this.tinted && this.tinted.nvIris) || this.rig.palette.nvIris || this.color('eye');
+    const cilios = () => {
+      if (g.cilios <= 0) return;
+      ctx.strokeStyle = outline; ctx.lineWidth = 1.8;
+      for (let i = 0; i < g.cilios; i++) {
+        const a = Math.PI * (1.15 + (i / Math.max(1, g.cilios - 1)) * 0.7) * (g.cilios === 1 ? 1 : 1);
+        const x0 = E.x + Math.cos(a) * E.rx * 1.1 * g.rx, y0 = E.y + Math.sin(a) * E.ry * 1.1 * g.ry * open;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + Math.cos(a) * 4 + lado * 1.2, y0 + Math.sin(a) * 4 - 1); ctx.stroke();
+      }
+    };
+    if (estilo === 7 || estilo === 8) {
+      this._eyeSP(ctx, estilo === 7 ? { ...pose, heartEyes: 1 } : { ...pose, eyeOpen: Math.min(open, 0.42) }, E);
+      cilios();
+      return true;
+    }
+    if (open < 0.14 || pose.happyEyes > 0.5 || pose.eyeX > 0.5 || pose.heartEyes > 0.5) return false;
     const px = (pose.pupilX || 0) * 2, py = (pose.pupilY || 0) * 2;
     const oval = (x, y, rx, ry, fill, stroke = true, rot = 0) => {
-      ctx.beginPath(); ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
+      ctx.beginPath(); ctx.ellipse(x, y, Math.max(0.5, rx), Math.max(0.5, ry), rot, 0, Math.PI * 2);
       ctx.fillStyle = fill; ctx.fill();
       if (stroke) { ctx.strokeStyle = outline; ctx.lineWidth = 2; ctx.stroke(); }
     };
+    // Pupila de cada visual: redonda, fenda, estrela, coração, losango, cruz, anel, dupla, gota, lua.
+    const pupila = (x, y, r, fill) => {
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      const k = g.pupila % 10;
+      if (k === 1) ctx.ellipse(x, y, r * 0.35, r * 1.1, 0, 0, Math.PI * 2);
+      else if (k === 2) ctx.ellipse(x, y, r * 1.1, r * 0.35, 0, 0, Math.PI * 2);
+      else if (k === 3 || k === 5 || k === 6) {
+        const n = k === 3 ? 5 : 4, dentro = k === 3 ? 0.45 : k === 5 ? 0.7 : 0.25;
+        for (let i = 0; i < n * 2; i++) { const a = -Math.PI / 2 + (i * Math.PI) / n; const rr = i % 2 ? r * dentro : r * 1.15; ctx[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+        ctx.closePath();
+      } else if (k === 4) {
+        ctx.moveTo(x, y + r); ctx.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.5, y - r * 1.3, x, y - r * 0.4);
+        ctx.bezierCurveTo(x + r * 0.5, y - r * 1.3, x + r * 1.6, y - r * 0.2, x, y + r); ctx.closePath();
+      } else if (k === 7) {
+        ctx.arc(x, y, r, 0, Math.PI * 2); ctx.arc(x, y, r * 0.5, 0, Math.PI * 2, true);
+      } else if (k === 8) {
+        ctx.arc(x - r * 0.45, y, r * 0.55, 0, Math.PI * 2); ctx.moveTo(x + r * 1.0, y); ctx.arc(x + r * 0.45, y, r * 0.55, 0, Math.PI * 2);
+      } else if (k === 9) {
+        ctx.moveTo(x, y - r * 1.2); ctx.quadraticCurveTo(x + r * 1.1, y + r * 0.2, x, y + r); ctx.quadraticCurveTo(x - r * 1.1, y + r * 0.2, x, y - r * 1.2); ctx.closePath();
+      } else ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill('evenodd');
+    };
+    const brilhos = (x, y, r, padrao) => {
+      const n = g.brilhos >= 0 ? g.brilhos : padrao;
+      const pos = [[-0.45, -0.5, 0.42], [0.42, 0.55, 0.2], [0.5, -0.35, 0.16]];
+      for (let i = 0; i < n; i++) oval(x + pos[i][0] * r * 2, y + pos[i][1] * r * 2, r * pos[i][2] * 2, r * pos[i][2] * 2 * open, '#ffffff', false);
+    };
     ctx.save();
+    // Formato e inclinação próprios do visual, em torno do centro do olho.
+    ctx.translate(E.x, E.y); ctx.rotate(g.tilt * lado); ctx.scale(g.rx, g.ry); ctx.translate(-E.x, -E.y);
     if (estilo === 1) {
       oval(E.x, E.y, E.rx * 1.2, E.ry * 1.3 * open, this.color('sclera'));
-      oval(E.x + px, E.y + 2 + py, E.rx * 0.78, E.ry * 1.05 * open, this.color('eye'), false);
-      oval(E.x + px, E.y + 3 + py, E.rx * 0.38, E.ry * 0.5 * open, '#111111', false);
-      oval(E.x + px - 3, E.y - 3 + py, 3, 3.6 * open, '#ffffff', false);
-      oval(E.x + px + 3, E.y + 6 + py, 1.4, 1.4, '#ffffff', false);
+      oval(E.x + px, E.y + 2 + py, E.rx * 0.78, E.ry * 1.05 * open, iris, false);
+      pupila(E.x + px, E.y + 3 + py, E.rx * 0.36, '#111111');
+      brilhos(E.x + px, E.y + 2 + py, E.rx * 0.5, 2);
     } else if (estilo === 2) {
-      oval(E.x + px, E.y + 2 + py, 3.4, 3.8 * open, this.color('eye'), false);
+      pupila(E.x + px, E.y + 2 + py, 3.6, iris);
+      brilhos(E.x + px, E.y + 2 + py, 2.2, 0);
     } else if (estilo === 3) {
       oval(E.x, E.y, E.rx, E.ry * open, this.color('sclera'));
-      oval(E.x + px, E.y + 1 + py, 6.6, 6.6 * open, this.color('eye'));
-      oval(E.x + px, E.y + 1 + py, 2, 2, '#111111', false);
-      for (let i = 0; i < 3; i++) { const a = -Math.PI / 2 + (i * 2 * Math.PI) / 3; oval(E.x + px + Math.cos(a) * 4, E.y + 1 + py + Math.sin(a) * 4, 1.4, 1.4, '#111111', false); }
+      oval(E.x + px, E.y + 1 + py, 6.6, 6.6 * open, iris);
+      pupila(E.x + px, E.y + 1 + py, 2, '#111111');
+      const tomoe = Math.max(1, (g.brilhos >= 0 ? g.brilhos : 2) + 1);
+      for (let i = 0; i < tomoe; i++) { const a = -Math.PI / 2 + (i * 2 * Math.PI) / tomoe; oval(E.x + px + Math.cos(a) * 4, E.y + 1 + py + Math.sin(a) * 4, 1.4, 1.4, '#111111', false); }
     } else if (estilo === 4) {
       oval(E.x + lado * 1, E.y, E.rx * 1.25, E.ry * 0.95 * open, this.color('sclera'), true, lado * 0.45);
+      if (g.pupila % 10 !== 0) pupila(E.x + lado, E.y, 1.6, iris);
     } else if (estilo === 5) {
-      oval(E.x, E.y + 2, E.rx * 1.05, E.ry * 1.25 * open, this.color('eye'));
-      oval(E.x - 3, E.y - 3, 2, 2.4, 'rgba(255,255,255,0.7)', false);
+      oval(E.x, E.y + 2, E.rx * 1.05, E.ry * 1.25 * open, iris);
+      brilhos(E.x, E.y + 2, E.rx * 0.5, 1);
     } else if (estilo === 6) {
-      ctx.globalAlpha *= 0.35; oval(E.x, E.y, E.rx * 1.5, E.ry * 1.4, this.color('eye'), false); ctx.globalAlpha /= 0.35;
+      ctx.globalAlpha *= 0.35; oval(E.x, E.y, E.rx * 1.5, E.ry * 1.4, iris, false); ctx.globalAlpha /= 0.35;
       oval(E.x, E.y, E.rx, E.ry * open, this.color('sclera'));
-      oval(E.x + px, E.y + 1 + py, 5.2, 5.6 * open, this.color('eye'), false);
-      oval(E.x + px - 1.6, E.y - 1 + py, 1.6, 1.6, '#ffffff', false);
+      pupila(E.x + px, E.y + 1 + py, 5, iris);
+      brilhos(E.x + px, E.y + 1 + py, 2.6, 1);
     } else if (estilo === 9) {
       oval(E.x, E.y - 1, 12.5, 12.5 * open, this.color('sclera'));
-      oval(E.x + px, E.y + py, 2.8, 2.8, this.color('eye'), false);
+      pupila(E.x + px, E.y + py, 2.8, iris);
+      brilhos(E.x + px, E.y + py, 1.8, 0);
     } else {
       ctx.restore();
       return false;
     }
     ctx.restore();
+    cilios();
     return true;
   }
 
