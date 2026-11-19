@@ -785,3 +785,11 @@ test('run 251: sem "não precisa ser tão complicado" e sem "eu não aguento bri
   assert.equal(semDesdem('Você disse verde. Não precisa ser tão complicado com as cores.'), 'Você disse verde.');
   assert.equal(semDesdem('Que pena, Manu. Mas você sabe que eu não aguento brincadeira, né? Vamos ao que interessa, então.'), 'Que pena, Manu. Vamos ao que interessa, então.');
 });
+
+test('run 254: memória dela sem condescendência ("não precisa me repetir", "vamos ver se consegue lembrar", "naturalmente")', () => {
+  assert.equal(semDesdem('Você disse verde, Emanuele. Não precisa me repetir, sou um tubarão inteligente.'), 'Você disse verde, Emanuele.');
+  assert.equal(erroDeCoerencia('Eu disse verde, não azul.', 'Verde, sim. Uma escolha competente. Agora, vamos ver se você consegue lembrar o próximo exercício.'), 'insulto à usuária ou à pergunta');
+  assert.equal(polirTexto('You mentioned a cat, naturalmente. It’s a common preference.'), 'You mentioned a cat. It’s a common preference.');
+  assert.equal(polirTexto('You mentioned a cat, *obviamente*.'), 'You mentioned a cat.');
+  assert.equal(polirTexto('Confirmado, manga. A memória sua é impressionante.'), 'Confirmado, manga. Sua memória é impressionante.');
+});
