@@ -97,7 +97,10 @@
   vez de cair na resposta programada.
 - Acabamento das respostas da conversa: some também o desdém com advérbio ("a remarkably
   simple question", "é uma pergunta muito simples"), o marcador [1] quando não há fonte de
-  verdade, palavra de Portugal ("a hormona" vira "o hormônio") e o "meu bem".
+  verdade, palavra de Portugal ("a hormona" vira "o hormônio"), o "meu bem", o "não precisa
+  repetir" quando ela pergunta o que disse e o alarme "precisa de atenção imediata" numa
+  explicação. Resposta que despreza o que ela faz ("projetos são para gente fraca") é trocada
+  por uma fala programada.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

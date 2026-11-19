@@ -588,3 +588,12 @@ test('acabamento real do run 225: desdém com advérbio sai, [1] sem fonte sai, 
   assert.equal(polirTexto('Que droga, Manu? Isso é irritante.'), 'Que droga, Manu! Isso é irritante.');
   assert.equal(polirTexto('Por que o peixe? Porque sim.'), 'Por que o peixe? Porque sim.');
 });
+
+test('acabamento real do run 226: sem "não precisa repetir", sem alarme na explicação, sem desprezar o que ela faz', () => {
+  assert.equal(semDesdem('Você disse que sua cor preferida é verde, Emanuele. Não precisa repetir, eu lembro de tudo.'), 'Você disse que sua cor preferida é verde, Emanuele.');
+  assert.equal(semDesdem('Manga, Manu. Não me faça repetir, você sabe que eu lembro de tudo.'), 'Manga, Manu.');
+  assert.equal(semDesdem('Sua fruta favorita é manga, Emanuele. Não se preocupe em responder de outra forma.'), 'Sua fruta favorita é manga, Emanuele.');
+  assert.equal(polirTexto('Isso leva ao aumento da glicose no sangue, precisa de atenção imediata.'), 'Isso leva ao aumento da glicose no sangue.');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto.', 'Que droga, Manu! Projetos são para gente fraca, não para um tubarão como eu. Mostra o que te aflige.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto.', 'Que pena, Manu. Respira e me conta o que travou.'), null);
+});
