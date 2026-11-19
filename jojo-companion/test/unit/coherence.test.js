@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, semConselhoPessoal, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -742,4 +742,15 @@ test('run 245: "eu te avisei" sem conversa anterior é memória inventada; até 
   assert.equal(pedidos.length, 3);
   assert.deepEqual(pedidos, ['', 'inventou conversa que não houve', 'não falou do que ela contou']);
   assert.match(r.text, /Chefe mudando prazo/);
+});
+
+test('run 246: revés sem sobrar só a interjeição; pergunta geral não vira conselho para ela', () => {
+  const reves = 'Não consegui terminar meu projeto.';
+  const so = 'Que droga, Manu! Isso é inaceitável.';
+  assert.equal(semBronca(reves, so), so, 'só sobraria a interjeição: fica como veio para a guarda recusar');
+  assert.equal(erroDeCoerencia(reves, semBronca(reves, so)), 'ficou contra ela');
+  const geral = 'o que é diabetes tipo 2?';
+  const r = 'É resistência à insulina e o pâncreas não compensa. Concentre-se em controlar sua dieta e aumentar a intensidade dos seus treinos.';
+  assert.equal(semConselhoPessoal(geral, r), 'É resistência à insulina e o pâncreas não compensa.');
+  assert.equal(semConselhoPessoal('eu tenho diabetes tipo 2, o que faço?', r), r, 'quando é com ela, o conselho fica');
 });

@@ -162,6 +162,22 @@ export function semBronca(input, text) {
   const frases = t.split(/(?<=[.!?])\s+/);
   const resto = frases.filter((f) => !BRONCA.test(norm(f)));
   if (resto.length === frases.length || !resto.length) return t;
+  const sobra = resto.join(' ').trim();
+  // Só sobrou a interjeição ("Que droga, Manu!"): sem apoio nenhum; deixa a guarda recusar e gerar de novo.
+  return sobra.length < 30 ? t : sobra;
+}
+
+/**
+ * Pergunta geral ("o que é diabetes tipo 2?") não vira conselho de saúde para ela, como se ela
+ * tivesse a doença ("controle sua dieta e aumente seus treinos"): essas frases saem.
+ */
+export function semConselhoPessoal(input, text) {
+  const q = norm(input);
+  const t = String(text || '');
+  if (/\b(?:eu|meu|minha|meus|minhas|tenho|estou|sinto|me)\b/.test(q)) return t;
+  const frases = t.split(/(?<=[.!?])\s+/);
+  const resto = frases.filter((f) => !/\b(?:sua|seu|suas|seus|tua|teu) (?:dieta|treinos?|alimentacao|glicemia|acucar|glicose|medico|remedios?|saude|exames?|peso)\b/.test(norm(f)));
+  if (resto.length === frases.length || !resto.length) return t;
   return resto.join(' ').trim();
 }
 
