@@ -661,7 +661,8 @@ test('run 236: nada sobre o corpo dela, piada pedida é piada, sem fato inventad
   assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! A deadline do projeto é amanhã.'), 'inventou fato da vida dela (deadline)');
   assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Vamos direto ao ponto, então. Aquele relatório, já?'), 'inventou fato da vida dela (relatorio)');
   assert.equal(erroDeCoerencia('O relatório ficou pronto.', 'Relatório pronto? Agora sim.'), null, 'se ela contou, pode');
-  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso é inaceitável, seu projeto precisa ser entregue.'), 'ficou contra ela');
+  // Critério do usuário (19/11/2026): bronca no revés é parte do JoJo, não é recusada.
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso é inaceitável, seu projeto precisa ser entregue.'), null);
   assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Mostre-me como, Emanuele, e talvez eu te dê uma mãozinha – se for digna.'), 'insulto à usuária ou à pergunta');
   assert.equal(erroDeCoerencia('você está bem?', 'Claro que estou ótimo, Manu! Mas essa sua pergunta me deixou um pouco... irritado.'), 'insulto à usuária ou à pergunta');
   assert.equal(erroDeCoerencia('Eu disse verde, não azul.', 'Verde, certo. Não se atrapalhe, está tudo bem.'), 'insulto à usuária ou à pergunta');
@@ -749,7 +750,7 @@ test('run 246: revés sem sobrar só a interjeição; pergunta geral não vira c
   const reves = 'Não consegui terminar meu projeto.';
   const so = 'Que droga, Manu! Isso é inaceitável.';
   assert.equal(semBronca(reves, so), so, 'só sobraria a interjeição: fica como veio para a guarda recusar');
-  assert.equal(erroDeCoerencia(reves, semBronca(reves, so)), 'ficou contra ela');
+  assert.equal(erroDeCoerencia(reves, semBronca(reves, so)), null, 'bronca passa (critério do usuário)');
   const geral = 'o que é diabetes tipo 2?';
   const r = 'É resistência à insulina e o pâncreas não compensa. Concentre-se em controlar sua dieta e aumentar a intensidade dos seus treinos.';
   assert.equal(semConselhoPessoal(geral, r), 'É resistência à insulina e o pâncreas não compensa.');
@@ -779,7 +780,7 @@ test('run 250: revés sem "covardes", sem "não tem jeito", sem "levanta essa bu
   const reves = 'Não consegui terminar meu projeto.';
   assert.equal(erroDeCoerencia(reves, 'Que merda, Manu! Projetos são para quem tem força de vontade, não para covardes. Vamos lá, levanta essa bunda e termina logo!'), 'comentou o corpo dela');
   assert.equal(semBronca('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito. Respira e amanhã a gente fecha esse projeto.'), 'Que droga, Manu! Respira e amanhã a gente fecha esse projeto.');
-  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito.'), 'ficou contra ela');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito.'), null, 'bronca passa (critério do usuário)');
 });
 
 test('run 251: sem "não precisa ser tão complicado" e sem "eu não aguento brincadeira"', () => {
@@ -802,4 +803,12 @@ test('run 256: fala programada depois da recusa também consola no revés e no a
     assert.notEqual(r.intent, 'ia');
     assert.equal(r.action, 'comfort', `${input}: ${r.text}`);
   }
+});
+
+test('run 261: no revés o apoio sem citar "projeto" passa, e a bronca também (critério do usuário)', async () => {
+  const reves = 'Não consegui terminar meu projeto hoje.';
+  assert.equal(relatoSemAssunto(reves, 'Que droga, Manu! Não se desespere, acontece. Levanta a cabeça.'), false);
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Que droga, Manu! Isso é inaceitável, não pode deixar assim, você sabe disso.' }) };
+  const r = await new DialogueEngine({ llm }).reply(reves);
+  assert.equal(r.intent, 'ia');
 });

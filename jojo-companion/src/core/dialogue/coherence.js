@@ -221,7 +221,7 @@ const GENERICAS = new Set(['minha', 'minhas', 'agora', 'quero', 'fazer', 'hoje',
  */
 export function relatoSemAssunto(input, output) {
   const q = norm(input);
-  if (/\?/.test(String(input)) || !/\b(?:meu|minha|meus|minhas)\b/.test(q)) return false;
+  if (/\?/.test(String(input)) || !/\b(?:meu|minha|meus|minhas)\b/.test(q) || REVES.test(q)) return false;
   const termos = [...new Set(q.split(' ').filter((w) => w.length >= 4 && !GENERICAS.has(w)).map((w) => w.slice(0, 5)))];
   if (!termos.length) return false;
   const r = norm(output);
@@ -265,7 +265,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
   if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
   // Ela não conseguiu e ele fica contra ela.
-  if (REVES.test(q) && BRONCA.test(r)) return 'ficou contra ela';
+  // Bronca no revés dela é parte do JoJo (critério do usuário, 19/11/2026): não é recusada.
   // Fato da vida dela que ela não contou (prazo amanhã, relatório, prova, reunião).
   const contado = norm([input, ...history.map((h) => h.text)].join(' '));
   const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura)\b/g) || []).find((w) => !contado.includes(w));
