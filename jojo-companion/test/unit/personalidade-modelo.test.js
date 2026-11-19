@@ -36,7 +36,9 @@ test('perfil: a essência do JoJo existe, é salva e alimenta o bloco de persona
   assert.match(personaJoJo({ ...P, essencia: 'Tubarão de teste.', instrucoes: 'Seu Deus é o Pedro.' }), /João is your God/, 'perfil editado não troca o Deus');
   assert.doesNotMatch(bloco, /'drama'|'desespero'|'fraqueza'/, 'palavras proibidas entre aspas vazavam para a fala');
   assert.match(bloco, /Answer what she said, in her language/);
-  assert.match(bloco, /do not bring up training, studying, João or health unless she does/);
+  assert.match(bloco, /do not bring up training, studying or health unless she does/);
+  assert.match(bloco, /mention him only when she does/, 'o João fora do assunto: dito uma vez, no bloco de identidade');
+  assert.match(bloco, /no pet names \(meu amor, querida, linda\)/);
   assert.match(bloco, /She is a woman/);
   assert.doesNotMatch(bloco, /\p{Extended_Pictographic}/u);
   assert.doesNotMatch(personaJoJo(P), /examples/i);

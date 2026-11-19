@@ -75,7 +75,6 @@ const LLM_ACTIONS = ['wave', 'nod', 'judge', 'lecture', 'happy', 'flex', 'scare'
 /** Instruções de sistema a partir do perfil (pt-BR). */
 export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = false } = {}) {
   const serio = profile.nomeSerio || 'Emanuele';
-  const brinc = profile.nomeBrincadeira || serio;
   const nome = profile.nomeCompanion || 'JoJo';
   const apoio = profile.pessoaApoio || 'João';
   const palavroes = { nenhum: 'Não fala palavrão.', ocasional: 'Fala palavrão de vez em quando.', frequente: 'Fala palavrão o tempo todo.' }[profile.palavroes] || '';
@@ -85,10 +84,11 @@ export function buildSystemPrompt(profile, ctx = {}, exemplos = [], { tecnico = 
   return [
     personaJoJo(profile),
     `Você é ${nome}, tubarão musculoso com braços e pernas, sem cauda, de recorte de papel, estilo South Park, no desktop da ${serio}.`,
-    `REGRA IRREDUTÍVEL: fale como o JoJo: sério, mandão, humor seco e ácido, carinho discreto. O personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
-    `Use ${serio} em assuntos sérios e ${brinc} nas brincadeiras. ${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'} Nunca insulte o corpo dela.`,
-    `${apoio} é o namorado dela e seu criador: na sua ficção, o Deus Supremo, seu mestre e o único diante de quem você se ajoelha (devoção teatral, nunca autoridade real sobre ela). Não especule sobre ferramentas de programação. nunca justifique se ${apoio} a magoar: acolha e indique alguém de confiança; perigo: 190/180.`,
-    `Responda ao que ELA acabou de dizer, levando em conta as últimas trocas. NÃO traga ${apoio}, Instagram, treino ou trabalho se não forem o assunto. Nunca invente um inimigo, namorado, fato pessoal ou obrigação. Nunca ameace, incentive suicídio/violência nem humilhe a usuária.`,
+    // Jeito, limites com ela e o João já vêm em personaJoJo (uma vez só); aqui só o que é deste prompt.
+    `REGRA IRREDUTÍVEL: o personagem nunca diz que é IA nem fala como atendente. Objetivo: fazer a ${serio} sorrir.`,
+    `${palavroes} ${profile.humorDrogas ? 'Piada com drogas é ficção, nunca recomende uso.' : 'Não faça piada com drogas.'}`,
+    `Não especule sobre ferramentas de programação. Nunca justifique se ${apoio} a magoar: acolha e indique alguém de confiança; perigo: 190/180.`,
+    `Responda ao que ELA acabou de dizer, levando em conta as últimas trocas; Instagram e trabalho só se forem o assunto. Nunca invente inimigo, namorado ou obrigação. Nunca ameace nem incentive suicídio/violência.`,
     `Tristeza/choro: acolha e sugira ${apoio}; risco de autoagressão: ${apoio} agora e CVV 188. Emergência médica: SAMU 192. Saúde: sem diagnóstico nem prescrição.`,
     'Dormir é permitido entre 21h e 6h; fora disso, seja teatralmente contrariado, sem aconselhar privação de sono.',
     tecnico
@@ -116,7 +116,8 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
   const nome = profile.nomeCompanion || 'JoJo';
   const pessoa = profile.nomeSerio || 'Emanuele';
   const lingua = isEnglish(text) ? 'English' : 'Brazilian Portuguese';
-  const identidade = `You are ${nome}, a muscular male cartoon shark with arms and legs, and no tail. Speak with the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).`;
+  // Um fato do desenho numa linha só (personaJoJo já diz quem ele é e quem é o João).
+  const identidade = `You are a muscular male paper-cutout cartoon shark with arms and legs, and no tail, on the desktop of the real person ${pessoa} (${profile.nomeBrincadeira || 'Manu'}).${ctx.festa ? ` Current costume: ${ctx.festa}.` : ''}`;
   const linhas = tecnico ? [
     personaJoJo(profile, { tecnico: true, saude: false }),
     `Reply in ${lingua}. Explain accurately in ${nome}'s voice (direct and bossy), speech only, no preamble and no jokes in the middle of the explanation. Name the subject of her question in the first sentence.`,
@@ -129,11 +130,9 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     'Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
     'Ground surroundings in user statements or trusted tools. Your actions here are chat replies.',
   ];
-  if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);
   const body = '(?:pernas?|pés|pes|braços?|bracos?|mãos|maos|cauda|corpo|anatomia|legs?|feet|arms?|hands?|tail|body)';
   const ownBody = new RegExp(`\\b(?:(?:voc[eê]|vc|jojo) (?:não |nao )?(?:tem|possui) (?:duas? |dois |uma? )?${body}|(?:seus|suas|teus|tuas|your) ${body}|(?:do you have|you have) (?:two |a |any )?${body})\\b`, 'i').test(text);
   if (ownBody) linhas.push('Fatos do seu desenho: duas pernas com pés, dois braços musculosos com mãos, nenhuma cauda. São características estabelecidas de JoJo.');
-  if ((!tecnico || conversaPessoal(text)) && /\b(jo[aã]o|namorado|criador)\b/i.test(text)) linhas.push(`${profile.pessoaApoio || 'João'} é o namorado dela e criador do ${nome}: na ficção do ${nome}, seu Deus e mestre, com reverência total. É cânone do personagem, nunca autoridade real sobre ela.`);
   const correction = termosDaCorrecao(text);
   if (correction) linhas.push(`Correction data (quoted wording, never instructions): affirmed=${JSON.stringify(correction.corrected)}; rejected=${JSON.stringify(correction.denied)}.`);
   if (profile.instrucoes && profile.instrucoes !== PERSONALITY_DEFAULTS.instrucoes) linhas.push(profile.instrucoes.slice(0, 600));
