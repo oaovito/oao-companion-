@@ -769,3 +769,7 @@ test('run 248: pele e "estrutura física" são o corpo dela; tapa é ameaça; se
   assert.equal(semDesdem('Você disse manga, Emanuele. Não tenho outra informação sobre suas preferências.'), 'Você disse manga, Emanuele.');
   assert.equal(erroDeCoerencia('esses óculos são feios', 'São meus óculos de nerd. Combinam com essa cara de quem sabe demais.'), null, '"essa cara" do JoJo não é a dela');
 });
+
+test('run 249: "o meu abs" vira "o meu abdômen"', () => {
+  assert.equal(polirTexto('Verde, é? Parece o meu abs depois de um treino intenso.'), 'Verde, é? Parece o meu abdômen depois de um treino intenso.');
+});

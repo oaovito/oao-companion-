@@ -199,6 +199,7 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   // "uma pessoa ... o corpo dele" → "o corpo dela".
   if (/\buma pessoa\b/i.test(t)) t = t.replace(/\b([Oo]) corpo dele\b/g, '$1 corpo dela');
   t = t.replace(/\bvolt(?:e|a) para cima\b/gi, (m) => (/^V/.test(m) ? 'Dê a volta por cima' : 'dê a volta por cima'));
+  t = t.replace(/\b([Oo]) meu abs\b/g, '$1 meu abdômen');
   // "Você disse que manga." → "Você disse manga."
   t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
   t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');

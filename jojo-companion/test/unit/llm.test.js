@@ -314,3 +314,13 @@ test('segunda tentativa diz ao modelo por que a primeira foi recusada e varia ma
   assert.equal(calls[1].options.temperature, 0.55);
   assert.match(calls[0].messages[0].content, /take her side against the situation and name it; if she failed, encourage her, no blame; never say she wastes your time/);
 });
+
+test('exemplo técnico pede o caso clássico, coerente com a explicação, sem fisiologia inventada (run 249)', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => { calls.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: 'Por exemplo, quem come muito açúcar e não se mexe fica com as células resistentes à insulina.' } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'me dá um exemplo', professor: 'MODO PROFESSOR\nAssunto em andamento: "o que é diabetes tipo 2?"', followup: { kind: 'exemplo', topic: 'o que é diabetes tipo 2?' } });
+  assert.match(calls[0].messages[0].content, /most common, textbook case, consistent with the explanation already given.*do not invent physiology/);
+});

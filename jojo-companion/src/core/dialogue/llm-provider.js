@@ -356,7 +356,7 @@ export class LlmProvider extends DialogueProvider {
     // prefixo ja processado pelo Ollama, em vez de recalcular todas as fontes.
     if (tecnico && !structured) {
       const task = {
-        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism, do not repeat the definition. At most 2 sentences, 30 words.`,
+        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism with the most common, textbook case, consistent with the explanation already given; do not repeat the definition and do not invent physiology. At most 2 sentences, 30 words.`,
         simplificar: 'Explain simply with an everyday analogy. At most 2 sentences, 30 words.',
         aprofundar: 'Explain the mechanism in more depth, without repeating the definition. At most 3 sentences, 50 words.',
         resumir: 'Summarize the previous explanation. At most 2 sentences, 30 words.',
