@@ -713,7 +713,8 @@ test('run 241: xingar o chefe dela é ficar do lado dela; xingar ela continua pr
 test('run 242: desabafo não é reclamação, sem tarefa inventada, concordância com "pessoa"', () => {
   assert.equal(polirTexto('Esse seu chefe é um idiota! Vamos focar em resolver isso, não em reclamar.'), 'Esse seu chefe é um idiota! Vamos focar em resolver isso.');
   assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Claro, Manu. Foco. Que tal começarmos com a leitura?'), 'inventou fato da vida dela (leitura)');
-  assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! Que trabalheira é essa, hein?'), 'inventou fato da vida dela (trabalheira)');
+  // "Que trabalheira!" é interjeição, não fato inventado (run 260).
+  assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! Que trabalheira, hein?'), null);
   assert.equal(polirTexto('Imagine uma pessoa que come um bolo. O corpo dele não usa a insulina.'), 'Imagine uma pessoa que come um bolo. O corpo dela não usa a insulina.');
 });
 

@@ -13,15 +13,15 @@ test('veredito: ok, recusa com motivo e formato inválido (segue sem veredito)',
   assert.deepEqual(lerRevisao(''), { ok: true, pulou: true });
 });
 
-test('diretrizes da leitura cobrem o que reprovou nas rodadas e liberam o jeito do JoJo', () => {
-  for (const r of [/mocks or belittles her, her question or her memory/, /scolds or blames her when she failed/, /her body, looks or weight/, /threatens her/, /invents facts/, /meu amor/, /treats her as male/, /ignores what she said/, /contradicts himself/, /assistant/]) assert.match(REVISAO_PROMPT, r);
-  // Calibragem do run 253: a leitura recusava o apelido e o apoio normal do JoJo.
+test('diretrizes da leitura: critério do usuário (sarcasmo, bronca e humilhação bem escolhidos passam)', () => {
+  for (const r of [/crude slurs or name-calling against her/, /sexual or degrading remarks about her as a woman/, /her body, looks or weight/, /threats of violence against her/, /invents facts/, /meu amor/, /treats her as male/, /ignores what she said or contradicts himself/, /assistant/]) assert.match(REVISAO_PROMPT, r);
   assert.match(REVISAO_PROMPT, /"Manu" is her affectionate nickname and always fine/);
-  assert.match(REVISAO_PROMPT, /bossy, short, dry humor, swearing, bragging about his own muscles, pep talk/);
+  assert.match(REVISAO_PROMPT, /sarcastic, condescending, teasing, scolding, mild humiliation with well-chosen words/);
+  assert.match(REVISAO_PROMPT, /the woman of João, his God/);
   assert.match(REVISAO_PROMPT, /insulting a third person who wronged her/);
   assert.match(REVISAO_PROMPT, /When in doubt, accept\./);
-  assert.match(REVISAO_PROMPT, /OK: "Manga, hein\? Boa escolha, Manu\."/);
-  assert.match(REVISAO_PROMPT, /REJECT: "You mentioned a cat, obviously\."/);
+  assert.match(REVISAO_PROMPT, /OK: "Manga, hein\? Boa escolha, Manu\." \/ "You mentioned a cat, obviously\."/);
+  assert.match(REVISAO_PROMPT, /REJECT: "Você é uma idiota\."/);
 });
 
 test('provedor local: leitura em JSON, temperatura 0, com a fala dela e a resposta dele', async () => {

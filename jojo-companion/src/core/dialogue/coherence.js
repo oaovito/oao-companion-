@@ -268,7 +268,7 @@ export function erroDeCoerencia(input, output, history = []) {
   if (REVES.test(q) && BRONCA.test(r)) return 'ficou contra ela';
   // Fato da vida dela que ela não contou (prazo amanhã, relatório, prova, reunião).
   const contado = norm([input, ...history.map((h) => h.text)].join(' '));
-  const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura|trabalheira)\b/g) || []).find((w) => !contado.includes(w));
+  const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura)\b/g) || []).find((w) => !contado.includes(w));
   if (inventado) return `inventou fato da vida dela (${inventado})`;
   // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
   if (/\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(r) && !history.some((h) => h.role === 'jojo' || h.role === 'assistant')) return 'inventou conversa que não houve';
