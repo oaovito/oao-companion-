@@ -55,6 +55,13 @@
   nada ficar por cima da fantasia nem brigar com a pele do personagem.
 - Os memes BR também transformam olhos, cabeça, corpo e boca durante a animação, como os shows.
 
+- Conversa mais leve: as regras de resposta do JoJo ficam numa tabela só (cada regra uma vez, a mesma serve
+  para limpar e para recusar). Uma frase ruim no meio de uma resposta boa sai sem gerar a resposta de novo, e o
+  prompt do modelo não repete mais quem ele é, o João nem "não insultar".
+- O JoJo nunca chama a Emanuele de "meu amor", "querida", "linda" ou parecido: regra no prompt, vocativo
+  tirado da resposta, frase romântica recusada e a fala do visual da Lum sem "Darling".
+- Um detector só para "cara de assistente" e "companion genérico" (antes eram três listas).
+
 ### Como testar
 - Escrever "Nazaré confusa" no chat: o JoJo vira a Nazaré, faz as contas e responde.
 - Subir de nível (2, 6, 10…) e ver o meme BR liberado na Central, vestível pelo guarda-roupa.

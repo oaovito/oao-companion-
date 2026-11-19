@@ -4,7 +4,7 @@
 // continuam no código só para reversão manual: nunca são usados sozinhos.
 // O JoJo responde no jeito dele e devolve ação de corpo e comando validados.
 // Puro: `fetch` é injetado.
-import { respostaGenerica } from './generico.js';
+import { respostaGenerica, tomDeAssistente } from './generico.js';
 import { blocoPesquisa } from './pesquisa.js';
 import { PERSONALITY_DEFAULTS, personaJoJo, regraSaude } from '../personality.js';
 import { situacaoSaude } from '../saude.js';
@@ -196,8 +196,6 @@ export function semComentarioDeCerteza(text) {
   return limpo && limpo !== t.trim() ? limpo : t;
 }
 
-// Sinais de que a resposta saiu do personagem (cara de assistente).
-const ASSISTANT = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!)/i;
 
 /** Motivo para descartar a resposta (fora do jeito do JoJo) ou null. */
 export function outOfCharacter(text, { max = 280, input = '' } = {}) {
@@ -207,7 +205,7 @@ export function outOfCharacter(text, { max = 280, input = '' } = {}) {
   if (/\b(eu disse|eu falei|n[aã]o foi isso|entendeu errado|i said|i meant)\b/i.test(input)) t = t.replace(/^(?:(?:ah|oh)[,!\s]*)?(?:desculp[ae]|sorry|i'?m sorry)[,!\s]*/i, '');
   // "Não se desculpe" e "sem desculpas" são o JoJo dando bronca, não pedindo desculpa de atendente.
   t = t.replace(/\b(?:n[aã]o (?:se |te )?desculp[ae]s?|sem desculpas?|nada de desculpas?)\b/gi, '');
-  if (ASSISTANT.test(t)) return 'tom de assistente';
+  if (tomDeAssistente(t)) return 'tom de assistente';
   // Ausência de pudor é traço fixo (identidade.js): recusa moralista não é o JoJo.
   if (respostaPudica(t)) return 'pudor';
   // Companion genérico ("Que legal! Estou aqui pra você.") não é o JoJo: cai na fala do personagem.
