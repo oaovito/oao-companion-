@@ -133,7 +133,7 @@ function preferenciaInventada(output, known, userFacts) {
 }
 
 // Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
-const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:simple|silly|stupid|dumb) question\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar)\b/;
+const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar)\b/;
 
 /**
  * Tira só as frases de desdém e mantém o resto da resposta ("You mentioned a cat,
@@ -146,6 +146,21 @@ export function semDesdem(text) {
   const resto = frases.filter((f) => !DESDEM.test(norm(f)));
   if (resto.length === frases.length || !resto.length) return t;
   return resto.join(' ').trim();
+}
+
+/**
+ * Acabamento da resposta do modelo, sem mudar o sentido: tira marcador de fonte "[1]" que não
+ * tem fonte de verdade no balão, troca palavra de Portugal pela do Brasil e tira o "meu bem"
+ * (não é o jeito do JoJo).
+ */
+export function polirTexto(text, { fontes = 0 } = {}) {
+  let t = String(text || '');
+  t = t.replace(/\s*\[(\d+)\]/g, (m, n) => (Number(n) >= 1 && Number(n) <= fontes ? m : ''));
+  t = t.replace(/\b([Aa]) hormona\b/g, (m, a) => (a === 'A' ? 'O' : 'o') + ' hormônio')
+    .replace(/\bhormonas\b/g, 'hormônios').replace(/\bhormona\b/g, 'hormônio');
+  t = t.replace(/,\s*meu bem(?=[.!?,]|$)/gi, '').replace(/\bmeu bem,\s*/gi, '');
+  t = t.replace(/^((?:Que|Mas que) (?:droga|merda|saco|porra)(?:, [A-ZÀ-Ú][\wà-ú]+)?)\?/, '$1!');
+  return t.replace(/\s+([.!?,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 }
 
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
