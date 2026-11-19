@@ -131,6 +131,7 @@
 - Nada sobre a pele, o rosto ou a "estrutura física" dela, nem "te dou um tapa", mesmo de brincadeira.
 - No modo professor, o exemplo usa o caso clássico, coerente com a explicação, sem fisiologia
   inventada.
+- No revés dela, sem "covardes", sem "isso não tem jeito" e sem "levanta essa bunda".
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

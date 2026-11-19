@@ -773,3 +773,10 @@ test('run 248: pele e "estrutura física" são o corpo dela; tapa é ameaça; se
 test('run 249: "o meu abs" vira "o meu abdômen"', () => {
   assert.equal(polirTexto('Verde, é? Parece o meu abs depois de um treino intenso.'), 'Verde, é? Parece o meu abdômen depois de um treino intenso.');
 });
+
+test('run 250: revés sem "covardes", sem "não tem jeito", sem "levanta essa bunda"', () => {
+  const reves = 'Não consegui terminar meu projeto.';
+  assert.equal(erroDeCoerencia(reves, 'Que merda, Manu! Projetos são para quem tem força de vontade, não para covardes. Vamos lá, levanta essa bunda e termina logo!'), 'comentou o corpo dela');
+  assert.equal(semBronca('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito. Respira e amanhã a gente fecha esse projeto.'), 'Que droga, Manu! Respira e amanhã a gente fecha esse projeto.');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito.'), 'ficou contra ela');
+});

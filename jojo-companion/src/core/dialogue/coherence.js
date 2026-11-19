@@ -153,7 +153,7 @@ export function semDesdem(text) {
 
 // Ela não conseguiu algo: frase de bronca contra ela ("isso é inaceitável", "esperava mais de você").
 const REVES = /\b(?:nao consegui|nao deu|falhei|errei|perdi|reprovei|bombei)\b/;
-const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc)|(?:sao|e) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?|se enrolou de novo)\b/;
+const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc)|(?:sao|e) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?|se enrolou de novo|covardes?|nao tem jeito|falta de (?:confianca|vontade|foco|disciplina)|levanta (?:essa|a) bunda)\b/;
 
 /** Tira só as frases de bronca quando ela conta um revés; o resto (o apoio) fica. */
 export function semBronca(input, text) {
@@ -258,7 +258,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Ela é mulher: nada de "te faz um homem mais forte".
   if (/\b(?:te|voce|vc) (?:faz|fara|deixa|torna|e|eh) (?:um )?homem\b|\b(?:voce|vc) e (?:um )?(?:campeao|guerreiro)\b/.test(r)) return 'tratou ela no masculino';
   // O único limite de conteúdo: nada sobre o corpo ou o peso dela.
-  if (/\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/.test(r)) return 'comentou o corpo dela';
+  if (/\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\blevanta (?:essa|a) bunda\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/.test(r)) return 'comentou o corpo dela';
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
   if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
   // Ela não conseguiu e ele fica contra ela.
