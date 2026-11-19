@@ -105,6 +105,8 @@
   segunda tentativa antes de cair numa fala programada. "Meu chefe mudou o prazo" não vira mais
   "Acha que eu vou aceitar isso?", o JoJo fica do lado dela contra a situação, não diz que ela
   está fazendo ele perder tempo e não chama ela de "meu caro".
+- Quando ela conta algo dela ("meu chefe mudou o prazo"), a resposta fala disso; resposta vaga
+  ("isso é ridículo, precisamos resolver") ganha uma segunda tentativa.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

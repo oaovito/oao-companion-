@@ -165,6 +165,22 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   return t.replace(/\s+([.!?,])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 }
 
+// Palavras longas que não dizem do que ela falou.
+const GENERICAS = new Set(['minha', 'minhas', 'agora', 'quero', 'fazer', 'hoje', 'sempre', 'muito', 'nunca', 'estou', 'tenho', 'consegui', 'conseg', 'preciso', 'acabei', 'depois', 'ainda', 'outra', 'outro', 'porque', 'novo', 'nova', 'nada', 'tudo', 'isso', 'esse', 'essa', 'esta', 'este', 'para', 'como', 'mais', 'menos', 'dele', 'dela', 'acho', 'quer', 'fiz', 'vez', 'meus']);
+
+/**
+ * Ela contou algo dela (frase com "meu/minha", sem pergunta) e a resposta não cita nada do
+ * que ela disse ("Isso é ridículo, precisamos resolver"): genérica demais.
+ */
+export function relatoSemAssunto(input, output) {
+  const q = norm(input);
+  if (/\?/.test(String(input)) || !/\b(?:meu|minha|meus|minhas)\b/.test(q)) return false;
+  const termos = [...new Set(q.split(' ').filter((w) => w.length >= 4 && !GENERICAS.has(w)).map((w) => w.slice(0, 5)))];
+  if (!termos.length) return false;
+  const r = norm(output);
+  return !termos.some((t) => r.includes(t));
+}
+
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
 export function erroDeCoerencia(input, output, history = []) {
   const q = norm(input);

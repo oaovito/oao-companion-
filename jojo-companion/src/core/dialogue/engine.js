@@ -4,7 +4,7 @@ import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 import { precisaPesquisar, linhaFontes } from './pesquisa.js';
 import { classificarSeriedade, seguimento, instrucaoProfessor, respostaFalaDoAssunto } from './professor.js';
-import { conversaPessoal, respostaAncorada, erroDeCoerencia, semDesdem, polirTexto, expressaoCoerente, pedidoAoApp, historicoRelevante } from './coherence.js';
+import { conversaPessoal, respostaAncorada, erroDeCoerencia, semDesdem, polirTexto, relatoSemAssunto, expressaoCoerente, pedidoAoApp, historicoRelevante } from './coherence.js';
 import { weatherRequest } from '../weather.js';
 
 // Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
@@ -136,7 +136,10 @@ export class DialogueEngine {
           out = normalizeReply(r);
           out.text = semDesdem(out.text); // a frase de desdém sai; a resposta certa fica
           out.text = polirTexto(out.text, { fontes: achado?.fontes?.length || 0 });
-          const incoerente = erroDeCoerencia(input, out.text, this.history.slice(0, -1));
+          let incoerente = erroDeCoerencia(input, out.text, this.history.slice(0, -1));
+          // Ela contou algo dela ("meu chefe mudou o prazo"): a resposta tem de falar disso.
+          // Na segunda tentativa vale a resposta (é do assunto da conversa, melhor que a programada).
+          if (!incoerente && tentativa === 0 && relatoSemAssunto(input, out.text)) incoerente = 'não falou do que ela contou';
           if (!incoerente) break;
           if (tentativa === 0) {
             this.log('warn', `IA: ${incoerente}; gerando de novo.`);

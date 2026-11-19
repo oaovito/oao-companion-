@@ -385,7 +385,7 @@ export class LlmProvider extends DialogueProvider {
       relevant = matching;
     }
     // Segunda tentativa: diz por que a primeira foi recusada (o modelo repete a mesma resposta se não souber).
-    if (corrigir) messages[0].content += `\nYour previous reply to this message was rejected (${String(corrigir).slice(0, 80)}). Write a different one: answer what she said, on her side; if she tells you something that happened to her, be against the situation, never against her, and never say she is wasting your time.`;
+    if (corrigir) messages[0].content += `\nYour previous reply to this message was rejected (${String(corrigir).slice(0, 80)}). Write a different one: answer what she said and name the specific thing she told you, on her side; if she tells you something that happened to her, be against the situation, never against her, and never say she is wasting your time.`;
     const atual = { role: 'user', content: String(text).slice(0, 500) };
     messages.push(...cabeNoContexto(messages[0], relevant.map((h) => ({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) })), atual, opts));
     messages.push(atual);

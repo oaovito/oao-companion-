@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, polirTexto } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -618,4 +618,24 @@ test('run 233: "não me faz perder tempo" sai; a segunda geração recebe o moti
   const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
   assert.deepEqual(pedidos.map(Boolean), [false, true]);
   assert.equal(r.intent, 'ia');
+});
+
+test('run 234: relato dela pede resposta que fale do assunto; a segunda geração vale', async () => {
+  const chefe = 'Meu chefe mudou o prazo de novo.';
+  assert.equal(relatoSemAssunto(chefe, 'Que droga, Manu! Isso é ridículo, não é? Precisamos focar em resolver isso, sem desculpas.'), true);
+  assert.equal(relatoSemAssunto(chefe, 'Que droga, Manu! Prazo mudando toda semana cansa.'), false);
+  assert.equal(relatoSemAssunto('Minha cor preferida é verde.', 'Verde, é? Cor de campeão.'), false);
+  assert.equal(relatoSemAssunto('Qual a minha fruta preferida?', 'Manga.'), false, 'pergunta não é relato');
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga!'), false, 'sem meu/minha não é relato');
+  let n = 0;
+  const pedidos = [];
+  const vaga = 'Que droga, Manu! Isso é ridículo, não é? Precisamos focar em resolver isso.';
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: ++n === 1 ? vaga : 'Que droga, Manu! Chefe mudando prazo de novo é sacanagem. Reorganiza a entrega.' }; } };
+  const r = await new DialogueEngine({ llm }).reply(chefe);
+  assert.equal(pedidos[1], 'não falou do que ela contou');
+  assert.match(r.text, /Chefe mudando prazo/);
+  // Duas vagas seguidas: fica a segunda (é do modelo e não é incoerente), não cai nas programadas.
+  const llm2 = { isAvailable: async () => true, reply: async () => ({ text: vaga }) };
+  const r2 = await new DialogueEngine({ llm: llm2 }).reply(chefe);
+  assert.equal(r2.intent, 'ia');
 });
