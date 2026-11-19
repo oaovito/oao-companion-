@@ -217,7 +217,9 @@ export function erroDeCoerencia(input, output, history = []) {
   // o modelo não sabe a quem se refere e para ela soa como xingamento.
   // Frase em que ele fala de si mesmo ("eu sou um tubarão idiota", "que pergunta idiota eu fiz") pode.
   const insultoSolto = r.split(/[.!?]+/).some((frase) => /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/.test(frase)
-    && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase));
+    && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase)
+    // Xingar quem fez mal a ela ("esse chefe é um idiota") é ficar do lado dela.
+    && !/\b(?:esse|essa|aquele|aquela|o|a|teu|tua|seu|sua) (?:chefe|patra\w*|professor\w*|colega|vizinh\w*|cara|ex|motorista|cliente)\b/.test(frase));
   const desdem = DESDEM.test(r) || MENOSPREZO.test(r);
   // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
   const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)

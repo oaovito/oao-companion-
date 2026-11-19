@@ -702,3 +702,10 @@ test('run 240: sem cortar o desabafo, sem sarcasmo, sem acusação, sem condesce
   assert.equal(semDesdem('Excelente, Manu! Organização é tudo. Que piada você quer ouvir agora?'), 'Excelente, Manu! Organização é tudo.');
   assert.equal(erroDeCoerencia('fala uma piada', 'Que piada você quer, Manu?'), 'não contou a piada');
 });
+
+test('run 241: xingar o chefe dela é ficar do lado dela; xingar ela continua proibido', () => {
+  const chefe = 'Meu chefe mudou o prazo de novo.';
+  assert.equal(erroDeCoerencia(chefe, 'Que droga, Manu! Esse chefe é um idiota! Não se preocupe, você vai entregar.'), null);
+  assert.equal(erroDeCoerencia(chefe, 'Que idiota! Você vai entregar.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia(chefe, 'Você é burra.'), 'insulto à usuária ou à pergunta');
+});
