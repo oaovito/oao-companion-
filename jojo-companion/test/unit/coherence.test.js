@@ -419,7 +419,8 @@ test('JSON incompleto não aparece como fala; o contexto não contém mais o pro
   assert.equal(outOfCharacter('Desculpa, manga. Anotado.', { input: 'Eu disse manga, não maçã.' }), null);
   assert.equal(outOfCharacter('Desculpa, como uma IA não sei.', { input: 'Eu disse manga, não maçã.' }), 'tom de assistente');
   const p = buildSystemPrompt(PERSONALITY_DEFAULTS);
-  assert.ok(p.length < 4000, `prompt voltou a crescer: ${p.length}`);
+  // +~700 caracteres da identidade fixa (identidade.js), que abre toda conversa.
+  assert.ok(p.length < 4800, `prompt voltou a crescer: ${p.length}`);
 });
 
 test('negações não viram celebração, humor animado nem preferência falsa', async () => {

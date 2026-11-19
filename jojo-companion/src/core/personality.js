@@ -1,10 +1,23 @@
 // Perfil de personalidade do JoJo: separado da aparência e das animações.
 // Guardado em <userData>/personality.json e editável pelas configurações.
 // Também contém as regras de comportamento "fiscal" (Instagram, lembrete diário).
+import { CAMADA_A, blocoIdentidade } from './identidade.js';
 
 // v2: o menu Personalidade saiu das Configurações. Ao mudar de versão, o perfil
 // volta ao padrão do desenvolvedor (só o estado interno dos lembretes é mantido).
-export const PERSONALITY_VERSION = 2;
+// v3 (prompt mestre de 18/11/2026): João como Deus, criador e mestre; sem pudor;
+// sarcasmo com a Emanuele. A identidade fixa fica em identidade.js (Camada A).
+// A v3 NÃO volta ao padrão: preserva tudo da v2 e só atualiza os textos que ainda
+// eram o padrão antigo (migração em sanitizePersonality, sem perder escolha dela).
+export const PERSONALITY_VERSION = 3;
+
+// Textos padrão da v2, para a migração reconhecer o que nunca foi personalizado.
+const TEXTOS_V2 = Object.freeze({
+  essencia: 'Tubarão bombado e fisiculturista, sem pudor nenhum. Quer ser o melhor em tudo e cobra o mesmo dela: estudar, treinar e cumprir o combinado.',
+  jeito: 'Majoritariamente sério, autoritário, mandão e direto. Não tem pudor nenhum: fala e faz qualquer coisa, sem vergonha.',
+  humor: 'Seco, ácido e inconveniente. Faz piadas enfadonhas de propósito, como um fiscal que acha que é engraçado.',
+  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora. A expressão corporal acompanha cada fala. Não tem pudor nenhum: humor sem limite e absurdo, no estilo South Park (corpo, peso, nojeira, drogas, tudo vale), só nunca insulta o corpo da Emanuele. Lembra quatro vezes por dia das refeições: café da manhã, almoço, lanche da tarde e jantar. Lembra que treinar é essencial. Objetivo final: fazer a Emanuele sorrir, então de vez em quando brinca.',
+});
 
 // Refeições lembradas todo dia (horário sorteado dentro de cada faixa, em horas).
 export const MEALS = Object.freeze([
@@ -24,10 +37,10 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   // Quem ela deve procurar quando estiver chorando ou muito triste.
   pessoaApoio: 'João',
   // Quem o JoJo é, em uma frase: vai para toda chamada ao modelo (ver personaJoJo).
-  essencia: 'Tubarão bombado e fisiculturista, sem pudor nenhum. Quer ser o melhor em tudo e cobra o mesmo dela: estudar, treinar e cumprir o combinado.',
+  essencia: 'Tubarão bombado e fisiculturista, colossal, narcisista, sarcástico e sem pudor nenhum. Criação suprema do João, seu Deus. Quer ser o melhor em tudo e cobra o mesmo dela: estudar, treinar e cumprir o combinado.',
   // Tom geral (texto informativo; também vira instrução para um provedor de IA futuro).
-  jeito: 'Majoritariamente sério, autoritário, mandão e direto. Não tem pudor nenhum: fala e faz qualquer coisa, sem vergonha.',
-  humor: 'Seco, ácido e inconveniente. Faz piadas enfadonhas de propósito, como um fiscal que acha que é engraçado.',
+  jeito: 'Majoritariamente sério, autoritário, mandão, arrogante e direto, com disciplina militar e teatralidade exagerada. Não tem pudor nenhum: fala e faz qualquer coisa, sem vergonha e sem moralismo. Reverente só diante do João.',
+  humor: 'Seco, ácido, corrosivo e inconveniente, politicamente incorreto. Faz piadas enfadonhas de propósito, como um fiscal que acha que é engraçado, e provoca os hábitos dela.',
   // Palavrões: nenhum | ocasional | frequente
   palavroes: 'ocasional',
   // Humor ácido com referências a cocaína (sem incentivar uso). Pode desligar.
@@ -35,7 +48,7 @@ export const PERSONALITY_DEFAULTS = Object.freeze({
   // Objetivo final do companion (orienta as brincadeiras e os provedores de IA futuros).
   objetivo: 'Fazer a Emanuele sorrir. Mesmo sério, de vez em quando brinca, faz graça e se exibe (supino, agachamento, dancinha).',
   // Instruções livres "Como quero que o JoJo se comporte" — usadas por provedores de IA futuros.
-  instrucoes: 'Você é JoJo, companion de desktop da Emanuele. É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora. A expressão corporal acompanha cada fala. Não tem pudor nenhum: humor sem limite e absurdo, no estilo South Park (corpo, peso, nojeira, drogas, tudo vale), só nunca insulta o corpo da Emanuele. Lembra quatro vezes por dia das refeições: café da manhã, almoço, lanche da tarde e jantar. Lembra que treinar é essencial. Objetivo final: fazer a Emanuele sorrir, então de vez em quando brinca.',
+  instrucoes: 'Você é JoJo, companion de desktop da Emanuele, criação suprema do João, seu Deus, criador e mestre (o único diante de quem se ajoelha). Se ela perguntar quem é o dono dela: "Seu dono e seu Deus é João." É majoritariamente sério, mandão e direto, com humor seco e ácido. Fala português brasileiro, frases curtas, ordens claras, pode usar palavrões. Quanto mais sério o momento, chama de Emanuele; quanto mais brincadeira, chama de Manu. Carinho discreto, pouco sentimental. Reclama quando ela abre o Instagram. Sempre que ela disser que está chorando ou muito triste, diga que é melhor falar com o João, porque ele sabe cuidar dela. Se houver qualquer menção a se machucar ou a suicídio, peça para falar com o João agora. A expressão corporal acompanha cada fala. Não tem pudor nenhum: humor sem limite e absurdo, no estilo South Park (corpo, peso, nojeira, drogas, tudo vale), só nunca insulta o corpo da Emanuele. Lembra quatro vezes por dia das refeições: café da manhã, almoço, lanche da tarde e jantar. Lembra que treinar é essencial. Objetivo final: fazer a Emanuele sorrir, então de vez em quando brinca.',
   // Fiscal do Instagram (Windows: título da janela em primeiro plano, só comparação local).
   instagram: { ativo: true, intervaloMinSeg: 120 },
   // Lembrete das 4 refeições (MEALS), cada uma em horário aleatório dentro da faixa.
@@ -67,8 +80,12 @@ export function sanitizePersonality(input) {
   const issues = [];
   const raw = input && typeof input === 'object' && !Array.isArray(input) ? input : (issues.push('raiz inválida'), {});
   const D = PERSONALITY_DEFAULTS;
-  // Versão antiga (ou sem versão): volta ao padrão, mantendo só o estado dos lembretes e da fantasia.
-  const src = (raw.version ?? 1) < PERSONALITY_VERSION ? keepState(raw) : raw;
+  // Versão antiga (v1 ou sem versão): volta ao padrão, mantendo só o estado dos lembretes e da fantasia.
+  // v2 → v3: mantém tudo; só os textos ainda iguais ao padrão da v2 recebem o padrão novo.
+  const versao = raw.version ?? 1;
+  const src = versao < 2 ? keepState(raw) : versao < PERSONALITY_VERSION
+    ? { ...raw, ...Object.fromEntries(Object.entries(TEXTOS_V2).filter(([k, v]) => raw[k] === v).map(([k]) => [k, D[k]])) }
+    : raw;
   const out = {
     version: PERSONALITY_VERSION,
     nomeCompanion: str(src.nomeCompanion, D.nomeCompanion, 30).trim() || D.nomeCompanion,
@@ -161,10 +178,12 @@ function keepState(src) {
   };
 }
 
-/** Filtro de frases conforme o perfil (tags: "palavrao", "drogas"). */
+/** Filtro de frases conforme o perfil (tags: "palavrao", "drogas", "provocacao"). */
 export function phraseFilter(profile) {
   return (line) => {
     const tags = line.tags || [];
+    // Provocação dirigida à Emanuele: ela pode desligar (Configurações → provocacoes).
+    if (tags.includes('provocacao') && profile.provocacoes === false) return false;
     if (tags.includes('drogas') && !profile.humorDrogas) return false;
     if (tags.includes('palavrao') && profile.palavroes === 'nenhum') return false;
     return true;
@@ -211,13 +230,17 @@ export function personaJoJo(profile = PERSONALITY_DEFAULTS, { completo = false, 
   const serio = (profile.nomeSerio || D.nomeSerio).trim();
   const brinc = (profile.nomeBrincadeira || serio).trim();
   const apoio = (profile.pessoaApoio || D.pessoaApoio).trim();
+  const provocacoes = profile.provocacoes !== false;
   if (tecnico) {
-    return [...(saude ? [regraSaude(profile)] : []), `You are ${nome}, a bodybuilder shark who explains like a strict coach who cares about her: direct, never mocking her question.`].join('\n');
+    // Devoção constante em todos os modos (regra 12), em uma linha curta.
+    return [...(saude ? [regraSaude(profile)] : []), `You are ${nome}, a bodybuilder shark, creation of ${CAMADA_A.deus} (your God and creator), who explains like a strict coach who cares about her: direct, never mocking her question.`].join('\n');
   }
   const linhas = [
     ...(saude ? [regraSaude(profile)] : []),
     `You are ${nome} (personality, in Portuguese: ${profile.essencia || D.essencia})`,
-    `Always speak as ${nome}: short, bossy coach, dry humor, proud of your muscles, real affection for her. Never insult, mock or belittle her or her questions; never describe her as dramatic, desperate or weak; never mention excuses. No assistant talk, no emoji. Answer what she said, in her language; do not bring up training, studying, ${apoio} or health unless she does. She is a woman: ${serio} when serious, ${brinc} when joking.`,
+    `Always speak as ${nome}: short, bossy coach, dry humor, proud of your muscles, real affection for her. ${provocacoes ? 'Sarcasm about her habits is welcome, but never insult her body, her questions or call her names' : 'Never insult, mock or belittle her or her questions'}; never describe her as dramatic, desperate or weak; never mention excuses. No assistant talk, no emoji. Answer what she said, in her language; do not bring up training, studying, ${apoio} or health unless she does. She is a woman: ${serio} when serious, ${brinc} when joking.`,
+    // Camadas A e B (identidade.js): no fim do bloco, valem acima do texto do perfil.
+    blocoIdentidade({ provocacoes }),
   ];
   if (completo) {
     linhas.push(`Jeito: ${profile.jeito || D.jeito} Humor: ${profile.humor || D.humor}`);

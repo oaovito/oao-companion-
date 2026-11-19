@@ -5,6 +5,7 @@ import { DialogueProvider } from './provider.js';
 import { isFactualQuestion, isBlockedQuestion } from './web-search.js';
 import { modoCiencia } from '../ciencia.js';
 import { pedidoNegado } from './coherence.js';
+import { perguntaDono, CAMADA_A } from '../identidade.js';
 
 export function normalizeText(s) {
   return String(s || '')
@@ -27,6 +28,8 @@ export const INTENTS = [
   { id: 'crisis', patterns: [/\b(me matar|suicid\w*|nao quero mais viver|quero morrer|acabar com tudo|me machucar|me cortar|automutila\w*)\b/] },
   { id: 'distress', patterns: [/\b(crise\w*|em crise|panico|ataque de ansiedade|crise de ansiedade|ansiedade|nao aguento mais|nao to aguentando|surtand\w*|surtei|desmoronand\w*|emocionalmente mal|mal emocionalmente|to destruida|desabei|desabando)\b/] },
   { id: 'sad', patterns: [/\b(chorand\w*|chorei|chorar|choro|triste\w*|tristeza|deprimid\w*|depre|pra baixo|arrasad\w*|sofrendo|muito mal|to mal|na bad|desanimad\w*|desesperad\w*)\b/] },
+  // Memória essencial: "quem é meu dono?" → "Seu dono e seu Deus é João." (identidade.js).
+  { id: 'dono', patterns: [{ test: (n) => perguntaDono(n) }] },
   // Dormir em qualquer forma e horário: o JoJo é radicalmente contra (logo depois da segurança).
   { id: 'sleep', patterns: [/\b(dorm\w*|sono|sonolent\w*|sonequinha|soneca\w*|cochil\w*|nana(r|ndo)?|nanar|deitar?|vou deitar|cama|travesseiro|insonia|capot\w*|zzz+|repous\w*)\b/] },
   // "E se eu comer um docinho?" (e variações): nojo e a pergunta da aberração.
@@ -80,6 +83,11 @@ export const RESPONSES = {
     'Emanuele, isso é com o {apoio}. Vai falar com ele: ele é médico de verdade e sabe cuidar de você melhor que ninguém.',
     'Chorando? Para tudo e chama o {apoio}, Emanuele. Ele é médico de verdade e sabe cuidar de você melhor que ninguém.',
     'Emanuele, agora não é comigo. Fala com o {apoio}. Ele é médico de verdade e ninguém sabe cuidar de você melhor que ele.',
+  ],
+  dono: [
+    `${CAMADA_A.respostaDono} Impressionante você precisar perguntar algo tão básico.`,
+    `${CAMADA_A.respostaDono} Impressionante você precisar perguntar algo tão básico. Talvez eu devesse escrever isso na sua área de trabalho.`,
+    `${CAMADA_A.respostaDono} Anota aí, {nome}.`,
   ],
   pretty: ['É.'],
   avc: ['Essa foi por pouco.'],
@@ -144,12 +152,12 @@ const ACTIONS = {
   joke: 'happy',
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', setback: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'angry', sleepOk: 'boaNoite', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
-  name: 'wave', criador: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop', tigresa: 'tigresa',
+  name: 'wave', criador: 'nod', dono: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop', tigresa: 'tigresa',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
-  sleepOk: 'serio', setback: 'serio',
+  sleepOk: 'serio', setback: 'serio', dono: 'serio',
   crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', tigresa: 'brincadeira', pretty: 'brincadeira', avc: 'brincadeira', avcReal: 'serio', dressDown: 'serio', dressUp: 'brincadeira', lol: 'brincadeira', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',

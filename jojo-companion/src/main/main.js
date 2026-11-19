@@ -293,7 +293,8 @@ function main() {
         const ativo = s.iaAtivo && (!TEST || !!process.env.JOJO_LLM_BASE);
         return { ativo, provedor: s.iaProvedor, chave: s.iaChave, modelo: s.iaModelo };
       },
-      getProfile: () => personality.get(),
+      // Provocações dirigidas a ela: chave dela nas Configurações (identidade.js, Camada B).
+      getProfile: () => ({ ...personality.get(), provocacoes: store.get().provocacoes !== false }),
       getContext: () => ({
         hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
         festa: companion && companion.holiday ? HOLIDAYS[companion.holiday].nome : null,

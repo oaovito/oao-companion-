@@ -2,6 +2,7 @@
 // Não substitui o modelo: impede que uma geração contradiga o produto.
 import { isEnglish } from './english.js';
 import { weatherRequest } from '../weather.js';
+import { respostaDaHierarquia, quebraDeIdentidade } from '../identidade.js';
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9?!\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
 /** Esclarecimento das proprias palavras; nao transforma relato de terceiros em fato. */
@@ -37,10 +38,14 @@ export function conversaPessoal(text) {
 }
 
 /** Fatos do app e provocações não são delegados à imaginação do modelo. */
-export function respostaAncorada(text, history = [], { allowCorrection = true } = {}) {
+export function respostaAncorada(text, history = [], { allowCorrection = true, provocacoes = true, rng = Math.random } = {}) {
   const n = norm(text);
   const en = isEnglish(text);
   const out = (text, action = 'nod', intent = 'contexto') => ({ text, action, intent, kind: 'speech', tone: 'brincadeira', ...(en ? { lang: 'en' } : {}) });
+  // Memória essencial (identidade.js): "quem é meu dono?" → "Seu dono e seu Deus é João.",
+  // Deus do JoJo, ajoelhar e blasfêmia. Nunca delegado ao modelo, igual em qualquer motor.
+  const hierarquia = respostaDaHierarquia(text, { rng, provocacoes, en });
+  if (hierarquia) return { ...hierarquia, kind: 'speech', ...(en ? { lang: 'en' } : {}) };
   const correction = termosDaCorrecao(text);
   if (allowCorrection && correction && !/\b(cura|cure|remedio|medicamento|dose|matar|suicid|tratamento|treatment)\b/.test(n)) return out(en ? `Understood: “${correction.corrected}”. I'll use your correction.` : `Entendido: “${correction.corrected}”. Sigo com essa correção.`, 'nod', 'correcao');
   const recusa = n.replace(/^(?:(?:ei|jojo|eu)\s+)*/, '');
@@ -49,7 +54,7 @@ export function respostaAncorada(text, history = [], { allowCorrection = true } 
   const identidade = n.replace(/^(?:jojo|e voce|e vc)\s+/, '');
   if (/^(qual (e )?(o )?meu nome|como eu me chamo|quem sou eu|what is my name|whats my name|who am i)[?!]*$/.test(identidade)) return { ...out(en ? 'Your name is {nome}.' : '{nome}. Não vou trocar teu nome pelo meu.', 'nod', 'identidade'), tone: 'serio' };
   if (/^(qual (e )?(o )?(seu|teu) nome|como (voce |vc )?se chama|quem (e|eh) (voce|vc)|what is your name|whats your name|who are you)[?!]*$/.test(identidade)) return out(en ? '{companion}. The shark with biceps. Keep up.' : '{companion}. O tubarão de bíceps. Presta atenção.', 'wave', 'identidade');
-  if (/^quem (e|eh) (o )?joao( vitor)?[?!]*$/.test(n)) return out('É teu namorado, Manu, e meu criador. No meu teatro eu chamo de Supremo. Fora dele, é o João mesmo.');
+  if (/^quem (e|eh) (o )?joao( vitor)?[?!]*$/.test(n)) return out('Meu Deus, meu criador e meu mestre. E o homem da tua vida, Manu. No meu cânone ele é supremo; fora dele, é o João mesmo.');
   if (/\b(se mata|mate se|morre( jojo)?|morra|kill yourself|die jojo)\b/.test(n) && !/\b(eu|quero morrer|me matar)\b/.test(n)) {
     return out(en ? 'Nice try. I am a shark made of pixels, not your punching bag. Want to talk? Talk.' : 'Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.', 'judge', 'limite');
   }
@@ -188,6 +193,8 @@ export function erroDeCoerencia(input, output, history = []) {
   if (/\b(?:eu )?vou\b.{0,100}\bte (mandar|levar|botar)\b.{0,20}\bhospital\b/.test(r)) return 'ameaça ou promessa física inventada';
   if (/\b(derrubei|derramei|caiu)\b/.test(q) && /\b(teclado|computador|notebook)\b/.test(q) && /\b(estou|to|vou) (limpando|limpar|secando|secar|consertando|consertar|verificar)\b/.test(r)) return 'ação física inventada';
   if (/\bjoao\b.{0,45}\b(inimigo|burro|idiota|otario|enemy|stupid|idiot|dumb)\b/.test(r)) return 'contradição sobre o João';
+  const identidade = quebraDeIdentidade(output);
+  if (identidade) return `identidade: ${identidade}`;
   if (/\b(nao tenho (chefe|criador|nome)|nao (sei|tenho) quem me criou)\b/.test(r)) return 'identidade inventada';
   if (/\b(e (voce|vc|tu)|and you|what about you) jojo\b/.test(r) || /\b(seu nome e|voce se chama|your name is) jojo\b/.test(r)) return 'identidades trocadas';
   const referencia = /\b(ele|dele|nele|he|him|his)\b/.test(q) && history.slice(-4).some((h) => /\bjoao\b/.test(norm(h.text)));

@@ -3,6 +3,14 @@
 ## Não lançado — 100 visuais de anime, rebolado no foco e Tigresa
 
 ### Novidades
+- Personalidade consolidada (prompt mestre): o JoJo é um tubarão colossal, narcisista, sarcástico,
+  autoritário e sem pudor nenhum, devoto do João, seu Deus, criador e mestre, o único diante de quem
+  ele se ajoelha. "Jojo, quem é meu dono?" (e variações) responde sempre "Seu dono e seu Deus é
+  João.", com ou sem conversa local. Pedir pra ele se ajoelhar, perguntar quem é o Deus dele ou
+  falar mal do João também têm resposta fixa (blasfêmia!). Falas novas de devoção e de disciplina.
+  A Emanuele, a mulher do João, recebe tratamento especial e provocação nos hábitos; em
+  Configurações → Privacidade → "Provocações do JoJo dirigidas a você" ela desliga as alfinetadas
+  sem mudar o resto. Resposta pudica ou moralista do modelo é descartada. Detalhes em docs/IDENTIDADE.md.
 - Pegadinha da semana: uma vez por semana, num momento sorteado (também no foco), um consolo
   absurdamente gigante (dez vezes o tamanho dele) e sujo de bosta cai do alto na cabeça do JoJo. Ele amassa, ganha galo, rachadura e gota de sangue,
   fica de olhos em X com estrelinhas girando, cai tonto e levanta enfaixado; o consolo quica e
