@@ -154,6 +154,7 @@ export const COMMANDS = Object.freeze([
   { "id":"anim","cmd":"/anim","aliases":["/animacao","/animação"],"label":"Animação","desc":"Toca uma animação pelo nome","hint":"Toca uma animação do catálogo: /anim nome (ex.: /anim selfie)" },
   { "id":"jogo","cmd":"/jogo","aliases":["/jogar"],"label":"Mini-jogo","desc":"Abre um mini-jogo","hint":"Joga com o JoJo: /jogo, /jogo quiz, /jogo bolhas…" },
   { "id":"foco","cmd":"/foco","aliases":[],"label":"Foco junto","desc":"Bloco de foco, ciclos e Pomodoro","hint":"Bloco de foco com o JoJo: /foco 25, /foco treino, /foco pomodoro (4 ciclos com pausa), /foco 30 x3 pausa 10" },
+  { "id":"timer","cmd":"/timer","aliases":["/timers","/cronometro","/cronômetro"],"label":"Timers","desc":"Timer, cronômetro e intervalos","hint":"Timers com o JoJo: /timer 10, /timer 25 estudo, /timer meditação 10, /timer cronometro, /timer exercicios 1,5 x4 (descanso entre séries), /timer tarefa relatório, /timer pausar, /timer continuar, /timer cancelar, /timer lista, /timer historico" },
   { "id":"estimulo","cmd":"/estimulo","aliases":["/estímulo"],"label":"Me dá estímulo","desc":"Uma animação surpresa","hint":"Uma animação surpresa" },
   { "id":"calma","cmd":"/calma","aliases":[],"label":"Calma","desc":"Dois minutos de calma","hint":"Padrão calmante por 2 min (cardume, cores suaves)" },
   { "id":"ritmo","cmd":"/ritmo","aliases":[],"label":"Ritmo","desc":"Sequência rítmica de 30 s","hint":"Sequência rítmica previsível por 30 s" },

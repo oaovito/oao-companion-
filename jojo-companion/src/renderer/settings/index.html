@@ -109,6 +109,77 @@
     </fieldset>
 
     <fieldset>
+      <legend>Timers</legend>
+      <label class="check"><input type="checkbox" name="timersAtivo"> Timers, cronômetros e intervalos com o JoJo (peça na conversa: "timer de 10 minutos", ou /timer). Nada começa sem você pedir ou aceitar.</label>
+      <label class="check"><input type="checkbox" name="timersVisivel"> Mostrar o relógio na tela (escondido, a contagem continua)</label>
+      <label class="check"><input type="checkbox" name="timersAnimacoes"> Animações do JoJo com o relógio</label>
+      <label class="row">Frequência das animações
+        <select name="timersFrequencia">
+          <option value="pouca">Pouca</option>
+          <option value="normal">Normal</option>
+          <option value="muita">Muita</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="timersSugestoes"> Sugerir um timer quando fizer sentido (jogo, refeição, treino)</label>
+      <label class="check"><input type="checkbox" name="timersNotificar"> Aviso visual ao terminar</label>
+      <label class="row">Ao terminar
+        <select name="timersAoTerminar">
+          <option value="avisar">Avisar com fala</option>
+          <option value="silencioso">Só o relógio piscando</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="timersAutoProximo"> O próximo intervalo começa sozinho</label>
+      <label class="check"><input type="checkbox" name="timersXp"> Sessões concluídas rendem XP</label>
+      <label class="check"><input type="checkbox" name="timersClicavel"> No modo de interação: clique pausa/continua, arrastar muda o lugar</label>
+      <label class="row">Aparência
+        <select name="timersAparencia">
+          <option value="contextual">Conforme a atividade</option>
+          <option value="digital">Relógio digital</option>
+          <option value="esportivo">Cronômetro esportivo</option>
+          <option value="ampulheta">Ampulheta</option>
+          <option value="analogico">Relógio analógico</option>
+          <option value="barra">Barra de progresso</option>
+          <option value="holograma">Holograma</option>
+          <option value="bolso">Relógio de bolso</option>
+          <option value="minimalista">Minimalista</option>
+          <option value="circular">Contagem ao redor do JoJo</option>
+        </select>
+      </label>
+      <p class="hint" id="timersLiberadas"></p>
+      <label class="row">Posição
+        <select name="timersPosicao">
+          <option value="direita">À direita do JoJo</option>
+          <option value="esquerda">À esquerda</option>
+          <option value="acima">Acima</option>
+          <option value="abaixo">Abaixo</option>
+        </select>
+      </label>
+      <label class="row">Tamanho
+        <select name="timersTamanho">
+          <option value="pequeno">Pequeno</option>
+          <option value="medio">Médio</option>
+          <option value="grande">Grande</option>
+        </select>
+      </label>
+      <label class="row">Transparência
+        <input type="range" name="timersOpacidade" min="0.3" max="1" step="0.05"><output data-for="timersOpacidade" data-fmt="pct"></output>
+      </label>
+      <label class="row">Timers ao mesmo tempo
+        <select name="timersMax" data-num="1">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+      <details>
+        <summary>Cada atividade</summary>
+        <div id="timersAtividades" class="viraisLista"></div>
+      </details>
+    </fieldset>
+
+    <fieldset>
       <legend>Monitores</legend>
       <label class="row">Monitor preferido
         <select name="preferredDisplay" id="displaySelect"></select>

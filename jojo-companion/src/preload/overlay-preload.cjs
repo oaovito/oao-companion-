@@ -28,5 +28,7 @@ contextBridge.exposeInMainWorld('jojo', {
   openSettings: () => ipcRenderer.send('jojo:open-settings'),
   openApp: (id) => ipcRenderer.send('jojo:open-app', id ? String(id) : null),
   setReducedMotion: (on) => ipcRenderer.send('jojo:reduced-motion', !!on),
+  // Relógio dos timers: só estas duas ações, com números validados.
+  timer: (m) => m && (m.acao === 'alternar' || (m.acao === 'mover' && Number.isFinite(m.dx) && Number.isFinite(m.dy))) && ipcRenderer.send('jojo:timer', { acao: m.acao, dx: Math.max(-2000, Math.min(2000, Math.round(m.dx || 0))), dy: Math.max(-2000, Math.min(2000, Math.round(m.dy || 0))) }),
   platform: process.platform,
 });

@@ -79,16 +79,16 @@ test('motor: avançar, voltar, pular, pausar e retomar com o progresso salvo', (
   let t = novo();
   assert.equal(t.st.estado, 'novo');
   assert.match(t.open(), /Primeira vez aqui\. Eu sou o JoJo/);
-  assert.match(t.next(), /^Conversar comigo \(1 de 34\), passo 1 de 2\.\n.*Ctrl \+ Alt \+ J.*\nTente: oi$/s);
+  assert.match(t.next(), /^Conversar comigo \(1 de 35\), passo 1 de 2\.\n.*Ctrl \+ Alt \+ J.*\nTente: oi$/s);
   assert.match(t.next(), /passo 2 de 2/);
   assert.match(t.back(), /passo 1 de 2/);
   assert.match(t.back(), /Já estamos no começo/);
   t.next();
-  assert.match(t.next(), /^Me mostrar e me esconder \(2 de 34\), passo 1 de 2/);
+  assert.match(t.next(), /^Me mostrar e me esconder \(2 de 35\), passo 1 de 2/);
   assert.deepEqual(disco.vistas, ['conversa']);
-  assert.match(t.back(), /^Conversar comigo \(1 de 34\), passo 2 de 2/, 'voltar no primeiro passo cai no fim da função anterior');
+  assert.match(t.back(), /^Conversar comigo \(1 de 35\), passo 2 de 2/, 'voltar no primeiro passo cai no fim da função anterior');
   t.next();
-  assert.match(t.skip(), /^Pulei "Me mostrar e me esconder"\. Dá pra ver depois com \/tutorial pet\.\nBalão de status \(3 de 34\)/);
+  assert.match(t.skip(), /^Pulei "Me mostrar e me esconder"\. Dá pra ver depois com \/tutorial pet\.\nBalão de status \(3 de 35\)/);
   assert.deepEqual(disco.puladas, ['pet']);
   assert.match(t.pause(), /pausado em "Balão de status"\. Seu progresso está salvo/);
   assert.equal(t.next(), DATA.textos.semTutorial, 'pausado não anda');
@@ -96,7 +96,7 @@ test('motor: avançar, voltar, pular, pausar e retomar com o progresso salvo', (
   // Fechou e reabriu o app: continua do mesmo passo.
   t = novo();
   assert.deepEqual([t.st.estado, t.st.funcao, t.st.passo], ['pausado', 'balao', 0]);
-  assert.match(t.start(), /^Voltando de onde paramos\.\nBalão de status \(3 de 34\), passo 1 de 2/);
+  assert.match(t.start(), /^Voltando de onde paramos\.\nBalão de status \(3 de 35\), passo 1 de 2/);
   // Fechou sem pausar: reabre pausado, sem perder o lugar.
   t.next();
   t = novo();
@@ -107,25 +107,25 @@ test('motor: avançar, voltar, pular, pausar e retomar com o progresso salvo', (
   let fim = '';
   for (let i = 0; i < 200 && t.ativo; i++) fim = t.next();
   assert.equal(t.st.estado, 'concluido');
-  assert.match(fim, /Fim do tutorial\. Você viu 33 de 34 funções e pulou: Me mostrar e me esconder/);
+  assert.match(fim, /Fim do tutorial\. Você viu 34 de 35 funções e pulou: Me mostrar e me esconder/);
   assert.match(t.startOne('pet'), /^Me mostrar e me esconder/);
   t.next();
   assert.match(t.next(), /Era isso sobre "Me mostrar e me esconder"/);
-  assert.deepEqual([t.st.estado, t.st.vistas.length, t.st.puladas.length], ['concluido', 34, 0]);
-  assert.match(t.start(), /Fim do tutorial\. Você viu 34 de 34 funções\./);
-  assert.match(t.restart(), /Do zero, então.*\nConversar comigo \(1 de 34\)/s);
+  assert.deepEqual([t.st.estado, t.st.vistas.length, t.st.puladas.length], ['concluido', 35, 0]);
+  assert.match(t.start(), /Fim do tutorial\. Você viu 35 de 35 funções\./);
+  assert.match(t.restart(), /Do zero, então.*\nConversar comigo \(1 de 35\)/s);
   assert.deepEqual(disco.vistas, []);
 });
 
 test('motor: abrir direto uma função não bagunça o tutorial inteiro; busca por nome; estado inválido é corrigido', () => {
   const t = new Tutorial({ data: DATA, vars: () => VARS });
   t.open(); t.next(); t.next(); // conversa, passo 2
-  assert.match(t.startOne('foco'), /^Timer de foco \(9 de 34\), passo 1 de 3/);
+  assert.match(t.startOne('foco'), /^Timer de foco \(9 de 35\), passo 1 de 3/);
   assert.equal(t.st.avulso, true);
   t.next(); t.next();
   assert.match(t.next(), /Era isso sobre "Timer de foco"\. Pra seguir o tutorial inteiro: \/tutorial/);
   assert.deepEqual([t.st.estado, t.st.funcao, t.st.passo, t.st.avulso], ['pausado', 'conversa', 1, false]);
-  assert.match(t.start(), /Conversar comigo \(1 de 34\), passo 2 de 2/);
+  assert.match(t.start(), /Conversar comigo \(1 de 35\), passo 2 de 2/);
   t.next();
   assert.ok(!t.pendentes().some((f) => f.id === 'foco'), 'o que já foi visto por fora não se repete');
   assert.equal(t.find('lista de tarefas').id, 'tarefas');
@@ -272,7 +272,7 @@ test('percurso completo: cada exemplo do tutorial funciona de verdade e faz o pa
   const e = env({ auto: false });
   e.companion.enterInteraction('test');
   let r = await chatAdv(e, '/tutorial');
-  assert.match(r.text, /^Conversar comigo \(1 de 34\), passo 1 de 2/);
+  assert.match(r.text, /^Conversar comigo \(1 de 35\), passo 1 de 2/);
   assert.equal(r.command, 'tutorial');
   const t = e.tut();
   let guard = 0;
@@ -300,7 +300,7 @@ test('percurso completo: cada exemplo do tutorial funciona de verdade e faz o pa
   assert.equal(t.st.estado, 'concluido');
   assert.equal(t.st.vistas.length, DATA.funcoes.length);
   assert.deepEqual(t.st.puladas, []);
-  assert.ok(conversa(e).some((x) => /Fim do tutorial\. Você viu 34 de 34 funções/.test(x)));
+  assert.ok(conversa(e).some((x) => /Fim do tutorial\. Você viu 35 de 35 funções/.test(x)));
   assert.equal(e.companion.conversations.get('tutorial').status, 'idle');
   // Nada ficou ligado por causa do tutorial.
   assert.equal(e.companion.work, null);
@@ -316,7 +316,7 @@ test('na conversa: próximo, voltar, pular, pausar e /tutorial <função>; fora 
   let r = await chatAdv(e, 'próximo');
   assert.notEqual(r.intent, 'tutorial', 'sem tutorial ativo não intercepta');
   r = await chatAdv(e, '/tutorial notas');
-  assert.match(r.text, /^Notas rápidas \(15 de 34\), passo 1 de 2/);
+  assert.match(r.text, /^Notas rápidas \(15 de 35\), passo 1 de 2/);
   assert.ok(e.said.some((x) => /^Notas rápidas/.test(x)), 'o passo aparece no balão');
   r = await chatAdv(e, '/nota comprar creatina');
   e.clock.advance(1300);
@@ -327,7 +327,7 @@ test('na conversa: próximo, voltar, pular, pausar e /tutorial <função>; fora 
   assert.match(r.text, /Pulei "Notas rápidas"/);
   assert.equal(e.tut().ativo, false);
   r = await chatAdv(e, '/tutorial');
-  assert.match(r.text, /Conversar comigo \(1 de 34\)/);
+  assert.match(r.text, /Conversar comigo \(1 de 35\)/);
   r = await chatAdv(e, 'pausar');
   assert.match(r.text, /Tutorial pausado/);
   r = await chatAdv(e, '/tutorial lista');

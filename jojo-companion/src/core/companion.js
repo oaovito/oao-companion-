@@ -25,6 +25,7 @@ import { jojoRects, metricsFrom } from './rig-metrics.js';
 import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey, personaJoJo } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
+import { instalarTimers } from './companion-timers.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
@@ -348,6 +349,8 @@ export class Companion {
     this.holiday = festa;
     this.costume = festa ? HOLIDAYS[festa].fantasia : null;
     this._scheduleReminderCheck(20000);
+    // Timers salvos: recupera uma vez (política em src/core/timers.js) e volta a contar.
+    this._timersStart();
     // Visuais que o nível acumulado já liberou: avisa logo depois da chegada.
     this.clock.setTimeout(() => this._avisarVisuais(), 9000);
     if (this.userHidden) {
@@ -405,6 +408,9 @@ export class Companion {
     this._cancelTimer();
     if (this.reminderTimer) this.clock.clearTimeout(this.reminderTimer);
     this.reminderTimer = null;
+    this._timerFechar();
+    if (this._timerHandle) this.clock.clearTimeout(this._timerHandle);
+    this._timerHandle = null;
     this.started = false;
   }
 
@@ -539,6 +545,7 @@ export class Companion {
   onSuspend() {
     this.visualContext++; this.effect = null; this.ambientQueue.length = 0;
     this.suspended = true;
+    this._timerSuspender();
     this._cancelTimer();
     if (this.interaction) this.exitInteraction('suspend');
     this.dragging = null;
@@ -548,6 +555,7 @@ export class Companion {
   onResume() {
     if (!this.suspended) return;
     this.suspended = false;
+    this._timerRetomarSistema();
     const now = this.clock.now();
     this.lastTick = now;
     this._resetAvoidance(now);
@@ -594,6 +602,7 @@ export class Companion {
     } else if (this.work && ['trabalhoPerfil', 'trabalhoCanto', 'trabalhoTamanho', 'trabalhoOpacidade', 'trabalhoMargem'].some((k) => changed.includes(k))) {
       this._enterWork(settings.trabalhoPerfil, { silent: true });
     }
+    if (changed.some((k) => k.startsWith('timers')) && this.started) this._timerSync();
     if (changed.includes('paused')) this.setPaused(settings.paused, { fromSettings: true });
     if (changed.includes('visible')) this.setVisible(settings.visible, { fromSettings: true });
     if (changed.includes('bubbleScale') && this.bubble) this._remeasureBubble();
@@ -1481,6 +1490,11 @@ export class Companion {
       const wa = await this._waChat(text);
       if (wa) return this._quickReply(conv, wa, 'whatsapp');
     }
+    // Timers: confirmação ("fiz"), oferta ("sim") e pedidos ("timer de 10 min", "pausa o timer").
+    if (!safety) {
+      const tm = this._timerChat(text);
+      if (tm) return this._quickReply(conv, tm, 'timer');
+    }
     if (!safety && this.todoChat) {
       const reply = this.todoChat.reply(text);
       if (reply) return this._quickReply(conv, reply, 'tarefas');
@@ -1528,7 +1542,10 @@ export class Companion {
       if (resumoDia) return this._quickReply(conv, this.daySummary(resumoDia.tipo, new Date()), 'resumoDia');
       // Treino: ficha, treino do dia, cargas e histórico.
       const treino = parseWorkoutRequest(text, { exercicios: this.workout.exercicios });
-      if (treino) return this._quickReply(conv, this._reminderReply(this.workout.apply(treino, dayKey(new Date()))), 'treino');
+      if (treino) {
+        if (treino.tipo === 'hoje' || treino.tipo === 'doDia') this._timerOfertar('exercicios');
+        return this._quickReply(conv, this._reminderReply(this.workout.apply(treino, dayKey(new Date()))), 'treino');
+      }
       // Rotina diária: montar, ver e limpar respondem; "acordei" só marca a manhã e a conversa segue.
       const rotina = parseRoutineRequest(text);
       if (rotina && rotina.natural) this.routine.apply(rotina, dayKey(new Date()));
@@ -2094,6 +2111,7 @@ export class Companion {
       const min = clamp(Number((arg.replace(FOCUS_PLAN_PARTS, ' ').match(/\d+/) || [25])[0]), 5, 120);
       return { text: this.startFocus(min, /treino/i.test(arg) ? 'treino' : 'estudo', plano), command: cmd, conversationId };
     }
+    if (cmd === 'timer') return { text: this._timerComando(arg), command: cmd, conversationId };
     if (cmd === 'discord') return { text: this._discordCommand(), command: cmd, conversationId };
     if (cmd === 'tutorial') return { text: this._tutorialCommand(arg), command: cmd, conversationId };
     if (cmd === 'checkin') {
@@ -3160,6 +3178,7 @@ export class Companion {
     }[cat];
     if (!R) return false;
     // Jogo aberto: às vezes GigaChad, Sigma ou a Morte batendo à porta no lugar da reação.
+    if (cat === 'jogo') this._timerOfertar('jogos');
     if (cat === 'jogo' && this._viral('jogo', { falar: false })) { /* tocou o viral */ }
     else if (R.pack) this.playPack(R.pack, { source: 'contexto', falar: false });
     else this.playCatalog(R.anim, { source: 'evento', speak: false });
@@ -3331,6 +3350,7 @@ export class Companion {
     const ciclo = plano ? ` Ciclo ${plano.atual} de ${plano.ciclos}.` : '';
     this.conversations.setStatus(c.id, 'running', `Foco: ${min} min.${ciclo} ${tipo === 'treino' ? 'Treinando junto.' : 'Estudando junto, em silêncio.'}`);
     this._focusAnim(now);
+    this._timerFoco();
     this.clock.setTimeout(() => this._focusTick(), 60e3);
     if (plano) return this._fala('focoCiclos', { min, pausa: plano.pausaMin, ciclo: plano.atual, total: plano.ciclos });
     return `Foco de ${min} min. ${tipo === 'treino' ? 'Eu treino aqui do lado e marco as séries.' : 'Eu estudo aqui do lado, quieto.'} Sem Instagram.`;
@@ -3362,6 +3382,7 @@ export class Companion {
   _cancelFocusBreak() {
     if (!this.focusBreak) return null;
     this.focusBreak = null;
+    this.clock.setTimeout(() => this._timerSync(), 0);
     this.conversations.setStatus('foco', 'idle');
     return 'Foco encerrado. Sem drama.';
   }
@@ -3466,6 +3487,7 @@ export class Companion {
     this.focus = null;
     if (!f) return null;
     this.onFocusEnd?.();
+    this.clock.setTimeout(() => this._timerSync(), 0);
     // Para de estudar/treinar do lado na hora.
     if (FOCUS_ANIM.test(this.behavior.anim || '')) this.behavior.finish(this.behavior.state, this.clock.now());
     if (!done) {
@@ -4801,6 +4823,7 @@ export class Companion {
     if (delivered) {
       this._nag(`refeicao_${delivered.id}`, this.clock.now());
       this.clock.setTimeout(() => this._viral('refeicao', { falar: false }), 4000); // Gato Babando, Comilão, Baiacu
+      this._timerOfertar('alimentacao');
       // Vira uma atividade "Precisa de você" até ela responder na conversa do lembrete.
       const c = this.conversations.create({ id: 'lembrete-comida', title: `Lembrete: ${delivered.nome}`, kind: 'reminder' });
       if (this.lastSaid) this.conversations.addMessage(c.id, 'jojo', this.lastSaid);
@@ -4986,6 +5009,10 @@ export class Companion {
       if (!needsPanel.forced) attachments.push(needsPanel); else needsPanel = null;
     }
 
+    // Relógio dos timers: objeto ao lado do JoJo (some com ele; escondido não ocupa espaço).
+    const relogio = this._timerLayout(r, wa, s, [toolbar?.rect, chat?.rect, bubble?.rect, needsPanel?.rect]);
+    if (relogio) attachments.push(...relogio.attach);
+
     // Sem barra de status ao lado do pet: as atividades ficam só na Central.
 
     // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
@@ -5041,6 +5068,7 @@ export class Companion {
       talking: this.talkingUntil > now,
       paused: this.paused,
       interaction: this.interaction,
+      relogio: relogio ? relogio.estado(rel) : null,
       funeral: funeral ? { rect: rel(funeral.rect), fotos: this.funeral.fotos, legenda: this.funeral.legenda, restam: Math.max(0, this.funeral.ate - now), total: FUNERAL_MS } : null,
       bubble: bubble ? {
         text: this.bubble.text, kind: this.bubble.kind, longo: !!this.bubble.longo, dur: this.bubble.dur || 0, side: bubble.side, rect: rel(bubble.rect),
@@ -5226,3 +5254,6 @@ export class Companion {
 }
 
 export { PRIORITY };
+
+// Timers interativos (0.47.5): métodos em src/core/companion-timers.js.
+instalarTimers(Companion);

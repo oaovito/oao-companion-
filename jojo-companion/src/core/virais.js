@@ -821,3 +821,6 @@ export function viralDoTexto(texto) {
   const id = FRASES.get(t);
   return id ? VIRAL_POR_ID.get(id) : null;
 }
+
+// Ferramentas de desenho e linha do tempo reaproveitadas pelas animações dos timers (0.47.5).
+export { linha, elip, furo, anel, rect, estrela, txt, grupo, VAZIO };

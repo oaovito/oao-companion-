@@ -9,6 +9,8 @@ import { rigComDildo } from '../../core/dildo.js';
 import { rigComEsteroide } from '../../core/esteroide.js';
 import { rigComVirais } from '../../core/virais.js';
 import { desenharComVirais } from '../shared/virais-desenho.js';
+import { rigComTimers } from '../../core/timer-anims.js';
+import { desenharRelogio, desenharAnel, leituraRelogio, posicaoRelogio, tamanhoNoQuadro } from '../shared/relogio-desenho.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
@@ -81,7 +83,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))))));
+  rig = new RigRenderer(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -156,6 +158,8 @@ function onState(s) {
   if (prev && prev.interaction && !s.interaction) {
     setCaptureLocal(false);
     dragging = false;
+    relogioArrasto = null;
+    relogioHit = null;
   }
   requestFrame();
 }
@@ -484,7 +488,8 @@ function frame(now) {
   }
   // Animação escalonada: não adianta desenhar mais vezes que os degraus.
   const cap = animator.current?.anim?.stepFps || animator.style.stepFps || 60;
-  const fps = Math.min(targetFps(), cap);
+  // Relógio visível: no mínimo um quadro por segundo (movimento reduzido também vê o tempo andar).
+  const fps = Math.max(Math.min(targetFps(), cap), state.relogio && windowVisible && state.anim !== 'hidden' ? 1 : 0);
   clearTimeout(frameTimer);
   if (fps > 0) {
     const interval = 1000 / fps;
@@ -638,14 +643,41 @@ function draw(now) {
     ctx.restore();
   }
 
+  // Relógio dos timers: atrás do JoJo quando ele segura/senta/encosta; na frente quando parado.
+  const relogio = s.relogio ? quadroRelogio(s, pose, box, scale, now) : null;
+  if (relogio && !relogio.frente) relogio.desenhar();
   // Virais: cópias do JoJo e pixel art só durante a animação; senão é o desenho de sempre.
   desenharComVirais(rig, ctx, pose, sample, { origin: { x: box.x, y: box.y }, scale, facing, alpha: s.opacity });
+  if (relogio && relogio.frente) relogio.desenhar();
 
   fxSpace();
   const mark = sample.flags.mark && (reduced || (sample.t > 0.08 && sample.t < 0.92)) ? sample.flags.mark : null;
   if (reduced) effects.particles.length = 0;
   effects.draw(ctx, now, { mark, head, mouth: rig.rig.metrics.mouth, facingSign: fs });
   ctx.restore();
+}
+
+/**
+ * Relógio neste quadro: lugar (repouso ou na mão do JoJo), tamanho, leitura do tempo e a área
+ * de clique (só existe enquanto ele aparece; escondido, nada fica no caminho do mouse).
+ */
+function quadroRelogio(s, pose, box, scale, now) {
+  const r = s.relogio;
+  const rect = relogioArrasto ? { ...r.rect, x: r.rect.x + relogioArrasto.dx, y: r.rect.y + relogioArrasto.dy } : r.rect;
+  const p = posicaoRelogio({ rect, box, scale, facing, pose, rig: rig.rig.metrics, now });
+  const size = tamanhoNoQuadro(r.base, p, scale);
+  const leitura = leituraRelogio(r);
+  const info = { aparencia: p.ampulheta ? 'ampulheta' : r.anel && p.mix < 0.5 ? 'circular' : r.aparencia, texto: leitura.texto, progresso: leitura.progresso, fase: r.fase, rotulo: r.rotulo, alerta: reduced ? 0 : r.alerta, pausado: r.pausado, mais: r.mais };
+  relogioHit = p.mix < 0.05 && r.clicavel ? rect : null;
+  return {
+    frente: p.frente,
+    desenhar: () => {
+      ctx.save();
+      if (r.anel && !p.ampulheta) desenharAnel(ctx, { cx: box.x + box.width / 2, cy: box.y + box.height / 2, r: Math.max(box.width, box.height) / 2 + 6, progresso: leitura.progresso, alerta: info.alerta, alpha: r.alpha * s.opacity, now });
+      desenharRelogio(ctx, info, { x: p.x, y: p.y, size, rot: reduced ? 0 : p.rot, sx: p.sx, sy: p.sy, alpha: r.alpha * s.opacity * (1 - p.some), now });
+      ctx.restore();
+    },
+  };
 }
 
 function easeInOut(t) {
@@ -655,6 +687,9 @@ function easeInOut(t) {
 // ------------------------------------------------------------------ interação
 
 let captureLocal = false;
+let relogioHit = null; // área do relógio clicável neste quadro (modo de interação)
+let relogioArrasto = null; // {x, y, dx, dy, id} enquanto ela arrasta o relógio
+const overRelogio = (x, y) => !!relogioHit && x >= relogioHit.x && x <= relogioHit.x + relogioHit.width && y >= relogioHit.y && y <= relogioHit.y + relogioHit.height;
 let dragging = false;
 let down = null;
 let rub = { dist: 0, since: 0, last: null };
@@ -698,7 +733,7 @@ function setupInteraction() {
   // decidirmos se o ponteiro está sobre uma região interativa.
   window.addEventListener('mousemove', (e) => {
     if (!state || !state.interaction) return;
-    const interactive = dragging || overJoJo(e.clientX, e.clientY) || overUi(e.target);
+    const interactive = dragging || !!relogioArrasto || overRelogio(e.clientX, e.clientY) || overJoJo(e.clientX, e.clientY) || overUi(e.target);
     setCaptureLocal(interactive);
     if (interactive) activity();
     // Ondinhas na água onde o cursor passa (estímulo calmo; não com movimento reduzido).
@@ -736,6 +771,35 @@ function setupInteraction() {
   document.addEventListener('mouseleave', () => {
     if (!dragging) setCaptureLocal(false);
   });
+
+  // Relógio: clique pausa/continua; arrastar muda o lugar (fica salvo). Vem antes do JoJo.
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!state || !state.interaction || e.button !== 0 || !overRelogio(e.clientX, e.clientY)) return;
+    e.stopImmediatePropagation();
+    relogioArrasto = { x: e.clientX, y: e.clientY, dx: 0, dy: 0, id: e.pointerId };
+    canvas.setPointerCapture(e.pointerId);
+    activity();
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!relogioArrasto) return;
+    e.stopImmediatePropagation();
+    relogioArrasto.dx = e.clientX - relogioArrasto.x;
+    relogioArrasto.dy = e.clientY - relogioArrasto.y;
+    requestFrame();
+  });
+  const fimRelogio = (e) => {
+    if (!relogioArrasto) return;
+    e.stopImmediatePropagation();
+    const a = relogioArrasto;
+    relogioArrasto = null;
+    try { canvas.releasePointerCapture(a.id); } catch { /* ignora */ }
+    if (e.type !== 'pointerup') return requestFrame();
+    if (Math.hypot(a.dx, a.dy) > 6) api.timer({ acao: 'mover', dx: Math.round(a.dx), dy: Math.round(a.dy) });
+    else api.timer({ acao: 'alternar' });
+    requestFrame();
+  };
+  canvas.addEventListener('pointerup', fimRelogio);
+  canvas.addEventListener('pointercancel', fimRelogio);
 
   canvas.addEventListener('pointerdown', (e) => {
     if (!state || !state.interaction || e.button !== 0 || !overJoJo(e.clientX, e.clientY)) return;

@@ -401,6 +401,34 @@
    "desc": "Experimente 10 alimentos diferentes.",
    "conta": "comidasDiferentes",
    "n": 10
+  },
+  {
+   "id": "timer1",
+   "nome": "Contra o relógio",
+   "desc": "Conclua uma sessão de timer.",
+   "conta": "timers",
+   "n": 1
+  },
+  {
+   "id": "timer10",
+   "nome": "Pontual de araque",
+   "desc": "Conclua 10 sessões de timer.",
+   "conta": "timers",
+   "n": 10
+  },
+  {
+   "id": "timer50",
+   "nome": "Escravo do cronômetro",
+   "desc": "Conclua 50 sessões de timer.",
+   "conta": "timers",
+   "n": 50
+  },
+  {
+   "id": "timerHoras10",
+   "nome": "Dez horas no relógio",
+   "desc": "Some 10 horas em sessões de timer concluídas.",
+   "conta": "timerMin",
+   "n": 600
   }
  ],
  "missoes": [
@@ -449,6 +477,11 @@
    "txt": "Bombe o bíceps do JoJo 10 vezes (💪)",
    "evento": "fidget",
    "n": 10
+  },
+  {
+   "id": "timer",
+   "txt": "Conclua uma sessão de timer (\"timer de 10 minutos\")",
+   "evento": "timer"
   }
  ],
  "areas": [
@@ -507,7 +540,8 @@
    "feeding": "Refeição",
    "cleanup": "Faxina do aquário",
    "care": "Cuidado",
-   "darkest": "Expedição no Darkest"
+   "darkest": "Expedição no Darkest",
+   "timer": "Sessão de timer"
   },
   "regras": [
    {

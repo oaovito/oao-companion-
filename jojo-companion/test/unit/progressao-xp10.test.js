@@ -75,11 +75,11 @@ test('crédito: a fonte manda o valor nominal e a progressão credita ×10; inte
   assert.equal(p.st.xp, 200 + 150);
 });
 
-test('bônus: 238 jeitos novos de ganhar XP, cada um com nome próprio (17 regras × 14 atividades)', () => {
+test('bônus: 255 jeitos novos de ganhar XP, cada um com nome próprio (17 regras × 15 atividades)', () => {
   const { p } = prog();
   const cat = p.bonusCatalogo;
-  assert.equal(cat.length, 238);
-  assert.equal(new Set(cat.map((c) => c.nome)).size, 238, 'nomes únicos');
+  assert.equal(cat.length, 255);
+  assert.equal(new Set(cat.map((c) => c.nome)).size, 255, 'nomes únicos');
   assert.ok(cat.every((c) => !c.nome.includes('{A}') && c.xp > 0 && c.xp <= 30));
   const fontesAntes = Object.keys(DATA.xp).length + ['todo', 'feeding', 'cleanup', 'care', 'darkest'].length + 8;
   assert.ok(cat.length >= fontesAntes * 10, `pelo menos 10× as ~${fontesAntes} fontes de antes`);

@@ -907,6 +907,44 @@
           "texto": "Nas Configurações, em Animações virais, você liga ou desliga tudo, escolhe frequência e intensidade, tira o humor adulto ou o negro, reduz os efeitos e bloqueia as que não quiser. No Modo Trabalho, no foco e em tela cheia eu nunca faço."
         }
       ]
+    },
+    {
+      "id": "timers",
+      "titulo": "Timers comigo",
+      "grupo": "Utilidades",
+      "comandos": [
+        "/timer"
+      ],
+      "configuracoes": [
+        "timersAtivo",
+        "timersVisivel",
+        "timersAnimacoes",
+        "timersFrequencia",
+        "timersSugestoes",
+        "timersNotificar",
+        "timersAoTerminar",
+        "timersAutoProximo",
+        "timersXp",
+        "timersClicavel",
+        "timersAparencia",
+        "timersPosicao",
+        "timersTamanho",
+        "timersOpacidade",
+        "timersMax"
+      ],
+      "passos": [
+        {
+          "texto": "Eu cronometro qualquer coisa: estudo, meditação, descanso entre séries, alongamento, tarefa da lista, refeição. O relógio fica do meu lado e eu mexo nele: dou tapa, sento em cima, uso de halter. Pede um.",
+          "tente": "timer de 10 minutos"
+        },
+        {
+          "texto": "Pausa, continua e cancela falando: \"pausa o timer\", \"quanto falta\", \"cancela o timer\". Também tem /timer lista e /timer historico. Escondido, ele continua contando; fechou o app, eu recupero.",
+          "tente": "quanto falta"
+        },
+        {
+          "texto": "Nas Configurações, em Timers, você escolhe aparência, lugar, tamanho, transparência, animações, sugestões, XP e cada atividade. No Modo Trabalho e no foco o relógio fica mínimo e eu fico quieto."
+        }
+      ]
     }
   ]
 }

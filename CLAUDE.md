@@ -137,6 +137,12 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   por gatilho real (`companion._viral`: jogo, derrota, vitória, conquista, ocioso, Instagram, procrastinação, tarefa,
   refeição, erro, fim do trabalho, lazer) com cooldown e preferências (`viraisAtivo`, `viraisFrequencia`, `viraisAdulto`,
   `viraisNegro`, `viraisReduzir`, `viraisIntensidade`, `viraisBloqueadas`); nunca no Trabalho/foco/tela cheia.
+- **Timers interativos** (0.47.5): `src/core/timers.js` (`GerenciadorTimers`: relógio monotônico, 12 atividades, regressivo/
+  progressivo/intervalado/recorrente/espelho do foco e dos lembretes, persistência em `progress.st.timers`, suspensão,
+  anti-duplicado de XP), `companion-timers.js` (conversa, `/timer`, falas, ofertas, XP por `Progress.award` com id do
+  timer), 48 animações `cat_tm01`–`cat_tm48` com o relógio na mão (`timer-anims.js`, canais `tm*`, peças `tm_*`) e o
+  relógio desenhado no overlay (`renderer/shared/relogio-desenho.js`; clique pausa e arrasto move só no modo de
+  interação). Trabalho/foco: discreto e mudo; tela cheia: some. Doc `jojo-companion/docs/TIMERS.md`.
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no

@@ -347,6 +347,7 @@ function main() {
     ipcMain.on('jojo:activity', (e) => fromOverlay(e) && companion.noteActivity());
     ipcMain.on('jojo:interact', (e, a) => fromOverlay(e) && companion.interact(String(a)));
     ipcMain.on('jojo:gesture', (e, g) => fromOverlay(e) && companion.gesture(String(g)));
+    ipcMain.on('jojo:timer', (e, m) => fromOverlay(e) && m && typeof m === 'object' && companion.timerInteracao({ acao: String(m.acao), dx: Number(m.dx), dy: Number(m.dy) }));
     ipcMain.on('jojo:chat-open', (e, open) => fromOverlay(e) && companion.setChatOpen(!!open));
     ipcMain.handle('jojo:chat', async (e, text) => (fromOverlay(e) ? companion.chat(String(text).slice(0, 500)) : null));
     ipcMain.on('jojo:drag-start', (e) => {

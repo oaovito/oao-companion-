@@ -1,6 +1,7 @@
 // Janela de configurações: aplica cada alteração imediatamente (validada no main).
 import { TodoSettings } from '../shared/todo-view.js';
 import { VIRAIS } from '../../core/virais.js';
+import { ATIVIDADES, ATIVIDADE_IDS, APARENCIAS, APARENCIA_DESBLOQUEIO, sanitizeAtividades } from '../../core/timers.js';
 const api = window.settingsApi;
 const form = document.getElementById('form');
 let info = null;
@@ -48,6 +49,7 @@ function render(i) {
   }
   renderDiscord(i);
   renderVirais(s);
+  renderTimers(s);
   const hk = document.getElementById('hotkeyStatus');
   hk.textContent = i.hotkey.ok
     ? `Atalho ativo: ${prettyHotkey(i.hotkey.accelerator)}. Também disponível pela bandeja.`
@@ -181,6 +183,48 @@ for (const v of VIRAIS) {
 function renderVirais(s) {
   const bloqueadas = new Set(s.viraisBloqueadas || []);
   for (const box of viraisLista.querySelectorAll('input[data-viral]')) box.checked = !bloqueadas.has(box.dataset.viral);
+}
+
+// Timers: por atividade, ligar, sugerir, animar e duração padrão.
+const timersBox = document.getElementById('timersAtividades');
+const timersCampos = {};
+for (const id of ATIVIDADE_IDS) {
+  const linha = document.createElement('div');
+  linha.className = 'timerAtividade';
+  const nome = document.createElement('strong');
+  nome.textContent = ATIVIDADES[id].nome;
+  linha.append(nome);
+  const campos = timersCampos[id] = {};
+  for (const [k, rotulo] of [['ativo', 'ligado'], ['sugerir', 'sugerir'], ['animar', 'animar']]) {
+    const l = document.createElement('label');
+    l.className = 'check';
+    const box = campos[k] = document.createElement('input');
+    box.type = 'checkbox';
+    box.addEventListener('change', () => salvarAtividade(id, { [k]: box.checked }));
+    l.append(box, ` ${rotulo}`);
+    linha.append(l);
+  }
+  const dur = campos.duracaoMin = document.createElement('input');
+  dur.type = 'number'; dur.min = '0.25'; dur.max = '600'; dur.step = '0.25'; dur.title = 'Duração padrão (min)';
+  dur.addEventListener('change', () => { const v = Number(dur.value); if (Number.isFinite(v) && v > 0) salvarAtividade(id, { duracaoMin: v }); });
+  const l = document.createElement('label');
+  l.append(dur, ' min');
+  linha.append(l);
+  timersBox.append(linha);
+}
+function salvarAtividade(id, patch) {
+  const atual = sanitizeAtividades(info?.settings.timersAtividades);
+  send({ timersAtividades: { ...atual, [id]: { ...atual[id], ...patch } } });
+}
+function renderTimers(s) {
+  const a = sanitizeAtividades(s.timersAtividades);
+  for (const id of ATIVIDADE_IDS) {
+    const c = timersCampos[id];
+    for (const k of ['ativo', 'sugerir', 'animar']) c[k].checked = !!a[id][k];
+    if (document.activeElement !== c.duracaoMin) c.duracaoMin.value = String(a[id].duracaoMin);
+  }
+  const bloqueadas = Object.entries(APARENCIA_DESBLOQUEIO).map(([k, n]) => `${APARENCIAS[k]} (${n} sessões)`).join(', ');
+  document.getElementById('timersLiberadas').textContent = `Aparências que a progressão libera: ${bloqueadas}. Enquanto não libera, fica o relógio digital.`;
 }
 
 // Gravação do atalho: clique no campo e pressione a combinação.
