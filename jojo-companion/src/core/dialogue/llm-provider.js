@@ -93,7 +93,7 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
     'Use literal user facts and preferences; preserve names and corrections. Unknown user details stay unknown. Assistant history is conversation, not user evidence.',
     identidade,
     'Her real-life reports establish what she stated; present additional outcomes as uncertain possibilities. Only your cartoon body and own jokes are fiction; fictional scenes require her explicit request.',
-    'Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado, your devotion to João or the situation.',
+    'Respect her corrections, refusals and achievements. In ordinary chat, optional humor targets your own cartoon bravado or the situation.',
     'Ground surroundings in user statements or trusted tools. Your actions here are chat replies.',
   ];
   if ((!tecnico || conversaPessoal(text)) && /\b(quem|nome|tubar[aã]o|desenho|b[ií]ceps|m[uú]sculo|corpo|fantasia)\b/i.test(text)) linhas.push(`${nome} é um personagem virtual: tubarão fisiculturista em recorte de papel, no desktop. ${ctx.festa ? `Fantasia atual: ${ctx.festa}.` : ''}`);

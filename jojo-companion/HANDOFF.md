@@ -15,79 +15,24 @@
   `npx electron scripts/anim-room.mjs` (Windows) ao mudar desenho/animação. Nesta sessão foi
   medido no Chromium (mesma página).
 
-## Rebolado no foco (não lançado) — 18/11/2026
+## Publicação 0.47.2 com WhatsApp — 18/11/2026
 
-Pedido do usuário (com o GIF do Among Us rebolando): no modo foco o JoJo rebola 3 s de vez em
-quando; opção nas Configurações tira só do foco; no repouso continua às vezes. Estado `twerk`,
-animação `twerk` alinhada aos 12 fps, peças por `src/core/rebolado.js` (rig intacto; o teste de
-anatomia continua valendo). Doc em `docs/FOCO.md`; testes em `test/unit/rebolado.test.js`.
-Unitários: 685.
+Pedidos do usuário: conferir os visuais e publicar; depois "Publica o WhatsApp". O run
+44328330376 (0.47.2 sem WhatsApp) reprovou só no ensaio de conversa (variação do modelo:
+"It's a simple question" barrado pela guarda de desdém), então a 0.47.2 passou a levar
+também a revisão do WhatsApp de `claude/dreamy-allen-4mtm7j`, num run só. Não verificado:
+leitura do QR com celular real e envio real (depende da usuária).
+Unitários: 675. Integração: 16. E2E esperados: 47.
 
-## 100 visuais de anime (não lançado) — 18/11/2026
+## Publicação 0.47.1 sem WhatsApp — 14/11/2026
 
-Pedido do usuário: mais 100 visuais "com os temas que já dei", sem repetir e focados em anime.
-`progressao.json` → `extras` com `colecao: "animes"` (níveis 2, 4, ..., 200; ids `an001`–`an100`,
-prefixo e 3 casas em `visual-nivel.js`). Teste novo garante 100 obras inéditas. Prévia renderizada
-conferida. Os temas de estereótipo machista e violência doméstica pedidos antes foram recusados e
-não entram. Unitários: 678. E2E de visuais ajustado (25 novos no nível 15, 344 cadeados).
-
-## Funeral do shape (não lançado), 18/11/2026
-
-Pedido do usuário: comida fora da dieta → slide de funeral com fotos de uma personagem gerada
-no ChatGPT (ele mostrou o print da geração; `assets/funeral/foto01–12.jpg`, 360 px). Detecção
-na intenção `docinho` (`COMIDA_GORDA` em `scripted-provider.js`), que agora vence o pacote de
-comida; `_doChatAction('nojo')` → `Companion._funeral` (11 s, 6 fotos sorteadas, legenda);
-layout no lugar do balão (`funeral` no estado do overlay, `#funeral` sem clique). Visual "Luto do
-Shape" (`partesDoLuto`, canal `nvLuto`): vômito, poça, lágrimas; o overlay liga boca aberta,
-tristeza e o movimento enquanto há funeral. Auditoria 18/11: todos os 269 visuais com cores do
-personagem + forma (teste "diretrizes" em `visual-nivel.test.js`). Testes:
-`pacotes.test.js` e E2E em `needs.windows.mjs` (47 E2E).
-
-## Visuais por nível (não lançado), 18/11/2026
-
-REGRA IRREDUTÍVEL (pedido de 18/11): títulos = referências de filme, anime, série, jogo e
-cultura pop, sem repetir obra (teste em `visual-nivel.test.js`), todas as clássicas de
-tubarão presentes (Tubarão 2, 3 e 4 entram como filmes próprios); `extras` = 20 visuais de
-South Park (ids `sp01`–`sp20`, níveis 10, 20 … 200) e 50 de memes do Twitter (`tw01`–`tw50`,
-níveis 4, 8 … 200, sem pudor), fora dos títulos, separados pelo campo `colecao`; peça, fala e reação de cada nível vêm da
-referência. Dados em `progressao.json` → `referencias` (titulo, obra, tipo, parte, forma,
-peca, cores, fala, anim, reacao?), alinhado com `niveis`. Formas desenhadas em
-`visual-nivel.js` (FORMAS, PINTURA, AURA, MAO); brilhos de acabamento no grupo
-`nivelBrilho`. A seção abaixo descreve a primeira versão (títulos marinhos), substituída.
-Transformações (18/11, autorizadas pela usuária só para visuais): `transforma` em cada
-referência/extra (`cabeca`, `corpo`, `boca` — fatores; `olhos` — estilo em `OLHOS`; `pele` —
-corpo/barriga/musculo/cabeca/olho/esclera). Renderer: canais `nvCabeca` (escala no pivô do
-pescoço, partes `headRot` e rosto), `nvCorpo` (partes marcadas `corpoX`; braços `ladoX`),
-`nvBoca`, `nvOlhos` (`_olhoEstilo`) e paleta `costume_pele<id>` (cabeça usa `nvCabecaPele`).
-A peça mais recente vence cada transformação. Exagero (18/11): `barrigona` (fator),
-`papada`, `manchasOlhos`/`orelhasRedondas` (cor), `suor`, `baba`, `sujeira`, `moscas` viram
-partes (`partesDoCorpo`, grupo `nivelCorpo`); `pele.membros` pinta braços e pernas (`nvMembros`).
-Detalhe do panda em todos (18/11): `pele.bracos`/`pele.pernas` (`nvBracos`/`nvPernas`; `membros`
-pinta os dois), traços `orelhas` (ogro, gato, cachorro, coelho, elfo, totoro, pequenas; cor =
-pele da cabeça ou `corOrelhas`), `chifres` (inseto, diabo), `juba`, `antenas`, `serraCabeca`,
-`tenis`, `pintas`; forma `transformacao` = só o corpo, sem objeto. Arquinho de orelha removido.
-Movimento: partes usam `scaleBy`/`dx`/`dy` com canais `nvBarriga`, `nvPapada`, `nvMoscaX/Y`,
-`nvSuor`, `nvBaba`, `nvAura`, `nvBolhas`, `nvBrilho/2`, calculados por quadro em
-`movimentoVisual` (overlay; desligado no movimento reduzido). `Companion._animDoVisual`:
-18% das escolhas de repouso tocam a animação de uma referência vestida. Janela ganha espaço extra em cima/dos lados.
-Avisos (18/11): `visualNivel.avisar` guarda o que o JoJo ainda não anunciou (abertura,
-nível novo; repetido a cada minuto se não deu para falar) e `novas` o que a Central
-ainda não mostrou (selo "Novo", contador no botão; `app:visuais-vistos` limpa). Na
-Central, liberado = nome + obra + fala; trancado = só `{nivel}` → cadeado.
-
-Pedido: a cada nível uma melhoria de aparência coerente com o título, o nível N+1
-melhor que o N, tudo liberado equipável à vontade e nada bloqueado visível.
-`src/core/visual-nivel.js` gera 199 peças (níveis 2–200) a partir dos títulos de
-`progressao.json`: parte por nível (`parteDoNivel`), cor por palavra do título
-(`temaDoTitulo`), detalhe crescente por faixa e por nível (`t`). Só peças por cima
-do desenho: `rigComVisuais` acrescenta partes com `showIf` próprio (`nv_nvNNN`;
-bermuda por `costume_bermudaNvNNN`) e dois grupos sem contorno (`nivelAura` atrás de
-tudo, `nivelPintura` após `armDetail`), sem tocar nas partes originais. Estado em
-`visualNivel` ({pecas, visto}); `Progress.onLevelUp` → `Companion._syncVisual` veste a
-peça nova e avisa; a parte ocupada por roupa/fantasia fica com elas (`canaisVisual`).
-Central recebe só `visualSnapshot` (liberadas). Testes: `test/unit/visual-nivel.test.js`
-e E2E em `test/e2e/needs.windows.mjs`; contagens do CI 667 unitários e 46 E2E.
-Vai na 0.47.2 junto com o WhatsApp.
+Pedido da usuária: "Publica tudo menos o que envolve WhatsApp". A árvore de
+`codex/living-companion` passa a ser a 0.47.0 publicada (`8abfe20`) + progressão ×10
+(200 títulos, 238 bônus, `src/core/xp-escala.js`), painel do aquário sem corte e seções
+"Lista de Tarefas"/"Bloqueio do Discord" ocultas. Todo o código do WhatsApp volta ao da
+0.47.0. A revisão completa do WhatsApp continua intacta em `claude/dreamy-allen-4mtm7j`
+(até `4ff91e8`) para uma versão futura; trazer de volta é aplicar aquela branch por cima.
+Unitários: 632 (620 da linha de base + 12 novos). E2E esperados: 44.
 
 ## Em andamento — revisão do WhatsApp (não lançada), 13/11/2026
 
@@ -120,13 +65,6 @@ conversa real por variação do modelo (frase de desdém recusada pela guarda de
 `coherence.js`, fora do WhatsApp; a usuária pediu para não alterar a conversa). Novo
 relato: o celular recusava o QR ("Verifique sua conexão"); causa e correção no adendo
 de `docs/WHATSAPP_DIAGNOSTICO.md` (identidade Chrome e `companion_reg_refresh`).
-
-PUBLICADA 18/11: a 0.47.1 saiu SEM o WhatsApp (pedido "Publica tudo menos o que envolve
-WhatsApp"), da árvore `codex/living-companion` @ `69af7c5`, run 44203264231 tentativa 2
-(conversa aprovada; release pública e atualizador verificados pelo próprio run). Conteúdo:
-200 títulos, curva da 0.47.0 ×10, 238 bônus (coleção, não aceleram nível), painel sem
-corte, seções de Tarefas e Discord ocultas. O WhatsApp desta branch precisa sair como
-0.47.2 (versão, CHANGELOG e `ci/actions-cost-policy.json` a ajustar na próxima publicação).
 
 Publicação 0.47.1 (13/11, autorizada pela usuária): versão, CHANGELOG e política
 preparados em `dd50b99`, `codex/living-companion` avançada por fast-forward. Run oficial
