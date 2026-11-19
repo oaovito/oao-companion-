@@ -117,6 +117,8 @@
   some a condescendência ("como você deveria entender", "não tente me enganar").
 - Xingar quem fez mal a ela ("esse chefe é um idiota") é ficar do lado dela e passa; xingar ela
   continua proibido.
+- Desabafo dela não vira "não em reclamar", sem tarefa inventada ("a leitura") e concordância
+  certa nos exemplos ("uma pessoa… o corpo dela").
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

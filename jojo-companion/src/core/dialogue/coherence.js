@@ -178,6 +178,10 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   // Condescendência no fim da frase: ", como você deveria entender", ", inteligente."
   t = t.replace(/,?\s*como (?:voce|você|vc) (?:deveria|deve|devia) (?:entender|saber)(?=[.!?]|$)/gi, '')
     .replace(/,\s*(?:inteligente|espertinha|g[eê]nio)(?=[.!?]|$)/gi, '');
+  // Desabafo não é reclamação: ", não em reclamar" sai.
+  t = t.replace(/,?\s*(?:e )?n[aã]o (?:em|pra|para) (?:ficar )?reclamar(?=[.!?]|$)/gi, '');
+  // "uma pessoa ... o corpo dele" → "o corpo dela".
+  if (/\buma pessoa\b/i.test(t)) t = t.replace(/\b([Oo]) corpo dele\b/g, '$1 corpo dela');
   // "Você disse que manga." → "Você disse manga."
   t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
   t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');
@@ -243,7 +247,7 @@ export function erroDeCoerencia(input, output, history = []) {
   if (REVES.test(q) && BRONCA.test(r)) return 'ficou contra ela';
   // Fato da vida dela que ela não contou (prazo amanhã, relatório, prova, reunião).
   const contado = norm([input, ...history.map((h) => h.text)].join(' '));
-  const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem)\b/g) || []).find((w) => !contado.includes(w));
+  const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura|trabalheira)\b/g) || []).find((w) => !contado.includes(w));
   if (inventado) return `inventou fato da vida dela (${inventado})`;
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
