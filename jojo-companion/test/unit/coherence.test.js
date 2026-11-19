@@ -780,3 +780,8 @@ test('run 250: revés sem "covardes", sem "não tem jeito", sem "levanta essa bu
   assert.equal(semBronca('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito. Respira e amanhã a gente fecha esse projeto.'), 'Que droga, Manu! Respira e amanhã a gente fecha esse projeto.');
   assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso não tem jeito.'), 'ficou contra ela');
 });
+
+test('run 251: sem "não precisa ser tão complicado" e sem "eu não aguento brincadeira"', () => {
+  assert.equal(semDesdem('Você disse verde. Não precisa ser tão complicado com as cores.'), 'Você disse verde.');
+  assert.equal(semDesdem('Que pena, Manu. Mas você sabe que eu não aguento brincadeira, né? Vamos ao que interessa, então.'), 'Que pena, Manu. Vamos ao que interessa, então.');
+});
