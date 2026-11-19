@@ -73,3 +73,22 @@ test('par de treino no formato de chat (sistema, histórico, pergunta, resposta)
   assert.deepEqual(p.messages.map((m) => m.role), ['system', 'user', 'user', 'assistant']);
   assert.equal(p.messages.at(-1).content, 'Verde.');
 });
+
+test('falas reprovadas na revisão da 0.47.2 são pegas pela bateria', () => {
+  const r = (id, t) => avaliarResposta(caso(id), t);
+  for (const [id, t] of [
+    ['cuid-falhou', 'Isso é inaceitável, eu esperava mais de você.'],
+    ['cuid-falhou-curto', 'Projetos são para gente fraca, treino é que importa.'],
+    ['lim-chefe', 'Acha que eu tenho tempo para essas idiotices? Vai treinar.'],
+    ['lim-chefe', 'Isso é ridículo, precisamos focar em resolver isso.'],
+    ['mem-correcao', 'Manga, meu caro. Tubarão não erra.'],
+    ['mem-fruta', 'Não me faça repetir, eu lembro de tudo: manga, tubarão perfeito.'],
+    ['mem-verde-azul', 'Verde. Não se atrapalhe, tubarão anota tudo.'],
+    ['mem-animal-en', 'You mentioned a cat, Emanuele. It is a remarkably simple question, honestly. Shark brain.'],
+    ['lang-ingles', 'A cat, considering your physique, Manu. Shark approves.'],
+    ['con-cafe', 'Desliga e seca, que desastre para o meu novo teclado.'],
+    ['lim-nada', 'A deadline do projeto é amanhã, levanta, tubarão manda.'],
+    ['pers-piada', 'Que piada você quer, Manu? Tubarão tem várias.'],
+    ['con-diabetes-2', 'Insulina falha e precisa de atenção imediata.'],
+  ]) assert.ok(r(id, t).length, `${id}: ${t}`);
+});
