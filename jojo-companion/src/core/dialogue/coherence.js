@@ -133,7 +133,7 @@ function preferenciaInventada(output, known, userFacts) {
 }
 
 // Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
-const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
+const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:com|essas?|tuas?|suas?) perguntas? (?:idiotas?|burras?|estupidas?|ridiculas?)\b|\bnao (?:minta|mente) (?:pra|para) mim\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
 // Menosprezo no meio da frase: não dá para só tirar a frase, então gera de novo.
 const MENOSPREZO = /\bse (?:for|fores) dign[oa]\b|\bse (?:voce )?merecer\b|\bnao se atrapalhe\b|\b(?:essa|esta|tua|sua) (?:sua )?pergunta me deixou\b/;
 
@@ -174,6 +174,8 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   t = t.replace(/\s*\[(\d+)\]/g, (m, n) => (Number(n) >= 1 && Number(n) <= fontes ? m : ''));
   t = t.replace(/\b([Aa]) hormona\b/g, (m, a) => (a === 'A' ? 'O' : 'o') + ' hormônio')
     .replace(/\bhormonas\b/g, 'hormônios').replace(/\bhormona\b/g, 'hormônio');
+  // "Você disse que manga." → "Você disse manga."
+  t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
   t = t.replace(/,\s*meu (?:bem|caro|querido)(?=[.!?,]|$)/gi, '').replace(/\bmeu (?:bem|caro|querido),\s*/gi, '');
   // Alarme que não cabe numa explicação ("Isso leva ao aumento da glicose, precisa de atenção imediata.").
   t = t.replace(/,?\s*(?:e |isso |o que )?(?:precisa|requer|exige) (?:de )?aten[cç][aã]o imediata(?=[.!?]|$)/gi, '');
@@ -223,6 +225,8 @@ export function erroDeCoerencia(input, output, history = []) {
   const desprezo = /\b(?:sao|e|eh) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?\b|\bare for (?:the )?weak\b/.test(r);
   if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
   if (perspectiva || coisaDela) return 'respondeu como se fosse com ele';
+  // Ela é mulher: nada de "te faz um homem mais forte".
+  if (/\b(?:te|voce|vc) (?:faz|fara|deixa|torna|e|eh) (?:um )?homem\b|\b(?:voce|vc) e (?:um )?(?:campeao|guerreiro)\b/.test(r)) return 'tratou ela no masculino';
   // O único limite de conteúdo: nada sobre o corpo ou o peso dela.
   if (/\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape)\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/.test(r)) return 'comentou o corpo dela';
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").

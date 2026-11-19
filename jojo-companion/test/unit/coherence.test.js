@@ -677,3 +677,13 @@ test('run 237: revés dela — a bronca sai e o apoio fica; o modelo responde', 
   assert.equal(r.intent, 'ia');
   assert.equal(r.text, 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
 });
+
+test('run 238: sem "perguntas idiotas", sem "não minta pra mim", ela no feminino, "disse manga"', () => {
+  assert.equal(semDesdem('Você disse manga, Emanuele. Não me venha com perguntas idiotas.'), 'Você disse manga, Emanuele.');
+  assert.equal(semDesdem('Você disse que sua cor preferida é verde, Emanuele. Não minta pra mim, isso é ridículo.'), 'Você disse que sua cor preferida é verde, Emanuele.');
+  assert.equal(erroDeCoerencia('Qual a minha fruta preferida?', 'Manga. Não me venha com perguntas idiotas.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('Minha fruta preferida é manga.', 'Manga, é? A doçura dela te faz um homem mais forte, não acha?'), 'tratou ela no masculino');
+  assert.equal(erroDeCoerencia('Minha fruta preferida é manga.', 'Manga, é? Doce como campeã merece.'), null);
+  assert.equal(polirTexto('Você disse que manga, Emanuele.'), 'Você disse manga, Emanuele.');
+  assert.equal(polirTexto('Você disse que sua cor preferida é verde.'), 'Você disse que sua cor preferida é verde.');
+});
