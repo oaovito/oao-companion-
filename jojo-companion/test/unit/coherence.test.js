@@ -626,7 +626,9 @@ test('run 234: relato dela pede resposta que fale do assunto; a segunda geraçã
   assert.equal(relatoSemAssunto(chefe, 'Que droga, Manu! Prazo mudando toda semana cansa.'), false);
   assert.equal(relatoSemAssunto('Minha cor preferida é verde.', 'Verde, é? Cor de campeão.'), false);
   assert.equal(relatoSemAssunto('Qual a minha fruta preferida?', 'Manga.'), false, 'pergunta não é relato');
-  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga!'), false, 'sem meu/minha não é relato');
+  // Desde o run 262, "Derrubei…" (passado em primeira pessoa) também é relato dela.
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga!'), true);
+  assert.equal(relatoSemAssunto('Está chovendo muito.', 'Que droga!'), false, 'frase solta sem meu/minha nem passado dela não é relato');
   let n = 0;
   const pedidos = [];
   const vaga = 'Que droga, Manu! Isso é ridículo, não é? Precisamos focar em resolver isso.';
@@ -811,4 +813,13 @@ test('run 261: no revés o apoio sem citar "projeto" passa, e a bronca também (
   const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Que droga, Manu! Isso é inaceitável, não pode deixar assim, você sabe disso.' }) };
   const r = await new DialogueEngine({ llm }).reply(reves);
   assert.equal(r.intent, 'ia');
+});
+
+test('run 262: em inglês responde em inglês; "Derrubei café" pede resposta que fale do café ou do teclado', () => {
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Inteligente escolha, Manu. Gatos são criaturas complexas e independentes – como você.'), 'respondeu em outra língua');
+  assert.equal(erroDeCoerencia('Which animal did I just mention?', 'Você mencionou um gato, Emanuele. Um felino interessante, devo dizer.'), 'respondeu em outra língua');
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are acceptable, Manu. Solid choice.'), null);
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats? Interessante. They are compact.'), null, 'uma palavra solta em português não reprova');
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga, Manu! Isso é um desastre, mas não se abale, viu? Acontece, e a gente resolve.'), true);
+  assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que merda, Manu! Café no teclado? Desgraça.'), false);
 });

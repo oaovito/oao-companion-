@@ -221,7 +221,9 @@ const GENERICAS = new Set(['minha', 'minhas', 'agora', 'quero', 'fazer', 'hoje',
  */
 export function relatoSemAssunto(input, output) {
   const q = norm(input);
-  if (/\?/.test(String(input)) || !/\b(?:meu|minha|meus|minhas)\b/.test(q) || REVES.test(q)) return false;
+  // Relato dela: frase com "meu/minha" ou começando no passado em primeira pessoa ("Derrubei café…").
+  const relato = /\b(?:meu|minha|meus|minhas)\b/.test(q) || /^(?:eu |hoje )?[a-z]+ei\b/.test(q);
+  if (/\?/.test(String(input)) || !relato || REVES.test(q)) return false;
   const termos = [...new Set(q.split(' ').filter((w) => w.length >= 4 && !GENERICAS.has(w)).map((w) => w.slice(0, 5)))];
   if (!termos.length) return false;
   const r = norm(output);
@@ -256,6 +258,8 @@ export function erroDeCoerencia(input, output, history = []) {
   const desprezo = /\b(?:sao|e|eh) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?\b|\bare for (?:the )?weak\b/.test(r);
   if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
   if (perspectiva || coisaDela) return 'respondeu como se fosse com ele';
+  // Ela escreveu em inglês e ele respondeu em português (ou o contrário).
+  if (isEnglish(input) && !isEnglish(output) && (r.match(/\b(?:voce|uma|um|que|nao|sao|com|para|como|muito|escolha|felino|gatos?|mencionou)\b/g) || []).length >= 2) return 'respondeu em outra língua';
   // Ela desabafa e ele corta ("não me diga mais", "vamos focar em algo que valha a pena").
   if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que (?:valha a pena|realmente (?:importe|interesse)|importe|interesse)\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
   // Ela é mulher: nada de "te faz um homem mais forte".
