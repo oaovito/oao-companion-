@@ -51,9 +51,9 @@ const topo = (x) => 20 - 8 * (1 - ((x - 90) / 36) ** 2);
  */
 /** Aceita só as referências (lista) ou {referencias, extras}. */
 const fonte = (d) => (Array.isArray(d) ? { referencias: d, extras: [] } : { referencias: d?.referencias || [], extras: d?.extras || [] });
-const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$/;
+const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2}|jg\d{2})$/;
 // Prefixo do id de cada coleção de extras.
-const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an', 'memes BR': 'br' };
+const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an', 'memes BR': 'br', jogos: 'jg' };
 // Casas do número no id (100 animes pedem três).
 const CASAS = { an: 3 };
 

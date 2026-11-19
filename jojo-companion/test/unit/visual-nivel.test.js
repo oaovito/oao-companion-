@@ -44,13 +44,13 @@ test('extras: 20 de South Park (um a cada 10 níveis) e 50 de memes do Twitter (
   assert.deepEqual(sp.map((x) => x.nivel), Array.from({ length: 20 }, (_, i) => (i + 1) * 10));
   assert.deepEqual(tw.map((x) => x.nivel), Array.from({ length: 50 }, (_, i) => (i + 1) * 4));
   assert.ok(sp.every((x) => x.obra === 'South Park'));
-  assert.equal(new Set(PROG.extras.map((x) => x.titulo)).size, 222, 'nenhum extra repetido');
+  assert.equal(new Set(PROG.extras.map((x) => x.titulo)).size, 272, 'nenhum extra repetido');
   // Nenhum meme dos extras repete um título de nível.
   const titulos = new Set(PROG.niveis.map((t) => t.toLowerCase()));
   assert.ok(tw.every((x) => !titulos.has(x.titulo.toLowerCase())));
   const cat = CAT.filter((p) => p.extra);
-  assert.equal(cat.length, 222);
-  assert.ok(cat.every((p) => /^((sp|tw|br)\d{2}|an\d{3})$/.test(p.id) && partesDaPeca(p).length >= 1));
+  assert.equal(cat.length, 272);
+  assert.ok(cat.every((p) => /^((sp|tw|br|jg)\d{2}|an\d{3})$/.test(p.id) && partesDaPeca(p).length >= 1));
   assert.equal(new Set(CAT.map((p) => p.nome)).size, CAT.length, 'nenhuma peça com nome repetido');
 });
 
@@ -132,10 +132,10 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
   assert.equal(r.palette.nvCabecaPele, RIG.palette.body, 'sem visual, a cabeça tem a cor de sempre');
   const todas = r.groups.flatMap((g) => g.parts);
   assert.equal(new Set(todas.map((p) => p.id)).size, todas.length, 'ids únicos no rig');
-  const novas = todas.filter((p) => /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})_/.test(p.id));
+  const novas = todas.filter((p) => /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2}|jg\d{2})_/.test(p.id));
   assert.ok(novas.length > 600);
   for (const p of novas) {
-    assert.match(p.showIf, /^nv_(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$|^tigresaAnim$|^tigresaNua$|^pelado$|^meme_(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$/, 'canal da peça (ou a animação do meme da Tigresa / pelado)');
+    assert.match(p.showIf, /^nv_(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2}|jg\d{2})$|^tigresaAnim$|^tigresaNua$|^pelado$|^meme_(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2}|jg\d{2})$/, 'canal da peça (ou a animação do meme da Tigresa / pelado)');
     assert.ok(!/NaN|undefined/.test(p.path), p.id);
     assert.ok(/^#[0-9a-f]{6}$/i.test(p.fill) || ['body', 'cream', 'nvCabecaPele', 'nvBracos', 'nvPernas'].includes(p.fill), p.id);
     // Pontos absolutos (sem os deslocamentos relativos dos arcos e curvas) cabem no espaço da janela.
@@ -152,7 +152,7 @@ test('desenho: só peças por cima (corpo intacto), ids únicos, números válid
 test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central só têm o que já foi liberado', () => {
   const L = 14;
   assert.ok(visuaisLiberados(REF, L).every((p) => p.nivel <= L));
-  assert.equal(visuaisLiberados(REF, L).length, L - 1 + 1 + 3 + 7 + 2 + 4, 'níveis 2 a 14, o South Park do 10, os memes do 4, 8 e 12, 7 animes, as duas Tigresas e os memes BR do 2, 6, 10 e 14');
+  assert.equal(visuaisLiberados(REF, L).length, L - 1 + 1 + 3 + 7 + 2 + 4 + 3, 'níveis 2 a 14, o South Park do 10, os memes do 4, 8 e 12, 7 animes, as duas Tigresas, os memes BR do 2, 6, 10 e 14 e os jogos do 3, 7 e 11');
   assert.equal(visuaisLiberados(REF, 1).length, 0, 'nível 1: nada');
   const bloqueada = CAT.find((p) => p.nivel === 15);
   assert.equal(pecaLiberada(REF, L, bloqueada.id), null);
@@ -171,14 +171,14 @@ test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central 
   const snap = visualSnapshot(forjado, REF, L);
   const titulos = new Set(snap.partes.flatMap((pt) => pt.itens.map((i) => i.titulo)));
   for (const p of CAT.filter((x) => x.nivel > L)) assert.ok(!json.includes(`"${p.nome}"`) && !json.includes(`"${p.id}"`) && !titulos.has(p.titulo), p.nome);
-  assert.equal(snap.total, L + 16);
+  assert.equal(snap.total, L + 19);
   assert.deepEqual(snap.vestido, { cabeca: 'nv003' });
   assert.ok(snap.partes.every((pt) => pt.itens.length > 0), 'parte sem peça liberada nem aparece');
   assert.ok(snap.partes.flatMap((pt) => pt.itens).every((i) => i.obra && i.titulo), 'cada peça mostra a obra');
   const zero = visualSnapshot({}, REF, 1);
   assert.deepEqual([zero.vestido, zero.partes, zero.total, zero.novos], [{}, [], 0, 0]);
   // Bloqueados: só cadeado com o nível; nenhuma pista do que é.
-  assert.equal(snap.bloqueados.length, CAT.length - (L + 16));
+  assert.equal(snap.bloqueados.length, CAT.length - (L + 19));
   for (const b of snap.bloqueados) {
     assert.deepEqual(Object.keys(b), ['nivel']);
     assert.ok(b.nivel > L);
@@ -193,7 +193,7 @@ test('bloqueado nunca aparece: lista, busca, vestir, canais e resumo da Central 
 
 test('subir de nível: primeira vez veste o mais recente de cada parte; depois só a peça nova, respeitando o que ela tirou', () => {
   let { estado, novas } = aplicarNivel({}, REF, 12);
-  assert.equal(novas.length, 26, 'níveis 2 a 12, o South Park do 10, os memes do 4, 8 e 12, 6 animes, as duas Tigresas e os memes BR do 2, 6 e 10');
+  assert.equal(novas.length, 29, 'níveis 2 a 12, o South Park do 10, os memes do 4, 8 e 12, 6 animes, as duas Tigresas, os memes BR do 2, 6 e 10 e os jogos do 3, 7 e 11');
   assert.deepEqual(estado.pecas, melhorConjunto(REF, 12));
   estado = vestirVisual(estado, REF, 12, estado.pecas.cabeca).estado; // ela tirou a peça da cabeça
   assert.equal(estado.pecas.cabeca, undefined);

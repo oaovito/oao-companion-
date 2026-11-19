@@ -9,7 +9,7 @@ import { animDoMeme, canalMeme, comAnimacoesMemes, memeDoTexto, itensDeMemes, GE
 const PROG = loadJSON('assets/catalog/progressao.json');
 const REF = { referencias: PROG.referencias, extras: PROG.extras };
 const CAT = gerarVisuais(REF);
-const MEMES = CAT.filter((p) => p.meme);
+const MEMES = CAT.filter((p) => p.meme && p.colecao === 'memes BR');
 const RIG = loadJSON('assets/character/jojo.rig.json');
 
 test('coleção: 50 memes BR (br03 a br52), um a cada 4 níveis a partir do 2, sem repetir obra nem frase', () => {
@@ -91,7 +91,7 @@ test('revisão no padrão da Tigresa: todo visual antigo tem fantasia completa e
     assert.ok(f.baixo === null ? p.parte === 'bermuda' : SLOTS.BAIXOS[f.baixo], `${p.id}: parte de baixo`);
   }
   const todos = visuaisComAnimacao(REF);
-  assert.equal(todos.length, 419, '369 visuais + 50 memes BR');
+  assert.equal(todos.length, 469, '369 visuais + 50 memes BR + 50 jogos');
   const A = comAnimacoesMemes(loadJSON('assets/animations/jojo.animations.json'), todos);
   const { Animator } = await import('../../src/renderer/shared/animator.js');
   const v = todos.find((p) => p.id === 'sp01');
@@ -128,4 +128,34 @@ test('durante a animação com fantasia inteira as peças vestidas saem (overlay
   for (const n of ['idle', 'twerk', undefined, 'cat_selfie']) assert.equal(ehAnimFantasia(n), false, String(n));
   const fs = await import('node:fs');
   assert.match(fs.readFileSync(new URL('../../src/renderer/overlay/overlay.js', import.meta.url), 'utf8'), /if \(s\.visualNivel && !fantasiaInteira\)/);
+});
+
+test('jogos (pedido de 19/11/2026): 50 visuais de clássicos, jg01 a jg50, fantasia inteira, corpo variado e show de 6,5 s', async () => {
+  const J = CAT.filter((p) => p.colecao === 'jogos');
+  assert.equal(J.length, 50);
+  assert.deepEqual([J[0].id, J.at(-1).id], ['jg01', 'jg50']);
+  assert.deepEqual(J.map((p) => p.nivel), Array.from({ length: 50 }, (_, i) => 3 + 4 * i));
+  assert.equal(new Set(J.map((p) => p.obra)).size, 50, 'um jogo por visual');
+  assert.ok(!J.some((p) => /league of legends/i.test(p.obra)), 'LoL fica de fora');
+  const titulos = new Set([...PROG.referencias.map((r) => r.titulo), ...MEMES.map((p) => p.titulo)]);
+  assert.ok(J.every((p) => !titulos.has(p.titulo)), 'sem repetir título de nível ou meme');
+  // Variedade do padrão: orelhas, chifres, barriga, tamanho de cabeça e de corpo continuam aparecendo.
+  const t = J.map((p) => p.transforma);
+  for (const k of ['orelhas', 'chifres', 'barrigona', 'cabeca', 'corpo']) assert.ok(t.filter((x) => x[k]).length >= 3, `variedade: ${k}`);
+  const r = rigComVisuais(RIG, REF);
+  const partes = r.groups.flatMap((g) => g.parts);
+  for (const p of J) {
+    assert.ok(SLOTS.TRONCOS[p.fantasia.tronco] && SLOTS.PES[p.fantasia.pes] && SLOTS.CABECAS[p.fantasia.cabeca] && SLOTS.MAOS[p.fantasia.mao], p.id);
+    assert.ok(partes.filter((x) => x.showIf === `nv_${p.id}`).length >= 6, `${p.id}: roupa inteira`);
+    assert.equal(animDoMeme(p.id), `jogo_${p.id}`);
+  }
+  const A = comAnimacoesMemes(loadJSON('assets/animations/jojo.animations.json'), J);
+  const { Animator } = await import('../../src/renderer/shared/animator.js');
+  for (const p of J) {
+    const an = new Animator(A); an.play(`jogo_${p.id}`, 0, { restart: true });
+    assert.equal(A.animations[`jogo_${p.id}`].duration, 6500);
+    assert.equal(an.sample(3250).pose[canalMeme(p.id)], 1, p.id);
+  }
+  assert.equal(itensDeMemes(J.slice(0, 1))[0].categoria, 'jogos');
+  assert.equal(memeDoTexto('bora jogar mega man', J)?.id, 'jg01');
 });

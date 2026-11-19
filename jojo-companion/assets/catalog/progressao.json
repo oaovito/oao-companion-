@@ -12690,6 +12690,2731 @@
      "Rogerinho do Ingá aprova esse foco."
     ]
    }
+  },
+  {
+   "nivel": 3,
+   "colecao": "jogos",
+   "titulo": "Mega Buster Carregado",
+   "obra": "Mega Man",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Armadura azul e Mega Buster",
+   "cores": [
+    "#1e88e5",
+    "#4fc3f7",
+    "#ffeb3b"
+   ],
+   "fala": "Mega Buster carregado. Mira apontada pro seu sedentarismo.",
+   "anim": "jogo_jg01",
+   "transforma": {
+    "pele": {
+     "corpo": "#4fc3f7",
+     "cabeca": "#ffe0b2"
+    },
+    "olhos": "grandes",
+    "cabeca": 1.2
+   },
+   "fantasia": {
+    "tronco": "armadura",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "baixo": "#1e88e5",
+     "pes": "#1565c0",
+     "cabeca": "#1e88e5",
+     "brilho": "#4fc3f7",
+     "mao": "#1e88e5",
+     "maoDetalhe": "#ffeb3b"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "raios",
+    "gatilhos": [
+     "mega buster",
+     "mega man"
+    ],
+    "respostas": [
+     "Carregando o Mega Buster, {nome}... pronto. Alvo: preguiça.",
+     "Robô azul? Não. Tubarão azul de armadura."
+    ]
+   }
+  },
+  {
+   "nivel": 7,
+   "colecao": "jogos",
+   "titulo": "Chicote dos Belmont",
+   "obra": "Castlevania",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Armadura de couro e chicote do caçador de vampiros",
+   "cores": [
+    "#6d4c41",
+    "#c62828",
+    "#ffd54f"
+   ],
+   "fala": "Um Belmont não foge. Ele chicoteia.",
+   "anim": "jogo_jg02",
+   "transforma": {
+    "pele": {
+     "corpo": "#d7a27a"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.2
+   },
+   "fantasia": {
+    "tronco": "armadura",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "cabeloLongo",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "chicote",
+    "cores": {
+     "baixo": "#3e2723",
+     "cabeca": "#8d6e63",
+     "pes": "#3e2723",
+     "mao": "#a1887f"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "fogo",
+    "gatilhos": [
+     "castlevania",
+     "what is a man"
+    ],
+    "respostas": [
+     "O que é um homem? Uma pilha miserável de segredos. E bíceps.",
+     "Drácula que se cuide, {nome}."
+    ]
+   }
+  },
+  {
+   "nivel": 11,
+   "colecao": "jogos",
+   "titulo": "Traje Varia",
+   "obra": "Metroid",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Traje laranja de caçadora de recompensas",
+   "cores": [
+    "#ef6c00",
+    "#c62828",
+    "#76ff03"
+   ],
+   "fala": "Caçadora de recompensas. A recompensa é o meu shape.",
+   "anim": "jogo_jg03",
+   "transforma": {
+    "pele": {
+     "corpo": "#ef6c00",
+     "cabeca": "#ef6c00"
+    },
+    "olhos": "brilho",
+    "corpo": 1.15
+   },
+   "fantasia": {
+    "tronco": "armadura",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "baixo": "#c62828",
+     "pes": "#c62828",
+     "cabeca": "#ef6c00",
+     "brilho": "#76ff03",
+     "mao": "#ef6c00",
+     "maoDetalhe": "#76ff03"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "raios",
+    "gatilhos": [
+     "metroid",
+     "samus"
+    ],
+    "respostas": [
+     "Morph ball? Eu viro uma bola de músculo, {nome}.",
+     "Traje Varia equipado. Agora só falta treino de perna."
+    ]
+   }
+  },
+  {
+   "nivel": 15,
+   "colecao": "jogos",
+   "titulo": "Punho de Ferro do Rei",
+   "obra": "Tekken",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Gi rasgado e cabelo de chifre do rei do torneio",
+   "cores": [
+    "#fafafa",
+    "#212121",
+    "#ffd54f"
+   ],
+   "fala": "Torneio do Punho de Ferro. Inscrição: um supino de cem quilos.",
+   "anim": "jogo_jg04",
+   "transforma": {
+    "pele": {
+     "corpo": "#d7a27a"
+    },
+    "olhos": "pretos",
+    "corpo": 1.3,
+    "papada": true,
+    "cabeca": 1.1
+   },
+   "fantasia": {
+    "tronco": "gi",
+    "mangas": "curta",
+    "baixo": "calca",
+    "pes": "descalco",
+    "cabeca": "espetado",
+    "rosto": [
+     "bigodao"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#fafafa",
+     "detalhe": "#212121",
+     "baixo": "#fafafa",
+     "cabeca": "#9e9e9e",
+     "rosto": "#9e9e9e"
+    }
+   },
+   "meme": {
+    "gesto": "grito",
+    "efeito": "raios",
+    "gatilhos": [
+     "tekken",
+     "punho de ferro"
+    ],
+    "respostas": [
+     "Mishima nenhum me derruba, {nome}.",
+     "Joga-te no penhasco? Eu volto escalando."
+    ]
+   }
+  },
+  {
+   "nivel": 19,
+   "colecao": "jogos",
+   "titulo": "Areia do Tempo",
+   "obra": "Prince of Persia",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Colete, bombacha e turbante do príncipe",
+   "cores": [
+    "#1565c0",
+    "#fafafa",
+    "#ffd54f"
+   ],
+   "fala": "Se eu errar o salto, volto o tempo. Simples.",
+   "anim": "jogo_jg05",
+   "transforma": {
+    "pele": {
+     "corpo": "#c68c63"
+    },
+    "olhos": "anime"
+   },
+   "fantasia": {
+    "tronco": "colete",
+    "mangas": null,
+    "baixo": "bombacha",
+    "pes": "sandalia",
+    "cabeca": "turbante",
+    "rosto": [],
+    "pescoco": "colar",
+    "mao": "espada",
+    "cores": {
+     "baixo": "#fafafa",
+     "cabeca": "#fafafa",
+     "brilho": "#ffd54f",
+     "pes": "#8d6e63"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "prince of persia",
+     "areia do tempo"
+    ],
+    "respostas": [
+     "Volta o tempo, {nome}: você ainda não treinou hoje.",
+     "Parkour persa com cento e vinte quilos de músculo."
+    ]
+   }
+  },
+  {
+   "nivel": 23,
+   "colecao": "jogos",
+   "titulo": "Trinta Vidas",
+   "obra": "Contra",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Regata e bandana vermelha de comando",
+   "cores": [
+    "#2e7d32",
+    "#1565c0",
+    "#c62828"
+   ],
+   "fala": "Cima, cima, baixo, baixo... trinta vidas e nenhuma desculpa.",
+   "anim": "jogo_jg06",
+   "transforma": {
+    "pele": {
+     "corpo": "#d7a27a"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.35,
+    "suor": true
+   },
+   "fantasia": {
+    "tronco": "regata",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "bandana",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "tronco": "#fafafa",
+     "baixo": "#1565c0",
+     "cabeca": "#c62828",
+     "pes": "#3e2723",
+     "mao": "#616161",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "grito",
+    "efeito": "fogo",
+    "gatilhos": [
+     "contra",
+     "konami code",
+     "cima cima baixo baixo"
+    ],
+    "respostas": [
+     "Código Konami ativado, {nome}. Trinta vidas e zero preguiça.",
+     "Spread gun na mão e regata suada."
+    ]
+   }
+  },
+  {
+   "nivel": 27,
+   "colecao": "jogos",
+   "titulo": "Solo Lendário",
+   "obra": "Guitar Hero",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Jaqueta de couro e guitarra de cinco botões",
+   "cores": [
+    "#212121",
+    "#e53935",
+    "#ffeb3b"
+   ],
+   "fala": "Nota perfeita. Combo de cem. Plateia chorando.",
+   "anim": "jogo_jg07",
+   "transforma": {
+    "pele": {
+     "corpo": "#c68c63"
+    },
+    "olhos": "semicerrados",
+    "boca": 1.2
+   },
+   "fantasia": {
+    "tronco": "jaqueta",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "cabeloLongo",
+    "rosto": [],
+    "pescoco": "corrente",
+    "mao": "guitarra",
+    "cores": {
+     "baixo": "#424242",
+     "cabeca": "#3e2723",
+     "pescoco": "#bdbdbd",
+     "mao": "#e53935",
+     "maoDetalhe": "#ffeb3b"
+    }
+   },
+   "meme": {
+    "gesto": "samba",
+    "efeito": "notas",
+    "gatilhos": [
+     "guitar hero",
+     "solo de guitarra"
+    ],
+    "respostas": [
+     "Expert, {nome}. Fácil é pra quem não tem bíceps.",
+     "Star power! Levanta a guitarra!"
+    ]
+   }
+  },
+  {
+   "nivel": 31,
+   "colecao": "jogos",
+   "titulo": "Atravessa a Rua",
+   "obra": "Frogger",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Pele de sapo e olhos saltados",
+   "cores": [
+    "#43a047",
+    "#c6ff00",
+    "#fafafa"
+   ],
+   "fala": "Atravessei a avenida inteira sem morrer. Agora a cardio tá paga.",
+   "anim": "jogo_jg08",
+   "transforma": {
+    "pele": {
+     "corpo": "#43a047",
+     "barriga": "#c6ff00"
+    },
+    "olhos": "grandes",
+    "boca": 1.4,
+    "cabeca": 1.2,
+    "pintas": "#2e7d32"
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "peGigante",
+    "cabeca": "nenhuma",
+    "rosto": [
+     "bochechas"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "pes": "#2e7d32",
+     "rosto": "#c6ff00"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "bolhas",
+    "gatilhos": [
+     "frogger",
+     "atravessar a rua"
+    ],
+    "respostas": [
+     "Pula, {nome}. O caminhão não espera.",
+     "Sapo musculoso atravessa qualquer rua."
+    ]
+   }
+  },
+  {
+   "nivel": 35,
+   "colecao": "jogos",
+   "titulo": "@!#?@!",
+   "obra": "Q*bert",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Nariz de tromba e corpo laranja do Q*bert",
+   "cores": [
+    "#ff9100",
+    "#6a1b9a",
+    "#fafafa"
+   ],
+   "fala": "@!#?@! Isso é palavrão de pirâmide.",
+   "anim": "jogo_jg09",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff9100"
+    },
+    "olhos": "grandes",
+    "cabeca": 1.3,
+    "corpo": 0.85
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "tenis",
+    "cabeca": "nenhuma",
+    "rosto": [
+     "bico"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "rosto": "#ff6d00",
+     "pes": "#6a1b9a"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "confete",
+    "gatilhos": [
+     "qbert",
+     "q bert"
+    ],
+    "respostas": [
+     "@!#?@!, {nome}. Tradução: vai treinar.",
+     "Pulando de cubo em cubo, sem cair da pirâmide."
+    ]
+   }
+  },
+  {
+   "nivel": 39,
+   "colecao": "jogos",
+   "titulo": "Bomba de Ar",
+   "obra": "Dig Dug",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Macacão de escavador e bomba de encher",
+   "cores": [
+    "#fafafa",
+    "#1e88e5",
+    "#e53935"
+   ],
+   "fala": "Encho o monstro até estourar. Igual minha barriga no lixo.",
+   "anim": "jogo_jg10",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "pontos",
+    "barrigona": 1.1
+   },
+   "fantasia": {
+    "tronco": "macacao",
+    "mangas": "longa",
+    "baixo": "macacao",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "pecabra",
+    "cores": {
+     "tronco": "#fafafa",
+     "detalhe": "#1e88e5",
+     "baixo": "#fafafa",
+     "cabeca": "#fafafa",
+     "brilho": "#1e88e5",
+     "mao": "#e53935"
+    }
+   },
+   "meme": {
+    "gesto": "incha",
+    "efeito": "bolhas",
+    "gatilhos": [
+     "dig dug"
+    ],
+    "respostas": [
+     "Cava, {nome}. E enche até estourar.",
+     "Pooka nenhum resiste à minha bomba."
+    ]
+   }
+  },
+  {
+   "nivel": 43,
+   "colecao": "jogos",
+   "titulo": "Bomba Relógio",
+   "obra": "Bomberman",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Macacão branco, antena rosa e bomba acesa",
+   "cores": [
+    "#fafafa",
+    "#1e88e5",
+    "#ff4081"
+   ],
+   "fala": "Bomba plantada. Três, dois...",
+   "anim": "jogo_jg11",
+   "transforma": {
+    "pele": {
+     "corpo": "#fafafa",
+     "cabeca": "#fafafa",
+     "musculo": "#e0e0e0"
+    },
+    "olhos": "pretos",
+    "cabeca": 1.3,
+    "antenas": "#ff4081"
+   },
+   "fantasia": {
+    "tronco": "macacao",
+    "mangas": "longa",
+    "baixo": "macacao",
+    "pes": "bota",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "bomba",
+    "cores": {
+     "tronco": "#fafafa",
+     "detalhe": "#1e88e5",
+     "baixo": "#1e88e5",
+     "pes": "#ff4081",
+     "mao": "#212121",
+     "maoDetalhe": "#ffd600",
+     "brilho": "#ffd600"
+    }
+   },
+   "meme": {
+    "gesto": "assusta",
+    "efeito": "fogo",
+    "gatilhos": [
+     "bomberman"
+    ],
+    "respostas": [
+     "Fica atrás do bloco, {nome}.",
+     "Explosão em cruz, alcance máximo."
+    ]
+   }
+  },
+  {
+   "nivel": 47,
+   "colecao": "jogos",
+   "titulo": "Dragão Duplo",
+   "obra": "Double Dragon",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Colete e calça de luta de rua",
+   "cores": [
+    "#1565c0",
+    "#fafafa",
+    "#ffd54f"
+   ],
+   "fala": "Briga de rua com cotovelada. Clássico.",
+   "anim": "jogo_jg12",
+   "transforma": {
+    "pele": {
+     "corpo": "#d7a27a"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.3,
+    "cabeca": 0.9
+   },
+   "fantasia": {
+    "tronco": "colete",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "topete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "baixo": "#fafafa",
+     "cabeca": "#8d6e63",
+     "pes": "#3e2723"
+    }
+   },
+   "meme": {
+    "gesto": "flexao",
+    "efeito": "raios",
+    "gatilhos": [
+     "double dragon"
+    ],
+    "respostas": [
+     "Rua é minha, {nome}.",
+     "Cotovelada giratória e bíceps no lugar."
+    ]
+   }
+  },
+  {
+   "nivel": 51,
+   "colecao": "jogos",
+   "titulo": "Machado Dourado",
+   "obra": "Golden Axe",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Tanga de bárbaro, barba e machado",
+   "cores": [
+    "#8d6e63",
+    "#c62828",
+    "#ffd54f"
+   ],
+   "fala": "Bárbaro, anão, amazona... eu sou os três.",
+   "anim": "jogo_jg13",
+   "transforma": {
+    "pele": {
+     "corpo": "#c68c63"
+    },
+    "olhos": "pretos",
+    "corpo": 1.4,
+    "cabeca": 0.85,
+    "papada": true,
+    "chifres": "inseto",
+    "corChifres": "#fafafa"
+   },
+   "fantasia": {
+    "tronco": "tanga",
+    "mangas": null,
+    "baixo": "tanga",
+    "pes": "bota",
+    "cabeca": "elmo",
+    "rosto": [
+     "barba"
+    ],
+    "pescoco": "colar",
+    "mao": "machado",
+    "cores": {
+     "baixo": "#8d6e63",
+     "cabeca": "#9e9e9e",
+     "brilho": "#ffd54f",
+     "rosto": "#ff8f00",
+     "pescoco": "#fafafa",
+     "mao": "#cfd8dc",
+     "maoDetalhe": "#ffffff"
+    }
+   },
+   "meme": {
+    "gesto": "grito",
+    "efeito": "raios",
+    "gatilhos": [
+     "golden axe",
+     "machado dourado"
+    ],
+    "respostas": [
+     "Machado no alto, {nome}! Magia de anão!",
+     "Bárbaro de verdade não pula leg day."
+    ]
+   }
+  },
+  {
+   "nivel": 55,
+   "colecao": "jogos",
+   "titulo": "Cachorro Rindo do Pato",
+   "obra": "Duck Hunt",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Orelhas de cachorro e risadinha",
+   "cores": [
+    "#8d6e63",
+    "#fafafa",
+    "#43a047"
+   ],
+   "fala": "Errou o pato? Eu rio. Sempre.",
+   "anim": "jogo_jg14",
+   "transforma": {
+    "pele": {
+     "corpo": "#a1887f",
+     "barriga": "#efebe9"
+    },
+    "olhos": "semicerrados",
+    "orelhas": "cachorro",
+    "corOrelhas": "#5d4037",
+    "boca": 1.3
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "cauda",
+    "pes": "descalco",
+    "cabeca": "nenhuma",
+    "rosto": [
+     "bochechas"
+    ],
+    "pescoco": "lencoPescoco",
+    "mao": "nenhum",
+    "cores": {
+     "pescoco": "#e53935",
+     "baixo": "#8d6e63",
+     "rosto": "#ff8a80"
+    }
+   },
+   "meme": {
+    "gesto": "ginga",
+    "efeito": "penas",
+    "gatilhos": [
+     "duck hunt",
+     "cachorro do duck hunt"
+    ],
+    "respostas": [
+     "Hehehe. Errou de novo, {nome}.",
+     "O pato fugiu e eu ri. Faz parte."
+    ]
+   }
+  },
+  {
+   "nivel": 59,
+   "colecao": "jogos",
+   "titulo": "Pequeno Grande Mac",
+   "obra": "Punch-Out!!",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Regata, short e luvas verdes de boxe",
+   "cores": [
+    "#43a047",
+    "#212121",
+    "#fafafa"
+   ],
+   "fala": "Baixinho no ringue, gigante no supino.",
+   "anim": "jogo_jg15",
+   "transforma": {
+    "pele": {
+     "corpo": "#c68c63"
+    },
+    "olhos": "grandes",
+    "cabeca": 1.15,
+    "corpo": 0.9
+   },
+   "fantasia": {
+    "tronco": "regata",
+    "mangas": null,
+    "baixo": "short",
+    "pes": "tenis",
+    "cabeca": "espetado",
+    "rosto": [
+     "bochechas"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#212121",
+     "baixo": "#43a047",
+     "pes": "#fafafa",
+     "cabeca": "#212121",
+     "rosto": "#ff8a80"
+    }
+   },
+   "meme": {
+    "gesto": "flexao",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "punch out",
+     "little mac"
+    ],
+    "respostas": [
+     "Star punch, {nome}! Três estrelas!",
+     "Mike Tyson ia suar comigo."
+    ]
+   }
+  },
+  {
+   "nivel": 63,
+   "colecao": "jogos",
+   "titulo": "De Cueca na Masmorra",
+   "obra": "Ghosts 'n Goblins",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Capacete de cavaleiro e cueca de coração",
+   "cores": [
+    "#cfd8dc",
+    "#e53935",
+    "#fafafa"
+   ],
+   "fala": "Levei um golpe e fiquei de cueca. Sem pudor nenhum.",
+   "anim": "jogo_jg16",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "grandes",
+    "barrigona": 1.15,
+    "suor": true
+   },
+   "fantasia": {
+    "tronco": "tanga",
+    "mangas": null,
+    "baixo": "sunga",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "espada",
+    "estampa": "coracao",
+    "cores": {
+     "baixo": "#fafafa",
+     "cabeca": "#cfd8dc",
+     "brilho": "#90a4ae",
+     "pes": "#9e9e9e",
+     "mao": "#cfd8dc",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "assusta",
+    "efeito": "raios",
+    "gatilhos": [
+     "ghosts n goblins",
+     "de cueca"
+    ],
+    "respostas": [
+     "Um golpe e a armadura voa, {nome}. Fiquei de cueca de coração.",
+     "Cavaleiro de cueca ainda é cavaleiro."
+    ]
+   }
+  },
+  {
+   "nivel": 67,
+   "colecao": "jogos",
+   "titulo": "Minhoca Espacial",
+   "obra": "Earthworm Jim",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Traje espacial branco e cabeça de minhoca",
+   "cores": [
+    "#fafafa",
+    "#e53935",
+    "#ff80ab"
+   ],
+   "fala": "Groovy! Uma minhoca dentro de um traje bombado.",
+   "anim": "jogo_jg17",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff80ab",
+     "cabeca": "#ff80ab"
+    },
+    "olhos": "grandes",
+    "cabeca": 0.8,
+    "corpo": 1.2
+   },
+   "fantasia": {
+    "tronco": "macacao",
+    "mangas": "longa",
+    "baixo": "macacao",
+    "pes": "bota",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "tronco": "#fafafa",
+     "detalhe": "#e53935",
+     "baixo": "#fafafa",
+     "pes": "#8d6e63",
+     "mao": "#e53935",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "ginga",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "earthworm jim",
+     "groovy"
+    ],
+    "respostas": [
+     "Groovy, {nome}!",
+     "Vaca voando? Normal no meu dia."
+    ]
+   }
+  },
+  {
+   "nivel": 71,
+   "colecao": "jogos",
+   "titulo": "Dragãozinho Roxo",
+   "obra": "Spyro",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Chifres dourados e pele roxa de dragão",
+   "cores": [
+    "#7b1fa2",
+    "#ffd54f",
+    "#ff6d00"
+   ],
+   "fala": "Baforada de fogo. Com hálito de whey.",
+   "anim": "jogo_jg18",
+   "transforma": {
+    "pele": {
+     "corpo": "#8e24aa",
+     "barriga": "#ffd54f"
+    },
+    "olhos": "grandes",
+    "chifres": "diabo",
+    "corChifres": "#ffd54f",
+    "cabeca": 1.1
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "cauda",
+    "pes": "descalco",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "baixo": "#8e24aa"
+    }
+   },
+   "meme": {
+    "gesto": "asas",
+    "efeito": "fogo",
+    "gatilhos": [
+     "spyro"
+    ],
+    "respostas": [
+     "Fogo neles, {nome}!",
+     "Dragão roxo, pequeno e invocado."
+    ]
+   }
+  },
+  {
+   "nivel": 75,
+   "colecao": "jogos",
+   "titulo": "Urso e Pássaro",
+   "obra": "Banjo-Kazooie",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Short amarelo, colar de dente e mochila azul",
+   "cores": [
+    "#ffd600",
+    "#1e88e5",
+    "#fafafa"
+   ],
+   "fala": "Guh-huh! Urso com mochila e pássaro reclamão.",
+   "anim": "jogo_jg19",
+   "transforma": {
+    "pele": {
+     "corpo": "#8d6e63",
+     "barriga": "#d7a86e"
+    },
+    "olhos": "pontos",
+    "orelhasRedondas": "#6d4c41",
+    "barrigona": 1.15,
+    "papada": true
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "short",
+    "pes": "descalco",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "colar",
+    "mao": "nenhum",
+    "cores": {
+     "baixo": "#ffd600",
+     "pescoco": "#fafafa"
+    }
+   },
+   "meme": {
+    "gesto": "asas",
+    "efeito": "penas",
+    "gatilhos": [
+     "banjo kazooie",
+     "banjo"
+    ],
+    "respostas": [
+     "Guh-huh, {nome}!",
+     "Notinhas coletadas: cem. Treino: em dia."
+    ]
+   }
+  },
+  {
+   "nivel": 79,
+   "colecao": "jogos",
+   "titulo": "Herói Sem Membros",
+   "obra": "Rayman",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Topete loiro e lenço vermelho do Rayman",
+   "cores": [
+    "#7b1fa2",
+    "#e53935",
+    "#ffd600"
+   ],
+   "fala": "Sem braço, sem perna, com punho voador. E com shape.",
+   "anim": "jogo_jg20",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2",
+     "cabeca": "#ffe0b2"
+    },
+    "olhos": "grandes",
+    "boca": 1.3,
+    "cabeca": 1.15
+   },
+   "fantasia": {
+    "tronco": "camiseta",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "tenis",
+    "cabeca": "topete",
+    "rosto": [],
+    "pescoco": "lencoPescoco",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#7b1fa2",
+     "baixo": "#7b1fa2",
+     "pes": "#ffd600",
+     "cabeca": "#ffd600",
+     "pescoco": "#e53935"
+    }
+   },
+   "meme": {
+    "gesto": "giro",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "rayman"
+    ],
+    "respostas": [
+     "Punho voador, {nome}!",
+     "Helicóptero de cabelo ligado."
+    ]
+   }
+  },
+  {
+   "nivel": 83,
+   "colecao": "jogos",
+   "titulo": "Cipó Sobre o Jacaré",
+   "obra": "Pitfall!",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Camisa de explorador e calça cáqui",
+   "cores": [
+    "#a5d6a7",
+    "#d7ccc8",
+    "#5d4037"
+   ],
+   "fala": "Cipó, jacaré, buraco. Rotina de terça.",
+   "anim": "jogo_jg21",
+   "transforma": {
+    "pele": {
+     "corpo": "#d7a27a"
+    },
+    "olhos": "semicerrados"
+   },
+   "fantasia": {
+    "tronco": "camisa",
+    "mangas": "curta",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#a5d6a7",
+     "detalhe": "#33691e",
+     "baixo": "#d7ccc8",
+     "pes": "#5d4037"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "folhas",
+    "gatilhos": [
+     "pitfall"
+    ],
+    "respostas": [
+     "Agarra o cipó, {nome}!",
+     "Jacaré nenhum me pega."
+    ]
+   }
+  },
+  {
+   "nivel": 87,
+   "colecao": "jogos",
+   "titulo": "Saqueadora de Tumbas",
+   "obra": "Tomb Raider",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Regata, shortinho, coldres e trança",
+   "cores": [
+    "#26a69a",
+    "#6d4c41",
+    "#3e2723"
+   ],
+   "fala": "Tumba saqueada, relíquia no bolso, glúteo trincado.",
+   "anim": "jogo_jg22",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "anime"
+   },
+   "fantasia": {
+    "tronco": "regata",
+    "mangas": null,
+    "baixo": "short",
+    "pes": "bota",
+    "cabeca": "cabeloLongo",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#26a69a",
+     "baixo": "#795548",
+     "cabeca": "#4e342e",
+     "pes": "#3e2723"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "tomb raider",
+     "lara croft"
+    ],
+    "respostas": [
+     "Relíquia achada, {nome}. Agora agachamento.",
+     "Pistola dupla e trança no lugar."
+    ]
+   }
+  },
+  {
+   "nivel": 91,
+   "colecao": "jogos",
+   "titulo": "Chegou a Hora de Chutar",
+   "obra": "Duke Nukem",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Regata vermelha, óculos e topete loiro",
+   "cores": [
+    "#c62828",
+    "#1565c0",
+    "#ffd54f"
+   ],
+   "fala": "Chegou a hora de chutar traseiros e mascar chiclete. E acabou o chiclete.",
+   "anim": "jogo_jg23",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.45,
+    "cabeca": 0.9
+   },
+   "fantasia": {
+    "tronco": "regata",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "topete",
+    "rosto": [
+     "oculosEscuros"
+    ],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "tronco": "#c62828",
+     "baixo": "#1565c0",
+     "cabeca": "#ffd54f",
+     "pes": "#3e2723",
+     "mao": "#616161",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "flexao",
+    "efeito": "fogo",
+    "gatilhos": [
+     "duke nukem",
+     "hail to the king"
+    ],
+    "respostas": [
+     "Salve o rei, {nome}. Eu.",
+     "Acabou o chiclete. Começou o treino."
+    ]
+   }
+  },
+  {
+   "nivel": 95,
+   "colecao": "jogos",
+   "titulo": "Pé de Cabra Teórico",
+   "obra": "Half-Life",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Traje HEV laranja, óculos e pé de cabra",
+   "cores": [
+    "#ef6c00",
+    "#424242",
+    "#ffd54f"
+   ],
+   "fala": "Físico teórico com pé de cabra. Sem uma palavra.",
+   "anim": "jogo_jg24",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados"
+   },
+   "fantasia": {
+    "tronco": "armadura",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "nenhuma",
+    "rosto": [
+     "oculos",
+     "barba"
+    ],
+    "pescoco": "nenhum",
+    "mao": "pecabra",
+    "cores": {
+     "baixo": "#424242",
+     "pes": "#212121",
+     "rosto": "#5d4037",
+     "mao": "#c62828"
+    }
+   },
+   "meme": {
+    "gesto": "explica",
+    "efeito": "raios",
+    "gatilhos": [
+     "half life",
+     "gordon freeman"
+    ],
+    "respostas": [
+     "...",
+     "Ele não fala, {nome}. Ele só bate com o pé de cabra."
+    ]
+   }
+  },
+  {
+   "nivel": 99,
+   "colecao": "jogos",
+   "titulo": "Cabeça de Pirâmide",
+   "obra": "Silent Hill",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Capacete de pirâmide enferrujado e avental sujo",
+   "cores": [
+    "#8d6e63",
+    "#5d4037",
+    "#bcaaa4"
+   ],
+   "fala": "Névoa, sirene e eu arrastando uma espada maior que o seu problema.",
+   "anim": "jogo_jg25",
+   "transforma": {
+    "pele": {
+     "corpo": "#bcaaa4"
+    },
+    "corpo": 1.3,
+    "sujeira": true,
+    "moscas": true
+   },
+   "fantasia": {
+    "tronco": "avental",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "descalco",
+    "cabeca": "piramide",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "espada",
+    "cores": {
+     "tronco": "#d7ccc8",
+     "detalhe": "#bcaaa4",
+     "cabeca": "#8d6e63",
+     "brilho": "#5d4037",
+     "mao": "#9e9e9e",
+     "maoDetalhe": "#5d4037"
+    }
+   },
+   "meme": {
+    "gesto": "assusta",
+    "efeito": "raios",
+    "gatilhos": [
+     "silent hill",
+     "pyramid head"
+    ],
+    "respostas": [
+     "A sirene tocou, {nome}. Corre.",
+     "Não fala comigo. Eu só arrasto a espada."
+    ]
+   }
+  },
+  {
+   "nivel": 103,
+   "colecao": "jogos",
+   "titulo": "Missão Metal",
+   "obra": "Metal Slug",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Colete de soldado, bandana e metralhadora pesada",
+   "cores": [
+    "#558b2f",
+    "#e53935",
+    "#ffd54f"
+   ],
+   "fala": "Heavy machine gun! E cento e vinte quilos de recruta.",
+   "anim": "jogo_jg26",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "grandes",
+    "cabeca": 1.25,
+    "corpo": 0.95
+   },
+   "fantasia": {
+    "tronco": "colete",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "bandana",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "tronco": "#558b2f",
+     "baixo": "#33691e",
+     "cabeca": "#e53935",
+     "pes": "#3e2723",
+     "mao": "#616161",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "fogo",
+    "gatilhos": [
+     "metal slug",
+     "heavy machine gun"
+    ],
+    "respostas": [
+     "Heavy machine gun, {nome}!",
+     "Missão completa. Medalha no peito."
+    ]
+   }
+  },
+  {
+   "nivel": 107,
+   "colecao": "jogos",
+   "titulo": "Tá Tudo Bem?",
+   "obra": "The King of Fighters",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Jaqueta vermelha sem manga e boné do lobo faminto",
+   "cores": [
+    "#c62828",
+    "#1565c0",
+    "#fafafa"
+   ],
+   "fala": "Are you okay? Buster wolf!",
+   "anim": "jogo_jg27",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.25
+   },
+   "fantasia": {
+    "tronco": "jaqueta",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "tenis",
+    "cabeca": "bone",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#c62828",
+     "detalhe": "#fafafa",
+     "baixo": "#1565c0",
+     "cabeca": "#c62828",
+     "brilho": "#fafafa",
+     "pes": "#fafafa"
+    }
+   },
+   "meme": {
+    "gesto": "grito",
+    "efeito": "fogo",
+    "gatilhos": [
+     "king of fighters",
+     "are you okay",
+     "buster wolf"
+    ],
+    "respostas": [
+     "Are you okay, {nome}? Eu tô ótimo.",
+     "Power wave no chão e boné virado."
+    ]
+   }
+  },
+  {
+   "nivel": 111,
+   "colecao": "jogos",
+   "titulo": "Um Slime Apareceu",
+   "obra": "Dragon Quest",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Corpo azul em gota de slime sorridente",
+   "cores": [
+    "#29b6f6",
+    "#e53935",
+    "#fafafa"
+   ],
+   "fala": "Um SLIME bombado apareceu! Comando?",
+   "anim": "jogo_jg28",
+   "transforma": {
+    "pele": {
+     "corpo": "#29b6f6",
+     "cabeca": "#29b6f6",
+     "barriga": "#81d4fa"
+    },
+    "olhos": "grandes",
+    "boca": 1.4,
+    "barrigona": 1.2
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "descalco",
+    "cabeca": "gota",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "cabeca": "#29b6f6"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "bolhas",
+    "gatilhos": [
+     "dragon quest",
+     "um slime apareceu"
+    ],
+    "respostas": [
+     "Um slime apareceu, {nome}! Lutar ou treinar?",
+     "Slime de musculação. Raridade."
+    ]
+   }
+  },
+  {
+   "nivel": 115,
+   "colecao": "jogos",
+   "titulo": "Viajante do Tempo",
+   "obra": "Chrono Trigger",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Cabelo espetado vermelho, faixa e katana",
+   "cores": [
+    "#1e88e5",
+    "#fafafa",
+    "#e53935"
+   ],
+   "fala": "Viajei de 600 d.C. até hoje só pra te ver treinar.",
+   "anim": "jogo_jg29",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "anime",
+    "cabeca": 1.15
+   },
+   "fantasia": {
+    "tronco": "gi",
+    "mangas": "curta",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "espetado",
+    "rosto": [],
+    "pescoco": "lencoPescoco",
+    "mao": "espada",
+    "cores": {
+     "tronco": "#1e88e5",
+     "detalhe": "#fafafa",
+     "baixo": "#fafafa",
+     "cabeca": "#e53935",
+     "pescoco": "#fafafa",
+     "pes": "#8d6e63",
+     "mao": "#cfd8dc",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "giro",
+    "efeito": "raios",
+    "gatilhos": [
+     "chrono trigger"
+    ],
+    "respostas": [
+     "Portal do tempo aberto, {nome}.",
+     "Golpe X triplo com a equipe: eu, eu e eu."
+    ]
+   }
+  },
+  {
+   "nivel": 119,
+   "colecao": "jogos",
+   "titulo": "Taco de Beisebol do Interior",
+   "obra": "EarthBound",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Boné vermelho, camiseta listrada e taco",
+   "cores": [
+    "#ffd54f",
+    "#1e88e5",
+    "#e53935"
+   ],
+   "fala": "PSI Rockin'! Com um taco de beisebol e boné virado.",
+   "anim": "jogo_jg30",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "pontos",
+    "cabeca": 1.3,
+    "corpo": 0.8
+   },
+   "fantasia": {
+    "tronco": "camiseta",
+    "mangas": "curta",
+    "baixo": "short",
+    "pes": "tenis",
+    "cabeca": "bone",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "pecabra",
+    "estampa": "listras",
+    "cores": {
+     "tronco": "#ffd54f",
+     "estampa": "#1e88e5",
+     "baixo": "#1565c0",
+     "cabeca": "#e53935",
+     "brilho": "#e53935",
+     "pes": "#e53935",
+     "mao": "#8d6e63"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "earthbound",
+     "psi rockin"
+    ],
+    "respostas": [
+     "PSI Rockin', {nome}!",
+     "Uma cidade pequena e um tubarão grande."
+    ]
+   }
+  },
+  {
+   "nivel": 123,
+   "colecao": "jogos",
+   "titulo": "Faz Uma Pirueta",
+   "obra": "Star Fox",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Jaqueta de piloto e orelhas de raposa",
+   "cores": [
+    "#43a047",
+    "#fafafa",
+    "#ff9800"
+   ],
+   "fala": "Faz uma pirueta! Aperta Z ou R duas vezes!",
+   "anim": "jogo_jg31",
+   "transforma": {
+    "pele": {
+     "corpo": "#ff9800",
+     "barriga": "#fafafa"
+    },
+    "olhos": "semicerrados",
+    "orelhas": "gato",
+    "corOrelhas": "#ff9800",
+    "boca": 0.8
+   },
+   "fantasia": {
+    "tronco": "jaqueta",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "lencoPescoco",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#43a047",
+     "detalhe": "#fafafa",
+     "baixo": "#fafafa",
+     "pescoco": "#e53935",
+     "pes": "#e53935"
+    }
+   },
+   "meme": {
+    "gesto": "asas",
+    "efeito": "raios",
+    "gatilhos": [
+     "star fox",
+     "faz uma pirueta",
+     "do a barrel roll"
+    ],
+    "respostas": [
+     "Faz uma pirueta, {nome}!",
+     "Esquadrão no ar e eu na liderança."
+    ]
+   }
+  },
+  {
+   "nivel": 127,
+   "colecao": "jogos",
+   "titulo": "Soco do Falcão",
+   "obra": "F-Zero",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Uniforme azul, capacete e cachecol de piloto",
+   "cores": [
+    "#1565c0",
+    "#ffd54f",
+    "#e53935"
+   ],
+   "fala": "FALCON... PUNCH!",
+   "anim": "jogo_jg32",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.35
+   },
+   "fantasia": {
+    "tronco": "uniforme",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "lencoPescoco",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#1565c0",
+     "detalhe": "#ffd54f",
+     "brilho": "#ffd54f",
+     "baixo": "#1565c0",
+     "cabeca": "#e53935",
+     "pescoco": "#ffd54f",
+     "pes": "#e53935"
+    }
+   },
+   "meme": {
+    "gesto": "grito",
+    "efeito": "fogo",
+    "gatilhos": [
+     "falcon punch",
+     "f zero"
+    ],
+    "respostas": [
+     "Show me your moves, {nome}!",
+     "Falcon punch no seu sedentarismo."
+    ]
+   }
+  },
+  {
+   "nivel": 131,
+   "colecao": "jogos",
+   "titulo": "Dívida com o Guaxinim",
+   "obra": "Animal Crossing",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Avental de lojista e orelhas de guaxinim",
+   "cores": [
+    "#4fc3f7",
+    "#fafafa",
+    "#8bc34a"
+   ],
+   "fala": "Sua casa está quitada? Não. Ótimo, a dívida é comigo.",
+   "anim": "jogo_jg33",
+   "transforma": {
+    "pele": {
+     "corpo": "#8d6e63",
+     "barriga": "#d7ccc8"
+    },
+    "olhos": "semicerrados",
+    "orelhasRedondas": "#5d4037",
+    "manchasOlhos": "#4e342e",
+    "barrigona": 1.15
+   },
+   "fantasia": {
+    "tronco": "avental",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "sandalia",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "pacoteDinheiro",
+    "cores": {
+     "tronco": "#4fc3f7",
+     "detalhe": "#fafafa",
+     "baixo": "#8d6e63",
+     "pes": "#5d4037",
+     "mao": "#8bc34a"
+    }
+   },
+   "meme": {
+    "gesto": "explica",
+    "efeito": "dinheiro",
+    "gatilhos": [
+     "animal crossing",
+     "tom nook"
+    ],
+    "respostas": [
+     "Seu empréstimo venceu, {nome}. Paga em supino.",
+     "Sininhos no bolso e juros nenhum. Mentira."
+    ]
+   }
+  },
+  {
+   "nivel": 135,
+   "colecao": "jogos",
+   "titulo": "Ficar Fresco",
+   "obra": "Splatoon",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Cabelo de tentáculo neon e camiseta de tinta",
+   "cores": [
+    "#ff4081",
+    "#76ff03",
+    "#fafafa"
+   ],
+   "fala": "Fresh! Pinta o chão e some na tinta.",
+   "anim": "jogo_jg34",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "brilho",
+    "manchasOlhos": "#212121"
+   },
+   "fantasia": {
+    "tronco": "camiseta",
+    "mangas": "curta",
+    "baixo": "short",
+    "pes": "tenis",
+    "cabeca": "cabeloLongo",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "estampa": "bolinhas",
+    "cores": {
+     "tronco": "#fafafa",
+     "estampa": "#76ff03",
+     "baixo": "#212121",
+     "cabeca": "#ff4081",
+     "pes": "#76ff03"
+    }
+   },
+   "meme": {
+    "gesto": "giro",
+    "efeito": "confete",
+    "gatilhos": [
+     "splatoon",
+     "stay fresh"
+    ],
+    "respostas": [
+     "Stay fresh, {nome}!",
+     "Tinta pra todo lado. Shape intacto."
+    ]
+   }
+  },
+  {
+   "nivel": 139,
+   "colecao": "jogos",
+   "titulo": "Protesto!",
+   "obra": "Ace Attorney",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Terno azul e cabelo espetado de advogado",
+   "cores": [
+    "#1565c0",
+    "#fafafa",
+    "#e53935"
+   ],
+   "fala": "PROTESTO! Esse argumento não levanta nem dez quilos.",
+   "anim": "jogo_jg35",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "grandes",
+    "cabeca": 1.1
+   },
+   "fantasia": {
+    "tronco": "terno",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "sapato",
+    "cabeca": "espetado",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#1565c0",
+     "detalhe": "#0d47a1",
+     "brilho": "#e53935",
+     "baixo": "#1565c0",
+     "cabeca": "#212121",
+     "pes": "#212121"
+    }
+   },
+   "meme": {
+    "gesto": "apontar",
+    "efeito": "raios",
+    "gatilhos": [
+     "objection",
+     "protesto",
+     "ace attorney"
+    ],
+    "respostas": [
+     "PROTESTO, {nome}! Você disse que ia treinar.",
+     "Segura aí! Tem contradição nesse seu treino."
+    ]
+   }
+  },
+  {
+   "nivel": 143,
+   "colecao": "jogos",
+   "titulo": "Sanduíche do Pesado",
+   "obra": "Team Fortress 2",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Colete de munição, careca e sanduíche",
+   "cores": [
+    "#c62828",
+    "#3e2723",
+    "#ffd54f"
+   ],
+   "fala": "Quem mexeu no meu sanduíche? Ninguém. Porque eu comi.",
+   "anim": "jogo_jg36",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados",
+    "corpo": 1.5,
+    "barrigona": 1.3,
+    "papada": true,
+    "suor": true
+   },
+   "fantasia": {
+    "tronco": "colete",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "careca",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "biscoito",
+    "cores": {
+     "tronco": "#3e2723",
+     "detalhe": "#c62828",
+     "baixo": "#5d4037",
+     "pes": "#212121",
+     "mao": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "flexao",
+    "efeito": "fogo",
+    "gatilhos": [
+     "team fortress",
+     "sandvich",
+     "sanduiche do heavy"
+    ],
+    "respostas": [
+     "Sandvich, {nome}. Proteína com pão.",
+     "Ninguém atira em mim por dez segundos."
+    ]
+   }
+  },
+  {
+   "nivel": 147,
+   "colecao": "jogos",
+   "titulo": "Estilingue Furioso",
+   "obra": "Angry Birds",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Penas vermelhas, sobrancelha brava e bico",
+   "cores": [
+    "#e53935",
+    "#fafafa",
+    "#ffd54f"
+   ],
+   "fala": "Me lança no estilingue. Os porcos vão sentir.",
+   "anim": "jogo_jg37",
+   "transforma": {
+    "pele": {
+     "corpo": "#e53935",
+     "barriga": "#ffccbc",
+     "cabeca": "#e53935"
+    },
+    "olhos": "pretos",
+    "corpo": 0.85,
+    "cabeca": 1.3,
+    "barrigona": 1.1
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "descalco",
+    "cabeca": "crista",
+    "rosto": [
+     "bico"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "cabeca": "#e53935",
+     "rosto": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "grito",
+    "efeito": "penas",
+    "gatilhos": [
+     "angry birds"
+    ],
+    "respostas": [
+     "Estilingue armado, {nome}.",
+     "Porco nenhum escapa de mim."
+    ]
+   }
+  },
+  {
+   "nivel": 151,
+   "colecao": "jogos",
+   "titulo": "O Zumbi Comeu Seu Cérebro",
+   "obra": "Plants vs. Zombies",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Terno rasgado de zumbi, sujeira e moscas",
+   "cores": [
+    "#5d4037",
+    "#a1887f",
+    "#c62828"
+   ],
+   "fala": "Cééérebrooo... e uma proteína, por favor.",
+   "anim": "jogo_jg38",
+   "transforma": {
+    "pele": {
+     "corpo": "#9ccc65",
+     "cabeca": "#9ccc65"
+    },
+    "olhos": "vazios",
+    "sujeira": true,
+    "moscas": true,
+    "baba": true
+   },
+   "fantasia": {
+    "tronco": "terno",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "sapato",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#5d4037",
+     "detalhe": "#3e2723",
+     "brilho": "#c62828",
+     "baixo": "#4e342e",
+     "pes": "#212121"
+    }
+   },
+   "meme": {
+    "gesto": "assusta",
+    "efeito": "folhas",
+    "gatilhos": [
+     "plants vs zombies",
+     "cerebro"
+    ],
+    "respostas": [
+     "Cééérebro, {nome}...",
+     "O girassol não segura um zumbi desse tamanho."
+    ]
+   }
+  },
+  {
+   "nivel": 155,
+   "colecao": "jogos",
+   "titulo": "Xícara Desafiadora",
+   "obra": "Cuphead",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Cabeça de xícara com canudo, short e luvas",
+   "cores": [
+    "#e53935",
+    "#fafafa",
+    "#ffd54f"
+   ],
+   "fala": "Não negocio com o Diabo. Ele que negocie comigo.",
+   "anim": "jogo_jg39",
+   "transforma": {
+    "pele": {
+     "corpo": "#fafafa",
+     "cabeca": "#fafafa",
+     "musculo": "#e0e0e0"
+    },
+    "olhos": "pontos",
+    "boca": 1.2
+   },
+   "fantasia": {
+    "tronco": "camiseta",
+    "mangas": "curta",
+    "baixo": "short",
+    "pes": "sapato",
+    "cabeca": "xicara",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#212121",
+     "baixo": "#e53935",
+     "pes": "#8d6e63",
+     "cabeca": "#fafafa",
+     "brilho": "#e53935"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "cuphead"
+    ],
+    "respostas": [
+     "Contrato com o Diabo? Não assino, {nome}.",
+     "Boss de anos 30 e eu de canudo."
+    ]
+   }
+  },
+  {
+   "nivel": 159,
+   "colecao": "jogos",
+   "titulo": "Feijão Cambaleante",
+   "obra": "Fall Guys",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Corpo de feijão rosa e olhos enormes",
+   "cores": [
+    "#f48fb1",
+    "#fafafa",
+    "#ffd600"
+   ],
+   "fala": "Caí na primeira fase. Mas caí bombado.",
+   "anim": "jogo_jg40",
+   "transforma": {
+    "pele": {
+     "corpo": "#f48fb1",
+     "cabeca": "#f48fb1",
+     "barriga": "#f8bbd0"
+    },
+    "olhos": "grandes",
+    "barrigona": 1.35,
+    "cabeca": 1.1,
+    "boca": 0.7
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "descalco",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum"
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "confete",
+    "gatilhos": [
+     "fall guys"
+    ],
+    "respostas": [
+     "Coroa ou eliminação, {nome}.",
+     "Escorreguei no slime. Levantei bombado."
+    ]
+   }
+  },
+  {
+   "nivel": 163,
+   "colecao": "jogos",
+   "titulo": "Sul Sul!",
+   "obra": "The Sims",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Plumbob verde flutuando na cabeça",
+   "cores": [
+    "#43a047",
+    "#76ff03",
+    "#fafafa"
+   ],
+   "fala": "Sul sul! Meu humor tá verde e o banheiro tá sujo.",
+   "anim": "jogo_jg41",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "anime"
+   },
+   "fantasia": {
+    "tronco": "camisa",
+    "mangas": "curta",
+    "baixo": "calca",
+    "pes": "sapato",
+    "cabeca": "plumbob",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#fafafa",
+     "detalhe": "#43a047",
+     "baixo": "#1565c0",
+     "cabeca": "#43a047",
+     "brilho": "#b9f6ca",
+     "pes": "#3e2723"
+    }
+   },
+   "meme": {
+    "gesto": "explica",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "sul sul",
+     "the sims"
+    ],
+    "respostas": [
+     "Sul sul, {nome}! Dag dag.",
+     "Necessidade de diversão: cheia. Necessidade de treino: vermelha."
+    ]
+   }
+  },
+  {
+   "nivel": 167,
+   "colecao": "jogos",
+   "titulo": "Wololo",
+   "obra": "Age of Empires",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Bata de monge, careca e cajado",
+   "cores": [
+    "#8d6e63",
+    "#ffd54f",
+    "#e53935"
+   ],
+   "fala": "Wololo. Agora você é do meu time.",
+   "anim": "jogo_jg42",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados",
+    "papada": true
+   },
+   "fantasia": {
+    "tronco": "bata",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "sandalia",
+    "cabeca": "careca",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "cajado",
+    "cores": {
+     "tronco": "#8d6e63",
+     "detalhe": "#5d4037",
+     "pes": "#5d4037",
+     "mao": "#6d4c41",
+     "maoDetalhe": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "giro",
+    "efeito": "raios",
+    "gatilhos": [
+     "wololo",
+     "age of empires"
+    ],
+    "respostas": [
+     "Wololo, {nome}. Você agora treina comigo.",
+     "Converti o cavaleiro inimigo. De novo."
+    ]
+   }
+  },
+  {
+   "nivel": 171,
+   "colecao": "jogos",
+   "titulo": "Trabalho Trabalho",
+   "obra": "Warcraft",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Pele verde, presas e machado de peão orc",
+   "cores": [
+    "#5d4037",
+    "#c62828",
+    "#cfd8dc"
+   ],
+   "fala": "Trabalho trabalho. Pronto pra trabalhar.",
+   "anim": "jogo_jg43",
+   "transforma": {
+    "pele": {
+     "corpo": "#7cb342"
+    },
+    "olhos": "pretos",
+    "orelhas": "elfo",
+    "corOrelhas": "#7cb342",
+    "corpo": 1.3,
+    "boca": 1.2
+   },
+   "fantasia": {
+    "tronco": "tanga",
+    "mangas": null,
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "nenhuma",
+    "rosto": [
+     "presas"
+    ],
+    "pescoco": "colar",
+    "mao": "machado",
+    "cores": {
+     "baixo": "#5d4037",
+     "pes": "#3e2723",
+     "pescoco": "#fafafa",
+     "mao": "#cfd8dc",
+     "maoDetalhe": "#ffffff"
+    }
+   },
+   "meme": {
+    "gesto": "explica",
+    "efeito": "raios",
+    "gatilhos": [
+     "warcraft",
+     "trabalho trabalho",
+     "zug zug"
+    ],
+    "respostas": [
+     "Zug zug, {nome}.",
+     "Mais trabalho? Tá bom."
+    ]
+   }
+  },
+  {
+   "nivel": 175,
+   "colecao": "jogos",
+   "titulo": "Senhor do Terror",
+   "obra": "Diablo",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Chifres de demônio e pele vermelha",
+   "cores": [
+    "#b71c1c",
+    "#ff6d00",
+    "#212121"
+   ],
+   "fala": "Fica um pouco e escuta: o inferno também treina.",
+   "anim": "jogo_jg44",
+   "transforma": {
+    "pele": {
+     "corpo": "#c62828",
+     "cabeca": "#c62828",
+     "barriga": "#8e0000"
+    },
+    "olhos": "brilho",
+    "chifres": "diabo",
+    "corChifres": "#3e2723",
+    "corpo": 1.35,
+    "cabeca": 0.9
+   },
+   "fantasia": {
+    "tronco": "tanga",
+    "mangas": null,
+    "baixo": "tanga",
+    "pes": "descalco",
+    "cabeca": "nenhuma",
+    "rosto": [
+     "presas"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "baixo": "#212121"
+    }
+   },
+   "meme": {
+    "gesto": "assusta",
+    "efeito": "fogo",
+    "gatilhos": [
+     "diablo",
+     "stay a while and listen"
+    ],
+    "respostas": [
+     "Fica um pouco e escuta, {nome}.",
+     "Santuário é pequeno pro meu shape."
+    ]
+   }
+  },
+  {
+   "nivel": 179,
+   "colecao": "jogos",
+   "titulo": "Fantasma Ladrão",
+   "obra": "Persona 5",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Sobretudo preto e máscara branca do coringa",
+   "cores": [
+    "#212121",
+    "#c62828",
+    "#fafafa"
+   ],
+   "fala": "Roubei seu coração. E sua preguiça.",
+   "anim": "jogo_jg45",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "semicerrados"
+   },
+   "fantasia": {
+    "tronco": "sobretudo",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "espetado",
+    "rosto": [
+     "mascaraOlhos"
+    ],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#212121",
+     "detalhe": "#c62828",
+     "baixo": "#212121",
+     "cabeca": "#212121",
+     "rosto": "#fafafa",
+     "pes": "#c62828"
+    }
+   },
+   "meme": {
+    "gesto": "ginga",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "persona 5",
+     "phantom thief"
+    ],
+    "respostas": [
+     "Seu coração foi roubado, {nome}.",
+     "Take your time. Mas treina."
+    ]
+   }
+  },
+  {
+   "nivel": 183,
+   "colecao": "jogos",
+   "titulo": "Estilo Elegante",
+   "obra": "Devil May Cry",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Sobretudo vermelho, cabelo branco e espadão",
+   "cores": [
+    "#c62828",
+    "#212121",
+    "#cfd8dc"
+   ],
+   "fala": "Jackpot! Rank de estilo: SSS.",
+   "anim": "jogo_jg46",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "semicerrados"
+   },
+   "fantasia": {
+    "tronco": "sobretudo",
+    "mangas": "longa",
+    "baixo": "calca",
+    "pes": "bota",
+    "cabeca": "cabeloLongo",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "espada",
+    "cores": {
+     "tronco": "#c62828",
+     "detalhe": "#212121",
+     "baixo": "#212121",
+     "cabeca": "#eceff1",
+     "pes": "#3e2723",
+     "mao": "#cfd8dc",
+     "maoDetalhe": "#c62828"
+    }
+   },
+   "meme": {
+    "gesto": "giro",
+    "efeito": "raios",
+    "gatilhos": [
+     "devil may cry",
+     "jackpot"
+    ],
+    "respostas": [
+     "Jackpot, {nome}!",
+     "Rank SSS no estilo e no supino."
+    ]
+   }
+  },
+  {
+   "nivel": 187,
+   "colecao": "jogos",
+   "titulo": "Pedra, Papel e Tesoura",
+   "obra": "Alex Kidd in Miracle World",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Macacão vermelho, orelhas de abano e punho",
+   "cores": [
+    "#e53935",
+    "#ffd54f",
+    "#212121"
+   ],
+   "fala": "Pedra, papel, tesoura! Perdeu? Vai treinar.",
+   "anim": "jogo_jg47",
+   "transforma": {
+    "pele": {
+     "corpo": "#ffe0b2"
+    },
+    "olhos": "grandes",
+    "orelhas": "ogro",
+    "corOrelhas": "#ffe0b2",
+    "cabeca": 1.25
+   },
+   "fantasia": {
+    "tronco": "macacao",
+    "mangas": "curta",
+    "baixo": "short",
+    "pes": "sapato",
+    "cabeca": "nenhuma",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "nenhum",
+    "cores": {
+     "tronco": "#e53935",
+     "detalhe": "#ffd54f",
+     "baixo": "#e53935",
+     "pes": "#ffd54f"
+    }
+   },
+   "meme": {
+    "gesto": "flexao",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "alex kidd",
+     "jokenpo"
+    ],
+    "respostas": [
+     "Jokenpô, {nome}: eu sempre escolho pedra. Pedra de músculo.",
+     "Onigiri no lugar do bolo. Clássico."
+    ]
+   }
+  },
+  {
+   "nivel": 191,
+   "colecao": "jogos",
+   "titulo": "Nitro na Reta",
+   "obra": "Top Gear",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Macacão de piloto, capacete e bandeira quadriculada",
+   "cores": [
+    "#e53935",
+    "#fafafa",
+    "#212121"
+   ],
+   "fala": "Nitro apertado na reta. Ninguém me alcança.",
+   "anim": "jogo_jg48",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "semicerrados"
+   },
+   "fantasia": {
+    "tronco": "macacao",
+    "mangas": "longa",
+    "baixo": "macacao",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "bandeiraXadrez",
+    "cores": {
+     "tronco": "#e53935",
+     "detalhe": "#fafafa",
+     "baixo": "#e53935",
+     "cabeca": "#fafafa",
+     "brilho": "#29b6f6",
+     "pes": "#212121",
+     "mao": "#212121"
+    }
+   },
+   "meme": {
+    "gesto": "pulo",
+    "efeito": "fogo",
+    "gatilhos": [
+     "top gear",
+     "nitro"
+    ],
+    "respostas": [
+     "Nitro, {nome}! Última volta!",
+     "Trilha sonora na cabeça e pé no fundo."
+    ]
+   }
+  },
+  {
+   "nivel": 195,
+   "colecao": "jogos",
+   "titulo": "Bazuca e Banana",
+   "obra": "Worms",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Faixa de minhoca de guerra e granada de banana",
+   "cores": [
+    "#f48fb1",
+    "#43a047",
+    "#ffd600"
+   ],
+   "fala": "Granada de banana armada. Cinco segundos.",
+   "anim": "jogo_jg49",
+   "transforma": {
+    "pele": {
+     "corpo": "#f48fb1",
+     "cabeca": "#f48fb1"
+    },
+    "olhos": "grandes",
+    "boca": 1.2,
+    "cabeca": 1.15
+   },
+   "fantasia": {
+    "tronco": "pelagem",
+    "mangas": null,
+    "baixo": "nenhum",
+    "pes": "descalco",
+    "cabeca": "bandana",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "bomba",
+    "cores": {
+     "cabeca": "#43a047",
+     "mao": "#ffd600",
+     "maoDetalhe": "#ff6d00"
+    }
+   },
+   "meme": {
+    "gesto": "assusta",
+    "efeito": "fogo",
+    "gatilhos": [
+     "worms",
+     "granada de banana"
+    ],
+    "respostas": [
+     "Banana bomb, {nome}! Corre!",
+     "Minhoca de guerra com shape de tubarão."
+    ]
+   }
+  },
+  {
+   "nivel": 199,
+   "colecao": "jogos",
+   "titulo": "Nave Dupla",
+   "obra": "Galaga",
+   "tipo": "jogo",
+   "parte": "pintura",
+   "forma": "fantasiaJogo",
+   "peca": "Macacão de piloto estelar e capacete branco",
+   "cores": [
+    "#fafafa",
+    "#1e88e5",
+    "#e53935"
+   ],
+   "fala": "Dupla nave ativada. Atirando em tudo.",
+   "anim": "jogo_jg50",
+   "transforma": {
+    "pele": {
+     "corpo": "#e8b48f"
+    },
+    "olhos": "brilho"
+   },
+   "fantasia": {
+    "tronco": "macacao",
+    "mangas": "longa",
+    "baixo": "macacao",
+    "pes": "bota",
+    "cabeca": "capacete",
+    "rosto": [],
+    "pescoco": "nenhum",
+    "mao": "canhao",
+    "cores": {
+     "tronco": "#fafafa",
+     "detalhe": "#e53935",
+     "baixo": "#fafafa",
+     "cabeca": "#fafafa",
+     "brilho": "#1e88e5",
+     "pes": "#e53935",
+     "mao": "#1e88e5",
+     "maoDetalhe": "#e53935"
+    }
+   },
+   "meme": {
+    "gesto": "asas",
+    "efeito": "estrelas",
+    "gatilhos": [
+     "galaga"
+    ],
+    "respostas": [
+     "Raio trator? Eu puxo de volta, {nome}.",
+     "Nave dupla e mira certa."
+    ]
+   }
   }
  ]
 }

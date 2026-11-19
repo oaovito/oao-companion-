@@ -2358,7 +2358,7 @@ export class Companion {
    * Interação dela (clique, arrasto, /pet) interrompe com transição suave.
    */
   playCatalog(id, { source = 'comando', speak = true, intensity = null } = {}) {
-    if (/^(memeBr|visual)_/.test(id)) void this._memes;
+    if (/^(memeBr|visual|jogo)_/.test(id)) void this._memes;
     const item = this.catalogById.get(id);
     if (this.clock.now() < (this.emotionalUntil || 0) && !['chat', 'comando', 'pedido', 'manual'].includes(source)) return false;
     if (!item || this.quitting || !this.started || this.userHidden) return false;

@@ -162,8 +162,8 @@ const CABECAS = {
   orelhasBicho: (c, g) => [['costumes', 'orelhasRedondas', c, `${circ(52, 10, 14)} ${circ(128, 10, 14)}`, H()], ['costumes', 'orelhasMiolo', g, `${circ(52, 10, 7)} ${circ(128, 10, 7)}`, H()]],
   // Jogos (pedido de 19/11/2026).
   bonePlumb: (c, g) => [['costumes', 'copaBone', c, 'M52,22 C54,-2 126,-2 128,22 Z', H()], ['costumes', 'abaFrente', c, 'M60,20 C74,28 106,28 120,20 L122,26 C106,34 74,34 58,26 Z', H()], ['costumes', 'escudoBone', '#ffffff', circ(90, 8, 8), H()], ['costumes', 'letraBone', g, 'M84,13 L84,3 L90,9 L96,3 L96,13 L94,13 L94,8 L90,12 L86,8 L86,13 Z', H()]],
-  piramide: (c, g) => [['costumes', 'piramide', c, 'M90,-44 L148,58 L32,58 Z', H()], ['costumes', 'piramideRebites', g, `${circ(70, 40, 2)} ${circ(110, 40, 2)} ${circ(90, 6, 2)}`, H()], ['costumes', 'piramideSombra', sombra(c, 0.6), 'M90,-44 L148,58 L118,58 Z', H({ alpha: 0.6 })]],
-  xicara: (c, g) => [['costumes', 'xicaraCopo', c, 'M50,22 L54,-14 L126,-14 L130,22 Z', H()], ['costumes', 'xicaraBorda', g, elip(90, -14, 36, 6), H()], ['costumes', 'xicaraCha', '#5d4037', elip(90, -14, 30, 4), H()], ['costumes', 'canudo', '#ffffff', 'M104,-14 L114,-40 L130,-36 L128,-32 L116,-35 L108,-13 Z', H()], ['costumes', 'canudoListras', '#e53935', 'M110,-26 L112,-30 L114,-29 L112,-25 Z M106,-18 L108,-22 L110,-21 L108,-17 Z', H()]],
+  piramide: (c, g) => [['costumes', 'piramide', c, 'M90,-34 L148,58 L32,58 Z', H()], ['costumes', 'piramideRebites', g, `${circ(70, 40, 2)} ${circ(110, 40, 2)} ${circ(90, 6, 2)}`, H()], ['costumes', 'piramideSombra', sombra(c, 0.6), 'M90,-34 L148,58 L118,58 Z', H({ alpha: 0.6 })]],
+  xicara: (c, g) => [['costumes', 'xicaraCopo', c, 'M50,22 L54,-14 L126,-14 L130,22 Z', H()], ['costumes', 'xicaraBorda', g, elip(90, -14, 36, 6), H()], ['costumes', 'xicaraCha', '#5d4037', elip(90, -14, 30, 4), H()], ['costumes', 'canudo', '#ffffff', 'M104,-14 L112,-34 L128,-31 L126,-27 L114,-30 L108,-13 Z', H()], ['costumes', 'canudoListras', '#e53935', 'M110,-26 L112,-30 L114,-29 L112,-25 Z M106,-18 L108,-22 L110,-21 L108,-17 Z', H()]],
   plumbob: (c, g) => [['costumes', 'plumbob', c, 'M90,-36 L102,-14 L90,8 L78,-14 Z', H({ dy: 'mbEfY' })], ['costumes', 'plumbobBrilho', g, 'M90,-30 L96,-14 L90,-14 Z', H({ dy: 'mbEfY' })]],
   turbante: (c, g) => [['costumes', 'turbante', c, 'M46,26 C40,-6 140,-6 134,26 C112,14 68,14 46,26 Z', H()], ['costumes', 'dobrasTurbante', sombra(c), 'M52,16 C70,4 110,4 128,16 L128,20 C110,8 70,8 52,20 Z', H()], ['costumes', 'joiaTurbante', g, circ(90, 10, 5), H()], ['costumes', 'peninha', '#fafafa', 'M90,6 C84,-8 88,-22 96,-28 C94,-16 96,-6 92,6 Z', H()]],
   careca: () => [],
@@ -240,7 +240,7 @@ const MAOS = {
   pecabra: (c) => [['pecabra', c, 'M150,152 L172,104 C176,98 182,100 180,106 L178,108 C178,104 176,104 174,106 L154,154 Z']],
   canhao: (c, g) => [['canhaoBraco', c, 'M132,124 L170,124 C176,124 178,136 172,140 L132,140 Z'], ['bocaCanhao', '#263238', elip(172, 132, 4, 6)], ['luzCanhao', g, rect(140, 128, 14, 3)]],
   chicote: (c) => [['caboChicote', '#4e342e', rect(152, 132, 5, 18)], ['chicote', c, 'M155,132 C150,110 164,96 176,104 C170,100 160,108 158,132 Z']],
-  bandeiraXadrez: (c) => [['mastro', '#795548', rect(154, 92, 2.4, 64)], ['pano', '#fafafa', 'M157,92 L178,92 L178,110 L157,110 Z'], ['xadrez', c, [0, 1, 2, 3].flatMap((l) => [0, 1, 2, 3].filter((k) => (k + l) % 2 === 0).map((k) => rect(157 + k * 5.25, 92 + l * 4.5, 5.25, 4.5))).join(' ')],
+  bandeiraXadrez: (c) => [['mastro', '#795548', rect(154, 92, 2.4, 64)], ['pano', '#fafafa', 'M157,92 L178,92 L178,110 L157,110 Z'], ['xadrez', c, [0, 1, 2, 3].flatMap((l) => [0, 1, 2, 3].filter((k) => (k + l) % 2 === 0).map((k) => rect(157 + k * 5.25, 92 + l * 4.5, 5.25, 4.5))).join(' ')]],
   nenhum: () => [],
 };
 
@@ -277,9 +277,9 @@ export const SLOTS = { TRONCOS, BAIXOS, PES, CABECAS, ROSTOS, PESCOCOS, MAOS };
 /** Canal que veste a fantasia do meme durante a animação dele. */
 export const canalMeme = (id) => `meme_${id}`;
 /** Id da animação (e do item da Coleção) de um meme. */
-export const animDoMeme = (id) => (/^br\d/.test(id) ? `memeBr_${id}` : `visual_${id}`);
+export const animDoMeme = (id) => (/^br\d/.test(id) ? `memeBr_${id}` : /^jg\d/.test(id) ? `jogo_${id}` : `visual_${id}`);
 /** Animações com fantasia inteira: Tigresa, memes BR e o show de cada visual. */
-export const ehAnimFantasia = (nome) => nome === 'tigresa' || /^(memeBr|visual)_/.test(nome || '');
+export const ehAnimFantasia = (nome) => nome === 'tigresa' || /^(memeBr|visual|jogo)_/.test(nome || '');
 // Valor de cada canal fora da animação (o mesmo que o desenho assume sem visual).
 const NEUTRO = { mbPufK: 1, nvCabeca: 1, nvCorpo: 1, nvBoca: 1, nvBrilhos: -1, nvOlhoRx: 1, nvOlhoRy: 1 };
 const neutro = (ch) => NEUTRO[ch] ?? 0;
@@ -433,5 +433,5 @@ export function memeDoTexto(text, memes) {
 
 /** Itens da Coleção (catálogo) para as animações dos memes: tocam pelo estado `act`. */
 export function itensDeMemes(memes) {
-  return memes.map((p) => ({ id: animDoMeme(p.id), nome: p.show ? `Fantasia: ${p.nome}` : p.titulo, categoria: p.show ? 'visuais' : 'memes BR', listas: {}, gatilho: {}, usa: animDoMeme(p.id), duracao: 6500, frequencia: 'rara', fala: p.fala, meme: p.id }));
+  return memes.map((p) => ({ id: animDoMeme(p.id), nome: p.show ? `Fantasia: ${p.nome}` : p.titulo, categoria: p.show ? 'visuais' : p.colecao || 'memes BR', listas: {}, gatilho: {}, usa: animDoMeme(p.id), duracao: 6500, frequencia: 'rara', fala: p.fala, meme: p.id }));
 }
