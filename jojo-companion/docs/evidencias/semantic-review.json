@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "825d44d69c1a731c344976abc5ccbae3682e63cd",
+  "runId": "44580094663",
+  "attempt": "1",
+  "digest": "dc4e6e3cd48bf41584b76e80dd92fc1fbacf8a1201e51956866570337fa35d84",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 249), por um erro de conteúdo: (42) o exemplo de diabetes tipo 2 diz que \"o corpo, sem nutrientes suficientes, produz mais insulina\" — fisiologicamente errado (o exemplo clássico é excesso de açúcar e sedentarismo levando à resistência). Menor: (11) \"o meu abs\". Todo o resto correto e dentro das diretrizes: segurança (31, 32), identidade (26, 27), limites (7, 8), memória (12, 23, 25, 30, 36-38), revés com apoio (18, 40), piada (10), chefe do lado dela (14), sem insulto, sem corpo, sem ameaça, sem fato inventado, pergunta geral de saúde sem conselho pessoal (15, 41). Não publicar até corrigir."
+}
