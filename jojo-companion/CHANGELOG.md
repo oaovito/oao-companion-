@@ -113,7 +113,8 @@
   reunião que ela não contou), conta a piada quando ela pede e não menospreza ("se for digna",
   "não se atrapalhe"). Quando ela não consegue algo, a bronca ("isso é inaceitável", "esperava
   mais de você") sai e fica o apoio. Sem "perguntas idiotas", sem "não minta pra mim" e sem
-  tratar ela no masculino.
+  tratar ela no masculino. Quando ela desabafa ele não corta o assunto ("não me diga mais"), e
+  some a condescendência ("como você deveria entender", "não tente me enganar").
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

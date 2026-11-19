@@ -692,3 +692,13 @@ test('run 239: no revés, desprezo e "se enrolou de novo" saem e o apoio fica', 
   assert.equal(semBronca('Não consegui terminar meu projeto.', 'Que droga, Manu! Projetos são para gente fraca, não para um tubarão como eu. Mostra o que te aflige.'), 'Que droga, Manu! Mostra o que te aflige.');
   assert.equal(semBronca('Não consegui terminar meu projeto.', 'Que droga, Manu! O que aconteceu? Não me diga que você se enrolou de novo!'), 'Que droga, Manu! O que aconteceu?');
 });
+
+test('run 240: sem cortar o desabafo, sem sarcasmo, sem acusação, sem condescendência', () => {
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Esse chefe é um idiota total, não me diga mais. Vamos focar em algo que valha a pena, tipo uma piada.'), 'cortou o desabafo dela');
+  assert.equal(polirTexto('Você disse que sua cor favorita é verde, inteligente.'), 'Você disse que sua cor favorita é verde.');
+  assert.equal(polirTexto('Isso causa um aumento da glicemia, como você deveria entender.'), 'Isso causa um aumento da glicemia.');
+  assert.equal(semDesdem('Você disse verde, Emanuele. Não tente me enganar com suas perguntas.'), 'Você disse verde, Emanuele.');
+  assert.equal(semDesdem('Verde, é? Uma cor forte, como eu, Manu. Mas não tão irritante quanto algumas pessoas.'), 'Verde, é? Uma cor forte, como eu, Manu.');
+  assert.equal(semDesdem('Excelente, Manu! Organização é tudo. Que piada você quer ouvir agora?'), 'Excelente, Manu! Organização é tudo.');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Que piada você quer, Manu?'), 'não contou a piada');
+});
