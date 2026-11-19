@@ -721,3 +721,13 @@ test('run 243: desabafo dela importa; sem alarme no gerúndio', () => {
   assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse seu chefe é um incompetente! Não se abata, vamos focar em algo que realmente importe, tipo, um bom café.'), 'cortou o desabafo dela');
   assert.equal(polirTexto('Isso causa aumento da glicose no sangue, exigindo atenção imediata.'), 'Isso causa aumento da glicose no sangue.');
 });
+
+test('run 244: pergunta de conhecimento sem o assunto na resposta ganha segunda geração', async () => {
+  const pedidos = [];
+  const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: pedidos.length === 1 ? 'A glicemia eleva-se devido à resistência à insulina e à falta dela.' : 'A diabetes tipo 2 é resistência à insulina: a glicose sobra no sangue.' }; } };
+  const r = await new DialogueEngine({ llm, searchEnabled: () => false }).reply('o que é a diabetes mellitus 2?');
+  assert.equal(pedidos.length, 2);
+  assert.equal(pedidos[1], 'não citou o assunto da pergunta no começo');
+  assert.equal(r.intent, 'ia');
+  assert.match(r.text, /diabetes tipo 2/);
+});

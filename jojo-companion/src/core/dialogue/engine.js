@@ -149,6 +149,8 @@ export class DialogueEngine {
           // Ela contou algo dela ("meu chefe mudou o prazo"): a resposta tem de falar disso.
           // Na segunda tentativa vale a resposta (é do assunto da conversa, melhor que a programada).
           if (!incoerente && tentativa === 0 && relatoSemAssunto(input, out.text)) incoerente = 'não falou do que ela contou';
+          // Pergunta de conhecimento: a primeira resposta que não cita o assunto também ganha outra chance.
+          if (!incoerente && tentativa === 0 && (achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) incoerente = 'não citou o assunto da pergunta no começo';
           if (!incoerente) break;
           if (tentativa === 0) {
             this.log('warn', `IA: ${incoerente}; gerando de novo.`);

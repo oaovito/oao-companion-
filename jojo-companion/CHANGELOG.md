@@ -120,6 +120,8 @@
 - Desabafo dela não vira "não em reclamar", sem tarefa inventada ("a leitura") e concordância
   certa nos exemplos ("uma pessoa… o corpo dela"). O desabafo dela não vira "vamos focar em algo
   que realmente importe", e explicação de saúde não termina em alarme ("exigindo atenção imediata").
+- Pergunta de conhecimento cuja resposta não cita o assunto também ganha uma segunda tentativa
+  antes de recorrer à pesquisa.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

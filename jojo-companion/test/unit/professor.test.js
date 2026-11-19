@@ -33,12 +33,15 @@ test('Qwen recebe a instrução de professor e o assunto anterior no "me dá um 
   const e = new DialogueEngine({ llm, searchEnabled: () => false });
   await e.reply('o que é DLS e como funciona?');
   assert.match(recebidos[0].professor, /MODO PROFESSOR/);
+  // A primeira resposta pode ganhar uma segunda geração (guarda de assunto): conta pelas chamadas de cada turno.
+  const n0 = recebidos.length;
   const exemplo = await e.reply('me dá um exemplo');
   assert.equal(exemplo.action, 'lecture', 'a expressão técnica acompanha o exemplo sem pesquisa externa');
-  assert.match(recebidos[1].professor, /Assunto em andamento: "o que é DLS e como funciona\?"/);
+  assert.match(recebidos[n0].professor, /Assunto em andamento: "o que é DLS e como funciona\?"/);
+  const n1 = recebidos.length;
   const casual = await e.reply('oi');
   assert.notEqual(casual.action, 'lecture', 'uma saudação encerra a expressão técnica');
-  assert.equal(recebidos[2].professor, '');
+  assert.equal(recebidos[n1].professor, '');
 });
 
 test('assunto pessoal independente encerra o tema e não reabre fontes científicas no próximo exemplo', async () => {
