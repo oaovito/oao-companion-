@@ -93,6 +93,11 @@ window.measure = async (rigJson, animJson, foodJson = { foods: [] }, niveis = nu
       const r = bbox(ctx, box), prev = out.animsVisual[base];
       out.animsVisual[base] = prev ? { l: Math.max(prev.l, r.l), t: Math.max(prev.t, r.t), r: Math.max(prev.r, r.r), b: Math.max(prev.b, r.b) } : r;
     }
+    // Com visual nunca menos espaço que sem (os 13 quadros podem pular o pico de um efeito).
+    for (const [nome, r] of Object.entries(out.anims)) {
+      const v = out.animsVisual[nome];
+      if (v) for (const k of ['l', 't', 'r', 'b']) v[k] = Math.max(v[k], r[k]);
+    }
     out.visuais = {};
     const repouso = new Animator(animJson, { rng: () => 0.5 });
     for (const p of cat) {
