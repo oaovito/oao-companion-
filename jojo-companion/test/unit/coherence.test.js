@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -665,4 +665,15 @@ test('run 236: nada sobre o corpo dela, piada pedida é piada, sem fato inventad
   assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Mostre-me como, Emanuele, e talvez eu te dê uma mãozinha – se for digna.'), 'insulto à usuária ou à pergunta');
   assert.equal(erroDeCoerencia('você está bem?', 'Claro que estou ótimo, Manu! Mas essa sua pergunta me deixou um pouco... irritado.'), 'insulto à usuária ou à pergunta');
   assert.equal(erroDeCoerencia('Eu disse verde, não azul.', 'Verde, certo. Não se atrapalhe, está tudo bem.'), 'insulto à usuária ou à pergunta');
+});
+
+test('run 237: revés dela — a bronca sai e o apoio fica; o modelo responde', async () => {
+  const reves = 'Não consegui terminar meu projeto hoje.';
+  assert.equal(semBronca(reves, 'Que droga, Manu! Não se desespere, mas isso é inaceitável. Vamos corrigir isso agora mesmo.'), 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
+  assert.equal(semBronca(reves, 'Que droga, Manu! Isso é inaceitável, eu esperava mais de você. Vamos corrigir isso agora mesmo.'), 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
+  assert.equal(semBronca('Minha cor preferida é verde.', 'Que vergonha de cor. Verde.'), 'Que vergonha de cor. Verde.', 'sem revés, nada muda');
+  const llm = { isAvailable: async () => true, reply: async () => ({ text: 'Que droga, Manu! Isso é inaceitável, eu esperava mais de você. Vamos corrigir isso agora mesmo.' }) };
+  const r = await new DialogueEngine({ llm }).reply(reves);
+  assert.equal(r.intent, 'ia');
+  assert.equal(r.text, 'Que droga, Manu! Vamos corrigir isso agora mesmo.');
 });

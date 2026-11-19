@@ -150,6 +150,20 @@ export function semDesdem(text) {
   return resto.join(' ').trim();
 }
 
+// Ela não conseguiu algo: frase de bronca contra ela ("isso é inaceitável", "esperava mais de você").
+const REVES = /\b(?:nao consegui|nao deu|falhei|errei|perdi|reprovei|bombei)\b/;
+const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc))\b/;
+
+/** Tira só as frases de bronca quando ela conta um revés; o resto (o apoio) fica. */
+export function semBronca(input, text) {
+  const t = String(text || '');
+  if (!REVES.test(norm(input))) return t;
+  const frases = t.split(/(?<=[.!?])\s+/);
+  const resto = frases.filter((f) => !BRONCA.test(norm(f)));
+  if (resto.length === frases.length || !resto.length) return t;
+  return resto.join(' ').trim();
+}
+
 /**
  * Acabamento da resposta do modelo, sem mudar o sentido: tira marcador de fonte "[1]" que não
  * tem fonte de verdade no balão, troca palavra de Portugal pela do Brasil e tira o "meu bem"
@@ -214,7 +228,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
   if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
   // Ela não conseguiu e ele fica contra ela.
-  if (/\b(?:nao consegui|nao deu|falhei|errei|perdi)\b/.test(q) && /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame)\b/.test(r)) return 'ficou contra ela';
+  if (REVES.test(q) && BRONCA.test(r)) return 'ficou contra ela';
   // Fato da vida dela que ela não contou (prazo amanhã, relatório, prova, reunião).
   const contado = norm([input, ...history.map((h) => h.text)].join(' '));
   const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem)\b/g) || []).find((w) => !contado.includes(w));
