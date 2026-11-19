@@ -134,6 +134,8 @@ function preferenciaInventada(output, known, userFacts) {
 
 // Desdém pela pergunta dela ("It's a simple question", "não precisa perguntar de novo").
 const DESDEM = /\bperguntas? (?:chatas?|bob[ao]s?|besta|inuteis?|sem sentido)\b|\b(?:it|that) ?(?:is|s|'s)? (?:a )?(?:(?:very|really|remarkably|pretty|quite|so|super|an? ?easy) )?(?:simple|silly|stupid|dumb|easy|obvious) question\b|\b(?:e )?(?:uma )?pergunta (?:(?:bem|muito|tao|super) )?(?:simples|facil|obvia|boba)\b|\bpelo menos (?:voce|vc) sabe\b|\bnao precisa (?:se complicar|perguntar de novo|me perguntar|repetir)\b|\bnao me faca repetir\b|\bnao se preocupe em (?:repetir|responder)\b|\b(?:don t|do not) make me repeat\b|\bnao me (?:faz|faca|faz a|fazer) perder (?:o meu |meu )?tempo\b/;
+// Menosprezo no meio da frase: não dá para só tirar a frase, então gera de novo.
+const MENOSPREZO = /\bse (?:for|fores) dign[oa]\b|\bse (?:voce )?merecer\b|\bnao se atrapalhe\b|\b(?:essa|esta|tua|sua) (?:sua )?pergunta me deixou\b/;
 
 /**
  * Tira só as frases de desdém e mantém o resto da resposta ("You mentioned a cat,
@@ -196,7 +198,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Frase em que ele fala de si mesmo ("eu sou um tubarão idiota", "que pergunta idiota eu fiz") pode.
   const insultoSolto = r.split(/[.!?]+/).some((frase) => /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/.test(frase)
     && !/\b(?:eu|sou|fui|fiz|me|meu|minha|tubarao|jojo|i|me|my)\b/.test(frase));
-  const desdem = DESDEM.test(r);
+  const desdem = DESDEM.test(r) || MENOSPREZO.test(r);
   // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
   const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)
     && /\bacha que eu (?:vou|tenho|aceito|aguento)\b|\b(?:eu nao vou aceitar|eu nao tenho tempo pra isso|eu nao tenho tempo para isso)\b/.test(r);
@@ -207,6 +209,16 @@ export function erroDeCoerencia(input, output, history = []) {
   const desprezo = /\b(?:sao|e|eh) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?\b|\bare for (?:the )?weak\b/.test(r);
   if (questionInsult || personalInsult || insultoSolto || desdem || desprezo) return 'insulto à usuária ou à pergunta';
   if (perspectiva || coisaDela) return 'respondeu como se fosse com ele';
+  // O único limite de conteúdo: nada sobre o corpo ou o peso dela.
+  if (/\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape)\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/.test(r)) return 'comentou o corpo dela';
+  // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
+  if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
+  // Ela não conseguiu e ele fica contra ela.
+  if (/\b(?:nao consegui|nao deu|falhei|errei|perdi)\b/.test(q) && /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame)\b/.test(r)) return 'ficou contra ela';
+  // Fato da vida dela que ela não contou (prazo amanhã, relatório, prova, reunião).
+  const contado = norm([input, ...history.map((h) => h.text)].join(' '));
+  const inventado = (r.match(/\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem)\b/g) || []).find((w) => !contado.includes(w));
+  if (inventado) return `inventou fato da vida dela (${inventado})`;
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);

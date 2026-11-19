@@ -652,3 +652,17 @@ test('run 235: coisa dela não vira dele; citar a pessoa vale como assunto; resp
   assert.equal(r.intent, 'ia');
   assert.equal(pedidos[1], 'fora do personagem (desculpas)');
 });
+
+test('run 236: nada sobre o corpo dela, piada pedida é piada, sem fato inventado, sem menosprezo', () => {
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are… acceptable. A solid choice, considering your physique, Manu.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde combina com teu corpo.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Que piada você quer, Manu?'), 'não contou a piada');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Por que o peixe foi ao médico? Porque estava sem graça, Manu!'), null);
+  assert.equal(erroDeCoerencia('eu não vou fazer nada', 'Não diga isso, Manu! A deadline do projeto é amanhã.'), 'inventou fato da vida dela (deadline)');
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Vamos direto ao ponto, então. Aquele relatório, já?'), 'inventou fato da vida dela (relatorio)');
+  assert.equal(erroDeCoerencia('O relatório ficou pronto.', 'Relatório pronto? Agora sim.'), null, 'se ela contou, pode');
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Que droga, Manu! Isso é inaceitável, seu projeto precisa ser entregue.'), 'ficou contra ela');
+  assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Mostre-me como, Emanuele, e talvez eu te dê uma mãozinha – se for digna.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('você está bem?', 'Claro que estou ótimo, Manu! Mas essa sua pergunta me deixou um pouco... irritado.'), 'insulto à usuária ou à pergunta');
+  assert.equal(erroDeCoerencia('Eu disse verde, não azul.', 'Verde, certo. Não se atrapalhe, está tudo bem.'), 'insulto à usuária ou à pergunta');
+});

@@ -109,6 +109,9 @@
   ("isso é ridículo, precisamos resolver") ganha uma segunda tentativa. O que é dela não vira
   dele ("café no teclado" não vira "meu teclado"), e resposta fora do personagem também ganha
   uma segunda tentativa antes da fala programada.
+- A conversa nunca comenta o corpo dela, não inventa fato da vida dela (prazo, relatório,
+  reunião que ela não contou), conta a piada quando ela pede e não menospreza ("se for digna",
+  "não se atrapalhe"), nem fica contra ela quando ela não conseguiu algo.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,
