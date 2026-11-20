@@ -91,3 +91,16 @@ test('run 268: parabéns no jeito do JoJo (nível, campeão, não se acomode) n�
   assert.equal(respostaGenerica('Parabéns, Manu! Isso foi impressionante, quase digno de um campeão. Mas não se acomode, preciso ver o resultado final, agora!'), null);
   assert.equal(respostaGenerica('Parabéns, Manu! Que bom que você finalmente concluiu seu projeto, isso é impressionante.'), 'frase de companion genérico', 'o genérico continua recusado');
 });
+
+test('run 269: a dica não traz frase pronta para copiar; "precisa de resultados" é o jeito do JoJo', async () => {
+  const { respostaGenerica } = await import('../../src/core/dialogue/generico.js');
+  assert.equal(respostaGenerica('Entendo, Manu. Conversar é bom, mas não se esqueça: a gente precisa de resultados, não é?'), null);
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, o) => { calls.push(JSON.parse(o.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: 'Conversa séria? Manda. Eu escuto com o bíceps contraído.' } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => ({}), baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'Só quero conversar, sem piada agora.', corrigir: 'fora do personagem (companion genérico)' });
+  assert.doesNotMatch(calls[0].messages[0].content, /quase no meu nível/, 'sem frase pronta que o modelo copia');
+  assert.match(calls[0].messages[0].content, /in your own new words about what she said/);
+});
