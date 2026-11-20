@@ -107,6 +107,7 @@ export class RigRenderer {
     ctx.scale(scale, scale);
     // Virar de lado: escala horizontal contínua em torno do centro.
     const f = Math.abs(facing) < 0.06 ? Math.sign(facing || 1) * 0.06 : facing;
+    this._lado = (f < 0 ? -1 : 1) * ((pose.squashX ?? 1) < 0 ? -1 : 1);
     ctx.translate(gx, 0);
     ctx.scale(f, 1);
     ctx.translate(-gx, 0);
@@ -161,7 +162,10 @@ export class RigRenderer {
           ctx.font = `bold ${part.fontSize || 6}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(part.text, part.textX, part.textY);
+          // Texto sempre legível: desfaz o espelho quando o JoJo olha para o outro lado.
+          ctx.translate(part.textX, part.textY);
+          if (this._lado < 0) ctx.scale(-1, 1);
+          ctx.fillText(part.text, 0, 0);
         });
       }
       if (group.id === this.faceAfter) this._face(ctx, pose);

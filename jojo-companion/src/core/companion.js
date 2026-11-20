@@ -52,6 +52,7 @@ import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReac
 import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
 import { DILDO_MS, ATADURA_MS, CANAIS_ATADURA, FALAS_DILDO } from './dildo.js';
 import { BALOES_ESTEROIDE } from './esteroide.js';
+import { GerenciadorVirais, viralDoTexto } from './virais.js';
 import { AnimeCalendario, episodiosNovos, visualDoAnime, normTitulo, ANIME_MAX } from './anime-calendario.js';
 import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL, visuaisComAnimacao } from './visual-nivel.js';
 import { memeDoTexto, animDoMeme, itensDeMemes } from './memes-br.js';
@@ -221,6 +222,8 @@ export class Companion {
     // Catálogo de animações (assets/catalog/animacoes.json) e motor de variedade.
     this.catalog = catalog || { itens: [] };
     this.catalogById = new Map(this.catalog.itens.map((it) => [it.id, it]));
+    // Animações virais (0.47.4): gerenciador central, gatilhos só por sinais reais.
+    this.virais = new GerenciadorVirais({ getConfig: () => this.store.get(), rng: () => this.rng(), now: () => this.clock.now() });
     this.variety = new VarietyEngine({
       catalog: this.catalog,
       lines: ambientLines || { falas: [] },
@@ -950,7 +953,7 @@ export class Companion {
       const quiet = now - Math.max(this.lastInteractionActivity || 0, this.startedAt || 0);
       if (quiet > 45 * 60e3 && now - (this.lastNeedy || 0) > 2 * 3600e3 && this._canNag()) {
         this.lastNeedy = now;
-        this.fireEvent('semInteracao');
+        if (!this._viral('ocioso')) this.fireEvent('semInteracao');
       }
     }
   }
@@ -1309,6 +1312,7 @@ export class Companion {
     const needs = this.onFeed?.(kind);
     if (needs && !needs.fed) { if (!quiet) this.say(needs.text, 'speech'); return null; }
     this.effect = { name: 'food', kind, until: now + 3400 };
+    if (!quiet) this.clock.setTimeout(() => this._viral('refeicao', { falar: false }), BURP_MS + 1500);
     if (!quiet) this.sayCategory(`food_${kind}`, { force: true, fallback: 'food' });
     this.clock.setTimeout(() => {
       if (this.quitting || !this.started) return;
@@ -1439,6 +1443,14 @@ export class Companion {
     }
     // Memes BR: a frase do meme ("me serve, vadia", "bah, tchê") vira a animação própria dele,
     // vestido do personagem, como a Tigresa. Segurança vem antes.
+    // Animações virais pelo nome do meme ("absolute cinema", "this is fine", "maxwell"…).
+    const viral = !safety && !this.work && !this.focus && viralDoTexto(text);
+    if (viral && this.store.get().viraisAtivo !== false && this.virais.candidatos(viral.gatilhos[0], { ignorarCooldown: true }).some((v) => v.id === viral.id)
+      && this.playCatalog(viral.id, { source: 'chat', speak: false, intensity: this.virais.intensidade() })) {
+      this.virais.registrar(viral.id);
+      const nome = profileVars(this.personality.get(), 'brincadeira').nome;
+      return this._quickReply(conv, (viral.fala || `${viral.nome}. Arte pura.`).replaceAll('{nome}', nome), 'viral');
+    }
     const meme = !safety && !this.work && memeDoTexto(text, this._memes);
     if (meme) {
       this.playCatalog(animDoMeme(meme.id), { source: 'chat', speak: false });
@@ -1551,6 +1563,7 @@ export class Companion {
             : { ok: false, code: 'unavailable', text: 'A ferramenta de clima não está disponível agora. Não tenho uma previsão confirmada.' };
         if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
         this.lastTool = { kind: 'weather', city: result.city || request.city || this.store.get().climaCidade, at: this.clock.now() };
+        if (!result.ok && result.code !== 'disabled') this.clock.setTimeout(() => this._viral('erro', { falar: false }), 1800);
         return { ...this._quickReply(conv, result.text, 'weather'), weather: { ok: result.ok, code: result.code || null } };
       }
       const agendaFollowup = this.lastTool?.kind === 'calendar' && /^(e )?(amanha|hoje|essa semana|proxima semana)[?!.,]*$/.test(normalizeText(text));
@@ -1674,6 +1687,7 @@ export class Companion {
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
       this.conversations.setStatus(conv.id, 'blocked', `Falha na conversa: ${e.message}`);
       this.fireEvent('erro', { speak: false });
+      this.clock.setTimeout(() => this._viral('erro', { falar: false }), 1800); // erro real: This Is Fine
       return { text: 'Deu erro aqui. Tenta de novo.', error: e.message, conversationId: conv.id, provider: this.dialogue.describe() };
     }
     this.clock.clearTimeout(thinkTimer);
@@ -2671,6 +2685,7 @@ export class Companion {
     if (!this.userHidden) this.overlay.show();
     if (this.behavior.state === 'meditate') this.behavior.finish('meditate', now);
     this.behavior.request('workWake', { now, force: true });
+    this.clock.setTimeout(() => this._viral('fimTrabalho', { falar: false }), 4000); // Chill Guy
     this._scheduleSpeech(now, true);
     this._applyLayout(true);
     this._schedule(0);
@@ -3042,6 +3057,9 @@ export class Companion {
     }
     this.instagramScolds = (this.instagramScolds || []).filter((t) => now - t < 20 * 60e3);
     this.instagramScolds.push(now);
+    // Virais: 3ª volta ao Instagram em 20 min = procrastinação (O Conselho); senão, olhar de lado.
+    const procrastinando = this.instagramScolds.length >= 3;
+    this.clock.setTimeout(() => this._viral(procrastinando ? 'procrastinacao' : 'instagram', { falar: false }), 2200);
     // Pacotes: a bronca às vezes vem com side eye/demure; reincidente, olhar de anime.
     if (this.rng() < 0.5) this.clock.setTimeout(() => this.packEvent(angry ? 'instagramRepetido' : 'instagram', { falar: false, sobrepor: true }), 400);
     return true;
@@ -3141,7 +3159,9 @@ export class Companion {
       mnelab: { anim: 'pensando', falas: ['O programa do João. Se travar no gráfico, me pergunta.', 'MNE_Lab aberto. A obra do Supremo. Dúvida? Me chama.'] },
     }[cat];
     if (!R) return false;
-    if (R.pack) this.playPack(R.pack, { source: 'contexto', falar: false });
+    // Jogo aberto: às vezes GigaChad, Sigma ou a Morte batendo à porta no lugar da reação.
+    if (cat === 'jogo' && this._viral('jogo', { falar: false })) { /* tocou o viral */ }
+    else if (R.pack) this.playPack(R.pack, { source: 'contexto', falar: false });
     else this.playCatalog(R.anim, { source: 'evento', speak: false });
     this.say(R.falas[Math.floor(this.rng() * R.falas.length) % R.falas.length], 'speech', { spontaneous: true, category: 'percepcao' });
     return true;
@@ -3177,7 +3197,7 @@ export class Companion {
     if (!msgs.length) return;
     // Pacotes: várias conquistas → arise; conquista → aura farming. Nível novo reage com a
     // referência do próprio nível (_syncVisual), não com um pacote genérico.
-    if (!lvl || !this._refs) this.clock.setTimeout(() => this.packEvent(lvl ? 'nivel' : novas.length >= 2 ? 'sequenciaConquistas' : 'conquista', { falar: false }), 2600);
+    if (!lvl || !this._refs) this.clock.setTimeout(() => (!lvl && novas.length && this._viral('conquista', { falar: false })) || this.packEvent(lvl ? 'nivel' : novas.length >= 2 ? 'sequenciaConquistas' : 'conquista', { falar: false }), 2600);
     // Não passa por cima de uma fala com categoria (bronca, lembrete): espera ela acabar.
     let tries = 0;
     const show = () => {
@@ -3224,10 +3244,30 @@ export class Companion {
   }
 
   /** Tédio do tubarão: tela parada sem novidade → dispara algo novo (respeita as configurações). */
+  /**
+   * Animação viral para um acontecimento real (gatilho do gerenciador). Nunca no Trabalho,
+   * no foco, em tela cheia, escondido ou pausado; respeita as preferências e os cooldowns.
+   * Devolve true se tocou (quem chamou não precisa tocar outra reação).
+   */
+  _viral(gatilho, { falar = true } = {}) {
+    // Conversando (modo de interação) o JoJo responde à conversa; viral não atravessa a resposta.
+    if (!this.started || this.work || this.focus || this.interaction || this.fullscreenHidden || this.lolHidden || this.userHidden || this.paused || this.quitting) return false;
+    // Viral nunca corta uma cena em andamento ("eu deveria jogar lol?", AVC, rebolado…): só com o JoJo à toa.
+    // (prioridade menor = mais importante; AUTO é o repouso)
+    if (this.behavior.priority < PRIORITY.AUTO) return false;
+    const id = this.virais.escolher(gatilho);
+    if (!id) return false;
+    if (!this.playCatalog(id, { source: 'viral', speak: falar && !this.store.get().quietMode, intensity: this.virais.intensidade() })) return false;
+    this.virais.registrar(id);
+    this.log('info', `Viral ${id} (${gatilho}).`);
+    return true;
+  }
+
   _boredomTick(now) {
     if (!this.started || !this._canIdleAct() || this.focus || this.store.get().ambienteFrequencia === 'desligado') return false;
     if (now - Math.max(this.lastAmbientAt || 0, this.startedAt || 0) < 6 * 60e3) return false;
     this.lastAmbientAt = now;
+    if (this.behavior.priority <= PRIORITY.AUTO && this._viral('lazer')) return true;
     if (this.variety.tickBoredom() < 3) return false;
     if (this.behavior.priority < PRIORITY.AUTO) return false;
     const data = this._pickAmbient();
@@ -3436,7 +3476,7 @@ export class Companion {
       return 'Foco encerrado. Sem drama.';
     }
     this.conversations.setStatus('foco', 'ready', 'Bloco concluído. Pausa de 5 min.');
-    this.clock.setTimeout(() => this.packEvent('tarefaConcluida', { falar: false }), 2500);
+    this.clock.setTimeout(() => this._viral('tarefa') || this.packEvent('tarefaConcluida', { falar: false }), 2500);
     this.progress.log('foco');
     this._progress('foco', { conta: 'foco', missao: 'foco' });
     // Bloco concluído conta para o hábito do dia (treino ou estudo).
@@ -3574,8 +3614,10 @@ export class Companion {
     if (g && score != null && (win || !menorMelhor) && this._saveRecord(g.id, score, menorMelhor)) text = `${text} Recorde novo: ${this._fmtRecord(g.id, score)}!`;
     // Pacotes: duas derrotas seguidas → "bro is cooked"; vitória perfeita → "antes do GTA 6".
     this.derrotas = win ? 0 : (this.derrotas || 0) + 1;
-    if (this.derrotas >= 2) this.clock.setTimeout(() => this.packEvent('derrota', { falar: false }), 1500);
+    // Virais: derrotas seguidas → Coffin Dance/Sad Hamster/máscara; vitória → GigaChad/Speed.
+    if (this.derrotas >= 2) this.clock.setTimeout(() => this._viral('derrota') || this.packEvent('derrota', { falar: false }), 1500);
     else if (win && g && g.total && g.pontos === g.total) this.clock.setTimeout(() => this.packEvent('conquistaImprovavel', { falar: false }), 1500);
+    else if (win) this.clock.setTimeout(() => this._viral('vitoria'), 2600);
     if (win) {
       this.progress.log('vitoria');
       this._progress('jogoVitoria', { conta: 'vitorias' });
@@ -4761,6 +4803,7 @@ export class Companion {
     if (JSON.stringify(next) !== JSON.stringify(cfg)) this.personality.update({ lembreteComida: next }, { silent: true });
     if (delivered) {
       this._nag(`refeicao_${delivered.id}`, this.clock.now());
+      this.clock.setTimeout(() => this._viral('refeicao', { falar: false }), 4000); // Gato Babando, Comilão, Baiacu
       // Vira uma atividade "Precisa de você" até ela responder na conversa do lembrete.
       const c = this.conversations.create({ id: 'lembrete-comida', title: `Lembrete: ${delivered.nome}`, kind: 'reminder' });
       if (this.lastSaid) this.conversations.addMessage(c.id, 'jojo', this.lastSaid);

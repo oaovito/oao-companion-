@@ -1,5 +1,6 @@
 // Janela de configurações: aplica cada alteração imediatamente (validada no main).
 import { TodoSettings } from '../shared/todo-view.js';
+import { VIRAIS } from '../../core/virais.js';
 const api = window.settingsApi;
 const form = document.getElementById('form');
 let info = null;
@@ -46,6 +47,7 @@ function render(i) {
     o.textContent = FMT[o.dataset.fmt](s[o.dataset.for]);
   }
   renderDiscord(i);
+  renderVirais(s);
   const hk = document.getElementById('hotkeyStatus');
   hk.textContent = i.hotkey.ok
     ? `Atalho ativo: ${prettyHotkey(i.hotkey.accelerator)}. Também disponível pela bandeja.`
@@ -157,6 +159,29 @@ form.addEventListener('change', (e) => {
   }
   send({ [el.name]: valueOf(el) });
 });
+
+// Animações virais: uma caixa por animação (marcada = permitida).
+const viraisLista = document.getElementById('viraisLista');
+for (const v of VIRAIS) {
+  const label = document.createElement('label');
+  label.className = 'check';
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.dataset.viral = v.id;
+  box.addEventListener('change', () => {
+    const bloqueadas = new Set(info?.settings.viraisBloqueadas || []);
+    if (box.checked) bloqueadas.delete(v.id);
+    else bloqueadas.add(v.id);
+    send({ viraisBloqueadas: [...bloqueadas] });
+  });
+  const marca = v.adulto ? ' (adulto)' : v.negro ? ' (humor negro)' : '';
+  label.append(box, ` ${String(v.num).padStart(2, '0')}. ${v.nome} — ${v.referencia}${marca}`);
+  viraisLista.append(label);
+}
+function renderVirais(s) {
+  const bloqueadas = new Set(s.viraisBloqueadas || []);
+  for (const box of viraisLista.querySelectorAll('input[data-viral]')) box.checked = !bloqueadas.has(box.dataset.viral);
+}
 
 // Gravação do atalho: clique no campo e pressione a combinação.
 const hotkeyInput = document.getElementById('hotkeyInput');

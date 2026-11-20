@@ -875,3 +875,8 @@ test('run 271: parabéns pela conquista dela não precisa repetir "projeto"', ()
   assert.equal(relatoSemAssunto('Hoje consegui terminar meu projeto.', 'Parabéns, Manu! Isso mostra disciplina. Agora, foco no próximo desafio!'), false);
   assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Isso é ridículo. Vamos resolver.'), true, 'o relato do chefe continua pedindo o assunto');
 });
+
+test('run 277: "Que piada é essa? Me diz logo" não é contar a piada', () => {
+  assert.equal(erroDeCoerencia('fala uma piada', 'Que piada é essa? Me diz logo, não tenho o dia todo pra perder.'), 'não contou a piada');
+  assert.equal(erroDeCoerencia('fala uma piada', 'Por que o tomate foi ao banco? Para tirar extrato!'), null);
+});

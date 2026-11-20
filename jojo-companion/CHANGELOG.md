@@ -1,5 +1,54 @@
 # CHANGELOG
 
+## 0.47.4 — 2026-11-19
+
+### Novidades
+- 50 animações virais originais do JoJo, inspiradas em memes do Twitter/X, TikTok e shitpost. O personagem
+  não muda: são adereços, roupas temporárias, luz, cor e deformações de desenho que sempre voltam ao normal.
+  - Brainrot e animais: Gato Babando (Drooling Cat), Gato Pensador (Cat Thinking), Olhar de Lado (Side-Eye
+    Cat), Comilão Flagrado (Mr. Fresh), Pop Tubarão (Pop Cat), Giro do Maxwell, Oiia Oiia, Hamster Triste,
+    Cara Tranquilo (Chill Guy), Tralalero Tralalá, Hã? (Huh? Cat), Gato Smurf, Máquina de Lavar (Pedro
+    Raccoon), Dança Desdentada (Dancing Toothless), Hipopótamo Bravo (Moo Deng), Marmota do Grito, Baiacu
+    (Pufferfish), Nyan Tubarão (em pixel art de verdade), Cachorro Desconfiado (Side-Eye Dog) e Dança de IA.
+  - Julgamento e reações: Gritaria na Mesa, Tá Tudo Bem (This Is Fine), Menina do Desastre, Surpresa
+    Elétrica, Pisca-Pisca Incrédulo, Cinema Absoluto (em preto e branco), Sr. Incrível Perturbado (quatro
+    fases), O Plano do Vilão (Gru), Sorriso Sem Graça (Kevin James) e Rindo e Chorando (Pedro Pascal).
+  - Shitpost e ego: Aprova e Reprova (Drake), Modo NPC, Máscara que Cai, Cara de Troll, Rotina Sigma,
+    GigaChad, Surto do Streamer (IShowSpeed), Bailarina Capuccina, Antes do GTA 6 e O Conselho (quatro
+    JoJos fantasmas julgando).
+  - Humor adulto, negro e absurdo: Cuspe Interrompido (Hawk Tuah, com aviso do RH), Cadeia dos Tarados
+    (mini JoJo com bastão de espuma, BONK), Auuuga (com tarja de censura), Surto na Reunião (paródia de
+    Downfall, comandante genérico, sem símbolo real), Esconderijo no Buraco ("Não estou aqui"),
+    Bombardeiro Tubarão (bombas de confete), Dança do Caixão (quatro mini JoJos levando a autoestima),
+    Risada Incontrolável (KEKW), Executivo no Espelho (Patrick Bateman) e A Morte Bate à Porta (sono,
+    dieta, produtividade, sanidade e "mais uma partida").
+- Só por acontecimentos reais: jogo aberto (GigaChad, Sigma, a Morte), duas derrotas seguidas nos
+  mini-jogos (Coffin Dance, Hamster Triste, Máscara, Rindo e Chorando), vitória (GigaChad, Speed),
+  conquista nova (GigaChad), muito tempo sem conversar (Gato Pensador, NPC), Instagram aberto (Olhar de
+  Lado, Cachorro Desconfiado) e a terceira volta em 20 min (O Conselho), bloco de foco concluído (Cinema
+  Absoluto), hora da refeição ou comida do JoJo (Gato Babando, Comilão, Baiacu), erro real da conversa ou do
+  clima (Tá Tudo Bem), fim do Modo Trabalho (Cara Tranquilo) e, de vez em quando, lazer. Nenhuma derrota ou
+  conquista é inventada.
+- O nome do meme no chat ("absolute cinema", "faz o maxwell", "kekw", "this is fine"…) toca a animação.
+- Configurações → Animações virais: ligar/desligar, frequência, intensidade, humor adulto, humor negro,
+  reduzir efeitos e permitir ou bloquear cada uma das 50. Tudo salvo.
+
+### Melhorias
+- Gerenciador central das animações virais: prioridade, cooldown de cada uma (90 min), intervalo mínimo
+  entre virais pela frequência, memória para não repetir as últimas cinco, interrompível como qualquer
+  animação.
+- Rótulos escritos nas peças continuam legíveis quando o JoJo vira para o outro lado.
+
+### Como testar
+- Escreva "absolute cinema", "faz o maxwell" ou "kekw" no chat.
+- Perca duas vezes seguidas num mini-jogo, abra o Instagram ou termine o Modo Trabalho.
+- Em Configurações → Animações virais, desligue o humor adulto ou bloqueie uma animação e confira.
+
+### Correções
+- As animações virais nunca cortam uma cena em andamento (o "eu deveria jogar lol?", o AVC, outra viral): só tocam com o JoJo à toa.
+- Em data solene (Consciência Negra, Finados, Sexta-feira Santa…) a conversa não trata a data como fantasia
+  e o JoJo não faz piada com ela.
+
 ## 0.47.3 — 2026-11-19
 
 ### Novidades

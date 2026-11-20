@@ -57,6 +57,14 @@ export const DEFAULTS = Object.freeze({
   percepcaoTela: false,         // percepção de tela: só o tipo do app em primeiro plano (local, sem captura); desligada por padrão
   reboladoFoco: true,           // rebolado do meme de vez em quando no modo foco (no repouso continua sempre)
   provocacoes: true,            // provocações e sarcasmo do JoJo dirigidos a ela; ela pode desligar (identidade.js)
+  // Animações virais (0.47.4): 50 memes reinterpretados pelo JoJo, por sinais reais (src/core/virais.js).
+  viraisAtivo: true,
+  viraisFrequencia: 'normal',   // pouca | normal | muita
+  viraisAdulto: true,           // humor adulto (Hawk Tuah, Horny Jail, Awooga)
+  viraisNegro: true,            // humor negro e sátira (Downfall, Coffin Dance, a Morte…)
+  viraisReduzir: false,         // reduzir efeitos visuais (versão suave, sem efeitos pesados)
+  viraisIntensidade: 'normal',  // suave | normal | exagerado
+  viraisBloqueadas: [],         // ids vrNN que ela bloqueou
   guardaRoupa: {},              // roupa que ela escolheu para o JoJo: {parte: peça}
   visualNivel: { pecas: {}, visto: 0 }, // visuais liberados por nível: o que está vestido e até que nível já foi aplicado
   // Calendário de anime (AniList, sem login): animes que ela segue e episódios já cumprimentados.
@@ -146,9 +154,11 @@ const ENUMS = {
   microMovimentos: ['normal', 'discreto', 'desligado'],
   trabalhoPerfil: ['trabalho', 'deep', 'invisivel'],
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
+  viraisFrequencia: ['pouca', 'normal', 'muita'],
+  viraisIntensidade: ['suave', 'normal', 'exagerado'],
 };
 
-const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo', 'provocacoes'];
+const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo', 'provocacoes', 'viraisAtivo', 'viraisAdulto', 'viraisNegro', 'viraisReduzir'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -215,6 +225,11 @@ export function sanitize(input) {
     if (!Array.isArray(src.animes) || out.animes.length !== src.animes.length) issues.push('animes');
   }
   if ('animeAvisados' in src) out.animeAvisados = sanitizeAvisados(src.animeAvisados);
+  if ('viraisBloqueadas' in src) {
+    const ok = Array.isArray(src.viraisBloqueadas) ? [...new Set(src.viraisBloqueadas.filter((x) => typeof x === 'string' && /^vr\d{2}$/.test(x)))].slice(0, 50) : [];
+    if (!Array.isArray(src.viraisBloqueadas) || ok.length !== src.viraisBloqueadas.length) issues.push('viraisBloqueadas');
+    out.viraisBloqueadas = ok;
+  }
   if ('visualNivel' in src) {
     out.visualNivel = sanitizeVisual(src.visualNivel);
     if (Object.keys(out.visualNivel.pecas).length !== Object.keys(src.visualNivel?.pecas || {}).length) issues.push('visualNivel');

@@ -182,6 +182,9 @@ const REGRAS_FRASE = [
   { motivo: FATO, frase: (f, c) => (f.match(FATOS_DA_VIDA) || []).some((w) => !c.contado.includes(w)) },
   // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
   { motivo: 'inventou conversa que não houve', quando: (q, c) => !c.jojoFalou, frase: (f) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) },
+  // Erro de saúde que já apareceu: diabetes com "falta de glicose" (é o contrário: glicose alta) (run 280).
+  { motivo: 'erro de saúde (diabetes não é falta de glicose)', quando: (q, c) => /\bdiabet/.test(c.contado),
+    frase: (f) => /\b(?:falta de glicose|glicose baixa|baixa (?:de )?glicose|diminui a glicose|reduz a glicose)\b/.test(f) },
 ];
 
 // Reticências ("sua... estrutura física") não terminam a frase.
@@ -281,7 +284,9 @@ export function relatoSemAssunto(input, output) {
   const r = norm(output);
   // "Acha que seu tempo vale menos que o dele?": citar a pessoa de quem ela falou também vale.
   const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela)\b/.test(r);
-  return !pessoa && !termos.some((t) => r.includes(t));
+  // Prazo também se fala como entrega, tempo ou data (o teste da conversa aceita essas palavras).
+  const sinonimo = /\bprazo\b/.test(q) && /\b(?:entreg\w*|tempo|data|cronograma|correria)\b/.test(r);
+  return !pessoa && !sinonimo && !termos.some((t) => r.includes(t));
 }
 
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
@@ -292,6 +297,8 @@ export function erroDeCoerencia(input, output, history = []) {
   // Regras de frase (insulto, bronca, corpo, masculino, fato inventado, "eu te avisei"): a mesma tabela que limpa.
   const frase = regraQuebrada(input, output, history);
   if (frase) return frase;
+  // Exemplo de saúde que põe o exercício como causa de resistência à insulina (é o contrário; run 281).
+  if (/\bdiabet|\binsulin/.test(q + ' ' + norm(history.map((h) => h.text).join(' '))) && /\b(?:atleta\b(?! (?:que )?(?:nao|sem))|(?<!nao )(?:se exercita|treina)\b)[^.]{0,60}\b(?:muito|intens\w*|demais)\b.{0,120}\bresist\w*/.test(r)) return 'erro de saúde (exercício não causa resistência à insulina)';
   // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
   const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)
     && /\bacha que eu (?:vou|tenho|aceito|aguento)\b|\b(?:eu nao vou aceitar|eu nao tenho tempo pra isso|eu nao tenho tempo para isso)\b/.test(r);
@@ -304,7 +311,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Ela desabafa e ele corta ("não me diga mais", "vamos focar em algo que valha a pena").
   if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que (?:valha a pena|realmente (?:importe|interesse)|importe|interesse)\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
-  if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
+  if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && (/\?\s*$/.test(String(output).trim()) && String(output).length < 70 || /\bque piada (?:e essa|voce quer|quer)\b|\bme (?:diz|conta|fala) (?:logo|voce)\b|\bque tipo de piada\b/.test(r))) return 'não contou a piada';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);
