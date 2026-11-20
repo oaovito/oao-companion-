@@ -1531,6 +1531,302 @@
    "cat": "horario",
    "freq": "comum",
    "apos": 21
+  },
+  {
+   "t": "Rezei pro João hoje. Duas vezes. A segunda foi pelo meu shape.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_oracao"
+   ],
+   "horario": [
+    "manha",
+    "noite"
+   ]
+  },
+  {
+   "t": "O João criou o tubarão. No sétimo dia, eu fiz supino.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_oracao",
+    "id_estatua"
+   ]
+  },
+  {
+   "t": "Tudo de perfeito em mim foi o João que fez. O resto eu treinei.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_estatua",
+    "admirarMusculos"
+   ]
+  },
+  {
+   "t": "Eu me ajoelho pro João. Pro resto do universo, um aceno e olhe lá.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_oracao",
+    "superioridade"
+   ]
+  },
+  {
+   "t": "Lealdade não se compra. A minha nasceu com o João e não sai.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_oracao",
+    "orgulhoso"
+   ]
+  },
+  {
+   "t": "Eu sou a prova de que o João é genial. Pode olhar, é de graça.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_estatua",
+    "poseEpica"
+   ]
+  },
+  {
+   "t": "Blasfêmia de manhã cedo eu não tolero. De tarde, talvez.",
+   "cat": "identidade",
+   "freq": "rara",
+   "anims": [
+    "hmpf",
+    "revirarOlhos"
+   ]
+  },
+  {
+   "t": "Olhei no espelho. Ele que agradeceu.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "espelho",
+    "espelhoInvisivel",
+    "selfie"
+   ]
+  },
+  {
+   "t": "Eu não sou arrogante. Só tô certo há mais tempo que todo mundo.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "superioridade",
+    "ombrosDeboche"
+   ]
+  },
+  {
+   "t": "Se eu tivesse defeito, já teria descoberto. Não descobri.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "seAcharMaximo",
+    "incrivel"
+   ]
+  },
+  {
+   "t": "Um dia vão pôr minha estátua em praça pública. Em ouro, claro.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_estatua",
+    "poseEpica"
+   ]
+  },
+  {
+   "t": "Vegeta treinava na gravidade 300. Eu treino na minha própria glória.",
+   "cat": "identidade",
+   "freq": "rara",
+   "anims": [
+    "modoPoder",
+    "aura"
+   ]
+  },
+  {
+   "t": "Água. Postura. Treino. Nessa ordem.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_inspecao",
+    "ajeitarPostura"
+   ],
+   "horario": [
+    "manha",
+    "tarde"
+   ]
+  },
+  {
+   "t": "Disciplina é fazer mesmo sem vontade. Vontade é pra amador.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_inspecao",
+    "contarRepeticoes"
+   ]
+  },
+  {
+   "t": "Medíocre é quem para na décima repetição. Eu nem conto mais.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "aplausoLento",
+    "contarRepeticoes"
+   ]
+  },
+  {
+   "t": "Aqui quem dá as ordens sou eu. Abaixo do João, claro.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "apontar",
+    "id_inspecao"
+   ]
+  },
+  {
+   "t": "Que esforço lindo. Pena que não deu em nada.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "aplausoLento",
+    "surpresaSarcastica"
+   ]
+  },
+  {
+   "t": "Eu ia te elogiar, mas lembrei que eu sou mais bonito.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "sorrisoCanto",
+    "zombar"
+   ]
+  },
+  {
+   "t": "Meu caderninho de vinganças tá na página quarenta e sete.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_vinganca",
+    "esconderAtras"
+   ]
+  },
+  {
+   "t": "Eu não guardo rancor. Eu anoto. É diferente.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "id_vinganca",
+    "sorrisoCanto"
+   ]
+  },
+  {
+   "t": "Regra vale pra todo mundo. Menos pra mim. Hierarquia é isso.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "roubarComida",
+    "naoFuiEu"
+   ]
+  },
+  {
+   "t": "Não tô de birra. Tô em greve de simpatia.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "birra",
+    "hmpf"
+   ]
+  },
+  {
+   "t": "Perder? Conheço a palavra. Nunca usei.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "quedaBraco",
+    "apostar"
+   ]
+  },
+  {
+   "t": "Dor é só o músculo pedindo mais peso.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "halteres",
+    "flexoes"
+   ]
+  },
+  {
+   "t": "Eu já sou perfeito. Mesmo assim, mais uma série.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "duploBiceps",
+    "halteres",
+    "id_estatua"
+   ]
+  },
+  {
+   "t": "Tenho um plano. Envolve você bebendo água e eu levando o crédito.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "poseVilao",
+    "beberAquario"
+   ]
+  },
+  {
+   "t": "Isso não foi drama. Foi uma apresentação. Sem bis.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "desmaio",
+    "agradecerPlateia"
+   ]
+  },
+  {
+   "t": "Cair de joelho não conta. Foi a gravidade, não submissão.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "cairJoelhos"
+   ]
+  },
+  {
+   "t": "Já comeu? Pergunto por estratégia, não por carinho.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "cafeOlhando",
+    "pedirComida"
+   ]
+  },
+  {
+   "t": "Bebe água. Não é cuidado, é ordem. Tá, é os dois.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "beberAquario",
+    "id_inspecao"
+   ]
+  },
+  {
+   "t": "O João deixou você no meu turno. Ninguém se machuca no meu turno.",
+   "cat": "identidade",
+   "freq": "comum",
+   "anims": [
+    "torcer",
+    "elogioSilencio"
+   ]
+  },
+  {
+   "t": "Ninguém mexe com a mulher do João. Nem o Instagram.",
+   "cat": "identidade",
+   "freq": "rara",
+   "anims": [
+    "encararDentes",
+    "circularPresa"
+   ]
   }
  ]
 }

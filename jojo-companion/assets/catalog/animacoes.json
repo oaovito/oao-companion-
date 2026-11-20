@@ -3009,7 +3009,8 @@
     "fx": [
      "aura"
     ]
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "evolucao",
@@ -3069,7 +3070,8 @@
     "fx": [
      "aura"
     ]
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "pet",
@@ -3261,7 +3263,8 @@
     "bracos": "ombros",
     "rosto": "canto",
     "cabeca": "revira"
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "superioridade",
@@ -3286,7 +3289,8 @@
     "bracos": "cruzados",
     "rosto": "orgulhoso",
     "corpo": "infla"
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "naoFuiEu",
@@ -3480,7 +3484,8 @@
     "cabeca": "viraRosto",
     "bracos": "cruzados",
     "rosto": "irritado"
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "circularPresa",
@@ -5182,7 +5187,8 @@
     "corpo": "ajoelha",
     "bracos": "maosAlto",
     "rosto": "chora"
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "perdaoTeatral",
@@ -5356,7 +5362,8 @@
     "bracos": "cruzados",
     "rosto": "irritado",
     "cabeca": "viraRosto"
-   }
+   },
+   "fala": "identidade"
   },
   {
    "id": "esconderAtras",

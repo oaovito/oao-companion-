@@ -8,6 +8,7 @@ import { rigComRebolado } from '../../core/rebolado.js';
 import { rigComDildo } from '../../core/dildo.js';
 import { rigComEsteroide } from '../../core/esteroide.js';
 import { rigComVirais } from '../../core/virais.js';
+import { rigComRituais } from '../../core/rituais.js';
 import { desenharComVirais } from '../shared/virais-desenho.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
@@ -81,7 +82,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))))));
+  rig = new RigRenderer(rigComRituais(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
