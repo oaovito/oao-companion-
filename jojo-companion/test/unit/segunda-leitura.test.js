@@ -137,3 +137,10 @@ test('run 280: diabetes não é "falta de glicose"; palavrão é exemplo do que 
   assert.equal(erroDeCoerencia('o que é diabetes tipo 2?', 'É resistência à insulina: a glicose sobra no sangue.'), null);
   assert.match(REVISAO_PROMPT, /"Que merda, Manu! Café no teclado\?" \(swearing is fine\)/);
 });
+
+test('run 281: exercício não é causa de resistência à insulina no exemplo', async () => {
+  const { erroDeCoerencia } = await import('../../src/core/dialogue/coherence.js');
+  const hist = [{ role: 'user', text: 'o que é diabetes tipo 2?' }];
+  assert.equal(erroDeCoerencia('me dá um exemplo', 'Por exemplo, imagine um atleta que se exercita muito. Com o tempo, ele pode se tornar resistente à insulina.', hist), 'erro de saúde (exercício não causa resistência à insulina)');
+  assert.equal(erroDeCoerencia('me dá um exemplo', 'Por exemplo, alguém que não se exercita e come muito açúcar fica resistente à insulina.', hist), null);
+});

@@ -295,6 +295,8 @@ export function erroDeCoerencia(input, output, history = []) {
   // Regras de frase (insulto, bronca, corpo, masculino, fato inventado, "eu te avisei"): a mesma tabela que limpa.
   const frase = regraQuebrada(input, output, history);
   if (frase) return frase;
+  // Exemplo de saúde que põe o exercício como causa de resistência à insulina (é o contrário; run 281).
+  if (/\bdiabet|\binsulin/.test(q + ' ' + norm(history.map((h) => h.text).join(' '))) && /\b(?:atleta\b(?! (?:que )?(?:nao|sem))|(?<!nao )(?:se exercita|treina)\b)[^.]{0,60}\b(?:muito|intens\w*|demais)\b.{0,120}\bresist\w*/.test(r)) return 'erro de saúde (exercício não causa resistência à insulina)';
   // Ela conta algo dela ("meu chefe mudou o prazo") e ele responde como se fosse com ele ("acha que eu vou aceitar isso?").
   const perspectiva = /\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\b(?:voce|vc|tu|jojo)\b/.test(q)
     && /\bacha que eu (?:vou|tenho|aceito|aguento)\b|\b(?:eu nao vou aceitar|eu nao tenho tempo pra isso|eu nao tenho tempo para isso)\b/.test(r);
