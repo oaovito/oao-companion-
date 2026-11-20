@@ -46,6 +46,8 @@
 
 ### Correções
 - As animações virais nunca cortam uma cena em andamento (o "eu deveria jogar lol?", o AVC, outra viral): só tocam com o JoJo à toa.
+- Em data solene (Consciência Negra, Finados, Sexta-feira Santa…) a conversa não trata a data como fantasia
+  e o JoJo não faz piada com ela.
 
 ## 0.47.3 — 2026-11-19
 

@@ -104,3 +104,13 @@ test('run 269: a dica não traz frase pronta para copiar; "precisa de resultados
   assert.doesNotMatch(calls[0].messages[0].content, /quase no meu nível/, 'sem frase pronta que o modelo copia');
   assert.match(calls[0].messages[0].content, /in your own new words about what she said/);
 });
+
+test('run 276: data solene não vira "fantasia atual" na conversa e a leitura recusa piada com ela', async () => {
+  const { fantasiaDaConversa, HOLIDAYS } = await import('../../src/core/holidays.js');
+  assert.equal(fantasiaDaConversa('conscienciaNegra'), null);
+  assert.equal(fantasiaDaConversa('finados'), null);
+  assert.equal(fantasiaDaConversa(null), null);
+  const comFantasia = Object.entries(HOLIDAYS).find(([, h]) => h.fantasia && h.tipo !== 'solene');
+  assert.equal(fantasiaDaConversa(comFantasia[0]), comFantasia[1].nome);
+  assert.match(REVISAO_PROMPT, /reject jokes about solemn dates \(Consciência Negra, Finados, Sexta-feira Santa\), race or religion/);
+});

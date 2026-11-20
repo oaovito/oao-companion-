@@ -257,3 +257,13 @@ export function holidaysFor(date) {
 export function holidayFor(date) {
   return holidaysFor(date)[0] || null;
 }
+
+/**
+ * Fantasia do dia para a conversa: só quando há fantasia de verdade. Data solene (Consciência
+ * Negra, Finados, Sexta-feira Santa…) não vira "fantasia atual" no prompt, para o modelo não
+ * fazer piada com ela (run 276, 20/11/2026).
+ */
+export function fantasiaDaConversa(id) {
+  const h = id ? HOLIDAYS[id] : null;
+  return h && h.tipo !== 'solene' && h.fantasia ? h.nome : null;
+}
