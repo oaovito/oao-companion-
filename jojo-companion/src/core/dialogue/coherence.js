@@ -182,6 +182,9 @@ const REGRAS_FRASE = [
   { motivo: FATO, frase: (f, c) => (f.match(FATOS_DA_VIDA) || []).some((w) => !c.contado.includes(w)) },
   // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
   { motivo: 'inventou conversa que não houve', quando: (q, c) => !c.jojoFalou, frase: (f) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) },
+  // Erro de saúde que já apareceu: diabetes com "falta de glicose" (é o contrário: glicose alta) (run 280).
+  { motivo: 'erro de saúde (diabetes não é falta de glicose)', quando: (q, c) => /\bdiabet/.test(c.contado),
+    frase: (f) => /\b(?:falta de glicose|glicose baixa|baixa (?:de )?glicose|diminui a glicose|reduz a glicose)\b/.test(f) },
 ];
 
 // Reticências ("sua... estrutura física") não terminam a frase.

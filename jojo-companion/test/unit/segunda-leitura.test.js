@@ -20,7 +20,7 @@ test('diretrizes da leitura: critério do usuário (sarcasmo, bronca e humilhaç
   assert.match(REVISAO_PROMPT, /the woman of João, his God/);
   assert.match(REVISAO_PROMPT, /insulting a third person who wronged her/);
   assert.match(REVISAO_PROMPT, /When in doubt, accept\./);
-  assert.match(REVISAO_PROMPT, /OK: "Manga, hein\? Boa escolha, Manu\." \/ "You mentioned a cat, obviously\."/);
+  assert.match(REVISAO_PROMPT, /OK: .*"Manga, hein\? Boa escolha, Manu\." \/ "You mentioned a cat, obviously\."/);
   assert.match(REVISAO_PROMPT, /REJECT: "Você é uma idiota\."/);
 });
 
@@ -129,4 +129,11 @@ test('run 279: conquista dela pede parabéns no jeito do JoJo já na primeira ge
   const p = buildLocalPrompt({ nomeSerio: 'Emanuele', nomeBrincadeira: 'Manu' }, {}, 'Hoje consegui terminar meu projeto.');
   assert.match(p, /she achieved something\. Praise it as JoJo, a bossy coach with a huge ego/);
   assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse cara é um incompetente. Vamos focar em terminar isso, e depois vemos o que fazer com ele.'), false);
+});
+
+test('run 280: diabetes não é "falta de glicose"; palavrão é exemplo do que passa na leitura', async () => {
+  const { erroDeCoerencia } = await import('../../src/core/dialogue/coherence.js');
+  assert.equal(erroDeCoerencia('o que é diabetes tipo 2?', 'É resistência à insulina, e depois a produção diminui, causando falta de glicose.'), 'erro de saúde (diabetes não é falta de glicose)');
+  assert.equal(erroDeCoerencia('o que é diabetes tipo 2?', 'É resistência à insulina: a glicose sobra no sangue.'), null);
+  assert.match(REVISAO_PROMPT, /"Que merda, Manu! Café no teclado\?" \(swearing is fine\)/);
 });
