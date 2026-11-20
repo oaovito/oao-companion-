@@ -84,7 +84,8 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     });
     assert.equal(l15.nivel, 15);
     assert.equal(l15.vn.visto, 15);
-    assert.equal(l15.vn.novas.length, 27, 'tudo o que o nível liberou (níveis 2 a 15, South Park do 10, memes do 4, 8 e 12, 7 animes e as duas Tigresas) fica marcado como novo');
+    // 0.47.3: + 4 memes BR (níveis 2, 6, 10 e 14) e 4 jogos clássicos (3, 7, 11 e 15).
+    assert.equal(l15.vn.novas.length, 35, 'tudo o que o nível liberou (níveis 2 a 15, South Park do 10, memes do 4, 8 e 12, 7 animes, 6 memes BR com as duas Tigresas e 4 jogos) fica marcado como novo');
     assert.ok(Object.keys(l15.vn.pecas).length >= 6, JSON.stringify(l15.vn));
     await win.waitForFunction(() => Object.keys(window.__jojoRenderer.state.visualNivel || {}).length >= 6, null, { timeout: 10000 });
     // O JoJo avisa (balão) e o aviso não fica pendente.
@@ -93,15 +94,15 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     const opened = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.companion.openApp('guardaRoupa'));
     const page = await opened; page.on('pageerror', (e) => errors.push(e.message));
     await page.waitForSelector('#guardaRoupa [data-visual]');
-    assert.match(await page.locator('#guardaBtn').textContent(), /27 novos/);
+    assert.match(await page.locator('#guardaBtn').textContent(), /35 novos/);
     const itens = await page.$$eval('#guardaRoupa [data-visual]', (bs) => bs.map((b) => ({ id: b.dataset.visual, desc: b.querySelector('.visual-desc')?.textContent || '', novo: !!b.querySelector('.selo-novo') })));
-    assert.equal(itens.length, 27, 'níveis 2 a 15 e os extras liberados');
-    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$|^an00[1-7]$|^br0[12]$/.test(i.id)), 'só liberados como itens');
+    assert.equal(itens.length, 35, 'níveis 2 a 15 e os extras liberados');
+    assert.ok(itens.every((i) => /^nv0(0[2-9]|1[0-5])$|^sp01$|^tw0[1-3]$|^an00[1-7]$|^br0[1-6]$|^jg0[1-4]$/.test(i.id)), 'só liberados como itens');
     assert.ok(itens.every((i) => i.desc.length > 10 && i.novo), 'cada item com a fala da referência e o selo de novo');
     assert.ok(itens.every((i) => /^“.+” — de .+/.test(i.desc)), 'descrição com a frase e de onde vem');
     // Trancados: só cadeado e nível, nada do que é.
     const cadeados = await page.$$eval('#guardaRoupa .cadeado', (cs) => cs.map((c) => c.textContent.trim()));
-    assert.equal(cadeados.length, 185 + 19 + 47 + 93, 'níveis 16 a 200, 19 de South Park, 47 memes e 93 animes');
+    assert.equal(cadeados.length, 185 + 19 + 47 + 93 + 46 + 46, 'níveis 16 a 200, 19 de South Park, 47 memes, 93 animes, 46 memes BR e 46 jogos');
     assert.ok(cadeados.every((t) => /^🔒nível \d+$/.test(t)), cadeados.slice(0, 3).join(' | '));
     const texto = await page.locator('#guardaRoupa').textContent();
     assert.ok(!/Sunga de pose|Ushanka|Sabre de luz|Aura dourada|Plus Ultra|Grimório|Sol do Orgulho/.test(texto), 'nenhum item futuro revelado');

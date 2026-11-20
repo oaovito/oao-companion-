@@ -8,6 +8,7 @@ import { Effects } from '../../src/renderer/shared/effects.js';
 import { rigComVisuais, gerarVisuais, canaisVisual } from '../../src/core/visual-nivel.js';
 import { rigComRebolado } from '../../src/core/rebolado.js';
 import { rigComDildo } from '../../src/core/dildo.js';
+import { rigComEsteroide } from '../../src/core/esteroide.js';
 // Mede quanto cada animação (com efeitos) passa da caixa do JoJo.
 const O = 400, SIZE = 1000;
 function bbox(ctx, box) {
@@ -25,7 +26,8 @@ function canvas() {
   return c.getContext('2d', { willReadFrequently: true });
 }
 function drawFrame(ctx, rig, s, fx, now, head, mouth) {
-  rig.draw(ctx, s.pose, { origin: { x: O, y: O }, scale: 1, facing: 1 });
+  const pose = s.pose.stMusculo ? { ...s.pose, nvCorpo: (s.pose.nvCorpo ?? 1) * s.pose.stMusculo } : s.pose; // como no overlay
+  rig.draw(ctx, pose, { origin: { x: O, y: O }, scale: 1, facing: 1 });
   if (!fx) return;
   fx.update(now, s.flags, head);
   ctx.save(); ctx.translate(O, O); ctx.translate(s.pose.rootX || 0, s.pose.rootY || 0);
@@ -40,11 +42,11 @@ const MOVIMENTO = [
 ];
 window.measure = async (rigJson, animJson, foodJson = { foods: [] }, niveis = null) => {
   // Mesmo desenho do overlay: visuais de nível e o modelo do rebolado.
-  const rigFull = rigComDildo(niveis ? rigComRebolado(rigComVisuais(rigJson, niveis)) : rigComRebolado(rigJson));
+  const rigFull = rigComEsteroide(rigComDildo(niveis ? rigComRebolado(rigComVisuais(rigJson, niveis)) : rigComRebolado(rigJson)));
   const rig = new RigRenderer(rigFull);
   // Sem visuais o desenho é muito mais leve: as animações comuns medem com ele; as que vestem
   // peças de visual na própria animação (Tigresa) medem com o desenho completo.
-  const rigLeve = new RigRenderer(rigComDildo(rigComRebolado(rigJson)));
+  const rigLeve = new RigRenderer(rigComEsteroide(rigComDildo(rigComRebolado(rigJson))));
   const COM_VISUAL = new Set(['tigresa']);
   const box = rigJson.metrics.box, head = rigJson.metrics.head, mouth = rigJson.metrics.mouth;
   const out = { anims: {}, effects: {} };

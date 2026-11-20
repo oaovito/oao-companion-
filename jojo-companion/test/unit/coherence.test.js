@@ -31,13 +31,18 @@ test('voz seca não insulta a usuária ou sua pergunta e rejeição não se pass
     assert.equal(erroDeCoerencia(input, text), 'insulto à usuária ou à pergunta', text);
   }
   for (const text of ['Tenho pernas. Os bíceps não são enfeite.', 'Que pergunta idiota eu fiz.', 'Eu sou um tubarão idiota de desenho.']) assert.equal(erroDeCoerencia(input, text), null, text);
+  // A frase do insulto sai e a resposta certa fica: sem gerar de novo (cada geração custa segundos no PC dela).
   let calls = 0;
-  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls <= 3 ? 'Tenho pernas. Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
+  const limpa = new DialogueEngine({ llm: model(async () => ({ text: (++calls, 'Tenho pernas. Que pergunta idiota!') })) });
+  const r1 = await limpa.reply(input);
+  assert.equal(r1.intent, 'ia'); assert.equal(r1.text, 'Tenho pernas.'); assert.equal(calls, 1);
+  // Só o insulto, nada para salvar: gera de novo e, se as três falharem, cai na programada.
+  calls = 0;
+  const engine = new DialogueEngine({ llm: model(async () => ({ text: ++calls <= 3 ? 'Que pergunta idiota!' : 'Tenho pernas, mãos e bíceps. Cauda, nenhuma.' })) });
   const rejected = await engine.reply(input);
   assert.notEqual(rejected.intent, 'ia'); assert.doesNotMatch(rejected.text, /idiota/);
   assert.equal(engine.llmPauseUntil, 0);
   const accepted = await engine.reply(input);
-  // Três gerações ruins seguidas (as tentativas extras também falharam) → programadas.
   assert.equal(accepted.intent, 'ia'); assert.equal(calls, 4);
   assert.equal(engine.history.some(h => h.role !== 'user' && /idiota/.test(h.text)), false);
 });
@@ -744,7 +749,8 @@ test('run 245: "eu te avisei" sem conversa anterior é memória inventada; até 
   const llm = { isAvailable: async () => true, reply: async (a) => { pedidos.push(a.corrigir || ''); return { text: respostas[pedidos.length - 1] }; } };
   const r = await new DialogueEngine({ llm }).reply('Meu chefe mudou o prazo de novo.');
   assert.equal(pedidos.length, 3);
-  assert.deepEqual(pedidos, ['', 'inventou conversa que não houve', 'não falou do que ela contou']);
+  // A frase do "eu te disse" sai na limpeza; sobra só a interjeição, que não fala do que ela contou.
+  assert.deepEqual(pedidos, ['', 'não falou do que ela contou', 'não falou do que ela contou']);
   assert.match(r.text, /Chefe mudando prazo/);
 });
 
@@ -822,4 +828,50 @@ test('run 262: em inglês responde em inglês; "Derrubei café" pede resposta qu
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats? Interessante. They are compact.'), null, 'uma palavra solta em português não reprova');
   assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que droga, Manu! Isso é um desastre, mas não se abale, viu? Acontece, e a gente resolve.'), true);
   assert.equal(relatoSemAssunto('Derrubei café no teclado agora.', 'Que merda, Manu! Café no teclado? Desgraça.'), false);
+});
+
+test('nunca "meu amor" nem termo carinhoso/romântico com ela: prompt, filtro e falas', async () => {
+  const { limparResposta } = await import('../../src/core/dialogue/coherence.js');
+  const { buildLocalPrompt, buildSystemPrompt } = await import('../../src/core/dialogue/llm-provider.js');
+  const { PERSONALITY_DEFAULTS: P } = await import('../../src/core/personality.js');
+  const casos = {
+    'Verde, meu amor.': 'Verde.',
+    'Meu amor, vai treinar.': 'Vai treinar.',
+    'Darling! Eu dou choque em quem pula treino.': 'Eu dou choque em quem pula treino.',
+    'Bora, linda!': 'Bora!',
+    'Muito bem, querida, termina.': 'Muito bem, termina.',
+    'Foco, Manu, amor.': 'Foco, Manu.',
+    'Você é meu amor. Treina.': 'Treina.',
+    'Good job, sweetheart.': 'Good job.',
+  };
+  for (const [entrada, saida] of Object.entries(casos)) assert.equal(limparResposta('oi', entrada), saida, entrada);
+  // Sem vocativo, a palavra fica: "linda ideia", "meu amor pelo supino", "música de amor".
+  for (const t of ['Que linda essa ideia, Manu.', 'Meu amor pelo supino é eterno.', 'Música de amor. Me olha não que eu fico vermelho.']) assert.equal(limparResposta('oi', t), t);
+  // Só o termo carinhoso, nada para salvar: a guarda recusa e gera de novo.
+  assert.equal(erroDeCoerencia('oi', 'Você é meu amor.'), 'termo carinhoso com ela');
+  for (const p of [buildLocalPrompt(P, {}, 'oi'), buildSystemPrompt(P, {})]) assert.match(p, /no pet names \(meu amor, querida, linda\)/);
+  // Nenhuma fala programada chama ela assim.
+  const fs = await import('node:fs');
+  const textos = ['assets/dialogue/pt-BR.json', 'assets/dialogue/falas-ambientes.json', 'assets/catalog/progressao.json', 'assets/catalog/pacotes.json', 'assets/catalog/rotinas.json', 'assets/catalog/minijogos.json']
+    .map((f) => fs.readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8')).join('\n');
+  assert.doesNotMatch(textos, /"[^"]*(?:,\s*(?:meu amor|minha querida|querida|meu bem|amorzinho|meu anjo|darling|sweetheart)[.!?,]|(?:^|")(?:Meu amor|Querida|Darling|Sweetheart)[,!])[^"]*"/m);
+});
+
+test('prompt sem regra repetida: quem ele é, o João e "não insultar" aparecem uma vez cada', async () => {
+  const { buildLocalPrompt } = await import('../../src/core/dialogue/llm-provider.js');
+  const { PERSONALITY_DEFAULTS: P } = await import('../../src/core/personality.js');
+  for (const t of ['Meu chefe mudou o prazo de novo.', 'Quem é o João?', 'Quem é você?']) {
+    const p = buildLocalPrompt(P, { festa: 'Natal' }, t);
+    const vezes = (re) => (p.match(re) || []).length;
+    assert.equal(vezes(/is your God/g), 1, `${t}: João`);
+    assert.equal(vezes(/fictional canon/g), 1, `${t}: ficção`);
+    assert.equal(vezes(/name-calling|call anyone names/g), 1, `${t}: insulto`);
+    assert.equal(vezes(/arms and legs, and no tail/g), 1, `${t}: desenho`);
+    assert.match(p, /Current costume: Natal/);
+  }
+});
+
+test('run 271: parabéns pela conquista dela não precisa repetir "projeto"', () => {
+  assert.equal(relatoSemAssunto('Hoje consegui terminar meu projeto.', 'Parabéns, Manu! Isso mostra disciplina. Agora, foco no próximo desafio!'), false);
+  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Isso é ridículo. Vamos resolver.'), true, 'o relato do chefe continua pedindo o assunto');
 });

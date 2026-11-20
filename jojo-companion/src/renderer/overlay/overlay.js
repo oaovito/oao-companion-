@@ -6,6 +6,8 @@ import { RigRenderer } from '../shared/rig-renderer.js';
 import { rigComVisuais } from '../../core/visual-nivel.js';
 import { rigComRebolado } from '../../core/rebolado.js';
 import { rigComDildo } from '../../core/dildo.js';
+import { rigComEsteroide } from '../../core/esteroide.js';
+import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -66,6 +68,7 @@ function movimentoVisual(t, anim = '') {
     nvBolhas: -((t * 9) % 16),
     nvBrilho: 0.55 + 0.6 * Math.abs(Math.sin(t * 2.4)),
     nvBrilho2: 0.55 + 0.6 * Math.abs(Math.sin(t * 2.4 + 1.3)),
+    nvChama: 1 + 0.07 * Math.sin(t * 9) + 0.035 * Math.sin(t * 23),
   };
 }
 
@@ -76,7 +79,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))));
+  rig = new RigRenderer(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -573,12 +576,16 @@ function draw(now) {
       nvLutoLagrima: reduced ? 4 : (t * 10) % 14,
     });
   }
-  if (s.visualNivel) {
-    Object.assign(pose, s.visualNivel);
-    // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
-    // baba estica, aura pulsa, bolhas sobem, brilhos piscam. Parado no movimento reduzido.
-    if (!reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
-  }
+  // Animação com fantasia inteira (Tigresa, memes BR): os visuais vestidos saem durante ela,
+  // para nada ficar por cima da fantasia nem brigar com a pele do personagem.
+  const fantasiaInteira = ehAnimFantasia(sample.name);
+  if (s.visualNivel && !fantasiaInteira) Object.assign(pose, s.visualNivel);
+  // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
+  // baba estica, aura pulsa, bolhas sobem, brilhos piscam, fogo tremula. Parado no movimento reduzido.
+  if ((s.visualNivel || fantasiaInteira) && !reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
+  // Êxtase Anabólico: os músculos incham por cima do corpo que ela vestiu (visual largo continua largo).
+  if (pose.stMusculo) pose.nvCorpo = (pose.nvCorpo ?? 1) * pose.stMusculo;
+  if (reduced && sample.name === 'esteroide') pose.rootX = 0; // sem tremedeira no movimento reduzido
   if (s.sexy) pose.sexy = 1;
   if (sample.name === 'snort' && sample.t > 0.55 && !puffDone && !reduced) {
     effects.burst('powderPuff', now, 6);

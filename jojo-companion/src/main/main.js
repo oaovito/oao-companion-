@@ -5,6 +5,8 @@ import { visualSnapshot } from '../core/visual-nivel.js';
 import { criarCerebroLocal } from './cerebro-local.js';
 import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
+import { visuaisComAnimacao } from '../core/visual-nivel.js';
+import { comAnimacoesMemes } from '../core/memes-br.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net, safeStorage, utilityProcess } from 'electron';
 import QRCode from 'qrcode';
 import fs from 'node:fs';
@@ -188,10 +190,12 @@ function main() {
     store.load();
     personality.load();
     log('info', `Iniciando JoJo Companion ${app.getVersion()} (${process.platform}, Electron ${process.versions.electron}, pid ${process.pid})`);
+    const memesBr = visuaisComAnimacao(readJSON('assets/catalog/progressao.json'));
     const assets = {
       rig: readJSON('assets/character/jojo.rig.json'),
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
-      animations: expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)),
+      // Memes BR: cada um tem animação própria (memes-br.js), gerada a partir dos dados do visual.
+      animations: comAnimacoesMemes(expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)), memesBr),
       foods: readJSON('assets/catalog/foods.json').foods,
       // Referências dos níveis: o overlay desenha a peça de cada uma (só aparece a vestida).
       niveis: (({ referencias, extras }) => ({ referencias, extras }))(readJSON('assets/catalog/progressao.json')),

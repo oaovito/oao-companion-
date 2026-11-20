@@ -1,3 +1,5 @@
+import { fantasiaInteira, canalMeme, gruposDosMemes } from './memes-br.js';
+import { showDoVisual } from './fantasias-visuais.js';
 // Visuais por nível. REGRA IRREDUTÍVEL (pedido de 18/11/2026): todo título de nível
 // é uma referência a filme, anime, série, jogo ou cultura pop, sem repetir obra (todas
 // as clássicas de tubarão estão presentes), mais 20 extras de South Park e 50 de memes do
@@ -49,9 +51,9 @@ const topo = (x) => 20 - 8 * (1 - ((x - 90) / 36) ** 2);
  */
 /** Aceita só as referências (lista) ou {referencias, extras}. */
 const fonte = (d) => (Array.isArray(d) ? { referencias: d, extras: [] } : { referencias: d?.referencias || [], extras: d?.extras || [] });
-const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2})$/;
+const ID_VALIDO = /^(nv\d{3}|sp\d{2}|tw\d{2}|an\d{3}|br\d{2}|jg\d{2})$/;
 // Prefixo do id de cada coleção de extras.
-const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an', 'memes BR': 'br' };
+const PREFIXO = { 'South Park': 'sp', 'memes do Twitter': 'tw', animes: 'an', 'memes BR': 'br', jogos: 'jg' };
 // Casas do número no id (100 animes pedem três).
 const CASAS = { an: 3 };
 
@@ -75,11 +77,41 @@ export function gerarVisuais(dados) {
     const n = contagem[pre] = (contagem[pre] || 0) + 1;
     if (!PARTES.has(x.parte) || !(x.nivel >= 2 && x.nivel <= total)) continue;
     const [a, b, g] = x.cores;
-    out.push({ id: `${pre}${String(n).padStart(CASAS[pre] || 2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, extra: true });
+    out.push({ id: `${pre}${String(n).padStart(CASAS[pre] || 2, '0')}`, nivel: x.nivel, parte: x.parte, forma: x.forma, t: (x.nivel - 2) / Math.max(1, total - 2), titulo: x.titulo, obra: x.obra, colecao: x.colecao || x.obra, tipo: x.tipo, nome: x.peca, fala: x.fala, anim: x.anim || null, reacao: x.reacao || null, cores: { a, b, g }, transforma: x.transforma || null, fantasia: x.fantasia || null, meme: x.meme || null, extra: true });
   }
   out.sort((p, q) => p.nivel - q.nivel || Number(!!p.extra) - Number(!!q.extra));
   atribuirGenes(out);
+  // Revisão de 19/11/2026: cada visual (peça) ganha a fantasia completa da referência e um show próprio.
+  for (const p of out) if (!p.meme && !p.fantasia) p.show = showDoVisual(p.id, p.parte);
   return out;
+}
+
+/**
+ * Visuais que têm animação própria com fantasia inteira (memes BR e o show de cada visual),
+ * no formato que memes-br.js anima: fantasia, gesto/efeito e os canais da transformação.
+ */
+export function visuaisComAnimacao(dados) {
+  return gerarVisuais(dados).filter((p) => p.meme || p.show).map((p) => {
+    const base = p.show ? { ...p, fantasia: p.show.fantasia, meme: { gesto: p.show.gesto, efeito: p.show.efeito, gatilhos: [] } } : p;
+    return { ...base, canaisShow: canaisDaTransformacao(p) };
+  });
+}
+
+/** Canais que transformam o JoJo no personagem de um visual (pele, olhos, cabeça, corpo, boca). */
+export function canaisDaTransformacao(p) {
+  const t = p.transforma || {};
+  const ch = {};
+  if (t.cabeca) ch.nvCabeca = t.cabeca;
+  if (t.corpo) ch.nvCorpo = t.corpo;
+  if (t.boca) ch.nvBoca = t.boca;
+  if (t.olhos && OLHOS[t.olhos]) {
+    ch.nvOlhos = OLHOS[t.olhos];
+    const go = p.genes?.olho;
+    if (go) Object.assign(ch, { nvPupila: go.pupila, nvBrilhos: go.brilhos, nvCilios: go.cilios, nvOlhoRx: go.rx, nvOlhoRy: go.ry, nvOlhoTilt: go.tilt, [`costume_olho${p.id}`]: 1 });
+  }
+  if (paletaPele(t)) ch[`costume_pele${p.id}`] = 1;
+  if (t.pelado) ch.pelado = 1;
+  return ch;
 }
 
 // ---------------------------------------------------------------- genes (variação única por visual)
@@ -977,17 +1009,20 @@ export const canalDaPeca = (p) => `nv_${p.id}`;
 export function partesDaPeca(p) {
   const c = p.cores;
   let lista;
-  if (p.parte === 'aura') lista = (AURA[p.forma] || AURA.chamas)(c, p.t);
+  if (p.fantasia) lista = fantasiaInteira(p.fantasia, c);
+  else if (p.parte === 'aura') lista = (AURA[p.forma] || AURA.chamas)(c, p.t);
   else if (p.parte === 'pintura') lista = (PINTURA[p.forma] || PINTURA.listras)(c, p.t);
   else if (p.parte === 'mao') lista = (MAO[p.forma] || MAO.espada)(c, p.t).map(([, id, fill, path, extra]) => ['costumeHand', id, fill, path, { parent: 'foreR', ...(extra || {}) }]);
   else lista = (FORMAS[p.forma] || FORMAS[p.parte === 'bermuda' ? 'liso' : 'medalhao'])(c, p.t);
   const ch = canalDaPeca(p);
   // Ajuste próprio da peça (tamanho e giro em torno da zona da parte) e o enfeite dela.
   const z = ZONAS[p.parte];
-  if (p.genes && z && !FANTASIAS_INTEIRAS.has(p.forma) && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
+  if (p.genes && z && !p.fantasia && !FANTASIAS_INTEIRAS.has(p.forma) && (p.genes.escala !== 1 || p.genes.giro !== 0)) {
     lista = lista.map(([gr, id, fill, path, extra]) => [gr, id, fill, path, { ...(extra || {}), fix: [p.genes.escala, p.genes.giro, ...z.pivo] }]);
   }
-  lista = [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
+  // Fantasia inteira: barrigona, papada, sujeira e pintas ficam por cima da roupa (a barriga
+  // escapa da camisa), para a fantasia nunca achatar o corpo do personagem.
+  lista = p.fantasia ? [...lista, ...partesDoCorpo(p.transforma), ...enfeiteDaPeca(p)] : [...partesDoCorpo(p.transforma), ...lista, ...enfeiteDaPeca(p)];
   const out = lista.map(([group, id, fill, path, extra]) => ({ group, part: { id: `${p.id}_${id}`, fill, showIf: ch, path, ...(extra || {}) } }));
   // Acabamento pelo nível: 0 a 2 brilhos, num grupo sem contorno por cima de tudo.
   const anc = ANCORAS[p.parte];
@@ -1025,7 +1060,11 @@ export function rigComVisuais(rig, dados) {
     return out;
   }) }));
   // Pelado (visual da Tigresa ou a animação do meme): a bermuda e a sunga somem.
-  for (const g of groups) if (['shorts', 'shortsDetail', 'sexyLayer'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'pelado'])];
+  for (const g of groups) if (['shorts', 'shortsDetail', 'sexyLayer'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'pelado', 'nvSemBermuda'])];
+  // Fantasia de uma perna só (Saci): a perna esquerda e a garra dela somem.
+  for (const g of groups) for (const pt of g.parts) if (pt.id === 'legL' || pt.id === 'clawL') pt.hideIf = [...new Set([...[].concat(pt.hideIf || []), 'nvSemPernaE'])];
+  // Mula sem Cabeça: a cabeça inteira some (crânio, focinho, rosto e adereços); no lugar só o fogo.
+  for (const g of groups) if (['head', 'headDetail', 'headProps', 'catalogHead'].includes(g.id)) g.hideIf = [...new Set([...[].concat(g.hideIf || []), 'nvSemCabeca'])];
   const aura = { id: 'nivelAura', hideIf: 'mooning', parts: [] };
   const pintura = { id: 'nivelPintura', hideIf: 'mooning', parts: [] };
   const brilhos = { id: 'nivelBrilho', hideIf: 'mooning', parts: [] };
@@ -1053,6 +1092,25 @@ export function rigComVisuais(rig, dados) {
       // A animação do meme veste a Tigresa por alguns segundos (canal próprio, sem tocar no Guarda-roupa).
       if (p.id === TIGRESA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaAnim' });
       if (p.id === TIGRESA_NUA_ID && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: 'tigresaNua' });
+      // Memes BR: a animação própria veste a fantasia inteira pelo canal do meme.
+      if ((p.meme || p.show) && marcado.showIf !== 'pelado') alvo.parts.push({ ...marcado, id: `${marcado.id}_meme`, showIf: canalMeme(p.id) });
+    }
+    // Show do visual: a fantasia completa da referência junto com a peça, só na animação dele.
+    if (p.show) {
+      for (const [group, id, fill, path, extra] of fantasiaInteira(p.show.fantasia, p.cores)) {
+        const alvo = byId.get(group) || byId.get('costumes');
+        const part = { id: `${p.id}_sh_${id}`, fill, showIf: canalMeme(p.id), path, ...(extra || {}) };
+        if (GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot') part.corpoX = true;
+        alvo.parts.push(part);
+      }
+      // O corpo do personagem (barrigona, papada, sujeira, pintas) por cima da fantasia: nada fica chapado.
+      for (const [group, id, fill, path, extra] of partesDoCorpo(p.transforma)) {
+        if (group !== 'nivelCorpo' && group !== 'nivelPintura') continue;
+        const alvo = byId.get(group);
+        const part = { id: `${p.id}_shc_${id}`, fill, showIf: canalMeme(p.id), path, ...(extra || {}) };
+        if (!part.parent && part.rot !== 'headRot') part.corpoX = true;
+        alvo.parts.push(part);
+      }
     }
   }
   // Faixa de otaku (hachimaki) para o episódio novo de um anime sem visual liberado.
@@ -1071,6 +1129,10 @@ export function rigComVisuais(rig, dados) {
     const alvo = byId.get(group) || byId.get('costumes');
     alvo.parts.push(GRUPOS_CORPO.has(alvo.id) && !part.parent && part.rot !== 'headRot' ? { ...part, corpoX: true } : part);
   }
+  // Memes BR: efeito de cada meme atrás de tudo e o puf da transformação por cima.
+  const memes = pecas.filter((p) => p.meme || p.show).map((p) => (p.show ? { ...p, meme: { gesto: p.show.gesto, efeito: p.show.efeito } } : p));
+  // (o efeito fica logo depois da aura, que continua atrás de tudo).
+  if (memes.length) { const { atras, frente } = gruposDosMemes(memes); groups.splice(1, 0, atras); groups.push(frente); }
   return { ...rig, groups, costumes, palette: { ...rig.palette, nvCabecaPele: rig.palette.body, nvBracos: rig.palette.body, nvPernas: rig.palette.body } };
 }
 
@@ -1199,6 +1261,8 @@ export function canaisVisual(estado, referencias, nivel, { outfit = {}, fantasia
     if (paletaPele(t)) pele = p.id;
     if (t.pelado) ch.pelado = 1;
   }
+  // Fantasia inteira (memes BR): cobre a bermuda; o Saci fica numa perna só.
+  for (const p of vestidas) if (p.fantasia) { ch.nvSemBermuda = 1; if (p.fantasia.umaPerna) ch.nvSemPernaE = 1; if (p.fantasia.cabeca === 'semCabeca') ch.nvSemCabeca = 1; }
   if (pele) ch[`costume_pele${pele}`] = 1;
   // Olho próprio do visual que define os olhos (pupila, brilhos, cílios, formato, inclinação e íris).
   const go = olho?.genes?.olho;

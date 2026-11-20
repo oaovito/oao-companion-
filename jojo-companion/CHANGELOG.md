@@ -1,5 +1,75 @@
 # CHANGELOG
 
+## 0.47.3 — 2026-11-19
+
+### Novidades
+- 50 memes BR novos no padrão da Tigresa (coleção "memes BR", br03 a br52, um a cada 4 níveis do 2 ao 198):
+  Nazaré Confusa, Carminha, Odete Roitman, Didi, Bozo, Fofão, Zé Gotinha, Saci, Curupira, Iara, Mula sem
+  Cabeça, Boitatá, Cuca, Cebolinha, Tiozão do Pavê, Bom dia do Zap, Gaúcho, Lampião, Bate-bola, Passista,
+  Boi-bumbá, Galinha Pintadinha, Louro José, Xaropinho, Coxinha, Tio do churrasco, Mandrake, Zé Pequeno,
+  Professor Raimundo, Seu Creysson, Bento Carneiro, Biscoito ou bolacha, Mineiro, Carioca, Faria Lima,
+  Abaporu, Zé Carioca, Canarinho Pistola, Menino Maluquinho, Fuleco, Hulk do Paraguai, Agostinho Carrara,
+  Sinhozinho Malta, Dona Hermínia, Macunaíma, Jeca Tatu, Zé do Caixão, Dona Redonda, Morgana e Rogerinho do Ingá.
+  Cada um é uma fantasia inteira (cabeça, rosto, pescoço, tronco, mangas, parte de baixo, pés e objeto na mão)
+  que transforma o JoJo, com pele e olhos do personagem, e tem animação própria de 6,5 s: puf de fumaça,
+  o gesto do meme com efeito girando (contas, corações, fogo, notas, confete, dinheiro…) e a pose final.
+- A frase de cada meme no chat ("Nazaré confusa", "me serve, vadia", "é pavê ou pra comer?", "biscoito ou
+  bolacha", "tá tranquilo, tá favorável"…) toca a animação e o JoJo responde no personagem. As animações
+  também ficam na coleção.
+
+- Revisão de todos os visuais no padrão da Tigresa: os 369 visuais antigos (níveis, South Park, memes do
+  Twitter e animes) ganharam a fantasia completa da referência (roupa, parte de baixo, calçado, cabeça,
+  rosto, pescoço e objeto na mão, com peças novas como armadura, kimono, jaleco, sobretudo, toga, coroa,
+  elmo, capacete, espada, martelo, tridente e cajado) e um show próprio de 6,5 s: puf, o JoJo vira o
+  personagem (pele, olhos, cabeça, corpo e boca da referência) junto com a peça, faz o gesto com efeito e
+  volta ao normal. O show toca quando o visual é liberado ou vestido e fica nas animações liberadas da
+  Central. No guarda-roupa a peça continua combinável como antes.
+
+- 50 visuais e animações de jogos clássicos (coleção "jogos", jg01 a jg50, um a cada 4 níveis do 3 ao 199):
+  Mega Man, Castlevania, Metroid, Tekken, Prince of Persia, Contra, Guitar Hero, Frogger, Q*bert, Dig Dug,
+  Bomberman, Double Dragon, Golden Axe, Duck Hunt, Punch-Out!!, Ghosts 'n Goblins, Earthworm Jim, Spyro,
+  Banjo-Kazooie, Rayman, Pitfall!, Tomb Raider, Duke Nukem, Half-Life, Silent Hill, Metal Slug, The King of
+  Fighters, Dragon Quest, Chrono Trigger, EarthBound, Star Fox, F-Zero, Animal Crossing, Splatoon, Ace Attorney,
+  Team Fortress 2, Angry Birds, Plants vs. Zombies, Cuphead, Fall Guys, The Sims, Age of Empires, Warcraft,
+  Diablo, Persona 5, Devil May Cry, Alex Kidd, Top Gear, Worms e Galaga. Fantasia inteira com peças novas
+  (boné do encanador, capacete de pirâmide, cabeça de xícara, plumbob, turbante, presas, machado, bomba,
+  guitarra, cogumelo, pé de cabra, canhão de braço, chicote, bandeira quadriculada) e corpo variado
+  (orelhas, chifres, barrigona, cabeça e corpo de tamanhos diferentes); animação própria de 6,5 s e frase no chat.
+- Êxtase Anabólico (15 s, comédia de desenho): a seringa TREMBOLONA com coração aparece, pupilas dilatadas e
+  baba; aplicação fictícia de desenho no ombro com olhos revirados, tremedeira, bochecha corada, corações e
+  estrelas; chegam Testosterona, Nandrolona, Boldenona e Stanozolol e os músculos incham; clímax com olhos
+  brancos, brilho dourado, pose de fisiculturista e os balões "EU CONSIGO OUVIR MEUS RECEPTORES ANDROGÊNICOS."
+  e "NÃO É VÍCIO. É AMOR."; no fim uma lágrima, "Foi melhor que meu último relacionamento." e tudo volta ao
+  normal. Sem áudio e sem técnica real; não toca no Modo Trabalho, no foco nem com tela cheia; interrompida,
+  para os balões. Pelo chat ("êxtase anabólico", "toma uma trembolona"), por /anim esteroide e pela Central.
+
+### Melhorias
+- Conversa: quando a resposta sai com cara de companion genérico ("Parabéns! Que bom que você…"), a nova
+  tentativa recebe como soar como o JoJo (ego, músculos ou ordem de treinador), em vez de repetir a mesma frase.
+- As configurações e o painel de jogos não mostram mais o nome do Darkest Dungeon ("Interações durante jogos",
+  "Steam e jogos"). Só o texto mudou: detecção, XP, conquistas e falas continuam iguais.
+- Mula sem Cabeça: no lugar da cabeça só o fogo, em camadas e tremulando.
+- Nível de detalhe da Tigresa sem achatar a variedade: barrigona, papada, orelhas, chifres, suor e moscas
+  aparecem por cima das fantasias; memes ganharam corpos diferentes (Dona Redonda, Abaporu, Hulk do Paraguai…).
+- O giro dos shows agora é de pé (vira de frente para trás), sem o JoJo deitar de lado.
+- Com fantasia inteira vestida, a bermuda preta não aparece mais por baixo; o Saci tem uma perna só.
+- Durante animação com fantasia inteira (Tigresa, memes BR e shows), as peças vestidas saem de cena para
+  nada ficar por cima da fantasia nem brigar com a pele do personagem.
+- Os memes BR também transformam olhos, cabeça, corpo e boca durante a animação, como os shows.
+
+- Conversa mais leve: as regras de resposta do JoJo ficam numa tabela só (cada regra uma vez, a mesma serve
+  para limpar e para recusar). Uma frase ruim no meio de uma resposta boa sai sem gerar a resposta de novo, e o
+  prompt do modelo não repete mais quem ele é, o João nem "não insultar".
+- O JoJo nunca chama a Emanuele de "meu amor", "querida", "linda" ou parecido: regra no prompt, vocativo
+  tirado da resposta, frase romântica recusada e a fala do visual da Lum sem "Darling".
+- Um detector só para "cara de assistente" e "companion genérico" (antes eram três listas).
+
+### Como testar
+- Escrever "Nazaré confusa" no chat: o JoJo vira a Nazaré, faz as contas e responde.
+- Subir de nível (2, 6, 10…) e ver o meme BR liberado na Central, vestível pelo guarda-roupa.
+- Subir para o nível 3 e ver o Mega Man liberado; "bora jogar mega man" no chat toca a animação.
+- Escrever "êxtase anabólico" no chat (fora do Modo Trabalho e do foco) e assistir aos 15 s.
+
 ## 0.47.2 — 2026-11-18
 
 ### Novidades

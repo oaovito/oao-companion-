@@ -39,6 +39,8 @@ export const INTENTS = [
     new RegExp(`\\b(${COMIDA_GORDA}) (hoje|agora|de novo|de noite|no jantar|no almoco|pra janta|pro almoco)\\b`)] },
   { id: 'avc', patterns: [/^(jojo )?avc[!?]*$/] },
   { id: 'tigresa', patterns: [/\btigresa\b.{0,30}\b(tire|tira|tirar)\b.{0,20}\broupa\b/, /\b(tire|tira) (a |sua |essa )?roupa,? tigresa\b/, /\btigresa\b.{0,20}\b(fique|fica|ficar) pelad[ao]\b/, /\b(fique|fica) pelad[ao],? tigresa\b/, /\beu sou o dragao guerreiro\b/] },
+  // Êxtase Anabólico: só por pedido explícito (pergunta séria sobre esteroide não dispara a piada).
+  { id: 'esteroide', patterns: [/\bextase anabolico\b/, /\b(toma|tome|tomar|aplica|aplique|manda|mete) (uma |a )?(trembolona|trembo)\b/, /^(jojo )?trembolona[!?]*$/] },
   { id: 'dressDown', patterns: [/\b((vai |pode )?(vestir|veste|coloca|poe|bota) uma roupa|veste roupa|se veste (direito|melhor|diferente)|vest[ea] (outra|uma roupa|direito|algo)|troca (de|essa) roupa|tira essa fantasia|que roupa (e|é) essa|se comporta|se cobre|roupa (mais )?comportada|fantasia comportada|bota uma roupa|poe uma roupa|veste algo decente)\b/] },
   { id: 'dressUp', patterns: [/\b(volta (a|pra|para a) fantasia ousada|pode (ser|ficar) ousado|fantasia ousada|volta a ser ousado|tira a roupa comportada)\b/] },
   { id: 'lol', patterns: [/\b((eu )?(deveria|devo|posso|vou|quero) jogar (um )?(lol|league( of legends)?)|jogo (um )?lol|bora (de )?lol|partida de lol|lolzinho)\b/] },
@@ -95,6 +97,7 @@ export const RESPONSES = {
   dressDown: ['Tá bom, chata. Vesti a versão comportada.', 'Careta. Pronto, me cobri.', 'Vai se foder. Mas tá, troquei.'],
   dressUp: ['Agora sim. Do jeito que eu gosto.', 'Voltei pro modo ousado. Olha a meia arrastão.'],
   lol: ['Passa na cara de uma vez.'],
+  esteroide: ['Trembolona? Pra mim? Ai, {nome}… segura minha whey.', 'Êxtase Anabólico chegando. Afasta os móveis, {nome}.', 'Isso é desenho, {nome}. Na vida real é médico e exame de sangue. Agora assiste.'],
   tigresa: ['Ordem do Dragão Guerreiro é ordem. Fiquei pelada, {nome}.', 'A Tigresa obedece. Sem roupa nenhuma, {nome}.', 'Pronto, {nome}: Tigresa pelada, do jeito que o Dragão Guerreiro mandou.'],
   moon: ['Toma você, {nome}. Olha aqui.', 'Tomar? Toma essa, {nome}.', 'Eu? Olha só o que eu acho disso, {nome}.'],
   rejected: ['Tá. Anotado, Emanuele.', 'Doeu, mas eu aguento. Sou de cartilagem.', 'Beleza. Fico aqui no meu canto.'],
@@ -141,9 +144,9 @@ export const RESPONSES = {
     'Isso eu não pesquiso. Próxima pergunta, Emanuele.',
   ],
   unknown: [
-    'Não peguei o que você quis dizer, {nome}. Me conta de outro jeito.',
-    'Pera. Você quer me contar uma coisa ou pedir que eu faça algo?',
-    'Perdi o fio dessa, {nome}. Me dá um pouco mais de contexto.',
+    'Fala direito, {nome}. Tubarão musculoso não lê mente, só levanta peso.',
+    'Pera. Você quer me contar uma coisa ou mandar eu fazer algo? Decide, que eu tenho série pra terminar.',
+    'Perdi o fio dessa, {nome}. Culpa sua, não do meu cérebro perfeito. Explica de novo.',
   ],
 };
 
@@ -152,13 +155,13 @@ const ACTIONS = {
   joke: 'happy',
   crisis: 'comfort', distress: 'comfort', sad: 'comfort', setback: 'comfort', greet: 'wave', goodbye: 'wave', quiet: 'quiet', scare: 'scare', achievement: 'flex',
   sleep: 'angry', sleepOk: 'boaNoite', docinho: 'nojo', wake: 'wake', eat: 'eat', play: 'play', gym: 'flex', pet: 'pet', thanks: 'nod', howAreYou: 'judge',
-  name: 'wave', criador: 'nod', dono: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop', tigresa: 'tigresa',
+  name: 'wave', criador: 'nod', dono: 'nod', help: 'lecture', unknown: 'judge', refuse: 'judge', rejected: 'sad', insult: 'angry', bench: 'bench', squat: 'squat', moon: 'moon', pretty: 'smitten', avc: 'avc', avcReal: 'comfort', dressDown: 'dressDown', dressUp: 'dressUp', lol: 'poop', tigresa: 'tigresa', esteroide: 'esteroide',
 };
 
 // Tom de cada resposta: define se o nome usado é "Emanuele" (sério) ou "Manu" (brincadeira).
 const TONES = {
   sleepOk: 'serio', setback: 'serio', dono: 'serio',
-  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', tigresa: 'brincadeira', pretty: 'brincadeira', avc: 'brincadeira', avcReal: 'serio', dressDown: 'serio', dressUp: 'brincadeira', lol: 'brincadeira', name: 'serio', sleep: 'serio',
+  crisis: 'serio', distress: 'serio', sad: 'serio', quiet: 'serio', goodbye: 'serio', thanks: 'serio', help: 'serio', unknown: 'serio', refuse: 'serio', rejected: 'serio', insult: 'serio', bench: 'brincadeira', squat: 'brincadeira', moon: 'brincadeira', tigresa: 'brincadeira', esteroide: 'brincadeira', pretty: 'brincadeira', avc: 'brincadeira', avcReal: 'serio', dressDown: 'serio', dressUp: 'brincadeira', lol: 'brincadeira', name: 'serio', sleep: 'serio',
   greet: 'brincadeira', scare: 'brincadeira', achievement: 'brincadeira', wake: 'brincadeira', eat: 'brincadeira', play: 'brincadeira',
   gym: 'brincadeira', pet: 'brincadeira', howAreYou: 'brincadeira',
 };
