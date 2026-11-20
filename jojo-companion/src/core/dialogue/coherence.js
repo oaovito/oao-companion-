@@ -304,7 +304,7 @@ export function erroDeCoerencia(input, output, history = []) {
   // Ela desabafa e ele corta ("não me diga mais", "vamos focar em algo que valha a pena").
   if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que (?:valha a pena|realmente (?:importe|interesse)|importe|interesse)\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
-  if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && /\?\s*$/.test(String(output).trim()) && String(output).length < 70) return 'não contou a piada';
+  if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && (/\?\s*$/.test(String(output).trim()) && String(output).length < 70 || /\bque piada (?:e essa|voce quer|quer)\b|\bme (?:diz|conta|fala) (?:logo|voce)\b|\bque tipo de piada\b/.test(r))) return 'não contou a piada';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);
