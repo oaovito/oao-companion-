@@ -72,3 +72,15 @@ test('run 258: a leitura vê o que ela disse antes — lembrar a manga não é f
   assert.ok(vistos[1].includes('Minha fruta preferida é manga.'));
   assert.ok(!vistos[1].includes('Qual fruta você deve lembrar agora?'), 'a mensagem atual vai à parte');
 });
+
+test('run 267: recusada como companion genérico, a nova geração recebe como soar como o JoJo', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, o) => { calls.push(JSON.parse(o.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: 'Terminou? Agora sim, quase no meu nível. Próximo!' } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => ({}), baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'Hoje consegui terminar meu projeto.', corrigir: 'fora do personagem (companion genérico)' });
+  assert.match(calls[0].messages[0].content, /It sounded like a generic companion, not JoJo\. Say it as JoJo: bossy coach with a huge ego/);
+  await p.reply({ text: 'Hoje consegui terminar meu projeto.', corrigir: 'não falou do que ela contou' });
+  assert.doesNotMatch(calls[1].messages[0].content, /generic companion/, 'só quando o motivo é genérico');
+});

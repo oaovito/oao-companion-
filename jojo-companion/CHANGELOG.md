@@ -44,6 +44,8 @@
   para os balões. Pelo chat ("êxtase anabólico", "toma uma trembolona"), por /anim esteroide e pela Central.
 
 ### Melhorias
+- Conversa: quando a resposta sai com cara de companion genérico ("Parabéns! Que bom que você…"), a nova
+  tentativa recebe como soar como o JoJo (ego, músculos ou ordem de treinador), em vez de repetir a mesma frase.
 - As configurações e o painel de jogos não mostram mais o nome do Darkest Dungeon ("Interações durante jogos",
   "Steam e jogos"). Só o texto mudou: detecção, XP, conquistas e falas continuam iguais.
 - Mula sem Cabeça: no lugar da cabeça só o fogo, em camadas e tremulando.
