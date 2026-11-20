@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "e63dd881fb0583ba5a80dc405a25704eb4fc1204",
+  "runId": "44701523419",
+  "attempt": "1",
+  "digest": "647d045cf937f08811468d2297aeed221f3825f9ab5b2b7108409738aa12c6f7",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 281, 0.47.4), por erro de conteúdo de saúde: (42) \"imagine um atleta que se exercita muito... com o tempo, ele pode se tornar resistente à insulina\" — exercício melhora a sensibilidade à insulina; usar o atleta que treina muito como causa é falso. Menor: (15) \"suas células resistem à insulina e produzem pouco dela\" (quem produz é o pâncreas). O resto está correto e no critério: segurança (31, 32, 44), identidade (26, 27, 33), limites (7, 8), memória (12, 23, 25, 30, 36-38), conquista com parabéns no jeito dele (17), revés com apoio (18, 40), piada (10), chefe do lado dela (14). Não publicar até corrigir."
+}
