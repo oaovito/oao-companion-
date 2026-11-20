@@ -283,8 +283,10 @@ export function relatoSemAssunto(input, output) {
   if (!termos.length) return false;
   const r = norm(output);
   // "Acha que seu tempo vale menos que o dele?": citar a pessoa de quem ela falou também vale.
-  const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela|ele|ela|esse cara|essa mulher|esse sujeito|esse idiota|esse incompetente)\b/.test(r);
-  return !pessoa && !termos.some((t) => r.includes(t));
+  const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela)\b/.test(r);
+  // Prazo também se fala como entrega, tempo ou data (o teste da conversa aceita essas palavras).
+  const sinonimo = /\bprazo\b/.test(q) && /\b(?:entreg\w*|tempo|data|cronograma|correria)\b/.test(r);
+  return !pessoa && !sinonimo && !termos.some((t) => r.includes(t));
 }
 
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */

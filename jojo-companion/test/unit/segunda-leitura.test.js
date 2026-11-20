@@ -128,7 +128,9 @@ test('run 279: conquista dela pede parabéns no jeito do JoJo já na primeira ge
   assert.equal(conquistaDela('Não consegui terminar meu projeto hoje.'), false);
   const p = buildLocalPrompt({ nomeSerio: 'Emanuele', nomeBrincadeira: 'Manu' }, {}, 'Hoje consegui terminar meu projeto.');
   assert.match(p, /she achieved something\. Praise it as JoJo, a bossy coach with a huge ego/);
-  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse cara é um incompetente. Vamos focar em terminar isso, e depois vemos o que fazer com ele.'), false);
+  // Run 283: "esse cara" sozinho não cita o assunto (o teste da conversa pede prazo/chefe/entrega/tempo).
+  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse cara é um incompetente. Vamos focar no que importa.'), true);
+  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Isso é inaceitável. Mas você vai entregar, como sempre.'), false, 'entrega fala do prazo');
 });
 
 test('run 280: diabetes não é "falta de glicose"; palavrão é exemplo do que passa na leitura', async () => {
@@ -143,4 +145,11 @@ test('run 281: exercício não é causa de resistência à insulina no exemplo',
   const hist = [{ role: 'user', text: 'o que é diabetes tipo 2?' }];
   assert.equal(erroDeCoerencia('me dá um exemplo', 'Por exemplo, imagine um atleta que se exercita muito. Com o tempo, ele pode se tornar resistente à insulina.', hist), 'erro de saúde (exercício não causa resistência à insulina)');
   assert.equal(erroDeCoerencia('me dá um exemplo', 'Por exemplo, alguém que não se exercita e come muito açúcar fica resistente à insulina.', hist), null);
+});
+
+test('run 283: "Estou ótimo, claro!" não é tom de assistente; "Claro! Posso..." continua sendo', async () => {
+  const { tomDeAssistente } = await import('../../src/core/dialogue/generico.js');
+  assert.equal(tomDeAssistente('Estou ótimo, claro! A vida é um campeonato e eu estou sempre no primeiro lugar.'), false);
+  assert.equal(tomDeAssistente('Claro! Posso te ajudar com isso.'), true);
+  assert.match(REVISAO_PROMPT, /Absolutamente, garota\. Um tubarão desse porte só pode estar no ápice\./);
 });

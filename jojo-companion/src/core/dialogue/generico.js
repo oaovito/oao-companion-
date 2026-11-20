@@ -7,7 +7,7 @@ const sem = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLo
 
 // Cara de assistente de IA: recusa sempre, tenha ou não marca do personagem (era a lista ASSISTANT
 // do llm-provider; agora as duas listas moram aqui, sem frase repetida entre elas).
-const ASSISTENTE = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!|n[aã]o tenho (?:sentimentos|emo[cç][oõ]es|corpo))/i;
+const ASSISTENTE = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|(?:^|[\n.!?]\s*)(?:claro|com certeza)!\s*(?:posso|vou|aqui|segue|vamos)|n[aã]o tenho (?:sentimentos|emo[cç][oõ]es|corpo))/i;
 
 /** A resposta fala como assistente de IA? (texto já sem as broncas "não se desculpe"). */
 export function tomDeAssistente(texto) {
