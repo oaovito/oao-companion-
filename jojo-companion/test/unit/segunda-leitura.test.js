@@ -114,3 +114,9 @@ test('run 276: data solene não vira "fantasia atual" na conversa e a leitura re
   assert.equal(fantasiaDaConversa(comFantasia[0]), comFantasia[1].nome);
   assert.match(REVISAO_PROMPT, /reject jokes about solemn dates \(Consciência Negra, Finados, Sexta-feira Santa\), race or religion/);
 });
+
+test('run 278: piada pedida e contada não é companion genérico; pedir a piada de volta continua errado', async () => {
+  const { outOfCharacter } = await import('../../src/core/dialogue/llm-provider.js');
+  assert.equal(outOfCharacter('Claro, Manu. Por que o tomate foi ao banco? Para pagar as dívidas! Que tal isso te animar um pouco?', { input: 'fala uma piada' }), null);
+  assert.equal(outOfCharacter('Claro, Manu. Que bom que você está bem.', { input: 'oi' }), 'companion genérico', 'sem piada, a regra vale');
+});

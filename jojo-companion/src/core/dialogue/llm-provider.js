@@ -211,7 +211,9 @@ export function outOfCharacter(text, { max = 280, input = '' } = {}) {
   if (respostaPudica(t)) return 'pudor';
   // Companion genérico ("Que legal! Estou aqui pra você.") não é o JoJo: cai na fala do personagem.
   // Só na conversa comum; explicação técnica (max maior) é julgada pelo conteúdo.
-  if (max <= 280 && respostaGenerica(t)) return 'companion genérico';
+  // Piada pedida e contada ("Claro, Manu. Por que o tomate…?") não precisa de músculo nem ego (run 278).
+  const piadaContada = /\b(?:piada|trocadilho|joke)\b/i.test(input) && /\?\s*\S.{3,}/.test(t);
+  if (max <= 280 && !piadaContada && respostaGenerica(t)) return 'companion genérico';
   if (String(text || '').length > max) return 'longa demais';
   return null;
 }
