@@ -55,6 +55,12 @@ export function lerRevisao(content) {
   return { ok: true, pulou: true };
 }
 
+/** Ela conta uma conquista (\"consegui terminar\", \"passei\"), sem negação: parabéns no jeito do JoJo (run 279). */
+export function conquistaDela(text) {
+  const n = String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return /\b(?:consegui|terminei|finalizei|conclui|passei|ganhei|bati a meta|entreguei|i (?:did it|finished|passed|won))\b/.test(n) && !/\b(?:nao|não|didn t|didnt|not)\b/.test(n);
+}
+
 /** Pergunta técnica (ciência, medicina, MNE_Lab…) pede contexto e resposta maiores. */
 export function isTechnical(text) {
   return /\b(dls|nta|zeta|pdi|nanopart\w*|nano\w*|anova|estat[ií]stic\w*|fisiopatolog\w*|farmac\w*|diagn[oó]stic\w*|hemograma|exame|sintoma\w*|mecanismo|mne_?lab|lightscattering|nanobrook|explica|por que|como funciona)\b/i.test(String(text || ''));
@@ -160,7 +166,9 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
       ? 'Current reply: one sentence about your own present mood as JoJo, limited to your fictional character state.'
       : recall
         ? 'Current reply: give only the requested fact from the conversation in one short factual sentence, using her stated wording for personal facts. If unavailable, say you do not know.'
-        : 'Current reply: answer the concrete subject of her latest message first, naming it; recall preferences by exact name. Optional humor follows the answer.');
+        : conquistaDela(text)
+          ? 'Current reply: she achieved something. Praise it as JoJo, a bossy coach with a huge ego: name what she did, compare it with your own greatness or raise the bar, and give the next order. Never \"que bom que você\".'
+          : 'Current reply: answer the concrete subject of her latest message first, naming it; recall preferences by exact name. Optional humor follows the answer.');
   return linhas.join('\n');
 }
 

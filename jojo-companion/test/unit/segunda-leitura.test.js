@@ -120,3 +120,13 @@ test('run 278: piada pedida e contada não é companion genérico; pedir a piada
   assert.equal(outOfCharacter('Claro, Manu. Por que o tomate foi ao banco? Para pagar as dívidas! Que tal isso te animar um pouco?', { input: 'fala uma piada' }), null);
   assert.equal(outOfCharacter('Claro, Manu. Que bom que você está bem.', { input: 'oi' }), 'companion genérico', 'sem piada, a regra vale');
 });
+
+test('run 279: conquista dela pede parabéns no jeito do JoJo já na primeira geração; "esse cara" fala do chefe', async () => {
+  const { conquistaDela, buildLocalPrompt } = await import('../../src/core/dialogue/llm-provider.js');
+  const { relatoSemAssunto } = await import('../../src/core/dialogue/coherence.js');
+  assert.equal(conquistaDela('Hoje consegui terminar meu projeto.'), true);
+  assert.equal(conquistaDela('Não consegui terminar meu projeto hoje.'), false);
+  const p = buildLocalPrompt({ nomeSerio: 'Emanuele', nomeBrincadeira: 'Manu' }, {}, 'Hoje consegui terminar meu projeto.');
+  assert.match(p, /she achieved something\. Praise it as JoJo, a bossy coach with a huge ego/);
+  assert.equal(relatoSemAssunto('Meu chefe mudou o prazo de novo.', 'Que merda, Manu! Esse cara é um incompetente. Vamos focar em terminar isso, e depois vemos o que fazer com ele.'), false);
+});

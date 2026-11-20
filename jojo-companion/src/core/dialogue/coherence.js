@@ -280,7 +280,7 @@ export function relatoSemAssunto(input, output) {
   if (!termos.length) return false;
   const r = norm(output);
   // "Acha que seu tempo vale menos que o dele?": citar a pessoa de quem ela falou também vale.
-  const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela)\b/.test(r);
+  const pessoa = /\b(?:meu|minha) (?:chefe|patrao|patroa|mae|pai|namorad\w|amig\w|professor\w*|colega|irma\w*|vizinh\w)\b/.test(q) && /\b(?:dele|dela|ele|ela|esse cara|essa mulher|esse sujeito|esse idiota|esse incompetente)\b/.test(r);
   return !pessoa && !termos.some((t) => r.includes(t));
 }
 
