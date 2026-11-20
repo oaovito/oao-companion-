@@ -24,7 +24,7 @@ import { MotorPesquisa } from '../core/dialogue/pesquisa.js';
 import dns from 'node:dns';
 import { LlmProvider } from '../core/dialogue/llm-provider.js';
 import { LOCAL_MODEL_LABEL } from '../core/dialogue/local-model.js';
-import { HOLIDAYS } from '../core/holidays.js';
+import { HOLIDAYS, fantasiaDaConversa } from '../core/holidays.js';
 import { createLogger } from './logger.js';
 import { createAutoUpdater } from './auto-update.js';
 import { OverlayWindow } from './overlay-window.js';
@@ -301,7 +301,7 @@ function main() {
       getProfile: () => ({ ...personality.get(), provocacoes: store.get().provocacoes !== false }),
       getContext: () => ({
         hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        festa: companion && companion.holiday ? HOLIDAYS[companion.holiday].nome : null,
+        festa: fantasiaDaConversa(companion && companion.holiday),
         ligadao: !!(companion && companion.wired),
       }),
       // Falas reais do JoJo (filtradas pelo perfil) como modelo do jeito dele.

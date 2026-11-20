@@ -86,6 +86,11 @@
 - Perca duas vezes seguidas num mini-jogo, abra o Instagram ou termine o Modo Trabalho.
 - Em Configurações → Animações virais, desligue o humor adulto ou bloqueie uma animação e confira.
 
+### Correções
+- As animações virais nunca cortam uma cena em andamento (o "eu deveria jogar lol?", o AVC, outra viral): só tocam com o JoJo à toa.
+- Em data solene (Consciência Negra, Finados, Sexta-feira Santa…) a conversa não trata a data como fantasia
+  e o JoJo não faz piada com ela.
+
 ## 0.47.3 — 2026-11-19
 
 ### Novidades
@@ -130,6 +135,8 @@
   para os balões. Pelo chat ("êxtase anabólico", "toma uma trembolona"), por /anim esteroide e pela Central.
 
 ### Melhorias
+- Conversa: quando a resposta sai com cara de companion genérico ("Parabéns! Que bom que você…"), a nova
+  tentativa recebe como soar como o JoJo (ego, músculos ou ordem de treinador), em vez de repetir a mesma frase.
 - As configurações e o painel de jogos não mostram mais o nome do Darkest Dungeon ("Interações durante jogos",
   "Steam e jogos"). Só o texto mudou: detecção, XP, conquistas e falas continuam iguais.
 - Mula sem Cabeça: no lugar da cabeça só o fogo, em camadas e tremulando.

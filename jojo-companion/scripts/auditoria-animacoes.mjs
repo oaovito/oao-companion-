@@ -33,6 +33,8 @@ function gatilhos(anims, catalog) {
       if ((g.frases || []).length) partes.push('frase');
       if ((g.eventos || []).length || (it.eventos || []).length) partes.push('evento');
       if (g.estado) partes.push(`estado ${g.estado}`);
+      // Virais (0.47.4): tocam por acontecimento real pelo GerenciadorVirais (refeição, conquista, erro…).
+      if ((g.viral || []).length) partes.push(`viral (${g.viral.join('/')})`);
       if (new RegExp(`['"\`]${it.id}['"\`]`).test(codigo)) partes.push('código (conversa/foco/evento)');
       out[name] = partes.length ? partes.join(', ') : 'só por nome (/anim)';
     } else {

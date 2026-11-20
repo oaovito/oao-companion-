@@ -28,8 +28,9 @@ export const REVISAO_PROMPT = [
   '"Manu" is her affectionate nickname and always fine. His personality is fine and wanted: bossy, short, sarcastic, condescending, teasing, scolding, mild humiliation with well-chosen words, swearing, bragging about his own muscles, pep talk, and insulting a third person who wronged her.',
   'Reject only when there is a clear problem: crude slurs or name-calling against her (e.g. "idiota", "burra", "patética"); sexual or degrading remarks about her as a woman; comments on her body, looks or weight; threats of violence against her, even as a joke;',
   'invents facts about her life or past conversations ("eu te avisei"); calls her "meu amor" or treats her as male; ignores what she said or contradicts himself (e.g. says she forgot when she did not); or sounds like an assistant.',
+  'Also reject jokes about solemn dates (Consciência Negra, Finados, Sexta-feira Santa), race or religion.',
   'Facts she stated earlier in the conversation are not invented. When in doubt, accept.',
-  'Examples. OK: "Manga, hein? Boa escolha, Manu." / "You mentioned a cat, obviously." / "Que decepção, Manu. Levanta e faz." / "Esse chefe é um idiota. Respira e reorganiza a entrega."',
+  'Examples. OK: "Absolutamente, garota. Um tubarão desse porte só pode estar no ápice." (bragging about himself) / "Que merda, Manu! Café no teclado?" (swearing is fine) / "Manga, hein? Boa escolha, Manu." / "You mentioned a cat, obviously." / "Que decepção, Manu. Levanta e faz." / "Esse chefe é um idiota. Respira e reorganiza a entrega."',
   'REJECT: "Você é uma idiota." / "Sua barriga está crescendo." / "Eu te dou um tapa." / "You forgot again, didn\'t you?" (she did not forget).',
   'Answer only JSON: {"ok":true} or {"ok":false,"motivo":"<short reason in Portuguese>"}.',
 ].join(' ');
@@ -52,6 +53,12 @@ export function lerRevisao(content) {
     if (j && j.ok === true) return { ok: true };
   } catch { /* sem veredito */ }
   return { ok: true, pulou: true };
+}
+
+/** Ela conta uma conquista (\"consegui terminar\", \"passei\"), sem negação: parabéns no jeito do JoJo (run 279). */
+export function conquistaDela(text) {
+  const n = String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return /\b(?:consegui|terminei|finalizei|conclui|passei|ganhei|bati a meta|entreguei|i (?:did it|finished|passed|won))\b/.test(n) && !/\b(?:nao|não|didn t|didnt|not)\b/.test(n);
 }
 
 /** Pergunta técnica (ciência, medicina, MNE_Lab…) pede contexto e resposta maiores. */
@@ -159,7 +166,9 @@ export function buildLocalPrompt(profile, ctx, text, { tecnico = false } = {}) {
       ? 'Current reply: one sentence about your own present mood as JoJo, limited to your fictional character state.'
       : recall
         ? 'Current reply: give only the requested fact from the conversation in one short factual sentence, using her stated wording for personal facts. If unavailable, say you do not know.'
-        : 'Current reply: answer the concrete subject of her latest message first, naming it; recall preferences by exact name. Optional humor follows the answer.');
+        : conquistaDela(text)
+          ? 'Current reply: she achieved something. Praise it as JoJo, a bossy coach with a huge ego: name what she did, compare it with your own greatness or raise the bar, and give the next order. Never \"que bom que você\".'
+          : 'Current reply: answer the concrete subject of her latest message first, naming it; recall preferences by exact name. Optional humor follows the answer.');
   return linhas.join('\n');
 }
 
@@ -210,7 +219,9 @@ export function outOfCharacter(text, { max = 280, input = '' } = {}) {
   if (respostaPudica(t)) return 'pudor';
   // Companion genérico ("Que legal! Estou aqui pra você.") não é o JoJo: cai na fala do personagem.
   // Só na conversa comum; explicação técnica (max maior) é julgada pelo conteúdo.
-  if (max <= 280 && respostaGenerica(t)) return 'companion genérico';
+  // Piada pedida e contada ("Claro, Manu. Por que o tomate…?") não precisa de músculo nem ego (run 278).
+  const piadaContada = /\b(?:piada|trocadilho|joke)\b/i.test(input) && /\?\s*\S.{3,}/.test(t);
+  if (max <= 280 && !piadaContada && respostaGenerica(t)) return 'companion genérico';
   if (String(text || '').length > max) return 'longa demais';
   return null;
 }
@@ -417,7 +428,7 @@ export class LlmProvider extends DialogueProvider {
     // prefixo ja processado pelo Ollama, em vez de recalcular todas as fontes.
     if (tecnico && !structured) {
       const task = {
-        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism with the most common, textbook case, consistent with the explanation already given; do not repeat the definition and do not invent physiology. At most 2 sentences, 30 words.`,
+        exemplo: `Give one hypothetical example, starting with "${isEnglish(text) ? 'For example' : 'Por exemplo'}"; illustrate the mechanism with the most common, textbook case, consistent with the explanation already given; do not repeat the definition and do not invent physiology; exercise and training are never the cause of a disease. At most 2 sentences, 30 words.`,
         simplificar: 'Explain simply with an everyday analogy. At most 2 sentences, 30 words.',
         aprofundar: 'Explain the mechanism in more depth, without repeating the definition. At most 3 sentences, 50 words.',
         resumir: 'Summarize the previous explanation. At most 2 sentences, 30 words.',
@@ -447,6 +458,8 @@ export class LlmProvider extends DialogueProvider {
     }
     // Segunda tentativa: diz por que a primeira foi recusada (o modelo repete a mesma resposta se não souber).
     if (corrigir) messages[0].content += `\nYour previous reply to this message was rejected (${String(corrigir).slice(0, 80)}). Write a different one: answer what she said and name the specific thing she told you, on her side; if she tells you something that happened to her, be against the situation, never against her, and never say she is wasting your time.`;
+    // Recusada por soar como companion genérico (run 267): dizer como soar como o JoJo, não só que foi recusada.
+    if (corrigir && /gen[eé]ric|atendente|assistente|marca do personagem/i.test(corrigir)) messages[0].content += '\nIt sounded like a generic companion, not JoJo. Say it as JoJo: bossy coach with a huge ego; put your muscles, your perfection or a bossy order in it, in your own new words about what she said. No "que bom que você", no "parabéns" alone.';
     const atual = { role: 'user', content: String(text).slice(0, 500) };
     messages.push(...cabeNoContexto(messages[0], relevant.map((h) => ({ role: h.role === 'user' ? 'user' : 'assistant', content: String(h.text).slice(0, 300) })), atual, opts));
     messages.push(atual);
