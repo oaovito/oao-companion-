@@ -44,7 +44,7 @@ test('payload casual depois de uma aula não encaminha fontes ou falas científi
   const requests = [], calls = [];
   const texts = ['Diabetes envolve resistência à insulina [1].', 'Por exemplo, imagine resistência à insulina [1].', 'A janela da cozinha precisa de reparo.', 'Por exemplo, podemos substituir o vidro da janela.'];
   const provider = new LlmProvider({
-    fetch: async (_, options) => { requests.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: texts[requests.length - 1] } }) }; },
+    fetch: async (_, options) => { const body = JSON.parse(options.body); if (ehRevisao(body)) return { ok: true, text: async () => JSON.stringify({ message: { content: '{"ok":true}' } }) }; requests.push(body); return { ok: true, text: async () => JSON.stringify({ message: { content: texts[requests.length - 1] } }) }; },
     getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => PERSONALITY_DEFAULTS, baseOverride: 'http://127.0.0.1:1',
   });
   const reply = provider.reply.bind(provider);
@@ -69,7 +69,7 @@ test('payload de lembrança recebe uma correção real sem categoria, depois da 
   const requests = [];
   const texts = ['Maçã, entendido.', 'Manga, corrigido.', 'Manga.'];
   const provider = new LlmProvider({
-    fetch: async (_, options) => { requests.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: texts[requests.length - 1] } }) }; },
+    fetch: async (_, options) => { const body = JSON.parse(options.body); if (ehRevisao(body)) return { ok: true, text: async () => JSON.stringify({ message: { content: '{"ok":true}' } }) }; requests.push(body); return { ok: true, text: async () => JSON.stringify({ message: { content: texts[requests.length - 1] } }) }; },
     getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => PERSONALITY_DEFAULTS, baseOverride: 'http://127.0.0.1:1',
   });
   const engine = new DialogueEngine({ llm: provider, searchEnabled: () => false });
@@ -84,6 +84,9 @@ test('payload de lembrança recebe uma correção real sem categoria, depois da 
 });
 
 const listen = (srv) => new Promise((r) => srv.listen(0, '127.0.0.1', () => r(`http://127.0.0.1:${srv.address().port}`)));
+
+// A segunda leitura é uma chamada à parte (JSON, prompt de revisão); os testes de payload contam só as gerações.
+const ehRevisao = (body) => body?.format === 'json' && /^You review one reply/.test(body?.messages?.[0]?.content || '');
 
 function fakeOllama({ modelos = [OLLAMA_MODEL], resposta = '{"texto":"Supino primeiro, conversa depois.","acao":"judge","tom":"serio"}' } = {}) {
   const pedidos = [];
@@ -155,7 +158,7 @@ test('após inatividade, a primeira pergunta espera o recarregamento e recebe a 
     const reply = await pending;
     assert.equal(reply.intent, 'ia');
     assert.equal(reply.text, 'Dia bom é dia de supino, Manu.');
-    assert.equal(pedidos.filter((p) => p.url === '/api/chat').length, 1);
+    assert.equal(pedidos.filter((p) => p.url === '/api/chat' && !ehRevisao(p.body)).length, 1, 'uma geração (a segunda leitura é outra chamada)');
   } finally {
     resume();
     srv.close();
