@@ -3252,6 +3252,9 @@ export class Companion {
   _viral(gatilho, { falar = true } = {}) {
     // Conversando (modo de interação) o JoJo responde à conversa; viral não atravessa a resposta.
     if (!this.started || this.work || this.focus || this.interaction || this.fullscreenHidden || this.lolHidden || this.userHidden || this.paused || this.quitting) return false;
+    // Viral nunca corta uma cena em andamento ("eu deveria jogar lol?", AVC, rebolado…): só com o JoJo à toa.
+    // (prioridade menor = mais importante; AUTO é o repouso)
+    if (this.behavior.priority < PRIORITY.AUTO) return false;
     const id = this.virais.escolher(gatilho);
     if (!id) return false;
     if (!this.playCatalog(id, { source: 'viral', speak: falar && !this.store.get().quietMode, intensity: this.virais.intensidade() })) return false;

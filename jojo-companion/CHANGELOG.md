@@ -44,6 +44,9 @@
 - Perca duas vezes seguidas num mini-jogo, abra o Instagram ou termine o Modo Trabalho.
 - Em Configurações → Animações virais, desligue o humor adulto ou bloqueie uma animação e confira.
 
+### Correções
+- As animações virais nunca cortam uma cena em andamento (o "eu deveria jogar lol?", o AVC, outra viral): só tocam com o JoJo à toa.
+
 ## 0.47.3 — 2026-11-19
 
 ### Novidades

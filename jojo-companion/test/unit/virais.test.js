@@ -172,6 +172,8 @@ test('companion: toca por sinal real; nunca no Trabalho, foco ou tela cheia; int
     assert.equal(c._viral('derrota'), false, 'tela cheia');
     c.fullscreenHidden = false;
     e.clock.advance(5000);
+    // A viral do fim do Trabalho (Chill Guy) pode estar tocando: uma viral não corta outra cena; espera acabar.
+    for (let i = 0; i < 60 && c.behavior.priority < 4; i++) e.clock.advance(500);
     c.virais.ultimoViral = -Infinity;
     assert.equal(c._viral('derrota'), true);
     assert.match(c.behavior.anim || '', /^cat_vr\d{2}/);
@@ -212,6 +214,24 @@ test('chat: o nome do meme toca a animação dele', async () => {
     e.companion.enterInteraction('test');
     await chatAdv(e, 'absolute cinema');
     assert.match(e.companion.behavior.anim || '', /^cat_vr26/);
+  } finally {
+    e.companion.stop();
+  }
+});
+
+test('viral nunca corta uma cena em andamento ("eu deveria jogar lol?"); com o JoJo à toa, toca (E2E do run 275)', () => {
+  const e = makeEnv({ settings: { speechFrequency: 'off' }, profile: { lembreteComida: { ativo: false }, lembreteTreino: { ativo: false } } });
+  try {
+    const c = e.companion;
+    c.start();
+    e.clock.advance(3000);
+    assert.ok(c.behavior.request('poop', { now: e.clock.now(), force: true }));
+    assert.equal(c.behavior.state, 'poop');
+    assert.equal(c._viral('conquista', { falar: false }), false, 'a conquista não interrompe a cena');
+    assert.equal(c.behavior.state, 'poop');
+    e.clock.advance(8000);
+    assert.notEqual(c.behavior.state, 'poop');
+    assert.equal(c._viral('conquista', { falar: false }), true, 'com o JoJo à toa, a viral toca');
   } finally {
     e.companion.stop();
   }
