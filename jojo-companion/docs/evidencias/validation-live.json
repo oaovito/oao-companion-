@@ -80,6 +80,36 @@
           "waitMs": 21164.992000000027
         }
       }
+    },
+    {
+      "id": "build",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 239982,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "installer",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 39690,
+      "optional": false,
+      "status": "passed",
+      "validation": {
+        "isPackaged": true,
+        "archive": true,
+        "workerUnpacked": true,
+        "coreUnpacked": true,
+        "installed": true,
+        "libraries": 2,
+        "count": 1,
+        "status": "closed",
+        "fixtureFound": true,
+        "known": true
+      }
     }
   ],
   "files": [],
