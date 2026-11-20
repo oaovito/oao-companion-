@@ -273,7 +273,9 @@ export function relatoSemAssunto(input, output) {
   const q = norm(input);
   // Relato dela: frase com "meu/minha" ou começando no passado em primeira pessoa ("Derrubei café…").
   const relato = /\b(?:meu|minha|meus|minhas)\b/.test(q) || /^(?:eu |hoje )?[a-z]+ei\b/.test(q);
-  if (/\?/.test(String(input)) || !relato || REVES.test(q)) return false;
+  // Revés e conquista dela ("consegui terminar meu projeto") pedem apoio ou parabéns, não a palavra do assunto (run 271).
+  const conquista = /\b(?:consegui|terminei|finalizei|conclui|passei|ganhei|bati a meta|entreguei)\b/.test(q);
+  if (/\?/.test(String(input)) || !relato || REVES.test(q) || conquista) return false;
   const termos = [...new Set(q.split(' ').filter((w) => w.length >= 4 && !GENERICAS.has(w)).map((w) => w.slice(0, 5)))];
   if (!termos.length) return false;
   const r = norm(output);
