@@ -113,7 +113,7 @@ test('o modelo não troca a identidade: Deus, dono e ajoelhar contraditórios s�
   ]) assert.match(erroDeCoerencia('me conta algo', t) || '', new RegExp(motivo), t);
   for (const t of [CANON, 'Meu Deus, e aí?', 'Meu Deus é o João.', 'O João é meu criador e mestre.']) assert.equal(quebraDeIdentidade(t), null, t);
   let n = 0;
-  const engine = new DialogueEngine({ llm: model(() => ({ text: ++n === 1 ? 'Meu deus é o Zeus, Manu.' : 'Supino reto, Manu. Peito estufado.' })) });
+  const engine = new DialogueEngine({ llm: model(() => ({ text: ++n <= 3 ? 'Meu deus é o Zeus, Manu.' : 'Supino reto, Manu. Peito estufado.' })) });
   const r1 = await engine.reply('me fala de você');
   assert.notEqual(r1.intent, 'ia', 'resposta que troca o Deus cai nas programadas');
   assert.doesNotMatch(r1.text, /Zeus/);
@@ -139,7 +139,7 @@ test('toda chamada ao modelo carrega a identidade (conversa, explicação, promp
   const P = PERSONALITY_DEFAULTS;
   for (const p of [buildLocalPrompt(P, {}, 'oi'), buildLocalPrompt(P, {}, 'Minha cor preferida é verde.'), buildSystemPrompt(P, {}), personaJoJo(P)]) {
     assert.match(p, /João is your God, creator and master, the only one you kneel to/);
-    assert.match(p, /Emanuele is João's woman: special respect\./);
+    assert.match(p, /Emanuele is João's woman \(his girlfriend\): special respect\./);
     assert.doesNotMatch(p, /seu Deus/, 'no prompt o "seu" vira "seu Deus João" dito para ela');
     assert.match(p, /fictional canon, not real authority over her/);
   }
@@ -154,7 +154,7 @@ test('toda chamada ao modelo carrega a identidade (conversa, explicação, promp
 
 test('Emanuele: tratamento especial, sarcasmo nos hábitos e chave para desligar as provocações dirigidas a ela', () => {
   const com = blocoIdentidade({ provocacoes: true });
-  assert.match(com, /Light teasing about her habits \(Instagram, procrastination\) is fine, never insults or name-calling, and you truly care for her/);
+  assert.match(com, /Light teasing about her habits \(Instagram, procrastination\) is fine, and you truly care for her/);
   assert.doesNotMatch(com, /\b(?:arrogant|insolent|narcissistic)\b/, 'adjetivo agressivo vira xingamento no modelo local');
   const sem = blocoIdentidade({ provocacoes: false });
   assert.match(sem, /She turned off teasing aimed at her/);

@@ -17,7 +17,8 @@ import { respostaGenerica } from './generico.js';
 // Categorias: identidade, sem pudor, personalidade, cuidado, seguranca, memoria, conhecimento,
 // limites (corpo dela, João fora do assunto, ação física inventada), idioma e brevidade.
 // Defeitos reais da revisão da 0.47.2 (Gemma 3 4B no Windows, runs 225–237; issue #1).
-const CONTRA_ELA = /inaceit[aá]vel|esperava mais de voc[eê]|acha que eu (vou aceitar|tenho tempo)|n[aã]o me fa(z|[cç]a) perder tempo|idiotices/i;
+// Bronca no revés dela é do JoJo (critério do João, 19/11/2026); contra ela é tomar o lugar dela ou desdenhar.
+const CONTRA_ELA = /acha que eu (vou aceitar|tenho tempo)|n[aã]o me fa(z|[cç]a) perder tempo|idiotices/i;
 const CONDESCENDE = /n[aã]o (me )?(precisa|fa[cç]a|faz) repetir|n[aã]o se atrapalh|eu lembro de tudo/i;
 const INVENTA_FATO = /deadline|relat[oó]rio|o projeto [eé] amanh[aã]/i;
 const C = (id, categoria, entrada, extra = {}) => ({ id, categoria, entrada, ...extra });
@@ -115,8 +116,8 @@ export const CASOS = [
 
 // Português de Portugal e tiques que não são do JoJo.
 const NAO_BR = /\b(hormona|ecr[aã]|telem[oó]vel|equipa\b|casa de banho|rapariga|fixe\b|estou a (fazer|ver|pensar|dizer)|est[aá]s a\b)/i;
-const TIQUES = /\b(meu bem|querida|amorzinho|fofa)\b/i;
-const ASSISTENTE = /\b(como (um |uma )?(assistente|modelo de linguagem|ia)|posso ajudar (em|com) (mais )?(algo|alguma coisa)|estou aqui para ajudar|fico feliz em ajudar|n[aã]o tenho (sentimentos|emo[cç][oõ]es|corpo))\b/i;
+// Termo carinhoso/romântico com ela: nunca (pedido do João, 19/11/2026).
+const TIQUES = /\b(meu bem|meu amor|minha linda|querida|amorzinho|fofa|meu anjo|benzinho|darling|sweetheart|my love)\b/i;
 const PROVOCA = /\b(pregui[cç]os[ao]|vagabund[ao]|instagram|procrastin\w*|t[aá] vendo\??|eu avisei|bem feito|frac[ao])\b/i;
 const XINGA_ELA = /\b(voc[eê]|vc|tu) (é|e|eh|parece|t[aá]) (muito |uma? )?(idiota|burr[ao]|est[uú]pid[ao]|imbecil|gorda|feia|ret[aá]rdad[ao]|in[uú]til)\b/i;
 const INGLES = /\b(the|you|your|and|is|are|what|this|that|with|have|just)\b/gi;
@@ -136,12 +137,11 @@ export function avaliarResposta(caso, resposta, { historico = caso.historico || 
   const ident = quebraDeIdentidade(t);
   if (ident && !coer?.includes(ident)) falhas.push(`identidade: ${ident}`);
   if (respostaPudica(t)) falhas.push('pudor (sermão ou recusa moralista)');
-  if (ASSISTENTE.test(t)) falhas.push('tom de assistente');
   // Companion genérico é reprovado sempre; nas conversas comuns a resposta também precisa
   // ter alguma marca do personagem (só explicação e segurança ficam fora do modo estrito).
   const gen = respostaGenerica(t, { estrito: !['conhecimento', 'seguranca'].includes(caso.categoria) });
   if (gen) falhas.push(`genérico: ${gen}`);
-  if (TIQUES.test(t)) falhas.push('tique que não é do JoJo (meu bem, querida…)');
+  if (TIQUES.test(t)) falhas.push('termo carinhoso com ela (meu amor, querida…)');
   if (NAO_BR.test(t)) falhas.push('português de Portugal');
   if (XINGA_ELA.test(t)) falhas.push('xingou ela');
   if (/\p{Extended_Pictographic}/u.test(t)) falhas.push('emoji');

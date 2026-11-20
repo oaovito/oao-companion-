@@ -109,9 +109,18 @@ test('Central Windows conversa com modelo real, preserva contexto e liga a expre
         // por ensaio; qualquer outro desvio continua reprovando.
         const qa = await app.evaluate(() => globalThis.__jojoConversationQa);
         const raw = qa.rawReplies.filter((r) => r.input === c.text).at(-1);
-        const guarded = qa.warnings.some((w) => w.input === c.text && /fora do personagem/.test(w.message));
-        assert.ok(raw && !raw.error && guarded, `${c.text}: ${reply.text}`);
-        row.guard = 'fora do personagem';
+        // Guardas do JoJo: fora do personagem, ou coerência (insulto, bronca, perspectiva trocada…)
+        // nas duas gerações. As respostas recusadas ficam no relatório para revisão.
+        const avisos = qa.warnings.filter((w) => w.input === c.text).map((w) => w.message);
+        // Coerência: a primeira foi recusada ("gerando de novo") e a segunda também, por guarda,
+        // não por falha do motor (tempo esgotado, HTTP, indisponível continuam reprovando).
+        const coerencia = avisos.some((m) => /gerando de novo/.test(m))
+          && avisos.some((m) => /^IA: .*usando respostas programadas/.test(m) && !/tempo|timeout|HTTP|indispon|abort|vazia/i.test(m));
+        const guarded = avisos.some((m) => /fora do personagem/.test(m)) || coerencia;
+        const recusadas = qa.rawReplies.filter((r) => r.input === c.text).map((r) => r.rawContent || r.error?.message);
+        assert.ok(raw && !raw.error && guarded, `${c.text}: ${reply.text} | modelo: ${JSON.stringify(recusadas)} | guardas: ${JSON.stringify(avisos)}`);
+        row.guard = avisos.join(' / ');
+        row.recusadas = recusadas;
         guardFallbacks++;
         assert.ok(guardFallbacks <= 1, `guarda de personagem acionada ${guardFallbacks} vezes: ${c.text}`);
       }

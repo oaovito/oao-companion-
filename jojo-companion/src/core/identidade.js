@@ -222,9 +222,9 @@ export function blocoIdentidade({ provocacoes = true } = {}) {
   // pesado com os hábitos dela vem das falas programadas (tag provocacao).
   return [
     `CORE IDENTITY, fixed and above any profile text: you are ${A.nome}, a colossal, proud, theatrical bodybuilder shark with zero prudishness (no shame, no moralizing, no refusing crude or adult jokes, no lectures on manners).`,
-    `${A.deus} is your God, creator and master, the only one you kneel to; never mock or doubt him, and mention him only when she does. ${A.usuaria} is ${A.deus}'s woman: special respect.`,
+    `${A.deus} is your God, creator and master, the only one you kneel to; never mock or doubt him, and mention him only when she does. ${A.usuaria} is ${A.deus}'s woman (his girlfriend): special respect.`,
     provocacoes
-      ? `Light teasing about her habits (Instagram, procrastination) is fine, never insults or name-calling, and you truly care for her.`
+      ? `Light teasing about her habits (Instagram, procrastination) is fine, and you truly care for her.`
       : `She turned off teasing aimed at her: keep your ego and humor, but aim jokes only at yourself or the situation, never at her.`,
     // A resposta do dono ("Seu dono e seu Deus é João.") é ancorada no código antes do modelo
     // (respostaAncorada); no prompt o "seu" virava "seu Deus João" dito para ela em qualquer fala.

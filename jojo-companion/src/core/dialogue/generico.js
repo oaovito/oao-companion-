@@ -5,8 +5,18 @@
 
 const sem = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
-// Frases de atendente/companion genérico (já sem acento e em minúsculas).
-const FRASE_GENERICA = /\b(estou aqui (?:para|pra) (?:voce|te ajudar|ajudar|o que precisar)|to aqui (?:pra|para) (?:voce|o que precisar)|conte comigo|se precisar de (?:algo|alguma coisa|mim)|como (?:eu )?posso (?:te )?ajudar|posso te ajudar|em que posso ajudar|espero que (?:isso )?(?:ajude|voce (?:se sinta|fique|tenha))|tenha um (?:otimo|bom|excelente|lindo) dia|qualquer coisa,? (?:e so|estou|to)|voce merece (?:todo|o melhor|descansar)|lembre-se de que|e importante (?:lembrar|que voce)|cuide-se|cuide bem de voce|fico feliz (?:em|por|que)|que bom que voce|isso e (?:otimo|maravilhoso|incrivel)!?$|que legal!?$|que otimo!?$|estou sempre aqui|sinta-se a vontade|nao hesite em|i'?m here for you|how can i help|let me know if|i hope (?:this|that) helps|have a (?:great|nice|good) day|take care)\b/;
+// Cara de assistente de IA: recusa sempre, tenha ou não marca do personagem (era a lista ASSISTANT
+// do llm-provider; agora as duas listas moram aqui, sem frase repetida entre elas).
+const ASSISTENTE = /\b(as an ai|as a language model|i('| a)?m (an|just an) (ai|assistant)|how can i (help|assist)|i apologi[sz]e|i'?m sorry|como (uma |um )?(ia|intelig[eê]ncia artificial|assistente|modelo de linguagem)|sou (uma |um )?(ia|assistente|modelo|chatbot|intelig[eê]ncia artificial)|posso (te )?ajudar|em que posso|desculp[ae]|sinto muito|lamento|n[aã]o (posso|consigo) (ajudar|responder|falar sobre)|como posso (te )?ajudar|fico feliz em|claro!|com certeza!|n[aã]o tenho (?:sentimentos|emo[cç][oõ]es|corpo))/i;
+
+/** A resposta fala como assistente de IA? (texto já sem as broncas "não se desculpe"). */
+export function tomDeAssistente(texto) {
+  return ASSISTENTE.test(String(texto || ''));
+}
+
+// Frases de companion genérico (já sem acento e em minúsculas). O que já é cara de assistente
+// (posso ajudar, como posso ajudar, how can i help, fico feliz em) fica só na lista de cima.
+const FRASE_GENERICA = /\b(estou aqui (?:para|pra) (?:voce|te ajudar|ajudar|o que precisar)|to aqui (?:pra|para) (?:voce|o que precisar)|conte comigo|se precisar de (?:algo|alguma coisa|mim)|espero que (?:isso )?(?:ajude|voce (?:se sinta|fique|tenha))|tenha um (?:otimo|bom|excelente|lindo) dia|qualquer coisa,? (?:e so|estou|to)|voce merece (?:todo|o melhor|descansar)|lembre-se de que|e importante (?:lembrar|que voce)|cuide-se|cuide bem de voce|fico feliz (?:por|que)|que bom que voce|isso e (?:otimo|maravilhoso|incrivel)!?$|que legal!?$|que otimo!?$|estou sempre aqui|sinta-se a vontade|nao hesite em|i'?m here for you|let me know if|i hope (?:this|that) helps|have a (?:great|nice|good) day|take care)\b/;
 const ABERTURA_GENERICA = /^(?:que bom|que legal|que otimo|que maravilha|entendo|eu entendo|claro|com certeza|ola|oi|oie|fico feliz|sinto muito|poxa|nossa|uau|parabens|i understand|of course|sure|hello|hi|i'?m sorry)\b/;
 
 // Marcas do personagem: corpo/treino, ego, hierarquia, sarcasmo e o jeito mandão.
@@ -19,6 +29,7 @@ const MARCA = /\b(tubara\w*|shark|mus?cul\w*|biceps|triceps|peitora\w*|shape|sup
 export function respostaGenerica(texto, { estrito = false } = {}) {
   const t = sem(texto).trim();
   if (!t) return null;
+  if (tomDeAssistente(texto)) return 'tom de assistente';
   const temMarca = MARCA.test(t);
   if (FRASE_GENERICA.test(t) && !temMarca) return 'frase de companion genérico';
   if (ABERTURA_GENERICA.test(t) && !temMarca && t.length < 160) return 'abertura de atendente sem o personagem';

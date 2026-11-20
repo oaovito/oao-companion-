@@ -18,5 +18,16 @@ if (reports) {
   reporters.push('--test-reporter=junit', '--test-reporter-destination=stdout', `--test-reporter-destination=${path.join(reports, process.argv.includes('--integration') ? 'windows.xml' : 'e2e.xml')}`);
 }
 const nodeArgs = ['--test', '--test-concurrency=1', ...reporters, ...files];
-const r = spawnSync(process.execPath, nodeArgs, { cwd: ROOT, stdio: 'inherit' });
+// Hora local fixa à tarde nos ensaios (run 263): o JoJo tem eventos por horário (resumo da manhã 6h–12h,
+// fechamento do dia e sono a partir das 21h) que, conforme a hora do runner, disparavam no meio de
+// testes que não são sobre horário. O fuso é escolhido para a hora local ficar em torno das 15h; os
+// testes de horário continuam fixando a data deles no próprio teste.
+const env = { ...process.env, TZ: process.env.JOJO_E2E_TZ || fusoDaTarde(new Date()) };
+const r = spawnSync(process.execPath, nodeArgs, { cwd: ROOT, stdio: 'inherit', env });
 process.exit(r.status ?? 1);
+
+/** Fuso Etc/GMT±N em que agora são ~15h (horas inteiras; Etc/GMT tem o sinal invertido). */
+export function fusoDaTarde(agora) {
+  const off = ((15 - agora.getUTCHours() + 36) % 24) - 12;
+  return off === 0 ? 'Etc/GMT' : `Etc/GMT${off > 0 ? '-' : '+'}${Math.abs(off)}`;
+}

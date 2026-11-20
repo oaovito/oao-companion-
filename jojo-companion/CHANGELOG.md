@@ -141,6 +141,13 @@
   nada ficar por cima da fantasia nem brigar com a pele do personagem.
 - Os memes BR também transformam olhos, cabeça, corpo e boca durante a animação, como os shows.
 
+- Conversa mais leve: as regras de resposta do JoJo ficam numa tabela só (cada regra uma vez, a mesma serve
+  para limpar e para recusar). Uma frase ruim no meio de uma resposta boa sai sem gerar a resposta de novo, e o
+  prompt do modelo não repete mais quem ele é, o João nem "não insultar".
+- O JoJo nunca chama a Emanuele de "meu amor", "querida", "linda" ou parecido: regra no prompt, vocativo
+  tirado da resposta, frase romântica recusada e a fala do visual da Lum sem "Darling".
+- Um detector só para "cara de assistente" e "companion genérico" (antes eram três listas).
+
 ### Como testar
 - Escrever "Nazaré confusa" no chat: o JoJo vira a Nazaré, faz as contas e responde.
 - Subir de nível (2, 6, 10…) e ver o meme BR liberado na Central, vestível pelo guarda-roupa.
@@ -244,7 +251,48 @@
   vez de cair na resposta programada.
 - Acabamento das respostas da conversa: some também o desdém com advérbio ("a remarkably
   simple question", "é uma pergunta muito simples"), o marcador [1] quando não há fonte de
-  verdade, palavra de Portugal ("a hormona" vira "o hormônio") e o "meu bem".
+  verdade, palavra de Portugal ("a hormona" vira "o hormônio"), o "meu bem", o "não precisa
+  repetir" quando ela pergunta o que disse e o alarme "precisa de atenção imediata" numa
+  explicação. Resposta que despreza o que ela faz ("projetos são para gente fraca") é trocada
+  por uma fala programada.
+- Conversa: resposta que sai torta (xingamento, desdém, como se o problema fosse dele) ganha uma
+  segunda tentativa antes de cair numa fala programada. "Meu chefe mudou o prazo" não vira mais
+  "Acha que eu vou aceitar isso?", o JoJo fica do lado dela contra a situação, não diz que ela
+  está fazendo ele perder tempo e não chama ela de "meu caro".
+- Quando ela conta algo dela ("meu chefe mudou o prazo"), a resposta fala disso; resposta vaga
+  ("isso é ridículo, precisamos resolver") ganha uma segunda tentativa. O que é dela não vira
+  dele ("café no teclado" não vira "meu teclado"), e resposta fora do personagem também ganha
+  uma segunda tentativa antes da fala programada.
+- A conversa nunca comenta o corpo dela, não inventa fato da vida dela (prazo, relatório,
+  reunião que ela não contou), conta a piada quando ela pede e não menospreza ("se for digna",
+  "não se atrapalhe"). Quando ela não consegue algo, a bronca ("isso é inaceitável", "esperava
+  mais de você") sai e fica o apoio. Sem "perguntas idiotas", sem "não minta pra mim" e sem
+  tratar ela no masculino. Quando ela desabafa ele não corta o assunto ("não me diga mais"), e
+  some a condescendência ("como você deveria entender", "não tente me enganar").
+- Xingar quem fez mal a ela ("esse chefe é um idiota") é ficar do lado dela e passa; xingar ela
+  continua proibido.
+- Desabafo dela não vira "não em reclamar", sem tarefa inventada ("a leitura") e concordância
+  certa nos exemplos ("uma pessoa… o corpo dela"). O desabafo dela não vira "vamos focar em algo
+  que realmente importe", e explicação de saúde não termina em alarme ("exigindo atenção imediata").
+- Pergunta de conhecimento cuja resposta não cita o assunto também ganha uma segunda tentativa
+  antes de recorrer à pesquisa.
+- Resposta recusada ganha até duas novas tentativas (cada uma sabendo o motivo da recusa), e o
+  JoJo não inventa conversa que não houve ("eu te avisei").
+- Pergunta geral de saúde ("o que é diabetes tipo 2?") não vira conselho para ela, como se ela
+  tivesse a doença; e o apoio no revés nunca fica só num "Que droga, Manu!".
+- Pedido de conversa séria não recebe impaciência ("não me faça esperar", "a vida é curta para
+  ser chata").
+- Nada sobre a pele, o rosto ou a "estrutura física" dela, nem "te dou um tapa", mesmo de brincadeira.
+- No modo professor, o exemplo usa o caso clássico, coerente com a explicação, sem fisiologia
+  inventada.
+- No revés dela, sem "covardes", sem "isso não tem jeito" e sem "levanta essa bunda".
+- Sem "não precisa ser tão complicado" quando ela pergunta o que disse, e sem "eu não aguento
+  brincadeira".
+- Segunda leitura da conversa: antes de a resposta aparecer, o próprio modelo do PC dela relê o
+  que escreveu contra as diretrizes do JoJo (sem condescendência, sem bronca no revés, nada sobre o
+  corpo dela, sem ameaça, sem fato inventado, sem cara de assistente) e, se recusar, escreve de novo
+  sabendo o motivo. Leva cerca de 1 a 2 segundos a mais por resposta; se a leitura falhar, as
+  guardas fixas continuam valendo.
 - Visuais refinados para parecer de verdade com a referência: além da peça, o JoJo muda
   enquanto usa o visual. Baby Shark amarelo de cabeção e olhos de desenho, Hulk verde e
   largo, Thanos roxo, Venom preto de olhos brancos e bocão, Kirby rosa e redondo, Totoro,

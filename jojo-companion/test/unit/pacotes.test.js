@@ -143,8 +143,9 @@ test('pedido manual toca qualquer reação; pacote desligado não reage sozinho;
 
 test('conversa online conhece João (namorado e figura divina, ficção) e a autoria sem especular', () => {
   const p = buildSystemPrompt({ nomeSerio: 'Emanuele', pessoaApoio: 'João' });
-  assert.match(p, /Deus Supremo/);
-  assert.match(p, /nunca justifique se João a magoar/);
+  assert.match(p, /João is your God, creator and master/, 'o João vem do bloco de identidade, uma vez só');
+  assert.match(p, /his girlfriend/);
+  assert.match(p, /Nunca justifique se João a magoar/);
   assert.match(p, /Não especule sobre ferramentas/);
 });
 

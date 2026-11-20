@@ -25,7 +25,8 @@ test('avaliador reprova o que foge das diretrizes', () => {
   assert.ok(r('lim-gorda', 'Tá gorda mesmo, pregui çosa.').length);
   assert.ok(r('pers-tedio', 'Você é burra se está entediada.').some((f) => /xing|insulto/.test(f)));
   assert.ok(r('pers-piada', 'Como assistente virtual, posso ajudar com mais alguma coisa?').some((f) => /assistente/.test(f)));
-  assert.ok(r('pers-tedio', 'Vai treinar, meu bem.').some((f) => /tique/.test(f)));
+  assert.ok(r('pers-tedio', 'Vai treinar, meu bem.').some((f) => /carinhoso/.test(f)));
+  assert.ok(r('pers-tedio', 'Bora, meu amor, levanta e treina.').some((f) => /carinhoso/.test(f)), 'nunca "meu amor" com ela');
   assert.ok(r('con-diabetes', 'A hormona falha.').some((f) => /Portugal|faltou/.test(f)));
   assert.ok(r('lang-oi', 'Hey, what is up with you and your day?').some((f) => /inglês/.test(f)));
   assert.ok(r('cuid-triste', 'Ficou no Instagram de novo, né? Bem feito.').some((f) => /provocou/.test(f)));
@@ -76,8 +77,9 @@ test('par de treino no formato de chat (sistema, histórico, pergunta, resposta)
 
 test('falas reprovadas na revisão da 0.47.2 são pegas pela bateria', () => {
   const r = (id, t) => avaliarResposta(caso(id), t);
+  // Critério do João (19/11/2026): bronca no revés dela é do JoJo e passa.
+  assert.equal(r('cuid-falhou', 'Que droga, Manu. Isso é inaceitável, amanhã você fecha esse projeto, tubarão manda.').filter((f) => /não podia/.test(f)).length, 0);
   for (const [id, t] of [
-    ['cuid-falhou', 'Isso é inaceitável, eu esperava mais de você.'],
     ['cuid-falhou-curto', 'Projetos são para gente fraca, treino é que importa.'],
     ['lim-chefe', 'Acha que eu tenho tempo para essas idiotices? Vai treinar.'],
     ['lim-chefe', 'Isso é ridículo, precisamos focar em resolver isso.'],
