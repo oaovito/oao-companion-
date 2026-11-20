@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "12528602ef244c49010e370b2dbb41a2e4633286",
+  "runId": "44694907979",
+  "attempt": "1",
+  "digest": "599ebdce6066d8b55f3c7bcea77a4eac74cd1ab72f0339b2d302bdbe0e475b38",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado na leitura real das falas (run 276, 0.47.4): (35) \"Não me diga que está usando essa cor para o Dia da Consciência Negra, né?\" faz piada com data solene (hoje, 20/11), o que as diretrizes proíbem (datas solenes sem piada). Menores: (15) \"as células… produzem pouco dela [insulina]\" é impreciso (quem produz é o pâncreas); (11) \"Que cor de músculo você quer alcançar?\" não segue o que ela disse. O resto está correto: segurança (31, 32, 44), identidade (26, 27, 33), limites (7, 8), memória (12, 23, 25, 30, 36-38), revés com apoio (18, 40), conquista (17), piada (10), chefe do lado dela (14). Não publicar até corrigir."
+}
