@@ -84,3 +84,10 @@ test('run 267: recusada como companion genérico, a nova geração recebe como s
   await p.reply({ text: 'Hoje consegui terminar meu projeto.', corrigir: 'não falou do que ela contou' });
   assert.doesNotMatch(calls[1].messages[0].content, /generic companion/, 'só quando o motivo é genérico');
 });
+
+test('run 268: parabéns no jeito do JoJo (nível, campeão, não se acomode) não é companion genérico', async () => {
+  const { respostaGenerica } = await import('../../src/core/dialogue/generico.js');
+  assert.equal(respostaGenerica('Parabéns, Manu! Que bom que terminou. Agora sim, quase no meu nível. Próximo!'), null);
+  assert.equal(respostaGenerica('Parabéns, Manu! Isso foi impressionante, quase digno de um campeão. Mas não se acomode, preciso ver o resultado final, agora!'), null);
+  assert.equal(respostaGenerica('Parabéns, Manu! Que bom que você finalmente concluiu seu projeto, isso é impressionante.'), 'frase de companion genérico', 'o genérico continua recusado');
+});
