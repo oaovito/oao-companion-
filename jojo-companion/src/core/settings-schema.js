@@ -52,7 +52,14 @@ export const DEFAULTS = Object.freeze({
   discordBloqueio: false,      // bloqueio do Discord: encerra, desinstala o app e fecha a aba; só liga por escolha explícita
   darkestSugestao: true,        // sugestão diária em momento permitido
   climaAtivo: true,
-  climaCidade: '',              // cidade/estado escolhidos; sem geolocalizacao
+  climaCidade: '',              // cidade/estado escolhidos (localização manual)
+  // Localização real (0.47.6): 'automatico' (Windows; só com autorização dela), 'manual' (a cidade acima) ou 'desligado'.
+  localizacaoModo: 'manual',
+  localizacaoIntervalo: 60,     // minutos entre verificações: 15, 30, 60, 180, 360 ou 720
+  localizacaoRede: true,        // sem o Windows, usa a rede/IP (sempre marcada como aproximada)
+  localizacaoFuso: true,        // segue o fuso da localização confiável quando difere do Windows
+  climaReacoes: true,           // animações com o clima de verdade (chuva, frio, calor, tempestade, neve)
+  climaNoite: true,             // luz de noite discreta em volta do JoJo
   lolBronca: true,              // mau humor e some enquanto o League of Legends está aberto
   spotifyReacoes: true,         // reage ao que toca no Spotify (só o título da janela, local)
   percepcaoTela: false,         // percepção de tela: só o tipo do app em primeiro plano (local, sem captura); desligada por padrão
@@ -176,6 +183,7 @@ const ENUMS = {
   trabalhoPerfil: ['trabalho', 'deep', 'invisivel'],
   trabalhoCanto: ['inferiorDireito', 'inferiorEsquerdo', 'superiorDireito', 'superiorEsquerdo'],
   viraisFrequencia: ['pouca', 'normal', 'muita'],
+  localizacaoModo: ['desligado', 'manual', 'automatico'],
   viraisIntensidade: ['suave', 'normal', 'exagerado'],
   timersAoTerminar: ['avisar', 'silencioso'],
   timersAparencia: ['contextual', 'digital', 'esportivo', 'ampulheta', 'analogico', 'barra', 'holograma', 'bolso', 'minimalista', 'circular'],
@@ -184,7 +192,7 @@ const ENUMS = {
   timersFrequencia: ['pouca', 'normal', 'muita'],
 };
 
-const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo', 'provocacoes', 'viraisAtivo', 'viraisAdulto', 'viraisNegro', 'viraisReduzir', 'timersAtivo', 'timersVisivel', 'timersAnimacoes', 'timersSugestoes', 'timersNotificar', 'timersAutoProximo', 'timersXp', 'timersClicavel'];
+const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo', 'provocacoes', 'viraisAtivo', 'viraisAdulto', 'viraisNegro', 'viraisReduzir', 'timersAtivo', 'timersVisivel', 'timersAnimacoes', 'timersSugestoes', 'timersNotificar', 'timersAutoProximo', 'timersXp', 'timersClicavel', 'localizacaoRede', 'localizacaoFuso', 'climaReacoes', 'climaNoite'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -242,6 +250,11 @@ export function sanitize(input) {
     }
   }
   if ('climaCidade' in src && typeof src.climaCidade === 'string') out.climaCidade = src.climaCidade.trim().slice(0, 120);
+  if ('localizacaoIntervalo' in src) {
+    const v = Number(src.localizacaoIntervalo);
+    if ([15, 30, 60, 180, 360, 720].includes(v)) out.localizacaoIntervalo = v;
+    else issues.push('localizacaoIntervalo');
+  }
   if ('agendaUrl' in src) {
     if (src.agendaUrl === '' || isCalendarUrl(src.agendaUrl)) out.agendaUrl = normalizeCalendarUrl(src.agendaUrl);
     else issues.push('agendaUrl');

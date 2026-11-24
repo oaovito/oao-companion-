@@ -31,11 +31,34 @@
       <p id="calendarStatus" class="hint" role="status">Conferindo conexão…</p>
       <label class="check"><input type="checkbox" name="agendaAtiva"> Consultar agenda e avisar compromissos</label>
     </fieldset>
-    <fieldset>
-      <legend>Clima</legend>
+    <fieldset id="localizacaoBlock">
+      <legend>Localização e clima</legend>
+      <label class="row">Localização
+        <select name="localizacaoModo">
+          <option value="manual">Manual: a cidade escrita abaixo</option>
+          <option value="automatico">Automática: localização do Windows</option>
+          <option value="desligado">Desligada</option>
+        </select>
+      </label>
+      <label class="row">Cidade (manual) <input type="text" name="climaCidade" maxlength="120" placeholder="Guarapuava, Paraná"></label>
+      <label class="row">Verificar a cada
+        <select name="localizacaoIntervalo" data-num="1">
+          <option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">1 hora</option>
+          <option value="180">3 horas</option><option value="360">6 horas</option><option value="720">12 horas</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="localizacaoRede"> Sem a localização do Windows, usar a rede (aproximada, pode errar a cidade)</label>
+      <label class="check"><input type="checkbox" name="localizacaoFuso"> Seguir o fuso horário da localização quando for diferente do Windows</label>
+      <p id="localizacaoStatus" class="hint" role="status">Localização ainda não verificada.</p>
+      <div class="row">
+        <button type="button" id="localizacaoAtualizar">Atualizar agora</button>
+        <button type="button" id="localizacaoEsquecer">Esquecer a última localização</button>
+      </div>
+      <p class="hint" id="localizacaoOQueFaz">Na automática, o JoJo pede a posição ao Windows ao abrir e depois só no intervalo escolhido (nunca o tempo todo). Guarda só a última, cifrada neste PC, sem histórico nem trajeto. Para o clima saem só coordenadas arredondadas (cerca de 1 km) para a Open-Meteo e, para o nome da cidade, para a BigDataCloud. Nos balões aparece no máximo a cidade.</p>
       <label class="check"><input type="checkbox" name="climaAtivo"> Consultar previsão atual na Open-Meteo quando eu perguntar</label>
-      <label class="row">Cidade padrão <input type="text" name="climaCidade" maxlength="120" placeholder="Guarapuava, Paraná"></label>
-      <p class="hint">Uma cidade escrita na pergunta tem prioridade. Não uso GPS nem Wikipédia para inventar previsão. Rede indisponível será informada como falha da consulta.</p>
+      <label class="check"><input type="checkbox" name="climaReacoes"> O JoJo reage ao clima de verdade (guarda-chuva, frio, calor, trovão, neve)</label>
+      <label class="check"><input type="checkbox" name="climaNoite"> Luz de noite discreta em volta do JoJo</label>
+      <p class="hint">Uma cidade escrita na pergunta tem prioridade. Sem localização, nada é inventado: a previsão pede a cidade. No Modo Trabalho, no foco e em tela cheia não há reação nem luz.</p>
     </fieldset>
     <fieldset>
       <legend>Interações durante jogos</legend>

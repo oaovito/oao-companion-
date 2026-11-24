@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('settingsApi', {
   load: () => ipcRenderer.invoke('settings:get'),
   todo: (request) => ipcRenderer.invoke('todo:request', request),
   calendar: (request) => ipcRenderer.invoke('calendar:request', request),
+  localizacao: (acao) => ipcRenderer.invoke('localizacao:request', acao),
   onCalendarChanged: (fn) => ipcRenderer.on('calendar:changed', (_e, s) => fn(s)),
   onTodoChanged: (fn) => ipcRenderer.on('todo:changed', (_e, s) => fn(s)),
   set: (patch) => ipcRenderer.invoke('settings:set', patch),

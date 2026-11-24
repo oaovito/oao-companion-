@@ -26,6 +26,7 @@ import { SPEECH_INTERVALS, AMBIENT_WEIGHTS } from './settings-schema.js';
 import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyReminder, phraseFilter, phraseWeight, profileVars, dayKey, personaJoJo } from './personality.js';
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { instalarTimers } from './companion-timers.js';
+import { instalarClima, pedidoLocalizacao } from './companion-clima.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
@@ -351,6 +352,8 @@ export class Companion {
     this._scheduleReminderCheck(20000);
     // Timers salvos: recupera uma vez (política em src/core/timers.js) e volta a contar.
     this._timersStart();
+    // Localização real e clima (0.47.6): primeira consulta só se ela autorizou.
+    this._climaStart();
     // Visuais que o nível acumulado já liberou: avisa logo depois da chegada.
     this.clock.setTimeout(() => this._avisarVisuais(), 9000);
     if (this.userHidden) {
@@ -411,6 +414,8 @@ export class Companion {
     this._timerFechar();
     if (this._timerHandle) this.clock.clearTimeout(this._timerHandle);
     this._timerHandle = null;
+    if (this._locHandle) this.clock.clearTimeout(this._locHandle);
+    this._locHandle = null;
     this.started = false;
   }
 
@@ -556,6 +561,8 @@ export class Companion {
     if (!this.suspended) return;
     this.suspended = false;
     this._timerRetomarSistema();
+    // Voltou da suspensão: confere localização/clima daqui a pouco (a rede volta antes).
+    if (this.started) this._locAgendar(30e3);
     const now = this.clock.now();
     this.lastTick = now;
     this._resetAvoidance(now);
@@ -603,6 +610,7 @@ export class Companion {
       this._enterWork(settings.trabalhoPerfil, { silent: true });
     }
     if (changed.some((k) => k.startsWith('timers')) && this.started) this._timerSync();
+    if (this.started) this._climaConfig(changed);
     if (changed.includes('paused')) this.setPaused(settings.paused, { fromSettings: true });
     if (changed.includes('visible')) this.setVisible(settings.visible, { fromSettings: true });
     if (changed.includes('bubbleScale') && this.bubble) this._remeasureBubble();
@@ -1572,11 +1580,16 @@ export class Companion {
     }
     // Ferramentas antes de acoes/pesquisa/modelo. Uma falha nunca vira resposta inventada.
     if (!safety) {
+      const sobreLocal = pedidoLocalizacao(text) ? await this._localizacaoChat(text) : null;
+      if (sobreLocal) {
+        if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
+        return this._quickReply(conv, sobreLocal, 'localizacao');
+      }
       const lastCity = this.lastTool?.kind === 'weather' && this.clock.now() - this.lastTool.at < 10 * 60e3 ? this.lastTool.city : null;
       const request = weatherRequest(text, { lastCity });
       if (request) {
         const result = !this.store.get().climaAtivo ? { ok: false, code: 'disabled', text: 'A consulta de clima está desligada nas Configurações.' }
-          : this.weather ? await this.weather.answer(request, this.store.get().climaCidade)
+          : this.weather ? await this.weather.answer(request, this.store.get().climaCidade || this._locParaPrevisao())
             : { ok: false, code: 'unavailable', text: 'A ferramenta de clima não está disponível agora. Não tenho uma previsão confirmada.' };
         if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
         this.lastTool = { kind: 'weather', city: result.city || request.city || this.store.get().climaCidade, at: this.clock.now() };
@@ -5072,6 +5085,7 @@ export class Companion {
       paused: this.paused,
       interaction: this.interaction,
       relogio: relogio ? relogio.estado(rel) : null,
+      luzNoite: this._climaLuz(),
       funeral: funeral ? { rect: rel(funeral.rect), fotos: this.funeral.fotos, legenda: this.funeral.legenda, restam: Math.max(0, this.funeral.ate - now), total: FUNERAL_MS } : null,
       bubble: bubble ? {
         text: this.bubble.text, kind: this.bubble.kind, longo: !!this.bubble.longo, dur: this.bubble.dur || 0, side: bubble.side, rect: rel(bubble.rect),
@@ -5260,3 +5274,5 @@ export { PRIORITY };
 
 // Timers interativos (0.47.5): métodos em src/core/companion-timers.js.
 instalarTimers(Companion);
+// Localização real e clima (0.47.6): métodos em src/core/companion-clima.js.
+instalarClima(Companion);

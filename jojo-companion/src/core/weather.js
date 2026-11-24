@@ -1,6 +1,7 @@
 // Clima factual: apenas APIs Open-Meteo. Nunca delegar numeros ou cidades ao modelo.
 const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const VALID_TTL = 10 * 60e3;
+const AMBIENTE_TTL = 30 * 60e3;
 export class WeatherError extends Error {
   constructor(code) { super(code); this.code = code; }
 }
@@ -63,6 +64,8 @@ export class WeatherService {
     return location;
   }
   async forecast(city) {
+    // Localização real (objeto com latitude/longitude): sem geocodificação.
+    if (city && typeof city === 'object') return this._forecastLocal(city);
     const key = norm(city).trim();
     const cached = this.cache.get(key);
     const age = cached ? this.now() - cached.fetchedAt : Infinity;
@@ -70,10 +73,49 @@ export class WeatherService {
     if (this.pending.has(key)) return this.pending.get(key);
     const request = (async () => {
       const location = await this.locate(city);
+      return this._buscarPrevisao(key, location);
+    })();
+    this.pending.set(key, request);
+    try { return await request; } finally { this.pending.delete(key); }
+  }
+  async _forecastLocal(loc) {
+    const location = { latitude: Number(loc.latitude), longitude: Number(loc.longitude), name: String(loc.name || ''), admin1: loc.admin1 || '', country: loc.country || '', timezone: loc.timezone || 'auto' };
+    if (!Number.isFinite(location.latitude) || !Number.isFinite(location.longitude) || Math.abs(location.latitude) > 90 || Math.abs(location.longitude) > 180) throw new WeatherError('invalid_response');
+    const key = `@prev:${location.latitude.toFixed(2)},${location.longitude.toFixed(2)}`;
+    const cached = this.cache.get(key);
+    const age = cached ? this.now() - cached.fetchedAt : Infinity;
+    if (age >= 0 && age < VALID_TTL) return { ...cached, cached: true };
+    if (this.pending.has(key)) return this.pending.get(key);
+    const request = this._buscarPrevisao(key, location);
+    this.pending.set(key, request);
+    try { return await request; } finally { this.pending.delete(key); }
+  }
+  async _buscarPrevisao(key, location) {
       const params = new URLSearchParams({ latitude: String(location.latitude), longitude: String(location.longitude), timezone: location.timezone, forecast_days: '16', current: 'temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,wind_speed_10m', daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max', wind_speed_unit: 'kmh', precipitation_unit: 'mm', temperature_unit: 'celsius' });
       const data = await this._json(`https://api.open-meteo.com/v1/forecast?${params}`);
+      if (location.timezone === 'auto' && typeof data.timezone === 'string') location.timezone = data.timezone;
       if (!data.current?.time || !Number.isFinite(data.current.temperature_2m) || !Array.isArray(data.daily?.time) || !data.daily.time.length || data.timezone !== location.timezone || data.current_units?.temperature_2m !== '°C' || !Number.isFinite(data.latitude) || !Number.isFinite(data.longitude) || Math.abs(data.latitude - location.latitude) > 0.25 || Math.abs(data.longitude - location.longitude) > 0.25) throw new WeatherError('invalid_response');
       const result = { location, current: data.current, daily: data.daily, fetchedAt: this.now(), source: 'Open-Meteo', cached: false };
+      if (this.cache.size >= 64) this.cache.delete(this.cache.keys().next().value);
+      this.cache.set(key, result);
+      return result;
+  }
+  /**
+   * Condições de agora por coordenadas (localização real), para as reações do JoJo.
+   * Coordenadas já chegam arredondadas (~1 km). Cache de 30 min por ponto; uma consulta por vez.
+   */
+  async atual({ lat, lon }) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) throw new WeatherError('invalid_response');
+    const key = `@${lat.toFixed(2)},${lon.toFixed(2)}`;
+    const cached = this.cache.get(key);
+    const age = cached ? this.now() - cached.fetchedAt : Infinity;
+    if (age >= 0 && age < AMBIENTE_TTL) return { ...cached, cached: true };
+    if (this.pending.has(key)) return this.pending.get(key);
+    const request = (async () => {
+      const params = new URLSearchParams({ latitude: lat.toFixed(2), longitude: lon.toFixed(2), timezone: 'auto', forecast_days: '1', current: 'temperature_2m,apparent_temperature,precipitation,rain,showers,snowfall,weather_code,is_day,wind_speed_10m,wind_gusts_10m', wind_speed_unit: 'kmh', precipitation_unit: 'mm', temperature_unit: 'celsius' });
+      const data = await this._json(`https://api.open-meteo.com/v1/forecast?${params}`);
+      if (!data.current?.time || !Number.isFinite(data.current.temperature_2m) || !Number.isFinite(data.current.weather_code) || data.current_units?.temperature_2m !== '°C') throw new WeatherError('invalid_response');
+      const result = { current: data.current, timezone: typeof data.timezone === 'string' ? data.timezone : '', fetchedAt: this.now(), source: 'Open-Meteo', cached: false };
       if (this.cache.size >= 64) this.cache.delete(this.cache.keys().next().value);
       this.cache.set(key, result);
       return result;

@@ -803,20 +803,36 @@
     },
     {
       "id": "clima",
-      "titulo": "Clima",
+      "titulo": "Clima e localização",
       "grupo": "Configurações",
       "comandos": [],
       "configuracoes": [
         "climaAtivo",
-        "climaCidade"
+        "climaCidade",
+        "localizacaoModo",
+        "localizacaoIntervalo",
+        "localizacaoRede",
+        "localizacaoFuso",
+        "climaReacoes",
+        "climaNoite"
       ],
       "passos": [
         {
-          "texto": "Eu consulto a previsão só quando você pergunta. A cidade padrão fica em Configurações, Clima; sem localização automática. Pergunta.",
+          "texto": "Eu consulto a previsão quando você pergunta. Sem cidade na pergunta, uso a sua localização: a cidade escrita em Configurações, Localização e clima, ou a do Windows, se você deixar.",
           "tente": "como está o tempo hoje?",
           "espera": {
             "qualquer": true
           }
+        },
+        {
+          "texto": "Na localização automática eu pergunto ao Windows ao abrir e depois só no intervalo que você escolher (15 minutos a 12 horas). Guardo só a última, cifrada, sem histórico. Pergunta \"onde eu estou?\" pra ver o que eu sei.",
+          "tente": "onde eu estou?",
+          "espera": {
+            "qualquer": true
+          }
+        },
+        {
+          "texto": "Com o clima de verdade eu reajo: guarda-chuva na chuva, tremedeira no frio, leque no calor, susto com trovão. À noite fico com uma luz mais escura. Tudo desliga nas Configurações, e no Modo Trabalho, no foco e em tela cheia eu não faço nada disso."
         }
       ]
     },

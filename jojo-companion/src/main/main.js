@@ -35,6 +35,7 @@ import { createTray } from './tray.js';
 import { createFullscreenDetector, hwndToString } from './fullscreen-monitor.js';
 import { criarPresenca, garantirAtalho } from './presenca.js';
 import { WeatherService } from '../core/weather.js';
+import { createLocalizacaoService } from './localizacao-service.js';
 import { AtomicState } from '../core/atomic-state.js';
 import { createTodoService } from './todo-service.js';
 import { createDarkestService } from './darkest-service.js';
@@ -444,6 +445,9 @@ function main() {
     // Agenda (só leitura, Google ou iCloud): busca o .ics a cada 10 min.
     let calendarLinks = null;
     companion.weather = new WeatherService({ fetch: (url, options) => net.fetch(url, options) });
+    // Localização real (0.47.6): Windows com autorização, rede como alternativa, última cifrada.
+    createLocalizacaoService({ userData, companion, fetch: (url, options) => net.fetch(url, options), safeStorage, ipcMain, fromSettings: (e) => fromSettings(e),
+      notify: () => settingsWin?.send('settings:changed', settingsInfo()), log });
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;
     const fetchCalendar = url => readCalendarFeed({ url, userAgent: `JoJoCompanion/${app.getVersion()}`,
       fetch: (target, options) => net.fetch(calBase ? `${calBase}/basic.ics` : target, options) });
@@ -666,6 +670,7 @@ function main() {
         dialogue: dialogue.describe(),
         version: app.getVersion(),
         paths: { userData, log: log.file },
+        localizacao: companion.localizacaoInfo(),
         loadIssues: store.loadIssues,
         petVisible: !companion.userHidden,
         companionName: companion.companionName,

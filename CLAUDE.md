@@ -143,6 +143,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   timer), 48 animações `cat_tm01`–`cat_tm48` com o relógio na mão (`timer-anims.js`, canais `tm*`, peças `tm_*`) e o
   relógio desenhado no overlay (`renderer/shared/relogio-desenho.js`; clique pausa e arrasto move só no modo de
   interação). Trabalho/foco: discreto e mudo; tela cheia: some. Doc `jojo-companion/docs/TIMERS.md`.
+- **Localização real e clima** (0.47.6): `src/core/localizacao.js` (manual/automática/desligada; Windows por PowerShell
+  só com autorização dela, rede/IP como alternativa aproximada; intervalo 15 min–12 h; só a última, cifrada), clima
+  ambiente (`clima-ambiente.js`, Open-Meteo 1×/h) com 12 reações `cat_cl01`–`cl12` (`clima-anims.js`) e luz de noite;
+  fuso da localização confiável vira o do processo principal. Doc `jojo-companion/docs/LOCALIZACAO.md`.
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no
@@ -201,7 +205,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    agendou e confirmou; mensagem atrasada nunca sai sozinha; não lê nem guarda conversas. Sessão, agenda e
    contatos (só nomes e números) ficam em `<userData>/whatsapp`; desconectar apaga sessão e contatos. A única
    saída é para o próprio WhatsApp. Detalhes: `jojo-companion/docs/WHATSAPP.md`.
-   Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
+   Saídas para a internet: **localização e clima** (só com o modo escolhido por ela: coordenadas arredondadas a ~1 km
+   para Open-Meteo e BigDataCloud, IP para a GeoJS só na alternativa por rede; ver `jojo-companion/docs/LOCALIZACAO.md`), **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
    conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) o **calendário de anime** (AniList, grátis e sem login: só o nome buscado ao seguir e os ids dos animes seguidos saem; `src/core/anime-calendario.js`, `/anime`) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. **Silêncio absoluto**: nenhum som (sem áudio no código, janelas mutadas, sem opções de som);

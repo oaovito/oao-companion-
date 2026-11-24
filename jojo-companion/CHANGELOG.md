@@ -1,5 +1,46 @@
 # CHANGELOG
 
+## 0.47.6 — 2026-11-24
+
+### Novidades
+- Localização real. Em Configurações → Localização e clima ela escolhe: manual (a cidade escrita, como
+  antes), automática (serviço de localização do Windows) ou desligada. A automática só liga depois de ela
+  confirmar o que sai do PC, e o Windows também precisa permitir.
+- Verifica ao abrir e depois só no intervalo escolhido: 15 min, 30 min, 1 h (padrão), 3 h, 6 h ou 12 h.
+  Botão "Atualizar agora" e "atualiza minha localização" na conversa. Entre uma verificação e outra, usa a
+  última.
+- Sem o Windows, usa a rede (IP) só como alternativa, sempre marcada como aproximada (raio mínimo de 25 km);
+  pode ser desligada. Sem nenhuma fonte, nada é inventado: fica a última válida ou pede a cidade.
+- "onde eu estou?" responde cidade, estado, fonte e precisão; "esquece minha localização" apaga.
+- Clima de verdade em volta do JoJo, com 12 animações novas: abre o guarda-chuva, ginga na chuva, sente
+  os pingos e sacode a mão, treme de frio, põe gorro e cachecol, se abana com leque, derrete no calor,
+  toalha gelada, susto com o trovão, o vento vira o guarda-chuva do avesso, floco de neve no focinho e
+  olha a lua à noite. Luz de noite discreta em volta dele. Tudo opcional.
+- A previsão ("como está o tempo hoje?") usa a localização quando a pergunta não diz a cidade.
+
+### Melhorias
+- Muda de cidade, estado, país ou fuso: o JoJo avisa uma vez, só com o nome da cidade.
+- Fuso horário: com localização confiável (Windows ou cidade escolhida) num fuso diferente do Windows, o app
+  segue o fuso do lugar (lembretes, vigília, timers e dia do XP). A rede/IP nunca muda o fuso (pode ser VPN).
+  Desligável.
+- Clima ambiente consultado no máximo uma vez por hora, com cache de 30 min; a mesma condição só ganha
+  outra reação depois de 3 h, no máximo 4 por dia.
+- Modo Trabalho, foco, tela cheia, JoJo escondido ou pausado: nenhuma reação ao clima e nenhuma luz de noite.
+- Privacidade: guarda só a última localização, cifrada pelo Windows (sem cifra disponível, fica só na memória). Sem
+  histórico e sem trajeto. Coordenadas arredondadas (cerca de 1 km) antes de sair do PC.
+- Privacidade: o que sai do PC são coordenadas arredondadas para a Open-Meteo (clima) e para a BigDataCloud (nome da cidade,
+  só quando ela anda mais de 3 km); o IP para a GeoJS só na alternativa por rede. Balões mostram no máximo
+  a cidade, nunca endereço ou coordenadas.
+
+### Como testar
+- Configurações → Localização e clima → Automática: confirme o aviso e clique em "Atualizar agora". O status
+  mostra cidade, precisão, fonte e horário.
+- Com localização do Windows negada: o status explica onde ligar e, com a rede ligada, mostra a cidade
+  aproximada.
+- Pergunte "onde eu estou?" e "como está o tempo hoje?" sem dizer a cidade.
+- Em dia de chuva, calor ou frio, espere a próxima verificação: o JoJo reage. Ligue o Modo Trabalho e
+  confirme que ele não reage nem escurece.
+
 ## 0.47.5 — 2026-11-19
 
 ### Novidades

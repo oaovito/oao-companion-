@@ -48,6 +48,7 @@ function render(i) {
     o.textContent = FMT[o.dataset.fmt](s[o.dataset.for]);
   }
   renderDiscord(i);
+  renderLocalizacao(i);
   renderVirais(s);
   renderTimers(s);
   const hk = document.getElementById('hotkeyStatus');
@@ -69,6 +70,39 @@ function render(i) {
     notice.classList.remove('hidden');
   }
 }
+
+// ---------------- Localização e clima (0.47.6): estado sem coordenadas
+const CLIMA_TXT = { chuva: 'chovendo', tempestade: 'tempestade', neve: 'nevando', frio: 'frio', calor: 'calor' };
+function renderLocalizacao(i) {
+  const l = i.localizacao;
+  const el = document.getElementById('localizacaoStatus');
+  if (!l || !el) return;
+  const s = i.settings;
+  document.querySelector('[name=localizacaoIntervalo]').disabled = s.localizacaoModo !== 'automatico';
+  document.querySelector('[name=localizacaoRede]').disabled = s.localizacaoModo !== 'automatico';
+  document.getElementById('localizacaoAtualizar').disabled = s.localizacaoModo === 'desligado';
+  let t;
+  if (s.localizacaoModo === 'desligado') t = 'Localização desligada. Nada é consultado nem guardado.';
+  else if (!l.ativa) t = l.erroTexto || (s.localizacaoModo === 'manual' ? 'Escreva a cidade para usar a localização manual.' : 'Aguardando a primeira verificação.');
+  else {
+    const quando = l.em ? new Date(l.em).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }) : '';
+    t = `${l.lugar || 'Lugar sem nome'} · precisão ${l.nivel} · ${l.fonte}${quando ? ` · atualizada ${quando}` : ''}.`;
+    if (l.fonte && l.aproximada) t += ' É uma estimativa: pode não ser onde você está.';
+    if (l.erroWindowsTexto) t += ` ${l.erroWindowsTexto}`;
+    if (l.clima) t += ` Agora: ${CLIMA_TXT[l.clima.tipo] || 'tempo firme'}${l.clima.sensacao != null ? `, sensação de ${l.clima.sensacao} °C` : ''}${l.clima.noite ? ', noite' : ''}.`;
+    if (l.fuso) t += ` Horário do app no fuso ${l.fuso}.`;
+  }
+  el.textContent = t;
+}
+document.getElementById('localizacaoAtualizar').addEventListener('click', async () => {
+  document.getElementById('localizacaoStatus').textContent = 'Verificando…';
+  await api.localizacao('atualizar');
+  render(await api.load());
+});
+document.getElementById('localizacaoEsquecer').addEventListener('click', async () => {
+  await api.localizacao('esquecer');
+  render(await api.load());
+});
 
 // ---------------- Bloqueio do Discord: estado, extensão e histórico
 function renderDiscord(i) {
@@ -157,6 +191,12 @@ form.addEventListener('change', (e) => {
   // Bloqueio do Discord: só liga depois de mostrar de novo o que ele faz.
   if (el.name === 'discordBloqueio' && el.checked && !confirm(`${document.getElementById('discordOQueFaz').innerText.trim()}\n\nLigar o bloqueio do Discord?`)) {
     el.checked = false;
+    return;
+  }
+  // Localização automática: só depois de ela autorizar, sabendo o que sai do PC.
+  if (el.name === 'localizacaoModo' && el.value === 'automatico' && info?.settings.localizacaoModo !== 'automatico'
+    && !confirm(`${document.getElementById('localizacaoOQueFaz').innerText.trim()}\n\nO Windows também precisa permitir a localização para aplicativos da área de trabalho.\n\nPermitir que o JoJo use a localização do Windows?`)) {
+    el.value = info?.settings.localizacaoModo || 'manual';
     return;
   }
   send({ [el.name]: valueOf(el) });
