@@ -6,11 +6,12 @@
 // Trabalho, foco e tela cheia: nada de fala ou animação; expedições seguem quietas.
 import path from 'node:path';
 import { AtomicState } from '../core/atomic-state.js';
+import { xpVisivel } from '../core/xp-escala.js';
 import { Rpg, rpgVazio, validarRpg } from '../core/rpg/motor.js';
 import { ATRIBUTOS } from '../core/rpg/atributos.js';
 import { HABILIDADES } from '../core/rpg/habilidades.js';
 import { ESPECIALIZACOES, ESP_POR_ID, HABILIDADES_ESP } from '../core/rpg/especializacoes.js';
-import { REGIOES, RECEITAS } from '../core/rpg/mundo.js';
+import { REGIOES, RECEITAS, MATERIAIS } from '../core/rpg/mundo.js';
 
 const norm = (t) => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[!?.,;:]+/g, ' ').replace(/\s+/g, ' ').trim();
 const porNome = (lista, alvo) => { const n = norm(alvo); return n ? lista.find((x) => norm(x.nome) === n || x.id.toLowerCase() === n) || lista.find((x) => n.length >= 4 && norm(x.nome).includes(n)) : null; };
@@ -47,7 +48,7 @@ export function createRpgService({ userData, companion, needsService = null, ipc
   function resumo(out) {
     if (!out) return null;
     const partes = [];
-    for (const m of out.missoes || []) partes.push(`${m.rotulo}${m.xp ? ` (+${m.xp} XP)` : ''}.${m.historia ? ` ${m.historia}` : ''}`);
+    for (const m of out.missoes || []) partes.push(`${m.rotulo}${m.xp ? ` (+${xpVisivel(m.xp)} XP)` : ''}.${m.historia ? ` ${m.historia}` : ''}`);
     for (const c of out.combos || []) partes.push(`${c.nome}! ${c.txt}`);
     if (out.rankEsp) partes.push(`${out.rankEsp.esp.nome} subiu para o rank ${out.rankEsp.rank}.`);
     for (const a of out.artefatos || []) partes.push(`Artefato novo: ${a.nome}.`);
@@ -169,7 +170,7 @@ export function createRpgService({ userData, companion, needsService = null, ipc
         }
       }
       if (out.doencas?.length) falar('Não estou nos meus melhores dias. Água, comida de verdade e um cuidado na Central.', 'rpg_doente');
-      if (out.exploracao) falar(`Explorando ${out.exploracao.regiao.nome} enquanto você trabalha nela: achei ${out.exploracao.material}.`, null);
+      if (out.exploracao) falar(`Explorando ${out.exploracao.regiao.nome} enquanto você trabalha nela: achei ${MATERIAIS[out.exploracao.material] || out.exploracao.material}.`, null);
       if (ativo) {
         minutosAtivos++;
         if (minutosAtivos % 10 === 0) {

@@ -12,6 +12,7 @@
 // Tudo é puro e determinístico com relógio e sorteio injetados. Nenhuma
 // chamada ao modelo de linguagem: o RPG nunca disputa a conversa.
 
+import { xpVisivel } from '../xp-escala.js';
 import { ATRIBUTOS, IDS_ATRIBUTOS, BASE_ATRIBUTO, TETO_ATRIBUTO, valorAtributo, efeitosDosAtributos } from './atributos.js';
 import { HABILIDADES, HAB_POR_ID, COMBOS, MAESTRIAS, ARVORES } from './habilidades.js';
 import { ESPECIALIZACOES, ESP_POR_ID, HABILIDADES_ESP, rankDe, limiarRank, RANK_MAX } from './especializacoes.js';
@@ -483,7 +484,7 @@ export class Rpg {
     const mult = 1 + (this.efeitos().xpMissao || 0);
     const ganho = this._xp(`missao:${chave}`, xp * mult, rotulo, 'missao');
     this._conta('missoes');
-    this._hist('missao', `${rotulo} (+${ganho} XP).`);
+    this._hist('missao', `${rotulo} (+${xpVisivel(ganho)} XP).`);
     out.missoes.push({ chave, rotulo, xp: ganho, ...extra });
   }
 
@@ -684,7 +685,7 @@ export class Rpg {
       this._avancarMissoesEvento(t, out);
     }
     const mats = Object.entries(out.materiais).map(([m, q]) => `${q}× ${MATERIAIS[m]}`).join(', ');
-    const texto = `Voltei de ${r.nome}. ${ENCRUZILHADAS.find((x) => x.id === ex.encruzilhada).txt} ${ex.escolhaAuto ? 'Decidi sozinho' : 'Você mandou'}: ${ex.escolhaTxt.toLowerCase()}. ${sucesso ? 'Deu certo, óbvio.' : 'Deu errado. Acontece até com lenda.'} Trouxe ${mats}${out.artefatos.length ? ` e ${out.artefatos.map((a) => `${a.nome} (${RARIDADES.find((x) => x.id === a.raridade).nome})`).join(', ')}` : ''}${moedas ? `, ${moedas} JOJOcoins` : ''}. +${xp} XP.`;
+    const texto = `Voltei de ${r.nome}. ${ENCRUZILHADAS.find((x) => x.id === ex.encruzilhada).txt} ${ex.escolhaAuto ? 'Decidi sozinho' : 'Você mandou'}: ${ex.escolhaTxt.toLowerCase()}. ${sucesso ? 'Deu certo, óbvio.' : 'Deu errado. Acontece até com lenda.'} Trouxe ${mats}${out.artefatos.length ? ` e ${out.artefatos.map((a) => `${a.nome} (${RARIDADES.find((x) => x.id === a.raridade).nome})`).join(', ')}` : ''}${moedas ? `, ${moedas} JOJOcoins` : ''}. +${xpVisivel(xp)} XP.`;
     const rel = { id: ex.id, regiao: r.id, nome: r.nome, sucesso, chance: Math.round(chance * 100), escolha: ex.escolhaTxt, auto: ex.escolhaAuto, materiais: out.materiais, artefatos: out.artefatos.map((a) => a.id), moedas, xp, em: this.now(), texto };
     this.st.relatorios = [...this.st.relatorios, rel].slice(-20);
     this._hist('expedicao', texto);

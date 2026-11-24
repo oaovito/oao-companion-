@@ -78,6 +78,9 @@ test('RPG no app: subir de nível entrega recompensas uma vez; JOJOcoins esperam
 test('RPG no app: conversa determinística (ficha, expedição, código secreto, encruzilhada)', async (t) => {
   const e = setup(t);
   assert.match(e.companion.rpgChat('ficha'), /Nível 1/);
+  let aberto = null; const abrir0 = e.companion.onOpenApp; e.companion.onOpenApp = (id) => { aberto = id; };
+  assert.match(e.companion.runCommand('aventura', null, '/aventura').text, /Abri a Aventura/);
+  assert.equal(aberto, 'aventura'); e.companion.onOpenApp = abrir0;
   assert.match(e.companion.rpgChat('vai numa expedição'), /nível 2/);
   assert.equal(e.companion.rpgChat('oi, tudo bem?'), null, 'conversa normal segue para o modelo');
   assert.equal(e.companion.rpgChat('vira de costas'), null, 'frase de meme não vira especialização');

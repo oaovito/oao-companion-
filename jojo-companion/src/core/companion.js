@@ -2151,6 +2151,10 @@ export class Companion {
       this.fireEvent('parabens', { speak: false });
       return { text: this.progress.resumoDia(new Date()), command: cmd, conversationId };
     }
+    if (cmd === 'aventura') {
+      if (this.onOpenApp) this.onOpenApp('aventura');
+      return { text: this.rpg ? `${this.rpgChat?.('ficha') || ''} Abri a Aventura na Central.`.trim() : 'A Aventura ainda está carregando.', command: cmd, conversationId };
+    }
     if (cmd === 'colecao') {
       const p = this.progress.snapshot(new Date());
       if (this.onOpenApp) this.onOpenApp('colecao');

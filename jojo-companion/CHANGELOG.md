@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## Próxima versão (0.48.0, não lançada)
+
+### Novidades
+- RPG do JoJo: o computador vira o mundo dele. Painel "Aventura" na Central e `/aventura` (`/rpg`).
+- 10 atributos com efeito real (Força, Inteligência, Agilidade, Resistência, Carisma, Sorte, Vitalidade,
+  Sabedoria, Disciplina, Percepção). Inteligência mexe em estudo, quiz e dicas e nunca limita a conversa.
+- 5 árvores com 45 habilidades (passivas, ativas, especiais, poderes e 8 lendários), ranks, recarga,
+  8 combinações e 8 maestrias. Distribuição automática ligada por padrão, ou ela escolhe.
+- 16 especializações (Cientista, Médico, Professor, Guerreiro, Explorador, Alquimista, Comerciante,
+  Estrategista, Investigador, Treinador, Cozinheiro, Guardião, Colecionador, Filósofo, Pesquisador, Mestre),
+  cada uma com rank 1–10, fontes de XP próprias, 2 habilidades, missões, região, adereço e animação.
+  Médico e Cientista são educativos (emergência: 192).
+- Todo nível do 2 ao 200 dá recompensa funcional (pontos, JOJOcoins, espaços, regiões, habilidades,
+  minijogos, títulos de marco), somada aos visuais que já existiam. Depois do 200: Paragon sem fim e
+  Estrelas de Prestígio. Nada é apagado.
+- Expedições por 12 regiões do desktop (cada categoria de app é uma região), com encruzilhada "a ou b",
+  desafio pelo atributo, relatório, materiais, artefatos e JOJOcoins. Exploração enquanto ela usa o app.
+- Oficina: 14 materiais, 8 receitas, 41 artefatos equipáveis (5 únicos).
+- Missões semanais (15), especiais por data (8), 5 histórias em capítulos, 12 secretas e 8 de longa duração.
+- 29 segredos (hora, data, lua cheia, clima, nível, vínculo, app em uso, volta de um sumiço), 8 códigos
+  para digitar na conversa, combinações de interações e o Diário do Megalodon em 7 páginas.
+- Vida do JoJo: sede, energia, tédio, carinho, confiança, satisfação, vínculo em 20 níveis e 7 doenças
+  com causa e cura. Sem punição por ausência; dormir continua só das 21h às 6h.
+- 12 bebidas no cardápio com arte própria (68 itens).
+- 8 minijogos novos: Ritmo do Supino, Enigma do Abismo, Sequência Lógica, Quebra-Cabeça de Letras,
+  Desafio de Velocidade, Caça ao Tesouro na Tela, Treino do JoJo e Dados do Tubarão (sorte só virtual).
+  Liberam pelo nível; dificuldade cresce com o nível.
+- 34 animações novas por receita para o RPG (partida, volta, encruzilhada, doença, cura, segredo,
+  habilidade, lendário, estrela e uma por especialização).
+
+### Melhorias
+- Comida, limpeza, cuidado, minijogos, foco, timers, tarefas, água, alongamento e pesquisa com fontes
+  alimentam o RPG sem mudar como funcionam e sem dar XP duas vezes.
+- XP do RPG com teto diário e id único; JOJOcoins do RPG esperam a carteira da loja e entram uma vez só.
+- Modo Trabalho, foco e tela cheia: nenhuma fala ou animação do RPG; expedições seguem em silêncio.
+
+### Como testar
+- Escreva "ficha", "expedição", depois "a" ou "b" quando ele perguntar, e abra a Aventura na Central.
+- Vença três minijogos seguidos e veja o combo "Invicta".
+
 ## 0.47.5 — 2026-11-19
 
 ### Novidades

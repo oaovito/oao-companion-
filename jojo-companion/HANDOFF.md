@@ -1,5 +1,15 @@
 # HANDOFF — JoJo Companion
 
+## 0.48 — RPG e auditoria (não lançada, só local) — 24/11/2026
+
+- Branch local `claude/project-thread-wzycwr` sobre `d1b23bd` (0.47.5). Não enviado: a fila da issue #1 é
+  0.47.5 (WhatsApp) → Identidade/RPG rituais (`0b922bf`) → 0.47.6 (clima) → esta.
+- Motor puro em `src/core/rpg/` (doc `docs/RPG.md`), serviço `src/main/rpg-service.js`, painel
+  `src/renderer/shared/rpg-view.js`, estado `<userData>/rpg.json`. Matriz em `docs/AUDITORIA_0.48.md`.
+- Contrato com a loja (outra frente): `companion.loja.creditar({ id, valor, origem, rotulo })`; ids `rpg:*`.
+- Clima nos segredos: ler `companion.climaAgora` quando a 0.47.6 entrar.
+- Testes: 33 novos (rpg.test, rpg-service.test). Windows ainda não validado.
+
 ## Rebolado refeito, Tigresa, liberados acessíveis e variação 50x (não lançado) — 18/11/2026
 
 - Rebolado refeito do GIF do Among Us (6 quadros de 40 ms): modelo próprio de costas em 3/4,

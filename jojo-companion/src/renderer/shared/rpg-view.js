@@ -3,6 +3,7 @@
 // segredos e diário. Tudo vem do processo principal já filtrado: segredo
 // não descoberto chega como "???" e nunca é revelado aqui.
 import { node } from './todo-view.js';
+import { xpVisivel } from '../../core/xp-escala.js';
 
 const btn = (label, action, cls = 'chipbtn', disabled = false, title = '') => {
   const b = node('button', cls, label); b.type = 'button'; b.disabled = !!disabled; if (title) b.title = title;
@@ -39,7 +40,7 @@ export class RpgView {
     const ficha = node('div', 'card');
     ficha.append(node('h2', '', `Nível ${s.nivel}${s.paragon ? ` · Paragon ${s.paragon}` : ''}${s.estrela ? ` · Estrela ${s.estrela}` : ''}`));
     ficha.append(node('p', '', `Especialização: ${esp ? `${esp.nome} (rank ${esp.rank})` : 'nenhuma ainda'} · Vínculo: ${s.vinculo.nome} (${s.vinculo.nivel}/20)`));
-    ficha.append(node('p', 'muted', `XP de aventura hoje: ${s.xpRpgHoje}/${s.xpRpgTeto} · Pontos livres: ${s.pontos.atributo} de atributo, ${s.pontos.habilidade} de habilidade.`));
+    ficha.append(node('p', 'muted', `XP de aventura hoje: ${xpVisivel(s.xpRpgHoje)}/${xpVisivel(s.xpRpgTeto)} · Pontos livres: ${s.pontos.atributo} de atributo, ${s.pontos.habilidade} de habilidade.`));
     if (s.pendentes && !s.carteira) ficha.append(node('p', 'muted', `${s.pendentes} recompensa(s) em JOJOcoins guardadas: entram na carteira assim que a loja estiver ativa. Nada se perde.`));
     const auto = btn(s.auto ? 'Distribuição automática: ligada' : 'Distribuição automática: desligada', () => this.request('auto', { valor: !s.auto }), `chipbtn${s.auto ? ' on' : ''}`);
     const titulos = node('select'); titulos.setAttribute('aria-label', 'Título exibido');
@@ -110,7 +111,7 @@ export class RpgView {
 
     // Missões.
     const ms = [];
-    if (s.semana.length) ms.push(node('h4', '', 'Da semana'), ...s.semana.map((m) => node('p', m.ok ? 'ok' : '', `${m.ok ? '✓' : `${m.feito}/${m.n}`} ${m.txt} · ${m.xp} XP`)));
+    if (s.semana.length) ms.push(node('h4', '', 'Da semana'), ...s.semana.map((m) => node('p', m.ok ? 'ok' : '', `${m.ok ? '✓' : `${m.feito}/${m.n}`} ${m.txt} · ${xpVisivel(m.xp)} XP`)));
     else ms.push(node('p', 'muted', 'Missões semanais liberam no nível 3.'));
     for (const m of s.especiais) ms.push(node('p', m.ok ? 'ok' : '', `Especial: ${m.nome} ${m.ok ? '✓' : m.objetivos.map((o, i) => `${m.feito[i]}/${o.n} ${EVENTOS[o.evento] || o.evento}`).join(' · ')}`));
     if (s.cadeias.length) ms.push(node('h4', '', 'Histórias'), ...s.cadeias.map((c) => node('p', c.ok ? 'ok' : '', `${c.nome}: ${c.ok ? 'concluída ✓' : `capítulo ${c.capitulo + 1}/${c.total} · ${c.atual.txt} (${c.atual.feito}/${c.atual.n})`}`)));

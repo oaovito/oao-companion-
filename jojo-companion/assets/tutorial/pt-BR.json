@@ -578,6 +578,27 @@
       ]
     },
     {
+      "id": "aventura",
+      "titulo": "Aventura (RPG)",
+      "grupo": "Mais",
+      "comandos": [
+        "/aventura"
+      ],
+      "configuracoes": [],
+      "passos": [
+        {
+          "texto": "Meu mundo é o seu computador. Ficha, atributos, habilidades, especializações, expedições e segredos ficam na Aventura.",
+          "tente": "/aventura",
+          "espera": {
+            "comando": "aventura"
+          }
+        },
+        {
+          "texto": "Na conversa também vale: \"expedição\", \"ficha\", \"missões da semana\". Quando eu perguntar o caminho, responda \"a\" ou \"b\"."
+        }
+      ]
+    },
+    {
       "id": "calma",
       "titulo": "Calma, ritmo e bolhas",
       "grupo": "Mais",

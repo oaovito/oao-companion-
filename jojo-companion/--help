@@ -1,0 +1,48 @@
+# Jojo v0.47.5
+
+## Novidades
+
+- Timers interativos do JoJo. O relógio é um objeto físico ao lado dele: ele tira do bolso, segura, gira,
+  sacode, empurra, abraça e comemora. Pede na conversa: "timer de 10 minutos", "me avisa em 15 min",
+  "cronometra a tarefa relatório", "descanso entre séries de 90 segundos 4 séries", "pausa o timer",
+  "quanto falta", "esconde o relógio". Também `/timer` (lista, pausar, continuar, reiniciar, cancelar,
+  histórico, destacar).
+- Contagem regressiva, cronômetro, intervalado (séries e descanso), recorrente e timer ligado a uma tarefa
+  da lista (marcou a tarefa como feita, o cronômetro para e guarda o tempo).
+- 12 atividades com duração, aparência e comportamento próprios: estudo, trabalho, meditação, exercícios,
+  alongamento, alimentação, hidratação, jogos, descanso, tarefa, hábito e personalizado. Estudo usa o foco
+  junto que já existe e hidratação/descanso mostram quanto falta para o lembrete (nada conta duas vezes).
+- 48 animações com o relógio: 10 de início, 15 durante, 10 na reta final, 10 no fim (uma rara), mais pausa
+  (congela o relógio), retomada (dá corda) e reação quando ela arrasta o relógio.
+- 9 aparências (digital, analógico, minimalista, barra, esportivo, ampulheta, de bolso, circular em volta do
+  JoJo e holograma); as últimas cinco liberam com sessões concluídas.
+- No modo de interação, clique no relógio pausa/continua e arrastar muda o lugar (fica salvo).
+- Configurações → Timers: ligar, mostrar, animações, sugestões, aviso no fim, próximo automático, XP,
+  clique, aparência, posição, tamanho, opacidade, frequência das animações, quantos ao mesmo tempo e
+  ajustes por atividade.
+- Progressão: XP pela infraestrutura existente, 4 conquistas, missão do dia "Conclua uma sessão de timer" e
+  bônus "Sessão de timer".
+
+## Melhorias
+
+- Conta pelo relógio monotônico (ajuste do relógio do Windows não muda nada); continua escondido, com a
+  Central fechada e depois de reabrir o app. Ao reabrir: contagem regressiva segue pelo tempo real,
+  cronômetro pausa, relógio do Windows estranho pausa em vez de inventar tempo, e o que acabou fechado avisa
+  uma vez só.
+- Suspensão: a contagem regressiva soma o tempo dormindo; o cronômetro pausa e volta sozinho.
+- Até 5 timers ao mesmo tempo (3 por padrão); só o destacado aparece e mexe com o JoJo.
+- Modo Trabalho e foco: relógio pequeno e discreto, sem fala e sem animação. Tela cheia: some tudo.
+- Anti-exploit: XP só com 5+ min, 80% com o app aberto, sem suspensão, até 6 por dia, nunca duas vezes o
+  mesmo timer; exercício, alongamento e hábito pedem confirmação ("fiz") antes do XP.
+- Ofertas de timer (jogo aberto, refeição, treino do dia) só com sugestões ligadas, uma vez a cada 3 h.
+
+## Como testar
+
+- Escreva "timer de 2 minutos": o JoJo tira o relógio, ele aparece ao lado, e no fim ele comemora.
+- "pausa o timer", "quanto falta", "continua o timer", "/timer lista", "/timer historico".
+- Ligue o Modo Trabalho com um timer rodando: o relógio fica pequeno e o JoJo não fala.
+- No modo de interação, clique no relógio (pausa) e arraste para outro lugar.
+
+---
+
+Quem já tem o JoJo instalado recebe esta versão sozinho (atualização automática). Primeira vez: baixe `JoJoCompanion.exe` abaixo e abra.
