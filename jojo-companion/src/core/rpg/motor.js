@@ -428,7 +428,9 @@ export class Rpg {
       // Combinações.
       this.st.eventosRecentes = [...this.st.eventosRecentes.filter((x) => agora - x.at < 3600e3), { t: tipo, at: agora }].slice(-12);
       for (const c of COMBINACOES) {
-        const ult = this.st.eventosRecentes.slice(-c.seq.length);
+        // Só os eventos do próprio combo contam (um jogo entre duas vitórias não quebra a sequência).
+        if (!c.seq.includes(tipo)) continue;
+        const ult = this.st.eventosRecentes.filter((x) => c.seq.includes(x.t)).slice(-c.seq.length);
         if (ult.length === c.seq.length && ult.every((x, i) => x.t === c.seq[i]) && agora - ult[0].at <= c.s * 1000 && agora - (this.st.combos[c.id] || 0) > 6 * 3600e3) {
           this.st.combos[c.id] = agora;
           this._aplicarDesfecho(c, `combo:${c.id}`);

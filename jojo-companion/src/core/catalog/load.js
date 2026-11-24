@@ -12,5 +12,7 @@ export function fullCatalog(read) {
   const living = read('assets/catalog/living-interactions.json');
   const foco = read('assets/catalog/foco-animations.json');
   const discord = read('assets/catalog/discord-animations.json');
-  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens, ...discord.itens, ...itensVirais(), ...itensTimers()], pacotes, foco: { trocaMin: foco.trocaMin } };
+  // RPG (0.48): animações por receita com adereços que já existem.
+  const rpg = read('assets/catalog/rpg-animations.json');
+  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens, ...discord.itens, ...rpg.itens, ...itensVirais(), ...itensTimers()], pacotes, foco: { trocaMin: foco.trocaMin } };
 }

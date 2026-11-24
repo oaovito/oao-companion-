@@ -1,0 +1,925 @@
+{
+ "notes": "0.48: animações do RPG por receita (adereços e primitivos que já existem; nenhuma arte nova). Gatilho: eventos do RPG (src/main/rpg-service.js).",
+ "itens": [
+  {
+   "id": "rpg_esp_cientista",
+   "nome": "Cientista em ação",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "balanca",
+    "cabeca": "olhaBaixo",
+    "rosto": "pensando",
+    "bracos": "focoOculos",
+    "objeto": [
+     "living_cientista",
+     "oculosNerd"
+    ],
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_medico",
+   "nome": "Plantão do Doutor Tubarão",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "respira",
+    "cabeca": "encara",
+    "rosto": "focado",
+    "bracos": "cruzados",
+    "objeto": [
+     "living_medico"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_professor",
+   "nome": "Aula do Professor JoJo",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "marcha",
+    "cabeca": "olhaUsuario",
+    "rosto": "sorriso",
+    "bracos": "aponta",
+    "objeto": [
+     "living_professor"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_guerreiro",
+   "nome": "Guerreiro do Recife",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "poder",
+    "cabeca": "encara",
+    "rosto": "fera",
+    "bracos": "flexDuplo",
+    "objeto": [
+     "halter"
+    ],
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_explorador",
+   "nome": "Explorador do Desktop",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "nada",
+    "cabeca": "olhaRedor",
+    "rosto": "brilhoOlhos",
+    "bracos": "nadando",
+    "objeto": [
+     "living_marinheiro"
+    ],
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_alquimista",
+   "nome": "Alquimia Abissal",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "pulinho",
+    "cabeca": "olhaBaixo",
+    "rosto": "sobrancelha",
+    "bracos": "agita",
+    "objeto": [
+     "living_quimico"
+    ],
+    "fx": [
+     "vapor"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_comerciante",
+   "nome": "Negócio Fechado",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "balanca",
+    "cabeca": "encara",
+    "rosto": "canto",
+    "bracos": "cintura",
+    "objeto": [
+     "living_economista"
+    ],
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_estrategista",
+   "nome": "Plano de Batalha",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "respira",
+    "cabeca": "olhaBaixo",
+    "rosto": "pensando",
+    "bracos": "escreve",
+    "objeto": [
+     "lista"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_investigador",
+   "nome": "Elementar",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "inclina",
+    "cabeca": "espia",
+    "rosto": "sobrancelha",
+    "bracos": "focoQueixo",
+    "objeto": [
+     "living_detetive"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_treinador",
+   "nome": "Mais uma série!",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "pulinho",
+    "cabeca": "encara",
+    "rosto": "bravo",
+    "bracos": "aponta",
+    "objeto": [
+     "living_treinador"
+    ],
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_cozinheiro",
+   "nome": "Chef das Profundezas",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "respira",
+    "cabeca": "inclina",
+    "rosto": "orgulhoso",
+    "bracos": "agita",
+    "objeto": [
+     "living_chef"
+    ],
+    "fx": [
+     "vapor"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_guardiao",
+   "nome": "Guardião do Portão",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "respira",
+    "cabeca": "encara",
+    "rosto": "focado",
+    "bracos": "protege",
+    "objeto": [
+     "ddManto"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_colecionador",
+   "nome": "Vitrine do Colecionador",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "flutua",
+    "cabeca": "olhaBaixo",
+    "rosto": "brilhoOlhos",
+    "bracos": "seguraFrente",
+    "objeto": [
+     "bau"
+    ],
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "rpg_esp_filosofo",
+   "nome": "Penso, logo treino",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "flutua",
+    "cabeca": "olhaCima",
+    "rosto": "zen",
+    "bracos": "le",
+    "objeto": [
+     "livro"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_pesquisador",
+   "nome": "Revisão por Pares",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "respira",
+    "cabeca": "olhaBaixo",
+    "rosto": "focado",
+    "bracos": "le",
+    "objeto": [
+     "living_pesquisador"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_esp_mestre",
+   "nome": "Postura do Mestre",
+   "categoria": "rpg",
+   "duracao": 3800,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "evolui",
+    "cabeca": "olhaUsuario",
+    "rosto": "orgulhoso",
+    "bracos": "maoNoPeito",
+    "objeto": [
+     "ddCoroa"
+    ],
+    "fx": [
+     "estrelas"
+    ]
+   }
+  },
+  {
+   "id": "rpg_partida",
+   "nome": "Partindo em expedição",
+   "categoria": "rpg",
+   "duracao": 3200,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "avanca",
+    "cabeca": "olhaRedor",
+    "rosto": "sorrisao",
+    "bracos": "acena",
+    "objeto": [
+     "bau"
+    ],
+    "fx": [
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "rpg_volta",
+   "nome": "De volta da expedição",
+   "categoria": "rpg",
+   "duracao": 3600,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "pulinho",
+    "cabeca": "olhaUsuario",
+    "rosto": "orgulhoso",
+    "bracos": "seguraAlto",
+    "objeto": [
+     "bau"
+    ],
+    "fx": [
+     "brilho",
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "rpg_falha",
+   "nome": "Expedição que deu errado",
+   "categoria": "rpg",
+   "duracao": 3400,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "encolhe",
+    "cabeca": "olhaBaixo",
+    "rosto": "cansado",
+    "bracos": "ombros",
+    "fx": [
+     "suor"
+    ],
+    "humor": {
+     "cansaco": 0.6
+    }
+   }
+  },
+  {
+   "id": "rpg_sede",
+   "nome": "Sede de tubarão",
+   "categoria": "rpg",
+   "duracao": 3200,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "treme",
+    "cabeca": "olhaCima",
+    "rosto": "lingua",
+    "bracos": "bebe",
+    "objeto": [
+     "garrafa"
+    ],
+    "fx": [
+     "suor"
+    ]
+   }
+  },
+  {
+   "id": "rpg_doente",
+   "nome": "Doente (de leve)",
+   "categoria": "rpg",
+   "duracao": 3600,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "treme",
+    "cabeca": "olhaBaixo",
+    "rosto": "cansado",
+    "bracos": "maoNoPeito",
+    "objeto": [
+     "needsTermometro"
+    ],
+    "fx": [],
+    "humor": {
+     "cansaco": 0.7,
+     "tristeza": 0.3
+    }
+   }
+  },
+  {
+   "id": "rpg_curado",
+   "nome": "Curado!",
+   "categoria": "rpg",
+   "duracao": 3000,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "pula",
+    "cabeca": "olhaUsuario",
+    "rosto": "aliviado",
+    "bracos": "maosAlto",
+    "objeto": [
+     "needsCurativo"
+    ],
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "rpg_habilidade",
+   "nome": "Habilidade nova",
+   "categoria": "rpg",
+   "duracao": 3400,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "poder",
+    "cabeca": "olhaCima",
+    "rosto": "brilhoOlhos",
+    "bracos": "flexDuplo",
+    "fx": [
+     "brilho",
+     "estrelas"
+    ],
+    "humor": {
+     "alegria": 0.6
+    }
+   }
+  },
+  {
+   "id": "rpg_lendario",
+   "nome": "Poder lendário desperto",
+   "categoria": "rpg",
+   "duracao": 4200,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "evolui",
+    "cabeca": "olhaCima",
+    "rosto": "fera",
+    "bracos": "maosAlto",
+    "fx": [
+     "estrelas",
+     "brilhoDente",
+     "vento"
+    ],
+    "humor": {
+     "ligado": 0.8
+    }
+   }
+  },
+  {
+   "id": "rpg_segredo",
+   "nome": "Segredo descoberto",
+   "categoria": "rpg",
+   "duracao": 3600,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "espiaBorda",
+    "cabeca": "espia",
+    "rosto": "surpreso",
+    "bracos": "maoBoca",
+    "fx": [
+     "estrelas"
+    ]
+   }
+  },
+  {
+   "id": "rpg_artefato",
+   "nome": "Artefato encontrado",
+   "categoria": "rpg",
+   "duracao": 3600,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "pulinho",
+    "cabeca": "olhaCima",
+    "rosto": "brilhoOlhos",
+    "bracos": "seguraAlto",
+    "objeto": [
+     "medalha"
+    ],
+    "fx": [
+     "brilho"
+    ]
+   }
+  },
+  {
+   "id": "rpg_fabricar",
+   "nome": "Poção pronta",
+   "categoria": "rpg",
+   "duracao": 3400,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "respira",
+    "cabeca": "olhaBaixo",
+    "rosto": "sobrancelha",
+    "bracos": "bebe",
+    "objeto": [
+     "living_quimico"
+    ],
+    "fx": [
+     "vapor",
+     "bolhas"
+    ]
+   }
+  },
+  {
+   "id": "rpg_rank",
+   "nome": "Rank novo na especialização",
+   "categoria": "rpg",
+   "duracao": 3400,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "desfile",
+    "cabeca": "olhaUsuario",
+    "rosto": "orgulhoso",
+    "bracos": "maoNoPeito",
+    "objeto": [
+     "medalha"
+    ],
+    "fx": [
+     "confete"
+    ]
+   }
+  },
+  {
+   "id": "rpg_estrela",
+   "nome": "Estrela de prestígio",
+   "categoria": "rpg",
+   "duracao": 4200,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "evolui",
+    "cabeca": "olhaCima",
+    "rosto": "orgulhoso",
+    "bracos": "seguraAlto",
+    "objeto": [
+     "trofeu"
+    ],
+    "fx": [
+     "confete",
+     "estrelas"
+    ]
+   }
+  },
+  {
+   "id": "rpg_missao",
+   "nome": "Missão cumprida",
+   "categoria": "rpg",
+   "duracao": 3000,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "aderecosAnimados": true,
+    "corpo": "pulinho",
+    "cabeca": "assente",
+    "rosto": "sorriso",
+    "bracos": "aplaude",
+    "objeto": [
+     "medalha"
+    ],
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_entediado",
+   "nome": "Tédio de tubarão",
+   "categoria": "rpg",
+   "duracao": 3400,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "boia",
+    "cabeca": "olhaLado",
+    "rosto": "entediado",
+    "bracos": "cruzados",
+    "fx": []
+   }
+  },
+  {
+   "id": "rpg_carente",
+   "nome": "Carente (sem admitir)",
+   "categoria": "rpg",
+   "duracao": 3200,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "inclina",
+    "cabeca": "olhaUsuario",
+    "rosto": "pidao",
+    "bracos": "cruzados",
+    "fx": [],
+    "humor": {
+     "vergonha": 0.4
+    }
+   }
+  },
+  {
+   "id": "rpg_energia",
+   "nome": "Bateria fraca",
+   "categoria": "rpg",
+   "duracao": 3400,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "encolhe",
+    "cabeca": "cochila",
+    "rosto": "boceja",
+    "bracos": "repouso",
+    "fx": [],
+    "humor": {
+     "cansaco": 0.8
+    }
+   }
+  },
+  {
+   "id": "rpg_encruzilhada",
+   "nome": "Encruzilhada na expedição",
+   "categoria": "rpg",
+   "duracao": 3200,
+   "frequencia": "rara",
+   "gatilho": {
+    "ambiente": false,
+    "frases": [],
+    "eventos": [
+     "rpg"
+    ]
+   },
+   "receita": {
+    "cauda": "devagar",
+    "corpo": "respira",
+    "cabeca": "olhaRedor",
+    "rosto": "pensando",
+    "bracos": "focoQueixo",
+    "fx": []
+   }
+  }
+ ]
+}
