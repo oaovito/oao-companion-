@@ -35,7 +35,7 @@ export class CareView {
     }
     this.renderFoods();
     while (this.history.children.length > 1) this.history.lastElementChild.remove();
-    for (const h of s.history || []) this.history.append(node('p', 'muted', `${h.kind === 'feed' ? `Alimentação: ${h.name}` : 'Limpeza do aquário'} · ${new Date(h.at).toLocaleString('pt-BR')}`));
+    for (const h of s.history || []) this.history.append(node('p', 'muted', `${h.kind === 'feed' ? `Alimentação: ${h.name}` : h.kind === 'lojaCuidado' ? `Cuidado: ${h.name}` : 'Limpeza do aquário'} · ${new Date(h.at).toLocaleString('pt-BR')}`));
   }
   renderFoods() {
     this.foods.replaceChildren();

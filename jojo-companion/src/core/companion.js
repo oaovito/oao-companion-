@@ -5211,8 +5211,9 @@ export class Companion {
     if (!canais || !tabela) return null;
     let out = null;
     for (const [ch, v] of Object.entries(canais)) {
-      if (!ch.startsWith('nv_') || v < 0.5) continue;
-      const e = tabela[ch.slice(3)];
+      if (v < 0.5 || !(ch.startsWith('nv_') || ch.startsWith('lj_'))) continue;
+      // Visual da loja de JOJOcoins: medido pelo nome do canal (lj_<id>).
+      const e = ch.startsWith('lj_') ? tabela[ch] : tabela[ch.slice(3)];
       if (!e) continue;
       out = out ? { l: Math.max(out.l, e.l), t: Math.max(out.t, e.t), r: Math.max(out.r, e.r), b: Math.max(out.b, e.b) } : { ...e };
     }
@@ -5270,5 +5271,5 @@ export { PRIORITY };
 
 // Timers interativos (0.47.5): métodos em src/core/companion-timers.js.
 instalarTimers(Companion);
-// Loja de JOJOcoins e troca dinâmica de visuais (0.48.0): src/core/companion-loja.js.
+// Loja de JOJOcoins e troca dinâmica de visuais: src/core/companion-loja.js.
 instalarLoja(Companion);

@@ -65,7 +65,8 @@ export const MIGRACOES = Object.freeze([
       if (antigo != null) base.saldo = antigo;
       return base;
     },
-    down: () => null,
+    // Volta ao formato v0 (só o saldo), que a subida lê de novo: ida e volta preserva o saldo.
+    down: (v) => ({ version: 0, JOJOcoins: v.saldo }),
   },
 ]);
 
@@ -284,8 +285,8 @@ export class Loja {
   }
 
   _buff(st, b) {
+    const atual = st.buffs.find((x) => x.id === b.id && x.ate > this.now());
     st.buffs = st.buffs.filter((x) => x.ate > this.now() && x.id !== b.id);
-    const atual = this.st.buffs.find((x) => x.id === b.id && x.ate > this.now());
     // Reusar o mesmo poder soma a duração restante (nunca perde o que já foi pago).
     if (atual) b = { ...b, ate: b.ate + (atual.ate - this.now()) };
     st.buffs.push(b);

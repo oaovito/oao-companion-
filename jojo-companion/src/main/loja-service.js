@@ -1,4 +1,4 @@
-// Serviço da loja de JOJOcoins (0.48.0): carteira em <userData>/loja.json (gravação
+// Serviço da loja de JOJOcoins: carteira em <userData>/loja.json (gravação
 // atômica com cópia anterior), ganho por reconciliação das recompensas confirmadas da
 // progressão, efeitos idempotentes nas necessidades e nas missões, e o canal da Central.
 // Só a Central chama a loja; o overlay apenas desenha o estado.
@@ -10,7 +10,7 @@ import { ITENS, CATEGORIAS, RARIDADES, NOME_MOEDA, item as itemLoja } from '../c
 import { NIVEL_MINIMO } from '../core/loja.js';
 import { logicalDay } from '../core/civil-time.js';
 
-export function createLojaService({ userData, companion, needsService, ipcMain, fromApp, notify = () => {}, log = () => {} }) {
+export function createLojaService({ userData, companion, needsService, ipcMain, fromApp, readJSON = null, notify = () => {}, log = () => {} }) {
   const disk = new AtomicState(path.join(userData, 'loja.json'), { validate: validarLoja, defaults: lojaVazia, log });
   let estado;
   try { estado = disk.load(); } catch { estado = lojaVazia(); }
@@ -21,7 +21,9 @@ export function createLojaService({ userData, companion, needsService, ipcMain, 
   const reconciliar = () => {
     let n = 0;
     try { n = loja.reconciliar(companion.progress.st.rewards?.history || []); } catch { log('warn', 'Carteira de JOJOcoins não confirmada no disco; tento de novo na próxima recompensa.'); }
-    if (n > 0) companion._lojaMoedas?.('ganho', Math.min(8, Math.ceil(n / 10)));
+    // Ganho grande vira pilha de moedas; o normal sobe girando com brilho.
+    if (n >= 40) companion._lojaMoedas?.('pilha', 10);
+    else if (n > 0) companion._lojaMoedas?.('ganho', Math.min(8, Math.ceil(n / 10)));
     return n;
   };
   const antesAward = companion.progress.onAward;
@@ -61,6 +63,12 @@ export function createLojaService({ userData, companion, needsService, ipcMain, 
       switch (req.action) {
         case 'catalogo': return { catalogo: catalogo(), loja: resumo(), visual: visualInfo() };
         case 'resumo': return { loja: resumo(), visual: visualInfo() };
+        // Arte para a pré-visualização da Central (rig e repouso); pedida uma vez, quando a loja abre.
+        case 'arte': {
+          if (!readJSON) return { error: 'Pré-visualização indisponível.' };
+          const a = readJSON('assets/animations/jojo.animations.json');
+          return { rig: readJSON('assets/character/jojo.rig.json'), anim: { style: a.style, channels: a.channels, animations: { idle: a.animations.idle } } };
+        }
         case 'comprar': {
           const qtd = Number.isInteger(req.qtd) ? req.qtd : 1;
           result = loja.comprar({ txId, id, qtd, nivel: nivel() });

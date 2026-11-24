@@ -1,4 +1,4 @@
-// Loja de JOJOcoins e troca dinâmica de visuais no companion (0.48.0). Instalado no
+// Loja de JOJOcoins e troca dinâmica de visuais no companion. Instalado no
 // protótipo do Companion, como os timers: liga a carteira pura (loja.js) e o motor de
 // visuais (visuais-dinamicos.js) ao JoJo sem mudar os sistemas que já existem.
 // Sem carteira conectada (testes antigos, falha ao ler o arquivo), nada aqui age.
@@ -42,7 +42,9 @@ export function instalarLoja(Companion) {
     this.progress.onLevelUp = (ev) => {
       antes?.(ev);
       this._sinalVisual(['conquista', 'nivel', 'celebracao'], 2);
-      if (loja.temRecurso('holofote')) this._lojaHolofote();
+      // Nível novo: pilha de JOJOcoins ao lado dele (depois das moedas do próprio ganho).
+      this.clock.setTimeout(() => this._lojaMoedas('pilha', 10), 1500);
+      if (loja.temRecurso('holofote')) { this._lojaHolofote(); this.clock.setTimeout(() => this._lojaPodeReagir() && this.playCatalog('ljCampeao', { source: 'loja', speak: false }), 5000); }
     };
     this._lojaAgendar();
     this._visualDecidir();

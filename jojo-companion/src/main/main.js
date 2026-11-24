@@ -524,7 +524,7 @@ function main() {
     app.on('will-quit', () => needsService.close());
     // Loja de JOJOcoins: carteira, compras e troca dinâmica de visuais (depois das necessidades, que recebem os efeitos).
     try {
-      lojaService = createLojaService({ userData, companion, needsService, ipcMain, fromApp, log,
+      lojaService = createLojaService({ userData, companion, needsService, ipcMain, fromApp, readJSON, log,
         notify: () => { if (lojaService) appWin.send('app:loja-update', { loja: lojaService.loja.resumo() }); } });
       app.on('will-quit', () => lojaService.close());
     } catch (e) { log('warn', `Loja de JOJOcoins indisponível: ${e.message}`); }

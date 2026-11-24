@@ -1,4 +1,4 @@
-// Animações da loja de JOJOcoins (0.48.0): 15 com objetos interativos (ob01–ob15),
+// Animações da loja de JOJOcoins: 15 com objetos interativos (ob01–ob15),
 // 15 animações especiais (la01–la15) e as cenas das atividades e dos lendários.
 // Itens do catálogo com `loja: <id do item>`: só tocam se o item foi comprado
 // (companion.playCatalog e VarietyEngine conferem). Receitas em camadas como as
@@ -72,6 +72,9 @@ const ESP = [
     squashX: L([[0, 1], [0.36, 1], [0.4, 1.12], [0.62, 1.12], [0.66, 1], [1, 1]]), scale: L([[0, 1], [0.08, 1.04], [0.9, 1.04], [1, 1]]) } },
 ];
 
+// JOJOcoin girando na mão: achata até a borda e volta (n meias-voltas).
+const GIRO_MOEDA = (n) => L(vai(1, 0.2, n, 1, 0.15, 0.85));
+
 /** Cenas das atividades e lendários com roteiro próprio (tocadas por companion.lojaAtividade). */
 const CENAS = [
   { id: 'ljFotos', nome: 'Sessão de fotos', dur: 6000, receita: { bracos: 'flexDuplo', cabeca: 'inclina', rosto: 'sobrancelha', fx: ['brilho', 'estrelas'] } },
@@ -83,9 +86,12 @@ const CENAS = [
   { id: 'ljCinema', nome: 'Cinema', dur: 8000, receita: { corpo: 'respira', bracos: 'pegaComida', rosto: 'mastiga', cabeca: 'reto' } },
   { id: 'ljCiencia', nome: 'Aula de ciência', dur: 7000, receita: { bracos: 'aponta', cabeca: 'olhaLado', rosto: 'pensando', objeto: 'livro' } },
   { id: 'ljFesta', nome: 'Festa no desktop', dur: 10000, receita: { corpo: 'danca', bracos: 'maosAlto', rosto: 'feliz', fx: ['confete', 'estrelas', 'brilho'], repeticoes: 10 } },
-  { id: 'ljChuva', nome: 'Chuva de JOJOcoins', dur: 8000, receita: { corpo: 'pulinho', bracos: 'maosAlto', cabeca: 'olhaCima', rosto: 'sorrisao', fx: ['brilho'], repeticoes: 5 } },
+  { id: 'ljChuva', nome: 'Chuva de JOJOcoins', dur: 8000, receita: { corpo: 'pulinho', bracos: 'maosAlto', cabeca: 'olhaCima', rosto: 'sorrisao', objeto: 'lj_moeda', fx: ['brilho'], repeticoes: 5 },
+    faixas: { ljoMoedaGiro: GIRO_MOEDA(10) } },
   { id: 'ljCampeao', nome: 'Holofote de campeão', dur: 6000, receita: { bracos: 'flexDuplo', rosto: 'orgulhoso', fx: ['brilho', 'aura'] } },
-  { id: 'ljCompra', nome: 'Compra na loja', dur: 2600, receita: { corpo: 'pulinho', bracos: 'segura', rosto: 'sorriso', fx: ['brilho'], repeticoes: 1 } },
+  // Compra: o JoJo pega a JOJOcoin, gira entre os dedos e comemora.
+  { id: 'ljCompra', nome: 'Compra na loja', dur: 2600, receita: { corpo: 'pulinho', bracos: 'segura', rosto: 'sorriso', objeto: 'lj_moeda', fx: ['brilho'], repeticoes: 1 },
+    faixas: { ljoMoedaGiro: GIRO_MOEDA(4) } },
 ];
 
 export const ROTEIROS = Object.freeze({ fotos: 'ljFotos', standup: 'ljStandup', treino: 'ljTreino', desfile: 'ljDesfile', karaoke: 'ljKaraoke', meditacao: 'ljMeditacao', cinema: 'ljCinema', ciencia: 'ljCiencia', festa: 'ljFesta', chuva: 'ljChuva', quiz: null, bolhas: null });

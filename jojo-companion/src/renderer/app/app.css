@@ -108,3 +108,45 @@ button.ghost { background: transparent; }
 .cadeados { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; }
 .cadeado { display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px dashed #b9c4d8; border-radius: 8px; padding: 6px 4px; background: #f0f3f8; color: var(--muted); font-size: 18px; }
 .cadeado small { font-size: 10.5px; }
+
+/* Loja de JOJOcoins */
+.moeda-valor { display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.moeda-valor img { flex: none; }
+.moeda-valor .moeda-num { display: inline-block; text-align: left; }
+.moeda-valor.grande { font-size: 22px; color: #6e4304; }
+.loja-topo h2 { margin-bottom: 2px; }
+.loja-corpo { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 12px; align-items: start; }
+.loja-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.loja-cats { display: flex; flex-wrap: wrap; gap: 6px; }
+.loja-cat { padding: 4px 10px; font-size: 12.5px; background: #fff; }
+.loja-cat.sel { background: #3f7fd4; color: #fff; border-color: #3f7fd4; }
+.loja-filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+.loja-filtros input, .loja-filtros select { padding: 5px 8px; border: 1px solid #c4cfdf; border-radius: 8px; font: inherit; background: #fff; }
+.loja-filtros input { flex: 1; min-width: 140px; }
+.loja-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
+.loja-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 6px; background: #fff; border: 1px solid #d9dde6; border-radius: 12px; text-align: center; min-height: 150px; }
+.loja-item b { font-size: 12.5px; line-height: 1.2; }
+.loja-item.sel { border-color: #3f7fd4; box-shadow: 0 0 0 2px #3f7fd433; }
+.loja-item.tem { background: #f6fbf6; }
+.loja-mini { width: 56px; height: 56px; display: grid; place-items: center; }
+.loja-rar { font-size: 11px; font-weight: 600; }
+.r-acessivel { color: #5f6b7a; } .r-comum { color: #2e7d32; } .r-incomum { color: #1565c0; } .r-raro { color: #6a1b9a; }
+.r-epico { color: #c2185b; } .r-lendario { color: #b26a00; } .r-extraordinario { color: #b71c1c; }
+.loja-item.rr-lendario, .loja-item.rr-extraordinario { border-color: #e0b44a; }
+.loja-item.rr-epico { border-color: #f0a6c4; }
+.loja-preco { font-size: 12.5px; }
+.loja-painel { position: sticky; top: 0; display: flex; flex-direction: column; gap: 4px; }
+.loja-previa { align-self: center; border-radius: 12px; background: radial-gradient(circle at 50% 60%, #eef4fb, #fff 70%); }
+.loja-preco-grande { font-size: 16px; }
+.loja-confirma { border: 1px solid #e0b44a; background: #fffaf0; border-radius: 10px; padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.loja-confirma p { flex-basis: 100%; margin: 2px 0; }
+.chipbtn.primario { background: #3f7fd4; color: #fff; border-color: #3f7fd4; }
+.chipbtn:disabled { opacity: 0.55; cursor: not-allowed; }
+.loja-feedback { min-height: 18px; color: #376a67; margin: 0; }
+.loja-feedback.comprou { color: #b26a00; font-weight: 600; }
+.loja-lore { font-style: italic; color: #5a4a2a; }
+.aviso { color: #b3261e; }
+.loja-linha { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; }
+.loja-inv { display: flex; flex-wrap: wrap; gap: 6px; }
+#lojaBtn img { vertical-align: -3px; }
+@media (max-width: 760px) { .loja-corpo { grid-template-columns: 1fr; } .loja-painel { position: static; } }

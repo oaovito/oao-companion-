@@ -143,6 +143,13 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   timer), 48 animações `cat_tm01`–`cat_tm48` com o relógio na mão (`timer-anims.js`, canais `tm*`, peças `tm_*`) e o
   relógio desenhado no overlay (`renderer/shared/relogio-desenho.js`; clique pausa e arrasto move só no modo de
   interação). Trabalho/foco: discreto e mudo; tela cheia: some. Doc `jojo-companion/docs/TIMERS.md`.
+- **Loja de JOJOcoins** (24/11/2026; nome da moeda é regra irredutível: **JOJOcoins**): 150 itens (`src/core/loja-catalogo.js`,
+  preço = índice de valor de 13 fatores → horas → × `TAXA_HORA` 190), carteira atômica/idempotente em `<userData>/loja.json`
+  (`src/core/loja.js`, ganho por reconciliação do XP, teto 1.200/dia, `creditar` para RPG/missões), tela na Central
+  (`renderer/shared/loja-view.js`), efeitos no overlay (`overlay/loja-fx.js`). Troca dinâmica de visuais só entre autorizados
+  (`src/core/visuais-dinamicos.js`; nunca grava o visual salvo; `visualAuto`/`visualFixo`). Arte oficial da moeda em
+  `src/core/moeda-arte.js` → `assets/moeda/` (`node scripts/moeda-assets.mjs`); padrão de arte permanente em
+  `jojo-companion/docs/ARTE_QUALIDADE.md` (checado por `test/unit/moeda-arte.test.js`). Docs `docs/LOJA.md`, `docs/VISUAIS_DINAMICOS.md`.
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no

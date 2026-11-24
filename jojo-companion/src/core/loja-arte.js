@@ -1,4 +1,4 @@
-// Arte dos itens da loja de JOJOcoins (0.48.0). Tudo é desenhado por cima do JoJo numa
+// Arte dos itens da loja de JOJOcoins. Tudo é desenhado por cima do JoJo numa
 // CÓPIA do rig (o arquivo não muda), como os visuais de nível e os virais:
 // - visuais: fantasias inteiras montadas com o kit do padrão da Tigresa (memes-br.js),
 //   mais detalhes próprios (estetoscópio, crachá, fone…), ligadas pelo canal `lj_<id>`;
@@ -8,7 +8,7 @@
 // Puro: usado pelo overlay, pela Central (pré-visualização) e pelos testes.
 
 import { fantasiaInteira } from './memes-br.js';
-import { TUBARAO, PEITORAL, PELVICA, OLHO } from './moeda-arte.js';
+import { TUBARAO, PEITORAL, PELVICA, OLHO, OURO } from './moeda-arte.js';
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const circ = (cx, cy, r) => `M${r1(cx - r)},${r1(cy)} a${r1(r)},${r1(r)} 0 1,0 ${r1(2 * r)},0 a${r1(r)},${r1(r)} 0 1,0 ${r1(-2 * r)},0 Z`;
@@ -103,6 +103,23 @@ export const LOOKS = {
   ll09: { cores: { a: '#b71c1c', b: '#ffd54f', g: '#00e5ff' }, pele: 'peleDourada', fantasia: { tronco: 'capa', baixo: 'sunga', pes: 'descalco', cabeca: 'coroa', pescoco: 'corrente', cores: { baixo: '#c9a227', cabeca: '#ffd54f', pescoco: '#ffecb3' } },
     extras: [['nivelPintura', 'medalhaPeito', '#ffd54f', circ(90, 104, 6)], ['nivelPintura', 'medalhaTub', '#9a6206', 'M86,105 C88,100 93,99 95,102 L92,104 C93,106 90,108 86,105 Z']] },
 };
+
+// ------------------------------------------------------------------ JOJOcoin na mão
+
+/**
+ * A JOJOcoin oficial em miniatura na mão do JoJo (compra, chuva de moedas): aro escuro,
+ * face dourada, reflexo e o tubarão da moeda (mesma geometria de moeda-arte, paleta OURO).
+ * `ljoMoedaGiro` achata na horizontal: é a moeda girando entre os dedos.
+ */
+const MOEDA_C = [157, 133], MOEDA_R = 8, MOEDA_K = 0.022;
+const GIRO_MOEDA = { ...MAO, scaleXBy: 'ljoMoedaGiro', squashPivot: MOEDA_C };
+export const MOEDA_MAO = [
+  ['moedaAro', OURO.borda, circ(MOEDA_C[0], MOEDA_C[1], MOEDA_R), GIRO_MOEDA],
+  ['moedaFace', OURO.medio, circ(MOEDA_C[0], MOEDA_C[1], MOEDA_R - 1.4), GIRO_MOEDA],
+  ['moedaLuz', OURO.claro, `M${MOEDA_C[0] - 5.6},${MOEDA_C[1] - 0.5} C${MOEDA_C[0] - 5},${MOEDA_C[1] - 5} ${MOEDA_C[0] - 1},${MOEDA_C[1] - 6.6} ${MOEDA_C[0] + 3},${MOEDA_C[1] - 5.6} C${MOEDA_C[0] - 1},${MOEDA_C[1] - 4.4} ${MOEDA_C[0] - 4},${MOEDA_C[1] - 2.6} ${MOEDA_C[0] - 5.6},${MOEDA_C[1] - 0.5} Z`, GIRO_MOEDA],
+  ['moedaTubarao', OURO.relevo, escalar(`${TUBARAO} ${PEITORAL}`, MOEDA_K, MOEDA_C[0] - 256 * MOEDA_K, MOEDA_C[1] - 256 * MOEDA_K), GIRO_MOEDA],
+  ['moedaBrilho', OURO.reflexo, circ(MOEDA_C[0] - 3.4, MOEDA_C[1] - 3.6, 1), GIRO_MOEDA],
+];
 
 // ------------------------------------------------------------------ objetos interativos (15)
 
@@ -372,6 +389,7 @@ export function rigComLoja(rig) {
       alvo.parts.push({ id: `${id}_${pid}`, fill, path, showIf: canalObjeto(id), ...(extra || {}) });
     }
   }
+  for (const [pid, fill, path, extra] of MOEDA_MAO) mao.parts.push({ id: `moeda_${pid}`, fill, path, showIf: canalObjeto('moeda'), ...extra });
   // Aura lendária: atrás de tudo.
   groups.unshift({ id: 'ljAura', showIf: 'ljAura', parts: AURA.map(([pid, fill, path, extra]) => ({ id: pid, fill, path, ...(extra || {}) })) });
   // Forma Megalodon: pele escura de tubarão antigo (paleta própria enquanto o canal está ligado).

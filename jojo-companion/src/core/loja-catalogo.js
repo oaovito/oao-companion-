@@ -1,4 +1,4 @@
-// Catálogo da loja de JOJOcoins (0.48.0): 150 itens, cada um com função real no app.
+// Catálogo da loja de JOJOcoins: 150 itens, cada um com função real no app.
 // O preço NÃO é escolhido à mão: sai do índice de valor percebido (13 fatores de 0 a 5,
 // ver `indiceValor`) convertido em tempo de obtenção numa sessão normal e depois em
 // JOJOcoins pela taxa auditada (`TAXA_HORA`, docs/LOJA.md). Puro e testável.
@@ -6,11 +6,22 @@
 export const NOME_MOEDA = 'JOJOcoins';
 
 /**
- * JOJOcoins por hora de uma sessão normal (moderada). Auditoria da geração real
- * (scripts/economia-sim.mjs): 1 JOJOcoin por ponto nominal de XP creditado, com os
- * tetos diários que já existem; a sessão moderada rende ~120/h.
+ * JOJOcoins por hora de uma sessão normal (moderada). Medida pela simulação com as
+ * classes reais (scripts/economia-sim.mjs, docs/LOJA.md): 1 JOJOcoin por ponto nominal
+ * de XP (fator por fonte, tetos do dia); o perfil moderado rende ~190/h.
  */
-export const TAXA_HORA = 120;
+export const TAXA_HORA = 190;
+
+/** Saldo exibido sem pular o layout até 1.000.000 (9 caracteres em pt-BR). */
+export const RESERVA_SALDO = 9;
+/**
+ * Largura reservada (em `ch`, com algarismos tabulares) para um valor em JOJOcoins:
+ * nunca menor que `reserva`, então o número cresce sem empurrar o resto da tela.
+ */
+export function larguraValor(n, reserva = 0) {
+  const txt = new Intl.NumberFormat('pt-BR').format(Math.max(0, Math.floor(Number(n) || 0)));
+  return Math.max(1, reserva, txt.length);
+}
 
 export const CATEGORIAS = Object.freeze([
   { id: 'visual', nome: 'Visuais', icone: '👔' },

@@ -46,10 +46,12 @@ export class LojaFx {
     if (!ev || ev.seq <= this.ultimoEvento) return;
     this.ultimoEvento = ev.seq;
     if (reduzido) return; // movimento reduzido: o saldo muda sem moedas voando
-    const n = ev.tipo === 'chuva' ? 40 : ev.tipo === 'festa' ? 30 : Math.max(1, Math.min(8, ev.n || 1));
+    const n = ev.tipo === 'chuva' ? 40 : ev.tipo === 'festa' ? 30 : ev.tipo === 'pilha' ? 10 : Math.max(1, Math.min(8, ev.n || 1));
     for (let i = 0; i < n && this.moedas.length < MAX_MOEDAS; i++) {
       const fase = i * 0.37;
       if (ev.tipo === 'ganho') this.moedas.push({ tipo: 'ganho', t0: now + i * 90, vida: 1400, x: centro.x + (i - n / 2) * 10, y: centro.y - 30, giro: fase });
+      // Pilha: moedas caem uma a uma e empilham ao lado dele (ganho grande, nível novo).
+      else if (ev.tipo === 'pilha') this.moedas.push({ tipo: 'pilha', t0: now + i * 180, vida: 3400 - i * 180, x: centro.x + 46, y: centro.y - 120, i, chao: centro.chao, giro: fase });
       else if (ev.tipo === 'gasto') this.moedas.push({ tipo: 'gasto', t0: now + i * 70, vida: 900, x: centro.x, y: centro.y + 20, vx: (i % 2 ? 1 : -1) * (40 + i * 12), giro: fase });
       else this.moedas.push({ tipo: 'queda', t0: now + i * (ev.tipo === 'festa' ? 160 : 110), vida: 2600, x: centro.x + ((i * 53) % 260) - 130, y: centro.y - 230, giro: fase, chao: centro.chao });
     }
@@ -93,11 +95,7 @@ export class LojaFx {
     for (const r of this.rastro) {
       const k = 1 - (now - r.t0) / 900;
       ctx.globalAlpha = Math.max(0, k) * s.opacity;
-      ctx.fillStyle = k > 0.5 ? '#fff3b0' : '#ffd84d';
-      const R = (3 + 3 * k) * scale;
-      ctx.beginPath();
-      ctx.moveTo(r.x, r.y - R); ctx.lineTo(r.x + R * 0.3, r.y - R * 0.3); ctx.lineTo(r.x + R, r.y); ctx.lineTo(r.x + R * 0.3, r.y + R * 0.3);
-      ctx.lineTo(r.x, r.y + R); ctx.lineTo(r.x - R * 0.3, r.y + R * 0.3); ctx.lineTo(r.x - R, r.y); ctx.lineTo(r.x - R * 0.3, r.y - R * 0.3); ctx.closePath(); ctx.fill();
+      estrela(ctx, r.x, r.y, (3 + 3 * k) * scale, k > 0.5 ? '#fff3b0' : '#ffd84d');
     }
     ctx.restore();
   }
@@ -120,13 +118,48 @@ export class LojaFx {
         const q = quique(t * 1.6);
         y += chao * q; a = t > 0.85 ? (1 - t) / 0.15 : 1;
       }
+      if (m.tipo === 'pilha') { this._moedaPilha(ctx, m, t, lado, scale, s.opacity); continue; }
       const quadro = Math.floor((now / 40 + m.giro * QUADROS) % QUADROS);
       ctx.globalAlpha = Math.max(0, a) * s.opacity;
       const w = lado * k;
       ctx.drawImage(this.atlas, quadro * 64, 0, 64, 64, x - w / 2, y - w / 2, w, w);
+      // Brilho: um lampejo na moeda que sobe quando ela chega ao alto.
+      if (m.tipo === 'ganho' && t > 0.3 && t < 0.55) {
+        const b = Math.sin(((t - 0.3) / 0.25) * Math.PI);
+        ctx.globalAlpha = b * s.opacity;
+        estrela(ctx, x - w * 0.22, y - w * 0.22, (2 + 5 * b) * scale, '#fffbe6');
+      }
     }
     ctx.restore();
   }
+
+  /** Uma moeda da pilha: cai girando, assenta de face (achatada) na altura dela e brilha no topo. */
+  _moedaPilha(ctx, m, t, lado, scale, opacity) {
+    const queda = Math.min(1, t * 5);                 // 20% da vida caindo
+    const alvo = m.chao - (m.i * 3.2 + 4) * scale;   // altura na pilha
+    const y = m.y + (alvo - m.y) * (queda * queda);
+    const a = t > 0.85 ? (1 - t) / 0.15 : 1;
+    ctx.globalAlpha = Math.max(0, a) * opacity;
+    if (queda < 1) {
+      const quadro = Math.floor((t * 60 + m.giro * QUADROS) % QUADROS);
+      ctx.drawImage(this.atlas, quadro * 64, 0, 64, 64, m.x - lado / 2, y - lado / 2, lado, lado);
+      return;
+    }
+    // Assentada: a face vista de cima-lado (achatada), com a borda escura embaixo.
+    const h = lado * 0.42;
+    ctx.fillStyle = '#6e4304';
+    ctx.beginPath(); ctx.ellipse(m.x, y + 1.6 * scale, lado / 2, h / 2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.drawImage(this.atlas, 0, 0, 64, 64, m.x - lado / 2, y - h / 2, lado, h);
+    if (m.i === 9 && t > 0.55 && t < 0.8) { ctx.globalAlpha *= Math.sin(((t - 0.55) / 0.25) * Math.PI); estrela(ctx, m.x + lado * 0.2, y - h * 0.3, 6 * scale, '#fffbe6'); }
+  }
+}
+
+/** Brilho de quatro pontas (rastro, lampejo da moeda, topo da pilha). */
+function estrela(ctx, x, y, R, cor) {
+  ctx.fillStyle = cor;
+  ctx.beginPath();
+  ctx.moveTo(x, y - R); ctx.lineTo(x + R * 0.3, y - R * 0.3); ctx.lineTo(x + R, y); ctx.lineTo(x + R * 0.3, y + R * 0.3);
+  ctx.lineTo(x, y + R); ctx.lineTo(x - R * 0.3, y + R * 0.3); ctx.lineTo(x - R, y); ctx.lineTo(x - R * 0.3, y - R * 0.3); ctx.closePath(); ctx.fill();
 }
 
 const easeOut = (t) => 1 - (1 - t) ** 3;

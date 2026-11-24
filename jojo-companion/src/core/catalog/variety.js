@@ -83,11 +83,14 @@ export class VarietyEngine {
   }
 
   get ambientItems() {
-    return this.catalog.itens.filter((it) => it.gatilho && it.gatilho.ambiente);
+    // Cache por lista: o catálogo só muda quando é trocado inteiro.
+    const itens = this.catalog.itens;
+    if (this._ambCache?.itens !== itens || this._ambCache.n !== itens.length) this._ambCache = { itens, n: itens.length, lista: itens.filter((it) => it.gatilho && it.gatilho.ambiente) };
+    return this._ambCache.lista;
   }
 
-  _freq() {
-    return { ...FREQ_DEFAULT, ...(this.catalog.frequencias || {}), ...(this.getPrefs().frequencias || {}) };
+  _freq(prefs = this.getPrefs()) {
+    return { ...FREQ_DEFAULT, ...(this.catalog.frequencias || {}), ...(prefs.frequencias || {}) };
   }
 
   _dayRollover(date) {
@@ -120,9 +123,7 @@ export class VarietyEngine {
   }
 
   /** Peso de um item agora (exposto para testes e para a Central). */
-  weight(it, { date = new Date(), energy = this.energy(date), season = seasonOf(date) } = {}) {
-    const prefs = this.getPrefs();
-    const freq = this._freq();
+  weight(it, { date = new Date(), energy = this.energy(date), season = seasonOf(date), prefs = this.getPrefs(), freq = this._freq(prefs) } = {}) {
     if (prefs.surpresas === false && it.frequencia !== 'comum') return 0;
     if (prefs.semPesadas && isHeavy(it)) return 0;
     if (prefs.semSono && SLEEP_ANIMS.has(it.id)) return 0;
@@ -153,12 +154,14 @@ export class VarietyEngine {
     this._dayRollover(date);
     const energy = this.energy(date);
     const season = seasonOf(date);
+    // Preferências lidas uma vez por sorteio (antes: uma vez por item, O(n²) no catálogo).
+    const prefs = this.getPrefs(), freq = this._freq(prefs);
     const w = {};
     for (const it of this.ambientItems) {
       if (filter && !filter(it)) continue;
       // Animação da loja de JOJOcoins: só entra no sorteio do repouso depois de comprada.
       if (it.loja && !(this.liberado && this.liberado(it))) continue;
-      const v = this.weight(it, { date, energy, season });
+      const v = this.weight(it, { date, energy, season, prefs, freq });
       if (v > 0) w[it.id] = v;
     }
     const id = pick(w, this.rng);

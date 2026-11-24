@@ -18,7 +18,7 @@ test('toda animação (as 3 intensidades) tem espaço medido na janela', () => {
 });
 
 test('toda reação do catálogo tem gatilho natural (ambiente, frase, evento, pacote ou conversa)', () => {
-  const codigo = ['src/core/companion.js', 'src/core/behavior.js', 'src/core/catalog/variety.js'].map((f) => fs.readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8')).join('\n');
+  const codigo = ['src/core/companion.js', 'src/core/behavior.js', 'src/core/catalog/variety.js', 'src/core/companion-loja.js', 'src/core/loja-anims.js'].map((f) => fs.readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8')).join('\n');
   const orfas = catalog.itens.filter((it) => {
     const g = it.gatilho || {};
     // "usa": reaproveita uma animação feita à mão, tocada pelo próprio estado (wake, eat, comfort…).

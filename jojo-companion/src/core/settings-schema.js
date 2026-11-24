@@ -66,7 +66,7 @@ export const DEFAULTS = Object.freeze({
   viraisReduzir: false,         // reduzir efeitos visuais (versão suave, sem efeitos pesados)
   viraisIntensidade: 'normal',  // suave | normal | exagerado
   viraisBloqueadas: [],         // ids vrNN que ela bloqueou
-  // Troca dinâmica de visuais (0.48.0): o JoJo escolhe entre os visuais autorizados pelo contexto.
+  // Troca dinâmica de visuais: o JoJo escolhe entre os visuais autorizados pelo contexto.
   visualAuto: true,
   visualFixo: null,             // id de visual fixado por ela (vence a troca automática)
   lojaReacoes: true,            // JoJo comenta as compras da loja de JOJOcoins

@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## Loja de JOJOcoins (versão definida na publicação) — 2026-11-24
+
+### Novidades
+- Loja de JOJOcoins na Central, com 150 itens que funcionam de verdade: 30 visuais, 20 comidas e bebidas,
+  15 objetos interativos, 15 decorações, 15 animações, 15 poderes, 10 atividades, 10 cuidados,
+  10 colecionáveis e 10 lendários. Tem categorias, busca, filtros, ordenação, prévia com o próprio JoJo,
+  raridade, saldo, requisitos, confirmação, inventário, histórico e avisos de saldo insuficiente, carregando
+  e erro.
+- JOJOcoins vêm de tudo que já dá XP (inclusive o que aconteceu com o app fechado), com teto de 1.200 por dia.
+- Preço calculado pelo valor de cada item (13 fatores) convertido em tempo de uso, com sete faixas de
+  raridade, de acessível (até 15 min) a extraordinário (mais de 24 h).
+- Troca dinâmica de visuais: o JoJo veste sozinho, pelo contexto (conversa, app aberto, horário, eventos),
+  um dos visuais que ela já liberou ou comprou. Nunca usa bloqueado, nunca muda o visual salvo dela, troca
+  só parado e sem ficar alternando. Na loja: desligar a troca automática ou fixar um visual.
+- Arte oficial da JOJOcoin: moeda dourada com o tubarão mordendo em relevo, louros e losango, em 10 tamanhos
+  (12 a 512 px), com versões simplificadas para tamanhos pequenos, perspectivas, giro de 24 quadros, pilhas e
+  composições.
+- Moedas animadas no desktop: sobem girando com brilho a cada ganho, saem na compra, chovem na chuva de
+  JOJOcoins, empilham ao lado dele em ganho grande e nível novo, e o JoJo gira a moeda entre os dedos quando
+  compra.
+- Itens comprados: visuais entram na troca dinâmica com destaque; animações entram no repouso; objetos e
+  atividades tocam pela Central; decorações ficam no chão ao lado dele; poderes e cuidados mexem nas
+  necessidades e nas missões; aura, rastro, holofote, forma Megalodon e pele dourada nos lendários.
+- Outras partes do app (missões, RPG) podem creditar JOJOcoins por um contrato idempotente.
+
+### Melhorias
+- Sorteio do repouso mais leve: as preferências são lidas uma vez por sorteio, não uma vez por animação
+  (a lógica do JoJo ficou cerca de 30% mais rápida na medição).
+
+### Como testar
+- Abra a Central, toque na moeda ao lado do saldo, compre um item barato e confirme. O saldo cai, o JoJo
+  comemora com a moeda na mão e o item aparece no inventário.
+- Compre um visual, converse sobre o tema dele (ex.: "vou treinar") e espere alguns minutos parado: ele veste
+  sozinho. Desligue "Troca automática" e ele volta ao visual dela.
+- Feche o app no meio de uma compra e abra de novo: o saldo e o item ficam coerentes, sem cobrança dupla.
+
 ## 0.47.5 — 2026-11-19
 
 ### Novidades
