@@ -1,0 +1,393 @@
+{
+  "nome": "JOJOcoins",
+  "paleta": {
+    "luz": "#fff3b0",
+    "claro": "#ffd84d",
+    "medio": "#f2b51e",
+    "profundo": "#c98a0b",
+    "reflexo": "#fffbe6",
+    "relevo": "#9a6206",
+    "borda": "#6e4304",
+    "contorno": "#4a2c02"
+  },
+  "gerado": "scripts/moeda-assets.mjs",
+  "arquivos": [
+    {
+      "arquivo": "svg/jojocoin.svg",
+      "bytes": 17341,
+      "sha256": "9fc8b48cc131606c",
+      "tipo": "mestre"
+    },
+    {
+      "arquivo": "svg/perspectiva-frente.svg",
+      "bytes": 17341,
+      "sha256": "85ee4e39a8eb5b64",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-giro15.svg",
+      "bytes": 22527,
+      "sha256": "3e3fb530c9c8b9c1",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-giro30.svg",
+      "bytes": 22545,
+      "sha256": "fef01deb2ab0e873",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-giro45.svg",
+      "bytes": 22557,
+      "sha256": "b09fe4bce406c7c0",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-giro60.svg",
+      "bytes": 22584,
+      "sha256": "15684499ff985011",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-lateral.svg",
+      "bytes": 22615,
+      "sha256": "d524e6ec8b066e25",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-cima.svg",
+      "bytes": 22555,
+      "sha256": "31d04de147259af1",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-baixo.svg",
+      "bytes": 22515,
+      "sha256": "ebb253b90a1196c9",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/perspectiva-inclinada.svg",
+      "bytes": 22636,
+      "sha256": "8869c3db4331c238",
+      "tipo": "perspectiva"
+    },
+    {
+      "arquivo": "svg/composicao-grupo.svg",
+      "bytes": 52437,
+      "sha256": "a369044832cbe90b",
+      "tipo": "composicao"
+    },
+    {
+      "arquivo": "svg/composicao-pequena.svg",
+      "bytes": 43691,
+      "sha256": "522fd4e474ff3272",
+      "tipo": "composicao"
+    },
+    {
+      "arquivo": "svg/composicao-media.svg",
+      "bytes": 130726,
+      "sha256": "e0294dbb1e36353c",
+      "tipo": "composicao"
+    },
+    {
+      "arquivo": "svg/composicao-grande.svg",
+      "bytes": 188123,
+      "sha256": "28c07af94c0f6bd0",
+      "tipo": "composicao"
+    },
+    {
+      "arquivo": "svg/composicao-monte.svg",
+      "bytes": 252775,
+      "sha256": "b638fa2835366ecb",
+      "tipo": "composicao"
+    },
+    {
+      "arquivo": "svg/composicao-extraordinaria.svg",
+      "bytes": 301449,
+      "sha256": "6e1288e07e619ec9",
+      "tipo": "composicao"
+    },
+    {
+      "arquivo": "svg/pilha.svg",
+      "bytes": 57603,
+      "sha256": "dc09adaf8826ed39",
+      "tipo": "pilha"
+    },
+    {
+      "arquivo": "jojocoin-12.png",
+      "bytes": 614,
+      "sha256": "bf1f66748a1c5a70",
+      "tipo": "icone",
+      "px": 12,
+      "lod": "micro"
+    },
+    {
+      "arquivo": "jojocoin-16.png",
+      "bytes": 965,
+      "sha256": "f3c0bb5df74cac53",
+      "tipo": "icone",
+      "px": 16,
+      "lod": "micro"
+    },
+    {
+      "arquivo": "jojocoin-20.png",
+      "bytes": 1319,
+      "sha256": "ebe2ad347b2aaf99",
+      "tipo": "icone",
+      "px": 20,
+      "lod": "micro"
+    },
+    {
+      "arquivo": "jojocoin-24.png",
+      "bytes": 1793,
+      "sha256": "9a23f838b2f86c0b",
+      "tipo": "icone",
+      "px": 24,
+      "lod": "micro"
+    },
+    {
+      "arquivo": "jojocoin-32.png",
+      "bytes": 2560,
+      "sha256": "756a9d5408b85080",
+      "tipo": "icone",
+      "px": 32,
+      "lod": "medio"
+    },
+    {
+      "arquivo": "jojocoin-48.png",
+      "bytes": 5138,
+      "sha256": "fcf7856d79c5566e",
+      "tipo": "icone",
+      "px": 48,
+      "lod": "medio"
+    },
+    {
+      "arquivo": "jojocoin-64.png",
+      "bytes": 8294,
+      "sha256": "9b9d6389f67ce84d",
+      "tipo": "icone",
+      "px": 64,
+      "lod": "mestre"
+    },
+    {
+      "arquivo": "jojocoin-128.png",
+      "bytes": 27764,
+      "sha256": "bc3c1b67bf456d91",
+      "tipo": "icone",
+      "px": 128,
+      "lod": "mestre"
+    },
+    {
+      "arquivo": "jojocoin-256.png",
+      "bytes": 87770,
+      "sha256": "90fc7e9bcf99567c",
+      "tipo": "icone",
+      "px": 256,
+      "lod": "mestre"
+    },
+    {
+      "arquivo": "jojocoin-512.png",
+      "bytes": 269151,
+      "sha256": "da7943b46cd7f094",
+      "tipo": "icone",
+      "px": 512,
+      "lod": "mestre"
+    },
+    {
+      "arquivo": "perspectiva-frente-256.png",
+      "bytes": 87770,
+      "sha256": "90fc7e9bcf99567c",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-giro15-256.png",
+      "bytes": 74914,
+      "sha256": "aa7b7ebc5b1a1ccc",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-giro30-256.png",
+      "bytes": 70000,
+      "sha256": "877bedeed9d19a73",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-giro45-256.png",
+      "bytes": 61428,
+      "sha256": "ba383b04a9cc4155",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-giro60-256.png",
+      "bytes": 48944,
+      "sha256": "a3a4bd3f84079397",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-lateral-256.png",
+      "bytes": 15538,
+      "sha256": "be77f0168e8242de",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-cima-256.png",
+      "bytes": 39213,
+      "sha256": "7711f6a8f2133b49",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-baixo-256.png",
+      "bytes": 54202,
+      "sha256": "9d397cc150798034",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "perspectiva-inclinada-256.png",
+      "bytes": 68420,
+      "sha256": "178c3cd23a004c65",
+      "tipo": "perspectiva",
+      "px": 256
+    },
+    {
+      "arquivo": "giro-32.png",
+      "bytes": 15505,
+      "sha256": "7aeca8e412b23df8",
+      "tipo": "atlasGiro",
+      "px": 32,
+      "quadros": 24
+    },
+    {
+      "arquivo": "giro-64.png",
+      "bytes": 47360,
+      "sha256": "69e65f4ab2509c5b",
+      "tipo": "atlasGiro",
+      "px": 64,
+      "quadros": 24
+    },
+    {
+      "arquivo": "giro-128.png",
+      "bytes": 158597,
+      "sha256": "b4b1492bc02540ae",
+      "tipo": "atlasGiro",
+      "px": 128,
+      "quadros": 24
+    },
+    {
+      "arquivo": "pilha-3-64.png",
+      "bytes": 2395,
+      "sha256": "e67442f58e60082e",
+      "tipo": "pilha",
+      "px": 64,
+      "n": 3
+    },
+    {
+      "arquivo": "pilha-6-128.png",
+      "bytes": 11892,
+      "sha256": "20900b647fa4505d",
+      "tipo": "pilha",
+      "px": 128,
+      "n": 6
+    },
+    {
+      "arquivo": "pilha-10-256.png",
+      "bytes": 54771,
+      "sha256": "3226be000d531e2e",
+      "tipo": "pilha",
+      "px": 256,
+      "n": 10
+    },
+    {
+      "arquivo": "composicao-grupo-128.png",
+      "bytes": 7270,
+      "sha256": "b504555279854c6a",
+      "tipo": "composicao",
+      "px": 128
+    },
+    {
+      "arquivo": "composicao-grupo-256.png",
+      "bytes": 24580,
+      "sha256": "0e32855ad68f8162",
+      "tipo": "composicao",
+      "px": 256
+    },
+    {
+      "arquivo": "composicao-pequena-128.png",
+      "bytes": 9295,
+      "sha256": "2c2c1eb354159860",
+      "tipo": "composicao",
+      "px": 128
+    },
+    {
+      "arquivo": "composicao-pequena-256.png",
+      "bytes": 30876,
+      "sha256": "778cf9ae750e2d1f",
+      "tipo": "composicao",
+      "px": 256
+    },
+    {
+      "arquivo": "composicao-media-128.png",
+      "bytes": 15404,
+      "sha256": "283efc9d507f560c",
+      "tipo": "composicao",
+      "px": 128
+    },
+    {
+      "arquivo": "composicao-media-256.png",
+      "bytes": 52332,
+      "sha256": "b4f8684daa9a76da",
+      "tipo": "composicao",
+      "px": 256
+    },
+    {
+      "arquivo": "composicao-grande-128.png",
+      "bytes": 20971,
+      "sha256": "6e3d4c6676433af2",
+      "tipo": "composicao",
+      "px": 128
+    },
+    {
+      "arquivo": "composicao-grande-256.png",
+      "bytes": 71221,
+      "sha256": "2cc4fd28b16b94e0",
+      "tipo": "composicao",
+      "px": 256
+    },
+    {
+      "arquivo": "composicao-monte-128.png",
+      "bytes": 23562,
+      "sha256": "baca6ed08c0f5a51",
+      "tipo": "composicao",
+      "px": 128
+    },
+    {
+      "arquivo": "composicao-monte-256.png",
+      "bytes": 82012,
+      "sha256": "24c5e67f036c4de4",
+      "tipo": "composicao",
+      "px": 256
+    },
+    {
+      "arquivo": "composicao-extraordinaria-128.png",
+      "bytes": 29324,
+      "sha256": "3ed6cd2c4a18f652",
+      "tipo": "composicao",
+      "px": 128
+    },
+    {
+      "arquivo": "composicao-extraordinaria-256.png",
+      "bytes": 99285,
+      "sha256": "f478ca649918348d",
+      "tipo": "composicao",
+      "px": 256
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>loja</title></head>
+<body style="margin:0;background:#fff">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+import { Animator } from '../../src/renderer/shared/animator.js';
+// Prancha de revisão: o JoJo parado (idle) com conjuntos de canais ligados.
+window.renderLooks = (rigJson, animJson, looks, cols, cell, bg) => {
+  const rig = new RigRenderer(rigJson);
+  const c = document.createElement('canvas');
+  const rows = Math.ceil(looks.length / cols);
+  c.width = cols * cell.w; c.height = rows * cell.h;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.font = '12px sans-serif';
+  looks.forEach((look, i) => {
+    const a = new Animator(animJson, { rng: () => 0.5 });
+    a.play(look.anim || 'idle', 0, { variant: look.anim || 'idle' });
+    const s = a.sample(look.t || 300);
+    const pose = { ...s.pose, ...look.canais };
+    const col = i % cols, row = Math.floor(i / cols);
+    const ox = col * cell.w + (cell.w - 180 * cell.s) / 2, oy = row * cell.h + cell.top;
+    rig.draw(ctx, pose, { origin: { x: ox, y: oy }, scale: cell.s, facing: 1 });
+    ctx.fillStyle = '#222'; ctx.fillText(look.nome, col * cell.w + 4, row * cell.h + 13);
+  });
+  return c.toDataURL('image/png');
+};
+window.ready = true;
+</script></body></html>

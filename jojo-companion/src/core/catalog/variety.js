@@ -156,6 +156,8 @@ export class VarietyEngine {
     const w = {};
     for (const it of this.ambientItems) {
       if (filter && !filter(it)) continue;
+      // Animação da loja de JOJOcoins: só entra no sorteio do repouso depois de comprada.
+      if (it.loja && !(this.liberado && this.liberado(it))) continue;
       const v = this.weight(it, { date, energy, season });
       if (v > 0) w[it.id] = v;
     }

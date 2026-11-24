@@ -18,6 +18,8 @@ contextBridge.exposeInMainWorld('appApi', {
   onSteamUpdate: fn => ipcRenderer.on('app:steam-update', (_e, s) => fn(s)),
   needs: (request) => ipcRenderer.invoke('needs:request', request),
   onNeedsUpdate: (fn) => ipcRenderer.on('app:needs-update', (_e, s) => fn(s)),
+  loja: (request) => ipcRenderer.invoke('loja:request', request),
+  onLojaUpdate: (fn) => ipcRenderer.on('app:loja-update', (_e, s) => fn(s)),
   onUpdate: (fn) => ipcRenderer.on('app:update', (_e, s) => fn(s)),
   onSelect: (fn) => ipcRenderer.on('app:select', (_e, id) => fn(id)),
 });

@@ -117,6 +117,7 @@ export class Progress {
     if (source === 'bonus') this.st.xpBonus = (this.st.xpBonus || 0) + credito;
     else this.st.xp += credito;
     const event = { id, amount: credito, source, day, label: String(label).slice(0, 200), at: this.now(), sequence: ++this.st.rewards.sequence, level: this.nivel, levelUp: this.nivel > level };
+    if (atividade) event.atividade = String(atividade).slice(0, 40);
     this.st.rewards.ids[id] = true;
     this.st.rewards.history.push(event);
     this.st.rewards.history = this.st.rewards.history.slice(-500);
@@ -162,7 +163,8 @@ export class Progress {
       && (q.sequencia == null || (nHoje === 1 && st.seq[atividade] === q.sequencia))
       && (q.marco == null || total === q.marco)
       && (!q.combo || combo);
-    if (st.qtd >= b.limites.porDia) return null;
+    const porDia = Math.max(b.limites.porDia, this.bonusPorDia?.() || 0); // Bônus Ampliado (loja)
+    if (st.qtd >= porDia) return null;
     const cabe = b.limites.xpPorDia - st.xp;
     const opcoes = this.bonusCatalogo.filter((c) => c.atividade === atividade && c.xp <= cabe && !st.feitos[c.id] && !(c.regra.quando.marco && st.vistos[c.id]) && casa(c.regra.quando));
     if (!opcoes.length) return null;
@@ -260,6 +262,35 @@ export class Progress {
       this.save(this.st);
     }
     return null;
+  }
+
+  /**
+   * Poderes da loja de JOJOcoins. Idempotentes pelo id do efeito (`loja:<tx>`): aplicar de
+   * novo devolve true sem mudar nada. Só mexem nas missões de hoje; XP continua igual.
+   */
+  trocarMissao(efeitoId, date = new Date()) {
+    const itens = this.missoes(date);
+    const usados = this.st.missoes.loja ||= [];
+    if (usados.includes(efeitoId)) return true;
+    const i = itens.findIndex((m) => !m.ok);
+    const pool = this.data.missoes.filter((m) => !itens.some((x) => x.id === m.id));
+    if (i < 0 || !pool.length) return false;
+    itens[i] = { ...pool[Math.floor(this.rng() * pool.length) % pool.length], feito: 0 };
+    usados.push(efeitoId);
+    this.save(this.st);
+    return true;
+  }
+
+  missaoExtra(efeitoId, date = new Date()) {
+    const itens = this.missoes(date);
+    const usados = this.st.missoes.loja ||= [];
+    if (usados.includes(efeitoId)) return true;
+    const pool = this.data.missoes.filter((m) => !itens.some((x) => x.id === m.id));
+    if (!pool.length) return false;
+    itens.push({ ...pool[Math.floor(this.rng() * pool.length) % pool.length], feito: 0, extra: true });
+    usados.push(efeitoId);
+    this.save(this.st);
+    return true;
   }
 
   /** Diário do tubarão: o que aconteceu hoje (resumo no fim do dia). */

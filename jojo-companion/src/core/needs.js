@@ -4,7 +4,7 @@ const clone = x => structuredClone(x);
 const clamp = v => Math.max(0, Math.min(100, v));
 export function emptyNeeds() {
   return { version: 1, hunger: 70, health: 100, mood: 75, hygiene: 100, activeMs: 0, objects: [], digestion: [],
-    daily: {}, highDay: null, lastCare: 0, history: [], outbox: [], foods: {}, cleanCount: 0, interactionMemory: [], cooldowns: {} };
+    daily: {}, highDay: null, lastCare: 0, history: [], outbox: [], foods: {}, cleanCount: 0, interactionMemory: [], cooldowns: {}, lojaAplicados: [] };
 }
 export function validateNeeds(value) {
   if (!value || value.version !== 1) throw new Error('Necessidades em formato incompatível.');
@@ -14,8 +14,8 @@ export function validateNeeds(value) {
   return st;
 }
 export class Needs {
-  constructor({ state, balance, foods = [], save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), monotonic = () => performance.now(), rng = Math.random, id = randomUUID, clockHealthy = () => true } = {}) {
-    this.st = state ? validateNeeds(state) : emptyNeeds(); Object.assign(this, { balance, foods, save, award, now, monotonic, rng, id, clockHealthy });
+  constructor({ state, balance, foods = [], save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), monotonic = () => performance.now(), rng = Math.random, id = randomUUID, clockHealthy = () => true, mods = () => ({}) } = {}) {
+    this.st = state ? validateNeeds(state) : emptyNeeds(); Object.assign(this, { balance, foods, save, award, now, monotonic, rng, id, clockHealthy, mods });
     this.sample = null; this.changed = () => {}; this.drain();
   }
   mutate(fn) {
@@ -47,16 +47,20 @@ export class Needs {
     if (elapsed <= 0 || elapsed > 90000) return { elapsed: 0, spawned: [] };
     return this.mutate(() => {
       const s = this.st, hours = elapsed / 3600000, spawned = [];
+      // Poderes da loja de JOJOcoins (sem poder ativo, tudo vale 1 e nada muda).
+      let m = {}; try { m = this.mods() || {}; } catch { m = {}; }
       s.activeMs += elapsed;
-      s.hunger = clamp(s.hunger - this.balance.hungerPerHour * hours);
-      s.hygiene = clamp(s.hygiene - (this.balance.hygienePerHour + Math.min(8, s.objects.length * 1.5)) * hours);
-      if (s.hunger < 10 || s.hygiene < 15) { s.health = Math.max(25, s.health - this.balance.healthDecayPerHour * hours); s.mood = clamp(s.mood - 5 * hours); }
+      s.hunger = clamp(s.hunger - this.balance.hungerPerHour * (m.fome ?? 1) * hours);
+      s.hygiene = clamp(s.hygiene - (this.balance.hygienePerHour + Math.min(8, s.objects.length * 1.5)) * (m.higiene ?? 1) * hours);
+      if (s.hunger < 10 || s.hygiene < 15) { if (!m.saude) s.health = Math.max(25, s.health - this.balance.healthDecayPerHour * hours); s.mood = clamp(s.mood - 5 * hours); }
       else if (s.hunger > 40 && s.hygiene > 40) { s.health = clamp(s.health + 2 * hours); s.mood = clamp(s.mood + hours); }
-      for (const item of s.digestion) item.remaining -= elapsed;
+      if (m.humorMin) s.mood = Math.max(s.mood, Math.min(100, m.humorMin));
+      for (const item of s.digestion) item.remaining -= elapsed / (m.digestao || 1);
       while (s.objects.length < this.balance.maxObjects && s.digestion.some(d => d.remaining <= 0)) {
         const index = s.digestion.findIndex(d => d.remaining <= 0); s.digestion.splice(index, 1);
-        const total = this.balance.types.reduce((n, t) => n + t.weight, 0); let roll = Math.min(0.999999, Math.max(0, this.rng())) * total;
-        const type = this.balance.types.find(t => (roll -= t.weight) < 0) || this.balance.types[0];
+        const peso = t => t.weight * (m.sorte && t.rarity !== 'Comum' ? m.sorte : 1);
+        const total = this.balance.types.reduce((n, t) => n + peso(t), 0); let roll = Math.min(0.999999, Math.max(0, this.rng())) * total;
+        const type = this.balance.types.find(t => (roll -= peso(t)) < 0) || this.balance.types[0];
         const object = { id: this.id(), type: type.id, createdAt: this.now(), slot: [0, 1, 2, 3, 4, 5].find(slot => !s.objects.some(o => o.slot === slot)), egg: null };
         // Ícones extraídos da instalação local; nunca redistribuídos com o aplicativo.
         if (this.balance.localBadges?.length && this.rng() < 0.025) object.egg = this.balance.localBadges[Math.floor(this.rng() * this.balance.localBadges.length) % this.balance.localBadges.length];
@@ -101,6 +105,31 @@ export class Needs {
       if (this.st.hunger >= 30 && xp > 0) { this.reward(`care:${this.id()}`, xp, 'care', 'Cuidado e recuperação'); daily.care += xp; }
       return { cared: true, text: 'Melhorando. Um tubarão precisa de manutenção, não de um plantão de pânico.' };
     }); this.drain(); return result;
+  }
+  /**
+   * Efeito de um consumível da loja de JOJOcoins (comida especial ou cuidado). Idempotente
+   * pelo id do pendente; não dá XP (JOJOcoins nunca compram nível). Devolve true quando
+   * o efeito está confirmado (inclusive se já tinha sido aplicado antes).
+   */
+  aplicarLoja({ id, item, tipo, nome = '', efeito = {} }) {
+    if (typeof id !== 'string' || !id) return false;
+    if ((this.st.lojaAplicados || []).includes(id)) return true;
+    this.mutate(() => {
+      const s = this.st, e = efeito;
+      if (e.fome) s.hunger = clamp(s.hunger + e.fome);
+      if (e.saude) s.health = clamp(Math.max(25, s.health + e.saude));
+      if (e.humor) s.mood = clamp(s.mood + e.humor);
+      if (e.higiene) s.hygiene = clamp(s.hygiene + e.higiene);
+      if (e.limpaTudo) { s.cleanCount += s.objects.length; s.objects = []; }
+      if (e.acao === 'cuidadoExpress') { s.health = clamp(s.health + 25); s.hygiene = clamp(s.hygiene + 10); }
+      if (tipo === 'comida') {
+        if (s.digestion.length < this.balance.maxObjects) s.digestion.push({ id: this.id(), remaining: this.balance.digestMinutes * 60000 });
+        s.foods[item] = (s.foods[item] || 0) + 1;
+      }
+      s.history.push(tipo === 'comida' ? { kind: 'feed', food: item, name: String(nome).slice(0, 60), at: this.now() } : { kind: 'lojaCuidado', item, name: String(nome).slice(0, 60), at: this.now() }); s.history = s.history.slice(-200);
+      s.lojaAplicados = [...(s.lojaAplicados || []), id].slice(-300);
+    });
+    return true;
   }
   snapshot() {
     return { hunger: Math.round(this.st.hunger), health: Math.round(this.st.health), mood: Math.round(this.st.mood), hygiene: Math.round(this.st.hygiene), hungerState: this.hungerState(),
