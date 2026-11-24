@@ -181,7 +181,9 @@ const REGRAS_FRASE = [
   // Fato da vida dela que ela não contou (prazo amanhã, relatório, reunião).
   { motivo: FATO, frase: (f, c) => (f.match(FATOS_DA_VIDA) || []).some((w) => !c.contado.includes(w)) },
   // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
-  { motivo: 'inventou conversa que não houve', quando: (q, c) => !c.jojoFalou, frase: (f) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) },
+  // Run 287: "eu te avisei que ele era incompetente" com o JoJo tendo falado de outras coisas antes também é
+  // inventado; só vale se uma fala anterior dele já tocou no que ele diz ter avisado.
+  { motivo: 'inventou conversa que não houve', frase: (f, c) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) && avisoInventado(f, c) },
   // Erro de saúde que já apareceu: diabetes com "falta de glicose" (é o contrário: glicose alta) (run 280).
   { motivo: 'erro de saúde (diabetes não é falta de glicose)', quando: (q, c) => /\bdiabet/.test(c.contado),
     frase: (f) => /\b(?:falta de glicose|glicose baixa|baixa (?:de )?glicose|diminui a glicose|reduz a glicose)\b/.test(f) },
@@ -190,7 +192,16 @@ const REGRAS_FRASE = [
 // Reticências ("sua... estrutura física") não terminam a frase.
 const frasesDe = (t) => String(t || '').split(/(?<=[!?]|(?<!\.)\.)\s+/);
 function contextoRegras(input, history = []) {
-  return { contado: norm([input, ...history.map((h) => h.text)].join(' ')), jojoFalou: history.some((h) => h.role === 'jojo' || h.role === 'assistant') };
+  const dele = history.filter((h) => h.role === 'jojo' || h.role === 'assistant');
+  return { contado: norm([input, ...history.map((h) => h.text)].join(' ')), jojoFalou: dele.length > 0, jojoDisse: norm(dele.map((h) => h.text).join(' ')) };
+}
+
+/** "Eu te avisei (que X)": inventado se nenhuma fala anterior dele tocou em X (sem X: se ele nunca falou). */
+function avisoInventado(f, c) {
+  if (!c.jojoFalou) return true;
+  const resto = f.split(/\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/)[1] || '';
+  const termos = resto.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
+  return termos.length > 0 && !termos.some((t) => c.jojoDisse.includes(t));
 }
 
 /** Primeira regra de frase (das que recusam) que a resposta quebra, ou null. */

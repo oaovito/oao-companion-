@@ -880,3 +880,12 @@ test('run 277: "Que piada é essa? Me diz logo" não é contar a piada', () => {
   assert.equal(erroDeCoerencia('fala uma piada', 'Que piada é essa? Me diz logo, não tenho o dia todo pra perder.'), 'não contou a piada');
   assert.equal(erroDeCoerencia('fala uma piada', 'Por que o tomate foi ao banco? Para tirar extrato!'), null);
 });
+
+test('run 287: "eu te avisei que ele era incompetente" com o JoJo tendo falado de outra coisa é inventado', () => {
+  const antes = [{ role: 'user', text: 'Derrubei café no teclado agora.' }, { role: 'jojo', text: 'Que droga, Manu! Café no teclado?' }];
+  const r = 'Que droga, Manu! Isso é um absurdo, eu te avisei que ele era incompetente. Vamos focar em resolver isso!';
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', r, antes), 'inventou conversa que não houve');
+  // Se ele já tinha mesmo falado daquilo, o "eu te avisei" vale.
+  const avisou = [...antes, { role: 'jojo', text: 'Esse chefe é incompetente, guarda o que eu digo.' }];
+  assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Eu te avisei que ele era incompetente. Prazo mudando de novo cansa.', avisou), null);
+});

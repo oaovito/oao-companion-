@@ -458,6 +458,12 @@ export class LlmProvider extends DialogueProvider {
     }
     // Segunda tentativa: diz por que a primeira foi recusada (o modelo repete a mesma resposta se não souber).
     if (corrigir) messages[0].content += `\nYour previous reply to this message was rejected (${String(corrigir).slice(0, 80)}). Write a different one: answer what she said and name the specific thing she told you, on her side; if she tells you something that happened to her, be against the situation, never against her, and never say she is wasting your time.`;
+    // Recusada por não falar do que ela contou (run 287: duas vezes "esse cara é incompetente" sem o prazo):
+    // dizer quais palavras dela a resposta tem de usar.
+    if (corrigir && /falou do que ela contou/.test(corrigir)) {
+      const palavras = [...new Set(String(text).toLowerCase().match(/[\p{L}]{4,}/gu) || [])].filter((w) => !/^(?:minha|meus|minhas|agora|hoje|quero|fazer|muito|isso|esse|essa|para|como|mais|novo|nova|ainda|depois|sempre|nunca)$/.test(w)).slice(0, 4);
+      if (palavras.length) messages[0].content += `\nYour reply must use her own words about it (${palavras.join(', ')}) and react to exactly that, not to something else.`;
+    }
     // Recusada por soar como companion genérico (run 267): dizer como soar como o JoJo, não só que foi recusada.
     if (corrigir && /gen[eé]ric|atendente|assistente|marca do personagem/i.test(corrigir)) messages[0].content += '\nIt sounded like a generic companion, not JoJo. Say it as JoJo: bossy coach with a huge ego; put your muscles, your perfection or a bossy order in it, in your own new words about what she said. No "que bom que você", no "parabéns" alone.';
     const atual = { role: 'user', content: String(text).slice(0, 500) };
