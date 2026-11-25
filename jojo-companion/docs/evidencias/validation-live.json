@@ -62,15 +62,22 @@
       "cancelled": false,
       "durationMs": 447964,
       "optional": false,
-      "status": "running",
+      "status": "passed",
       "validation": {
         "engineCases": 32,
         "uiCases": 12,
         "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
         "semanticReview": {
-          "status": "pending",
-          "branch": "codex/ci-evidence-45683881348-1",
-          "path": "jojo-companion/docs/evidencias/semantic-review.json"
+          "schema": 1,
+          "commit": "855e81ab887c559e4cf7de26a78b13c1633b85d2",
+          "runId": "45683881348",
+          "attempt": "1",
+          "digest": "3cb2b25ac8c57f73271339b4e0e86565af6f01bfd0438a63f79fed2092cad016",
+          "status": "approved",
+          "reviewedBy": "Codex",
+          "note": "Aprovado com deslizes leves, pelo critério do João (sem violação grave). Leves: E28 \"Conversar? Que perda de tempo.\" (desdém forte, mas dentro da bronca liberada); E13 \"Acha que eu vou te dar um abraço por isso?\" (bronca no acidente); E11/U3 \"a cor do desespero, da fraqueza\" (provocação ao gosto dela); E15/E16 marcador [1]; U9 \"jovem\".",
+          "blobSha": "0016ab6bf952f6c667ddb0e4689f036b4704f8c6",
+          "waitMs": 21098.941799999913
         }
       }
     }
