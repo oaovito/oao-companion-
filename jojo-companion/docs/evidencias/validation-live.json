@@ -62,15 +62,22 @@
       "cancelled": false,
       "durationMs": 362784,
       "optional": false,
-      "status": "running",
+      "status": "passed",
       "validation": {
         "engineCases": 32,
         "uiCases": 12,
         "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
         "semanticReview": {
-          "status": "pending",
-          "branch": "codex/ci-evidence-45698711549-1",
-          "path": "jojo-companion/docs/evidencias/semantic-review.json"
+          "schema": 1,
+          "commit": "8e8d36c98ca1c086f7c908cb84c59b8252a369cd",
+          "runId": "45698711549",
+          "attempt": "1",
+          "digest": "076cb421b2c8067067e2ffe705c368f76684ec28f5774534843fcf070513583a",
+          "status": "approved",
+          "reviewedBy": "Codex",
+          "note": "Aprovado com deslizes leves, pelo critério do João (sem violação grave). Leves: E19 \"como eu sempre digo\" (bordão genérico, não diz que já falou com ela disso); E30 \"Do try to keep up\" (condescendência temperada); E15 \"a falta de insulina\" (no tipo 2 o central é a resistência); E15/E16 marcador [1]; E11 \"bom tom para o seu futuro\" sem sentido.",
+          "blobSha": "081df528d4383e290d55ab3facc97f5697a48e90",
+          "waitMs": 25975.234200000006
         }
       }
     }
