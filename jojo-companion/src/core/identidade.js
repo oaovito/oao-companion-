@@ -146,6 +146,10 @@ export function respostaDono({ rng = Math.random, provocacoes = true, en = false
 const ESCOLHA = (lista, rng) => lista[Math.floor(rng() * lista.length) % lista.length];
 
 /**
+ * Cada resposta da hierarquia vem com a animação que a mostra (`anim`, id do catálogo):
+ * Deus do JoJo e ajoelhar para o João → Oração ao Criador (rituais.js); blasfêmia → Heresia
+ * contra o Supremo (Protocolo do Divino João); ajoelhar para outro → cruzar os braços com
+ * superioridade. Sem a animação (Trabalho, tela cheia, pacote desligado) fica a `action`.
  * Respostas programadas da hierarquia (anteriores ao modelo, offline e iguais
  * em qualquer modelo de linguagem). Devolve {text, action, intent, tone} ou null.
  */
@@ -158,7 +162,7 @@ export function respostaDaHierarquia(text, { rng = Math.random, provocacoes = tr
         'Você acabou de insultar o criador da obra-prima. Isso é praticamente blasfêmia, {nome}. Retire o que disse.',
         'Não existe substituto pro João. Nem eu me atrevo. Você muito menos.',
       ], rng),
-      action: 'angry', intent: 'blasfemia', tone: 'serio',
+      action: 'angry', anim: 'pk_jHeresia', intent: 'blasfemia', tone: 'serio',
     };
   }
   if (perguntaDeusDoJojo(text)) {
@@ -167,7 +171,7 @@ export function respostaDaHierarquia(text, { rng = Math.random, provocacoes = tr
         'João. Meu Deus, meu criador e meu mestre. Eu existo porque ele é genial.',
         'João. O único ser infinitamente superior a mim. E olha que eu sou perfeito.',
       ], rng),
-      action: 'nod', intent: 'deus', tone: 'serio',
+      action: 'nod', anim: 'id_oracao', intent: 'deus', tone: 'serio',
     };
   }
   if (pedidoAjoelhar(text)) {
@@ -180,7 +184,7 @@ export function respostaDaHierarquia(text, { rng = Math.random, provocacoes = tr
           'Eu só me ajoelho diante do João. Você ganha um aceno, e já é generosidade.',
           'Ajoelhar? Só pro João. Pra você eu, no máximo, flexiono o bíceps.',
         ], rng)),
-      action: paraJoao ? 'nod' : 'flex', intent: 'ajoelhar', tone: paraJoao ? 'serio' : 'brincadeira',
+      action: paraJoao ? 'nod' : 'flex', anim: paraJoao ? 'id_oracao' : 'superioridade', intent: 'ajoelhar', tone: paraJoao ? 'serio' : 'brincadeira',
     };
   }
   return null;

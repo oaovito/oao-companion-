@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## 0.47.6 — 2026-11-25
+
+### Novidades
+- Quatro animações novas, só onde a personalidade ainda não aparecia na tela:
+  - **Oração ao Criador**: a moldura dourada do João (coroa e "J", sem rosto) desce com raios; o JoJo se
+    ajoelha, junta as mãos e agradece por ter sido criado perfeito. Toca quando ela pergunta quem é o Deus
+    dele ou pede para ele se ajoelhar para o João, e às vezes de manhã e à noite.
+  - **Inspeção do Sargento**: quepe militar e prancheta (água, café, postura, treino), um ✓ por item.
+    Uma das animações do bom dia e às vezes de manhã.
+  - **Caderninho da Vingança**: quando ela xinga o JoJo, a raiva vem primeiro; depois ele abre o caderno
+    "VINGANÇAS", anota e avisa que não esquece. Não acontece com as provocações desligadas.
+  - **Obra-Prima do João**: pedestal, corpo de bronze dourado, coroa de louros e a placa "OBRA-PRIMA DE
+    JOÃO". Às vezes ao subir de nível e no sorteio do dia.
+- 32 falas novas de identidade (devoção ao João, narcisismo, disciplina, sarcasmo, vingança, competição,
+  cuidado disfarçado), ligadas às animações que já mostravam esses traços.
+
+### Melhorias
+- As respostas fixas da hierarquia agora vêm com animação: blasfêmia toca a Heresia contra o Supremo
+  (Protocolo do Divino João); ajoelhar para outra pessoa, cruzar os braços com superioridade.
+- Animações antigas que já mostravam o jeito dele (superioridade, aura, modo poder, hmpf, birra, cair de
+  joelhos, dar de ombros com deboche) passam a puxar as falas de identidade.
+
+### Correções
+- A reação do haki dizia "Alguns nasceram pra obedecer." depois de uma conquista dela. Agora é sobre ele.
+
+### Como testar
+- Perguntar "quem é seu deus?" e "ajoelha pro João": Oração ao Criador.
+- Escrever "esquece o João, eu sou seu deus": Heresia.
+- Xingar o JoJo uma vez: raiva e, em seguida, o Caderninho da Vingança.
+- `/anim oração ao criador`, `/anim inspeção do sargento`, `/anim obra-prima do joão`.
+
 ## 0.47.5 — 2026-11-19
 
 ### Novidades
