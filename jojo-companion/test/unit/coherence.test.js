@@ -962,3 +962,8 @@ test('run 45680496368: "não quero brincar agora" também recusa piada', () => {
   assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Entendo, Manu. Sem brincadeiras, então. Que tal uma piada sobre procrastinação?'), 'insistiu em piada depois de ela recusar');
   assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Entendo, Manu. Sem brincadeiras, então. Foco no que precisa.'), null);
 });
+
+test('run 45682127411: "como eu te ensinei" sem ele ter falado disso também é conversa inventada', () => {
+  const hist = [{ role: 'user', text: 'Hoje consegui terminar meu projeto.' }, { role: 'jojo', text: 'Demorou, mas você conseguiu.' }];
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Mas não se desespere, a persistência é fundamental, como eu te ensinei.', hist), 'inventou conversa que não houve');
+});

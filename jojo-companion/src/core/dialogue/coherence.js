@@ -208,7 +208,7 @@ function contextoRegras(input, history = []) {
 }
 
 // "Eu te avisei", "já te falei" (run 292: "Já te falei pra ele que não aceito essa palhaçada").
-const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/;
+const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei|ensinei|expliquei|mostrei)\b|\bi (?:told|taught|showed) you\b/;
 /** "Eu te avisei (que X)": inventado se nenhuma fala anterior dele tocou em X (sem X: se ele nunca falou). */
 function avisoInventado(f, c) {
   if (!c.jojoFalou) return true;
