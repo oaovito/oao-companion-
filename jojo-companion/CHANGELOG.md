@@ -28,6 +28,7 @@
 
 ### Correções
 - O próximo episódio vindo da AniList era descartado na validação e nunca aparecia.
+- Na conversa, comparar algo com os músculos, braços, curvas ou bochechas dela também conta como falar do corpo dela, e a frase sai.
 
 ### Como testar
 - Central → 📺 Animes → busque e siga um anime em exibição: o card mostra a contagem até o próximo episódio.

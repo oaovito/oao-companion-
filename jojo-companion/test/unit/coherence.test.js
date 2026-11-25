@@ -935,3 +935,9 @@ test('run 45595965155: "garoto" é tratar ela no masculino; o vocativo sai', asy
   assert.doesNotMatch(limparResposta('Minha cor preferida é verde.', 'Verde, hein? Mas não espere que eu me pinte, bobo!'), /bobo/);
   assert.equal(erroDeCoerencia('oi', 'Bobo! Presta atenção.'), 'tratou ela no masculino');
 });
+
+test('run 45675227159: "como seus músculos" também é o corpo dela; os músculos dele continuam livres', () => {
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Uma cor vibrante, como seus músculos, Manu.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are sleek, like your curves.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Combina com os meus músculos, Manu.'), null);
+});
