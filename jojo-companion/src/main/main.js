@@ -7,6 +7,7 @@ import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
 import { visuaisComAnimacao } from '../core/visual-nivel.js';
 import { comAnimacoesMemes } from '../core/memes-br.js';
+import { comCanaisAnime } from '../core/anime-arte.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net, safeStorage, utilityProcess } from 'electron';
 import QRCode from 'qrcode';
 import fs from 'node:fs';
@@ -48,6 +49,7 @@ import { createDiscordGuard } from './discord-guard.js';
 import { createWhatsAppService } from './whatsapp-service.js';
 import { WhatsAppWindow } from './whatsapp-window.js';
 import { createLojaService } from './loja-service.js';
+import { createAnimeService } from './anime-service.js';
 import { createNeedsService } from './needs-service.js';
 import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
@@ -197,7 +199,8 @@ function main() {
       rig: readJSON('assets/character/jojo.rig.json'),
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
       // Memes BR: cada um tem animação própria (memes-br.js), gerada a partir dos dados do visual.
-      animations: comAnimacoesMemes(expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)), memesBr),
+      // Animações de anime: canais de escala dos efeitos começam em 1 (neutro), não em 0.
+      animations: comCanaisAnime(comAnimacoesMemes(expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)), memesBr)),
       foods: readJSON('assets/catalog/foods.json').foods,
       // Referências dos níveis: o overlay desenha a peça de cada uma (só aparece a vestida).
       niveis: (({ referencias, extras }) => ({ referencias, extras }))(readJSON('assets/catalog/progressao.json')),
@@ -532,6 +535,13 @@ function main() {
         notify: () => { if (lojaService) appWin.send('app:loja-update', { loja: lojaService.loja.resumo() }); } });
       app.on('will-quit', () => lojaService.close());
     } catch (e) { log('warn', `Loja de JOJOcoins indisponível: ${e.message}`); }
+    // Animes: acompanhamento, alertas temáticos, sessões e JOJOcoins (depois da loja, que recebe os créditos).
+    let animeService = null;
+    try {
+      animeService = createAnimeService({ userData, companion, ipcMain, fromApp, shell, dialog, log, fetch: (url, options) => net.fetch(url, options),
+        notify: () => { if (animeService) appWin.send('app:anime-update', { anime: animeService.resumo() }); } });
+      app.on('will-quit', () => animeService.close());
+    } catch (e) { log('warn', `Animes indisponíveis: ${e.message}`); }
     focusApps = createFocusApps({ userData, companion, store,
       getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
       getFileIcon: file => app.getFileIcon(file, { size: 'small' }),

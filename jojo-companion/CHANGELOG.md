@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## 0.47.9 — 2026-11-25
+
+### Novidades
+- Aba 📺 Animes na Central: hoje, amanhã, semana, mês, em transmissão, favoritos, nova temporada, pausados,
+  concluídos, não assistidos, todos os lançamentos, histórico, estatísticas e alertas, com filtros, capa,
+  contagem ao vivo e o botão "Assistir agora" (só o link oficial, pelo clique dela).
+- Alertas por anime (no lançamento, minutos antes, véspera, silenciar até), numa fila que espera o Modo Trabalho,
+  o foco, a tela cheia, o LoL e o horário de sono; "me lembra em 30 min" adia.
+- Conversa natural sobre anime, com apelidos e erro de digitação: "segue jjk", "tem episódio hoje?", "comecei a
+  assistir One Piece", "terminei o episódio 12", "silencia Bleach", "quanto ganhei hoje?", "contagem pro próximo
+  de Frieren" (vira timer no relógio do JoJo). 130 falas novas.
+- O JoJo se veste do tema do anime sem mudar o corpo: 16 pacotes próprios e um pacote montado para qualquer outro
+  anime (gêneros, tags e cor da capa), com 12 situações cada e 156 animações novas. Tudo volta ao que ela vestia.
+- JOJOcoins por assistir, na carteira da loja: episódio, filme, primeiro episódio, temporada, obra concluída,
+  retomada e revisita, com 14 conquistas novas.
+- Detecção opcional (desligada) do que está tocando no Windows, pela sessão de mídia do sistema, e registro
+  manual para TV e celular.
+- Exportar os próximos episódios para a agenda (.ics), salvo onde ela escolher.
+
+### Melhorias
+- Sincronização adaptativa: mais frequente perto de um lançamento, rara quando nada está no ar, com recuo em erro.
+- Horários sempre no fuso de Brasília, com previsões marcadas como previsão.
+- A lista antiga de animes seguidos migra sozinha, sem avisar de novo episódio já avisado.
+
+### Correções
+- O próximo episódio vindo da AniList era descartado na validação e nunca aparecia.
+
+### Como testar
+- Central → 📺 Animes → busque e siga um anime em exibição: o card mostra a contagem até o próximo episódio.
+- Na conversa: "comecei a assistir <anime>", espere o episódio e diga "terminei": o JoJo comemora vestido do tema
+  e o saldo sobe. Corrija o registro no histórico: as moedas voltam.
+- Ligue o Modo Trabalho perto de um lançamento: o aviso só aparece quando ela sai.
+
 ## 0.47.8 — 2026-11-25
 
 ### Novidades

@@ -41,6 +41,8 @@ function gatilhos(anims, catalog) {
       if ((g.clima || []).length) partes.push(`clima (${g.clima.join('/')})`);
       // Loja de JOJOcoins (0.47.8): compra, ganho, holofote e roteiros comprados (companion-loja.js).
       if ((g.loja || []).length) partes.push(`loja (${g.loja.join('/')})`);
+      // Animes (0.47.9): episódio novo, maratona e pacotes temáticos do anime seguido (companion-anime).
+      if ((g.anime || []).length) partes.push(`anime (${g.anime.join('/')})`);
       if (new RegExp(`['"\`]${it.id}['"\`]`).test(codigo)) partes.push('código (conversa/foco/evento)');
       out[name] = partes.length ? partes.join(', ') : 'só por nome (/anim)';
     } else {

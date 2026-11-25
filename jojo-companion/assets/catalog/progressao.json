@@ -429,6 +429,118 @@
    "desc": "Some 10 horas em sessões de timer concluídas.",
    "conta": "timerMin",
    "n": 600
+  },
+  {
+   "id": "animeEp1",
+   "nome": "Primeiro episódio",
+   "desc": "Assistiu o primeiro episódio com o JoJo",
+   "conta": "animeEps",
+   "n": 1,
+   "moedas": 20
+  },
+  {
+   "id": "animeEp10",
+   "nome": "Maratonista iniciante",
+   "desc": "10 episódios assistidos",
+   "conta": "animeEps",
+   "n": 10,
+   "moedas": 40
+  },
+  {
+   "id": "animeEp50",
+   "nome": "Otaku de respeito",
+   "desc": "50 episódios assistidos",
+   "conta": "animeEps",
+   "n": 50,
+   "moedas": 100
+  },
+  {
+   "id": "animeEp100",
+   "nome": "Cem episódios",
+   "desc": "100 episódios assistidos",
+   "conta": "animeEps",
+   "n": 100,
+   "moedas": 150
+  },
+  {
+   "id": "animeEp250",
+   "nome": "Veterana do sofá",
+   "desc": "250 episódios assistidos",
+   "conta": "animeEps",
+   "n": 250,
+   "moedas": 300
+  },
+  {
+   "id": "animeEp500",
+   "nome": "Lenda dos animes",
+   "desc": "500 episódios assistidos",
+   "conta": "animeEps",
+   "n": 500,
+   "moedas": 500
+  },
+  {
+   "id": "animeTemp1",
+   "nome": "Primeira temporada",
+   "desc": "Concluiu uma temporada inteira",
+   "conta": "animeTemporadas",
+   "n": 1,
+   "moedas": 50
+  },
+  {
+   "id": "animeSerie1",
+   "nome": "Primeiro anime concluído",
+   "desc": "Terminou um anime até o fim",
+   "conta": "animeSeries",
+   "n": 1,
+   "moedas": 60
+  },
+  {
+   "id": "animeSerie5",
+   "nome": "Cinco séries",
+   "desc": "Cinco animes concluídos",
+   "conta": "animeSeries",
+   "n": 5,
+   "moedas": 200
+  },
+  {
+   "id": "animeSerie10",
+   "nome": "Dez séries",
+   "desc": "Dez animes concluídos",
+   "conta": "animeSeries",
+   "n": 10,
+   "moedas": 400
+  },
+  {
+   "id": "animeFilme1",
+   "nome": "Noite de cinema",
+   "desc": "Primeiro filme de anime",
+   "conta": "animeFilmes",
+   "n": 1,
+   "moedas": 40
+  },
+  {
+   "id": "animeGeneros",
+   "nome": "Exploradora de gêneros",
+   "desc": "Episódios de 8 gêneros diferentes",
+   "conta": "animeGeneros",
+   "n": 8,
+   "moedas": 80
+  },
+  {
+   "id": "animeLonga",
+   "nome": "Obra longa",
+   "desc": "Concluiu uma obra com 100 episódios ou mais",
+   "conta": "animeLongas",
+   "n": 1,
+   "moedas": 150
+  },
+  {
+   "id": "animeRetomada",
+   "nome": "De volta à história",
+   "desc": "Retomou um anime parado",
+   "conta": "animeRetomadas",
+   "n": 1,
+   "moedas": 30
   }
  ],
  "missoes": [

@@ -171,3 +171,24 @@ button.ghost { background: transparent; }
 .loja-inv { display: flex; flex-wrap: wrap; gap: 6px; }
 #lojaBtn img { vertical-align: -3px; }
 @media (max-width: 760px) { .loja-corpo { grid-template-columns: 1fr; } .loja-painel { position: static; } }
+
+/* Animes (calendário, sessões e JOJOcoins) */
+.an-topo input[type=search] { flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #d9dde6; border-radius: 8px; font: inherit; }
+.an-linha { display: flex; gap: 6px; align-items: center; }
+.an-busca { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.an-sessao { margin-top: 8px; padding: 8px; border-radius: 8px; background: #f3f6fb; font-size: 13px; }
+.an-abas { display: flex; flex-wrap: wrap; gap: 4px; }
+.an-abas button { font-size: 12px; padding: 4px 8px; }
+.an-abas button.on { background: #3f7fd4; color: #fff; }
+.an-filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+.an-filtros select { font: inherit; font-size: 12px; padding: 3px 4px; border-radius: 6px; border: 1px solid #d9dde6; background: #fff; }
+.an-corpo { display: flex; flex-direction: column; gap: 8px; }
+.an-card { display: flex; gap: 10px; align-items: flex-start; }
+.an-capa { flex: none; width: 54px; height: 76px; object-fit: cover; border-radius: 6px; background: #eef1f6; }
+.an-info { flex: 1; min-width: 0; }
+.an-contagem { font-variant-numeric: tabular-nums; font-weight: 600; color: #3f7fd4; }
+.an-moedas { color: #a0740b; }
+.an-hist.corrigido { opacity: 0.55; }
+.an-opcao { display: block; font-size: 13px; margin: 3px 0; }
+.an-alertas { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+.colecao .aviso { color: #a23b3b; font-size: 13px; }

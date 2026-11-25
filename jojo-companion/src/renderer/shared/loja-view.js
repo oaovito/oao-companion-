@@ -335,7 +335,7 @@ export class LojaView {
     for (const x of h.slice(0, 40)) {
       const it = x.item ? ITENS.find((i) => i.id === x.item) : null;
       const linha = node('p', 'muted'); const quando = new Date(x.at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-      linha.append(`${quando} · `, x.tipo === 'ganho' ? `+${fmt.format(x.valor)} (${x.origem || 'atividade'})` : x.tipo === 'compra' ? `${fmt.format(x.valor)} · ${it?.nome || x.item}` : x.tipo === 'uso' ? `Usou ${it?.nome || x.item}` : 'Escudo de sequência usado');
+      linha.append(`${quando} · `, x.tipo === 'ganho' ? `+${fmt.format(x.valor)} (${x.origem || 'atividade'})` : x.tipo === 'compra' ? `${fmt.format(x.valor)} · ${it?.nome || x.item}` : x.tipo === 'uso' ? `Usou ${it?.nome || x.item}` : x.tipo === 'estorno' ? `−${fmt.format(x.valor)} (${x.origem || 'correção'})` : 'Escudo de sequência usado');
       this.hist.append(linha);
     }
   }

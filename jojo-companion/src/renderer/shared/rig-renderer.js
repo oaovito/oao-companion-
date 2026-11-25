@@ -44,7 +44,8 @@ export class RigRenderer {
   }
 
   color(key) {
-    return (this.tinted && this.tinted[key]) || this.rig.palette[key] || key;
+    // `extra`: cores do pacote de anime da vez (chaves ak*), sem tocar na paleta do rig.
+    return (this.extra && this.extra[key]) || (this.tinted && this.tinted[key]) || this.rig.palette[key] || key;
   }
 
   /**
@@ -176,6 +177,7 @@ export class RigRenderer {
   _part(ctx, part, pose, op) {
     // Adereços (banco, barra, pó…) só aparecem quando o canal `showIf` está ligado.
     if (part.showIf && !((pose[part.showIf] ?? 0) >= 0.5)) return;
+    if (part.showIf2 && !((pose[part.showIf2] ?? 0) >= 0.5)) return;
     if (part.hideIf && [].concat(part.hideIf).some((ch) => (pose[ch] ?? 0) >= 0.5)) return;
     ctx.save();
     this._xform(ctx, part, pose, 0);

@@ -1,5 +1,14 @@
 # HANDOFF — JoJo Companion
 
+## Ecossistema de animes (não lançado) — 25/11/2026
+
+- Pronto só LOCAL no branch `claude/project-thread-vkeqzs`, sobre a Loja (`78294a1`). Não publicar fora da vez
+  da fila; dar o número de versão na seção do CHANGELOG ao publicar.
+- Doc: `docs/ANIMES.md` (fonte e limitações, recompensas, simulação, antifraude, desempenho, relatório).
+- Núcleo `src/core/anime-*.js` + `companion-anime.js` (mixin; sem `animeAcomp` o calendário antigo segue igual);
+  serviço `src/main/anime-service.js` (IPC `anime:request`); Central `renderer/shared/anime-view.js`.
+- Pendente de Windows: E2E/medição, aparência real dos pacotes e o PowerShell da detecção de mídia.
+
 ## Loja de JOJOcoins, troca dinâmica de visuais e arte da moeda (não lançado) — 24/11/2026
 
 - Pronto só LOCAL no branch `claude/project-thread-lhzb98` (sobre a 0.47.5 `d1b23bd`). Publicar só na vez
