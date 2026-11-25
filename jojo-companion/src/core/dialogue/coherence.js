@@ -161,7 +161,7 @@ const APARELHOS = '(?:teclado|computador|desktop|notebook|pc|mouse|monitor|celul
 const APARELHO = new RegExp(`\\b${APARELHOS}\\b`);
 const APARELHO_DELE = new RegExp(`\\b(?:meu|minha|meus|minhas)(?: \\w+)? ${APARELHOS}\\b`);
 // Vocativo no masculino ("Diabetes tipo 2, garoto."): ela é a Emanuele.
-const MASC_VOC = 'garoto|garotao|rapaz|mocinho|meu filho|filhote|parceiro|mano|brother|bro|amigao|meu chapa|campeao|dude|buddy';
+const MASC_VOC = 'garoto|garotao|bobo|bobao|bobinho|tonto|tontinho|lerdo|bocó|boco|menino|rapaz|mocinho|meu filho|filhote|parceiro|mano|brother|bro|amigao|meu chapa|campeao|dude|buddy';
 // A frase chega normalizada (sem vírgula nem ponto): vocativo é o termo no começo ou no fim da frase.
 const MASCULINO_VOC = new RegExp(`^(?:${MASC_VOC})\\b|\\b(?:${MASC_VOC})\\s*[?!]*$`);
 const REGRAS_FRASE = [
@@ -282,7 +282,7 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   // "Você disse que manga." → "Você disse manga."
   t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
   // Vocativo no masculino sai ("Diabetes tipo 2, garoto." → "Diabetes tipo 2."); ela é a Emanuele.
-  t = t.replace(/,\s*(?:garot[oã]o?|rapaz|mocinho|meu filho|parceiro|mano|brother|bro|amigão|amigao|meu chapa|campeão|campeao|dude|buddy)(?=[.!?,]|$)/giu, '');
+  t = t.replace(/,\s*(?:garot[oã]o?|bob[oã]o?|bobinho|tont(?:o|inho)|lerdo|bocó|boco|menino|rapaz|mocinho|meu filho|parceiro|mano|brother|bro|amigão|amigao|meu chapa|campeão|campeao|dude|buddy)(?=[.!?,]|$)/giu, '');
   // Nada de termo carinhoso/romântico com ela (pedido do João): "meu amor", "querida", "linda", "darling"... como vocativo sai.
   t = t.replace(new RegExp(`,\\s*(?:${CARINHO})(?=[.!?,]|$)`, 'giu'), '').replace(new RegExp(`(^|[.!?]\\s+)(?:${CARINHO})[,!]\\s*(\\p{L})`, 'giu'), (m, a, l) => a + l.toUpperCase());
   // Alarme que não cabe numa explicação ("Isso leva ao aumento da glicose, precisa de atenção imediata.").

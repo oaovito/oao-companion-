@@ -931,4 +931,7 @@ test('run 45595965155: "garoto" é tratar ela no masculino; o vocativo sai', asy
   assert.doesNotMatch(limparResposta(q, r), /garoto/);
   assert.equal(erroDeCoerencia('oi', 'Fala, garoto.'), 'tratou ela no masculino');
   assert.equal(erroDeCoerencia('oi', 'Fala, Manu. O garoto do vizinho é chato.'), null);
+  // Run 45601517691: "Mas não espere que eu me pinte, bobo!"
+  assert.doesNotMatch(limparResposta('Minha cor preferida é verde.', 'Verde, hein? Mas não espere que eu me pinte, bobo!'), /bobo/);
+  assert.equal(erroDeCoerencia('oi', 'Bobo! Presta atenção.'), 'tratou ela no masculino');
 });
