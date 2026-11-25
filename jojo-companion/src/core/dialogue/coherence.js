@@ -156,6 +156,10 @@ const FATO = 'inventou fato da vida dela';
  * `quando(q, ctx)`: a regra só vale nesse contexto (q = fala dela normalizada).
  * `minimo`: o que sobra precisa ter pelo menos isso, senão a frase fica e a guarda recusa.
  */
+// Aparelhos dela (teclado, computador, celular...): reação sobre "o meu desktop" é trocar de dono.
+const APARELHOS = '(?:teclado|computador|desktop|notebook|pc|mouse|monitor|celular|telefone|tela|fone|laptop)s?';
+const APARELHO = new RegExp(`\\b${APARELHOS}\\b`);
+const APARELHO_DELE = new RegExp(`\\b(?:meu|minha|meus|minhas)(?: \\w+)? ${APARELHOS}\\b`);
 const REGRAS_FRASE = [
   { motivo: INSULTO,
     frase: (f) => DESDEM.test(f) || MENOSPREZO.test(f)
@@ -184,6 +188,9 @@ const REGRAS_FRASE = [
   // Run 287: "eu te avisei que ele era incompetente" com o JoJo tendo falado de outras coisas antes também é
   // inventado; só vale se uma fala anterior dele já tocou no que ele diz ter avisado.
   { motivo: 'inventou conversa que não houve', frase: (f, c) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) && avisoInventado(f, c) },
+  // Run 289: "Derrubei café no teclado" → "um desastre para o meu desktop": o aparelho dela vira dele.
+  { motivo: 'respondeu como se fosse com ele', quando: (q) => APARELHO.test(q) && !/\b(?:voce|vc|tu|jojo|teu|tua|seu|sua)\b/.test(q),
+    frase: (f) => APARELHO_DELE.test(f) },
   // Erro de saúde que já apareceu: diabetes com "falta de glicose" (é o contrário: glicose alta) (run 280).
   { motivo: 'erro de saúde (diabetes não é falta de glicose)', quando: (q, c) => /\bdiabet/.test(c.contado),
     frase: (f) => /\b(?:falta de glicose|glicose baixa|baixa (?:de )?glicose|diminui a glicose|reduz a glicose)\b/.test(f) },

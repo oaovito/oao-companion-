@@ -889,3 +889,13 @@ test('run 287: "eu te avisei que ele era incompetente" com o JoJo tendo falado d
   const avisou = [...antes, { role: 'jojo', text: 'Esse chefe é incompetente, guarda o que eu digo.' }];
   assert.equal(erroDeCoerencia('Meu chefe mudou o prazo de novo.', 'Que droga, Manu! Eu te avisei que ele era incompetente. Prazo mudando de novo cansa.', avisou), null);
 });
+
+test('run 289: o teclado dela não vira "o meu desktop" dele', async () => {
+  const { limparResposta } = await import('../../src/core/dialogue/coherence.js');
+  const q = 'Derrubei café no teclado agora.';
+  const r = 'Que droga, Manu! Café no teclado? Isso é desperdício de dinheiro e um desastre para o meu desktop.';
+  assert.equal(erroDeCoerencia(q, r), 'respondeu como se fosse com ele');
+  assert.equal(limparResposta(q, r), 'Que droga, Manu! Café no teclado?');
+  assert.equal(erroDeCoerencia(q, 'Que droga, Manu! Café no teclado? Seca isso já.'), null);
+  assert.equal(erroDeCoerencia('Gostou do meu teclado novo?', 'Teu teclado é bonito, mas o meu bíceps é mais.'), null);
+});

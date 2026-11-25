@@ -36,7 +36,8 @@
   mesmo timer; exercício, alongamento e hábito pedem confirmação ("fiz") antes do XP.
 - Ofertas de timer (jogo aberto, refeição, treino do dia) só com sugestões ligadas, uma vez a cada 3 h.
 - Conversa: quando ela conta algo ("meu chefe mudou o prazo"), a nova tentativa recebe as palavras dela e
-  responde sobre aquilo; "eu te avisei que…" só vale se o JoJo tiver mesmo falado daquilo antes.
+  responde sobre aquilo; "eu te avisei que…" só vale se o JoJo tiver mesmo falado daquilo antes; e o teclado (ou
+  computador, celular) dela não vira "o meu desktop" na resposta dele.
 
 ### Como testar
 - Escreva "timer de 2 minutos": o JoJo tira o relógio, ele aparece ao lado, e no fim ele comemora.
