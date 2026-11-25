@@ -332,7 +332,7 @@ export function relatoSemAssunto(input, output) {
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
 /** Ela pediu para não ter piada ("sem piada", "sem brincadeira", "fala sério", "no jokes"). */
 export function recusouPiada(input) {
-  return /\b(?:sem|nada de|chega de|para de|pare de|nao quero) (?:piada|piadinha|brincadeira|gracinha|zoeira)s?\b|\bno jokes?\b|\b(?:not|no) joking\b/.test(norm(input));
+  return /\b(?:sem|nada de|chega de|para de|pare de|nao quero) (?:piada|piadinha|brincadeira|gracinha|zoeira)s?\b|\b(?:nao quero|sem|chega de|para de|pare de) (?:brincar|zoar)\b|\bno jokes?\b|\b(?:not|no) joking\b|\bdon t want to (?:play|joke)\b/.test(norm(input));
 }
 
 export function erroDeCoerencia(input, output, history = []) {

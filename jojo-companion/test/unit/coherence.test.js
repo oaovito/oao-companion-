@@ -957,3 +957,8 @@ test('run 45679006361: "X, como eu te disse" sem ele ter dito X é conversa inve
   const disse = [...hist, { role: 'jojo', text: 'Organização é a chave do treino.' }];
   assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Organização é a chave, como eu te disse, não é?', disse), null);
 });
+
+test('run 45680496368: "não quero brincar agora" também recusa piada', () => {
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Entendo, Manu. Sem brincadeiras, então. Que tal uma piada sobre procrastinação?'), 'insistiu em piada depois de ela recusar');
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Entendo, Manu. Sem brincadeiras, então. Foco no que precisa.'), null);
+});
