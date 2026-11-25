@@ -114,6 +114,27 @@ button.ghost { background: transparent; }
 .moeda-valor img { flex: none; }
 .moeda-valor .moeda-num { display: inline-block; text-align: left; }
 .moeda-valor.grande { font-size: 22px; color: #6e4304; }
+/* Saldo mudou: a moeda gira pelo atlas oficial (24 quadros), pula no ganho e treme no gasto. */
+.moeda-valor, #lojaBtn { position: relative; }
+.animando > img { visibility: hidden; }
+.moeda-giro { position: absolute; width: var(--px); height: var(--px); pointer-events: none;
+  background: url(../../../assets/moeda/giro-64.png) 0 0 / calc(var(--px) * 24) var(--px) no-repeat;
+  animation: moedaGiro 0.48s steps(24) 3; }
+.moeda-sobe .moeda-giro { animation: moedaGiro 0.48s steps(24) 3, moedaPulo 1.44s ease-out; }
+.moeda-gasta .moeda-giro { animation: moedaGiro 0.48s steps(24) 3 reverse, moedaTreme 0.6s ease-in-out; }
+@keyframes moedaGiro { to { background-position-x: calc(var(--px) * -24); } }
+@keyframes moedaPulo { 0% { transform: none; } 20% { transform: translateY(-45%) scale(1.15); } 40% { transform: none; } 55% { transform: translateY(-15%); } 70%, 100% { transform: none; } }
+@keyframes moedaTreme { 0%, 100% { transform: none; } 20% { transform: translateX(-12%) scale(0.9); } 40% { transform: translateX(12%) scale(0.9); } 60% { transform: translateX(-8%); } 80% { transform: translateX(6%); } }
+.moeda-sobe .moeda-num { animation: numSobe 1.2s ease-out; }
+.moeda-gasta .moeda-num { animation: numGasta 1.2s ease-out; }
+@keyframes numSobe { 0%, 60% { color: #2e7d32; } 100% { color: inherit; } }
+@keyframes numGasta { 0%, 60% { color: #c62828; } 100% { color: inherit; } }
+.moeda-delta { position: absolute; right: 0; top: -0.2em; font-size: 0.7em; font-weight: 700; pointer-events: none; white-space: nowrap; animation: deltaSobe 1.5s ease-out forwards; }
+.moeda-delta.sobe { color: #2e7d32; }
+.moeda-delta.gasta { color: #c62828; }
+#lojaBtn .moeda-delta { right: 4px; top: -11px; font-size: 11px; }
+@keyframes deltaSobe { 0% { opacity: 0; transform: translateY(4px); } 15% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+@media (prefers-reduced-motion: reduce) { .moeda-delta, .moeda-num { animation: none !important; } }
 .loja-topo h2 { margin-bottom: 2px; }
 .loja-corpo { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 12px; align-items: start; }
 .loja-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }

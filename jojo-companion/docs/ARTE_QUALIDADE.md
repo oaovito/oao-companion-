@@ -55,8 +55,10 @@ Regerar a arte da moeda: `node scripts/moeda-assets.mjs` (Chromium do Playwright
 | Compra (moedas saem para os lados) | Toda compra |
 | Pilha (caem uma a uma e empilham, brilho no topo) | Ganho grande (40 ou mais) e nível novo |
 | JoJo com a moeda (gira entre os dedos) | Cena de compra e chuva de JOJOcoins |
+| JoJo pega a moeda no ar e comemora (`ljGanho`) | Saldo subiu (no máximo 1 vez a cada 10 min) |
+| Moeda do saldo na Central gira, pula no ganho e treme no gasto; o número conta até o valor novo; "+N" ou "−N" sobe e some | Saldo mudou, com a loja aberta; o botão da loja faz o mesmo com ela fechada |
 
-Movimento reduzido do Windows: o saldo muda sem moedas voando.
+Movimento reduzido do Windows: o saldo muda sem moedas voando nem moeda girando; só aparece a diferença.
 
 ## Auditoria feita (loja, 24/11/2026)
 

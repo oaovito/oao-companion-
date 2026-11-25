@@ -89,6 +89,9 @@ const CENAS = [
   { id: 'ljChuva', nome: 'Chuva de JOJOcoins', dur: 8000, receita: { corpo: 'pulinho', bracos: 'maosAlto', cabeca: 'olhaCima', rosto: 'sorrisao', objeto: 'lj_moeda', fx: ['brilho'], repeticoes: 5 },
     faixas: { ljoMoedaGiro: GIRO_MOEDA(10) } },
   { id: 'ljCampeao', nome: 'Holofote de campeão', dur: 6000, receita: { bracos: 'flexDuplo', rosto: 'orgulhoso', fx: ['brilho', 'aura'] } },
+  // Ganho: a JOJOcoin cai do alto, ele pega no ar, gira a moeda e comemora.
+  { id: 'ljGanho', nome: 'Ganhou JOJOcoins', dur: 2400, receita: { corpo: 'pulinho', bracos: 'seguraAlto', cabeca: 'olhaCima', rosto: 'sorrisao', objeto: 'lj_moeda', fx: ['brilho'], repeticoes: 1 },
+    faixas: { ljoMoedaGiro: GIRO_MOEDA(6) } },
   // Compra: o JoJo pega a JOJOcoin, gira entre os dedos e comemora.
   { id: 'ljCompra', nome: 'Compra na loja', dur: 2600, receita: { corpo: 'pulinho', bracos: 'segura', rosto: 'sorriso', objeto: 'lj_moeda', fx: ['brilho'], repeticoes: 1 },
     faixas: { ljoMoedaGiro: GIRO_MOEDA(4) } },

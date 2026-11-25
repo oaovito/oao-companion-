@@ -24,6 +24,10 @@
   atividades tocam pela Central; decorações ficam no chão ao lado dele; poderes e cuidados mexem nas
   necessidades e nas missões; aura, rastro, holofote, forma Megalodon e pele dourada nos lendários.
 - Outras partes do app (missões, RPG) podem creditar JOJOcoins por um contrato idempotente.
+- Quando o saldo sobe ou é gasto, a moeda anima: na Central, a JOJOcoin do saldo gira, pula no ganho e treme
+  no gasto, o número conta até o valor novo e "+N" ou "−N" sobe e some; a moeda do botão da loja faz o mesmo
+  com a loja fechada. No desktop, o JoJo pega a moeda no ar e comemora quando ganha (no máximo uma vez a cada
+  10 minutos) e gira a moeda na mão quando compra.
 
 ### Melhorias
 - Sorteio do repouso mais leve: as preferências são lidas uma vez por sorteio, não uma vez por animação
@@ -34,6 +38,8 @@
   comemora com a moeda na mão e o item aparece no inventário.
 - Compre um visual, converse sobre o tema dele (ex.: "vou treinar") e espere alguns minutos parado: ele veste
   sozinho. Desligue "Troca automática" e ele volta ao visual dela.
+- Com a Central aberta, converse com o JoJo até ganhar JOJOcoins: a moeda do botão da loja gira e mostra "+N",
+  e o JoJo pega uma moeda no ar. Compre algo com a loja aberta: a moeda do saldo treme e o número desce contando.
 - Feche o app no meio de uma compra e abra de novo: o saldo e o item ficam coerentes, sem cobrança dupla.
 
 ## 0.47.5 — 2026-11-19

@@ -122,3 +122,44 @@ test('companion: loja conectada troca o visual momentâneo sem mexer no salvo e 
   e.companion._visualDecidir();
   assert.equal(e.companion.visualMomento, null);
 });
+
+test('saldo subiu: JoJo pega a moeda (no máximo 1 vez a cada 10 min) e o serviço anima todo crédito', async () => {
+  const { createLojaService } = await import('../../src/main/loja-service.js');
+  const fs = await import('node:fs'); const os = await import('node:os'); const path = await import('node:path');
+  const e = makeEnv();
+  e.companion.start();
+  e.clock.advance(4000);
+  for (let i = 0; i < 60 && !e.companion._lojaPodeReagir(); i++) e.clock.advance(1000); // espera a saudação acabar
+  const tocadas = [], moedas = [];
+  const play = e.companion.playCatalog.bind(e.companion);
+  e.companion.playCatalog = (id, o) => { tocadas.push(id); return play(id, o); };
+  const svc = createLojaService({ userData: fs.mkdtempSync(path.join(os.tmpdir(), 'jojo-loja-')), companion: e.companion, needsService: null,
+    ipcMain: { handle() {}, removeHandler() {} }, fromApp: () => true });
+  const fx = e.companion._lojaMoedas.bind(e.companion);
+  e.companion._lojaMoedas = (tipo, n) => { moedas.push(tipo); return fx(tipo, n); };
+  svc.loja.creditar({ id: 'rpg:a', valor: 12, origem: 'rpg' });
+  assert.deepEqual(moedas, ['ganho']);
+  assert.equal(tocadas.filter((t) => t === 'ljGanho').length, 1, 'JoJo comemora o ganho');
+  e.clock.advance(60e3);
+  svc.loja.creditar({ id: 'rpg:b', valor: 50, origem: 'rpg' });
+  assert.deepEqual(moedas, ['ganho', 'pilha'], 'ganho grande vira pilha');
+  assert.equal(tocadas.filter((t) => t === 'ljGanho').length, 1, 'sem repetir antes de 10 min');
+  svc.loja.creditar({ id: 'rpg:b', valor: 50, origem: 'rpg' });
+  assert.equal(moedas.length, 2, 'crédito repetido não anima de novo');
+  e.clock.advance(10 * 60e3);
+  e.companion.store.update({ lojaReacoes: false });
+  assert.equal(e.companion.lojaReagirGanho(5), false, 'reações da loja desligadas');
+  e.companion.store.update({ lojaReacoes: true });
+  e.companion.work = true;
+  assert.equal(e.companion.lojaReagirGanho(5), false, 'Modo Trabalho bloqueia');
+  e.companion.work = false;
+  for (let i = 0; i < 120 && !e.companion._lojaPodeReagir(); i++) e.clock.advance(1000); // ocupado com outra animação: espera
+  // O XP do próprio uso pode ter comemorado no meio; o intervalo conta da última comemoração.
+  e.companion._lojaGanhoUltimo = e.clock.now() - 10 * 60e3 + 1000;
+  assert.equal(e.companion.lojaReagirGanho(5), false, 'ainda dentro dos 10 min');
+  e.clock.advance(1000);
+  for (let i = 0; i < 120 && !e.companion._lojaPodeReagir(); i++) e.clock.advance(1000);
+  assert.equal(e.companion.lojaReagirGanho(5), true, 'depois de 10 min comemora de novo');
+  assert.equal(e.companion.lojaReagirGanho(0), false);
+  svc.close();
+});

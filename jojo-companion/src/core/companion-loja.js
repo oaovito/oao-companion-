@@ -26,6 +26,8 @@ const FALAS_COMPRA = {
   lendario: 'Lendário. Agora sim estamos conversando.',
 };
 
+const GANHO_INTERVALO_MS = 10 * 60e3;
+
 export function instalarLoja(Companion) {
   const P = Companion.prototype;
 
@@ -147,6 +149,18 @@ export function instalarLoja(Companion) {
   /** Pode reagir agora sem atravessar nada (trabalho, foco, tela cheia, conversa, cena). */
   P._lojaPodeReagir = function () {
     return this.started && !this.work && !this.focus && !this.fullscreenHidden && !this.userHidden && !this.quitting && this._canNag?.() !== false && this.behavior.priority >= PRIORITY.AUTO;
+  };
+
+  /**
+   * Saldo subiu: o JoJo pega a moeda no ar e comemora (sem fala). No máximo uma vez a cada
+   * 10 min, para não virar insistência; as moedas do overlay aparecem em todo ganho.
+   */
+  P.lojaReagirGanho = function (n) {
+    if (!(n > 0) || this.store.get().lojaReacoes === false || !this._lojaPodeReagir()) return false;
+    const agora = this.clock.now();
+    if (agora - (this._lojaGanhoUltimo ?? -Infinity) < GANHO_INTERVALO_MS) return false;
+    this._lojaGanhoUltimo = agora;
+    return this.playCatalog('ljGanho', { source: 'loja', speak: false }) !== false;
   };
 
   /** Reação à compra: uma animação curta e uma fala, só se der; visual comprado ganha prioridade. */

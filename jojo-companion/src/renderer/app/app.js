@@ -4,7 +4,7 @@ import { TodoView } from '../shared/todo-view.js';
 import { xpVisivel } from '../../core/xp-escala.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { CareView } from '../shared/care-view.js';
-import { LojaView } from '../shared/loja-view.js';
+import { LojaView, animarMoeda } from '../shared/loja-view.js';
 import { filterCommands } from '../shared/command-filter.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
@@ -532,4 +532,11 @@ $('lojaBtn').addEventListener('click', async () => {
   render(await api.state());
   if (showingLoja) await lojaView.abrir();
 });
-api.onLojaUpdate((s) => { if (showingLoja && s?.loja) lojaView.atualizar(s.loja); });
+// A moeda do botão da loja gira e mostra +N/−N sempre que o saldo muda, mesmo com a loja fechada.
+let saldoLoja = null;
+api.loja({ action: 'resumo' }).then((r) => { if (Number.isInteger(r?.loja?.saldo)) saldoLoja ??= r.loja.saldo; }).catch(() => {});
+api.onLojaUpdate((s) => {
+  const novo = s?.loja?.saldo;
+  if (Number.isInteger(novo)) { if (saldoLoja != null && novo !== saldoLoja) animarMoeda($('lojaBtn'), saldoLoja, novo, { px: 16 }); saldoLoja = novo; }
+  if (showingLoja && s?.loja) lojaView.atualizar(s.loja);
+});

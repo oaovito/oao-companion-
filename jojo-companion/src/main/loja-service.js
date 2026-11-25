@@ -15,15 +15,23 @@ export function createLojaService({ userData, companion, needsService, ipcMain, 
   let estado;
   try { estado = disk.load(); } catch { estado = lojaVazia(); }
   const loja = new Loja({ state: estado, save: (st) => disk.write(st), dia: (ms) => logicalDay(ms), escala: companion.progress.escala || 10 });
-  loja.changed = () => { companion._applyLayout?.(true); notify(); };
+  // Toda subida do saldo (XP reconciliado, crédito do RPG, missões) anima as moedas e o JoJo;
+  // a descida da compra anima em lojaReagirCompra.
+  let ultimoSaldo = loja.st.saldo;
+  loja.changed = () => {
+    const delta = loja.st.saldo - ultimoSaldo; ultimoSaldo = loja.st.saldo;
+    if (delta > 0) {
+      if (delta >= 40) companion._lojaMoedas?.('pilha', 10);
+      else companion._lojaMoedas?.('ganho', Math.min(8, Math.ceil(delta / 10)));
+      companion.lojaReagirGanho?.(delta);
+    }
+    companion._applyLayout?.(true); notify();
+  };
 
   // Ganho: toda recompensa confirmada vira JOJOcoins (inclusive as que chegaram com o app fechado).
   const reconciliar = () => {
     let n = 0;
     try { n = loja.reconciliar(companion.progress.st.rewards?.history || []); } catch { log('warn', 'Carteira de JOJOcoins não confirmada no disco; tento de novo na próxima recompensa.'); }
-    // Ganho grande vira pilha de moedas; o normal sobe girando com brilho.
-    if (n >= 40) companion._lojaMoedas?.('pilha', 10);
-    else if (n > 0) companion._lojaMoedas?.('ganho', Math.min(8, Math.ceil(n / 10)));
     return n;
   };
   const antesAward = companion.progress.onAward;

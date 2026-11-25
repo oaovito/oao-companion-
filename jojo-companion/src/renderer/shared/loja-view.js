@@ -31,6 +31,48 @@ export function valorMoeda(n, { px = 16, classe = '', reserva = 0 } = {}) {
   box.append(img, txt); return box;
 }
 
+/**
+ * Anima a moeda quando o saldo muda: a JOJOcoin gira pelo atlas oficial (pula no ganho, treme e
+ * gira ao contrário no gasto), o número conta até o novo valor e um "+N"/"−N" sobe e some.
+ * `box` contém a <img> da moeda; `num` (opcional) é o texto que conta. Movimento reduzido do
+ * Windows: só troca o número e mostra a diferença parada.
+ */
+export function animarMoeda(box, de, para, { px = 16, num = null } = {}) {
+  if (!box || de === para) return;
+  const sobe = para > de;
+  const reduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  clearTimeout(box._moedaFim); cancelAnimationFrame(box._moedaRaf);
+  box.querySelectorAll('.moeda-giro, .moeda-delta').forEach((n) => n.remove());
+  box.classList.remove('moeda-sobe', 'moeda-gasta', 'animando');
+  void box.offsetWidth; // reinicia a animação CSS se vier outra mudança logo em seguida
+  const delta = node('span', `moeda-delta ${sobe ? 'sobe' : 'gasta'}`, `${sobe ? '+' : '−'}${fmt.format(Math.abs(para - de))}`);
+  delta.setAttribute('aria-hidden', 'true');
+  box.append(delta);
+  box.classList.add(sobe ? 'moeda-sobe' : 'moeda-gasta');
+  if (!reduzido) {
+    const img = box.querySelector('img');
+    if (img) {
+      const giro = node('span', 'moeda-giro'); giro.style.setProperty('--px', `${px}px`);
+      giro.style.left = `${img.offsetLeft}px`; giro.style.top = `${img.offsetTop}px`;
+      box.append(giro); box.classList.add('animando');
+    }
+    if (num) {
+      const t0 = performance.now(), dur = 800;
+      const passo = (t) => {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - (1 - k) ** 3;
+        num.textContent = fmt.format(Math.round(de + (para - de) * e));
+        if (k < 1) box._moedaRaf = requestAnimationFrame(passo);
+      };
+      box._moedaRaf = requestAnimationFrame(passo);
+    }
+  } else if (num) num.textContent = fmt.format(para);
+  box._moedaFim = setTimeout(() => {
+    box.querySelectorAll('.moeda-giro, .moeda-delta').forEach((n) => n.remove());
+    box.classList.remove('moeda-sobe', 'moeda-gasta', 'animando');
+    if (num) num.textContent = fmt.format(para);
+  }, 1500);
+}
+
 export class LojaView {
   constructor(root, api, { onAberta = () => {} } = {}) {
     Object.assign(this, { root, api, onAberta });
@@ -95,7 +137,20 @@ export class LojaView {
 
   _topo() {
     const e = this.estado; if (!e) return;
-    this.saldoEl.replaceChildren(valorMoeda(e.saldo, { px: 24, classe: 'grande', reserva: RESERVA_SALDO }));
+    // Saldo mudou com a loja aberta: a moeda gira e o número conta do valor antigo ao novo.
+    const antes = this._saldoMostrado; this._saldoMostrado = e.saldo;
+    // Mesmo saldo (outra atualização chegando): mantém a moeda como está, sem cortar a animação.
+    if (antes === e.saldo && this.saldoEl.firstChild) { this._ganhoTexto(e); return; }
+    const box = valorMoeda(e.saldo, { px: 24, classe: 'grande', reserva: RESERVA_SALDO });
+    this.saldoEl.replaceChildren(box);
+    if (antes != null && antes !== e.saldo) {
+      const num = box.querySelector('.moeda-num'); num.textContent = fmt.format(antes);
+      animarMoeda(box, antes, e.saldo, { px: 24, num });
+    }
+    this._ganhoTexto(e);
+  }
+
+  _ganhoTexto(e) {
     this.ganhoEl.textContent = `Hoje: +${fmt.format(e.ganhoHoje)} de até ${fmt.format(e.tetoDia)} · total ganho ${fmt.format(e.ganhoTotal)} · gasto ${fmt.format(e.gastoTotal)}${e.escudos ? ` · ${e.escudos} escudo(s) de sequência` : ''}`;
   }
 
