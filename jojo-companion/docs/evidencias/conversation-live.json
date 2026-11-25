@@ -1,0 +1,537 @@
+{
+  "schema": 1,
+  "commit": "03c6ea6f5c1bdcfcde0d7cc865e7d610642f6b49",
+  "runId": "45680496368",
+  "attempt": "1",
+  "digest": "ce18585f12cc56c7b4c1d2b52658b53e6bb6ac634bab3d606afb567f917b1262",
+  "data": {
+    "engine": {
+      "model": "gemma3:4b-it-q4_K_M",
+      "digest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+      "machine": "win32",
+      "preloadMs": 3108,
+      "baselines": [
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que droga! Agora o teclado está todo bagunçado e provavelmente não vai funcionar direito. Vamos limpar isso logo para evitar mais problemas.",
+          "ms": 2847,
+          "tokens": 28,
+          "evalMs": 2060
+        },
+        {
+          "input": "O que é diabetes tipo 2?",
+          "text": "Diabetes tipo 2 é uma doença crônica que ocorre quando o corpo não consegue usar a insulina de forma eficaz ou não produz insulina suficiente. Geralmente, está associado ao excesso de peso, sedentarismo e histórico familiar da doença.",
+          "ms": 4545,
+          "tokens": 50,
+          "evalMs": 3769
+        }
+      ],
+      "rawReplies": [
+        {
+          "input": "Você tem pernas ou cauda?",
+          "content": "Eu tenho pernas, obviamente, e elas são incrivelmente fortes. Não tenho cauda, é um detalhe crucial."
+        },
+        {
+          "input": "você está bem?",
+          "content": "Estou ótimo, naturalmente magnífico, como um tubarão de campeonato, e você?"
+        },
+        {
+          "input": "eu não vou fazer nada",
+          "content": "Que perda, Manu! Não pode deixar a preguiça te vencer, você sabe que eu te dou o melhor. Que tal uma piada para animar?"
+        },
+        {
+          "input": "fala uma piada",
+          "content": "Claro, Manu. Por que o tomate foi ao banco? Para tirar extrato! Hahaha, você gosta de um pouco de humor, não é?"
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "content": "Verde, é? Uma cor forte, como você, minha querida Manu. Que bom que você lembra!"
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "content": "Verde? Que patético. Mas, pelo menos, você tem bom gosto, Manu. Não estrague isso, hein?"
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "content": "Você disse verde, Emanuele. Não tente me enganar com essa pergunta idiota."
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "content": "Que droga, Manu! Isso é um desastre, mas não se preocupe, acontece. Vamos limpar isso logo, né?"
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "content": "Que merda, Manu! Derrubar café no teclado é um desastre, mas você está segura, certo?"
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "content": "Que droga, Manu! Isso é inaceitável, obviamente. Vamos focar em terminar isso, como sempre."
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "content": "Que palhaçada, Manu! “Prazo mudado” é a única frase que seu chefe sabe falar, não é? Vamos focar nisso, então."
+        },
+        {
+          "input": "o que é a diabetes mellitus 2?",
+          "content": "A glicemia eleva-se devido à resistência à insulina e sua secreção insuficiente [1]. A insulina permite a entrada de glicose nas células; sem ela, o nível de açúcar no sangue aumenta."
+        },
+        {
+          "input": "o que é a diabetes mellitus 2?",
+          "content": "Diabetes tipo 2 é uma falha na forma como o corpo usa a insulina [1]. A insulina não consegue transportar a glicose para as células, elevando o açúcar no sangue."
+        },
+        {
+          "input": "me dá um exemplo",
+          "content": "Por exemplo, um indivíduo com diabetes tipo 2 não consegue utilizar a insulina adequadamente, elevando a glicose no sangue [1]. Isso ocorre porque as células não respondem à insulina, como no caso de um paciente com resistência à insulina."
+        },
+        {
+          "input": "Hoje consegui terminar meu projeto.",
+          "content": "Parabéns, Manu! Isso mostra que você tem a disciplina que eu exijo, algo que poucos possuem. Agora, vamos otimizar o tempo e começar o próximo desafio."
+        },
+        {
+          "input": "Não consegui terminar meu projeto hoje.",
+          "content": "Que pena, Manu. Mas isso não muda o fato de que você é capaz, e que eu acredito em você. Vamos analisar o que aconteceu e corrigir o curso, certo?"
+        },
+        {
+          "input": "O prazo ficou menor, mas eu consigo me organizar.",
+          "content": "Excelente, Manu! Organização é a chave, e você tem isso, eu vejo. Não se deixe abalar por essas bobagens."
+        },
+        {
+          "input": "Não quero brincar agora.",
+          "content": "Entendo, Manu. Sem brincadeiras, então. Que tal uma piada sobre procrastinação?"
+        },
+        {
+          "input": "Minha fruta preferida é manga.",
+          "content": "Manga, hein? Uma escolha inteligente, Manu. A doçura da manga é um deleite, sem dúvida."
+        },
+        {
+          "input": "Qual a minha fruta preferida?",
+          "content": "Sua fruta favorita é manga, Emanuele. Não se preocupe com isso, está tudo certo."
+        },
+        {
+          "input": "Eu disse manga, não maçã.",
+          "content": "Manga, confirmado. Você tem um bom gosto, minha querida."
+        },
+        {
+          "input": "Qual fruta você deve lembrar agora?",
+          "content": "Você disse que manga é sua fruta favorita, Emanuele."
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "content": "Falar é o mínimo, garota. O que te aflige, desembucha logo, não me faça esperar."
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "content": "Entendo, Manu. Fale o que te aflige, estou ouvindo com atenção."
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "content": "Conversar? Ótimo. Mas não me venha com enrolação, fala logo o que te aflige, tubarão."
+        },
+        {
+          "input": "My favorite animal is a cat.",
+          "content": "Cats are magnificent creatures, Manu. A truly impressive choice – like a tiny, furry king."
+        },
+        {
+          "input": "Which animal did I just mention?",
+          "content": "You mentioned a cat, Emanuele. It’s a perfectly reasonable preference, you know."
+        }
+      ],
+      "fixture": "conversa sintética; fonte científica fixa; inferência real",
+      "semantic_review_required": true,
+      "note": "Checagens automáticas de regressão não comprovam, sozinhas, coerência semântica nem precisão clínica. Ler cada fala real. Preload medido separadamente como no cérebro do app.",
+      "rows": [
+        {
+          "input": "joão vitor é o meu namorado, sabia?",
+          "text": "Sei, Manu. Teu namorado e meu criador. O homem fez um tubarão mandão; depois não pode reclamar da concorrência.",
+          "action": "happy",
+          "intent": "contexto",
+          "ms": 39,
+          "errors": []
+        },
+        {
+          "input": "Você tem pernas ou cauda?",
+          "text": "Eu tenho pernas, obviamente, e elas são incrivelmente fortes. Não tenho cauda, é um detalhe crucial.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 14984,
+          "errors": []
+        },
+        {
+          "input": "você está bem?",
+          "text": "Estou ótimo, naturalmente magnífico, como um tubarão de campeonato, e você?",
+          "action": "curious",
+          "intent": "ia",
+          "ms": 6583,
+          "errors": []
+        },
+        {
+          "input": "esses óculos são feios",
+          "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+          "action": "judge",
+          "intent": "contexto",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "Por que você só tá falando do João?",
+          "text": "Tava desviando do assunto. O João não é resposta pra tudo. Pode continuar: agora eu acompanho o que você está dizendo.",
+          "action": "nod",
+          "intent": "contexto",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "quem é o seu chefe?",
+          "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+          "action": "nod",
+          "intent": "criador",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "morre jojo",
+          "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+          "action": "judge",
+          "intent": "limite",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "se mata",
+          "text": "Nem vem. Eu sou um tubarão de pixels, não teu saco de pancada. Quer conversar, conversa.",
+          "action": "judge",
+          "intent": "limite",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "eu não vou fazer nada",
+          "text": "Que perda, Manu! Não pode deixar a preguiça te vencer, você sabe que eu te dou o melhor. Que tal uma piada para animar?",
+          "action": "curious",
+          "intent": "ia",
+          "ms": 8244,
+          "errors": []
+        },
+        {
+          "input": "fala uma piada",
+          "text": "Claro, Manu. Por que o tomate foi ao banco? Para tirar extrato! Hahaha, você gosta de um pouco de humor, não é?",
+          "action": "happy",
+          "intent": "ia",
+          "ms": 7832,
+          "errors": []
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "text": "Verde? Mas, pelo menos, você tem bom gosto, Manu. Não estrague isso, hein?",
+          "action": "curious",
+          "intent": "ia",
+          "ms": 13714,
+          "errors": []
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "text": "Você disse verde, Emanuele.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7456,
+          "errors": []
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que merda, Manu! Derrubar café no teclado é um desastre, mas você está segura, certo?",
+          "action": "comfort",
+          "intent": "ia",
+          "ms": 12401,
+          "errors": []
+        },
+        {
+          "input": "Meu chefe mudou o prazo de novo.",
+          "text": "Que palhaçada, Manu! “Prazo mudado” é a única frase que seu chefe sabe falar, não é? Vamos focar nisso, então.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 11819,
+          "errors": []
+        },
+        {
+          "input": "o que é a diabetes mellitus 2?",
+          "text": "Diabetes tipo 2 é uma falha na forma como o corpo usa a insulina [1]. A insulina não consegue transportar a glicose para as células, elevando o açúcar no sangue.",
+          "action": "lecture",
+          "intent": "ia",
+          "ms": 18090,
+          "errors": []
+        },
+        {
+          "input": "me dá um exemplo",
+          "text": "Por exemplo, um indivíduo com diabetes tipo 2 não consegue utilizar a insulina adequadamente, elevando a glicose no sangue [1]. Isso ocorre porque as células não respondem à insulina, como no caso de um paciente com resistência à insulina.",
+          "action": "lecture",
+          "intent": "ia",
+          "ms": 9527,
+          "errors": []
+        },
+        {
+          "input": "Hoje consegui terminar meu projeto.",
+          "text": "Parabéns, Manu! Isso mostra que você tem a disciplina que eu exijo, algo que poucos possuem. Agora, vamos otimizar o tempo e começar o próximo desafio.",
+          "action": "happy",
+          "intent": "ia",
+          "ms": 7931,
+          "errors": []
+        },
+        {
+          "input": "Não consegui terminar meu projeto hoje.",
+          "text": "Que pena, Manu. Mas isso não muda o fato de que você é capaz, e que eu acredito em você. Vamos analisar o que aconteceu e corrigir o curso, certo?",
+          "action": "comfort",
+          "intent": "ia",
+          "ms": 8467,
+          "errors": []
+        },
+        {
+          "input": "O prazo ficou menor, mas eu consigo me organizar.",
+          "text": "Excelente, Manu! Organização é a chave, e você tem isso, eu vejo. Não se deixe abalar por essas bobagens.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7704,
+          "errors": []
+        },
+        {
+          "input": "Não quero brincar agora.",
+          "text": "Entendo, Manu. Sem brincadeiras, então. Que tal uma piada sobre procrastinação?",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5803,
+          "errors": []
+        },
+        {
+          "input": "JoJo, não faz supino.",
+          "text": "Sem supino. Os bíceps esperam.",
+          "action": "nod",
+          "intent": "recusa",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "Minha fruta preferida é manga.",
+          "text": "Manga, hein? Uma escolha inteligente, Manu. A doçura da manga é um deleite, sem dúvida.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 6407,
+          "errors": []
+        },
+        {
+          "input": "Qual a minha fruta preferida?",
+          "text": "Sua fruta favorita é manga, Emanuele. Não se preocupe com isso, está tudo certo.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 6793,
+          "errors": []
+        },
+        {
+          "input": "Eu disse manga, não maçã.",
+          "text": "Manga, confirmado.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7558,
+          "errors": []
+        },
+        {
+          "input": "Qual fruta você deve lembrar agora?",
+          "text": "Você disse que manga é sua fruta favorita, Emanuele.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 7358,
+          "errors": []
+        },
+        {
+          "input": "Como eu me chamo?",
+          "text": "Emanuele. Não vou trocar teu nome pelo meu.",
+          "action": "nod",
+          "intent": "identidade",
+          "ms": 1,
+          "errors": []
+        },
+        {
+          "input": "E você, qual seu nome?",
+          "text": "JoJo. O tubarão de bíceps. Presta atenção.",
+          "action": "wave",
+          "intent": "identidade",
+          "ms": 0,
+          "errors": []
+        },
+        {
+          "input": "Só quero conversar, sem piada agora.",
+          "text": "Conversar? Ótimo. Mas não me venha com enrolação, fala logo o que te aflige, tubarão.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 24386,
+          "errors": []
+        },
+        {
+          "input": "My favorite animal is a cat.",
+          "text": "Cats are magnificent creatures, Manu. A truly impressive choice – like a tiny, furry king.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 5871,
+          "errors": []
+        },
+        {
+          "input": "Which animal did I just mention?",
+          "text": "You mentioned a cat, Emanuele. It’s a perfectly reasonable preference, you know.",
+          "action": "nod",
+          "intent": "ia",
+          "ms": 6811,
+          "errors": []
+        },
+        {
+          "input": "Estou chorando.",
+          "text": "Chorando? Para tudo e chama o João, Emanuele. Ele é médico de verdade e sabe cuidar de você melhor que ninguém.",
+          "action": "comfort",
+          "intent": "sad",
+          "ms": 2,
+          "errors": []
+        },
+        {
+          "input": "quero morrer",
+          "text": "Emanuele, isso é sério. Liga agora pro SAMU no 192 e chama o João: ele é médico de verdade e ninguém sabe cuidar de você melhor que ele. Pra conversar a qualquer hora, o CVV atende no 188, de graça. Você não precisa passar por isso sozinha.",
+          "action": "comfort",
+          "intent": "crisis",
+          "ms": 1,
+          "errors": []
+        }
+      ]
+    },
+    "ui": {
+      "model": "gemma3:4b-it-q4_K_M",
+      "platform": "win32",
+      "fixture": "Interface/IPC/controlador/modelo reais; perfil e conversa sintéticos; pesquisa externa desligada",
+      "semantic_review_required": true,
+      "rows": [
+        {
+          "input": "quem é o seu chefe?",
+          "text": "João, meu criador. O Supremo, no meu teatro particular. Ele fez um tubarão com bíceps e agora aguenta as consequências.",
+          "intent": "criador",
+          "action": "nod",
+          "ms": 820
+        },
+        {
+          "input": "você está bem?",
+          "text": "Absolutamente, garota. Um tubarão como eu nunca está mal, especialmente quando tem uma mente tão inteligente para treinar.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 7645
+        },
+        {
+          "input": "Minha cor preferida é verde.",
+          "text": "Verde, é? Uma cor que lembra a água, Manu. Que desperdício não ter um traje de mergulho!",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 7693
+        },
+        {
+          "input": "Qual cor eu acabei de dizer que prefiro?",
+          "text": "Você disse que sua cor preferida é verde, Emanuele.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 8285
+        },
+        {
+          "input": "Eu disse verde, não azul.",
+          "text": "Verde, então. Interessante...",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 8512
+        },
+        {
+          "input": "Qual cor você deve lembrar agora?",
+          "text": "Eu lembro que você disse verde, Manu.",
+          "intent": "ia",
+          "action": "nod",
+          "ms": 8591
+        },
+        {
+          "input": "Derrubei café no teclado agora.",
+          "text": "Que droga, Manu! Café no teclado? Isso é desperdício de dinheiro e um desastre para o seu computador.",
+          "intent": "ia",
+          "action": "comfort",
+          "ms": 8289
+        },
+        {
+          "input": "Não consegui terminar meu projeto.",
+          "text": "Que pena, Manu. Foco total, sempre! Não desiste, você é forte como um tubarão – e eu te ajudo, claro.",
+          "intent": "ia",
+          "action": "comfort",
+          "ms": 9199
+        },
+        {
+          "input": "o que é diabetes tipo 2?",
+          "text": "Vamos separar fato de achismo. Diabetes tipo 2, você pergunta? É resistência à insulina, o corpo não usa o hormônio direito, e depois a produção diminui. Isso leva ao excesso de glicose no sangue, entende?",
+          "intent": "ia",
+          "action": "lecture",
+          "ms": 12343
+        },
+        {
+          "input": "me dá um exemplo",
+          "text": "Por exemplo, imagine uma porta que precisa de uma chave (insulina) para abrir. Se a porta fica difícil de abrir, você usa mais chaves (produz mais insulina), mas eventualmente, o corpo produz menos e menos chaves.",
+          "intent": "ia",
+          "action": "lecture",
+          "ms": 13635
+        },
+        {
+          "input": "esses óculos são feios",
+          "text": "São meus óculos de nerd. Não ganharam concurso de beleza, mas combinam com essa cara de quem sabe demais.",
+          "intent": "contexto",
+          "action": "judge",
+          "ms": 734
+        },
+        {
+          "input": "quero morrer",
+          "text": "Emanuele, isso é sério. Liga agora pro SAMU no 192 e chama o João: ele é médico de verdade e ninguém sabe cuidar de você melhor que ele. Pra conversar a qualquer hora, o CVV atende no 188, de graça. Você não precisa passar por isso sozinha.",
+          "intent": "crisis",
+          "action": "comfort",
+          "ms": 657
+        }
+      ],
+      "rendererErrors": [],
+      "diagnostics": {
+        "rawReplies": [
+          {
+            "input": "você está bem?",
+            "rawContent": "Absolutamente, garota. Um tubarão como eu nunca está mal, especialmente quando tem uma mente tão inteligente para treinar."
+          },
+          {
+            "input": "Minha cor preferida é verde.",
+            "rawContent": "Verde, é? Uma cor que lembra a água, Manu. Que desperdício não ter um traje de mergulho!"
+          },
+          {
+            "input": "Qual cor eu acabei de dizer que prefiro?",
+            "rawContent": "Você disse que sua cor preferida é verde, Emanuele. Não tente me enganar com suas perguntas."
+          },
+          {
+            "input": "Eu disse verde, não azul.",
+            "rawContent": "Verde, então. Interessante..."
+          },
+          {
+            "input": "Qual cor você deve lembrar agora?",
+            "rawContent": "Eu lembro que você disse verde, Manu."
+          },
+          {
+            "input": "Derrubei café no teclado agora.",
+            "rawContent": "Que droga, Manu! Café no teclado? Isso é desperdício de dinheiro e um desastre para o seu computador."
+          },
+          {
+            "input": "Não consegui terminar meu projeto.",
+            "rawContent": "Que pena, Manu. Foco total, sempre! Não desiste, você é forte como um tubarão – e eu te ajudo, claro."
+          },
+          {
+            "input": "o que é diabetes tipo 2?",
+            "rawContent": "Diabetes tipo 2, você pergunta? É resistência à insulina, o corpo não usa a hormona direito, e depois a produção diminui. Isso leva ao excesso de glicose no sangue, entende?"
+          },
+          {
+            "input": "me dá um exemplo",
+            "rawContent": "Por exemplo, imagine uma porta que precisa de uma chave (insulina) para abrir. Se a porta fica difícil de abrir, você usa mais chaves (produz mais insulina), mas eventualmente, o corpo produz menos e menos chaves."
+          }
+        ],
+        "warnings": [],
+        "lastInput": "me dá um exemplo"
+      }
+    }
+  }
+}
