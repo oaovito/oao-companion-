@@ -1,4 +1,4 @@
-// Animações do clima de verdade (0.47.6): o JoJo reage à chuva, frio, calor, tempestade,
+// Animações do clima de verdade (0.47.7): o JoJo reage à chuva, frio, calor, tempestade,
 // neve e noite que a localização real informa. Itens `cat_cl01`–`cat_cl12` no catálogo,
 // com adereços `cl_*` numa CÓPIA do rig (o arquivo do personagem não muda). Tudo que
 // liga desliga antes do fim: a aparência canônica volta sempre (testado).

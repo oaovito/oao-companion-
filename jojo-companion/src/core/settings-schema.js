@@ -53,7 +53,7 @@ export const DEFAULTS = Object.freeze({
   darkestSugestao: true,        // sugestão diária em momento permitido
   climaAtivo: true,
   climaCidade: '',              // cidade/estado escolhidos (localização manual)
-  // Localização real (0.47.6): 'automatico' (Windows; só com autorização dela), 'manual' (a cidade acima) ou 'desligado'.
+  // Localização real (0.47.7): 'automatico' (Windows; só com autorização dela), 'manual' (a cidade acima) ou 'desligado'.
   localizacaoModo: 'manual',
   localizacaoIntervalo: 60,     // minutos entre verificações: 15, 30, 60, 180, 360 ou 720
   localizacaoRede: true,        // sem o Windows, usa a rede/IP (sempre marcada como aproximada)

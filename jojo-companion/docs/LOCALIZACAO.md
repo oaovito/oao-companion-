@@ -1,4 +1,4 @@
-# Localização real e clima (0.47.6)
+# Localização real e clima (0.47.7)
 
 ## Modos (Configurações → Localização e clima)
 

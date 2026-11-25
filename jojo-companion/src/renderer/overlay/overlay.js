@@ -8,6 +8,7 @@ import { rigComRebolado } from '../../core/rebolado.js';
 import { rigComDildo } from '../../core/dildo.js';
 import { rigComEsteroide } from '../../core/esteroide.js';
 import { rigComVirais } from '../../core/virais.js';
+import { rigComRituais } from '../../core/rituais.js';
 import { desenharComVirais } from '../shared/virais-desenho.js';
 import { rigComTimers } from '../../core/timer-anims.js';
 import { rigComClima } from '../../core/clima-anims.js';
@@ -84,7 +85,7 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComClima(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))))))));
+  rig = new RigRenderer(rigComClima(rigComRituais(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))))))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
@@ -649,7 +650,7 @@ function draw(now) {
   if (relogio && !relogio.frente) relogio.desenhar();
   // Virais: cópias do JoJo e pixel art só durante a animação; senão é o desenho de sempre.
   desenharComVirais(rig, ctx, pose, sample, { origin: { x: box.x, y: box.y }, scale, facing, alpha: s.opacity });
-  // Luz de noite (0.47.6): tom azulado só sobre o que já foi desenhado; sai de manhã.
+  // Luz de noite (0.47.7): tom azulado só sobre o que já foi desenhado; sai de manhã.
   if (s.luzNoite > 0) {
     ctx.save();
     ctx.globalCompositeOperation = 'source-atop';

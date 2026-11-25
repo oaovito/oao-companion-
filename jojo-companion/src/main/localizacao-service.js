@@ -1,4 +1,4 @@
-// Localização real no Windows (0.47.6). Entrega ao companion:
+// Localização real no Windows (0.47.7). Entrega ao companion:
 // - fontes: Windows (System.Device GeoCoordinateWatcher via PowerShell, uma leitura e para),
 //   rede/IP (GeoJS, só como alternativa marcada como aproximada), cidade escrita (Open-Meteo
 //   geocoding, já usado pela previsão) e nome do lugar (BigDataCloud, coordenada arredondada);

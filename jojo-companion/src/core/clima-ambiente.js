@@ -1,4 +1,4 @@
-// Clima de verdade em volta do JoJo (0.47.6): condição atual pela localização real →
+// Clima de verdade em volta do JoJo (0.47.7): condição atual pela localização real →
 // reação visual opcional (guarda-chuva, tremedeira, leque, susto com trovão) e luz de noite.
 // Lógica pura; a consulta (Open-Meteo, cache de 30 min) e o relógio vêm de fora.
 // Nada aqui muda a aparência permanente do JoJo: tudo é animação que termina ou luz que sai.

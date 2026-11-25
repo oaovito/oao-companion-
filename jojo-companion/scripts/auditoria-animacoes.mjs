@@ -35,6 +35,10 @@ function gatilhos(anims, catalog) {
       if (g.estado) partes.push(`estado ${g.estado}`);
       // Virais (0.47.4): tocam por acontecimento real pelo GerenciadorVirais (refeição, conquista, erro…).
       if ((g.viral || []).length) partes.push(`viral (${g.viral.join('/')})`);
+      // Timers (0.47.5): tocam pelo GerenciadorTimers, na fase do timer (início, pausa, fim…).
+      if ((g.timer || []).length) partes.push(`timer (${g.timer.join('/')})`);
+      // Clima (0.47.7): tocam quando a condição do tempo muda (chuva, frio, calor, tempestade, neve, noite).
+      if ((g.clima || []).length) partes.push(`clima (${g.clima.join('/')})`);
       if (new RegExp(`['"\`]${it.id}['"\`]`).test(codigo)) partes.push('código (conversa/foco/evento)');
       out[name] = partes.length ? partes.join(', ') : 'só por nome (/anim)';
     } else {

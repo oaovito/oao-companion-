@@ -1,4 +1,4 @@
-// Localização real e clima em volta do JoJo (0.47.6): métodos do Companion.
+// Localização real e clima em volta do JoJo (0.47.7): métodos do Companion.
 // - Localização: GerenciadorLocalizacao (src/core/localizacao.js); as fontes chegam do main
 //   em `companion.locFontes` (Windows, rede/IP, cidade escrita e nome do lugar).
 // - Clima ambiente: uma consulta por hora no máximo (cache de 30 min no WeatherService),

@@ -55,9 +55,12 @@ import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitize
 import { DILDO_MS, ATADURA_MS, CANAIS_ATADURA, FALAS_DILDO } from './dildo.js';
 import { BALOES_ESTEROIDE } from './esteroide.js';
 import { GerenciadorVirais, viralDoTexto } from './virais.js';
+import { falaDoRitual } from './rituais.js';
+
 import { AnimeCalendario, episodiosNovos, visualDoAnime, normTitulo, ANIME_MAX } from './anime-calendario.js';
 import { aplicarNivel, vestirVisual, melhorConjunto, canaisVisual, acharVisual, sanitizeVisual, avisoVisual, marcarVistos, pecaLiberada, visuaisLiberados, FALAS_VISUAL, visuaisComAnimacao } from './visual-nivel.js';
 import { memeDoTexto, animDoMeme, itensDeMemes } from './memes-br.js';
+const CADERNINHO_MS = 4500; // a raiva do xingamento termina antes do caderninho abrir
 
 const TOOLBAR_SIZE = { width: 382, height: 50 };
 // O que um tubarão come (peso no sorteio). Gente só de vez em quando.
@@ -352,7 +355,7 @@ export class Companion {
     this._scheduleReminderCheck(20000);
     // Timers salvos: recupera uma vez (política em src/core/timers.js) e volta a contar.
     this._timersStart();
-    // Localização real e clima (0.47.6): primeira consulta só se ela autorizou.
+    // Localização real e clima (0.47.7): primeira consulta só se ela autorizou.
     this._climaStart();
     // Visuais que o nível acumulado já liberou: avisa logo depois da chegada.
     this.clock.setTimeout(() => this._avisarVisuais(), 9000);
@@ -1755,6 +1758,8 @@ export class Companion {
     if (delayed) this.say(reply.text, 'speech');
     else if (reply.web) this.fireEvent('respostaPronta', { speak: false });
     // A expressão do que ela sente já está tocando: a resposta só fala junto.
+    // Identidade (dono/Deus/ajoelhar/blasfêmia): a animação que mostra quem ele é; sem ela, a ação de sempre.
+    else if (reply.anim && !emocao && this._animIdentidade(reply.anim)) { /* a animação da identidade já está tocando */ }
     else if (reply.action && !emocao) this._doChatAction(reply.action, now);
     else this._beginTalking(reply.text, now);
     // A conversa online entendeu um pedido de comando que as frases programadas não pegaram.
@@ -2262,6 +2267,20 @@ export class Companion {
     this._applyLayout(true);
   }
 
+  /** Caderninho da Vingança depois da raiva (só com o JoJo livre e as provocações ligadas). */
+  _caderninho() {
+    if (!this.started || this.store.get().provocacoes === false || this.game) return false;
+    if (!this.playCatalog('id_vinganca', { source: 'chat', speak: false })) return false;
+    this.say(falaDoRitual('id_vinganca', profileVars(this.personality.get(), 'brincadeira').nome), 'speech', { category: 'identidade' });
+    return true;
+  }
+
+  /** Animação da identidade pedida pela resposta (catálogo ou Protocolo do Divino João). */
+  _animIdentidade(id) {
+    if (/^pk_/.test(id)) return !!(this.store.get().pacoteJoao && this.playPack(id, { source: 'chat', falar: false }));
+    return this.playCatalog(id, { source: 'chat', speak: false });
+  }
+
   _doChatAction(action, now) {
     if (this.work || this.fullscreenHidden || this.dragging || this.avoid.state === 'fleeing' || this.avoid.state === 'hidden') return;
     if (action === 'boaNoite') {
@@ -2600,6 +2619,9 @@ export class Companion {
     }
     // Provocação repetida (2ª em 5 min): o JoJo responde com presença de anime; a 1ª é só raiva.
     if (intent === 'insult') this.insultos = [...(this.insultos || []).filter((t) => this.clock.now() - t < 5 * 60e3), this.clock.now()];
+    // Primeira provocação: a raiva vem primeiro (resposta de sempre); passada a raiva, ele anota no
+    // Caderninho da Vingança (vingatividade cômica). Nada disso com as provocações desligadas.
+    if (intent === 'insult' && this.insultos.length === 1 && s.provocacoes !== false) this.clock.setTimeout(() => this._caderninho(), CADERNINHO_MS);
     if (intent === 'insult' && s.pacoteAnime && this.insultos.length >= 2) {
       const ids = ['pk_menacing', 'pk_dominio', 'pk_serio'];
       return tenta(ids[Math.floor(this.rng() * ids.length) % ids.length]);
@@ -5274,5 +5296,5 @@ export { PRIORITY };
 
 // Timers interativos (0.47.5): métodos em src/core/companion-timers.js.
 instalarTimers(Companion);
-// Localização real e clima (0.47.6): métodos em src/core/companion-clima.js.
+// Localização real e clima (0.47.7): métodos em src/core/companion-clima.js.
 instalarClima(Companion);

@@ -1,4 +1,4 @@
-// Localização real e clima (0.47.6): fontes com autorização, intervalo, fallback por rede
+// Localização real e clima (0.47.7): fontes com autorização, intervalo, fallback por rede
 // marcado como aproximado, só a última localização, fuso, clima com cache e reações
 // opcionais que respeitam Trabalho/foco/tela cheia.
 import test from 'node:test';

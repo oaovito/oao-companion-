@@ -143,8 +143,8 @@ const XINGAMENTO = /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic
 const CORPO_DELA = /\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\blevanta (?:essa|a) bunda\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/;
 const FATOS_DA_VIDA = /\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura)\b/g;
 // Termos carinhosos ou românticos: o JoJo nunca chama a Emanuele assim.
-const CARINHO = "meu amor|minha amada|amorzinho|amor|meu bem|minha querida|querida|querido|meu caro|minha linda|lindinha|linda|fofinha|fofa|gatinha|gata|princesa|meu anjo|anjinho|benzinho|mozão|mozao|minha vida|vida|docinho|minha flor|bebê|bebe|baby|babe|honey|sweetheart|sweetie|darling|my love|love|dear";
-const CARINHO_FRASE = /\b(?:meu amor(?! (?:pel[oa]s?|por|ao?s?)\b)|minha amada|amorzinho|minha querida|meu anjo|minha vida|benzinho|mozao|sweetheart|darling|my love)\b/;
+const CARINHO = "meu amor|minha estrela|estrelinha|meu tesouro|minha joia|minha rainha|minha princesa|minha amada|amorzinho|amor|meu bem|minha querida|querida|querido|meu caro|minha linda|lindinha|linda|fofinha|fofa|gatinha|gata|princesa|meu anjo|anjinho|benzinho|mozão|mozao|minha vida|vida|docinho|minha flor|bebê|bebe|baby|babe|honey|sweetheart|sweetie|darling|my love|love|dear";
+const CARINHO_FRASE = /\b(?:meu amor(?! (?:pel[oa]s?|por|ao?s?)\b)|minha amada|amorzinho|minha querida|meu anjo|minha vida|minha estrela|estrelinha|meu tesouro|minha joia|minha rainha|minha princesa|benzinho|mozao|sweetheart|darling|my love)\b/;
 const INSULTO = 'insulto à usuária ou à pergunta';
 const FATO = 'inventou fato da vida dela';
 
@@ -156,6 +156,10 @@ const FATO = 'inventou fato da vida dela';
  * `quando(q, ctx)`: a regra só vale nesse contexto (q = fala dela normalizada).
  * `minimo`: o que sobra precisa ter pelo menos isso, senão a frase fica e a guarda recusa.
  */
+// Aparelhos dela (teclado, computador, celular...): reação sobre "o meu desktop" é trocar de dono.
+const APARELHOS = '(?:teclado|computador|desktop|notebook|pc|mouse|monitor|celular|telefone|tela|fone|laptop)s?';
+const APARELHO = new RegExp(`\\b${APARELHOS}\\b`);
+const APARELHO_DELE = new RegExp(`\\b(?:meu|minha|meus|minhas)(?: \\w+)? ${APARELHOS}\\b`);
 const REGRAS_FRASE = [
   { motivo: INSULTO,
     frase: (f) => DESDEM.test(f) || MENOSPREZO.test(f)
@@ -181,7 +185,12 @@ const REGRAS_FRASE = [
   // Fato da vida dela que ela não contou (prazo amanhã, relatório, reunião).
   { motivo: FATO, frase: (f, c) => (f.match(FATOS_DA_VIDA) || []).some((w) => !c.contado.includes(w)) },
   // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
-  { motivo: 'inventou conversa que não houve', quando: (q, c) => !c.jojoFalou, frase: (f) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) },
+  // Run 287: "eu te avisei que ele era incompetente" com o JoJo tendo falado de outras coisas antes também é
+  // inventado; só vale se uma fala anterior dele já tocou no que ele diz ter avisado.
+  { motivo: 'inventou conversa que não houve', frase: (f, c) => AVISO.test(f) && avisoInventado(f, c) },
+  // Run 289: "Derrubei café no teclado" → "um desastre para o meu desktop": o aparelho dela vira dele.
+  { motivo: 'respondeu como se fosse com ele', quando: (q) => APARELHO.test(q) && !/\b(?:voce|vc|tu|jojo|teu|tua|seu|sua)\b/.test(q),
+    frase: (f) => APARELHO_DELE.test(f) },
   // Erro de saúde que já apareceu: diabetes com "falta de glicose" (é o contrário: glicose alta) (run 280).
   { motivo: 'erro de saúde (diabetes não é falta de glicose)', quando: (q, c) => /\bdiabet/.test(c.contado),
     frase: (f) => /\b(?:falta de glicose|glicose baixa|baixa (?:de )?glicose|diminui a glicose|reduz a glicose)\b/.test(f) },
@@ -190,7 +199,18 @@ const REGRAS_FRASE = [
 // Reticências ("sua... estrutura física") não terminam a frase.
 const frasesDe = (t) => String(t || '').split(/(?<=[!?]|(?<!\.)\.)\s+/);
 function contextoRegras(input, history = []) {
-  return { contado: norm([input, ...history.map((h) => h.text)].join(' ')), jojoFalou: history.some((h) => h.role === 'jojo' || h.role === 'assistant') };
+  const dele = history.filter((h) => h.role === 'jojo' || h.role === 'assistant');
+  return { contado: norm([input, ...history.map((h) => h.text)].join(' ')), jojoFalou: dele.length > 0, jojoDisse: norm(dele.map((h) => h.text).join(' ')) };
+}
+
+// "Eu te avisei", "já te falei" (run 292: "Já te falei pra ele que não aceito essa palhaçada").
+const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/;
+/** "Eu te avisei (que X)": inventado se nenhuma fala anterior dele tocou em X (sem X: se ele nunca falou). */
+function avisoInventado(f, c) {
+  if (!c.jojoFalou) return true;
+  const resto = f.split(AVISO)[1] || '';
+  const termos = resto.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
+  return termos.length > 0 && !termos.some((t) => c.jojoDisse.includes(t));
 }
 
 /** Primeira regra de frase (das que recusam) que a resposta quebra, ou null. */
@@ -290,6 +310,11 @@ export function relatoSemAssunto(input, output) {
 }
 
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
+/** Ela pediu para não ter piada ("sem piada", "sem brincadeira", "fala sério", "no jokes"). */
+export function recusouPiada(input) {
+  return /\b(?:sem|nada de|chega de|para de|pare de|nao quero) (?:piada|piadinha|brincadeira|gracinha|zoeira)s?\b|\bno jokes?\b|\b(?:not|no) joking\b/.test(norm(input));
+}
+
 export function erroDeCoerencia(input, output, history = []) {
   const q = norm(input);
   const r = norm(output);
@@ -312,6 +337,8 @@ export function erroDeCoerencia(input, output, history = []) {
   if (/\b(?:meu|minha|meus|minhas)\b/.test(q) && !/\?/.test(String(input)) && /\bnao me (?:diga|conta|fala) mais\b|\balgo que (?:valha a pena|realmente (?:importe|interesse)|importe|interesse)\b|\bchega (?:desse|disso)\b|\bmuda (?:de|o) assunto\b/.test(r)) return 'cortou o desabafo dela';
   // Pediu piada e ele devolveu pergunta ("Que piada você quer?").
   if (/\b(?:fala|conta|me conta|diz|faz|manda) (?:uma |um )?(?:piada|trocadilho)\b|\btell (?:me )?a joke\b/.test(q) && (/\?\s*$/.test(String(output).trim()) && String(output).length < 70 || /\bque piada (?:e essa|voce quer|quer)\b|\bme (?:diz|conta|fala) (?:logo|voce)\b|\bque tipo de piada\b/.test(r))) return 'não contou a piada';
+  // Ela recusou piada ("só quero conversar, sem piada agora") e ele insiste em humor (runs 289 e 291).
+  if (recusouPiada(input) && /\b(?:piada|piadinha|humor|brincadeira|rir|risada|engracad\w*|joke|funny)\b/.test(r.replace(/\b(?:sem|nada de|chega de|no) (?:piada|piadinha|brincadeira|humor|jokes?)s?\b/g, ''))) return 'insistiu em piada depois de ela recusar';
   const recall = correcaoPessoal(input) || (/\?|^(?:qual|quais|what|which)\b/i.test(String(input)) && /\b(?:lembra\w*|disse|falei|acabei de dizer|remember|said|mention\w*)\b/.test(q));
   const memoryComparison = /\b(?:memoria|memory)\b/.test(r) && /\b(?:minha|meu|my|mine)\b/.test(r) && /\b(?:sua|seu|tua|teu|your|yours)\b/.test(r)
     && /\b(?:confund\w*|confus\w*|compar\w*|melhor|pior|superior|inferior|better|worse)\b/.test(r);

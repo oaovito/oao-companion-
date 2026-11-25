@@ -4,6 +4,7 @@ import { packItems } from '../pacotes.js';
 import { itensVirais } from '../virais.js';
 import { itensTimers } from '../timer-anims.js';
 import { itensClima } from '../clima-anims.js';
+import { itensRituais } from '../rituais.js';
 
 export function fullCatalog(read) {
   const base = read('assets/catalog/animacoes.json');
@@ -13,5 +14,5 @@ export function fullCatalog(read) {
   const living = read('assets/catalog/living-interactions.json');
   const foco = read('assets/catalog/foco-animations.json');
   const discord = read('assets/catalog/discord-animations.json');
-  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens, ...discord.itens, ...itensVirais(), ...itensTimers(), ...itensClima()], pacotes, foco: { trocaMin: foco.trocaMin } };
+  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens, ...discord.itens, ...itensVirais(), ...itensTimers(), ...itensRituais(), ...itensClima()], pacotes, foco: { trocaMin: foco.trocaMin } };
 }

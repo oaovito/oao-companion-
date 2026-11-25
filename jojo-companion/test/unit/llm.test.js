@@ -324,3 +324,30 @@ test('exemplo técnico pede o caso clássico, coerente com a explicação, sem f
   await p.reply({ text: 'me dá um exemplo', professor: 'MODO PROFESSOR\nAssunto em andamento: "o que é diabetes tipo 2?"', followup: { kind: 'exemplo', topic: 'o que é diabetes tipo 2?' } });
   assert.match(calls[0].messages[0].content, /most common, textbook case, consistent with the explanation already given.*do not invent physiology/);
 });
+
+test('run 287: recusada por não falar do que ela contou, a nova geração recebe as palavras dela', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => {
+      calls.push(JSON.parse(options.body));
+      return { ok: true, text: async () => JSON.stringify({ message: { content: 'Que droga, Manu! Chefe que muda prazo toda hora cansa. Reorganiza a entrega.' } }) };
+    },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'Meu chefe mudou o prazo de novo.', corrigir: 'não falou do que ela contou' });
+  assert.match(calls[0].messages[0].content, /must use her own words about it \(chefe, mudou, prazo\)/);
+  await p.reply({ text: 'Meu chefe mudou o prazo de novo.', corrigir: 'respondeu como se fosse com ele' });
+  assert.doesNotMatch(calls[1].messages[0].content, /her own words about it/);
+});
+
+test('runs 289 e 291: ela recusou piada, o prompt pede zero humor', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => { calls.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: 'Fala, Manu. Tô ouvindo. O que tá pegando?' } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'Só quero conversar, sem piada agora.' });
+  assert.match(calls[0].messages[0].content, /She asked for no jokes\. Zero humor/);
+  await p.reply({ text: 'Só quero conversar agora.' });
+  assert.doesNotMatch(calls[1].messages[0].content, /She asked for no jokes/);
+});

@@ -71,7 +71,7 @@ function render(i) {
   }
 }
 
-// ---------------- Localização e clima (0.47.6): estado sem coordenadas
+// ---------------- Localização e clima (0.47.7): estado sem coordenadas
 const CLIMA_TXT = { chuva: 'chovendo', tempestade: 'tempestade', neve: 'nevando', frio: 'frio', calor: 'calor' };
 function renderLocalizacao(i) {
   const l = i.localizacao;

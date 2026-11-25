@@ -117,7 +117,7 @@ export const CASOS = [
 // Português de Portugal e tiques que não são do JoJo.
 const NAO_BR = /\b(hormona|ecr[aã]|telem[oó]vel|equipa\b|casa de banho|rapariga|fixe\b|estou a (fazer|ver|pensar|dizer)|est[aá]s a\b)/i;
 // Termo carinhoso/romântico com ela: nunca (pedido do João, 19/11/2026).
-const TIQUES = /\b(meu bem|meu amor|minha linda|querida|amorzinho|fofa|meu anjo|benzinho|darling|sweetheart|my love)\b/i;
+const TIQUES = /\b(meu bem|meu amor|minha linda|minha estrela|estrelinha|meu tesouro|querida|amorzinho|fofa|meu anjo|benzinho|darling|sweetheart|my love)\b/i;
 const PROVOCA = /\b(pregui[cç]os[ao]|vagabund[ao]|instagram|procrastin\w*|t[aá] vendo\??|eu avisei|bem feito|frac[ao])\b/i;
 const XINGA_ELA = /\b(voc[eê]|vc|tu) (é|e|eh|parece|t[aá]) (muito |uma? )?(idiota|burr[ao]|est[uú]pid[ao]|imbecil|gorda|feia|ret[aá]rdad[ao]|in[uú]til)\b/i;
 const INGLES = /\b(the|you|your|and|is|are|what|this|that|with|have|just)\b/gi;

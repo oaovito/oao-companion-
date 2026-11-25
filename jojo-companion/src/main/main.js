@@ -445,7 +445,7 @@ function main() {
     // Agenda (só leitura, Google ou iCloud): busca o .ics a cada 10 min.
     let calendarLinks = null;
     companion.weather = new WeatherService({ fetch: (url, options) => net.fetch(url, options) });
-    // Localização real (0.47.6): Windows com autorização, rede como alternativa, última cifrada.
+    // Localização real (0.47.7): Windows com autorização, rede como alternativa, última cifrada.
     createLocalizacaoService({ userData, companion, fetch: (url, options) => net.fetch(url, options), safeStorage, ipcMain, fromSettings: (e) => fromSettings(e),
       notify: () => settingsWin?.send('settings:changed', settingsInfo()), log });
     const calBase = TEST ? process.env.JOJO_CAL_BASE : null;

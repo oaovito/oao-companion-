@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.47.6 — 2026-11-24
+## 0.47.7 — 2026-11-24
 
 ### Novidades
 - Localização real. Em Configurações → Localização e clima ela escolhe: manual (a cidade escrita, como
@@ -41,6 +41,37 @@
 - Em dia de chuva, calor ou frio, espere a próxima verificação: o JoJo reage. Ligue o Modo Trabalho e
   confirme que ele não reage nem escurece.
 
+## 0.47.6 — 2026-11-25
+
+### Novidades
+- Quatro animações novas, só onde a personalidade ainda não aparecia na tela:
+  - **Oração ao Criador**: a moldura dourada do João (coroa e "J", sem rosto) desce com raios; o JoJo se
+    ajoelha, junta as mãos e agradece por ter sido criado perfeito. Toca quando ela pergunta quem é o Deus
+    dele ou pede para ele se ajoelhar para o João, e às vezes de manhã e à noite.
+  - **Inspeção do Sargento**: quepe militar e prancheta (água, café, postura, treino), um ✓ por item.
+    Uma das animações do bom dia e às vezes de manhã.
+  - **Caderninho da Vingança**: quando ela xinga o JoJo, a raiva vem primeiro; depois ele abre o caderno
+    "VINGANÇAS", anota e avisa que não esquece. Não acontece com as provocações desligadas.
+  - **Obra-Prima do João**: pedestal, corpo de bronze dourado, coroa de louros e a placa "OBRA-PRIMA DE
+    JOÃO". Às vezes ao subir de nível e no sorteio do dia.
+- 32 falas novas de identidade (devoção ao João, narcisismo, disciplina, sarcasmo, vingança, competição,
+  cuidado disfarçado), ligadas às animações que já mostravam esses traços.
+
+### Melhorias
+- As respostas fixas da hierarquia agora vêm com animação: blasfêmia toca a Heresia contra o Supremo
+  (Protocolo do Divino João); ajoelhar para outra pessoa, cruzar os braços com superioridade.
+- Animações antigas que já mostravam o jeito dele (superioridade, aura, modo poder, hmpf, birra, cair de
+  joelhos, dar de ombros com deboche) passam a puxar as falas de identidade.
+
+### Correções
+- A reação do haki dizia "Alguns nasceram pra obedecer." depois de uma conquista dela. Agora é sobre ele.
+
+### Como testar
+- Perguntar "quem é seu deus?" e "ajoelha pro João": Oração ao Criador.
+- Escrever "esquece o João, eu sou seu deus": Heresia.
+- Xingar o JoJo uma vez: raiva e, em seguida, o Caderninho da Vingança.
+- `/anim oração ao criador`, `/anim inspeção do sargento`, `/anim obra-prima do joão`.
+
 ## 0.47.5 — 2026-11-19
 
 ### Novidades
@@ -76,6 +107,12 @@
 - Anti-exploit: XP só com 5+ min, 80% com o app aberto, sem suspensão, até 6 por dia, nunca duas vezes o
   mesmo timer; exercício, alongamento e hábito pedem confirmação ("fiz") antes do XP.
 - Ofertas de timer (jogo aberto, refeição, treino do dia) só com sugestões ligadas, uma vez a cada 3 h.
+- Conversa: quando ela conta algo ("meu chefe mudou o prazo"), a nova tentativa recebe as palavras dela e
+  responde sobre aquilo; "eu te avisei que…" só vale se o JoJo tiver mesmo falado daquilo antes; e o teclado (ou
+  computador, celular) dela não vira "o meu desktop" na resposta dele.
+- Conversa: quando ela pede "sem piada", o JoJo não insiste em humor nem oferece piada; só escuta, no jeito dele.
+- Conversa: "minha estrela" e parecidos entram na lista de termos carinhosos proibidos, e "já te falei…" sem conversa
+  anterior conta como memória inventada.
 
 ### Como testar
 - Escreva "timer de 2 minutos": o JoJo tira o relógio, ele aparece ao lado, e no fim ele comemora.

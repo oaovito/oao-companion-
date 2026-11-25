@@ -143,7 +143,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   timer), 48 animações `cat_tm01`–`cat_tm48` com o relógio na mão (`timer-anims.js`, canais `tm*`, peças `tm_*`) e o
   relógio desenhado no overlay (`renderer/shared/relogio-desenho.js`; clique pausa e arrasto move só no modo de
   interação). Trabalho/foco: discreto e mudo; tela cheia: some. Doc `jojo-companion/docs/TIMERS.md`.
-- **Localização real e clima** (0.47.6): `src/core/localizacao.js` (manual/automática/desligada; Windows por PowerShell
+- **Localização real e clima** (0.47.7): `src/core/localizacao.js` (manual/automática/desligada; Windows por PowerShell
   só com autorização dela, rede/IP como alternativa aproximada; intervalo 15 min–12 h; só a última, cifrada), clima
   ambiente (`clima-ambiente.js`, Open-Meteo 1×/h) com 12 reações `cat_cl01`–`cl12` (`clima-anims.js`) e luz de noite;
   fuso da localização confiável vira o do processo principal. Doc `jojo-companion/docs/LOCALIZACAO.md`.

@@ -27,6 +27,15 @@ test('toda reação do catálogo tem gatilho natural (ambiente, frase, evento, p
   assert.deepEqual(orfas, []);
 });
 
+test('a auditoria do Windows reconhece todo tipo de gatilho usado no catálogo', () => {
+  // O gate "animations" do CI reprova o que ela marca como "só por nome"; ela precisa ler os mesmos campos.
+  const script = fs.readFileSync(new URL('../../scripts/auditoria-animacoes.mjs', import.meta.url), 'utf8');
+  // "horario" só restringe quando o gatilho ambiente vale; não é um caminho próprio.
+  const chaves = new Set(catalog.itens.flatMap((it) => Object.keys(it.gatilho || {})).filter((k) => k !== 'horario'));
+  const faltam = [...chaves].filter((k) => !new RegExp(`g\\.${k}\\b`).test(script));
+  assert.deepEqual(faltam, []);
+});
+
 test('reações recuperadas: o que ela sente na conversa vira expressão do JoJo', async () => {
   const { makeEnv, chatAdv } = await import('./helpers.js');
   for (const [frase, id] of [['que nojo disso', 'nojo'], ['passei vergonha hoje', 'envergonhado'], ['que medo daquele filme', 'assustado'], ['que saco esse trânsito', 'irritadoLeve'], ['tô nervosa com a prova', 'nervoso']]) {
