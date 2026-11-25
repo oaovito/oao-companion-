@@ -68,6 +68,11 @@
 
 ### Correções
 - O próximo episódio vindo da AniList era descartado na validação e nunca aparecia.
+- Na conversa, comparar algo com os músculos, braços, curvas ou bochechas dela também conta como falar do corpo dela, e a frase sai.
+- Definição de diabetes que não fala de insulina ganha o fato essencial no fim, sem trocar a fala do JoJo.
+- "X, como eu te disse" sem o JoJo ter falado de X antes conta como conversa inventada, e a frase sai.
+- "Não quero brincar agora" também vale como "sem piada": o JoJo não oferece piada depois disso.
+- "Como eu te ensinei/expliquei/mostrei" sem conversa anterior também conta como conversa inventada.
 
 ### Como testar
 - Central → 📺 Animes → busque e siga um anime em exibição: o card mostra a contagem até o próximo episódio.

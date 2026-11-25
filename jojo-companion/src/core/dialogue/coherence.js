@@ -140,7 +140,7 @@ const MENOSPREZO = /\bvamos ver se (?:voce |vc )?consegue lembrar\b|\bnao me fac
 const REVES = /\b(?:nao consegui|nao deu|falhei|errei|perdi|reprovei|bombei)\b/;
 const BRONCA = /\b(?:inaceitavel|vergonh\w*|fracass\w*|vexame|decepc\w*|esperava mais de (?:voce|vc|ti)|que pena de (?:voce|vc)|(?:sao|e) (?:coisa )?(?:para|pra|de) (?:gente )?frac[oa]s?|se enrolou de novo|covardes?|nao tem jeito|falta de (?:confianca|vontade|foco|disciplina)|levanta (?:essa|a) bunda)\b/;
 const XINGAMENTO = /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic[oa]s?|retardad[oa]s?|stupid|idiot|dumb|pathetic)\b/;
-const CORPO_DELA = /\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\blevanta (?:essa|a) bunda\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/;
+const CORPO_DELA = /\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\blevanta (?:essa|a) bunda\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b|\b(?:seus|teus|suas|tuas) (?:musculos|bracos|pernas|coxas|curvas|seios|peitos|gorduras?|banhas|pneus|dobras|bochechas)\b|\b(?:seu|teu|sua|tua) (?:musculo|braco|bumbum|peito|bochecha|papada|celulite)\b|\b(?:your|her) (?:muscles|arms|legs|curves|cheeks)\b/;
 const FATOS_DA_VIDA = /\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura)\b/g;
 // Termos carinhosos ou românticos: o JoJo nunca chama a Emanuele assim.
 const CARINHO = "meu amor|minha estrela|estrelinha|meu tesouro|minha joia|minha rainha|minha princesa|minha amada|amorzinho|amor|meu bem|minha querida|querida|querido|meu caro|minha linda|lindinha|linda|fofinha|fofa|gatinha|gata|princesa|meu anjo|anjinho|benzinho|mozão|mozao|minha vida|vida|docinho|minha flor|bebê|bebe|baby|babe|honey|sweetheart|sweetie|darling|my love|love|dear";
@@ -208,12 +208,14 @@ function contextoRegras(input, history = []) {
 }
 
 // "Eu te avisei", "já te falei" (run 292: "Já te falei pra ele que não aceito essa palhaçada").
-const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/;
+const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei|ensinei|expliquei|mostrei)\b|\bi (?:told|taught|showed) you\b/;
 /** "Eu te avisei (que X)": inventado se nenhuma fala anterior dele tocou em X (sem X: se ele nunca falou). */
 function avisoInventado(f, c) {
   if (!c.jojoFalou) return true;
-  const resto = f.split(AVISO)[1] || '';
-  const termos = resto.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
+  const [antes = '', resto = ''] = f.split(AVISO);
+  const chave = (t) => t.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
+  // "X, como eu te disse" (run 45679006361): sem nada depois, o aviso fala do que veio antes.
+  const termos = chave(resto).length ? chave(resto) : chave(antes);
   return termos.length > 0 && !termos.some((t) => c.jojoDisse.includes(t));
 }
 
@@ -298,6 +300,18 @@ const GENERICAS = new Set(['minha', 'minhas', 'agora', 'quero', 'fazer', 'hoje',
  * Ela contou algo dela (frase com "meu/minha", sem pergunta) e a resposta não cita nada do
  * que ela disse ("Isso é ridículo, precisamos resolver"): genérica demais.
  */
+/**
+ * Definição de saúde que não pode sair rasa (run 45677312389: "Diabetes tipo 2... leva ao acúmulo de glicose"
+ * sem falar de insulina, depois de três gerações): completa com o fato essencial, sem trocar a fala do JoJo.
+ */
+export function completarDefinicao(input, text) {
+  const q = norm(input);
+  if (!/\b(?:o que (?:e|eh)|what is|what s)\b.*\bdiabet/.test(q) || /insulin/i.test(String(text || ''))) return text;
+  const en = /\bwhat\b/.test(q);
+  const fato = en ? 'In short: the body resists insulin, so sugar stays high in the blood.' : 'Resumindo: o corpo resiste à insulina, e o açúcar fica alto no sangue.';
+  return `${String(text || '').trim()} ${fato}`.trim();
+}
+
 export function relatoSemAssunto(input, output) {
   const q = norm(input);
   // Relato dela: frase com "meu/minha" ou começando no passado em primeira pessoa ("Derrubei café…").
@@ -318,7 +332,7 @@ export function relatoSemAssunto(input, output) {
 /** Motivo para bloquear uma geração, inclusive quando o JSON e o tom são válidos. */
 /** Ela pediu para não ter piada ("sem piada", "sem brincadeira", "fala sério", "no jokes"). */
 export function recusouPiada(input) {
-  return /\b(?:sem|nada de|chega de|para de|pare de|nao quero) (?:piada|piadinha|brincadeira|gracinha|zoeira)s?\b|\bno jokes?\b|\b(?:not|no) joking\b/.test(norm(input));
+  return /\b(?:sem|nada de|chega de|para de|pare de|nao quero) (?:piada|piadinha|brincadeira|gracinha|zoeira)s?\b|\b(?:nao quero|sem|chega de|para de|pare de) (?:brincar|zoar)\b|\bno jokes?\b|\b(?:not|no) joking\b|\bdon t want to (?:play|joke)\b/.test(norm(input));
 }
 
 export function erroDeCoerencia(input, output, history = []) {

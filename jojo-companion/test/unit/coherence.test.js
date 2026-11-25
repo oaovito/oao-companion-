@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, semConselhoPessoal, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, completarDefinicao, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, semConselhoPessoal, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -934,4 +934,36 @@ test('run 45595965155: "garoto" é tratar ela no masculino; o vocativo sai', asy
   // Run 45601517691: "Mas não espere que eu me pinte, bobo!"
   assert.doesNotMatch(limparResposta('Minha cor preferida é verde.', 'Verde, hein? Mas não espere que eu me pinte, bobo!'), /bobo/);
   assert.equal(erroDeCoerencia('oi', 'Bobo! Presta atenção.'), 'tratou ela no masculino');
+});
+
+test('run 45675227159: "como seus músculos" também é o corpo dela; os músculos dele continuam livres', () => {
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Uma cor vibrante, como seus músculos, Manu.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are sleek, like your curves.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Combina com os meus músculos, Manu.'), null);
+});
+
+test('run 45677312389: definição de diabetes sem insulina ganha o fato essencial', () => {
+  const t = completarDefinicao('o que é diabetes tipo 2?', 'Erm, na verdade... Diabetes tipo 2, você pergunta? Isso leva ao acúmulo de glicose no sangue, causando problemas.');
+  assert.match(t, /^Erm, na verdade/);
+  assert.match(t, /insulina/);
+  assert.equal(completarDefinicao('o que é diabetes tipo 2?', 'É resistência à insulina.'), 'É resistência à insulina.');
+  assert.match(completarDefinicao('what is type 2 diabetes?', 'A sugar thing.'), /insulin/);
+  assert.equal(completarDefinicao('meu chefe mudou o prazo', 'Que droga.'), 'Que droga.');
+});
+
+test('run 45679006361: "X, como eu te disse" sem ele ter dito X é conversa inventada', () => {
+  const hist = [{ role: 'user', text: 'Hoje consegui terminar meu projeto.' }, { role: 'jojo', text: 'Demorou, mas você conseguiu.' }];
+  assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Organização é a chave, como eu te disse, não é?', hist), 'inventou conversa que não houve');
+  const disse = [...hist, { role: 'jojo', text: 'Organização é a chave do treino.' }];
+  assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Organização é a chave, como eu te disse, não é?', disse), null);
+});
+
+test('run 45680496368: "não quero brincar agora" também recusa piada', () => {
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Entendo, Manu. Sem brincadeiras, então. Que tal uma piada sobre procrastinação?'), 'insistiu em piada depois de ela recusar');
+  assert.equal(erroDeCoerencia('Não quero brincar agora.', 'Entendo, Manu. Sem brincadeiras, então. Foco no que precisa.'), null);
+});
+
+test('run 45682127411: "como eu te ensinei" sem ele ter falado disso também é conversa inventada', () => {
+  const hist = [{ role: 'user', text: 'Hoje consegui terminar meu projeto.' }, { role: 'jojo', text: 'Demorou, mas você conseguiu.' }];
+  assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Mas não se desespere, a persistência é fundamental, como eu te ensinei.', hist), 'inventou conversa que não houve');
 });
