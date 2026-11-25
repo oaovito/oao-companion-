@@ -23,6 +23,8 @@
 - Sincronização adaptativa: mais frequente perto de um lançamento, rara quando nada está no ar, com recuo em erro.
 - Horários sempre no fuso de Brasília, com previsões marcadas como previsão.
 - A lista antiga de animes seguidos migra sozinha, sem avisar de novo episódio já avisado.
+- As animações de anime de manobra e ninja ganharam a medida certa da janela, sem corte nas bordas.
+- A auditoria de animações reconhece o gatilho de anime.
 
 ### Correções
 - O próximo episódio vindo da AniList era descartado na validação e nunca aparecia.
