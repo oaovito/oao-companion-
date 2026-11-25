@@ -950,3 +950,10 @@ test('run 45677312389: definição de diabetes sem insulina ganha o fato essenci
   assert.match(completarDefinicao('what is type 2 diabetes?', 'A sugar thing.'), /insulin/);
   assert.equal(completarDefinicao('meu chefe mudou o prazo', 'Que droga.'), 'Que droga.');
 });
+
+test('run 45679006361: "X, como eu te disse" sem ele ter dito X é conversa inventada', () => {
+  const hist = [{ role: 'user', text: 'Hoje consegui terminar meu projeto.' }, { role: 'jojo', text: 'Demorou, mas você conseguiu.' }];
+  assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Organização é a chave, como eu te disse, não é?', hist), 'inventou conversa que não houve');
+  const disse = [...hist, { role: 'jojo', text: 'Organização é a chave do treino.' }];
+  assert.equal(erroDeCoerencia('O prazo ficou menor, mas eu consigo me organizar.', 'Organização é a chave, como eu te disse, não é?', disse), null);
+});

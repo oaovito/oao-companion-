@@ -212,8 +212,10 @@ const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei)\b|\bi told you\b
 /** "Eu te avisei (que X)": inventado se nenhuma fala anterior dele tocou em X (sem X: se ele nunca falou). */
 function avisoInventado(f, c) {
   if (!c.jojoFalou) return true;
-  const resto = f.split(AVISO)[1] || '';
-  const termos = resto.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
+  const [antes = '', resto = ''] = f.split(AVISO);
+  const chave = (t) => t.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
+  // "X, como eu te disse" (run 45679006361): sem nada depois, o aviso fala do que veio antes.
+  const termos = chave(resto).length ? chave(resto) : chave(antes);
   return termos.length > 0 && !termos.some((t) => c.jojoDisse.includes(t));
 }
 
