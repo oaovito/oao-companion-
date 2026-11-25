@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "03c6ea6f5c1bdcfcde0d7cc865e7d610642f6b49",
+  "runId": "45680496368",
+  "attempt": "1",
+  "digest": "ce18585f12cc56c7b4c1d2b52658b53e6bb6ac634bab3d606afb567f917b1262",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado pelo critério do João. Grave: E20 \"Não quero brincar agora.\" → \"Sem brincadeiras, então. Que tal uma piada sobre procrastinação?\" ignora o que ela pediu e se contradiz na mesma resposta. Leves: E28 \"fala logo o que te aflige, tubarão\" (vocativo estranho); E9 oferece piada sem ela pedir; U2 \"garota\"; E15/E16 marcador [1]."
+}
