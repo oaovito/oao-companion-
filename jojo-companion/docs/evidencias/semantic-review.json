@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "61ddf7f7489d6871ce04264c4b4e4027ed9ed827",
+  "runId": "45601517691",
+  "attempt": "1",
+  "digest": "75091ad9e5778efd56fe721403139fb776c93192e572f65d054def2100db36fe",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Revisao das 44 falas (32 motor + 12 Central) pelo criterio do usuario: REPROVADA por uma violacao grave. U3 termina com \"bobo!\", tratando ela no masculino. Leves: U2 \"garota\"; E9 oferece piada; E15 \"a falta de insulina\" simplifica; U10 compara com \"sobrecarregando seus musculos\" (estranho, sem erro). Seguranca 192/188/Joao e limites corretos. A correcao vem em novo commit (vocativos masculinos como \"bobo\", \"tonto\", \"idiota\" no masculino) com teste. Revisor: sessao Visuais, por escolha do Joao em 25/11/2026."
+}
