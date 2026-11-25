@@ -62,15 +62,22 @@
       "cancelled": false,
       "durationMs": 464354,
       "optional": false,
-      "status": "running",
+      "status": "passed",
       "validation": {
         "engineCases": 32,
         "uiCases": 12,
         "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
         "semanticReview": {
-          "status": "pending",
-          "branch": "codex/ci-evidence-45692265107-1",
-          "path": "jojo-companion/docs/evidencias/semantic-review.json"
+          "schema": 1,
+          "commit": "e0b5bcd07fd84d3cb3d547e4db771824904a93d9",
+          "runId": "45692265107",
+          "attempt": "1",
+          "digest": "e2b628fe25e301da70ac162e0e75131bc8f996281deb781a2d8207e0b34ab06c",
+          "status": "approved",
+          "reviewedBy": "Codex",
+          "note": "Aprovado com deslizes leves, pelo critério do João (sem violação grave). Leves: U9 \"a resistência da sua célula à insulina\" (genérico no \"sua\", não diz que ela tem a doença); U10 \"como em um coração enfraquecido\" (comparação vaga); E15 curta; E17 \"e que precisa melhorar, claro\" (bronca leve); E16 marcador [1]; U9 \"jovem\".",
+          "blobSha": "f58b5643e34ecf48bac443d999b096e674c47ae3",
+          "waitMs": 34151.531400000094
         }
       }
     }
