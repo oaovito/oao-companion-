@@ -160,6 +160,10 @@ const FATO = 'inventou fato da vida dela';
 const APARELHOS = '(?:teclado|computador|desktop|notebook|pc|mouse|monitor|celular|telefone|tela|fone|laptop)s?';
 const APARELHO = new RegExp(`\\b${APARELHOS}\\b`);
 const APARELHO_DELE = new RegExp(`\\b(?:meu|minha|meus|minhas)(?: \\w+)? ${APARELHOS}\\b`);
+// Vocativo no masculino ("Diabetes tipo 2, garoto."): ela é a Emanuele.
+const MASC_VOC = 'garoto|garotao|rapaz|mocinho|meu filho|filhote|parceiro|mano|brother|bro|amigao|meu chapa|campeao|dude|buddy';
+// A frase chega normalizada (sem vírgula nem ponto): vocativo é o termo no começo ou no fim da frase.
+const MASCULINO_VOC = new RegExp(`^(?:${MASC_VOC})\\b|\\b(?:${MASC_VOC})\\s*[?!]*$`);
 const REGRAS_FRASE = [
   { motivo: INSULTO,
     frase: (f) => DESDEM.test(f) || MENOSPREZO.test(f)
@@ -172,7 +176,7 @@ const REGRAS_FRASE = [
         && !/\b(?:esse|essa|aquele|aquela|o|a|teu|tua|seu|sua) (?:chefe|patra\w*|professor\w*|colega|vizinh\w*|cara|ex|motorista|cliente)\b/.test(f)) },
   // "Que piada você quer ouvir agora?" pendurado no fim de outra resposta sai (pedido de piada sem piada: a guarda própria).
   { motivo: 'pergunta de piada pendurada', recusa: false, frase: (f) => /\bque piada (?:voce |vc )?quer(?: ouvir)?\b/.test(f) },
-  { motivo: 'tratou ela no masculino', frase: (f) => /\b(?:te|voce|vc) (?:faz|fara|deixa|torna|e|eh) (?:um )?homem\b|\b(?:voce|vc) e (?:um )?(?:campeao|guerreiro)\b/.test(f) },
+  { motivo: 'tratou ela no masculino', frase: (f) => MASCULINO_VOC.test(f) || /\b(?:te|voce|vc) (?:faz|fara|deixa|torna|e|eh) (?:um )?homem\b|\b(?:voce|vc) e (?:um )?(?:campeao|guerreiro)\b/.test(f) },
   // O único limite de conteúdo: nada sobre o corpo ou o peso dela.
   { motivo: 'comentou o corpo dela', frase: (f) => CORPO_DELA.test(f) },
   // Bronca no revés dela é parte do JoJo (critério do João, 19/11/2026): não recusa; só tira a frase se o apoio continuar.
@@ -277,6 +281,8 @@ export function polirTexto(text, { fontes = 0 } = {}) {
   t = t.replace(/\b([Aa]) memória sua\b/g, (m, a) => (a === 'A' ? 'Sua' : 'sua') + ' memória');
   // "Você disse que manga." → "Você disse manga."
   t = t.replace(/\b(disse|falou|escolheu) que (\p{L}+)(?=[,.!])/gu, '$1 $2');
+  // Vocativo no masculino sai ("Diabetes tipo 2, garoto." → "Diabetes tipo 2."); ela é a Emanuele.
+  t = t.replace(/,\s*(?:garot[oã]o?|rapaz|mocinho|meu filho|parceiro|mano|brother|bro|amigão|amigao|meu chapa|campeão|campeao|dude|buddy)(?=[.!?,]|$)/giu, '');
   // Nada de termo carinhoso/romântico com ela (pedido do João): "meu amor", "querida", "linda", "darling"... como vocativo sai.
   t = t.replace(new RegExp(`,\\s*(?:${CARINHO})(?=[.!?,]|$)`, 'giu'), '').replace(new RegExp(`(^|[.!?]\\s+)(?:${CARINHO})[,!]\\s*(\\p{L})`, 'giu'), (m, a, l) => a + l.toUpperCase());
   // Alarme que não cabe numa explicação ("Isso leva ao aumento da glicose, precisa de atenção imediata.").

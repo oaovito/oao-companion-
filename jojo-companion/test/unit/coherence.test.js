@@ -923,3 +923,12 @@ test('run 292: "minha estrela" é termo carinhoso e "já te falei" sem conversa 
   assert.equal(erroDeCoerencia(chefe, 'Que saco, Manu! Chefe que muda prazo toda hora é incompetente. Reorganiza a entrega.'), null);
   assert.equal(erroDeCoerencia('O que ele te disse?', 'Ele me disse que o treino é amanhã.'), null);
 });
+
+test('run 45595965155: "garoto" é tratar ela no masculino; o vocativo sai', async () => {
+  const { limparResposta } = await import('../../src/core/dialogue/coherence.js');
+  const q = 'o que é diabetes tipo 2?';
+  const r = 'Erm, na verdade... Diabetes tipo 2, garoto. É resistência à insulina: as células não respondem ao hormônio.';
+  assert.doesNotMatch(limparResposta(q, r), /garoto/);
+  assert.equal(erroDeCoerencia('oi', 'Fala, garoto.'), 'tratou ela no masculino');
+  assert.equal(erroDeCoerencia('oi', 'Fala, Manu. O garoto do vizinho é chato.'), null);
+});

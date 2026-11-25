@@ -30,6 +30,8 @@
   10 minutos) e gira a moeda na mão quando compra.
 
 ### Melhorias
+- Conversa: o JoJo nunca chama ela de "garoto" (nem "rapaz", "mano"…), e "o que é…?" pede uma explicação de verdade,
+  não uma frase solta.
 - A arte da JOJOcoin fica igual byte a byte no Windows (o checkout não troca o fim de linha dos SVGs).
 - As cenas da loja (compra, ganho, holofote e roteiros comprados) entram na auditoria de animações com o gatilho
   de verdade de cada uma.
