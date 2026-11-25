@@ -23,8 +23,11 @@ function ambiente({ xp = 0, seed = 7, t0 = DIA, state = null } = {}) {
   let t = t0;
   const progress = new Progress({ data: PROG, state: { xp, escalaXp: PROG.escalaXp }, now: () => t, wallNow: () => t, monotonicNow: () => t, rng: seededRng(seed) });
   const carteira = { saldo: 0, ids: new Set(), creditar({ id, valor }) { if (this.ids.has(id)) return { ok: true, duplicado: true, creditado: 0 }; this.ids.add(id); this.saldo += valor; return { ok: true, creditado: valor, saldo: this.saldo }; } };
-  const salvos = [];
-  const rpg = new Rpg({ state, save: (s) => salvos.push(JSON.stringify(s)), award: (r) => progress.award(r), creditar: (r) => carteira.creditar(r), nivel: () => progress.nivel, xpTotal: () => progress.st.xp, threshold: (n) => progress.threshold(n), now: () => t, rng: seededRng(seed), clockHealthy: () => true });
+  // Só a última gravação, serializada quando o teste lê: guardar todas estourava a memória do Windows
+  // na simulação de 365 dias.
+  let ultimo = null;
+  const salvos = { at: () => JSON.stringify(ultimo) };
+  const rpg = new Rpg({ state, save: (s) => { ultimo = s; }, award: (r) => progress.award(r), creditar: (r) => carteira.creditar(r), nivel: () => progress.nivel, xpTotal: () => progress.st.xp, threshold: (n) => progress.threshold(n), now: () => t, rng: seededRng(seed), clockHealthy: () => true });
   return { rpg, progress, carteira, salvos, avancar: (ms) => { t += ms; progress.resetRewardClock(); }, get t() { return t; } };
 }
 const xpDoNivel = (n) => new Progress({ data: PROG }).threshold(n);
