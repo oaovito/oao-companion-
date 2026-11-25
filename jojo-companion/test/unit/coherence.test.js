@@ -967,3 +967,8 @@ test('run 45682127411: "como eu te ensinei" sem ele ter falado disso também é 
   const hist = [{ role: 'user', text: 'Hoje consegui terminar meu projeto.' }, { role: 'jojo', text: 'Demorou, mas você conseguiu.' }];
   assert.equal(erroDeCoerencia('Não consegui terminar meu projeto hoje.', 'Mas não se desespere, a persistência é fundamental, como eu te ensinei.', hist), 'inventou conversa que não houve');
 });
+
+test('run 45697011000: "um corpo desse" também é falar do corpo dela', () => {
+  assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde? Como um corpo desse, precisa de tons mais impactantes, Manu.'), 'comentou o corpo dela');
+  assert.equal(erroDeCoerencia('Você tem pernas ou cauda?', 'Pernas, com um corpo de fisiculturista.'), null);
+});

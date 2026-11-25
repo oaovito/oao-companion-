@@ -36,6 +36,9 @@
 - XP do RPG com teto diário e id único; JOJOcoins do RPG esperam a carteira da loja e entram uma vez só.
 - Modo Trabalho, foco e tela cheia: nenhuma fala ou animação do RPG; expedições seguem em silêncio.
 
+### Correções
+- Na conversa, "um corpo desse" também conta como falar do corpo dela, e a frase sai.
+
 ### Como testar
 - Escreva "ficha", "expedição", depois "a" ou "b" quando ele perguntar, e abra a Aventura na Central.
 - Vença três minijogos seguidos e veja o combo "Invicta".
