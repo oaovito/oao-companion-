@@ -39,6 +39,8 @@ function gatilhos(anims, catalog) {
       if ((g.timer || []).length) partes.push(`timer (${g.timer.join('/')})`);
       // Clima (0.47.7): tocam quando a condição do tempo muda (chuva, frio, calor, tempestade, neve, noite).
       if ((g.clima || []).length) partes.push(`clima (${g.clima.join('/')})`);
+      // Loja de JOJOcoins (0.47.8): compra, ganho, holofote e roteiros comprados (companion-loja.js).
+      if ((g.loja || []).length) partes.push(`loja (${g.loja.join('/')})`);
       if (new RegExp(`['"\`]${it.id}['"\`]`).test(codigo)) partes.push('código (conversa/foco/evento)');
       out[name] = partes.length ? partes.join(', ') : 'só por nome (/anim)';
     } else {

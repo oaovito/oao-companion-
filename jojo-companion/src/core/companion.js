@@ -27,6 +27,7 @@ import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyRem
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { instalarTimers } from './companion-timers.js';
 import { instalarClima, pedidoLocalizacao } from './companion-clima.js';
+import { instalarLoja } from './companion-loja.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
@@ -2792,7 +2793,8 @@ export class Companion {
     if (!this._refs) return null;
     const base = canaisVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, { outfit: this.outfit, fantasia: vestido ? null : this.costume, maoLivre: this._handFree() });
     // Episódio novo de anime: por 20 s ele veste o visual do anime (ou a faixa de otaku) por cima.
-    let out = base;
+    // Aparência momentânea (troca dinâmica): escolhida entre os autorizados; o salvo não muda.
+    let out = this._visualMomentoCanais ? this._visualMomentoCanais(base, { vestido }) : base;
     // Depois da pegadinha do consolo: uma hora com a cabeça enfaixada e o galo.
     if (this.dildoMarca && this.clock.now() < this.dildoMarca.ate) out = { ...(out || {}), ...CANAIS_ATADURA };
     const v = this.animeVisita;
@@ -5072,6 +5074,12 @@ export class Companion {
       // Lanternas penduradas na mão passam do pé.
       attachments.push({ rect: { x: r.box.x, y: r.box.y + r.box.height, width: r.box.width, height: COSTUME_FOOTROOM * s.size } });
     }
+    // Loja: decoração no chão e aura pedem espaço dos lados (a decoração não vira com ele).
+    const el = this._lojaEspaco ? this._lojaEspaco() : null;
+    if (el) {
+      const k = s.size;
+      attachments.push({ rect: { x: r.box.x - el.l * k, y: r.box.y - el.t * k, width: r.box.width + (el.l + el.r) * k, height: r.box.height + el.t * k } });
+    }
     // Jogo de bolhas: espaço em volta do JoJo para as bolhas.
     if (this.game && this.game.tipo === 'bolhas' && this.interaction) {
       const k = s.size;
@@ -5134,6 +5142,8 @@ export class Companion {
       outfit: this._outfitComNerd(vestido),
       // Visuais liberados por nível (só peças liberadas; a parte ocupada pela roupa ou fantasia fica com ela).
       visualNivel,
+      // Loja de JOJOcoins: decoração, aura, rastro, holofote, Megalodon e moedas animadas.
+      loja: this._lojaEstado ? this._lojaEstado() : null,
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
       sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
@@ -5237,8 +5247,9 @@ export class Companion {
     if (!canais || !tabela) return null;
     let out = null;
     for (const [ch, v] of Object.entries(canais)) {
-      if (!ch.startsWith('nv_') || v < 0.5) continue;
-      const e = tabela[ch.slice(3)];
+      if (v < 0.5 || !(ch.startsWith('nv_') || ch.startsWith('lj_'))) continue;
+      // Visual da loja de JOJOcoins: medido pelo nome do canal (lj_<id>).
+      const e = ch.startsWith('lj_') ? tabela[ch] : tabela[ch.slice(3)];
       if (!e) continue;
       out = out ? { l: Math.max(out.l, e.l), t: Math.max(out.t, e.t), r: Math.max(out.r, e.r), b: Math.max(out.b, e.b) } : { ...e };
     }
@@ -5298,3 +5309,5 @@ export { PRIORITY };
 instalarTimers(Companion);
 // Localização real e clima (0.47.7): métodos em src/core/companion-clima.js.
 instalarClima(Companion);
+// Loja de JOJOcoins e troca dinâmica de visuais: src/core/companion-loja.js.
+instalarLoja(Companion);

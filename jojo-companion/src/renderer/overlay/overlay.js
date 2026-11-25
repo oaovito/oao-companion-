@@ -12,6 +12,8 @@ import { rigComRituais } from '../../core/rituais.js';
 import { desenharComVirais } from '../shared/virais-desenho.js';
 import { rigComTimers } from '../../core/timer-anims.js';
 import { rigComClima } from '../../core/clima-anims.js';
+import { rigComLoja } from '../../core/loja-arte.js';
+import { LojaFx } from './loja-fx.js';
 import { desenharRelogio, desenharAnel, leituraRelogio, posicaoRelogio, tamanhoNoQuadro } from '../shared/relogio-desenho.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
 import { Effects } from '../shared/effects.js';
@@ -44,6 +46,7 @@ let animator = null;
 let localBadges = {};
 let rig = null;
 let effects = new Effects();
+let lojaFx = new LojaFx();
 let facing = 1;
 let facingTarget = 1;
 let turnStart = -1;
@@ -85,8 +88,10 @@ async function init() {
   localBadges = assets.localBadges || {};
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
-  rig = new RigRenderer(rigComClima(rigComRituais(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))))))));
+  // Loja de JOJOcoins: visuais, objetos, aura e forma Megalodon (peças só com o canal ligado).
+  rig = new RigRenderer(rigComLoja(rigComClima(rigComRituais(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))))))))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
+  lojaFx = new LojaFx({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
   animator = new Animator(assets.animations);
   api.onAnimationCheck(request => {
@@ -466,7 +471,7 @@ function targetFps() {
   if (state.anim === 'sleep') return 15;
   // Modo Trabalho: meditação lenta, poucos quadros (leve e discreto).
   if (state.work) return state.moving ? 30 : 8;
-  if (turnStart >= 0 || effects.busy || state.effect || state.talking || state.interaction) return 30;
+  if (turnStart >= 0 || effects.busy || lojaFx.busy || state.effect || state.talking || state.interaction) return 30;
   return 24;
 }
 
@@ -589,6 +594,9 @@ function draw(now) {
   // para nada ficar por cima da fantasia nem brigar com a pele do personagem.
   const fantasiaInteira = ehAnimFantasia(sample.name);
   if (s.visualNivel && !fantasiaInteira) Object.assign(pose, s.visualNivel);
+  // Loja de JOJOcoins: aura lendária pulsando e forma Megalodon por cima do visual.
+  const lojaPose = lojaFx.pose(s, now, reduced);
+  if (lojaPose) Object.assign(pose, lojaPose);
   // Movimento dos visuais: barrigona e papada balançam, moscas voam, suor escorre,
   // baba estica, aura pulsa, bolhas sobem, brilhos piscam, fogo tremula. Parado no movimento reduzido.
   if ((s.visualNivel || fantasiaInteira) && !reduced) Object.assign(pose, movimentoVisual(now / 1000, sample.name));
@@ -645,6 +653,14 @@ function draw(now) {
     ctx.restore();
   }
 
+  // Loja: holofote e decorações atrás do JoJo; rastro de brilho no chão por onde ele anda.
+  if (s.loja) {
+    lojaFx.desenharHolofote(ctx, s, box, scale);
+    lojaFx.desenharDecor(ctx, s, box, scale, 1, now, reduced);
+    lojaFx.rastrear(s, box, scale, now, reduced);
+    lojaFx.desenharRastro(ctx, s, scale, now);
+    lojaFx.eventos(s, now, reduced, { x: box.x + box.width / 2, y: box.y + head.y * scale, chao: box.y + rig.ground * scale });
+  }
   // Relógio dos timers: atrás do JoJo quando ele segura/senta/encosta; na frente quando parado.
   const relogio = s.relogio ? quadroRelogio(s, pose, box, scale, now) : null;
   if (relogio && !relogio.frente) relogio.desenhar();
@@ -665,6 +681,8 @@ function draw(now) {
   if (reduced) effects.particles.length = 0;
   effects.draw(ctx, now, { mark, head, mouth: rig.rig.metrics.mouth, facingSign: fs });
   ctx.restore();
+  // JOJOcoins voando (ganho, compra, chuva, festa) por cima de tudo.
+  lojaFx.desenharMoedas(ctx, s, scale, now);
 }
 
 /**

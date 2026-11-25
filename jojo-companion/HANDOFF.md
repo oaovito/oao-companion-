@@ -1,5 +1,16 @@
 # HANDOFF — JoJo Companion
 
+## Loja de JOJOcoins, troca dinâmica de visuais e arte da moeda (não lançado) — 24/11/2026
+
+- Pronto só LOCAL no branch `claude/project-thread-lhzb98` (sobre a 0.47.5 `d1b23bd`). Publicar só na vez
+  certa da fila (issue #1): depois da 0.47.5, do Identidade/RPG e da 0.47.6. Juntar o publicado antes do push
+  único e dar o número de versão na seção do CHANGELOG ("versão definida na publicação").
+- Docs: `docs/LOJA.md` (economia, simulação, desempenho, reverter, catálogo), `docs/VISUAIS_DINAMICOS.md`,
+  `docs/ARTE_QUALIDADE.md` (regra permanente de arte e checagens automáticas).
+- O RPG credita JOJOcoins por `companion.loja.creditar({ id: 'rpg:...', valor, origem, rotulo })`.
+- Pendente de Windows: `scripts/measure.mjs` e os E2E com a loja aberta só rodam no CI do Windows.
+- Limite conhecido: no ritmo intenso o catálogo acaba em ~6 meses e o saldo acumula (ver LOJA.md).
+
 ## Rebolado refeito, Tigresa, liberados acessíveis e variação 50x (não lançado) — 18/11/2026
 
 - Rebolado refeito do GIF do Among Us (6 quadros de 40 ms): modelo próprio de costas em 3/4,

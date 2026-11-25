@@ -4,6 +4,7 @@ import { TodoView } from '../shared/todo-view.js';
 import { xpVisivel } from '../../core/xp-escala.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { CareView } from '../shared/care-view.js';
+import { LojaView, animarMoeda } from '../shared/loja-view.js';
 import { filterCommands } from '../shared/command-filter.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
@@ -20,6 +21,8 @@ let showingDarkest = false;
 let showingCuidados = false, lastCareRequest = 0;
 const xpView = new ProgressView($('progression'));
 const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho || st?.foco, animations: st?.todo?.settings.animations !== false }) });
+let showingLoja = false;
+const lojaView = new LojaView($('loja'), api);
 const careView = new CareView($('cuidados'), api, s => xpView.render(s, { quiet: st?.trabalho || st?.foco }));
 
 function chip(el, status, label) {
@@ -88,6 +91,9 @@ function render(s) {
   renderDarkest();
   $('cuidados').classList.toggle('hidden', !showingCuidados);
   if (showingCuidados) { $('convTitle').textContent = 'Cuidados e cardápio'; chip($('convStatus'), 'idle', ''); careView.refresh(); }
+  $('loja').classList.toggle('hidden', !showingLoja);
+  if (showingLoja) { $('convTitle').textContent = 'Loja de JOJOcoins'; chip($('convStatus'), 'idle', ''); }
+  else lojaView.fechar();
   xpView.render(s.colecao, { quiet: s.trabalho || s.foco, animations: s.todo?.settings.animations !== false });
 }
 
@@ -103,7 +109,7 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest || showingCuidados;
+  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest || showingCuidados || showingLoja;
   for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
@@ -516,4 +522,21 @@ api.onSelect((id) => select(id));
 api.state().then((s) => {
   render(s);
   input.focus();
+});
+
+// ---------------- loja de JOJOcoins (só carrega e anima enquanto aberta)
+// Qualquer outro botão da barra lateral ou conversa fecha a loja.
+$('side').addEventListener('click', (e) => { const b = e.target.closest('button, .item'); if (b && b.id !== 'lojaBtn' && showingLoja) { showingLoja = false; lojaView.fechar(); $('loja').classList.add('hidden'); } }, true);
+$('lojaBtn').addEventListener('click', async () => {
+  showingLoja = !showingLoja; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
+  render(await api.state());
+  if (showingLoja) await lojaView.abrir();
+});
+// A moeda do botão da loja gira e mostra +N/−N sempre que o saldo muda, mesmo com a loja fechada.
+let saldoLoja = null;
+api.loja({ action: 'resumo' }).then((r) => { if (Number.isInteger(r?.loja?.saldo)) saldoLoja ??= r.loja.saldo; }).catch(() => {});
+api.onLojaUpdate((s) => {
+  const novo = s?.loja?.saldo;
+  if (Number.isInteger(novo)) { if (saldoLoja != null && novo !== saldoLoja) animarMoeda($('lojaBtn'), saldoLoja, novo, { px: 16 }); saldoLoja = novo; }
+  if (showingLoja && s?.loja) lojaView.atualizar(s.loja);
 });

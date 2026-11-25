@@ -73,6 +73,10 @@ export const DEFAULTS = Object.freeze({
   viraisReduzir: false,         // reduzir efeitos visuais (versão suave, sem efeitos pesados)
   viraisIntensidade: 'normal',  // suave | normal | exagerado
   viraisBloqueadas: [],         // ids vrNN que ela bloqueou
+  // Troca dinâmica de visuais: o JoJo escolhe entre os visuais autorizados pelo contexto.
+  visualAuto: true,
+  visualFixo: null,             // id de visual fixado por ela (vence a troca automática)
+  lojaReacoes: true,            // JoJo comenta as compras da loja de JOJOcoins
   // Timers interativos (0.47.5): src/core/timers.js, src/core/companion-timers.js.
   timersAtivo: true,            // sistema inteiro
   timersVisivel: true,          // relógio na tela (esconder nunca para a contagem)
@@ -192,7 +196,7 @@ const ENUMS = {
   timersFrequencia: ['pouca', 'normal', 'muita'],
 };
 
-const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo', 'provocacoes', 'viraisAtivo', 'viraisAdulto', 'viraisNegro', 'viraisReduzir', 'timersAtivo', 'timersVisivel', 'timersAnimacoes', 'timersSugestoes', 'timersNotificar', 'timersAutoProximo', 'timersXp', 'timersClicavel', 'localizacaoRede', 'localizacaoFuso', 'climaReacoes', 'climaNoite'];
+const BOOLS = ['discordCloseOnFocus', 'discordForceClose', 'discordBloqueio', 'darkestAtivo', 'darkestSugestao', 'climaAtivo', 'allowDisplaySwitch', 'quietMode', 'startWithWindows', 'visible', 'paused', 'webSearch', 'autoUpdate', 'iaAtivo', 'surpresas', 'avisoRaros', 'falasAmbientes', 'lolBronca', 'spotifyReacoes', 'agendaAtiva', 'agendaSugerida', 'animacoesPesadas', 'trabalhoAtivo', 'trabalhoRestaurar', 'pacoteMemes', 'pacoteAnime', 'pacoteComida', 'pacoteNamorado', 'pacoteJoao', 'pacotesEspontaneos', 'cienciaModo', 'cienciaOculos', 'cienciaDentes', 'percepcaoTela', 'reboladoFoco', 'animeAtivo', 'provocacoes', 'viraisAtivo', 'viraisAdulto', 'viraisNegro', 'viraisReduzir', 'timersAtivo', 'timersVisivel', 'timersAnimacoes', 'timersSugestoes', 'timersNotificar', 'timersAutoProximo', 'timersXp', 'timersClicavel', 'localizacaoRede', 'localizacaoFuso', 'climaReacoes', 'climaNoite', 'visualAuto', 'lojaReacoes'];
 
 // Peso do sorteio ambiente (catálogo) frente aos comportamentos básicos.
 export const AMBIENT_WEIGHTS = { desligado: 0, pouca: 0.7, normal: 1.6, muita: 3.2 };
@@ -268,6 +272,10 @@ export function sanitize(input) {
     const ok = Array.isArray(src.viraisBloqueadas) ? [...new Set(src.viraisBloqueadas.filter((x) => typeof x === 'string' && /^vr\d{2}$/.test(x)))].slice(0, 50) : [];
     if (!Array.isArray(src.viraisBloqueadas) || ok.length !== src.viraisBloqueadas.length) issues.push('viraisBloqueadas');
     out.viraisBloqueadas = ok;
+  }
+  if ('visualFixo' in src) {
+    if (src.visualFixo === null || (typeof src.visualFixo === 'string' && /^[a-z]{2}\d{2,3}$/.test(src.visualFixo))) out.visualFixo = src.visualFixo;
+    else issues.push('visualFixo');
   }
   if ('timersAtividades' in src) out.timersAtividades = sanitizeAtividades(src.timersAtividades);
   if ('timersOffset' in src) out.timersOffset = sanitizeOffset(src.timersOffset);

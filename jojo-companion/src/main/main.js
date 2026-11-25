@@ -47,6 +47,7 @@ import { createFocusApps } from './focus-apps.js';
 import { createDiscordGuard } from './discord-guard.js';
 import { createWhatsAppService } from './whatsapp-service.js';
 import { WhatsAppWindow } from './whatsapp-window.js';
+import { createLojaService } from './loja-service.js';
 import { createNeedsService } from './needs-service.js';
 import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
@@ -425,6 +426,7 @@ function main() {
     let abrirTarefas = 0;
     let todoService = null;
     let darkestService = null;
+    let lojaService = null;
     let needsService = null;
     let focusApps = null;
     let discordGuard = null;
@@ -524,6 +526,12 @@ function main() {
     needsService = createNeedsService({ userData, companion, store, foods: assets.foods, balance: readJSON('assets/catalog/needs-balance.json'), ipcMain, fromApp, fromOverlay, log,
       notify: () => { if (needsService) appWin.send('app:needs-update', { needs: needsService.snapshot(), colecao: companion.progress.snapshot(new Date()), foco: !!companion.focus, trabalho: !!companion.work }); } });
     app.on('will-quit', () => needsService.close());
+    // Loja de JOJOcoins: carteira, compras e troca dinâmica de visuais (depois das necessidades, que recebem os efeitos).
+    try {
+      lojaService = createLojaService({ userData, companion, needsService, ipcMain, fromApp, readJSON, log,
+        notify: () => { if (lojaService) appWin.send('app:loja-update', { loja: lojaService.loja.resumo() }); } });
+      app.on('will-quit', () => lojaService.close());
+    } catch (e) { log('warn', `Loja de JOJOcoins indisponível: ${e.message}`); }
     focusApps = createFocusApps({ userData, companion, store,
       getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
       getFileIcon: file => app.getFileIcon(file, { size: 'small' }),
