@@ -79,6 +79,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
 - **Calendário de anime** (`/anime`, "me avisa quando sair episódio de X"): episódio novo de anime seguido → JoJo cumprimenta
   vestido do visual daquele anime (se liberado; senão faixa de otaku) por 20 s; espera Modo Trabalho/tela cheia; desligável
   (`animeAtivo`). Fonte AniList (o animeschedule.net exige token por app, proibido em app público).
+  Ecossistema (25/11/2026, `docs/ANIMES.md`): acompanhamento/alertas/fila (`anime-acompanhamento.js`), linguagem
+  (`anime-linguagem.js`), 16 pacotes + compositor e 156 animações `cat_anime_*` sem mudar a anatomia (`anime-pacotes.js`,
+  `anime-arte.js`, canal `animeOn`), JOJOcoins só pela `Loja.creditar` (`anime-recompensas.js`, estorno idempotente),
+  aba 📺 Animes, .ics; detecção de mídia SMTC opcional e desligada (`anime-deteccao.js`).
 - Agenda Google ou iCloud (link de calendário público, `webcal://` → https): JoJo sugere e guia ("conectar agenda"); avisos com animação do tipo de compromisso; "o que tenho hoje?".
 - Spotify: reage ao que toca (título da janela); LoL: mau humor e some enquanto aberto.
 - Docinho ("e se eu comer um docinho?" e variações): nojo esverdeado + "Quer se tornar uma aberração?". Desde 18/11/2026,
@@ -209,7 +213,7 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
    contatos (só nomes e números) ficam em `<userData>/whatsapp`; desconectar apaga sessão e contatos. A única
    saída é para o próprio WhatsApp. Detalhes: `jojo-companion/docs/WHATSAPP.md`.
    Saídas para a internet: **agenda Google ou iCloud** (só leitura, endereço secreto iCal do Google ou link público do iCloud colado por ela; busca a cada 10 min), **download do motor da conversa** (Ollama + Qwen 3.5 2B, uma vez; depois a conversa roda local), perguntas de
-   conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) o **calendário de anime** (AniList, grátis e sem login: só o nome buscado ao seguir e os ids dos animes seguidos saem; `src/core/anime-calendario.js`, `/anime`) e a
+   conhecimento (Wikipédia, DuckDuckGo, Europe PMC, Crossref, README público do MNE_Lab; só a consulta sai) o **calendário de anime** (AniList, grátis e sem login: só o nome buscado ao seguir e os ids dos animes seguidos saem, mais as capas do CDN da AniList; `src/core/anime-calendario.js`, `/anime`) e a
    **atualização automática** — todas desligáveis em Configurações. Gatilhos e segurança são locais. Integrações de IA só opcionais.
 5. **Silêncio absoluto**: nenhum som (sem áudio no código, janelas mutadas, sem opções de som);
    **"iniciar com o Windows" ligado por padrão** (desmarcável).

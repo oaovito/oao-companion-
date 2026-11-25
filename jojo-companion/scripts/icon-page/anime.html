@@ -1,0 +1,95 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>anime</title></head>
+<body style="margin:0;background:#fff">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+import { Animator } from '../../src/renderer/shared/animator.js';
+import { rigComAnime, NEUTRO_ANIME } from '../../src/core/anime-arte.js';
+import { rigComLoja } from '../../src/core/loja-arte.js';
+import { canaisDoPacote, paletaDoPacote, animAnime } from '../../src/core/anime-pacotes.js';
+// Prancha de revisão dos pacotes de anime: cada célula = pacote × contexto num instante.
+window.renderPacotes = (rigJson, animJson, celulas, cols, cell, bg) => {
+  const rig = new RigRenderer(rigComAnime(rigComLoja(rigJson)));
+  const c = document.createElement('canvas');
+  const rows = Math.ceil(celulas.length / cols);
+  c.width = cols * cell.w; c.height = rows * cell.h;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.font = '11px sans-serif';
+  celulas.forEach((ce, i) => {
+    const nome = ce.contexto ? 'cat_' + animAnime(ce.pacote.estilo, ce.contexto) : 'idle';
+    const a = new Animator({ ...animJson, channels: { ...animJson.channels, ...NEUTRO_ANIME } }, { rng: () => 0.5 });
+    a.play(animJson.animations[nome] ? nome : 'idle', 0, { variant: nome });
+    const dur = animJson.animations[nome]?.duration || 1000;
+    const s = a.sample(Math.round(dur * (ce.t ?? 0.5)));
+    const pose = { ...s.pose, ...canaisDoPacote(ce.pacote, ce.contexto), ...(ce.canais || {}) };
+    rig.extra = paletaDoPacote(ce.pacote);
+    const col = i % cols, row = Math.floor(i / cols);
+    const ox = col * cell.w + (cell.w - 180 * cell.s) / 2, oy = row * cell.h + cell.top;
+    rig.draw(ctx, pose, { origin: { x: ox, y: oy }, scale: cell.s, facing: 1 });
+    ctx.fillStyle = '#222'; ctx.fillText(ce.rotulo || ce.pacote.nome, col * cell.w + 4, row * cell.h + 12);
+  });
+  rig.extra = null;
+  return c.toDataURL('image/png');
+};
+// Medida do espaço (px além da caixa do JoJo): cada animação temática com cada pacote do
+// estilo dela (envelope), e cada pacote parado (ak:<id>), como no overlay.
+const O = 400, SIZE = 1000;
+function bbox(ctx, box) {
+  const d = ctx.getImageData(0, 0, SIZE, SIZE).data;
+  let x0 = SIZE, y0 = SIZE, x1 = -1, y1 = -1;
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (d[(y * SIZE + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 < 0) return { l: 0, t: 0, r: 0, b: 0 };
+  const c = (v) => Math.max(0, Math.ceil(v + 2));
+  return { l: c(O - x0), t: c(O - y0), r: c(x1 + 1 - (O + box.width)), b: c(y1 + 1 - (O + box.height)) };
+}
+const tela = () => { const c = document.createElement('canvas'); c.width = SIZE; c.height = SIZE; return c.getContext('2d', { willReadFrequently: true }); };
+window.medirAnime = (rigJson, animJson, pacotes) => {
+  const rig = new RigRenderer(rigComAnime(rigComLoja(rigJson)));
+  const box = rigJson.metrics.box;
+  const anims = { ...animJson, channels: { ...animJson.channels, ...NEUTRO_ANIME } };
+  const out = { anims: {}, pacotes: {} };
+  for (const [nome, anim] of Object.entries(animJson.animations)) {
+    const m = /^cat_anime_([a-z]+)_([a-zA-Z]+)(~\w+)?$/.exec(nome);
+    if (!m) continue;
+    const base = nome.replace(/~.*$/, '');
+    const ctx = tela();
+    for (const p of pacotes.filter((x) => x.estilo === m[1])) {
+      rig.extra = paletaDoPacote(p);
+      const a = new Animator(anims, { rng: () => 0.5 });
+      a.play(nome, 0, { variant: nome });
+      const dur = anim.duration || 1000;
+      const canais = canaisDoPacote(p, m[2]);
+      for (let i = 0; i <= 16; i++) rig.draw(ctx, { ...a.sample((dur * i) / 16).pose, ...canais }, { origin: { x: O, y: O }, scale: 1, facing: 1 });
+    }
+    const r = bbox(ctx, box), prev = out.anims[base];
+    out.anims[base] = prev ? { l: Math.max(prev.l, r.l), t: Math.max(prev.t, r.t), r: Math.max(prev.r, r.r), b: Math.max(prev.b, r.b) } : r;
+  }
+  for (const p of pacotes) {
+    const ctx = tela();
+    rig.extra = paletaDoPacote(p);
+    const a = new Animator(anims, { rng: () => 0.5 });
+    for (const t of [0, 400, 800, 1200]) { a.play('idle', 0, { restart: true }); rig.draw(ctx, { ...a.sample(t).pose, ...canaisDoPacote(p, null) }, { origin: { x: O, y: O }, scale: 1, facing: 1 }); }
+    out.pacotes[p.id] = bbox(ctx, box);
+  }
+  rig.extra = null;
+  return out;
+};
+// Custo de desenho de um quadro: rig sem e com as peças de anime (desligadas e com um pacote).
+window.benchDesenho = (rigJson, animJson, pacote, n = 1500) => {
+  const ctx = tela();
+  const anims = { ...animJson, channels: { ...animJson.channels, ...NEUTRO_ANIME } };
+  const medir = (rig, extra, canais) => {
+    const a = new Animator(anims, { rng: () => 0.5 }); a.play('idle', 0, { variant: 'idle' });
+    rig.extra = extra;
+    const t0 = performance.now();
+    for (let i = 0; i < n; i++) { ctx.clearRect(0, 0, SIZE, SIZE); rig.draw(ctx, { ...a.sample(i * 16).pose, ...canais }, { origin: { x: O, y: O }, scale: 1, facing: 1 }); }
+    return (performance.now() - t0) / n;
+  };
+  const sem = new RigRenderer(rigComLoja(rigJson));
+  const com = new RigRenderer(rigComAnime(rigComLoja(rigJson)));
+  medir(sem, null, {}); // aquecimento
+  return { semAnimeMs: medir(sem, null, {}), comPecasDesligadasMs: medir(com, null, {}), comPacoteMs: medir(com, paletaDoPacote(pacote), canaisDoPacote(pacote, 'conquista')) };
+};
+window.ready = true;
+</script></body></html>

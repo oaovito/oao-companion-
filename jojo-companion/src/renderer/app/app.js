@@ -5,6 +5,7 @@ import { xpVisivel } from '../../core/xp-escala.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { CareView } from '../shared/care-view.js';
 import { LojaView, animarMoeda } from '../shared/loja-view.js';
+import { AnimeView } from '../shared/anime-view.js';
 import { filterCommands } from '../shared/command-filter.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
@@ -23,6 +24,8 @@ const xpView = new ProgressView($('progression'));
 const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho || st?.foco, animations: st?.todo?.settings.animations !== false }) });
 let showingLoja = false;
 const lojaView = new LojaView($('loja'), api);
+const animeView = new AnimeView($('animes'), api);
+let showingAnimes = false;
 const careView = new CareView($('cuidados'), api, s => xpView.render(s, { quiet: st?.trabalho || st?.foco }));
 
 function chip(el, status, label) {
@@ -91,6 +94,9 @@ function render(s) {
   renderDarkest();
   $('cuidados').classList.toggle('hidden', !showingCuidados);
   if (showingCuidados) { $('convTitle').textContent = 'Cuidados e cardápio'; chip($('convStatus'), 'idle', ''); careView.refresh(); }
+  $('animes').classList.toggle('hidden', !showingAnimes);
+  if (showingAnimes) { $('convTitle').textContent = 'Animes'; chip($('convStatus'), 'idle', ''); }
+  else animeView.fechar();
   $('loja').classList.toggle('hidden', !showingLoja);
   if (showingLoja) { $('convTitle').textContent = 'Loja de JOJOcoins'; chip($('convStatus'), 'idle', ''); }
   else lojaView.fechar();
@@ -336,6 +342,7 @@ async function select(id) {
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
+  if (id === 'animes') { await abrirAnimes(); return; }
   if (id === 'colecao' || id === 'guardaRoupa') {
     showingColecao = id === 'colecao';
     showingGuarda = id === 'guardaRoupa';
@@ -528,10 +535,18 @@ api.state().then((s) => {
 // Qualquer outro botão da barra lateral ou conversa fecha a loja.
 $('side').addEventListener('click', (e) => { const b = e.target.closest('button, .item'); if (b && b.id !== 'lojaBtn' && showingLoja) { showingLoja = false; lojaView.fechar(); $('loja').classList.add('hidden'); } }, true);
 $('lojaBtn').addEventListener('click', async () => {
-  showingLoja = !showingLoja; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
+  showingLoja = !showingLoja; showingAnimes = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
   render(await api.state());
   if (showingLoja) await lojaView.abrir();
 });
+// ---------------- animes (calendário, sessões e JOJOcoins; só atualiza enquanto aberto)
+$('side').addEventListener('click', (e) => { const b = e.target.closest('button, .item'); if (b && b.id !== 'animesBtn' && showingAnimes) { showingAnimes = false; animeView.fechar(); $('animes').classList.add('hidden'); } }, true);
+async function abrirAnimes() {
+  showingAnimes = true; showingLoja = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
+  render(await api.state());
+  await animeView.abrir();
+}
+$('animesBtn').addEventListener('click', async () => { if (showingAnimes) { showingAnimes = false; render(await api.state()); } else await abrirAnimes(); });
 // A moeda do botão da loja gira e mostra +N/−N sempre que o saldo muda, mesmo com a loja fechada.
 let saldoLoja = null;
 api.loja({ action: 'resumo' }).then((r) => { if (Number.isInteger(r?.loja?.saldo)) saldoLoja ??= r.loja.saldo; }).catch(() => {});

@@ -11,6 +11,7 @@ import { rigComVirais } from '../../core/virais.js';
 import { desenharComVirais } from '../shared/virais-desenho.js';
 import { rigComTimers } from '../../core/timer-anims.js';
 import { rigComLoja } from '../../core/loja-arte.js';
+import { rigComAnime } from '../../core/anime-arte.js';
 import { LojaFx } from './loja-fx.js';
 import { desenharRelogio, desenharAnel, leituraRelogio, posicaoRelogio, tamanhoNoQuadro } from '../shared/relogio-desenho.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
@@ -87,7 +88,8 @@ async function init() {
   api.onBadges(icons => { localBadges = icons || {}; litterEl.replaceChildren(); if (state) renderNeeds(state); });
   // Peças dos visuais por nível entram no rig; cada uma só aparece com o canal dela ligado.
   // Loja de JOJOcoins: visuais, objetos, aura e forma Megalodon (peças só com o canal ligado).
-  rig = new RigRenderer(rigComLoja(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis))))))));
+  // Animes: roupa do kit, acessórios e efeitos dos pacotes temáticos (cores do pacote em rig.extra).
+  rig = new RigRenderer(rigComAnime(rigComLoja(rigComTimers(rigComVirais(rigComEsteroide(rigComDildo(rigComRebolado(rigComVisuais(assets.rig, assets.niveis)))))))));
   effects = new Effects({ ground: rig.ground, center: rig.box.width / 2 });
   lojaFx = new LojaFx({ ground: rig.ground, center: rig.box.width / 2 });
   effects.loadFoods(assets.foods || []);
@@ -592,6 +594,8 @@ function draw(now) {
   // para nada ficar por cima da fantasia nem brigar com a pele do personagem.
   const fantasiaInteira = ehAnimFantasia(sample.name);
   if (s.visualNivel && !fantasiaInteira) Object.assign(pose, s.visualNivel);
+  // Pacote de anime vestido: as cores dele valem só nas peças do pacote (chaves ak*).
+  rig.extra = s.anime?.paleta || null;
   // Loja de JOJOcoins: aura lendária pulsando e forma Megalodon por cima do visual.
   const lojaPose = lojaFx.pose(s, now, reduced);
   if (lojaPose) Object.assign(pose, lojaPose);

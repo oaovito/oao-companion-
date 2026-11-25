@@ -192,6 +192,25 @@ export class Loja {
     });
   }
 
+  /**
+   * Estorno de um crédito dado por engano (correção do histórico de anime): { id, valor, motivo }.
+   * Idempotente pelo `id` do crédito original (estornar duas vezes não desconta de novo) e
+   * nunca deixa o saldo negativo: desconta no máximo o que existe. Lança se a gravação falhar.
+   */
+  estornar({ id, valor, motivo = '' } = {}) {
+    if (typeof id !== 'string' || !id || id.length > 200 || !Number.isSafeInteger(valor) || valor < 0 || valor > 5000) throw new Error('Estorno de JOJOcoins inválido.');
+    const chave = `estorno:${id}`;
+    if (this.st.creditos?.[chave]) return { ok: true, duplicado: true, estornado: 0, saldo: this.st.saldo };
+    return this._mutar((st) => {
+      const n = Math.max(0, Math.min(valor, st.saldo));
+      st.creditos ||= {}; st.creditosOrdem ||= [];
+      st.creditos[chave] = this.dia(this.now()); st.creditosOrdem.push(chave);
+      while (st.creditosOrdem.length > LOJA_LIMITES.creditosGuardados) delete st.creditos[st.creditosOrdem.shift()];
+      if (n > 0) { st.saldo -= n; this._registrar(st, { tipo: 'estorno', valor: n, origem: String(motivo || 'Correção').slice(0, 80), credito: id }); }
+      return { ok: true, estornado: n, saldo: st.saldo };
+    });
+  }
+
   // ------------------------------------------------------------------ consultas
 
   possui(id) { return (this.st.inventario[id]?.qtd || 0) > 0 || !!this.st.inventario[id]?.permanente; }

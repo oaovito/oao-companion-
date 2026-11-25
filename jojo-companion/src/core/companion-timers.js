@@ -57,6 +57,7 @@ export function instalarTimers(Companion) {
           foco: () => this._timerFonteFoco(),
           agua: () => this._timerFonteLembrete('agua'),
           pausa: () => this._timerFonteLembrete('pausa'),
+          anime: () => (this._timerFonteAnime ? this._timerFonteAnime() : null),
         },
       });
       return this._timers;

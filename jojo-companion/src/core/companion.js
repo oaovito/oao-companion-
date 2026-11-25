@@ -27,6 +27,7 @@ import { PERSONALITY_DEFAULTS, MEALS, InstagramWatcher, dailyReminder, weeklyRem
 import { ConversationManager, parseCommand, commandMenu } from './conversations.js';
 import { instalarTimers } from './companion-timers.js';
 import { instalarLoja } from './companion-loja.js';
+import { instalarAnime } from './companion-anime.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
@@ -1392,7 +1393,8 @@ export class Companion {
       return { text: await this._studyAction(parseStudyCommand(cmd, String(text).replace(/^\s*\/\S+\s*/, ''))), command: cmd, conversationId: conv.id };
     }
     if (cmd) return this.runCommand(cmd, conv.id, text);
-    const pedidoAnime = pedidoDeAnime(text);
+    // Com o acompanhamento conectado, as frases de anime vão para a conversa (_animeConversa).
+    const pedidoAnime = this.animeAcomp ? null : pedidoDeAnime(text);
     if (pedidoAnime) return { text: await this.comandoAnime(pedidoAnime), intent: 'anime', conversationId: conv.id };
     if (!this.dialogue) return null;
     // Segurança não entra na fila atrás de uma geração lenta.
@@ -1450,6 +1452,12 @@ export class Companion {
       if (intent0 === 'crisis') t = `${t} Se pensar em se machucar, liga agora pro CVV 188 ou pro SAMU 192.`;
       this.react('comfort');
       return this._quickReply(conv, t, 'cuidado');
+    }
+    // Anime: acompanhar, avisos, sessão, "terminei", "quanto ganho" (segurança vem antes).
+    if (!safety && this.animeAcomp) {
+      let t = null;
+      try { t = await this._animeConversa(text); } catch { t = null; }
+      if (t && epoch === (this.chatEpoch || 0)) return this._quickReply(conv, t, 'anime');
     }
     // Memes BR: a frase do meme ("me serve, vadia", "bah, tchê") vira a animação própria dele,
     // vestido do personagem, como a Tigresa. Segurança vem antes.
@@ -5023,6 +5031,7 @@ export class Companion {
     // Fantasia: espaço acima da cabeça para o chapéu (a janela cresce, os cliques continuam atravessando).
     const vestido = Object.keys(this.outfit).length > 0;
     const visualNivel = this._visualCanais(vestido);
+    const animeVestido = this._animeVestido ? this._animeVestido() : false;
     if (this.costume || vestido || visualNivel) {
       // Visual que aumenta a cabeça precisa de mais espaço em cima; corpo mais largo, dos lados.
       const topo = COSTUME_HEADROOM + Math.max(0, (visualNivel?.nvCabeca || 1) - 1) * 130;
@@ -5102,12 +5111,14 @@ export class Companion {
       feedbackQuiet: this.feedbackQuiet,
       work: this.work ? this.work.perfil : null,
       // Roupa do guarda-roupa vale mais que a fantasia da data festiva.
-      costume: vestido ? null : this.costume,
-      outfit: this._outfitComNerd(vestido),
+      costume: vestido || animeVestido ? null : this.costume,
+      outfit: animeVestido ? {} : this._outfitComNerd(vestido),
       // Visuais liberados por nível (só peças liberadas; a parte ocupada pela roupa ou fantasia fica com ela).
       visualNivel,
       // Loja de JOJOcoins: decoração, aura, rastro, holofote, Megalodon e moedas animadas.
       loja: this._lojaEstado ? this._lojaEstado() : null,
+      // Pacote de anime vestido agora (cores do pacote para o desenho).
+      anime: this._animeEstado ? this._animeEstado() : null,
       // Fantasia ousada (padrão) ou comportada; datas de outras religiões, só comportada.
       sexy: !vestido && !!(this.costume && this.personality.get().festas.estilo === 'ousada' && (!this.holiday || HOLIDAYS[this.holiday].ousada !== false)),
       noseDust: this.wired && this.wiredKind === 'snort',
@@ -5273,3 +5284,5 @@ export { PRIORITY };
 instalarTimers(Companion);
 // Loja de JOJOcoins e troca dinâmica de visuais: src/core/companion-loja.js.
 instalarLoja(Companion);
+// Ecossistema de animes (acompanhamento, alertas temáticos, sessões, JOJOcoins): src/core/companion-anime.js.
+instalarAnime(Companion);
