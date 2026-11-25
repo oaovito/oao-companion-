@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "source": "oaovito/oao-companion-",
+  "version": "0.47.5",
+  "tag": "v0.47.5",
+  "commit": "4e2437efe6d420bac8ccaa1ffa85011dd4d6455a",
+  "platform": "win32",
+  "arch": "x64",
+  "node": "22.23.4",
+  "windows": "10.0.26100",
+  "executor": "github-hosted",
+  "runId": "45554035951",
+  "startedAt": "2026-11-25T05:30:45.094Z",
+  "status": "running",
+  "steps": [
+    {
+      "id": "preflight",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 3974,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 12799,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 11877,
+      "optional": false,
+      "status": "passed"
+    },
+    {
+      "id": "unit",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 51647,
+      "optional": false,
+      "status": "passed",
+      "validation": {
+        "tests": 804,
+        "pass": 804,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "conversation",
+      "exitCode": 0,
+      "timedOut": false,
+      "cancelled": false,
+      "durationMs": 463400,
+      "optional": false,
+      "status": "running",
+      "validation": {
+        "engineCases": 32,
+        "uiCases": 12,
+        "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
+        "semanticReview": {
+          "status": "pending",
+          "branch": "codex/ci-evidence-45554035951-1",
+          "path": "jojo-companion/docs/evidencias/semantic-review.json"
+        }
+      }
+    }
+  ],
+  "files": [],
+  "evidence": {
+    "branch": "codex/ci-evidence-45554035951-1",
+    "conversationPath": "jojo-companion/docs/evidencias/conversation-live.json",
+    "validationPath": "jojo-companion/docs/evidencias/validation-live.json",
+    "reviewPath": "jojo-companion/docs/evidencias/semantic-review.json"
+  }
+}
