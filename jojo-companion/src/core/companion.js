@@ -252,7 +252,7 @@ export class Companion {
     // Antitédio: progressão/coleções, rotinas e mini-jogos (assets/catalog/*.json).
     const at = antitedio || {};
     this.rotinas = (at.rotinas && at.rotinas.rotinas) || [];
-    this.games = at.minijogos ? new Games({ data: at.minijogos, rng }) : null;
+    this.games = at.minijogos ? new Games({ data: at.minijogos, rng, nivel: () => this.progress?.nivel || 1, contexto: () => this.rpgJogoContexto?.() || {} }) : null;
     this.progress = new Progress({
       data: at.progressao || { niveis: ['Sardinha'], xpPorNivel: 60, xp: {}, acessorios: [], conquistas: [], missoes: [], areas: [] },
       state: this.variety.state.prog,
@@ -1526,6 +1526,9 @@ export class Companion {
     if (!safety && this.careChat) {
       const reply = this.careChat(text); if (reply) return this._quickReply(conv, reply, 'cuidados');
     }
+    if (!safety && this.rpgChat) {
+      const reply = this.rpgChat(text); if (reply) return this._quickReply(conv, reply, 'rpg');
+    }
     if (!safety && ciencia !== 'emergencia' && this.livingChat) {
       const reply = await this.livingChat(text, { expectedGeneration: sceneGeneration });
       if (epoch !== (this.chatEpoch || 0)) return { cancelled: true, conversationId: conv.id };
@@ -1757,6 +1760,8 @@ export class Companion {
     else if (reply.linhaFontes) reply.text = `${reply.text} (${reply.linhaFontes})`;
     if (prefixo) reply.text = `${prefixo} ${reply.text}`;
     this.conversations.addMessage(conv.id, 'jojo', reply.text);
+    // RPG: pesquisa de verdade (com fontes) conta para o Pesquisador.
+    if ((reply.web || reply.linhaFontes) && !reply.webError) { try { this.onPesquisa?.(); } catch { /* nunca derruba a resposta */ } }
     if (reply.webError) this.conversations.setStatus(conv.id, 'blocked', `Pesquisa na internet falhou (${reply.webError}).`);
     else if (reply.error) this.conversations.setStatus(conv.id, 'blocked', `Conversa online indisponível (${reply.error}); respondi do meu jeito mesmo.`);
     else if (/\?\s*$/.test(reply.text)) this.conversations.setStatus(conv.id, 'needsInput', 'Pergunta esperando resposta.');
@@ -2172,6 +2177,10 @@ export class Companion {
       if (parte) return { text: this.daySummary(parte.tipo, new Date()), command: cmd, conversationId };
       this.fireEvent('parabens', { speak: false });
       return { text: this.progress.resumoDia(new Date()), command: cmd, conversationId };
+    }
+    if (cmd === 'aventura') {
+      if (this.onOpenApp) this.onOpenApp('aventura');
+      return { text: this.rpg ? `${this.rpgChat?.('ficha') || ''} Abri a Aventura na Central.`.trim() : 'A Aventura ainda está carregando.', command: cmd, conversationId };
     }
     if (cmd === 'colecao') {
       const p = this.progress.snapshot(new Date());
@@ -3657,7 +3666,7 @@ export class Companion {
     if (this.game !== g) return;
     g.goAt = this.clock.now();
     this.hideBubble();
-    this.say(g.id === 'corrida' ? 'JÁ!' : 'AGORA!', 'speech');
+    this.say(g.goText || (g.id === 'corrida' ? 'JÁ!' : 'AGORA!'), 'speech');
   }
 
   _gameTimeout(g) {
@@ -3668,7 +3677,7 @@ export class Companion {
     else if (g.tipo === 'pega') text = this._finishGame(false, `Tempo! Me pegou ${g.pegos} de 3. Sou rápido demais.`, null, g.pegos);
     else if (g.tipo === 'esconde') text = this._finishGame(false, 'Tempo! Ganhei. Eu tava bem ali.');
     else if (g.tipo === 'cabo') text = this._finishGame(false, 'Tempo! Eu ganhei o cabo de guerra.');
-    else if (['quiz', 'curiosidade', 'emocao', 'mandou'].includes(g.tipo)) text = this._finishGame(g.pontos * 2 > g.total, `Tempo! Placar: ${g.pontos}/${g.total}.`, null, g.pontos);
+    else if (['quiz', 'curiosidade', 'emocao', 'mandou', 'ritmo', 'enigma', 'sequencia', 'anagrama', 'treino', 'dados'].includes(g.tipo)) text = this._finishGame(g.pontos * 2 > g.total, `Tempo! Placar: ${g.pontos}/${g.total}.`, null, g.pontos);
     else text = this._finishGame(false, 'Acabou o tempo.');
     this.say(text, 'speech');
   }
@@ -3685,6 +3694,7 @@ export class Companion {
     if (this.derrotas >= 2) this.clock.setTimeout(() => this._viral('derrota') || this.packEvent('derrota', { falar: false }), 1500);
     else if (win && g && g.total && g.pontos === g.total) this.clock.setTimeout(() => this.packEvent('conquistaImprovavel', { falar: false }), 1500);
     else if (win) this.clock.setTimeout(() => this._viral('vitoria'), 2600);
+    try { this.onGameEnd?.(g, win, score); } catch { /* o RPG nunca derruba o fim do jogo */ }
     if (win) {
       this.progress.log('vitoria');
       this._progress('jogoVitoria', { conta: 'vitorias' });

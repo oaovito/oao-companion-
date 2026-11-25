@@ -141,6 +141,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   por gatilho real (`companion._viral`: jogo, derrota, vitória, conquista, ocioso, Instagram, procrastinação, tarefa,
   refeição, erro, fim do trabalho, lazer) com cooldown e preferências (`viraisAtivo`, `viraisFrequencia`, `viraisAdulto`,
   `viraisNegro`, `viraisReduzir`, `viraisIntensidade`, `viraisBloqueadas`); nunca no Trabalho/foco/tela cheia.
+- **RPG** (0.48, `src/core/rpg/`, serviço `src/main/rpg-service.js`, painel Aventura, doc `jojo-companion/docs/RPG.md`):
+  10 atributos (Inteligência nunca limita a conversa), 45 habilidades, 16 especializações, expedições pelas regiões do
+  desktop, missões, 29 segredos, vida (sede, energia, tédio, carinho…), Paragon/Estrelas; nada do RPG vai ao modelo;
+  JOJOcoins do RPG saem por `companion.loja.creditar` (ids `rpg:*`) e esperam a carteira; mudo em Trabalho/foco/tela cheia.
 - **Timers interativos** (0.47.5): `src/core/timers.js` (`GerenciadorTimers`: relógio monotônico, 12 atividades, regressivo/
   progressivo/intervalado/recorrente/espelho do foco e dos lembretes, persistência em `progress.st.timers`, suspensão,
   anti-duplicado de XP), `companion-timers.js` (conversa, `/timer`, falas, ofertas, XP por `Progress.award` com id do

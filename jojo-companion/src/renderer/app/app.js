@@ -6,6 +6,7 @@ import { ProgressView } from '../shared/progress-view.js';
 import { CareView } from '../shared/care-view.js';
 import { LojaView, animarMoeda } from '../shared/loja-view.js';
 import { AnimeView } from '../shared/anime-view.js';
+import { RpgView } from '../shared/rpg-view.js';
 import { filterCommands } from '../shared/command-filter.js';
 const api = window.appApi;
 const $ = (id) => document.getElementById(id);
@@ -20,12 +21,14 @@ let showingTarefas = false;
 let lastTarefasReq = 0;
 let showingDarkest = false;
 let showingCuidados = false, lastCareRequest = 0;
+let showingAventura = false, lastAventuraRequest = 0;
 const xpView = new ProgressView($('progression'));
 const todoView = new TodoView($('tarefas'), api, { openSettings: () => api.openTodoSettings(), onProgress: s => xpView.render(s, { quiet: st?.trabalho || st?.foco, animations: st?.todo?.settings.animations !== false }) });
 let showingLoja = false;
 const lojaView = new LojaView($('loja'), api);
 const animeView = new AnimeView($('animes'), api);
 let showingAnimes = false;
+const rpgView = new RpgView($('aventura'), api);
 const careView = new CareView($('cuidados'), api, s => xpView.render(s, { quiet: st?.trabalho || st?.foco }));
 
 function chip(el, status, label) {
@@ -37,16 +40,19 @@ function chip(el, status, label) {
 function render(s) {
   st = s;
   if (s.abrirCuidados && s.abrirCuidados !== lastCareRequest) {
-    lastCareRequest = s.abrirCuidados; showingCuidados = true; showingTarefas = false; showingGuarda = false; showingColecao = false; showingDarkest = false;
+    lastCareRequest = s.abrirCuidados; showingCuidados = true; showingAventura = false; showingTarefas = false; showingGuarda = false; showingColecao = false; showingDarkest = false;
+  }
+  if (s.abrirAventura && s.abrirAventura !== lastAventuraRequest) {
+    lastAventuraRequest = s.abrirAventura; showingAventura = true; showingLoja = false; showingAnimes = false; showingCuidados = false; showingTarefas = false; showingGuarda = false; showingColecao = false; showingDarkest = false;
   }
   if (s.abrirTarefas && s.abrirTarefas !== lastTarefasReq) {
-    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false; showingDarkest = false; showingCuidados = false;
+    lastTarefasReq = s.abrirTarefas; showingTarefas = true; showingGuarda = false; showingColecao = false; showingDarkest = false; showingCuidados = false; showingAventura = false;
   }
   // Pedido de abrir a coleção (/colecao): cada pedido novo vale uma vez.
   if (s.abrirColecao && s.abrirColecao !== lastColecaoReq) {
     lastColecaoReq = s.abrirColecao;
     showingColecao = true;
-    showingCuidados = false;
+    showingCuidados = false; showingAventura = false;
     showingDarkest = false;
     showingTarefas = false;
     showingGuarda = false;
@@ -54,7 +60,7 @@ function render(s) {
   if (s.abrirGuardaRoupa && s.abrirGuardaRoupa !== lastGuardaReq) {
     lastGuardaReq = s.abrirGuardaRoupa;
     showingGuarda = true;
-    showingCuidados = false;
+    showingCuidados = false; showingAventura = false;
     showingDarkest = false;
     showingTarefas = false;
     showingColecao = false;
@@ -100,6 +106,8 @@ function render(s) {
   $('loja').classList.toggle('hidden', !showingLoja);
   if (showingLoja) { $('convTitle').textContent = 'Loja de JOJOcoins'; chip($('convStatus'), 'idle', ''); }
   else lojaView.fechar();
+  $('aventura').classList.toggle('hidden', !showingAventura);
+  if (showingAventura) { $('convTitle').textContent = 'Aventura'; chip($('convStatus'), 'idle', ''); rpgView.refresh(); }
   xpView.render(s.colecao, { quiet: s.trabalho || s.foco, animations: s.todo?.settings.animations !== false });
 }
 
@@ -115,7 +123,7 @@ function el(tag, cls, text) {
 function renderColecao() {
   const box = $('colecao');
   box.classList.toggle('hidden', !showingColecao);
-  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest || showingCuidados || showingLoja;
+  const painel = showingColecao || showingGuarda || showingTarefas || showingDarkest || showingCuidados || showingLoja || showingAventura;
   for (const id of ['log', 'form', 'convDetail']) $(id).classList.toggle('hidden', painel || (id === 'convDetail' && $('convDetail').classList.contains('hidden')));
   if (!showingColecao || !st || !st.colecao) return;
   const c = st.colecao;
@@ -302,7 +310,7 @@ async function vestir(cmd) {
   if (r && r.text && $('guardaFala')) $('guardaFala').textContent = `${st.companionName}: ${r.text}`;
 }
 $('guardaBtn').addEventListener('click', async () => {
-  showingCuidados = false; $('cuidados').classList.add('hidden');
+  showingCuidados = false; $('cuidados').classList.add('hidden'); showingAventura = false; $('aventura').classList.add('hidden');
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
@@ -323,7 +331,7 @@ async function playCmd(cmd) {
   await run(cmd);
 }
 $('colecaoBtn').addEventListener('click', async () => {
-  showingCuidados = false; $('cuidados').classList.add('hidden');
+  showingCuidados = false; $('cuidados').classList.add('hidden'); showingAventura = false; $('aventura').classList.add('hidden');
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
@@ -338,7 +346,7 @@ $('colecaoBtn').addEventListener('click', async () => {
 });
 
 async function select(id) {
-  showingCuidados = false; $('cuidados').classList.add('hidden');
+  showingCuidados = false; $('cuidados').classList.add('hidden'); showingAventura = false; $('aventura').classList.add('hidden');
   showingDarkest = false; $('darkest').classList.add('hidden');
   showingTarefas = false;
   $('tarefas').classList.add('hidden');
@@ -360,7 +368,7 @@ async function select(id) {
 // Mensagens programadas no WhatsApp: janela própria.
 $('whatsappBtn').addEventListener('click', () => api.openWhatsapp());
 $('tarefasBtn').addEventListener('click', async () => {
-  showingCuidados = false;
+  showingCuidados = false; showingAventura = false;
   showingDarkest = false;
   showingTarefas = !showingTarefas; showingColecao = false; showingGuarda = false;
   render(await api.state());
@@ -393,7 +401,7 @@ function renderDarkest() {
   $('darkest').replaceChildren(steam, status, numbers, achievement, rules);
 }
 $('darkestBtn').addEventListener('click', async () => {
-  showingCuidados = false;
+  showingCuidados = false; showingAventura = false;
   showingDarkest = !showingDarkest; showingTarefas = false; showingColecao = false; showingGuarda = false;
   render(await api.state());
 });
@@ -402,8 +410,12 @@ api.onDarkestUpdate(s => {
   renderDarkest(); xpView.render(s.colecao, { quiet: s.trabalho || s.foco });
 });
 api.onSteamUpdate(s => { if (st) st.steam = s; renderDarkest(); });
+$('aventuraBtn').addEventListener('click', async () => {
+  showingAventura = !showingAventura; showingLoja = false; showingAnimes = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false; render(await api.state());
+});
+api.onRpgUpdate(s => { if (showingAventura && s.rpg) rpgView.render(s.rpg); });
 $('cuidadosBtn').addEventListener('click', async () => {
-  showingCuidados = !showingCuidados; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false; render(await api.state());
+  showingAventura = false; showingCuidados = !showingCuidados; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false; render(await api.state());
 });
 api.onNeedsUpdate(s => {
   if (st) { st.foco = s.foco; st.trabalho = s.trabalho; st.needs = s.needs; st.colecao = { ...st.colecao, ...s.colecao }; }
@@ -535,14 +547,14 @@ api.state().then((s) => {
 // Qualquer outro botão da barra lateral ou conversa fecha a loja.
 $('side').addEventListener('click', (e) => { const b = e.target.closest('button, .item'); if (b && b.id !== 'lojaBtn' && showingLoja) { showingLoja = false; lojaView.fechar(); $('loja').classList.add('hidden'); } }, true);
 $('lojaBtn').addEventListener('click', async () => {
-  showingLoja = !showingLoja; showingAnimes = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
+  showingLoja = !showingLoja; showingAnimes = false; showingAventura = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
   render(await api.state());
   if (showingLoja) await lojaView.abrir();
 });
 // ---------------- animes (calendário, sessões e JOJOcoins; só atualiza enquanto aberto)
 $('side').addEventListener('click', (e) => { const b = e.target.closest('button, .item'); if (b && b.id !== 'animesBtn' && showingAnimes) { showingAnimes = false; animeView.fechar(); $('animes').classList.add('hidden'); } }, true);
 async function abrirAnimes() {
-  showingAnimes = true; showingLoja = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
+  showingAnimes = true; showingLoja = false; showingAventura = false; showingCuidados = false; showingDarkest = false; showingTarefas = false; showingGuarda = false; showingColecao = false;
   render(await api.state());
   await animeView.abrir();
 }

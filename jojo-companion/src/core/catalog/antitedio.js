@@ -4,6 +4,7 @@
 // opcional e sem cobrança — nada aqui interrompe o trabalho dela.
 
 import { dayKey } from '../personality.js';
+import { MINIJOGOS_EXTRA, TIPOS_EXTRA, iniciarExtra, responderExtra } from '../rpg/minijogos.js';
 
 const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -427,16 +428,23 @@ export function quizChoice(text, opts) {
 }
 
 export class Games {
-  constructor({ data, rng = Math.random }) {
-    this.data = data;
+  constructor({ data, rng = Math.random, nivel = () => 1, contexto = () => ({}) }) {
+    // 0.48: minijogos extras (ritmo, enigma, sequência…) entram por nível do JoJo.
+    this.data = { ...data, jogos: [...data.jogos, ...MINIJOGOS_EXTRA.filter((x) => !data.jogos.some((j) => j.id === x.id))] };
     this.rng = rng;
-    this.byId = new Map(data.jogos.map((j) => [j.id, j]));
+    this.nivel = nivel;
+    this.contexto = contexto;
+    this.byId = new Map(this.data.jogos.map((j) => [j.id, j]));
   }
+
+  /** Jogo liberado pelo nível (os 15 originais sempre). */
+  liberado(j) { return !j.nivel || this.nivel() >= j.nivel; }
 
   find(text) {
     const n = norm(text);
     let best = null;
     for (const j of this.data.jogos) {
+      if (!this.liberado(j)) continue;
       for (const f of j.frases) if (n.includes(norm(f)) && (!best || f.length > best.len)) best = { j, len: f.length };
       if (n.includes(norm(j.nome))) best = { j, len: 99 };
     }
@@ -444,7 +452,7 @@ export class Games {
   }
 
   random(last = null) {
-    const opts = this.data.jogos.filter((j) => j.id !== last);
+    const opts = this.data.jogos.filter((j) => j.id !== last && this.liberado(j));
     return pickOne(opts, this.rng);
   }
 
@@ -491,6 +499,7 @@ export class Games {
 
   start(jogo) {
     const g = { id: jogo.id, tipo: jogo.tipo, nome: jogo.nome, rodada: 0, pontos: 0, total: RODADAS[jogo.tipo] || 1 };
+    if (TIPOS_EXTRA.has(jogo.tipo)) return iniciarExtra(jogo, g, { rng: this.rng, ...this.contexto() });
     const r = this.rng;
     switch (jogo.tipo) {
       case 'quiz': {
@@ -553,6 +562,7 @@ export class Games {
   }
 
   answer(g, text, { now = 0 } = {}) {
+    if (TIPOS_EXTRA.has(g.tipo)) return responderExtra(g, text, { now, rng: this.rng });
     const n = norm(text);
     const r = this.rng;
     switch (g.tipo) {

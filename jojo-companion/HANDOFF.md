@@ -1,23 +1,24 @@
 # HANDOFF — JoJo Companion
 
-## Ecossistema de animes (não lançado) — 25/11/2026
+## 0.48.0 — RPG e auditoria — 25/11/2026
 
-- Pronto só LOCAL no branch `claude/project-thread-vkeqzs`, sobre a Loja (`78294a1`). Não publicar fora da vez
-  da fila; dar o número de versão na seção do CHANGELOG ao publicar.
+- Publicada pela fila da issue #1 depois da 0.47.9 (Animes). Motor puro em `src/core/rpg/` (doc `docs/RPG.md`),
+  serviço `src/main/rpg-service.js`, painel `src/renderer/shared/rpg-view.js`, estado `<userData>/rpg.json`.
+  Matriz em `docs/AUDITORIA_0.48.md`.
+- JOJOcoins do RPG entram pela carteira da loja: `companion.loja.creditar({ id: 'rpg:...', valor, origem, rotulo })`.
+- Clima nos segredos lê `companion.climaAgora` (tempestade/chuva/garoa/calor).
+
+## Ecossistema de animes (0.47.9) — 25/11/2026
+
 - Doc: `docs/ANIMES.md` (fonte e limitações, recompensas, simulação, antifraude, desempenho, relatório).
 - Núcleo `src/core/anime-*.js` + `companion-anime.js` (mixin; sem `animeAcomp` o calendário antigo segue igual);
   serviço `src/main/anime-service.js` (IPC `anime:request`); Central `renderer/shared/anime-view.js`.
-- Pendente de Windows: E2E/medição, aparência real dos pacotes e o PowerShell da detecção de mídia.
+- Pendente de teste manual no Windows: aparência real dos pacotes e o PowerShell da detecção de mídia.
 
-## Loja de JOJOcoins, troca dinâmica de visuais e arte da moeda (não lançado) — 24/11/2026
+## Loja de JOJOcoins, troca dinâmica de visuais e arte da moeda (0.47.8) — 25/11/2026
 
-- Pronto só LOCAL no branch `claude/project-thread-lhzb98` (sobre a 0.47.5 `d1b23bd`). Publicar só na vez
-  certa da fila (issue #1): depois da 0.47.5, do Identidade/RPG e da 0.47.6. Juntar o publicado antes do push
-  único e dar o número de versão na seção do CHANGELOG ("versão definida na publicação").
 - Docs: `docs/LOJA.md` (economia, simulação, desempenho, reverter, catálogo), `docs/VISUAIS_DINAMICOS.md`,
   `docs/ARTE_QUALIDADE.md` (regra permanente de arte e checagens automáticas).
-- O RPG credita JOJOcoins por `companion.loja.creditar({ id: 'rpg:...', valor, origem, rotulo })`.
-- Pendente de Windows: `scripts/measure.mjs` e os E2E com a loja aberta só rodam no CI do Windows.
 - Limite conhecido: no ritmo intenso o catálogo acaba em ~6 meses e o saldo acumula (ver LOJA.md).
 
 ## Rebolado refeito, Tigresa, liberados acessíveis e variação 50x (não lançado) — 18/11/2026

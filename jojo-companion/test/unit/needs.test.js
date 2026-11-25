@@ -17,8 +17,8 @@ function env(state) {
     step: (ms, active = true) => { mono += ms; now += ms; return n.tick({ active }); },
     hours: h => { n.tick(); for (let i = 0; i < h * 60; i++) { mono += 60000; now += 60000; n.tick(); } } };
 }
-test('cardápio: exatamente 50 opções novas, seis preservadas, sem duplicar lula; imagens e falas reais', () => {
-  assert.equal(foods.length, 56); assert.equal(foods.filter(f => !f.legacy).length, 50);
+test('cardápio: 50 opções novas + 12 bebidas da 0.48, seis preservadas, sem duplicar lula; imagens e falas reais', () => {
+  assert.equal(foods.length, 68); assert.equal(foods.filter(f => !f.legacy && !f.bebida).length, 50); assert.equal(foods.filter(f => f.bebida).length, 12);
   assert.deepEqual(foods.filter(f => f.legacy).map(f => f.id), ['peixe', 'foca', 'lula', 'tartaruga', 'pinguim', 'humano']);
   assert.equal(foods.filter(f => f.id === 'lula').length, 1); assert.ok(foods.some(f => f.id === 'mexilhao'));
   const drawings = new Set(), phrases = new Set();
@@ -27,7 +27,7 @@ test('cardápio: exatamente 50 opções novas, seis preservadas, sem duplicar lu
     const image = fs.readFileSync(new URL(`../../${f.image}`, import.meta.url), 'utf8'); assert.match(image, /<svg/); assert.match(image, /<path|<ellipse/);
     assert.equal(/<script|https?:\/\/(?!www.w3.org)/.test(image), false); drawings.add(image.replace(/aria-label="[^"]*"/, '')); phrases.add(f.phrase);
   }
-  assert.equal(drawings.size, 56); assert.equal(phrases.size, 56);
+  assert.equal(drawings.size, 68); assert.equal(phrases.size, 68);
 });
 test('necessidades: seis estados graduais, sem morte permanente e sem degradação offline/foco', () => {
   const e = env(); e.hours(1); assert.equal(e.n.snapshot().hunger, 60);

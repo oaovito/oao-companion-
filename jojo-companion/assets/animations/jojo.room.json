@@ -7452,6 +7452,210 @@
    "t": 85,
    "r": 31,
    "b": 5
+  },
+  "cat_rpg_esp_cientista": {
+   "l": 0,
+   "t": 5,
+   "r": 3,
+   "b": 5
+  },
+  "cat_rpg_esp_medico": {
+   "l": 0,
+   "t": 14,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_esp_professor": {
+   "l": 0,
+   "t": 7,
+   "r": 26,
+   "b": 5
+  },
+  "cat_rpg_esp_guerreiro": {
+   "l": 28,
+   "t": 39,
+   "r": 38,
+   "b": 5
+  },
+  "cat_rpg_esp_explorador": {
+   "l": 25,
+   "t": 20,
+   "r": 33,
+   "b": 5
+  },
+  "cat_rpg_esp_alquimista": {
+   "l": 24,
+   "t": 56,
+   "r": 24,
+   "b": 5
+  },
+  "cat_rpg_esp_comerciante": {
+   "l": 0,
+   "t": 6,
+   "r": 4,
+   "b": 5
+  },
+  "cat_rpg_esp_estrategista": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 8
+  },
+  "cat_rpg_esp_investigador": {
+   "l": 0,
+   "t": 5,
+   "r": 39,
+   "b": 9
+  },
+  "cat_rpg_esp_treinador": {
+   "l": 0,
+   "t": 15,
+   "r": 26,
+   "b": 5
+  },
+  "cat_rpg_esp_cozinheiro": {
+   "l": 24,
+   "t": 48,
+   "r": 24,
+   "b": 5
+  },
+  "cat_rpg_esp_guardiao": {
+   "l": 0,
+   "t": 14,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_esp_colecionador": {
+   "l": 0,
+   "t": 15,
+   "r": 20,
+   "b": 5
+  },
+  "cat_rpg_esp_filosofo": {
+   "l": 0,
+   "t": 17,
+   "r": 7,
+   "b": 5
+  },
+  "cat_rpg_esp_pesquisador": {
+   "l": 0,
+   "t": 12,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_esp_mestre": {
+   "l": 5,
+   "t": 45,
+   "r": 8,
+   "b": 5
+  },
+  "cat_rpg_partida": {
+   "l": 5,
+   "t": 40,
+   "r": 29,
+   "b": 5
+  },
+  "cat_rpg_volta": {
+   "l": 18,
+   "t": 31,
+   "r": 26,
+   "b": 14
+  },
+  "cat_rpg_falha": {
+   "l": 11,
+   "t": 5,
+   "r": 11,
+   "b": 5
+  },
+  "cat_rpg_sede": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_doente": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_curado": {
+   "l": 27,
+   "t": 33,
+   "r": 27,
+   "b": 5
+  },
+  "cat_rpg_habilidade": {
+   "l": 28,
+   "t": 41,
+   "r": 28,
+   "b": 5
+  },
+  "cat_rpg_lendario": {
+   "l": 40,
+   "t": 37,
+   "r": 79,
+   "b": 5
+  },
+  "cat_rpg_segredo": {
+   "l": 5,
+   "t": 37,
+   "r": 68,
+   "b": 5
+  },
+  "cat_rpg_artefato": {
+   "l": 0,
+   "t": 15,
+   "r": 26,
+   "b": 5
+  },
+  "cat_rpg_fabricar": {
+   "l": 0,
+   "t": 48,
+   "r": 8,
+   "b": 5
+  },
+  "cat_rpg_rank": {
+   "l": 34,
+   "t": 21,
+   "r": 31,
+   "b": 14
+  },
+  "cat_rpg_estrela": {
+   "l": 18,
+   "t": 37,
+   "r": 42,
+   "b": 14
+  },
+  "cat_rpg_missao": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_entediado": {
+   "l": 82,
+   "t": 5,
+   "r": 0,
+   "b": 88
+  },
+  "cat_rpg_carente": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 9
+  },
+  "cat_rpg_energia": {
+   "l": 0,
+   "t": 5,
+   "r": 0,
+   "b": 5
+  },
+  "cat_rpg_encruzilhada": {
+   "l": 0,
+   "t": 15,
+   "r": 26,
+   "b": 5
   }
  },
  "effects": {

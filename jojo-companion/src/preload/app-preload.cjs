@@ -22,6 +22,8 @@ contextBridge.exposeInMainWorld('appApi', {
   onLojaUpdate: (fn) => ipcRenderer.on('app:loja-update', (_e, s) => fn(s)),
   anime: (request) => ipcRenderer.invoke('anime:request', request),
   onAnimeUpdate: (fn) => ipcRenderer.on('app:anime-update', (_e, s) => fn(s)),
+  rpg: (request) => ipcRenderer.invoke('rpg:request', request),
+  onRpgUpdate: (fn) => ipcRenderer.on('app:rpg-update', (_e, s) => fn(s)),
   onUpdate: (fn) => ipcRenderer.on('app:update', (_e, s) => fn(s)),
   onSelect: (fn) => ipcRenderer.on('app:select', (_e, id) => fn(id)),
 });

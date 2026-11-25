@@ -51,6 +51,7 @@ import { WhatsAppWindow } from './whatsapp-window.js';
 import { createLojaService } from './loja-service.js';
 import { createAnimeService } from './anime-service.js';
 import { createNeedsService } from './needs-service.js';
+import { createRpgService } from './rpg-service.js';
 import { CredentialVault } from './credential-vault.js';
 import { requireWindows } from './windows-only.js';
 
@@ -414,6 +415,7 @@ function main() {
         focusApps: focusApps?.snapshot() || null,
         livingScenes: livingService?.list() || [],
         abrirCuidados,
+        abrirAventura,
       };
     }
     let appUpdateTimer = null;
@@ -436,13 +438,16 @@ function main() {
     let livingService = null;
     let steamService = null;
     let abrirCuidados = 0;
+    let abrirAventura = 0;
+    let rpgService = null;
     companion.onOpenApp = (id) => {
       // A Central pode ainda estar carregando: o pedido do painel vai junto no estado.
-      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'tarefas' || id === 'cuidados';
+      const painel = id === 'colecao' || id === 'guardaRoupa' || id === 'tarefas' || id === 'cuidados' || id === 'aventura';
       if (id === 'colecao') abrirColecao++;
       if (id === 'guardaRoupa') abrirGuardaRoupa++;
       if (id === 'tarefas') abrirTarefas++;
       if (id === 'cuidados') abrirCuidados++;
+      if (id === 'aventura') abrirAventura++;
       appWin.open(painel ? null : id);
       if (painel) appWin.send('app:update', appState());
     };
@@ -542,6 +547,11 @@ function main() {
         notify: () => { if (animeService) appWin.send('app:anime-update', { anime: animeService.resumo() }); } });
       app.on('will-quit', () => animeService.close());
     } catch (e) { log('warn', `Animes indisponíveis: ${e.message}`); }
+    // RPG (0.48): observa os sistemas que já existem; avisos só fora de Trabalho/foco/tela cheia.
+    let rpgNotify = null;
+    rpgService = createRpgService({ userData, companion, needsService, ipcMain, fromApp, fromOverlay, log,
+      notify: () => { clearTimeout(rpgNotify); rpgNotify = setTimeout(() => { if (rpgService && appWin.isOpen) appWin.send('app:rpg-update', { rpg: rpgService.snapshot() }); }, 250); } });
+    app.on('will-quit', () => rpgService.close());
     focusApps = createFocusApps({ userData, companion, store,
       getDetector: () => { if (!fullscreen) startFullscreenWatch(); return fullscreen; },
       getFileIcon: file => app.getFileIcon(file, { size: 'small' }),
