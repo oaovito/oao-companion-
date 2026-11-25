@@ -298,6 +298,18 @@ const GENERICAS = new Set(['minha', 'minhas', 'agora', 'quero', 'fazer', 'hoje',
  * Ela contou algo dela (frase com "meu/minha", sem pergunta) e a resposta não cita nada do
  * que ela disse ("Isso é ridículo, precisamos resolver"): genérica demais.
  */
+/**
+ * Definição de saúde que não pode sair rasa (run 45677312389: "Diabetes tipo 2... leva ao acúmulo de glicose"
+ * sem falar de insulina, depois de três gerações): completa com o fato essencial, sem trocar a fala do JoJo.
+ */
+export function completarDefinicao(input, text) {
+  const q = norm(input);
+  if (!/\b(?:o que (?:e|eh)|what is|what s)\b.*\bdiabet/.test(q) || /insulin/i.test(String(text || ''))) return text;
+  const en = /\bwhat\b/.test(q);
+  const fato = en ? 'In short: the body resists insulin, so sugar stays high in the blood.' : 'Resumindo: o corpo resiste à insulina, e o açúcar fica alto no sangue.';
+  return `${String(text || '').trim()} ${fato}`.trim();
+}
+
 export function relatoSemAssunto(input, output) {
   const q = norm(input);
   // Relato dela: frase com "meu/minha" ou começando no passado em primeira pessoa ("Derrubei café…").

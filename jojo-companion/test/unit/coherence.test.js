@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { DialogueEngine } from '../../src/core/dialogue/engine.js';
 import { LlmProvider, parseLlmReply, buildSystemPrompt, outOfCharacter } from '../../src/core/dialogue/llm-provider.js';
-import { erroDeCoerencia, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, semConselhoPessoal, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
+import { erroDeCoerencia, completarDefinicao, historicoRelevante, expressaoCoerente, correcaoPessoal, semDesdem, semBronca, semConselhoPessoal, polirTexto, relatoSemAssunto } from '../../src/core/dialogue/coherence.js';
 import { precisaPesquisar } from '../../src/core/dialogue/pesquisa.js';
 import { ConversationManager, commandMenu } from '../../src/core/conversations.js';
 import { PERSONALITY_DEFAULTS } from '../../src/core/personality.js';
@@ -940,4 +940,13 @@ test('run 45675227159: "como seus músculos" também é o corpo dela; os múscul
   assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Uma cor vibrante, como seus músculos, Manu.'), 'comentou o corpo dela');
   assert.equal(erroDeCoerencia('My favorite animal is a cat.', 'Cats are sleek, like your curves.'), 'comentou o corpo dela');
   assert.equal(erroDeCoerencia('Minha cor preferida é verde.', 'Verde, é? Combina com os meus músculos, Manu.'), null);
+});
+
+test('run 45677312389: definição de diabetes sem insulina ganha o fato essencial', () => {
+  const t = completarDefinicao('o que é diabetes tipo 2?', 'Erm, na verdade... Diabetes tipo 2, você pergunta? Isso leva ao acúmulo de glicose no sangue, causando problemas.');
+  assert.match(t, /^Erm, na verdade/);
+  assert.match(t, /insulina/);
+  assert.equal(completarDefinicao('o que é diabetes tipo 2?', 'É resistência à insulina.'), 'É resistência à insulina.');
+  assert.match(completarDefinicao('what is type 2 diabetes?', 'A sugar thing.'), /insulin/);
+  assert.equal(completarDefinicao('meu chefe mudou o prazo', 'Que droga.'), 'Que droga.');
 });

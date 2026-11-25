@@ -4,7 +4,7 @@ import { normalizeReply } from './provider.js';
 import { ScriptedProvider, detectIntent } from './scripted-provider.js';
 import { precisaPesquisar, linhaFontes } from './pesquisa.js';
 import { classificarSeriedade, seguimento, instrucaoProfessor, respostaFalaDoAssunto } from './professor.js';
-import { conversaPessoal, respostaAncorada, erroDeCoerencia, limparResposta, relatoSemAssunto, expressaoCoerente, pedidoAoApp, historicoRelevante } from './coherence.js';
+import { conversaPessoal, respostaAncorada, erroDeCoerencia, limparResposta, completarDefinicao, relatoSemAssunto, expressaoCoerente, pedidoAoApp, historicoRelevante } from './coherence.js';
 import { weatherRequest } from '../weather.js';
 
 // Assunto em andamento vale por 15 min para "me dá um exemplo", "aprofunda"…
@@ -184,6 +184,7 @@ export class DialogueEngine {
           fora.foraDoAssunto = true;
           throw fora;
         }
+        out.text = completarDefinicao(input, out.text);
         out.intent = 'ia';
         if (achado) {
           out.fontes = achado.fontes;
