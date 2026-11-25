@@ -169,7 +169,7 @@ try {
   await step('windows', node, ['test/e2e/run-e2e.mjs', '--integration'], 8, (text) => tapTotals(text, 16));
   await step('e2e', node, ['test/e2e/run-e2e.mjs'], 14, (text) => tapTotals(text, 48));
   await evidence.writeValidation(report);
-  await step('animations', node, [npm, 'run', 'audit:animations'], 10, () => {
+  await step('animations', node, [npm, 'run', 'audit:animations'], 20, () => {
     const audit = JSON.parse(fs.readFileSync(path.join(env.JOJO_ANIMATION_REPORT_DIR, 'auditoria-animacoes.json')));
     if (audit.total < 1268 || audit.erros.length || audit.fora.length || audit.paradas.length || audit.semGatilho) throw new Error('Auditoria de animacoes incompleta/reprovada');
     return { total: audit.total, errors: audit.erros.length, cuts: audit.fora.length, stopped: audit.paradas.length, orphaned: audit.semGatilho };

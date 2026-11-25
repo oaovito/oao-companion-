@@ -156,6 +156,9 @@ export class DialogueEngine {
           if (!incoerente && tentativa < ULTIMA && relatoSemAssunto(input, out.text)) incoerente = 'não falou do que ela contou';
           // Pergunta de conhecimento: a primeira resposta que não cita o assunto também ganha outra chance.
           if (!incoerente && tentativa < ULTIMA && (achado || seriedade === 'cientifico' || seriedade === 'tecnico' || tipo) && !seg && !respostaFalaDoAssunto(input, out.text)) incoerente = 'não citou o assunto da pergunta no começo';
+          // Definição rasa ("Diabetes tipo 2, garoto. Isso leva ao acúmulo de açúcar.", run 45595965155): explica de verdade.
+          if (!incoerente && tentativa < ULTIMA && (seriedade === 'cientifico' || seriedade === 'tecnico') && !seg && /^\s*(?:o que (?:e|é)|what is)\b/i.test(input)
+            && String(out.text).replace(/^\s*(?:erm,? na verdade\.*|vamos separar fato de achismo\.)\s*/i, '').length < 120) incoerente = 'explicação rasa demais';
           // Segunda leitura: o próprio modelo relê a resposta contra as diretrizes (pedido de 19/11/2026).
           if (!incoerente && this.llm.revisar) {
             try {
