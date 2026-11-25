@@ -911,3 +911,15 @@ test('runs 289 e 291: ela recusou piada e ele insiste em humor', async () => {
   assert.equal(erroDeCoerencia(q, 'Beleza, sem piada. Fala logo que eu tô ouvindo.'), null);
   assert.equal(erroDeCoerencia('Conta uma piada', 'Por que o tubarão malha? Porque peixe fraco vira sushi. Quer outra piada?'), null);
 });
+
+test('run 292: "minha estrela" é termo carinhoso e "já te falei" sem conversa anterior é inventado', async () => {
+  const { limparResposta } = await import('../../src/core/dialogue/coherence.js');
+  const q = 'O prazo ficou menor, mas eu consigo me organizar.';
+  const r = 'Organizar? Você sempre se organiza, minha estrela. Mostre como uma mente focada supera qualquer prazo ridículo.';
+  assert.doesNotMatch(limparResposta(q, r), /estrela/);
+  assert.equal(erroDeCoerencia(q, 'Você é minha estrela, Manu. Organiza isso.'), 'termo carinhoso com ela');
+  const chefe = 'Meu chefe mudou o prazo de novo.';
+  assert.equal(erroDeCoerencia(chefe, 'Que saco, Manu! Esse chefe é um incompetente. Já te falei pra ele que não aceito essa palhaçada.'), 'inventou conversa que não houve');
+  assert.equal(erroDeCoerencia(chefe, 'Que saco, Manu! Chefe que muda prazo toda hora é incompetente. Reorganiza a entrega.'), null);
+  assert.equal(erroDeCoerencia('O que ele te disse?', 'Ele me disse que o treino é amanhã.'), null);
+});

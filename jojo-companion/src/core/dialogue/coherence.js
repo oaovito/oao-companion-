@@ -143,8 +143,8 @@ const XINGAMENTO = /\b(?:idiota|idiotas|burr[oa]s?|imbecil|estupid[oa]s?|patetic
 const CORPO_DELA = /\b(?:your|her) (?:physique|body|weight|figure|belly|thighs?)\b|\b(?:seu|teu|sua|tua) (?:fisico|corpo|peso|barriga|coxas?|bunda|shape|pele|silhueta|estrutura fisica|forma fisica|tipo fisico|cintura|quadril|rosto|cara)\b|\b(?:your|her) (?:skin|face|hips|waist)\b|\blevanta (?:essa|a) bunda\b|\b(?:voce|vc|tu) (?:esta|ta|tá) (?:gorda|magra|acima do peso|fora de forma)\b|\bconsidering your (?:size|shape)\b/;
 const FATOS_DA_VIDA = /\b(?:deadline|relatorio|reuniao|entrevista|apresentacao|viagem|leitura)\b/g;
 // Termos carinhosos ou românticos: o JoJo nunca chama a Emanuele assim.
-const CARINHO = "meu amor|minha amada|amorzinho|amor|meu bem|minha querida|querida|querido|meu caro|minha linda|lindinha|linda|fofinha|fofa|gatinha|gata|princesa|meu anjo|anjinho|benzinho|mozão|mozao|minha vida|vida|docinho|minha flor|bebê|bebe|baby|babe|honey|sweetheart|sweetie|darling|my love|love|dear";
-const CARINHO_FRASE = /\b(?:meu amor(?! (?:pel[oa]s?|por|ao?s?)\b)|minha amada|amorzinho|minha querida|meu anjo|minha vida|benzinho|mozao|sweetheart|darling|my love)\b/;
+const CARINHO = "meu amor|minha estrela|estrelinha|meu tesouro|minha joia|minha rainha|minha princesa|minha amada|amorzinho|amor|meu bem|minha querida|querida|querido|meu caro|minha linda|lindinha|linda|fofinha|fofa|gatinha|gata|princesa|meu anjo|anjinho|benzinho|mozão|mozao|minha vida|vida|docinho|minha flor|bebê|bebe|baby|babe|honey|sweetheart|sweetie|darling|my love|love|dear";
+const CARINHO_FRASE = /\b(?:meu amor(?! (?:pel[oa]s?|por|ao?s?)\b)|minha amada|amorzinho|minha querida|meu anjo|minha vida|minha estrela|estrelinha|meu tesouro|minha joia|minha rainha|minha princesa|benzinho|mozao|sweetheart|darling|my love)\b/;
 const INSULTO = 'insulto à usuária ou à pergunta';
 const FATO = 'inventou fato da vida dela';
 
@@ -187,7 +187,7 @@ const REGRAS_FRASE = [
   // "Eu te avisei" sem conversa anterior em que ele tenha avisado: memória inventada.
   // Run 287: "eu te avisei que ele era incompetente" com o JoJo tendo falado de outras coisas antes também é
   // inventado; só vale se uma fala anterior dele já tocou no que ele diz ter avisado.
-  { motivo: 'inventou conversa que não houve', frase: (f, c) => /\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/.test(f) && avisoInventado(f, c) },
+  { motivo: 'inventou conversa que não houve', frase: (f, c) => AVISO.test(f) && avisoInventado(f, c) },
   // Run 289: "Derrubei café no teclado" → "um desastre para o meu desktop": o aparelho dela vira dele.
   { motivo: 'respondeu como se fosse com ele', quando: (q) => APARELHO.test(q) && !/\b(?:voce|vc|tu|jojo|teu|tua|seu|sua)\b/.test(q),
     frase: (f) => APARELHO_DELE.test(f) },
@@ -203,10 +203,12 @@ function contextoRegras(input, history = []) {
   return { contado: norm([input, ...history.map((h) => h.text)].join(' ')), jojoFalou: dele.length > 0, jojoDisse: norm(dele.map((h) => h.text).join(' ')) };
 }
 
+// "Eu te avisei", "já te falei" (run 292: "Já te falei pra ele que não aceito essa palhaçada").
+const AVISO = /\b(?:eu (?:ja )?te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/;
 /** "Eu te avisei (que X)": inventado se nenhuma fala anterior dele tocou em X (sem X: se ele nunca falou). */
 function avisoInventado(f, c) {
   if (!c.jojoFalou) return true;
-  const resto = f.split(/\beu (?:te|ja te) (?:avisei|disse|falei)\b|\bi told you\b/)[1] || '';
+  const resto = f.split(AVISO)[1] || '';
   const termos = resto.split(' ').filter((w) => w.length >= 5 && !GENERICAS.has(w)).map((w) => w.slice(0, 5));
   return termos.length > 0 && !termos.some((t) => c.jojoDisse.includes(t));
 }
