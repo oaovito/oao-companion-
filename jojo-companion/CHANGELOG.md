@@ -30,6 +30,7 @@
   10 minutos) e gira a moeda na mão quando compra.
 
 ### Melhorias
+- A arte da JOJOcoin fica igual byte a byte no Windows (o checkout não troca o fim de linha dos SVGs).
 - As cenas da loja (compra, ganho, holofote e roteiros comprados) entram na auditoria de animações com o gatilho
   de verdade de cada uma.
 - Sorteio do repouso mais leve: as preferências são lidas uma vez por sorteio, não uma vez por animação

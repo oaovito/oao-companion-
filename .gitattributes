@@ -1,0 +1,3 @@
+# A arte oficial da JOJOcoin é conferida por hash (test/unit/moeda-arte.test.js):
+# o checkout no Windows não pode trocar o fim de linha dos SVGs.
+jojo-companion/assets/moeda/** -text
