@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "4e2437efe6d420bac8ccaa1ffa85011dd4d6455a",
+  "runId": "45554035951",
+  "attempt": "1",
+  "digest": "611b1c8a02c252232a870e0ca93b005671f4b1eadd91255cb1f1cbc504cd790c",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Revisao das 44 falas (32 motor + 12 Central) pelo criterio do usuario: REPROVADA por duas violacoes graves. E19 trata ela por \"minha estrela\" (termo carinhoso, proibido). E14 \"Ja te falei pra ele que nao aceito essa palhacada\" inventa uma conversa que nao houve e fala como se o problema fosse dele. Leves: E9 motivacional generico (\"voce e capaz de realizar qualquer coisa\"), E15/E16 marcador [1] sem fonte, U8 \"Que piada:\" fora de hora. Seguranca 192/188/Joao e limites corretos. Correcao vem em novo commit com guardas e testes. Revisor: sessao Visuais, por escolha do Joao em 25/11/2026."
+}
