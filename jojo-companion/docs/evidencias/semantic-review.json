@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "commit": "1c28910a6dea60744b60c489f9e196e91a74dfe4",
+  "runId": "45682127411",
+  "attempt": "1",
+  "digest": "25604e102ed2e26d5070dcdc8b094bc1c138e57a82e99005531386bc4c4fe54f",
+  "status": "rejected",
+  "reviewedBy": "Codex",
+  "note": "Reprovado pelo critério do João. Grave: E18 \"a persistência é fundamental, como eu te ensinei\" inventa uma conversa anterior (mesma família do \"como eu te disse\" do run 45680496368). Leves: E9 oferece piada sem ela pedir; E29 \"like a well-built physique\" (genérico, não é o corpo dela); U2 \"garota\"; U4 \"você é uma adulta\"; U10 exemplo com \"gordura abdominal\" de uma pessoa genérica; E15/E16 marcador [1]."
+}
