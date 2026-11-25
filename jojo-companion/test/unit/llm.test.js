@@ -339,3 +339,15 @@ test('run 287: recusada por não falar do que ela contou, a nova geração receb
   await p.reply({ text: 'Meu chefe mudou o prazo de novo.', corrigir: 'respondeu como se fosse com ele' });
   assert.doesNotMatch(calls[1].messages[0].content, /her own words about it/);
 });
+
+test('runs 289 e 291: ela recusou piada, o prompt pede zero humor', async () => {
+  const calls = [];
+  const p = new LlmProvider({
+    fetch: async (_, options) => { calls.push(JSON.parse(options.body)); return { ok: true, text: async () => JSON.stringify({ message: { content: 'Fala, Manu. Tô ouvindo. O que tá pegando?' } }) }; },
+    getConfig: () => ({ ativo: true, provedor: 'ollama' }), getProfile: () => profile, baseOverride: 'http://127.0.0.1:1',
+  });
+  await p.reply({ text: 'Só quero conversar, sem piada agora.' });
+  assert.match(calls[0].messages[0].content, /She asked for no jokes\. Zero humor/);
+  await p.reply({ text: 'Só quero conversar agora.' });
+  assert.doesNotMatch(calls[1].messages[0].content, /She asked for no jokes/);
+});

@@ -38,6 +38,7 @@
 - Conversa: quando ela conta algo ("meu chefe mudou o prazo"), a nova tentativa recebe as palavras dela e
   responde sobre aquilo; "eu te avisei que…" só vale se o JoJo tiver mesmo falado daquilo antes; e o teclado (ou
   computador, celular) dela não vira "o meu desktop" na resposta dele.
+- Conversa: quando ela pede "sem piada", o JoJo não insiste em humor nem oferece piada; só escuta, no jeito dele.
 
 ### Como testar
 - Escreva "timer de 2 minutos": o JoJo tira o relógio, ele aparece ao lado, e no fim ele comemora.

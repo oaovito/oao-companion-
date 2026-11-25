@@ -899,3 +899,15 @@ test('run 289: o teclado dela não vira "o meu desktop" dele', async () => {
   assert.equal(erroDeCoerencia(q, 'Que droga, Manu! Café no teclado? Seca isso já.'), null);
   assert.equal(erroDeCoerencia('Gostou do meu teclado novo?', 'Teu teclado é bonito, mas o meu bíceps é mais.'), null);
 });
+
+test('runs 289 e 291: ela recusou piada e ele insiste em humor', async () => {
+  const { recusouPiada } = await import('../../src/core/dialogue/coherence.js');
+  const q = 'Só quero conversar, sem piada agora.';
+  assert.equal(recusouPiada(q), true);
+  assert.equal(recusouPiada('Conta uma piada'), false);
+  assert.equal(erroDeCoerencia(q, 'Entendo, Manu. Conversar é bom, mas o mundo precisa de um pouco de humor, não é mesmo?'), 'insistiu em piada depois de ela recusar');
+  assert.equal(erroDeCoerencia(q, 'Sem piada. Mas quer que eu conte uma piada depois?'), 'insistiu em piada depois de ela recusar');
+  assert.equal(erroDeCoerencia(q, 'Fala, Manu. Tô ouvindo. O que tá pegando?'), null);
+  assert.equal(erroDeCoerencia(q, 'Beleza, sem piada. Fala logo que eu tô ouvindo.'), null);
+  assert.equal(erroDeCoerencia('Conta uma piada', 'Por que o tubarão malha? Porque peixe fraco vira sushi. Quer outra piada?'), null);
+});
