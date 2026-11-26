@@ -60,7 +60,12 @@ export const WARDROBE_ITEMS = [
   { id: 'bermudaVerde', slot: 'bermuda', nome: 'Verde', canal: 'costume_bermudaVerde', cor: '#1b8a3c' },
   { id: 'bermudaDourada', slot: 'bermuda', nome: 'Dourada', canal: 'costume_bermudaDourada', cor: '#d4a72c' },
   { id: 'bermudaLaranja', slot: 'bermuda', nome: 'Laranja', canal: 'costume_bermudaLaranja', cor: '#fb8c00' },
+  // Sem bermuda: corpo liso de desenho no lugar dela (canal `nuLiso` no rig), sem detalhe íntimo.
+  { id: 'semBermuda', slot: 'bermuda', nome: 'Sem bermuda (pelado)', canal: 'nuLiso', semRoupa: true },
 ];
+
+/** "Tirar tudo": nenhuma peça e sem bermuda. */
+export const PELADO = Object.freeze({ bermuda: 'semBermuda' });
 
 const BY_ID = new Map(WARDROBE_ITEMS.map((it) => [it.id, it]));
 const SLOT_IDS = new Set(WARDROBE_SLOTS.map((s) => s.id));
@@ -93,9 +98,14 @@ export function wear(outfit, id) {
   return { outfit: o, item: it, removed: false };
 }
 
-/** Tira uma parte ou tudo. */
+/** JoJo pelado (sem bermuda): nada de visual automático por cima. */
+export function estaPelado(outfit) {
+  return sanitizeOutfit(outfit).bermuda === 'semBermuda';
+}
+
+/** Tira uma parte ou tudo (tudo = pelado, sem bermuda). */
 export function undress(outfit, slot = null) {
-  if (!slot) return {};
+  if (!slot) return { ...PELADO };
   const o = sanitizeOutfit(outfit);
   delete o[slot];
   return o;
@@ -106,7 +116,7 @@ export function randomOutfit(rng = Math.random) {
   const o = {};
   for (const s of WARDROBE_SLOTS) {
     if (rng() < 0.4) continue;
-    const opts = WARDROBE_ITEMS.filter((it) => it.slot === s.id);
+    const opts = WARDROBE_ITEMS.filter((it) => it.slot === s.id && !it.semRoupa);
     o[s.id] = opts[Math.floor(rng() * opts.length) % opts.length].id;
   }
   if (!Object.keys(o).length) o.cabeca = 'coroa';

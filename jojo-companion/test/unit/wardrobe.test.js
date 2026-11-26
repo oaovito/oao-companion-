@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeEnv, loadJSON, chatAdv, seededRng } from './helpers.js';
-import { WARDROBE_ITEMS, WARDROBE_SLOTS, wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, wardrobeSnapshot } from '../../src/core/wardrobe.js';
+import { WARDROBE_ITEMS, WARDROBE_SLOTS, wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, wardrobeSnapshot, estaPelado } from '../../src/core/wardrobe.js';
 import { sanitize } from '../../src/core/settings-schema.js';
 
 const RIG = loadJSON('assets/character/jojo.rig.json');
@@ -39,7 +39,7 @@ test('catálogo do guarda-roupa: toda peça existe no desenho, ids únicos, toda
   }
   for (const s of WARDROBE_SLOTS) assert.ok(WARDROBE_ITEMS.some((it) => it.slot === s.id), s.id);
   // Bermudas: só paleta, e a cor do botão é a da paleta.
-  for (const it of WARDROBE_ITEMS.filter((x) => x.slot === 'bermuda')) {
+  for (const it of WARDROBE_ITEMS.filter((x) => x.slot === 'bermuda' && !x.semRoupa)) {
     assert.equal(RIG.costumes[it.canal.slice(8)].palette.shorts, it.cor, it.id);
   }
 });
@@ -55,13 +55,17 @@ test('vestir: uma peça por parte, a mesma de novo tira, tirar tudo, surpresa e 
   assert.equal(r.removed, true);
   assert.deepEqual(r.outfit, { cabeca: 'gorroNatal' });
   assert.deepEqual(undress({ cabeca: 'coroa', rosto: 'oculos' }, 'rosto'), { cabeca: 'coroa' });
-  assert.deepEqual(undress({ cabeca: 'coroa' }), {});
+  assert.deepEqual(undress({ cabeca: 'coroa' }), { bermuda: 'semBermuda' }, 'tirar tudo = pelado, sem bermuda');
+  assert.equal(estaPelado(undress({ cabeca: 'coroa' })), true);
+  assert.equal(estaPelado({ bermuda: 'bermudaRosa' }), false);
+  assert.deepEqual(outfitChannels(undress({})), { nuLiso: 1 });
   assert.equal(wear({}, 'naoExiste').item, null);
   const rng = seededRng(3);
   for (let i = 0; i < 30; i++) {
     const o = randomOutfit(rng);
     assert.ok(Object.keys(o).length >= 1);
     assert.deepEqual(sanitizeOutfit(o), o);
+    assert.equal(estaPelado(o), false, 'look surpresa nunca tira a bermuda');
   }
   assert.equal(findWardrobeItem('óculos escuros').id, 'oculos');
   assert.equal(findWardrobeItem('bermuda rosa').id, 'bermudaRosa');
@@ -109,12 +113,19 @@ test('companion: /vestir veste, comenta e o desenho recebe as peças; vale mais 
   e.companion._applyLayout(true);
   assert.equal(e.overlay.state.outfit.costume_flor, undefined);
   r = await chatAdv(e, '/vestir tirar');
-  assert.deepEqual(e.store.get().guardaRoupa, {});
+  assert.deepEqual(e.store.get().guardaRoupa, { bermuda: 'semBermuda' });
   e.companion.costume = 'natal';
   e.companion._applyLayout(true);
   st = e.overlay.state;
-  assert.equal(st.outfit, null);
-  assert.equal(st.costume, 'natal', 'sem roupa dela, volta a fantasia do dia');
+  assert.deepEqual(st.outfit, { nuLiso: 1 }, 'pelado: corpo liso no lugar da bermuda');
+  assert.equal(st.costume, null, 'pelado por escolha dela: a fantasia do dia não veste');
+  assert.equal(st.sexy, false);
+  // Tirar só a peça da bermuda volta à bermuda padrão; sem nada do guarda-roupa, a fantasia do dia volta.
+  await chatAdv(e, '/vestir sem bermuda');
+  assert.deepEqual(e.store.get().guardaRoupa, {});
+  e.companion._applyLayout(true);
+  assert.equal(e.overlay.state.outfit, null);
+  assert.equal(e.overlay.state.costume, 'natal', 'sem roupa dela, volta a fantasia do dia');
   await chatAdv(e, '/vestir surpresa');
   assert.ok(Object.keys(e.store.get().guardaRoupa).length >= 1);
   r = await chatAdv(e, '/vestir capa de chuva inventada');

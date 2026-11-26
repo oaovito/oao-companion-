@@ -584,6 +584,47 @@
       ]
     },
     {
+      "id": "quadrilNu",
+      "outline": false,
+      "showIf": "nuLiso",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "quadrilNuBase",
+          "fill": "body",
+          "path": "M61,124 L119,124 C122,133 124,141 125,150 L55,150 C56,141 58,133 61,124 Z"
+        },
+        {
+          "id": "quadrilNuContorno",
+          "fill": "outline",
+          "path": "M63,131 C61,137 59,143 58,150 L52,150 C53,142 55,135 57.5,129 Z M117,131 C119,137 121,143 122,150 L128,150 C127,142 125,135 122.5,129 Z M52,150 L128,150 L128,153 L52,153 Z"
+        }
+      ]
+    },
+    {
+      "id": "quadrilNuDetail",
+      "outline": false,
+      "showIf": "nuLiso",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "quadrilNuCreme",
+          "fill": "cream",
+          "path": "M74,126 L106,126 L104,134 C100,138 80,138 76,134 Z"
+        },
+        {
+          "id": "quadrilNuV",
+          "fill": "muscle",
+          "path": "M64,129 Q72,138 82,141 Q72,140 63,132 Z M116,129 Q108,138 98,141 Q108,140 117,132 Z"
+        },
+        {
+          "id": "quadrilNuQuadril",
+          "fill": "muscle",
+          "path": "M58,140 Q62,146 66,149 Q60,148 57,144 Z M122,140 Q118,146 114,149 Q120,148 123,144 Z"
+        }
+      ]
+    },
+    {
       "id": "shorts",
       "outline": true,
       "parts": [
@@ -595,7 +636,8 @@
       ],
       "hideIf": [
         "mooning",
-        "sexy"
+        "sexy",
+        "nuLiso"
       ]
     },
     {
@@ -610,14 +652,18 @@
       ],
       "hideIf": [
         "mooning",
-        "sexy"
+        "sexy",
+        "nuLiso"
       ]
     },
     {
       "id": "sexyLayer",
       "outline": true,
       "showIf": "sexy",
-      "hideIf": "mooning",
+      "hideIf": [
+        "mooning",
+        "nuLiso"
+      ],
       "parts": [
         {
           "id": "sexySunga",

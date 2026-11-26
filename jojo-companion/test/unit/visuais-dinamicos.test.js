@@ -163,3 +163,41 @@ test('saldo subiu: JoJo pega a moeda (no máximo 1 vez a cada 10 min) e o servi�
   assert.equal(e.companion.lojaReagirGanho(0), false);
   svc.close();
 });
+
+test('guarda-roupa: tirar peça ou tirar tudo vale na hora, mesmo com visual momentâneo do motor (bug do nível 16)', () => {
+  const e = makeEnv();
+  const c = e.companion;
+  c.progress.st.xp = c.progress.threshold(16);
+  c._syncVisual({ anunciar: false });
+  c.start();
+  e.clock.advance(4000);
+  c.lojaConectar(new Loja({ dia: () => '2026-11-24' }));
+  for (let i = 0; i < 60 && !c.visualMomento; i++) { e.clock.advance(30e3); c._sinalVisual(['treino', 'festa', 'musica', 'humor'], 3); }
+  assert.ok(c.visualMomento, 'motor escolheu uma peça momentânea');
+  const pecas = c.store.get().visualNivel.pecas;
+  assert.ok(Object.keys(pecas).length > 3, 'nível 16 veste várias peças');
+  // Tirar uma peça: some na hora, inclusive do desenho (antes a foto antiga do motor mantinha tudo).
+  const [parte, id] = Object.entries(pecas).find(([p]) => p !== c.visualMomento.parte);
+  c.runCommand('vestir', null, `/vestir ${id}`);
+  assert.equal(c.store.get().visualNivel.pecas[parte], undefined);
+  assert.equal(c._visualCanais()?.[`nv_${id}`], undefined, 'peça tirada não fica no desenho');
+  // Tirar tudo: nada de visual, sem bermuda (corpo liso) e o motor não veste de novo.
+  c.runCommand('vestir', null, '/vestir tirar');
+  assert.deepEqual(c.store.get().visualNivel.pecas, {});
+  assert.equal(c._visualCanais(), null);
+  for (let i = 0; i < 80; i++) { e.clock.advance(60e3); c._sinalVisual(['treino', 'festa', 'musica', 'humor'], 3); }
+  assert.equal(c._visualCanais(), null, 'troca automática não veste o JoJo pelado');
+  c._applyLayout(true);
+  assert.deepEqual(e.overlay.state.outfit, { nuLiso: 1 });
+  assert.equal(e.overlay.state.visualNivel, null);
+  // Subir de nível pelado: libera e anuncia, mas não veste.
+  c.progress.st.xp = c.progress.threshold(20);
+  const novas = c._syncVisual({ anunciar: false });
+  assert.ok(novas?.length, 'liberou peças novas');
+  assert.deepEqual(c.store.get().visualNivel.pecas, {}, 'nível novo não veste o JoJo pelado');
+  // Vestir de novo pelo botão "o mais recente de cada parte" traz a bermuda de volta.
+  c.runCommand('vestir', null, '/vestir melhor');
+  assert.ok(Object.keys(c.store.get().visualNivel.pecas).length > 3);
+  assert.equal(c.store.get().guardaRoupa.bermuda, undefined);
+  c.stop();
+});

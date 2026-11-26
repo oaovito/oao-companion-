@@ -3,6 +3,7 @@
 // visuais (visuais-dinamicos.js) ao JoJo sem mudar os sistemas que já existem.
 // Sem carteira conectada (testes antigos, falha ao ler o arquivo), nada aqui age.
 import { PRIORITY } from './behavior.js';
+import { estaPelado } from './wardrobe.js';
 import { ehAnimFantasia } from './memes-br.js';
 import { visuaisLiberados, canaisVisual, sanitizeVisual } from './visual-nivel.js';
 import { canaisLook, espacoDecor, LOOKS } from './loja-arte.js';
@@ -36,7 +37,7 @@ export function instalarLoja(Companion) {
     this.loja = loja;
     this.lojaFxSeq = 0;
     this.lojaFx = null;
-    this.visualMomento = null; // { id, canais, inteiro }
+    this.visualMomento = null; // { id, inteiro } + canais (look da loja) ou parte/nivel (peça de nível, refeita do salvo atual)
     // Animações compradas entram no repouso; as não compradas nunca aparecem.
     if (this.variety) this.variety.liberado = (it) => !!it.loja && loja.possui(it.loja);
     this.motorVisual = new MotorVisual({ now: () => this.clock.now(), estado: loja.st.motorVisual || null });
@@ -86,7 +87,9 @@ export function instalarLoja(Companion) {
   P._visualDecidir = function () {
     if (!this.motorVisual) return null;
     const cfg = this.store.get();
-    const r = this.motorVisual.decidir({ candidatos: this._visuaisAutorizados(), seguro: this._visualSeguro(), auto: cfg.visualAuto !== false, fixo: cfg.visualFixo || null });
+    // Pelado por escolha dela: nenhum visual automático por cima (volta para o dela).
+    const candidatos = estaPelado(this.outfit) ? [] : this._visuaisAutorizados();
+    const r = this.motorVisual.decidir({ candidatos, seguro: this._visualSeguro(), auto: cfg.visualAuto !== false, fixo: cfg.visualFixo || null });
     if (r.trocou) {
       this._aplicarMomento(r.id);
       try { this.loja.salvarMotor(this.motorVisual.salvar()); } catch { /* o histórico de uso é só preferência */ }
@@ -98,24 +101,36 @@ export function instalarLoja(Companion) {
   P._aplicarMomento = function (id) {
     if (!id) { this.visualMomento = null; this._applyLayout(true); return; }
     if (LOOKS[id]) { this.visualMomento = { id, canais: canaisLook(id), inteiro: true }; this._applyLayout(true); return; }
-    // Peça de nível: só troca aquela parte no conjunto dela (o salvo não muda).
+    // Peça de nível: só troca aquela parte no conjunto dela (o salvo não muda). Os canais
+    // são refeitos a cada quadro a partir do salvo ATUAL (nada de foto antiga do que ela tirou).
     const c = this._visuaisAutorizados().find((x) => x.id === id);
-    if (!c) { this.visualMomento = null; return; }
-    const salvo = sanitizeVisual(this.store.get().visualNivel, this._refs);
-    const estado = { ...salvo, pecas: c.inteiro ? { [c.parte]: id } : { ...salvo.pecas, [c.parte]: id } };
-    const canais = canaisVisual(estado, this._refs, this.progress.nivel, { outfit: this.outfit, maoLivre: this._handFree() });
-    this.visualMomento = canais ? { id, canais, inteiro: c.inteiro } : null;
+    this.visualMomento = c ? { id, parte: c.parte, inteiro: c.inteiro, nivel: true } : null;
     this._applyLayout(true);
+  };
+
+  /** Ela mexeu no guarda-roupa: a aparência momentânea sai já (o motor espera o intervalo dele). */
+  P._visualVoltarDela = function () {
+    if (!this.motorVisual || !this.visualMomento) return;
+    this.motorVisual._trocar(null, this.motorVisual.now(), 'dela');
+    this.visualMomento = null;
   };
 
   /** Canais da aparência momentânea por cima do visual salvo (null = usa o dela). */
   P._visualMomentoCanais = function (base, { vestido = false } = {}) {
     const m = this.visualMomento;
     if (!m || !this.motorVisual) return base;
+    // Pelado por escolha dela: nada por cima.
+    if (estaPelado(this.outfit)) return base;
     // Roupa escolhida por ela no guarda-roupa ou fantasia do dia: a fantasia inteira espera.
     if (m.inteiro && (vestido || this.costume)) return base;
-    if (m.inteiro) return { ...m.canais };
-    return { ...(base || {}), ...m.canais };
+    if (!m.nivel) return m.inteiro ? { ...m.canais } : { ...(base || {}), ...m.canais };
+    const salvo = sanitizeVisual(this.store.get().visualNivel, this._refs);
+    // Parte que ela deixou vazia continua vazia: o motor só troca peça que ela está usando.
+    if (!m.inteiro && !salvo.pecas[m.parte]) return base;
+    // Ela tirou todos os visuais de nível: nenhuma fantasia de nível volta sozinha.
+    if (m.inteiro && !Object.keys(salvo.pecas).length) return base;
+    const estado = { ...salvo, pecas: m.inteiro ? { [m.parte]: m.id } : { ...salvo.pecas, [m.parte]: m.id } };
+    return canaisVisual(estado, this._refs, this.progress.nivel, { outfit: this.outfit, maoLivre: this._handFree() }) || base;
   };
 
   P._lojaAgendar = function () {

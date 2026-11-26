@@ -53,7 +53,7 @@ import { parseBreakdownRequest, parseBreakdownCommand, buildBreakdownPrompt, par
 import { interpretar, EXPLICA } from './dialogue/motor-intencoes.js';
 import { modoCiencia, RESPOSTA_EMERGENCIA, ABERTURAS } from './ciencia.js';
 import { detectComida, detectNamorado, respostaCuidado, comidaVariante, findReacao, reacaoDeContexto, PACOTE_CONFIG } from './pacotes.js';
-import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, WEAR_LINES } from './wardrobe.js';
+import { wear, undress, randomOutfit, outfitChannels, findWardrobeItem, sanitizeOutfit, estaPelado, WEAR_LINES } from './wardrobe.js';
 import { DILDO_MS, ATADURA_MS, CANAIS_ATADURA, FALAS_DILDO } from './dildo.js';
 import { BALOES_ESTEROIDE } from './esteroide.js';
 import { GerenciadorVirais, viralDoTexto } from './virais.js';
@@ -2827,7 +2827,8 @@ export class Companion {
   _syncVisual({ anunciar = true } = {}) {
     const refs = this._refs;
     if (!refs) return null;
-    const { estado, novas } = aplicarNivel(this.store.get().visualNivel, refs, this.progress.nivel);
+    // Pelado por escolha dela: o nível novo libera e anuncia, mas não veste nada sozinho.
+    const { estado, novas } = aplicarNivel(this.store.get().visualNivel, refs, this.progress.nivel, { vestir: !estaPelado(this.outfit) });
     if (!novas.length) return null;
     this.store.update({ visualNivel: estado }, { silent: true });
     // O aviso fica guardado (avisar) até o JoJo conseguir falar; aqui só tenta logo depois do nível.
@@ -2898,6 +2899,7 @@ export class Companion {
     if (!this._refs) return 'Não tenho essa peça.';
     const r = vestirVisual(this.store.get().visualNivel, this._refs, this.progress.nivel, id);
     if (!r.peca) return 'Não tenho essa peça.';
+    this._escolhaDela();
     return this._saveVisual(r.estado, r.tirou ? 'tira' : r.peca);
   }
 
@@ -2905,6 +2907,9 @@ export class Companion {
   visualMelhor() {
     if (!this._refs) return 'Ainda não liberei nenhum visual.';
     const s = sanitizeVisual(this.store.get().visualNivel);
+    this._escolhaDela();
+    // Vestiu os visuais: se estava pelado, a bermuda dele volta (a do visual, se tiver).
+    if (estaPelado(this.outfit)) this.store.update({ guardaRoupa: undress(this.outfit, 'bermuda') }, { silent: true });
     return this._saveVisual({ ...s, pecas: melhorConjunto(this._refs, this.progress.nivel) }, 'melhor');
   }
 
@@ -2927,17 +2932,32 @@ export class Companion {
   vestir(id) {
     const r = wear(this.outfit, id);
     if (!r.item) return 'Não tenho essa peça.';
-    return this._saveOutfit(r.outfit, r.removed ? 'tira' : r.item.slot);
+    this._escolhaDela();
+    return this._saveOutfit(r.outfit, r.removed || r.item.semRoupa ? 'tira' : r.item.slot);
   }
 
-  /** Tira uma parte (ou tudo). */
+  /**
+   * Tira uma parte ou tudo. Tudo = pelado de verdade: sai a roupa do guarda-roupa, saem os
+   * visuais de nível vestidos, sai a bermuda (corpo liso no lugar) e a troca automática para.
+   */
   despir(slot = null) {
+    this._escolhaDela();
+    if (!slot && this._refs) {
+      const s = sanitizeVisual(this.store.get().visualNivel, this._refs);
+      this.store.update({ visualNivel: { ...s, pecas: {} } }, { silent: true });
+    }
     return this._saveOutfit(undress(this.outfit, slot), 'tira');
   }
 
   /** Look surpresa sorteado. */
   lookSurpresa() {
+    this._escolhaDela();
     return this._saveOutfit(randomOutfit(this.rng), 'surpresa');
+  }
+
+  /** Ela mexeu no guarda-roupa: a aparência momentânea sai e a escolha dela aparece na hora. */
+  _escolhaDela() {
+    if (this._visualVoltarDela) this._visualVoltarDela();
   }
 
   _saveOutfit(outfit, kind) {

@@ -826,7 +826,9 @@ test('guarda-roupa: /vestir abre o painel na Central, clicar veste o JoJo no des
     assert.equal(await central.evaluate(() => document.querySelector('#guardaRoupa button.on')?.textContent), 'Coroa');
     await central.click('#guardaRoupa button:has-text("Tirar tudo")');
     await sleep(400);
-    assert.deepEqual(await app.evaluate(() => globalThis.__jojo.store.get().guardaRoupa), {});
+    // Tirar tudo = pelado: sem peça e sem bermuda (corpo liso no desenho), na hora.
+    assert.deepEqual(await app.evaluate(() => globalThis.__jojo.store.get().guardaRoupa), { bermuda: 'semBermuda' });
+    await win.waitForFunction(() => window.__jojoRenderer.state?.outfit?.nuLiso === 1 && !window.__jojoRenderer.state.outfit.costume_coroa, null, { timeout: 10000 });
   } finally {
     await quit(app);
   }

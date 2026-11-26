@@ -110,6 +110,10 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     await page.locator('#guardaRoupa [data-visual="nv003"]').click();
     await waitFor(app, () => globalThis.__jojo.store.get().visualNivel.pecas.cabeca === 'nv003');
     await win.waitForFunction(() => window.__jojoRenderer.state.visualNivel?.nv_nv003 === 1, null, { timeout: 10000 });
+    // Tirar tudo também tira os visuais de nível, na hora (antes a troca automática mantinha tudo).
+    await page.locator('#guardaRoupa button:has-text("Tirar tudo")').click();
+    await waitFor(app, () => Object.keys(globalThis.__jojo.store.get().visualNivel.pecas).length === 0);
+    await win.waitForFunction(() => !window.__jojoRenderer.state.visualNivel && window.__jojoRenderer.state.outfit?.nuLiso === 1, null, { timeout: 10000 });
     // Coleção: todas as animações liberadas tocam com um clique (rebolado e Tigresa inclusos).
     await page.locator('#colecaoBtn').click();
     await page.waitForSelector('.animacoes-liberadas button[data-anim="rebolado"]', { state: 'attached' });

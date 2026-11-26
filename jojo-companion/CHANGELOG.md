@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 0.48.1 — 2026-11-26
+
+### Correções
+- Guarda-roupa: tirar uma peça ou "Tirar tudo" agora muda o JoJo na hora. A troca automática de visuais
+  guardava uma cópia antiga das peças e continuava desenhando chapéu, óculos, gravata, luvas e o resto
+  mesmo depois de ela tirar tudo.
+- "Tirar tudo" tira de verdade: sai a roupa do guarda-roupa, saem os visuais de nível vestidos e sai a
+  bermuda. Pelado, ele não ganha fantasia do dia nem visual automático, e subir de nível libera as peças
+  novas sem vestir nenhuma.
+- A troca automática só troca peças que ela está usando; parte que ela deixou vazia continua vazia.
+
+### Novidades
+- Peça "Sem bermuda (pelado)" na parte Bermuda do guarda-roupa: corpo liso de desenho no lugar da bermuda.
+  Escolher uma cor de bermuda, o look surpresa ou "o mais recente de cada parte" veste de novo.
+
+### Como testar
+- Central → Guarda-roupa → "🧺 Tirar tudo": o JoJo fica sem nenhuma peça e sem bermuda, na hora, e continua
+  assim depois de reabrir o app.
+- Com visuais vestidos, clicar numa peça marcada tira só ela, na hora.
+
 ## 0.48.0 — 2026-11-25
 
 ### Novidades

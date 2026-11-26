@@ -1191,12 +1191,13 @@ export function sanitizeVisual(v, referencias = null) {
  * deixou. Primeira vez (visto 0): veste a mais recente de cada parte.
  * Devolve {estado, novas} (novas = peças liberadas agora, em ordem de nível).
  */
-export function aplicarNivel(estado, referencias, nivel) {
+export function aplicarNivel(estado, referencias, nivel, { vestir = true } = {}) {
   const s = sanitizeVisual(estado, referencias);
   if (nivel <= s.visto) return { estado: s, novas: [] };
   const novas = catalogo(referencias).filter((p) => p.nivel > s.visto && p.nivel <= nivel);
-  const pecas = s.visto === 0 ? melhorConjunto(referencias, nivel) : { ...s.pecas };
-  if (s.visto !== 0) for (const p of novas) pecas[p.parte] = p.id;
+  // vestir false (ela tirou tudo): libera e anuncia, mas não veste nada sozinho.
+  const pecas = !vestir ? { ...s.pecas } : s.visto === 0 ? melhorConjunto(referencias, nivel) : { ...s.pecas };
+  if (vestir && s.visto !== 0) for (const p of novas) pecas[p.parte] = p.id;
   // Tudo o que foi liberado agora fica marcado como novo (Central) e a anunciar (JoJo).
   const novos = novas.map((p) => p.id);
   return { estado: { pecas, visto: nivel, novas: ids([...s.novas, ...novos]), avisar: ids([...s.avisar, ...novos]) }, novas };
