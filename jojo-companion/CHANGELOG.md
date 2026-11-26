@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.48.2 — 2026-11-26
+
+### Novidades
+- Seis latas de Monster entram no cardápio do JoJo, na parte das bebidas: Energy (verde), Ultra, Mango Loco,
+  Pipeline Punch, Juice Khaotic e Ultra Violet. Cada lata tem desenho próprio no estilo das outras bebidas.
+- Monster conta como energético no RPG: dá energia, e exagerar deixa o coração do JoJo acelerado.
+
+### Como testar
+- Central → Cuidados: as seis latas aparecem entre as bebidas e o JoJo bebe qualquer uma delas.
+
 ## 0.48.1 — 2026-11-26
 
 ### Correções

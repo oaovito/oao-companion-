@@ -1,0 +1,38 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>monster</title></head>
+<body style="margin:0;background:#fff">
+<script type="module">
+import { RigRenderer } from '../../src/renderer/shared/rig-renderer.js';
+import { Animator } from '../../src/renderer/shared/animator.js';
+import { Effects } from '../../src/renderer/shared/effects.js';
+import { rigComMonster } from '../../src/core/monster.js';
+// Prancha do Êxtase do Monster Branco: quadros nos instantes pedidos (segundos).
+window.renderMonster = (rigJson, animJson, nome, tempos, cols, cell, bg) => {
+  const rig = new RigRenderer(rigComMonster(rigJson));
+  const c = document.createElement('canvas');
+  const rows = Math.ceil(tempos.length / cols);
+  c.width = cols * cell.w; c.height = rows * cell.h;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.font = '13px sans-serif';
+  const head = rigJson.metrics.head;
+  tempos.forEach((seg, i) => {
+    const a = new Animator(animJson, { rng: () => 0.5 });
+    a.play(nome, 0, { restart: true });
+    const t = Math.round(seg * 1000) + 1;
+    const fx = new Effects({ rng: () => 0.5, ground: rigJson.metrics.ground, center: rigJson.metrics.box.width / 2 });
+    let s = a.sample(1);
+    for (let k = 1; k <= t; k += 40) { s = a.sample(k); fx.update(k, s.flags, head); }
+    s = a.sample(t); fx.update(t, s.flags, head);
+    const col = i % cols, row = Math.floor(i / cols);
+    const ox = col * cell.w + (cell.w - 180 * cell.s) / 2, oy = row * cell.h + cell.top;
+    const space = () => { ctx.save(); ctx.translate(ox, oy); ctx.scale(cell.s, cell.s); ctx.translate(s.pose.rootX || 0, s.pose.rootY || 0); };
+    space(); fx.drawBack(ctx, t, { head }); ctx.restore();
+    rig.draw(ctx, s.pose, { origin: { x: ox, y: oy }, scale: cell.s, facing: 1 });
+    space(); fx.draw(ctx, t, { head }); ctx.restore();
+    ctx.fillStyle = '#333'; ctx.fillText(`${seg.toFixed(1)} s`, col * cell.w + 6, row * cell.h + 16);
+  });
+  return c.toDataURL('image/png');
+};
+window.ready = true;
+</script></body></html>

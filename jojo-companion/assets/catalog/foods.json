@@ -1,7 +1,7 @@
 {
   "version": 1,
   "newCount": 50,
-  "notes": "Seis alimentos preservados. Lula já existia; as 49 outras opções solicitadas e mexilhão somam exatamente 50 novas. Ilustrações SVG originais do projeto, sem recursos de terceiros. 0.48: 12 bebidas (campo bebida) entram no cardápio para a sede do JoJo; ilustrações SVG originais do projeto.",
+  "notes": "Seis alimentos preservados. Lula já existia; as 49 outras opções solicitadas e mexilhão somam exatamente 50 novas. Ilustrações SVG originais do projeto, sem recursos de terceiros. 0.48: 12 bebidas (campo bebida) entram no cardápio para a sede do JoJo; ilustrações SVG originais do projeto. 26/11/2026: 6 latas de Monster (bebidas, ícones gerados por scripts/monster-assets.mjs).",
   "foods": [
     {
       "id": "peixe",
@@ -898,6 +898,90 @@
       "preference": "normal",
       "animation": "needsComer",
       "phrase": "Energético. Meu coração vai fazer cardio sozinho."
+    },
+    {
+      "id": "monsterOriginal",
+      "name": "Monster Energy (verde)",
+      "legacy": false,
+      "bebida": true,
+      "image": "assets/foods/monsterOriginal.svg",
+      "hunger": 2,
+      "mood": 7,
+      "health": -2,
+      "xp": 1,
+      "preference": "normal",
+      "animation": "needsComer",
+      "phrase": "Monster verde. Clássico de quem não dorme e ainda acha que é estilo de vida."
+    },
+    {
+      "id": "monsterUltra",
+      "name": "Monster Ultra (branco)",
+      "legacy": false,
+      "bebida": true,
+      "image": "assets/foods/monsterUltra.svg",
+      "hunger": 2,
+      "mood": 7,
+      "health": -1,
+      "xp": 1,
+      "preference": "normal",
+      "animation": "needsComer",
+      "phrase": "Monster Ultra. Zero açúcar. Branco igual a minha paciência quando você some."
+    },
+    {
+      "id": "monsterMangoLoco",
+      "name": "Monster Mango Loco",
+      "legacy": false,
+      "bebida": true,
+      "image": "assets/foods/monsterMangoLoco.svg",
+      "hunger": 3,
+      "mood": 8,
+      "health": -2,
+      "xp": 1,
+      "preference": "normal",
+      "animation": "needsComer",
+      "phrase": "Mango Loco. Manga com cafeína e uma caveira mexicana. Isso é cultura."
+    },
+    {
+      "id": "monsterPipelinePunch",
+      "name": "Monster Pipeline Punch",
+      "legacy": false,
+      "bebida": true,
+      "image": "assets/foods/monsterPipelinePunch.svg",
+      "hunger": 3,
+      "mood": 8,
+      "health": -2,
+      "xp": 1,
+      "preference": "normal",
+      "animation": "needsComer",
+      "phrase": "Pipeline Punch. Maracujá, laranja e goiaba. Tubarão surfista aprovado."
+    },
+    {
+      "id": "monsterKhaotic",
+      "name": "Monster Juice Khaotic",
+      "legacy": false,
+      "bebida": true,
+      "image": "assets/foods/monsterKhaotic.svg",
+      "hunger": 3,
+      "mood": 7,
+      "health": -2,
+      "xp": 1,
+      "preference": "normal",
+      "animation": "needsComer",
+      "phrase": "Khaotic. Laranja e caos. Combina comigo antes do treino."
+    },
+    {
+      "id": "monsterUltraViolet",
+      "name": "Monster Ultra Violet",
+      "legacy": false,
+      "bebida": true,
+      "image": "assets/foods/monsterUltraViolet.svg",
+      "hunger": 2,
+      "mood": 6,
+      "health": -1,
+      "xp": 1,
+      "preference": "normal",
+      "animation": "needsComer",
+      "phrase": "Ultra Violet. Roxo, zero açúcar. Bonito. Não é o meu, mas bebo."
     }
   ]
 }

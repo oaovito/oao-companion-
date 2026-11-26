@@ -1,11 +1,12 @@
 import path from 'node:path';
 import { AtomicState } from '../core/atomic-state.js';
 import { Needs, emptyNeeds, validateNeeds } from '../core/needs.js';
+import { FAVORITO, ANIM_FAVORITO_ID, registrarFavorito } from '../core/monster.js';
 
 export function createNeedsService({ userData, companion, store, foods, balance, ipcMain, fromApp, fromOverlay, notify, log }) {
   const disk = new AtomicState(path.join(userData, 'needs.json'), { validate: validateNeeds, defaults: emptyNeeds, log });
   const canExpress = (related = false) => companion._canNag() && !companion.focus && !companion.game && !companion.fullscreenIds?.length && !(companion.bubble && !related) && !companion.chatQueue && !companion.dragging && !['fleeing', 'hidden'].includes(companion.avoid.state);
-  const model = new Needs({ state: disk.load(), foods, balance, save: s => disk.write(s), clockHealthy: () => companion.progress.clockHealthy(), award: reward => {
+  const model = new Needs({ state: disk.load(), foods, balance, save: s => disk.write(s), clockHealthy: () => companion.progress.clockHealthy(), sempreCabe: id => id === FAVORITO, award: reward => {
     const result = companion.progress.award(reward);
     if (result.amount && canExpress()) companion.playCatalog(result.levelUp ? 'needsNivel' : 'needsXp', { source: 'evento', speak: false });
     return result;
@@ -27,8 +28,22 @@ export function createNeedsService({ userData, companion, store, foods, balance,
   companion.progress.onAward = update;
   companion.progress.onXp = update;
   let feedEpoch = 0;
+  // JOJOcoins do segredo esperam a carteira (a loja abre depois das necessidades).
+  const entregarMoedas = () => { if (companion.loja?.creditar) { try { model.entregarMoedas(x => companion.loja.creditar(x)); } catch { /* tenta de novo no próximo minuto */ } } };
+  /** O favorito secreto (Monster branco): animação própria, fala e recompensa; nada na interface entrega. */
+  function favorito() {
+    let r = null;
+    try { r = model.segredo('monsterFavorito', registrarFavorito); } catch { log('warn', 'Segredo do favorito não confirmado no disco.'); return null; }
+    entregarMoedas();
+    if (canExpress(true) && companion.playCatalog(ANIM_FAVORITO_ID, { source: 'pedido', speak: false })) {
+      companion.effect = null;
+      companion.clock.setTimeout(() => { if (canExpress(true)) companion.say(r.fala, 'speech'); }, 5600);
+    } else if (canExpress(true)) companion.say(r.fala, 'speech');
+    return r;
+  }
   function feed(id, { legacy = false } = {}) {
     const result = model.feed(id);
+    if (result.fed && id === FAVORITO && !legacy) { result.segredo = !!favorito(); update(); return result; }
     if (result.fed) {
       const achievements = companion.progress.count('comidasDiferentes', Object.keys(model.st.foods).length, true);
       const epoch = ++feedEpoch; const context = companion.visualContext;
@@ -70,7 +85,7 @@ export function createNeedsService({ userData, companion, store, foods, balance,
       if (active && nextDigestion && preDigestion !== nextDigestion.id && canExpress()) {
         companion.playCatalog('needsPreCoco', { source: 'evento', speak: false }); preDigestion = nextDigestion.id;
       }
-      const result = model.tick({ active }); model.drain();
+      const result = model.tick({ active }); model.drain(); entregarMoedas();
       if (result.spawned.length && canExpress()) {
         const type = result.spawned[0].type;
         companion.playCatalog(type === 'legendary' ? 'needsLendario' : ['gold', 'flaming', 'radioactive'].includes(type) ? 'needsRaro' : 'needsCoco', { source: 'evento', speak: false });

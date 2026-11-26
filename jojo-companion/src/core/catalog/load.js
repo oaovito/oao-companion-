@@ -7,6 +7,7 @@ import { itensClima } from '../clima-anims.js';
 import { itensRituais } from '../rituais.js';
 import { itensLoja } from '../loja-anims.js';
 import { itensAnime } from '../anime-pacotes.js';
+import { itensMonster } from '../monster.js';
 
 export function fullCatalog(read) {
   const base = read('assets/catalog/animacoes.json');
@@ -18,5 +19,5 @@ export function fullCatalog(read) {
   const discord = read('assets/catalog/discord-animations.json');
   // RPG (0.48): animações por receita com adereços que já existem.
   const rpg = read('assets/catalog/rpg-animations.json');
-  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens, ...discord.itens, ...rpg.itens, ...itensVirais(), ...itensTimers(), ...itensRituais(), ...itensClima(), ...itensLoja(), ...itensAnime()], pacotes, foco: { trocaMin: foco.trocaMin } };
+  return { ...base, itens: [...base.itens, ...packItems(pacotes), ...darkest.itens, ...needs.itens, ...living.itens, ...foco.itens, ...discord.itens, ...rpg.itens, ...itensVirais(), ...itensTimers(), ...itensRituais(), ...itensClima(), ...itensLoja(), ...itensAnime(), ...itensMonster()], pacotes, foco: { trocaMin: foco.trocaMin } };
 }

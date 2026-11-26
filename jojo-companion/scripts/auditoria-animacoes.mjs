@@ -43,6 +43,8 @@ function gatilhos(anims, catalog) {
       if ((g.loja || []).length) partes.push(`loja (${g.loja.join('/')})`);
       // Animes (0.47.9): episódio novo, maratona e pacotes temáticos do anime seguido (companion-anime).
       if ((g.anime || []).length) partes.push(`anime (${g.anime.join('/')})`);
+      // Monster (0.48.2): toca quando ela dá uma bebida especial do cardápio (needs-service).
+      if ((g.monster || []).length) partes.push(`comida (${g.monster.join('/')})`);
       if (new RegExp(`['"\`]${it.id}['"\`]`).test(codigo)) partes.push('código (conversa/foco/evento)');
       out[name] = partes.length ? partes.join(', ') : 'só por nome (/anim)';
     } else {

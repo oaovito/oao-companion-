@@ -9,6 +9,7 @@
 // horário a energia volta por meditação/descanso, nunca por sono.
 
 import { NIVEIS_VINCULO, limiarVinculo } from './mundo.js';
+import { IDS_MONSTER } from '../monster.js';
 
 const clamp = (v, a = 0, b = 100) => Math.max(a, Math.min(b, v));
 
@@ -51,7 +52,11 @@ export const BEBIDAS = Object.freeze({
   kombucha: { sede: 25, energia: 4, cura: ['indigestao'] },
   refrigerante: { sede: 10, energia: 8, risco: 'indigestao' },
   energetico: { sede: 5, energia: 30, risco: 'taquicardia' },
+  // Monster (26/11/2026): mesma pegada do energético; os Ultra são zero açúcar e dão um pouco mais de sede.
+  ...Object.fromEntries(IDS_MONSTER.map((id) => [id, { sede: /Ultra/.test(id) ? 8 : 5, energia: 30, risco: 'taquicardia' }])),
 });
+/** Tudo que conta como energético para o coração acelerado. */
+const ENERGETICOS = new Set(['energetico', ...IDS_MONSTER]);
 
 export const DOENCAS = Object.freeze({
   indigestao: { nome: 'Indigestão', horas: 3, anim: 'barrigaRoncando', fala: 'Muita besteira. Meu estômago abriu um processo trabalhista.', energiaQueda: 1.5 },
@@ -144,7 +149,7 @@ export function comer(v, foodId, ctx) {
     const besteiras = v.recentes.filter((r) => ['besteira', 'doce'].includes(GRUPO_DA_COMIDA[r.id]) || BEBIDAS[r.id]?.risco === 'indigestao').length;
     if (besteiras >= 3 && adoecer(v, 'indigestao', e, ctx.rng, 0.45)) out.novas.push('indigestao');
   } else if (risco === 'taquicardia') {
-    const n = v.recentes.filter((r) => r.id === 'energetico').length;
+    const n = v.recentes.filter((r) => ENERGETICOS.has(r.id)).length;
     if (n >= 3 && adoecer(v, 'taquicardia', e, ctx.rng, 0.6)) out.novas.push('taquicardia');
   }
   return out;

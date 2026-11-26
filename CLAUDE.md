@@ -162,6 +162,9 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   (`src/core/visuais-dinamicos.js`; nunca grava o visual salvo; `visualAuto`/`visualFixo`). Arte oficial da moeda em
   `src/core/moeda-arte.js` → `assets/moeda/` (`node scripts/moeda-assets.mjs`); padrão de arte permanente em
   `jojo-companion/docs/ARTE_QUALIDADE.md` (checado por `test/unit/moeda-arte.test.js`). Docs `docs/LOJA.md`, `docs/VISUAIS_DINAMICOS.md`.
+- **Monster** (0.48.2, `src/core/monster.js`, doc `jojo-companion/docs/MONSTER.md`): 6 latas no cardápio (bebidas; ícones
+  gerados da geometria-mestre por `scripts/monster-assets.mjs`). Segredo: o favorito é o **branco (Ultra)**; dar ele toca
+  `cat_mn01` e rende JOJOcoins/XP (descoberta + 1×/dia). Nunca dar pista do favorito na interface nem nas notas da versão.
 - Pegadinha semanal (estado `dildo`, 6,5 s; `src/core/dildo.js`): consolo gigante cai na cabeça, traumatismo craniano de
   desenho, uma vez por semana em momento sorteado (8h–23h), também no foco; Modo Trabalho/tela cheia esperam; 1 h enfaixado depois.
 - "Eu sou bonita?" (e variações): olhos de coração, cai de costas com 😵 e responde "É." no

@@ -4,7 +4,7 @@ const clone = x => structuredClone(x);
 const clamp = v => Math.max(0, Math.min(100, v));
 export function emptyNeeds() {
   return { version: 1, hunger: 70, health: 100, mood: 75, hygiene: 100, activeMs: 0, objects: [], digestion: [],
-    daily: {}, highDay: null, lastCare: 0, history: [], outbox: [], foods: {}, cleanCount: 0, interactionMemory: [], cooldowns: {}, lojaAplicados: [] };
+    daily: {}, highDay: null, lastCare: 0, history: [], outbox: [], foods: {}, cleanCount: 0, interactionMemory: [], cooldowns: {}, lojaAplicados: [], segredos: {}, moedasPendentes: [] };
 }
 export function validateNeeds(value) {
   if (!value || value.version !== 1) throw new Error('Necessidades em formato incompatível.');
@@ -14,8 +14,8 @@ export function validateNeeds(value) {
   return st;
 }
 export class Needs {
-  constructor({ state, balance, foods = [], save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), monotonic = () => performance.now(), rng = Math.random, id = randomUUID, clockHealthy = () => true, mods = () => ({}) } = {}) {
-    this.st = state ? validateNeeds(state) : emptyNeeds(); Object.assign(this, { balance, foods, save, award, now, monotonic, rng, id, clockHealthy, mods });
+  constructor({ state, balance, foods = [], save = () => {}, award = () => ({ pending: true }), now = () => Date.now(), monotonic = () => performance.now(), rng = Math.random, id = randomUUID, clockHealthy = () => true, mods = () => ({}), sempreCabe = () => false } = {}) {
+    this.st = state ? validateNeeds(state) : emptyNeeds(); Object.assign(this, { balance, foods, save, award, now, monotonic, rng, id, clockHealthy, mods, sempreCabe });
     this.sample = null; this.changed = () => {}; this.drain();
   }
   mutate(fn) {
@@ -71,7 +71,7 @@ export class Needs {
   }
   feed(foodId) {
     const food = this.foods.find(f => f.id === foodId); if (!food) throw new Error('Alimento não encontrado.');
-    if (this.st.hunger >= 95) return { fed: false, text: 'Já estou saciado, Manu. Meu estômago não é um depósito de XP.' };
+    if (this.st.hunger >= 95 && !this.sempreCabe(foodId)) return { fed: false, text: 'Já estou saciado, Manu. Meu estômago não é um depósito de XP.' };
     const result = this.mutate(() => {
       const before = this.st.hunger; const key = this.id();
       this.st.hunger = clamp(before + food.hunger); this.st.health = clamp(Math.max(25, this.st.health + food.health));
@@ -130,6 +130,37 @@ export class Needs {
       s.lojaAplicados = [...(s.lojaAplicados || []), id].slice(-300);
     });
     return true;
+  }
+  /**
+   * Segredo descoberto pela comida (ex.: o favorito do JoJo). `registrar(estado, { dia, agora, rng })`
+   * devolve { seg, recompensas: [{ id, xp, moedas, rotulo }] }: o estado fica gravado, o XP entra na fila
+   * idempotente (`needs:<id>`) e os JOJOcoins esperam a carteira em `moedasPendentes`.
+   */
+  segredo(chave, registrar) {
+    const out = this.mutate(() => {
+      const s = this.st, day = this.day();
+      s.segredos ||= {};
+      const r = registrar(s.segredos[chave], { dia: day, agora: this.now(), rng: this.rng });
+      s.segredos[chave] = r.seg;
+      for (const x of r.recompensas) {
+        if (x.xp > 0 && this.clockHealthy()) s.outbox.push({ id: `needs:${x.id}`, amount: x.xp, source: 'segredo', day, label: x.rotulo });
+        if (x.moedas > 0) s.moedasPendentes = [...(s.moedasPendentes || []), { id: x.id, valor: x.moedas, rotulo: x.rotulo }].slice(-20);
+      }
+      return r;
+    });
+    this.drain(); return out;
+  }
+  /** Entrega os JOJOcoins pendentes (`creditar` é idempotente pelo id); o que falhar espera. */
+  entregarMoedas(creditar) {
+    let n = 0;
+    while (this.st.moedasPendentes?.length) {
+      const x = this.st.moedasPendentes[0];
+      let r; try { r = creditar({ id: x.id, valor: x.valor, origem: 'segredo', rotulo: x.rotulo }); } catch { return n; }
+      if (!r || r.pending) return n;
+      n += r.creditado || 0;
+      this.mutate(() => this.st.moedasPendentes.shift());
+    }
+    return n;
   }
   snapshot() {
     return { hunger: Math.round(this.st.hunger), health: Math.round(this.st.health), mood: Math.round(this.st.mood), hygiene: Math.round(this.st.hygiene), hungerState: this.hungerState(),

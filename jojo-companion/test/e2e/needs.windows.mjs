@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { launch, quit, waitFor } from './feature-helpers.mjs';
-test('cuidados Windows: 68 itens reais (56 alimentos e 12 bebidas do RPG), saciedade, limpeza persistente e XP integrado', { timeout: 120000 }, async () => {
+test('cuidados Windows: 74 itens reais (56 alimentos, 12 bebidas do RPG e 6 latas de Monster), saciedade, limpeza persistente e XP integrado', { timeout: 120000 }, async () => {
   const { app, win, errors } = await launch();
   try {
     const opened = app.waitForEvent('window'); await app.evaluate(() => globalThis.__jojo.companion.openApp('cuidados'));
     const page = await opened; page.on('pageerror', e => errors.push(e.message));
     await page.waitForSelector('#cuidados .care-food');
-    assert.equal(await page.locator('#cuidados .care-food').count(), 68);
+    assert.equal(await page.locator('#cuidados .care-food').count(), 74);
     await page.locator('[data-food=salmao]').click();
     await waitFor(app, () => globalThis.__jojo.needsService.model.st.foods.salmao === 1);
     assert.ok(await app.evaluate(() => globalThis.__jojo.needsService.model.st.hunger > 90));
