@@ -58,7 +58,7 @@ test('vestir: uma peça por parte, a mesma de novo tira, tirar tudo, surpresa e 
   assert.deepEqual(undress({ cabeca: 'coroa' }), { bermuda: 'semBermuda' }, 'tirar tudo = pelado, sem bermuda');
   assert.equal(estaPelado(undress({ cabeca: 'coroa' })), true);
   assert.equal(estaPelado({ bermuda: 'bermudaRosa' }), false);
-  assert.deepEqual(outfitChannels(undress({})), { nuLiso: 1 });
+  assert.deepEqual(outfitChannels(undress({})), { nuJojo: 1 });
   assert.equal(wear({}, 'naoExiste').item, null);
   const rng = seededRng(3);
   for (let i = 0; i < 30; i++) {
@@ -78,6 +78,14 @@ test('vestir: uma peça por parte, a mesma de novo tira, tirar tudo, surpresa e 
   const snap = wardrobeSnapshot({ cabeca: 'coroa' });
   assert.equal(snap.vestido.cabeca, 'coroa');
   assert.equal(snap.partes.length, WARDROBE_SLOTS.length);
+});
+
+test('pelado (canal nuJojo): bermuda e sunga somem e o corpo nu aparece, sempre em repouso', () => {
+  const grupos = RIG.groups.filter((g) => g.showIf === 'nuJojo');
+  const ids = grupos.flatMap((g) => g.parts.map((p) => p.id));
+  for (const id of ['quadrilNuBase', 'nuPinto', 'nuSaco']) assert.ok(ids.includes(id), id);
+  for (const g of grupos) for (const p of g.parts) assert.equal(p.rot, undefined, `${p.id} não mexe`);
+  for (const id of ['shorts', 'shortsDetail', 'sexyLayer']) assert.ok([].concat(RIG.groups.find((g) => g.id === id).hideIf).includes('nuJojo'), id);
 });
 
 test('configurações: roupa salva é validada', () => {
@@ -117,7 +125,7 @@ test('companion: /vestir veste, comenta e o desenho recebe as peças; vale mais 
   e.companion.costume = 'natal';
   e.companion._applyLayout(true);
   st = e.overlay.state;
-  assert.deepEqual(st.outfit, { nuLiso: 1 }, 'pelado: corpo liso no lugar da bermuda');
+  assert.deepEqual(st.outfit, { nuJojo: 1 }, 'pelado: corpo liso no lugar da bermuda');
   assert.equal(st.costume, null, 'pelado por escolha dela: a fantasia do dia não veste');
   assert.equal(st.sexy, false);
   // Tirar só a peça da bermuda volta à bermuda padrão; sem nada do guarda-roupa, a fantasia do dia volta.

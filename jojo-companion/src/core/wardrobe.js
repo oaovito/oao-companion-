@@ -60,8 +60,8 @@ export const WARDROBE_ITEMS = [
   { id: 'bermudaVerde', slot: 'bermuda', nome: 'Verde', canal: 'costume_bermudaVerde', cor: '#1b8a3c' },
   { id: 'bermudaDourada', slot: 'bermuda', nome: 'Dourada', canal: 'costume_bermudaDourada', cor: '#d4a72c' },
   { id: 'bermudaLaranja', slot: 'bermuda', nome: 'Laranja', canal: 'costume_bermudaLaranja', cor: '#fb8c00' },
-  // Sem bermuda: corpo liso de desenho no lugar dela (canal `nuLiso` no rig), sem detalhe íntimo.
-  { id: 'semBermuda', slot: 'bermuda', nome: 'Sem bermuda (pelado)', canal: 'nuLiso', semRoupa: true },
+  // Sem bermuda: pelado com tudo à mostra (canal `nuJojo` no rig, modelo da Tigresa, sempre em repouso).
+  { id: 'semBermuda', slot: 'bermuda', nome: 'Sem bermuda (pelado)', canal: 'nuJojo', semRoupa: true },
 ];
 
 /** "Tirar tudo": nenhuma peça e sem bermuda. */

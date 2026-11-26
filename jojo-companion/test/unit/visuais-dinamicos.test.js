@@ -188,7 +188,7 @@ test('guarda-roupa: tirar peça ou tirar tudo vale na hora, mesmo com visual mom
   for (let i = 0; i < 80; i++) { e.clock.advance(60e3); c._sinalVisual(['treino', 'festa', 'musica', 'humor'], 3); }
   assert.equal(c._visualCanais(), null, 'troca automática não veste o JoJo pelado');
   c._applyLayout(true);
-  assert.deepEqual(e.overlay.state.outfit, { nuLiso: 1 });
+  assert.deepEqual(e.overlay.state.outfit, { nuJojo: 1 });
   assert.equal(e.overlay.state.visualNivel, null);
   // Subir de nível pelado: libera e anuncia, mas não veste.
   c.progress.st.xp = c.progress.threshold(20);

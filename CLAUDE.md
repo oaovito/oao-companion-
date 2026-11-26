@@ -173,8 +173,8 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   `holidays.js` (ICU + fases da Lua), `rig.costumes`.
 - Guarda-roupa (opcional): painel na Central e `/vestir`; peças por parte (`src/core/wardrobe.js`), salvas em
   `guardaRoupa`; vale mais que a fantasia do dia; bermuda por paleta `costume_bermuda*`. "Tirar tudo" (0.48.1) = pelado
-  de verdade: `{bermuda: 'semBermuda'}` (canal `nuLiso`, quadril liso de desenho, sem detalhe íntimo — limite combinado
-  com o João), visuais de nível tirados e nada automático por cima (`estaPelado`). A troca dinâmica refaz os canais do
+  de verdade: `{bermuda: 'semBermuda'}` (canal `nuJojo`, grupos `quadrilNu`/`nuPartes` no rig: pelado com
+  as partes no modelo da Tigresa, sempre em repouso, sem ereção — pedido do João em 26/11), visuais de nível tirados e nada automático por cima (`estaPelado`). A troca dinâmica refaz os canais do
   salvo atual a cada layout e só troca parte que ela está usando.
 - Fantasias ousadas por padrão (`festas.estilo`); "se veste direito" → dedo do meio + comportada.
 - Comida de tubarão sorteada (peixe, foca, lula, tartaruga, pinguim, às vezes gente), gore e arroto.

@@ -1,7 +1,7 @@
 {
   "origin": "Exportação do rig histórico restaurado pelo Chromium Windows, sem redesenho.",
   "source": "../character/jojo.rig.json",
-  "sha256": "2a563ee826626c970e1763629ee411b0f3ee8b4ca7f003061f39a413d47fc8d5",
+  "sha256": "b8aa45b688ace2e28848ee007150f13bfdfe13c6a6a966c0ba7465ada7538b47",
   "anatomy": "original-legged-v1",
   "sizes": [
     16,

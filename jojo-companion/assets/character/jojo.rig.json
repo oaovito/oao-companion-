@@ -292,7 +292,9 @@
     "living_75849a": "#75849a",
     "living_d2be86": "#d2be86",
     "living_a8bac5": "#a8bac5",
-    "living_6e7e9c": "#6e7e9c"
+    "living_6e7e9c": "#6e7e9c",
+    "nuGlande": "#e57373",
+    "nuPelos": "#2b1d14"
   },
   "outlineWidth": 2.2,
   "faceAfter": "headDetail",
@@ -586,7 +588,7 @@
     {
       "id": "quadrilNu",
       "outline": false,
-      "showIf": "nuLiso",
+      "showIf": "nuJojo",
       "hideIf": "mooning",
       "parts": [
         {
@@ -604,7 +606,7 @@
     {
       "id": "quadrilNuDetail",
       "outline": false,
-      "showIf": "nuLiso",
+      "showIf": "nuJojo",
       "hideIf": "mooning",
       "parts": [
         {
@@ -625,6 +627,42 @@
       ]
     },
     {
+      "id": "nuPartes",
+      "outline": true,
+      "showIf": "nuJojo",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "nuSaco",
+          "fill": "body",
+          "path": "M76.5,151 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0 Z M88.5,151 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0 Z"
+        },
+        {
+          "id": "nuPinto",
+          "fill": "body",
+          "path": "M85,136 C84,148 83,158 86,165 C88,170 93,170 95,165 C97,158 96,148 95,136 Z"
+        }
+      ]
+    },
+    {
+      "id": "nuPartesDetail",
+      "outline": false,
+      "showIf": "nuJojo",
+      "hideIf": "mooning",
+      "parts": [
+        {
+          "id": "nuCabecinha",
+          "fill": "nuGlande",
+          "path": "M86,162 C87,167 93,168 94,162 C93,164 87,164 86,162 Z"
+        },
+        {
+          "id": "nuPelos",
+          "fill": "nuPelos",
+          "path": "M74,135 L77,128 L80,134 L84,127 L87,133 L90,126 L93,133 L96,127 L100,134 L103,128 L106,135 C96,140 84,140 74,135 Z"
+        }
+      ]
+    },
+    {
       "id": "shorts",
       "outline": true,
       "parts": [
@@ -637,7 +675,7 @@
       "hideIf": [
         "mooning",
         "sexy",
-        "nuLiso"
+        "nuJojo"
       ]
     },
     {
@@ -653,7 +691,7 @@
       "hideIf": [
         "mooning",
         "sexy",
-        "nuLiso"
+        "nuJojo"
       ]
     },
     {
@@ -662,7 +700,7 @@
       "showIf": "sexy",
       "hideIf": [
         "mooning",
-        "nuLiso"
+        "nuJojo"
       ],
       "parts": [
         {

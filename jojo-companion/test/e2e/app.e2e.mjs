@@ -828,7 +828,7 @@ test('guarda-roupa: /vestir abre o painel na Central, clicar veste o JoJo no des
     await sleep(400);
     // Tirar tudo = pelado: sem peça e sem bermuda (corpo liso no desenho), na hora.
     assert.deepEqual(await app.evaluate(() => globalThis.__jojo.store.get().guardaRoupa), { bermuda: 'semBermuda' });
-    await win.waitForFunction(() => window.__jojoRenderer.state?.outfit?.nuLiso === 1 && !window.__jojoRenderer.state.outfit.costume_coroa, null, { timeout: 10000 });
+    await win.waitForFunction(() => window.__jojoRenderer.state?.outfit?.nuJojo === 1 && !window.__jojoRenderer.state.outfit.costume_coroa, null, { timeout: 10000 });
   } finally {
     await quit(app);
   }
