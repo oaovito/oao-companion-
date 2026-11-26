@@ -15,6 +15,7 @@
 - Peça "Sem bermuda (pelado)" na parte Bermuda do guarda-roupa: o JoJo fica pelado com tudo à mostra, no
   mesmo modelo de desenho da Tigresa (sempre em repouso). Qualquer bermuda ou roupa cobre. Escolher uma cor de
   bermuda, o look surpresa ou "o mais recente de cada parte" veste de novo.
+- Ao ficar pelado pelo "Tirar tudo", o JoJo passa 5 segundos corado e tímido, tapando o rosto.
 
 ### Como testar
 - Central → Guarda-roupa → "🧺 Tirar tudo": o JoJo fica sem nenhuma peça e pelado, na hora, e continua

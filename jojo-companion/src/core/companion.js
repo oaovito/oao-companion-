@@ -2933,7 +2933,7 @@ export class Companion {
     const r = wear(this.outfit, id);
     if (!r.item) return 'Não tenho essa peça.';
     this._escolhaDela();
-    return this._saveOutfit(r.outfit, r.removed || r.item.semRoupa ? 'tira' : r.item.slot);
+    return this._saveOutfit(r.outfit, r.item.semRoupa && !r.removed ? 'pelado' : r.removed ? 'tira' : r.item.slot);
   }
 
   /**
@@ -2946,7 +2946,7 @@ export class Companion {
       const s = sanitizeVisual(this.store.get().visualNivel, this._refs);
       this.store.update({ visualNivel: { ...s, pecas: {} } }, { silent: true });
     }
-    return this._saveOutfit(undress(this.outfit, slot), 'tira');
+    return this._saveOutfit(undress(this.outfit, slot), slot ? 'tira' : 'pelado');
   }
 
   /** Look surpresa sorteado. */
@@ -2967,7 +2967,9 @@ export class Companion {
     if (this.started) {
       this.say(t, 'speech');
       // Poses sem objeto na mão: a peça escolhida aparece na hora (o espelho tomava o lugar dela).
-      this.playCatalog(kind === 'surpresa' ? 'orgulhoso' : kind === 'tira' ? 'ajeitarPostura' : 'seAcharMaximo', { source: 'comando', speak: false });
+      // Pelado: corado e tímido por 5 s, tapando o rosto.
+      const anim = { surpresa: 'orgulhoso', tira: 'ajeitarPostura', pelado: 'vergonhaPelado' }[kind] || 'seAcharMaximo';
+      this.playCatalog(anim, { source: 'comando', speak: false });
       this._applyLayout(true);
     }
     if (this.onConversationsChange) this.onConversationsChange();

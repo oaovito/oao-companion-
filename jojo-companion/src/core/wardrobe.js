@@ -166,4 +166,6 @@ export const WEAR_LINES = {
   bermuda: ['Cor nova, mesmo glúteo de aço.', 'Bermuda nova. As pernas continuam lendárias.'],
   tira: ['Tirou? Tá bom. Ao natural também é obra de arte.', 'Pelado de acessório. Do jeito que a natureza caprichou.'],
   surpresa: ['Você me vestiu no escuro? Ficou ótimo, mesmo assim.', 'Look aleatório. Ainda assim, um ícone.'],
+  // Tirou tudo: ele fica corado e tímido (animação vergonhaPelado, 5 s).
+  pelado: ['Ei! Para de olhar, sua tarada.', 'Tá… tá frio aqui. Não é o que parece.', 'Isso é assédio contra tubarão. Mas tá, pode olhar.', 'Pelo menos fecha a cortina, Manu.'],
 };

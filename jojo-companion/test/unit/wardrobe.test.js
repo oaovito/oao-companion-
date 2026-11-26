@@ -122,6 +122,7 @@ test('companion: /vestir veste, comenta e o desenho recebe as peças; vale mais 
   assert.equal(e.overlay.state.outfit.costume_flor, undefined);
   r = await chatAdv(e, '/vestir tirar');
   assert.deepEqual(e.store.get().guardaRoupa, { bermuda: 'semBermuda' });
+  assert.match(e.companion.behavior.anim || '', /vergonhaPelado/, 'pelado: fica corado e tímido');
   e.companion.costume = 'natal';
   e.companion._applyLayout(true);
   st = e.overlay.state;

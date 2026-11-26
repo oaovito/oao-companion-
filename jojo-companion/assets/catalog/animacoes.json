@@ -7106,6 +7106,29 @@
     ],
     "repeticoes": 4
    }
+  },
+  {
+   "id": "vergonhaPelado",
+   "nome": "Vergonha de ficar pelado",
+   "categoria": "reacoes",
+   "listas": {},
+   "gatilho": {},
+   "duracao": 5000,
+   "loop": false,
+   "entrada": 220,
+   "frequencia": "comum",
+   "receita": {
+    "rosto": "envergonhado",
+    "bracos": "cobreRosto",
+    "corpo": "encolhe",
+    "cabeca": "viraRosto",
+    "humor": {
+     "vergonha": 1
+    },
+    "fx": [
+     "suor"
+    ]
+   }
   }
  ]
 }
