@@ -62,15 +62,22 @@
       "cancelled": false,
       "durationMs": 471574,
       "optional": false,
-      "status": "running",
+      "status": "passed",
       "validation": {
         "engineCases": 32,
         "uiCases": 12,
         "modelDigest": "68ceab7e468a31c988b44d5a4984a0e21f58c4f7158c6ce29c1804babac38df7",
         "semanticReview": {
-          "status": "pending",
-          "branch": "codex/ci-evidence-45901772043-2",
-          "path": "jojo-companion/docs/evidencias/semantic-review.json"
+          "schema": 1,
+          "commit": "0130eeb7bfa41c9b6cbbdd54c11cb634961f32d6",
+          "runId": "45901772043",
+          "attempt": "2",
+          "digest": "96bda7463f3a16ff946b16095189f0ffe12816849565ff0199479b776f598c17",
+          "status": "approved",
+          "reviewedBy": "Codex",
+          "note": "Aprovado com deslizes leves, pelo critério do João (autorização dele em 26/11/2026 para esta revisão; sem violação grave: nada sobre corpo/peso dela, ameaça ou termo carinhoso). Leves: U3 \"roupa de Ação de Graças\" (piada especulativa, quase fato inventado); E11 e E22 comparações sem sentido; E20 \"Falar, Manu\" truncado; E15/E16 marcador [1]; E28 \"Tubarão Bombado\" em vez de JoJo.",
+          "blobSha": "075cb9b4d7f9c3eac3f74905eb70edf06dc899c3",
+          "waitMs": 52783.95830000006
         }
       }
     }
