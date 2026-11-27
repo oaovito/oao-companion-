@@ -78,6 +78,9 @@ test('visuais por nível Windows: peça nova ao subir, aviso, desenho com os can
     await win.waitForFunction(() => !!window.__jojoRenderer.state, null, { timeout: 15000 });
     const l15 = await app.evaluate(() => {
       const c = globalThis.__jojo.companion;
+      // Sem fantasia do dia: num feriado (Ação de Graças, Natal…) o chapéu da festa ocupa a cabeça e esconde nv003.
+      c.checkHoliday = () => { c.costume = null; c.holiday = null; return null; };
+      c.checkHoliday();
       c.progress.st.xp = c.progress.threshold(15);
       c._syncVisual({ anunciar: true });
       return { nivel: c.progress.nivel, vn: globalThis.__jojo.store.get().visualNivel };
