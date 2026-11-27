@@ -33,6 +33,8 @@ test('monster: seis sabores no cardápio como bebidas, com a lata gerada da geom
     }
     assert.ok(BEBIDAS[s.id]?.energia > 0, `${s.id}: efeito de bebida no RPG`);
   }
+  const atributos = fs.readFileSync(new URL('../../../.gitattributes', import.meta.url), 'utf8');
+  assert.match(atributos, /^jojo-companion\/assets\/foods\/monster\*\.svg -text$/m, 'o checkout no Windows não pode trocar o fim de linha das latas');
 });
 
 test('monster: o favorito é segredo; no cardápio o branco aparece igual aos outros', () => {
