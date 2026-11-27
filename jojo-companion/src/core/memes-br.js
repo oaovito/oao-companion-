@@ -5,6 +5,8 @@
 // fecha na pose com a fala. Os dados ficam em progressao.json (extras, coleção "memes BR",
 // campos `fantasia` e `meme`); este módulo desenha, anima e reconhece a frase do meme.
 
+import { escolherCoreografia, aplicarCoreografia, palavrasPara, climaDe } from './originalidade.js';
+
 const r1 = (n) => Math.round(n * 10) / 10;
 const circ = (cx, cy, r) => `M${r1(cx - r)},${r1(cy)} a${r1(r)},${r1(r)} 0 1,0 ${r1(2 * r)},0 a${r1(r)},${r1(r)} 0 1,0 ${r1(-2 * r)},0 Z`;
 const elip = (cx, cy, rx, ry) => `M${r1(cx - rx)},${r1(cy)} a${r1(rx)},${r1(ry)} 0 1,0 ${r1(2 * rx)},0 a${r1(rx)},${r1(ry)} 0 1,0 ${r1(-2 * rx)},0 Z`;
@@ -101,13 +103,17 @@ const BAIXOS = {
   nenhum: () => [QUADRIL],
 };
 
+// Cada calçado cobre o pé inteiro da sua perna (pé do rig: x 49–96 à esquerda, 84–131 à direita) e
+// fica preso nela (pernas.js): com a perna chutando, o pé de verdade nunca sai por baixo.
+const PES_X = [72.5, 107.5];
+const parPes = (f) => PES_X.map((x, i) => f(x, i ? 1 : -1)).join(' ');
 const PES = {
-  chinelo: (c) => [['nivelCorpo', 'chinelo', c, `${elip(68, 166, 17, 3.4)} ${elip(112, 166, 17, 3.4)}`], ['nivelPintura', 'tira', '#ffffff', 'M64,163 L70,158 L72,159 L67,164 Z M108,163 L114,158 L116,159 L111,164 Z']],
-  bota: (c) => [['nivelCorpo', 'botas', c, 'M54,150 L84,150 L86,168 L50,168 Z M96,150 L126,150 L130,168 L94,168 Z']],
-  sapato: (c) => [['nivelCorpo', 'sapatos', c, `${elip(68, 165, 18, 5)} ${elip(112, 165, 18, 5)}`]],
-  tenis: (c) => [['nivelCorpo', 'tenisF', c, `${elip(68, 164, 18, 6)} ${elip(112, 164, 18, 6)}`], ['nivelCorpo', 'solaF', '#ffffff', `${rect(50, 166, 36, 2.6)} ${rect(94, 166, 36, 2.6)}`]],
-  invertidos: (c) => [['nivelCorpo', 'pesVirados', c, 'M52,160 C46,164 48,170 58,170 L84,170 L84,160 Z M128,160 C134,164 132,170 122,170 L96,170 L96,160 Z']],
-  sandalia: (c) => [['nivelCorpo', 'sandalias', c, `${rect(52, 164, 32, 4)} ${rect(96, 164, 32, 4)}`], ['nivelPintura', 'tirasSandalia', c, 'M66,164 L68,156 L70,156 L70,164 Z M110,164 L112,156 L114,156 L114,164 Z']],
+  chinelo: (c) => [['nivelCorpo', 'chinelo', c, parPes((x) => elip(x, 166, 24.5, 3.6))], ['nivelPintura', 'tira', '#ffffff', parPes((x, s) => poly([[x - 4 * s, 163], [x + 2 * s, 158], [x + 4 * s, 159], [x - 1 * s, 164]]))]],
+  bota: (c) => [['nivelCorpo', 'botas', c, 'M52,150 L86,150 L97,158 L97,169 L47,169 Z M128,150 L94,150 L83,158 L83,169 L133,169 Z']],
+  sapato: (c) => [['nivelCorpo', 'sapatos', c, parPes((x) => elip(x, 164.5, 25, 5.6))]],
+  tenis: (c) => [['nivelCorpo', 'tenisF', c, parPes((x) => elip(x, 163.5, 25, 6.4))], ['nivelCorpo', 'solaF', '#ffffff', parPes((x) => rect(x - 24, 166.5, 48, 2.6))]],
+  invertidos: (c) => [['nivelCorpo', 'pesVirados', c, 'M52,158 C44,163 46,170 58,170 L97,170 L97,158 Z M128,158 C136,163 134,170 122,170 L83,170 L83,158 Z']],
+  sandalia: (c) => [['nivelCorpo', 'sandalias', c, parPes((x) => rect(x - 24, 164, 48, 4.4))], ['nivelPintura', 'tirasSandalia', c, parPes((x) => rect(x - 1, 156, 2.4, 8))]],
   descalco: () => [],
   // Abaporu: um pé enorme na frente.
   peGigante: (c) => [['nivelCorpo', 'peGigante', c, 'M58,150 C40,150 22,156 22,166 C22,174 60,176 104,174 C114,172 114,160 104,154 Z'], ['nivelPintura', 'dedos', sombra(c), [30, 42, 54, 66].map((x) => elip(x, 168, 4, 3)).join(' ')]],
@@ -370,8 +376,19 @@ export function gruposDosMemes(memes) {
  * Animação própria de um meme (6,5 s, como a da Tigresa): ato 1, o puf e a fantasia
  * aparecem; ato 2, o gesto do meme com o efeito girando; ato 3, a pose final com a fala.
  */
-export function animacaoMeme(p) {
-  const g = (GESTOS[p.meme.gesto] || GESTOS.explica)();
+// O gesto do meme fica no começo do ato 2 (comprimido em [0,06; 0,46]); a segunda metade é a
+// coreografia própria de cada animação (originalidade.js), que nunca se repete entre elas.
+const COMPRIME = (t) => Math.round((0.06 + 0.4 * t) * 10000) / 10000;
+function comprimir(keys) {
+  const out = keys.map(([t, v, s]) => (s ? [COMPRIME(t), v, s] : [COMPRIME(t), v]));
+  if (out[0][0] > 0) out.unshift([0, out[0][1]]);
+  out.push([1, out[out.length - 1][1]]);
+  return out;
+}
+
+export function animacaoMeme(p, { coreografia = null, palavras = null } = {}) {
+  const g0 = (GESTOS[p.meme.gesto] || GESTOS.explica)();
+  const g = coreografia ? Object.fromEntries(Object.entries(g0).map(([ch, keys]) => [ch, comprimir(keys)])) : g0;
   const veste = [[0, 0], [0.06, 1, 'step'], [0.97, 0, 'step'], [1, 0]];
   const tracks = {
     [canalMeme(p.id)]: veste,
@@ -400,16 +417,28 @@ export function animacaoMeme(p) {
   else tracks.nvSemBermuda = veste;
   if (p.fantasia?.umaPerna) tracks.nvSemPernaE = veste;
   if (p.fantasia?.cabeca === 'semCabeca') tracks.nvSemCabeca = veste;
-  return { duration: 6500, blendIn: 0, mark: '!', blink: true, tracks };
+  const anim = { duration: 6500, blendIn: 0, mark: '!', blink: true, tracks };
+  if (coreografia) {
+    anim.tracks = aplicarCoreografia(tracks, coreografia, { t0: 0.47, t1: 0.86, base: NEUTRO_CORPO });
+    anim.coreografia = coreografia.batidas;
+  }
+  if (palavras) anim.palavras = palavras;
+  return anim;
 }
+// Repouso dos canais de corpo (o mesmo do arquivo de animações).
+const NEUTRO_CORPO = { squashX: 1, squashY: 1, scale: 1, eyeOpen: 1 };
 
 /** Animações dos memes acrescentadas às do arquivo (não altera o objeto recebido). */
-export function comAnimacoesMemes(anims, memes) {
+export function comAnimacoesMemes(anims, memes, { sal = {} } = {}) {
   if (!memes?.length) return anims;
   const animations = { ...anims.animations };
   const channels = { ...anims.channels };
+  // Cada show/meme/jogo tem coreografia e palavras na tela próprias (nenhuma combinação repete).
+  const usados = new Set();
   for (const p of memes) {
-    const a = animacaoMeme(p);
+    const nome = animDoMeme(p.id);
+    const clima = climaDe(p);
+    const a = animacaoMeme(p, { coreografia: escolherCoreografia(sal[nome] ? `${nome}#${sal[nome]}` : nome, clima, usados), palavras: palavrasPara({ id: nome, nome: p.nome || p.titulo || p.id, clima, t0: 0.16, t1: 0.9 }) });
     animations[animDoMeme(p.id)] = a;
     for (const ch of Object.keys(a.tracks)) if (!(ch in channels)) channels[ch] = neutro(ch);
   }

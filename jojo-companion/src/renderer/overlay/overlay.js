@@ -18,6 +18,9 @@ import { rigComAnime } from '../../core/anime-arte.js';
 import { LojaFx } from './loja-fx.js';
 import { desenharRelogio, desenharAnel, leituraRelogio, posicaoRelogio, tamanhoNoQuadro } from '../shared/relogio-desenho.js';
 import { ehAnimFantasia } from '../../core/memes-br.js';
+import { desenharPalavras } from '../shared/palavras-desenho.js';
+import { palavrasDesbloqueio } from '../../core/originalidade.js';
+const CARIMBO = palavrasDesbloqueio({ t0: 0, t1: 1 });
 import { Effects } from '../shared/effects.js';
 import { ProgressView } from '../shared/progress-view.js';
 import { filterCommands } from '../shared/command-filter.js';
@@ -686,6 +689,25 @@ function draw(now) {
   if (reduced) effects.particles.length = 0;
   effects.draw(ctx, now, { mark, head, mouth: rig.rig.metrics.mouth, facingSign: fs });
   ctx.restore();
+  // Palavras na tela da animação (fórmula na lousa, grito, legenda, placar, carimbo de desbloqueio...).
+  if (sample.flags.palavras) {
+    ctx.save();
+    ctx.globalAlpha = s.opacity;
+    ctx.translate(box.x, box.y);
+    ctx.scale(scale, scale);
+    desenharPalavras(ctx, sample.flags.palavras, sample.t, { lado: fs, dinamico: s.desbloqueio || {}, reduzido: reduced });
+    ctx.restore();
+  }
+  // Desbloqueio: carimbo DESBLOQUEADO + etiqueta com o nome, por cima de qualquer animação.
+  if (s.desbloqueio) {
+    const td = Math.max(0, Math.min(1, (Date.now() - s.desbloqueio.desde) / Math.max(1, s.desbloqueio.dur)));
+    ctx.save();
+    ctx.globalAlpha = s.opacity;
+    ctx.translate(box.x, box.y);
+    ctx.scale(scale, scale);
+    desenharPalavras(ctx, CARIMBO, td, { lado: fs, dinamico: { nome: s.desbloqueio.nome }, reduzido: reduced });
+    ctx.restore();
+  }
   // JOJOcoins voando (ganho, compra, chuva, festa) por cima de tudo.
   lojaFx.desenharMoedas(ctx, s, scale, now);
 }

@@ -122,7 +122,7 @@ export class Animator {
       name: this.current.name,
       t,
       done: !anim.loop && now - start >= dur,
-      flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts, sweat: !!anim.sweat, stink: !!anim.stink, fx: anim.fx || null },
+      flags: { z: !!anim.z, dust: anim.dust || false, sparkle: anim.sparkle || false, mark: anim.mark || null, hearts: !!anim.hearts, sweat: !!anim.sweat, stink: !!anim.stink, fx: anim.fx || null, palavras: anim.palavras || null },
     };
   }
 
@@ -139,7 +139,7 @@ export class Animator {
       pose[ch] = evalTrack(keys, t, pose[ch], this.defaultEase);
     }
     this.pose = pose;
-    return { pose, name: this.current.name, t, done: true, flags: { z: false, dust: false, sparkle: false, mark: anim.mark || null, hearts: false } };
+    return { pose, name: this.current.name, t, done: true, flags: { z: false, dust: false, sparkle: false, mark: anim.mark || null, hearts: false, palavras: anim.palavras || null } };
   }
 }
 

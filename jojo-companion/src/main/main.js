@@ -3,11 +3,10 @@
 import { wardrobeSnapshot } from '../core/wardrobe.js';
 import { visualSnapshot } from '../core/visual-nivel.js';
 import { criarCerebroLocal } from './cerebro-local.js';
-import { expandCatalog } from '../core/catalog/recipes.js';
 import { fullCatalog } from '../core/catalog/load.js';
 import { visuaisComAnimacao } from '../core/visual-nivel.js';
-import { comAnimacoesMemes } from '../core/memes-br.js';
-import { comCanaisAnime } from '../core/anime-arte.js';
+import { montarAnimacoes } from '../core/conjunto-animacoes.js';
+import { espacoDasPalavras } from '../renderer/shared/palavras-desenho.js';
 import { app, screen, powerMonitor, ipcMain, globalShortcut, dialog, shell, BrowserWindow, net, safeStorage, utilityProcess } from 'electron';
 import QRCode from 'qrcode';
 import fs from 'node:fs';
@@ -201,7 +200,8 @@ function main() {
       // Animações do catálogo (receitas em camadas) entram junto com as feitas à mão.
       // Memes BR: cada um tem animação própria (memes-br.js), gerada a partir dos dados do visual.
       // Animações de anime: canais de escala dos efeitos começam em 1 (neutro), não em 0.
-      animations: comCanaisAnime(comAnimacoesMemes(expandCatalog(readJSON('assets/animations/jojo.animations.json'), fullCatalog(readJSON)), memesBr)),
+      // Originalidade (27/11/2026): as que se repetiam ganham coreografia e palavras na tela próprias.
+      animations: montarAnimacoes(readJSON, { memes: memesBr }),
       foods: readJSON('assets/catalog/foods.json').foods,
       // Referências dos níveis: o overlay desenha a peça de cada uma (só aparece a vestida).
       niveis: (({ referencias, extras }) => ({ referencias, extras }))(readJSON('assets/catalog/progressao.json')),
@@ -317,7 +317,7 @@ function main() {
     });
     const dialogue = new DialogueEngine({ log, search: webSearch, searchEnabled: () => store.get().webSearch, llm, pesquisa });
 
-    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: readJSON('assets/animations/jojo.room.json'), catalog, ambientLines, variety: varietyState,
+    companion = new Companion({ platform, overlay, clock, store, personality, rig: assets.rig, room: comEspacoDasPalavras(readJSON('assets/animations/jojo.room.json'), assets.animations), catalog, ambientLines, variety: varietyState,
       antitedio: { rotinas: readJSON('assets/catalog/rotinas.json'), minijogos: readJSON('assets/catalog/minijogos.json'), progressao: readJSON('assets/catalog/progressao.json') }, phrases, dialogue, log,
       tutorial: readJSON('assets/tutorial/pt-BR.json'), tutorialAuto: !TEST });
 
@@ -1010,4 +1010,16 @@ function main() {
       };
     }
   }
+}
+
+/** Espaço medido (jojo.room.json) somado ao das palavras na tela de cada animação (lousa, placar...). */
+function comEspacoDasPalavras(room, anims) {
+  const out = { ...room, anims: { ...(room.anims || {}) } };
+  for (const [nome, a] of Object.entries(anims.animations || {})) {
+    const e = a.palavras && espacoDasPalavras(a.palavras);
+    if (!e || nome.includes('~')) continue;
+    const r = out.anims[nome];
+    out.anims[nome] = r ? { l: Math.max(r.l, e.l), t: Math.max(r.t, e.t), r: Math.max(r.r, e.r), b: Math.max(r.b, e.b) } : e;
+  }
+  return out;
 }

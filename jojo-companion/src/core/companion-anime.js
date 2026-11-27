@@ -251,7 +251,7 @@ export function instalarAnime(Companion) {
     else if (reg.motivoSemMoedas === 'tetoDia') partes.push(this._animeFala('tetoDia', vars));
     else partes.push(this._animeFala('semRecompensa', vars));
     for (const b of reg.bonus || []) if (['primeiroEp', 'retomada', 'temporada', 'serie'].includes(b.id)) partes.push(this._animeFala(b.id, { nome: reg.titulo, moedas: b.valor }));
-    for (const c of conquistas) partes.push(this._animeFala('conquista', { titulo: c.nome, moedas: c.moedas }));
+    for (const c of conquistas) { partes.push(this._animeFala('conquista', { titulo: c.nome, moedas: c.moedas })); this._carimbo?.(`Conquista: ${c.nome}`); }
     if (reg.relogioSuspeito) partes.push('O relógio do PC mudou no meio do episódio; contei só o tempo que passou de verdade.');
     // Reação: a maior coisa que aconteceu vira o contexto da visita.
     const ctx = conquistas.length ? 'conquista' : r.concluiuSerie || r.concluiuTemporada ? 'encerramento' : moedas > 0 ? 'moedas' : 'conclusao';

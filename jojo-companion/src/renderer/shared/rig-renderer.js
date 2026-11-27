@@ -1,10 +1,14 @@
 // Desenha o rig vetorial do JoJo em um CanvasRenderingContext2D a partir de uma
 // pose (canais numéricos). Não conhece Electron.
 
+import { prenderNasPernas } from '../../core/pernas.js';
+
 const DEG = Math.PI / 180;
 
 export class RigRenderer {
-  constructor(rig) {
+  constructor(rigBase) {
+    // Sapatos, botas e calças das roupas seguem a perna quando ela mexe (nunca o pé saindo por baixo).
+    const rig = prenderNasPernas(rigBase);
     this.rig = rig;
     this.paths = new Map();
     this.clips = new Map(); // recortes (ex.: meia arrastão só dentro das pernas)

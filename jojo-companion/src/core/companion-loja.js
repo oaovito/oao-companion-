@@ -186,6 +186,7 @@ export function instalarLoja(Companion) {
     if (it.efeito.look) { this.motorVisual?.destacar(it.efeito.look); this._autorizadosCache = null; this.clock.setTimeout(() => this._visualDecidir(), 3000); }
     if (this.store.get().lojaReacoes === false || !this._lojaPodeReagir()) return;
     this.playCatalog('ljCompra', { source: 'loja', speak: false });
+    this._carimbo?.(it.nome); // o que ela comprou aparece carimbado DESBLOQUEADO
     this.clock.setTimeout(() => this._lojaPodeReagir() && this.say(it.fala || FALAS_COMPRA[it.tipo], 'speech'), 900);
   };
 

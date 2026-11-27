@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## 0.48.3 — 2026-11-27
+
+### Correções
+- Pé do JoJo: sapatos, botas, chinelos, meias e calças dos visuais agora acompanham a perna. Antes ficavam
+  parados no chão e o pé de verdade aparecia por baixo quando ele chutava, pulava ou sentava (142 animações
+  tinham o defeito; a auditoria das 1.340 animações agora não acha nenhuma).
+- Sapatos e botas de todos os visuais cobrem o pé inteiro.
+
+### Melhorias
+- Fim das animações repetidas: uma auditoria compara o movimento de todas as animações e, onde duas pareciam a
+  mesma, refaz uma delas com uma coreografia própria (39 movimentos novos combinados sem repetir). 109
+  animações do catálogo e 66 shows de visuais, memes e jogos ganharam movimento novo.
+
+### Novidades
+- Palavras na tela durante as animações: fórmulas fictícias na lousa, gritos de susto, legendas de
+  documentário, placar de notas, gráfico, seta com rótulo e nuvem de pensamento, cada uma escrita para aquela
+  animação.
+- Tudo que é desbloqueado aparece na tela: o JoJo toca a animação daquilo (ou a cerimônia de desbloqueio), o
+  carimbo DESBLOQUEADO bate com o nome e ele fala. Vale para visual, título e acessório de nível, minijogo,
+  conquista, aparência de relógio, habilidade, região e segredo do RPG, conquista de anime e compra na loja.
+  No Modo Trabalho, foco ou tela cheia o desbloqueio espera e aparece depois.
+
+### Como testar
+- Subir de nível: o carimbo mostra o título e o que ele liberou, com a animação e a fala.
+- Vestir um visual com sapato ou bota e ver um show com chute ou pulo: o sapato vai junto com o pé.
+- `/anim lerJunto` ou `/anim bolhas`: aparecem as palavras na tela.
+
 ## 0.48.2 — 2026-11-26
 
 ### Novidades

@@ -171,6 +171,10 @@ O usuário discute ideias no ChatGPT e traz prompts prontos. Regras:
   último suspiro (estado `smitten`, 6 s).
 - Idle nunca parado: toda animação de repouso respira, balança braços e inclina a cabeça, preservando o modelo original com pernas e sem cauda.
 - "Eu deveria jogar lol?": caga no chão, pega e oferece — "Passa na cara de uma vez." (estado `poop`, 7 s).
+- **Originalidade e desbloqueios** (0.48.3, doc `jojo-companion/docs/ORIGINALIDADE.md`): pé/calça presos na perna
+  (`pernas.js` no `RigRenderer`); animações quase iguais refeitas com coreografia única (`originalidade.js`, auditoria
+  `node scripts/originalidade.mjs` → `originalidade.json`) e palavras na tela (nunca "HÃ?"); todo desbloqueio passa por
+  `celebrarDesbloqueio` (animação + carimbo DESBLOQUEADO + fala; espera Trabalho/foco/tela cheia).
 - Datas festivas (38): feriados nacionais do Brasil + datas religiosas e culturais do mundo;
   fantasia do dia + cumprimento (solenes sem fantasia/piada; religiosas sem zombaria);
   `holidays.js` (ICU + fases da Lua), `rig.costumes`.

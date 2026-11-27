@@ -153,8 +153,12 @@ export function createRpgService({ userData, companion, needsService = null, ipc
     const ult = ganhos[ganhos.length - 1];
     const desb = ganhos.flatMap((g) => g.desbloqueios || []);
     if (ult.estrela) falar(`Estrela de Prestígio ${rpg.snapshot().estrela}. Nada apagado: tudo somado.`, 'rpg_estrela');
-    else if (desb.some((d) => d.tipo === 'habilidade' && /lend/i.test(d.nome))) falar(`${desb.map((d) => d.nome).join('. ')}.`, 'rpg_lendario');
-    else if (desb.length) falar(`Liberado: ${desb.slice(0, 3).map((d) => d.nome).join(', ')}.`, 'rpg_habilidade');
+    // Cada desbloqueio do RPG aparece na tela: animação, carimbo com o nome e a fala (fila se ocupado).
+    if (desb.length) {
+      const lendario = desb.some((d) => d.tipo === 'habilidade' && /lend/i.test(d.nome));
+      const fala = lendario ? `${desb.map((d) => d.nome).join('. ')}.` : `Liberado: ${desb.slice(0, 3).map((d) => d.nome).join(', ')}.`;
+      desb.forEach((d, i) => companion.celebrarDesbloqueio({ nome: d.nome, fala: i === 0 && !ult.estrela ? fala : null, anim: lendario ? 'rpg_lendario' : 'rpg_habilidade' }));
+    }
     update();
   }
   let ultimoMono = companion.clock.now(), minutosAtivos = 0, ultimoPedido = 0;
@@ -184,7 +188,8 @@ export function createRpgService({ userData, companion, needsService = null, ipc
         if (minutosAtivos % 10 === 0) {
           const s = rpg.checarSegredos({ categoria: companion.appCategoria || null, clima: climaParaRpg(companion.climaAgora), ausenciaHoras: ausenciaUsada ? 0 : ausenciaHoras, streak: p.st.contas?.streak || 0 });
           ausenciaUsada = true;
-          if (s) { entregar(); falar(`${s.novo ? 'Segredo! ' : ''}${s.segredo.nome}: ${s.texto}${resumo(s) ? ` ${resumo(s)}` : ''}`, s.anim || 'rpg_segredo'); }
+          if (s && s.novo) { entregar(); companion.celebrarDesbloqueio({ nome: `Segredo: ${s.segredo.nome}`, fala: `Segredo! ${s.segredo.nome}: ${s.texto}${resumo(s) ? ` ${resumo(s)}` : ''}`, anim: s.anim || 'rpg_segredo' }); }
+          else if (s) { entregar(); falar(`${s.novo ? 'Segredo! ' : ''}${s.segredo.nome}: ${s.texto}${resumo(s) ? ` ${resumo(s)}` : ''}`, s.anim || 'rpg_segredo'); }
         }
         pedido(hora);
       }

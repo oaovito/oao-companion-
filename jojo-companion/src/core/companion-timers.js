@@ -1,6 +1,7 @@
 // Timers no companion (0.47.5): liga o gerenciador puro (timers.js) ao JoJo — falas,
 // animações com o relógio, relógio na janela, XP, hábitos, tarefas, foco e lembretes.
 // Instalado no protótipo do Companion (mesmo padrão dos outros sistemas, sem mexer neles).
+import { APARENCIAS, APARENCIA_DESBLOQUEIO } from './timers.js';
 import { GerenciadorTimers, ATIVIDADES, TIMER_LIMITES, parseTimerRequest, parseTimerCommand, respostaConfirmacao, respostaOferta, duracaoFalada, formatarTempo, caixaRelogio, aparenciaDoTimer, sanitizeAtividades, sanitizeOffset } from './timers.js';
 import { animsDaFase, ANIM_TIMER_POR_ID, ESPACO_ANIM_TIMER, timerDaAnim } from './timer-anims.js';
 import { placeAround } from './layout.js';
@@ -291,6 +292,13 @@ export function instalarTimers(Companion) {
       const c = this.conversations.create({ id: 'timer', title: 'Timer do JoJo', kind: 'reminder' });
       this.conversations.setStatus(c.id, 'needsInput', `${a.nome}: ${duracaoFalada(e.ms)}. Fez? Responda "fiz".`);
     } else if (valida) this._timerRecompensa(t, e.ms);
+    // Aparência de relógio liberada por esta sessão: aparece carimbada na tela com a fala.
+    const sessoes = this.timers.st.stats?.sessoes || 0;
+    for (const [ap, n] of Object.entries(APARENCIA_DESBLOQUEIO)) {
+      if (n !== sessoes || this._aparenciaCarimbada?.has(ap)) continue;
+      (this._aparenciaCarimbada ||= new Set()).add(ap);
+      this.clock.setTimeout(() => this.celebrarDesbloqueio?.({ nome: `Relógio: ${APARENCIAS[ap]}`, fala: `${n} sessões completas. Liberei um relógio novo: ${APARENCIAS[ap].toLowerCase()}.` }), 4000);
+    }
     // Próximo intervalo automático (configurável): mesma atividade, mesma duração.
     if (cfg.timersAutoProximo === true && !e.manual && ['regressivo'].includes(t.tipo) && !confirmar) {
       this.clock.setTimeout(() => { if (!this.work) { this._timerSemFala = true; try { this.timers.iniciar({ atividade: t.atividade, tipo: t.tipo, duracaoMs: t.duracaoMs, rotulo: t.rotulo }); } finally { this._timerSemFala = false; } this._timerSync(); } }, 8000);

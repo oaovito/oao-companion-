@@ -29,6 +29,9 @@ import { instalarTimers } from './companion-timers.js';
 import { instalarClima, pedidoLocalizacao } from './companion-clima.js';
 import { instalarLoja } from './companion-loja.js';
 import { instalarAnime } from './companion-anime.js';
+import { instalarDesbloqueio } from './companion-desbloqueio.js';
+import { espacoDasPalavras } from '../renderer/shared/palavras-desenho.js';
+import { APARENCIAS, APARENCIA_DESBLOQUEIO } from './timers.js';
 import { holidayFor, HOLIDAYS } from './holidays.js';
 import { findIcalUrl, agendaDoDia, agendaBetween, hhmm, eventKind, KIND_ANIMS, calendarRequest } from './calendar.js';
 import { weatherRequest } from './weather.js';
@@ -2857,6 +2860,8 @@ export class Companion {
     const s = sanitizeVisual(this.store.get().visualNivel, refs);
     this.store.update({ visualNivel: { ...s, avisar: [] } }, { silent: true });
     this._reagirReferencia(aviso.ultima);
+    // Carimbo DESBLOQUEADO com o nome do visual (e quantos mais vieram junto).
+    this._carimbo(aviso.pecas?.length > 1 ? `${aviso.ultima.nome} (+${aviso.pecas.length - 1})` : aviso.ultima.nome);
     this._applyLayout(true);
     if (this.onConversationsChange) this.onConversationsChange();
     return true;
@@ -3290,6 +3295,9 @@ export class Companion {
     for (const q of novas) msgs.push(`Conquista: ${q.nome}!`);
     if (lvl) msgs.push(`Subi pro nível ${lvl.nivel}: ${lvl.nome}. Shape evoluindo.`);
     if (!msgs.length) return;
+    // Tudo que esse progresso liberou aparece carimbado na tela: título do nível, acessórios e
+    // minijogos daquele nível e cada conquista (um carimbo por vez, na fila).
+    for (const nome of this._liberadosNoProgresso(lvl, novas)) this._carimbo(nome);
     // Pacotes: várias conquistas → arise; conquista → aura farming. Nível novo reage com a
     // referência do próprio nível (_syncVisual), não com um pacote genérico.
     if (!lvl || !this._refs) this.clock.setTimeout(() => (!lvl && novas.length && this._viral('conquista', { falar: false })) || this.packEvent(lvl ? 'nivel' : novas.length >= 2 ? 'sequenciaConquistas' : 'conquista', { falar: false }), 2600);
@@ -4039,6 +4047,7 @@ export class Companion {
       this.checkHoliday(new Date());
       this.checkAgenda(new Date());
       this._avisarVisuais(); // visual liberado que ainda não foi anunciado
+      this._mostrarPendente?.(); // desbloqueio que esperou o Trabalho/tela cheia passar
       this.onRoutineTick?.();
       if (this.started) this._scheduleReminderCheck(60000);
     }, ms);
@@ -5183,6 +5192,8 @@ export class Companion {
       outfit: animeVestido ? {} : this._outfitComNerd(vestido),
       // Visuais liberados por nível (só peças liberadas; a parte ocupada pela roupa ou fantasia fica com ela).
       visualNivel,
+      // Desbloqueio acontecendo: carimbo DESBLOQUEADO + nome desenhados por cima (overlay).
+      desbloqueio: this._estadoDesbloqueio ? this._estadoDesbloqueio() : null,
       // Loja de JOJOcoins: decoração, aura, rastro, holofote, Megalodon e moedas animadas.
       loja: this._lojaEstado ? this._lojaEstado() : null,
       // Pacote de anime vestido agora (cores do pacote para o desenho).
@@ -5314,6 +5325,8 @@ export class Companion {
     const parts = tabelas.map((tb) => tb[anim]);
     if (this.roomPrev.prev && now < this.roomPrev.until) for (const tb of tabelas) parts.push(tb[this.roomPrev.prev]);
     if (this.effect) parts.push(this.room.effects[this.effect.name]);
+    // Carimbo de desbloqueio por cima do JoJo: a janela cresce o bastante para ele.
+    if (this._estadoDesbloqueio?.()) parts.push(espacoDasPalavras({ tipo: 'carimbo' }));
     let out = null;
     for (const p of parts) {
       if (!p) continue;
@@ -5356,3 +5369,5 @@ instalarClima(Companion);
 instalarLoja(Companion);
 // Ecossistema de animes (acompanhamento, alertas temáticos, sessões, JOJOcoins): src/core/companion-anime.js.
 instalarAnime(Companion);
+// Desbloqueios na tela (animação + carimbo com o nome + fala): src/core/companion-desbloqueio.js.
+instalarDesbloqueio(Companion);
